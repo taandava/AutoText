@@ -91,17 +91,20 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             notifManager.cancel(taskId.toInt())
         }
 
-        Log.d(TAG, "Alarm triggered for Task ID: $taskId")
-        AppFileLogger.action(context, TAG, "Alarm triggered for Task #${task.id} (${task.title}) [${task.channel.displayName}]")
-        val pendingResult = goAsync()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                executeTask(context, repository, task)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error executing task $taskId", e)
-                AppFileLogger.e(context, TAG, "Error executing task #$taskId: ${e.message}", e)
-            } finally {
-                pendingResult.finish()
+        Log.d(TAG, "Alarm triggered for Task ID: $taskId. Routing to SequentialTaskEngine.")
+        AppFileLogger.action(context, TAG, "Alarm triggered for Task #${task.id} (${task.title}) [${task.channel.displayName}] -> SequentialTaskEngine")
+        val enqueued = com.jmd.autotext.engine.SequentialTaskEngine.getInstance(context).enqueue(taskId)
+        if (!enqueued) {
+            val pendingResult = goAsync()
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    executeTask(context, repository, task)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error executing task $taskId", e)
+                    AppFileLogger.e(context, TAG, "Error executing task #$taskId: ${e.message}", e)
+                } finally {
+                    pendingResult.finish()
+                }
             }
         }
     }
