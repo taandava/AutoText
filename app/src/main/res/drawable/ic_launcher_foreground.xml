@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.65"
+        android:scaleY="0.65"
+        android:translateX="18.9"
+        android:translateY="18.9">
+        <!-- Message Chat Bubble -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M24,20 h60 a12,12 0 0,1 12,12 v40 a12,12 0 0,1 -12,12 h-36 l-16,14 v-14 h-8 a12,12 0 0,1 -12,-12 v-40 a12,12 0 0,1 12,-12 z" />
+        
+        <!-- Automation Lightning Bolt -->
+        <path
+            android:fillColor="#6366F1"
+            android:pathData="M56,28 L38,54 L52,54 L46,80 L70,48 L56,48 Z" />
+
+        <path
+            android:fillColor="#06B6D4"
+            android:pathData="M55,34 L43,53 L52,53 L48,72 L64,49 L55,49 Z" />
+
+        <!-- Emerald Status Pulse Dot -->
+        <path
+            android:fillColor="#10B981"
+            android:pathData="M84,32 a6,6 0 1,0 0.001,0 Z" />
+    </group>
+</vector>

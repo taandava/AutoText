@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Maintain existing Gradle wrapper version per project requirements -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
+    <!-- Allow defensive SDK level guards across OEM accessibility helpers -->
+    <issue id="ObsoleteSdkInt" severity="ignore" />
+    <issue id="MonochromeLauncherIcon" severity="ignore" />
+    <issue id="IconLocation" severity="ignore" />
+    <issue id="UseKtx" severity="ignore" />
+    <issue id="HardwareIds" severity="ignore" />
+</lint>

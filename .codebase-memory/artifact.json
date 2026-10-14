@@ -1,0 +1,11 @@
+{
+    "schema_version": 2,
+    "commit": "",
+    "indexed_at": "2026-10-14T11:21:06Z",
+    "project": "AutoText-audited",
+    "nodes": 1325,
+    "edges": 6664,
+    "original_size": 7798784,
+    "compressed_size": 1435396,
+    "compression_level": 3
+}

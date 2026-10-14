@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Network & Remote Cloud Sync Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- SMS Permissions -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+    <!-- Phone Call & Contacts Permissions -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <!-- Scheduling & Execution Permissions -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" tools:ignore="ProtectedPermissions" />
+
+    <!-- Device Administration (Hardware Auto-Lock) -->
+
+    <!-- Biometric Security -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
+    <!-- Hardware Features Declaration (Optional for tablet / ChromeOS compatibility) -->
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+
+    <!-- Queries for Supported Apps -->
+    <queries>
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+    </queries>
+
+    <application
+        android:name=".AutoTextApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false"
+        android:enableOnBackInvokedCallback="true"
+        tools:targetApi="33"
+        android:theme="@style/Theme.AutoText">
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.AutoText">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- Share Target Intent Filter -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <!-- Fake Call Simulation Activity (Internal app simulation only) -->
+        <activity
+            android:name=".ui.fakecall.FakeCallActivity"
+            android:exported="false"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AutoText.FullScreen"
+            tools:targetApi="o_mr1" />
+
+        <!-- Heads Up Reminder / Alarm Activity (Internal app alarm only) -->
+        <activity
+            android:name=".ui.reminder.ReminderAlarmActivity"
+            android:exported="false"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AutoText"
+            tools:targetApi="o_mr1" />
+
+        <!-- Automation Screen-On / Keyguard Dismiss Trampoline Activity (Internal automation only) -->
+        <activity
+            android:name=".ui.automation.AutomationLauncherActivity"
+            android:exported="false"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.AutoText.Transparent"
+            tools:targetApi="o_mr1" />
+
+        <!-- Device Administration Receiver (Hardware Screen Lock after Automation) -->
+        <receiver
+            android:name=".service.AutoTextDeviceAdminReceiver"
+            android:label="@string/app_name"
+            android:description="@string/device_admin_description"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Accessibility Automation Service (WhatsApp, WA Business) -->
+        <service
+            android:name=".service.AutoTextAccessibilityService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:stopWithTask="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- Notification Listener Service (Smart Auto-Reply for Chat Apps) -->
+        <service
+            android:name=".service.AutoTextNotificationListenerService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:stopWithTask="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- Alarm Receiver for Exact Scheduling -->
+        <receiver
+            android:name=".scheduler.TaskAlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.jmd.autotext.ACTION_FIRE_TASK" />
+                <action android:name="com.jmd.autotext.ACTION_COUNTDOWN_TIMEOUT" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Boot & Upgrade Receiver -->
+        <receiver
+            android:name=".scheduler.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Time & Timezone Change Receiver -->
+        <receiver
+            android:name=".scheduler.TimeChangeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Accessibility & Automation Watchdog Heartbeat Receiver -->
+        <receiver
+            android:name=".scheduler.AccessibilityWatchdogReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.jmd.autotext.ACTION_WATCHDOG_HEARTBEAT" />
+            </intent-filter>
+        </receiver>
+
+
+        <!-- Incoming SMS Receiver (Auto-Reply & Auto-Forward) -->
+        <receiver
+            android:name=".service.SmsReceiver"
+            android:permission="android.permission.BROADCAST_SMS"
+            android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Incoming / Missed Call Receiver (Missed Call Auto-Reply & Forward) -->
+        <receiver
+            android:name=".service.PhoneCallReceiver"
+            android:permission="android.permission.READ_PHONE_STATE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- File Provider -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.jmd.autotext.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+    </application>
+
+</manifest>
