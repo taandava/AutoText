@@ -44,8 +44,30 @@ AutoText is a modern Android application written entirely in Kotlin with Jetpack
 - All text inputs across Task Composer, Sequence Studio, Campaign Builder, and Auto-Reply rules initialize strictly to empty strings (`""`) without prebuilt entries or fallback text injection.
 
 ### 5. Unattended Screen Unlock & Auto-Lock Postcondition
-- Automated Keyguard unlock via touch simulation using local AES-GCM encrypted PIN.
+- Automated Keyguard unlock via touch simulation using hardware-backed or Direct Boot encrypted PIN.
 - Automatic hardware screen lock postcondition executed via Accessibility Service and Device Administration (`AutoTextDeviceAdminReceiver.lockNow`).
+
+### 6. SQLite Write-Ahead Logging (WAL Mode)
+- Configured via `DatabaseHelper.onConfigure()`.
+- Unlocks concurrent read and write transactions: background batch campaign dispatches and log writes commit to `-wal` without stalling UI queries in `TasksScreen`, `ExecutionLogsScreen`, or `DailyAutoSenderScreen`.
+- Foreign key constraints enabled with `ON DELETE CASCADE` integrity.
+
+### 7. Rolling Log Auto-Pruning Policy
+- Auto-pruning in `LogRepository` caps execution logs to a maximum of 5,000 entries and a 45-day retention window.
+- Opportunistically invoked in the background every 100 log writes, preventing database bloat over long-term operation.
+
+### 8. Accessibility Standby Event Throttling
+- When idle (`isAutomating == false`), `AutoTextAccessibilityService` throttles its event mask to touch and window state changes only (`STANDBY_EVENT_MASK`).
+- Discards scroll, window content, and text change events from other apps, drastically slashing background CPU and battery consumption.
+- Switches dynamically to `TYPES_ALL_MASK` only during active automation sequences.
+
+### 9. Hardware Keystore AES-256-GCM Encryption
+- Auto-unlock PIN stored with 256-bit AES encryption managed by `AndroidKeyStore` (`HW_ENC:`).
+- Dual-tier Direct Boot fallback (`ENC:`) stored in device-protected storage (`dePrefs`) ensures keyguard auto-unlock functions reliably even across cold reboots before first user unlock.
+
+### 10. Responsive Dashboard Header Layout
+- Compact, icon-only action buttons for **New Task** (`+`) and **Emergency Stop** (`🛑`).
+- Responsive header grid gracefully accommodates all 7 real-time system health indicators without clipping across varying screen sizes.
 
 ---
 

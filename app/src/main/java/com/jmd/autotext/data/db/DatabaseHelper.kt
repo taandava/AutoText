@@ -81,6 +81,21 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
     /**
+     * Configures database connection before schema creation, migrations, or queries.
+     * Enables SQLite Write-Ahead Logging (WAL) for high-concurrency read/write operations
+     * and enforces foreign key relational constraints.
+     */
+    override fun onConfigure(db: SQLiteDatabase) {
+        super.onConfigure(db)
+        try {
+            db.enableWriteAheadLogging()
+            db.setForeignKeyConstraintsEnabled(true)
+        } catch (e: Exception) {
+            android.util.Log.w("DatabaseHelper", "onConfigure WAL/ForeignKeys failed: ${e.message}")
+        }
+    }
+
+    /**
      * Executes initial schema creation for all 15 relational tables, indices, and seed records.
      *
      * @param db Target SQLiteDatabase instance.

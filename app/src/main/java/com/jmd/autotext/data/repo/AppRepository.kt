@@ -399,6 +399,9 @@ class AppRepository(private val context: Context) {
     fun getAllLogs(limit: Int = 200): List<ExecutionLog> = logRepo.getAllLogs(limit)
     fun clearLogs() = logRepo.clearAllLogs()
 
+    fun pruneOldLogs(maxCount: Int = LogRepository.MAX_LOG_RETENTION_COUNT, maxAgeDays: Int = LogRepository.MAX_LOG_RETENTION_DAYS): Int =
+        logRepo.pruneOldLogs(maxCount, maxAgeDays)
+
     fun getLogsForToday(): List<ExecutionLog> {
         return logRepo.getLogsForToday()
     }

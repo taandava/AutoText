@@ -210,6 +210,29 @@ CREATE TABLE auto_reply_logs (
 );
 ```
 
+#### 5. SQLite Write-Ahead Logging (WAL Mode) & High-Concurrency Isolation
+AutoText configures Write-Ahead Logging (WAL) in `DatabaseHelper.onConfigure(db: SQLiteDatabase)`:
+```kotlin
+override fun onConfigure(db: SQLiteDatabase) {
+    super.onConfigure(db)
+    db.enableWriteAheadLogging()
+    db.setForeignKeyConstraintsEnabled(true)
+}
+```
+**Benefits & Performance Rationale:**
+- **Concurrent Readers & Writers**: Normal rollback journaling locks the entire database file during writes, freezing the UI thread whenever long-running background campaign batches or log inserts occur. WAL mode permits background write transactions to commit to a separate `-wal` log without blocking concurrent reads from the UI thread (`TasksScreen`, `ExecutionLogsScreen`, `DailyAutoSenderScreen`).
+- **Zero UI Hitching**: Real-time log list queries and scheduled task refresh operations execute simultaneously during multi-recipient campaign dispatches.
+- **Foreign Key Integrity**: Enforces `ON DELETE CASCADE` across `daily_campaigns` -> `campaign_recipients` and `auto_reply_rules` -> `auto_reply_logs`.
+
+#### 6. Rolling Log Auto-Pruning Policy
+To maintain a lean storage footprint and prevent unbounded SQLite database growth over months or years of continuous automated dispatches, `LogRepository` enforces an opportunistic rolling log pruning policy:
+```kotlin
+fun pruneOldLogs(maxCount: Int = 5000, maxAgeDays: Int = 45): Int
+```
+- **Max Count Retention**: Retains the most recent 5,000 execution logs, purging older entries.
+- **Max Age Retention**: Deletes any logs with an `execution_time` older than 45 days.
+- **Opportunistic Triggering**: Executed automatically in the background every 100 log writes (`if (insertionCounter % 100 == 0L) pruneOldLogs()`), completely avoiding manual database maintenance requirements.
+
 ---
 
 ## 4. System Invariant: Display Auto-Rotate Protection Guard
@@ -402,6 +425,32 @@ graph TD
     R --> S
 ```
 
+### Hardware Keystore AES-256-GCM Encryption for Unlock PIN (`PreferenceManager`)
+The device auto-unlock PIN is safeguarded using Android's hardware-backed Keystore system:
+1. **Hardware-Isolated AES Key (`AndroidKeyStore`)**:
+   - Resolves or generates a 256-bit AES key in the hardware security module (TEE / StrongBox) using alias `AutoText_Hardware_Key`.
+   - Keys are non-exportable and isolated from application memory.
+   - Ciphertext is tagged with prefix `HW_ENC:`.
+2. **Dual-Tier Direct Boot Fallback (`ENC:`)**:
+   - Before the user unlocks their device following a reboot, Android's Credential Encrypted (CE) storage—including the Keystore provider—remains inaccessible.
+   - AutoText automatically provisions a package-derived AES-256-GCM fallback key stored in Device-Protected (`dePrefs`) storage with prefix `ENC:`.
+   - This ensures unattended auto-unlock operations continue to function seamlessly even under Direct Boot conditions (e.g. after scheduled overnight reboots or system updates).
+3. **Transparent Backwards-Compatible Migration**:
+   - Stored PINs are transparently upgraded to hardware-bound Keystore encryption upon reading, while legacy plaintext values are decrypted and re-encrypted seamlessly.
+
+### Hardware Keystore AES-256-GCM Encryption for Unlock PIN (`PreferenceManager`)
+The device auto-unlock PIN is safeguarded using Android's hardware-backed Keystore system:
+1. **Hardware-Isolated AES Key (`AndroidKeyStore`)**:
+   - Resolves or generates a 256-bit AES key in the hardware security module (TEE / StrongBox) using alias `AutoText_Hardware_Key`.
+   - Keys are non-exportable and isolated from application memory.
+   - Ciphertext is tagged with prefix `HW_ENC:`.
+2. **Dual-Tier Direct Boot Fallback (`ENC:`)**:
+   - Before the user unlocks their device following a reboot, Android's Credential Encrypted (CE) storage—including the Keystore provider—remains inaccessible.
+   - AutoText automatically provisions a package-derived AES-256-GCM fallback key stored in Device-Protected (`dePrefs`) storage with prefix `ENC:`.
+   - This ensures unattended auto-unlock operations continue to function seamlessly even under Direct Boot conditions (e.g. after scheduled overnight reboots or system updates).
+3. **Transparent Backwards-Compatible Migration**:
+   - Stored PINs are transparently upgraded to hardware-bound Keystore encryption upon reading, while legacy plaintext values are decrypted and re-encrypted seamlessly.
+
 ### Hardware Auto-Lock Implementation (`executeDeviceLockPostcondition`)
 After completing any automated non-interactive task (SMS, WhatsApp direct, Status publishing, Phone Call, WhatsApp Call), if `isAutoLockAfterSendEnabled` is active:
 1. Returns to the Android home screen (`minimizeToHome`) so private chats or dialers are not left visible.
@@ -445,6 +494,30 @@ Located in the compact top header bar, clicking the indicators navigates directl
 ---
 
 ## 10. Silent Watchdog & Privileged Service Self-Healing
+
+### Accessibility Standby Event Throttling (`AutoTextAccessibilityService`)
+To eliminate unnecessary CPU and battery drain when AutoText is not actively executing tasks:
+1. **Dynamic Event Masking**:
+   - **Standby Mode (`isAutomating == false`)**: Event mask is throttled to `STANDBY_EVENT_MASK` (`TYPE_WINDOW_STATE_CHANGED or TYPE_TOUCH_INTERACTION_START or TYPE_GESTURE_DETECTION_START`). All scroll events, window content change events, and text change events dispatched by other apps on the device are discarded at the service boundary.
+   - **Active Automation Mode (`isAutomating == true`)**: Switches to `ACTIVE_AUTOMATION_EVENT_MASK` (`TYPES_ALL_MASK`) exclusively during live task dispatches to enable node crawling, send button targeting, and popup detection.
+2. **Impact**: Prevents thousands of IPC calls per hour across the Android system bus during normal device usage, dramatically reducing background energy consumption.
+
+### Responsive Dashboard Header & Icon-Only Action Buttons
+To accommodate the comprehensive 7-indicator system health monitor on devices of varying screen widths:
+- The **New Task** and **Emergency Stop** controls are streamlined into compact, high-contrast icon buttons (`Icons.Default.Add` and `Icons.Default.StopCircle`).
+- The top app bar adopts a responsive layout that dynamically balances the title, health status indicators, and action triggers without horizontal truncation or multi-line clipping on narrow or high-density displays.
+
+### Accessibility Standby Event Throttling (`AutoTextAccessibilityService`)
+To eliminate unnecessary CPU and battery drain when AutoText is not actively executing tasks:
+1. **Dynamic Event Masking**:
+   - **Standby Mode (`isAutomating == false`)**: Event mask is throttled to `STANDBY_EVENT_MASK` (`TYPE_WINDOW_STATE_CHANGED or TYPE_TOUCH_INTERACTION_START or TYPE_GESTURE_DETECTION_START`). All scroll events, window content change events, and text change events dispatched by other apps on the device are discarded at the service boundary.
+   - **Active Automation Mode (`isAutomating == true`)**: Switches to `ACTIVE_AUTOMATION_EVENT_MASK` (`TYPES_ALL_MASK`) exclusively during live task dispatches to enable node crawling, send button targeting, and popup detection.
+2. **Impact**: Prevents thousands of IPC calls per hour across the Android system bus during normal device usage, dramatically reducing background energy consumption.
+
+### Responsive Dashboard Header & Icon-Only Action Buttons
+To accommodate the comprehensive 7-indicator system health monitor on devices of varying screen widths:
+- The **New Task** and **Emergency Stop** controls are streamlined into compact, high-contrast icon buttons (`Icons.Default.Add` and `Icons.Default.StopCircle`).
+- The top app bar adopts a responsive layout that dynamically balances the title, health status indicators, and action triggers without horizontal truncation or multi-line clipping on narrow or high-density displays.
 
 ### Single-Service Safe Cycling (`autoHealAccessibility`)
 When modern OEM systems (OneUI, ColorOS, MIUI) silently drop accessibility binder connections, `AccessibilityHealthManager` restores the service using `WRITE_SECURE_SETTINGS`.

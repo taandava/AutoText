@@ -161,6 +161,27 @@ class AutoTextAccessibilityService : AccessibilityService() {
         private var isAutomating = false
         private var sendAttemptCount = 0
 
+        private const val STANDBY_EVENT_MASK =
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
+            AccessibilityEvent.TYPE_TOUCH_INTERACTION_START or
+            AccessibilityEvent.TYPE_GESTURE_DETECTION_START
+
+        private const val ACTIVE_AUTOMATION_EVENT_MASK = AccessibilityEvent.TYPES_ALL_MASK
+
+        fun setStandbyEventMask(standby: Boolean) {
+            try {
+                val service = getInstance() ?: return
+                val info = service.serviceInfo ?: return
+                info.eventTypes = if (standby) STANDBY_EVENT_MASK else ACTIVE_AUTOMATION_EVENT_MASK
+                service.serviceInfo = info
+            } catch (_: Exception) {}
+        }
+
+        private fun setAutomatingState(automating: Boolean) {
+            isAutomating = automating
+            setStandbyEventMask(!automating)
+        }
+
         /**
          * Returns the task ID currently undergoing accessibility automation, or 0 if idle.
          */
@@ -240,7 +261,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val appLabel = if (isBusiness) "WhatsApp Business" else "WhatsApp"
 
             if (targetPkg == null) {
-                isAutomating = false
+                setAutomatingState(false)
                 currentMode = AutomationMode.DIRECT_SEND
                 context.showAppToast("$appLabel is not installed")
                 return
@@ -251,7 +272,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             }
             currentMode = AutomationMode.MANUAL_PICK_CHAT
             pendingPackageName = targetPkg
-            isAutomating = true
+            setAutomatingState(true)
             sendAttemptCount = 0
             onManualChatInfoPicked = onPicked
             onManualChatPicked = null
@@ -273,7 +294,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                         }, 30_000L)
                     }
                 } else {
-                    isAutomating = false
+                    setAutomatingState(false)
                     currentMode = AutomationMode.DIRECT_SEND
                     context.showAppToast("Could not open $appLabel")
                 }
@@ -332,7 +353,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val appLabel = if (isBusiness) "WhatsApp Business" else "WhatsApp"
 
             if (targetPkg == null) {
-                isAutomating = false
+                setAutomatingState(false)
                 currentMode = AutomationMode.DIRECT_SEND
                 pendingPackageName = null
                 lastSendResult = RESULT_INVALID
@@ -341,7 +362,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             }
             currentMode = AutomationMode.WHATSAPP_SCAN_CHATS
             pendingPackageName = targetPkg
-            isAutomating = true
+            setAutomatingState(true)
             sendAttemptCount = 0
             instance?.let { s ->
                 s.whatsAppChatScanner.resetScanState(scanTarget)
@@ -356,7 +377,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                     Log.d(TAG, "startWhatsAppChatScan: Launched $targetPkg for chat scan")
                     context.showAppToast("Scanning $appLabel chats...")
                 } else {
-                    isAutomating = false
+                    setAutomatingState(false)
                     currentMode = AutomationMode.DIRECT_SEND
                     pendingPackageName = null
                     lastSendResult = RESULT_INVALID
@@ -433,7 +454,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             pendingPackageName = packageName
             pendingRecipient = recipient
             pendingMessage = "WhatsApp Voice Call"
-            isAutomating = true
+            setAutomatingState(true)
             sendAttemptCount = 0
             isBatchCampaignMode = false
             instance?.hasAttemptedSendClick = false
@@ -514,7 +535,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             pendingPackageName = packageName
             pendingRecipient = recipient
             pendingMessage = messageText
-            isAutomating = true
+            setAutomatingState(true)
             sendAttemptCount = 0
             isBatchCampaignMode = isBatchCampaign
             instance?.hasAttemptedSendClick = false
@@ -698,7 +719,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         @JvmStatic
         fun clearPending() {
             if (lastSendResult == RESULT_PENDING) lastSendResult = RESULT_TIMEOUT
-            isAutomating = false
+            setAutomatingState(false)
             isUnlockPending = false
             isTestUnlockMode = false
             isBatchCampaignMode = false
@@ -1057,7 +1078,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                             sendAttemptCount = sendAttemptCount,
                             onRetry = { handler.postDelayed(sendRunnable, it) },
                             onFinish = {
-                                isAutomating = false
+                                setAutomatingState(false)
                                 currentMode = AutomationMode.DIRECT_SEND
                                 if (pendingReturnToApp) {
                                     pendingReturnToApp = false
@@ -1107,7 +1128,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         try {
             val info = serviceInfo ?: android.accessibilityservice.AccessibilityServiceInfo()
             info.packageNames = null
-            info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK
+            info.eventTypes = if (isAutomating) ACTIVE_AUTOMATION_EVENT_MASK else STANDBY_EVENT_MASK
             serviceInfo = info
         } catch (_: Exception) {}
         isServiceRunning = true
@@ -1136,7 +1157,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         try {
             val info = serviceInfo ?: android.accessibilityservice.AccessibilityServiceInfo()
             info.packageNames = null
-            info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK
+            info.eventTypes = if (isAutomating) ACTIVE_AUTOMATION_EVENT_MASK else STANDBY_EVENT_MASK
             serviceInfo = info
         } catch (_: Exception) {}
         AccessibilityHealthManager.recordHeartbeat()
@@ -1197,6 +1218,15 @@ class AutoTextAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         try {
             if (event == null) return
+            if (!isAutomating) {
+                val type = event.eventType
+                if (type == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED ||
+                    type == AccessibilityEvent.TYPE_VIEW_SCROLLED ||
+                    type == AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED
+                ) {
+                    return
+                }
+            }
             val currentPkg = event.packageName?.toString() ?: return
 
             // Stealth Protection Guard: Completely isolate accessibility from banking & UPI apps
@@ -1265,7 +1295,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             if (isEmergencyStop || !prefs.isTasksMasterEnabled) {
                 if (isAutomating) {
                     Log.w(TAG, "Master switch disabled or emergency stop active! Halting accessibility automation immediately.")
-                    isAutomating = false
+                    setAutomatingState(false)
                     isUnlockPending = false
                     clearPending()
                     handler.removeCallbacksAndMessages(null)
@@ -1315,7 +1345,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                     val repo = AppRepository(applicationContext)
                     if (cleanPicked.isNotBlank() && repo.isValidPickedChatName(cleanPicked)) {
                         Log.i(TAG, "User clicked and selected WhatsApp chat: '$cleanPicked'")
-                        isAutomating = false
+                        setAutomatingState(false)
                         currentMode = AutomationMode.DIRECT_SEND
 
                         val chatInfo = analyzePickedChat(
@@ -1672,7 +1702,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         AppFileLogger.action(applicationContext, TAG, "Successfully delivered $channelName to $pendingRecipient for task #$pendingTaskId")
         showAppToast("Sent: $channelName")
 
-        isAutomating = false
+        setAutomatingState(false)
         hasAttemptedSendClick = false
         groupSearchStep = 0
         whatsAppStatusEngine.resetState()
@@ -1712,7 +1742,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         AppFileLogger.action(applicationContext, TAG, "Successfully placed $channelName to $pendingRecipient for task #$pendingTaskId")
         showAppToast("Calling: $channelName")
 
-        isAutomating = false
+        setAutomatingState(false)
         hasAttemptedSendClick = false
         whatsAppCallEngine.resetState()
         currentMode = AutomationMode.DIRECT_SEND
@@ -1843,7 +1873,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         if (!isBatchCampaignMode && pendingTaskId > 0) {
             AppRepository(applicationContext).updateTaskStatus(pendingTaskId, TaskStatus.FAILED)
         }
-        isAutomating = false
+        setAutomatingState(false)
         hasAttemptedSendClick = false
         groupSearchStep = 0
         whatsAppStatusEngine.resetState()
@@ -1865,7 +1895,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
     override fun onInterrupt() {
         Log.w(TAG, "Accessibility Service Interrupted")
         if (lastSendResult == RESULT_PENDING) lastSendResult = RESULT_TIMEOUT
-        isAutomating = false
+        setAutomatingState(false)
         isUnlockPending = false
         hasAttemptedSendClick = false
         handler.removeCallbacks(sendRunnable)

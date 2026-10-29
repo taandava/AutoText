@@ -61,6 +61,9 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_SMS_QUOTA_LIMIT_ENABLED = "sms_quota_limit_enabled"
         private const val KEY_EMERGENCY_STOP_ACTIVE = "emergency_stop_active"
         private const val KEY_PREVENT_SYSTEM_AUTO_ROTATE = "prevent_system_auto_rotate"
+
+        private const val KEYSTORE_PROVIDER = "AndroidKeyStore"
+        private const val KEYSTORE_ALIAS = "AutoText_Hardware_Key"
     }
 
     var isEmergencyStopActive: Boolean
@@ -83,15 +86,40 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getBoolean(KEY_APP_LOCK_ENABLED, false)
         set(value) = prefs.edit { putBoolean(KEY_APP_LOCK_ENABLED, value) }
 
+
+
     /**
-     * Encrypts sensitive secrets (such as the device lockscreen PIN) using AES/GCM/NoPadding.
-     * Generates a 12-byte cryptographic nonce per encryption and prepends "ENC:".
-     *
-     * @param secret Plaintext string to encrypt.
-     * @return Base64 ciphertext string prefixed with "ENC:", or original string if encryption fails.
+     * Resolves or generates a hardware-backed 256-bit AES key inside the Android Keystore.
+     * Hardware isolation protects encryption keys against memory dumping or physical extraction.
      */
-    private fun encryptSecret(secret: String): String {
-        if (secret.isEmpty()) return ""
+    private fun getOrCreateHardwareKey(): javax.crypto.SecretKey? {
+        return try {
+            val keyStore = java.security.KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
+            if (keyStore.containsAlias(KEYSTORE_ALIAS)) {
+                (keyStore.getEntry(KEYSTORE_ALIAS, null) as? java.security.KeyStore.SecretKeyEntry)?.secretKey
+            } else {
+                val keyGen = javax.crypto.KeyGenerator.getInstance(
+                    android.security.keystore.KeyProperties.KEY_ALGORITHM_AES,
+                    KEYSTORE_PROVIDER
+                )
+                val spec = android.security.keystore.KeyGenParameterSpec.Builder(
+                    KEYSTORE_ALIAS,
+                    android.security.keystore.KeyProperties.PURPOSE_ENCRYPT or android.security.keystore.KeyProperties.PURPOSE_DECRYPT
+                )
+                    .setBlockModes(android.security.keystore.KeyProperties.BLOCK_MODE_GCM)
+                    .setEncryptionPaddings(android.security.keystore.KeyProperties.ENCRYPTION_PADDING_NONE)
+                    .setKeySize(256)
+                    .build()
+                keyGen.init(spec)
+                keyGen.generateKey()
+            }
+        } catch (_: Throwable) {
+            // AndroidKeyStore is unavailable in JVM unit tests or pre-unlock direct boot storage
+            null
+        }
+    }
+
+    private fun encryptSecretWithDerivedKey(secret: String): String {
         return try {
             val keyBytes = getDeviceSecretKey()
             val cipher = javax.crypto.Cipher.getInstance("AES/GCM/NoPadding")
@@ -110,6 +138,34 @@ class PreferenceManager(private val context: Context) {
     }
 
     /**
+     * Encrypts sensitive secrets (such as the device lockscreen PIN) using Hardware Keystore AES/GCM/NoPadding
+     * when available, with automatic fallback to Direct Boot compatible derived AES-GCM.
+     *
+     * @param secret Plaintext string to encrypt.
+     * @return Base64 ciphertext string prefixed with "HW_ENC:" or "ENC:".
+     */
+    private fun encryptSecret(secret: String): String {
+        if (secret.isEmpty()) return ""
+        // 1. Primary: Hardware Keystore encryption (hardware-isolated cryptographic keys)
+        try {
+            val hwKey = getOrCreateHardwareKey()
+            if (hwKey != null) {
+                val cipher = javax.crypto.Cipher.getInstance("AES/GCM/NoPadding")
+                cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, hwKey)
+                val iv = cipher.iv
+                val ciphertext = cipher.doFinal(secret.toByteArray(Charsets.UTF_8))
+                val combined = ByteArray(iv.size + ciphertext.size)
+                System.arraycopy(iv, 0, combined, 0, iv.size)
+                System.arraycopy(ciphertext, 0, combined, iv.size, ciphertext.size)
+                return "HW_ENC:" + android.util.Base64.encodeToString(combined, android.util.Base64.NO_WRAP)
+            }
+        } catch (_: Throwable) {}
+
+        // 2. Secondary fallback: Package-derived AES-GCM (Direct Boot & unit test compatibility)
+        return encryptSecretWithDerivedKey(secret)
+    }
+
+    /**
      * Decrypts AES/GCM encrypted secrets prefixed with "ENC:".
      * First attempts decryption using the device-hardware bound key. If that fails (e.g. legacy stored secret),
      * falls back to the legacy package seed and automatically re-encrypts using the modern key.
@@ -120,7 +176,30 @@ class PreferenceManager(private val context: Context) {
      */
     private fun decryptSecret(stored: String): String {
         if (stored.isEmpty()) return ""
+        // 1. Hardware Keystore ciphertext decryption
+        if (stored.startsWith("HW_ENC:")) {
+            try {
+                val hwKey = getOrCreateHardwareKey()
+                if (hwKey != null) {
+                    val encoded = stored.substring(7)
+                    val combined = android.util.Base64.decode(encoded, android.util.Base64.NO_WRAP)
+                    if (combined.size > 12) {
+                        val iv = ByteArray(12)
+                        System.arraycopy(combined, 0, iv, 0, 12)
+                        val ciphertext = ByteArray(combined.size - 12)
+                        System.arraycopy(combined, 12, ciphertext, 0, ciphertext.size)
+                        val cipher = javax.crypto.Cipher.getInstance("AES/GCM/NoPadding")
+                        val spec = javax.crypto.spec.GCMParameterSpec(128, iv)
+                        cipher.init(javax.crypto.Cipher.DECRYPT_MODE, hwKey, spec)
+                        val decryptedBytes = cipher.doFinal(ciphertext)
+                        return String(decryptedBytes, Charsets.UTF_8)
+                    }
+                }
+            } catch (_: Throwable) {}
+        }
+
         if (!stored.startsWith("ENC:")) return stored // transparent legacy plain migration
+
         val decrypted = try {
             decryptSecretWithKey(stored, getDeviceSecretKey())
         } catch (_: Exception) {
@@ -136,7 +215,7 @@ class PreferenceManager(private val context: Context) {
                 try {
                     val upgraded = encryptSecret(legacyDecrypted)
                     prefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, upgraded) }
-                    try { dePrefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, upgraded) } } catch (_: Exception) {}
+                    try { dePrefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, encryptSecretWithDerivedKey(legacyDecrypted)) } } catch (_: Exception) {}
                 } catch (_: Exception) {}
             }
             legacyDecrypted
@@ -241,7 +320,11 @@ class PreferenceManager(private val context: Context) {
         set(value) {
             val enc = encryptSecret(value)
             prefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, enc) }
-            try { dePrefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, enc) } } catch (_: Exception) {}
+            try {
+                // For Direct Boot storage, store derived-key ciphertext so it is readable pre-unlock
+                val deEnc = encryptSecretWithDerivedKey(value)
+                dePrefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, deEnc) }
+            } catch (_: Exception) {}
         }
 
     var isAutoLockAfterSendEnabled: Boolean

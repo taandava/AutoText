@@ -26,7 +26,44 @@ import com.jmd.autotext.data.model.ExecutionLog
  */
 class LogRepository(context: Context) {
 
+    companion object {
+        private const val TAG = "LogRepository"
+        const val MAX_LOG_RETENTION_COUNT = 5000
+        const val MAX_LOG_RETENTION_DAYS = 45
+        private val insertCounter = java.util.concurrent.atomic.AtomicInteger(0)
+    }
+
     private val dbHelper = DatabaseHelper.getInstance(context)
+
+    /**
+     * Enforces rolling log retention policy:
+     * 1. Removes records older than [maxAgeDays] (default 45 days).
+     * 2. Caps maximum total log rows to [maxCount] (default 5,000 entries).
+     *
+     * @param maxCount Maximum number of recent log entries to retain.
+     * @param maxAgeDays Maximum age of logs in days before eviction.
+     * @return Number of pruned historical log records.
+     */
+    fun pruneOldLogs(maxCount: Int = MAX_LOG_RETENTION_COUNT, maxAgeDays: Int = MAX_LOG_RETENTION_DAYS): Int {
+        val db = dbHelper.writableDatabase
+        return try {
+            val cutoff = System.currentTimeMillis() - (maxAgeDays * 86_400_000L)
+            val deletedOld = db.delete(DatabaseHelper.TABLE_LOGS, "timestamp < ?", arrayOf(cutoff.toString()))
+            val deletedExceeding = db.delete(
+                DatabaseHelper.TABLE_LOGS,
+                "id NOT IN (SELECT id FROM ${DatabaseHelper.TABLE_LOGS} ORDER BY timestamp DESC LIMIT ?)",
+                arrayOf(maxCount.toString())
+            )
+            val total = deletedOld + deletedExceeding
+            if (total > 0) {
+                android.util.Log.d(TAG, "Pruned $total historical logs (older than $maxAgeDays days or exceeding $maxCount cap)")
+            }
+            total
+        } catch (e: Exception) {
+            android.util.Log.w(TAG, "pruneOldLogs failed: ${e.message}")
+            0
+        }
+    }
 
     /**
      * Persists an execution diagnostic event with channel, recipient, status, and SMS part count.
@@ -60,7 +97,13 @@ class LogRepository(context: Context) {
             put("segments", maxOf(1, segments))
             put("timestamp", System.currentTimeMillis())
         }
-        return db.insert(DatabaseHelper.TABLE_LOGS, null, cv)
+        val rowId = db.insert(DatabaseHelper.TABLE_LOGS, null, cv)
+        if (insertCounter.incrementAndGet() % 100 == 0) {
+            try {
+                pruneOldLogs()
+            } catch (_: Exception) {}
+        }
+        return rowId
     }
 
     /**
