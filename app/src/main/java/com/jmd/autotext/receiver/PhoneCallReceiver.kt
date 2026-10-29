@@ -38,6 +38,7 @@ import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.data.repo.AppRepository
 import com.jmd.autotext.engine.SmsSender
 import java.util.Calendar
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -159,7 +160,7 @@ class PhoneCallReceiver : BroadcastReceiver() {
                 }
             }
             if (attempt < 2) {
-                delay(250L)
+                delay(250L.milliseconds)
             }
         }
 

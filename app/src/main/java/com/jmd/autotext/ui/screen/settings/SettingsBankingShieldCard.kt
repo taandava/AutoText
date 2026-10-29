@@ -16,6 +16,7 @@ import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.receiver.TaskAlarmReceiver
 import com.jmd.autotext.ui.components.*
 import com.jmd.autotext.ui.theme.AppDesignTokens
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Controller for Stealth Automation Guard and uninterrupted background execution.
@@ -38,7 +39,7 @@ fun settingsBankingShieldCard(
         while (true) {
             a11yRunning = AccessibilityHealthManager.isServiceOperational()
             stealthGuard = prefs.isBankingShieldEnabled
-            kotlinx.coroutines.delay(2000L)
+            kotlinx.coroutines.delay(2000L.milliseconds)
         }
     }
 

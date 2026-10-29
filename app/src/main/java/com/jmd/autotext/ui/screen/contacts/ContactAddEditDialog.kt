@@ -95,7 +95,7 @@ fun addEditContactView(
                 icon = Icons.Default.Check,
                 onClick = {
                     if (contactPhone.isNotBlank()) {
-                        val nameToSave = if (contactName.isNotBlank()) contactName.trim() else contactPhone.trim()
+                        val nameToSave = contactName.trim().ifBlank { contactPhone.trim() }
                         val wasEditing = editingRecipient != null
                         if (editingRecipient != null) {
                             repository.updateRecipient(

@@ -536,10 +536,9 @@ class WhatsAppRepository(private val context: Context) {
                         val data1 = if (data1Idx >= 0) c.getString(data1Idx).orEmpty().trim() else ""
                         val mime = if (mimeIdx >= 0) c.getString(mimeIdx).orEmpty().trim() else ""
                         val candidatePhone = when {
-                            data3.isNotBlank() && phoneRegex.find(data3) != null -> phoneRegex.find(data3)!!.value
+                            data3.isNotBlank() && phoneRegex.find(data3) != null -> phoneRegex.find(data3)?.value.orEmpty()
                             data1.contains("@") -> "+" + data1.substringBefore("@").filter { it.isDigit() }
-                            phoneRegex.find(data1) != null -> phoneRegex.find(data1)!!.value
-                            else -> ""
+                            else -> phoneRegex.find(data1)?.value.orEmpty()
                         }
 
                         if (candidatePhone.isNotBlank() && PhoneNumberNormalizer.isMobileNumber(candidatePhone)) {

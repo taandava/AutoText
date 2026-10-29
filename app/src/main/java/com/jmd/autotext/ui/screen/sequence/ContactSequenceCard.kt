@@ -81,7 +81,7 @@ fun contactSequenceCard(
                         )
                     }
                     Text(
-                        text = if (sequence.title.isNotBlank()) sequence.title else "Sequence #${sequence.id}",
+                        text = sequence.title.ifBlank { "Sequence #${sequence.id}" },
                         fontSize = 11.5.sp,
                         color = Color(0xFF38BDF8),
                         fontWeight = FontWeight.Medium

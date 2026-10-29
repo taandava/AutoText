@@ -150,8 +150,7 @@ class ContactIngestionEngine(
                         val candidatePhone = when {
                             phoneMatch != null -> phoneMatch
                             data1.contains("@") -> "+" + data1.substringBefore("@").filter { it.isDigit() }
-                            phoneRegex.find(data1) != null -> phoneRegex.find(data1)!!.value
-                            else -> ""
+                            else -> phoneRegex.find(data1)?.value.orEmpty()
                         }
 
                         if (candidatePhone.isNotBlank() && PhoneNumberNormalizer.isMobileNumber(candidatePhone)) {
@@ -305,10 +304,9 @@ class ContactIngestionEngine(
                         if (isW4b) waBusinessScanned++ else waChatsScanned++
 
                         val candidatePhone = when {
-                            d3.isNotBlank() && (phoneRegex.find(d3) != null) -> phoneRegex.find(d3)!!.value
+                            d3.isNotBlank() && (phoneRegex.find(d3) != null) -> phoneRegex.find(d3)?.value.orEmpty()
                             d1.contains("@") -> "+" + d1.substringBefore("@").filter { it.isDigit() }
-                            phoneRegex.find(d1) != null -> phoneRegex.find(d1)!!.value
-                            else -> ""
+                            else -> phoneRegex.find(d1)?.value.orEmpty()
                         }
 
                         if (candidatePhone.isNotBlank() && PhoneNumberNormalizer.isMobileNumber(candidatePhone)) {
