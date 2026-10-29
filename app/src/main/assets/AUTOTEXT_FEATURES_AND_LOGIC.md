@@ -368,11 +368,13 @@ If the device lacks `READ_CALL_LOG` permission or the provider returns no record
 - **Unregistered Contact Handling**: Detects "Phone number isn't on WhatsApp" alert dialogs (`com.whatsapp:id/alertTitle`), dismisses the alert automatically, logs `FAILED_NOT_ON_WHATSAPP`, and returns cleanly.
 
 ### 3. WhatsApp Status Story Publishing (`WhatsAppStatusEngine`)
-- **Zero-Tap Media Publishing**: Shares local image or video URIs via `ACTION_SEND` targeting WhatsApp or WhatsApp Business status picker.
-- **Strict 2-Pass "My Status" Verification**:
-  1. Searches the node tree for localized status targets (`"my status"`, `"मेरा स्टेटस"`, `"माझा स्टेटस"`).
-  2. Confirms that the target is a status container and verifies checkbox selection.
-- **Caption Text Injection**: Uses `ACTION_SET_TEXT` on `com.whatsapp:id/caption_text` and clicks send.
+- **Zero-Tap Media Publishing**: Shares local image or video URIs via `ACTION_SEND` targeting WhatsApp or WhatsApp Business status picker with strict 2-pass "My Status" selection and caption text injection.
+- **Text Status Story Composition**: Automates direct text status creation via WhatsApp Updates tab:
+  1. Navigates to Updates tab in bottom navigation.
+  2. Interacts with the pencil FAB (`com.whatsapp:id/extended_mini_fab`) using physical gesture coordinate fallback.
+  3. Detects `ConsolidatedStatusComposerActivity` text status composer.
+  4. Injects verified message text into the status text entry field (`com.whatsapp:id/entry`).
+  5. Clicks the dynamic Send button (`com.whatsapp:id/send`) and verifies publication confirmation upon returning to the Updates tab.
 
 ### 4. Direct Native Telephony Calls (`SequentialTaskEngine`)
 - **Automated Outgoing Calling**: Initiates calls via `android.intent.action.CALL` with multi-SIM subscription bindings.
@@ -381,9 +383,10 @@ If the device lacks `READ_CALL_LOG` permission or the provider returns no record
 - **Sequential Multi-Recipient Pacing**: Enforces configurable inter-call delays (`delayBetweenCallsSeconds`, default: 5s) between sequential numbers.
 
 ### 5. WhatsApp VoIP Voice Calls (`WhatsAppCallEngine`)
-- Initiates voice calls inside WhatsApp conversations via the voice call action button (`com.whatsapp:id/voice_call`).
+- Initiates voice calls inside WhatsApp conversations via the voice call action button (`com.whatsapp:id/voice_call` / `action_call`).
 - Automatically confirms WhatsApp's "Start voice call?" confirmation dialog.
-- Monitors in-call state via accessibility window tracking and terminates the call upon duration expiration via the end-call button (`com.whatsapp:id/hangup_call_btn`).
+- Supports both classic VoIP layouts and modern `VoipActivityV2` layouts (`com.whatsapp:id/end_call_button` / `end_call_btn` and localized labels: `"Leave call"`, `"End call"`, `"Hang up"`).
+- Retries VoIP teardown up to 3 times to ensure clean disconnection and auto-hangup matching user-configured durations.
 
 ### 6. Simulated Fake Incoming Calls (`FakeCallActivity`)
 - Simulates realistic incoming phone calls with high-priority wake locks and full-screen display flags (`FLAG_SHOW_WHEN_LOCKED`, `FLAG_TURN_SCREEN_ON`).

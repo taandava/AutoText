@@ -259,15 +259,18 @@ object PopupShield {
             if (pkg.contains("systemui") || pkg.contains("settings") ||
                 txt.contains("rotate") || txt.contains("rotation") ||
                 desc.contains("rotate") || desc.contains("rotation") ||
-                id.contains("rotate") || id.contains("rotation") || id.contains("tile")
+                id.contains("rotate") || id.contains("rotation") || id.contains("tile") ||
+                id.contains("close_keyboard") || id.contains("keyboard") || id.contains("composer")
             ) {
                 continue
             }
 
             val isDialogButton = curr.isClickable &&
                 (dismissKeywords.any { txt == it || desc == it } ||
-                    id.contains("button1") || id.contains("button2") || id.contains("btn_close") ||
-                    id.contains("close"))
+                    id.endsWith(":id/button1") || id.endsWith(":id/button2") ||
+                    id.endsWith(":id/btn_close") || id.endsWith(":id/close_btn") ||
+                    id.endsWith(":id/close") || id.endsWith(":id/iv_close") ||
+                    id.endsWith(":id/button_close") || id.endsWith(":id/dialog_close"))
             if (isDialogButton && AccessibilityNodeUtils.clickElement(curr, service)) {
                 Log.d(TAG, "PopupShield dismissed button: $txt / $desc")
                 return true

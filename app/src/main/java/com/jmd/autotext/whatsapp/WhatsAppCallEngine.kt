@@ -276,13 +276,13 @@ class WhatsAppCallEngine(
                     return true
                 }
                 // End Call button
-                if (id.endsWith("end_call_btn") || id.endsWith("hangup_btn") || id.endsWith("end_call") || id.endsWith("cancel_call_back_btn")) {
+                if (id.contains("end_call") || id.endsWith("hangup_btn") || id.contains("hangup") || id.endsWith("cancel_call_back_btn")) {
                     return true
                 }
-                if (desc.equals("End call", ignoreCase = true) || desc.equals("End", ignoreCase = true) || desc.contains("hang up", ignoreCase = true)) {
+                if (desc.equals("End call", ignoreCase = true) || desc.equals("End", ignoreCase = true) || desc.contains("hang up", ignoreCase = true) || desc.contains("leave call", ignoreCase = true) || desc.equals("Leave", ignoreCase = true)) {
                     return true
                 }
-                if (text.equals("End", ignoreCase = true) || text.startsWith("Calling", ignoreCase = true) || text.startsWith("Ringing", ignoreCase = true)) {
+                if (text.equals("End", ignoreCase = true) || text.startsWith("Calling", ignoreCase = true) || text.startsWith("Ringing", ignoreCase = true) || text.contains("leave", ignoreCase = true)) {
                     return true
                 }
 
@@ -484,13 +484,13 @@ class WhatsAppCallEngine(
 
             node.getBoundsInScreen(rect)
 
-            if (id.endsWith("end_call_btn") || id.endsWith("end_call") || id.endsWith("hangup_btn") || id.contains("hangup") || id.contains("call_end")) {
+            if (id.contains("end_call") || id.endsWith("hangup_btn") || id.contains("hangup") || id.contains("call_end")) {
                 return node
             }
-            if (desc.equals("End call", ignoreCase = true) || desc.equals("End", ignoreCase = true) || desc.contains("hang up", ignoreCase = true) || desc.equals("Disconnect call", ignoreCase = true)) {
+            if (desc.equals("End call", ignoreCase = true) || desc.equals("End", ignoreCase = true) || desc.contains("hang up", ignoreCase = true) || desc.equals("Disconnect call", ignoreCase = true) || desc.contains("leave call", ignoreCase = true) || desc.equals("Leave", ignoreCase = true)) {
                 return node
             }
-            if (text.equals("End call", ignoreCase = true) || text.equals("End", ignoreCase = true) || text.equals("Hang up", ignoreCase = true)) {
+            if (text.equals("End call", ignoreCase = true) || text.equals("End", ignoreCase = true) || text.equals("Hang up", ignoreCase = true) || text.equals("Leave call", ignoreCase = true) || text.equals("Leave", ignoreCase = true)) {
                 return node
             }
             if (id.endsWith("cancel_call_back_btn") || id.endsWith("cancel_call_back")) {
@@ -498,7 +498,7 @@ class WhatsAppCallEngine(
             }
 
             if (rect.top >= 600 && rect.left >= 350 && (node.isClickable || node.className?.contains("Button") == true)) {
-                if (desc.contains("end", ignoreCase = true) || text.contains("end", ignoreCase = true)) {
+                if (desc.contains("end", ignoreCase = true) || text.contains("end", ignoreCase = true) || desc.contains("leave", ignoreCase = true) || text.contains("leave", ignoreCase = true)) {
                     fallbackEndButton = node
                 }
             }

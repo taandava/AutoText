@@ -259,8 +259,18 @@ class WhatsAppStatusEngine(
             if (isUpdatesSelected) hasTappedUpdatesTab = false
 
             if (textFab != null) {
+                val rect = android.graphics.Rect()
+                textFab.getBoundsInScreen(rect)
                 if (hasTappedTextStatusFab) {
-                    if (sendAttemptCount > 18) {
+                    if (rect.width() > 0 && rect.height() > 0) {
+                        val tapX = rect.centerX().toFloat()
+                        val tapY = rect.centerY().toFloat()
+                        Log.d(loggerTag, "Pencil FAB active after previous attempt, dispatching physical tap to ($tapX, $tapY)...")
+                        AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                        onRetry(900L)
+                        return
+                    }
+                    if (sendAttemptCount > 20) {
                         Log.w(loggerTag, "Text status composer did not open after tapping pencil FAB")
                         onTimeout()
                     } else onRetry(500L)
@@ -268,10 +278,13 @@ class WhatsAppStatusEngine(
                 }
                 Log.d(loggerTag, "Tapping text status pencil FAB element...")
                 val clicked = AccessibilityNodeUtils.clickElement(textFab, service)
-                if (clicked) {
-                    hasTappedTextStatusFab = true
-                    onRetry(850L)
-                } else onRetry(350L)
+                hasTappedTextStatusFab = true
+                if (rect.width() > 0 && rect.height() > 0) {
+                    val tapX = rect.centerX().toFloat()
+                    val tapY = rect.centerY().toFloat()
+                    AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                }
+                onRetry(900L)
                 return
             }
 
@@ -321,7 +334,17 @@ class WhatsAppStatusEngine(
         if (bottomBar.any { it.isVisibleToUser }) return true
 
         val caption: AccessibilityNodeInfo? = AccessibilityNodeUtils.findNodesByViewId(root, targetPkg, "caption", windows).firstOrNull { it.isVisibleToUser }
-        return caption != null
+        if (caption != null) return true
+
+        val entries = AccessibilityNodeUtils.findNodesByViewId(root, targetPkg, "entry", windows)
+        for (e in entries) {
+            if (e.isVisibleToUser) {
+                val text = e.text?.toString()?.lowercase().orEmpty()
+                val hint = e.hintText?.toString()?.lowercase().orEmpty()
+                if (text.contains("status") || hint.contains("status")) return true
+            }
+        }
+        return false
     }
 
     private fun isMyStatusSelected(

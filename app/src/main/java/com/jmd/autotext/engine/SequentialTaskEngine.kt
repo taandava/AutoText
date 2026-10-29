@@ -1374,7 +1374,14 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_CALL -> "com.whatsapp.w4b"
                             else -> "com.whatsapp"
                         }
-                        val hungUp = AutoTextAccessibilityService.endWhatsAppCall(targetPkg)
+                        var hungUp = AutoTextAccessibilityService.endWhatsAppCall(targetPkg)
+                        if (!hungUp) {
+                            for (r in 1..3) {
+                                delay(600L.milliseconds)
+                                hungUp = AutoTextAccessibilityService.endWhatsAppCall(targetPkg)
+                                if (hungUp) break
+                            }
+                        }
                         AppFileLogger.action(appContext, TAG, "Auto-hangup WhatsApp VoIP call after ${durationSec}s: result=$hungUp")
                         delay(1000L.milliseconds)
                     } else {
