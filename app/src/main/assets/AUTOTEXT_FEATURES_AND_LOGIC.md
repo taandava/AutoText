@@ -377,18 +377,32 @@ If the device lacks `READ_CALL_LOG` permission or the provider returns no record
   5. Clicks the dynamic Send button (`com.whatsapp:id/send`) and verifies publication confirmation upon returning to the Updates tab.
 
 ### 4. Direct Native Telephony Calls (`SequentialTaskEngine`)
-- **Automated Outgoing Calling**: Initiates calls via `android.intent.action.CALL` with multi-SIM subscription bindings.
-- **Custom Call Duration & Auto-Hangup**: Automatically hangs up active phone calls via `TelecomManager.endCall()` or accessibility action when the configured duration expires.
-- **Dial Timing Invariant**: Allows user to specify whether duration timing begins immediately upon dialing (`includeDialTimeInCallDuration = true`) or once the call connects (`includeDialTimeInCallDuration = false`).
-- **Early Termination & Connection Detection**: Continuously monitors multi-SIM `TelephonyManager`, `TelecomManager.isInCall()`, and in-call UI. If a call disconnects or is rejected prior to connecting, duration holding is skipped and no false elapsed notifications are fired. If an active call ends early before the timer expires, the delay loop exits immediately.
-- **Sequential Multi-Recipient Pacing**: Enforces configurable inter-call delays (`delayBetweenCallsSeconds`, default: 5s) between sequential numbers.
+- **Automated Outgoing Calling**: Initiates calls via `android.intent.action.CALL` with multi-SIM subscription bindings (`TelecomManager.EXTRA_PHONE_ACCOUNT_HANDLE`).
+- **Multi-SIM Telephony Compat Architecture (`TelephonyManagerCompat`)**:
+  - Handles SDK branching across legacy (`< API 31`) and modern Android (`API 31–36+`).
+  - Iterates over active subscriptions using `SubscriptionManager.activeSubscriptionInfoList`, checking each subscription's `createForSubscriptionId(subId).callStateForSubscription`.
+  - Integrates cross-radio inspection with `TelecomManager.isInCall` and in-call UI verification via `AutoTextAccessibilityService.isPhoneCallUiActive()`.
+- **Custom Call Duration & Auto-Hangup**: Automatically terminates active phone calls via `TelecomManager.endCall()` or accessibility action when the configured duration expires.
+- **Dial Timing Criteria Enforcement**:
+  - **Dial Time Included (`includeDialTimeInCallDuration = true`)**: Duration countdown begins immediately upon placing the call. While counting down in 250ms chunks, the engine monitors telephony state; if the user or callee hangs up early (after an initial 3.5s dial grace window), the delay loop exits immediately, preventing false notifications or hangup actions. If the timer elapses while the call is active, it hangs up and posts `"Call Duration Elapsed"`.
+  - **Conversation Only (`includeDialTimeInCallDuration = false`)**: Waits up to 40s for the call to enter `CALL_STATE_OFFHOOK`. If the call is unanswered, busy, rejected, or disconnected before answer, duration holding is skipped entirely with zero false notifications. If answered, the duration timer holds for the configured duration with early disconnect detection.
+  - **Untimed Mode (`callDurationSeconds == 0`)**: Call remains open without any automatic hangup or timer limits.
+- **Sequential Multi-Recipient Pacing**: Enforces configurable inter-call delays (`delayBetweenCallsSeconds`, default: 5s) between sequential numbers to allow cellular networks and radio states to settle.
 
 ### 5. WhatsApp VoIP Voice Calls (`WhatsAppCallEngine`)
 - Initiates voice calls inside WhatsApp conversations via the voice call action button (`com.whatsapp:id/voice_call` / `action_call`).
 - Automatically confirms WhatsApp's "Start voice call?" confirmation dialog.
-- Supports both classic VoIP layouts and modern `VoipActivityV2` layouts (`com.whatsapp:id/end_call_button` / `end_call_btn` and localized labels: `"Leave call"`, `"End call"`, `"Hang up"`).
-- **VoIP Call Duration Criteria Enforcement**: Slices VoIP duration holding into 250ms chunks, supporting both dial-time inclusion (`includeDialTimeInCallDuration = true`) and connected-conversation timing (`includeDialTimeInCallDuration = false` via active call timer detection). Automatically exits if the call ends early or fails to connect, preventing false hangup commands.
-- Retries VoIP teardown up to 3 times to ensure clean disconnection and auto-hangup matching user-configured durations.
+- **Multi-Step WhatsApp Business Bottom-Sheet Resolution**:
+  - Correctly resolves WhatsApp Business's bottom-sheet selector (`audio_call_item` -> confirmation dialog `android:id/button1`).
+  - Uses direct physical touch gesture coordinate dispatch on high-DPI displays (`dRect.left + 300f`) to avoid missed clicks on wide bottom-sheet containers.
+- **Stale Voice Draft Discard**:
+  - Scans for and auto-clicks `voice_note_cancel_btn_v2` before initiating calls to release microphone hardware and audio focus.
+- **VoIP Call Duration Criteria Enforcement**:
+  - Slices VoIP duration holding into 250ms polling chunks.
+  - Detects active conversation state via `isVoipCallConnected()` by tracking conversation timer indicators (`00:01`, etc.) versus dialing states (`"Calling..."`, `"Ringing..."`).
+  - Supports both `includeDialTimeInCallDuration = true` (immediate timer) and `includeDialTimeInCallDuration = false` (waits up to 40s for answer).
+  - Automatically exits if the call ends early or fails to connect, preventing false hangup commands.
+- Retries VoIP teardown up to 3 times via `endWhatsAppCall()` to ensure clean disconnection matching user-configured durations.
 
 ### 6. Simulated Fake Incoming Calls (`FakeCallActivity`)
 - Simulates realistic incoming phone calls with high-priority wake locks and full-screen display flags (`FLAG_SHOW_WHEN_LOCKED`, `FLAG_TURN_SCREEN_ON`).
@@ -429,19 +443,6 @@ graph TD
     L -- No --> S[Release WakeLock & Complete]
     R --> S
 ```
-
-### Hardware Keystore AES-256-GCM Encryption for Unlock PIN (`PreferenceManager`)
-The device auto-unlock PIN is safeguarded using Android's hardware-backed Keystore system:
-1. **Hardware-Isolated AES Key (`AndroidKeyStore`)**:
-   - Resolves or generates a 256-bit AES key in the hardware security module (TEE / StrongBox) using alias `AutoText_Hardware_Key`.
-   - Keys are non-exportable and isolated from application memory.
-   - Ciphertext is tagged with prefix `HW_ENC:`.
-2. **Dual-Tier Direct Boot Fallback (`ENC:`)**:
-   - Before the user unlocks their device following a reboot, Android's Credential Encrypted (CE) storage—including the Keystore provider—remains inaccessible.
-   - AutoText automatically provisions a package-derived AES-256-GCM fallback key stored in Device-Protected (`dePrefs`) storage with prefix `ENC:`.
-   - This ensures unattended auto-unlock operations continue to function seamlessly even under Direct Boot conditions (e.g. after scheduled overnight reboots or system updates).
-3. **Transparent Backwards-Compatible Migration**:
-   - Stored PINs are transparently upgraded to hardware-bound Keystore encryption upon reading, while legacy plaintext values are decrypted and re-encrypted seamlessly.
 
 ### Hardware Keystore AES-256-GCM Encryption for Unlock PIN (`PreferenceManager`)
 The device auto-unlock PIN is safeguarded using Android's hardware-backed Keystore system:
@@ -598,6 +599,25 @@ adb shell dumpsys activity services com.jmd.autotext
 ### 4. Emergency Stop Trigger via Intent
 ```bash
 adb shell am broadcast -a com.jmd.autotext.ACTION_EMERGENCY_STOP -n com.jmd.autotext/.receiver.TaskAlarmReceiver
+```
+
+### 5. Automated Single Task Verification Trigger (`ACTION_TEST_TASK`)
+Dispatches a single immediate task for any supported channel type:
+```bash
+# Channels: SMS, WHATSAPP, WHATSAPP_BUSINESS, WHATSAPP_STATUS, WHATSAPP_BUSINESS_STATUS, CALL, WHATSAPP_CALL, WHATSAPP_BUSINESS_CALL, FAKE_CALL, REMINDER, SOUND_MODE
+adb shell "am broadcast -a com.jmd.autotext.ACTION_TEST_TASK --es channel CALL --es recipients 9769602020 --ei callDuration 5 -n com.jmd.autotext/.receiver.TaskAlarmReceiver"
+```
+
+### 6. Full Task Matrix Staggered Dispatch (`ACTION_SETUP_ALL_TASKS`)
+Provisions and schedules the complete test suite across all 11 channels with configurable stagger and duration criteria:
+```bash
+adb shell "am broadcast -a com.jmd.autotext.ACTION_SETUP_ALL_TASKS --es recipients 9769602020,9930604542 --es message 'jai mata di' --ei staggerSeconds 10 --ei repeatIntervalSeconds 10 --ez executeImmediately true --ei callDurationSeconds 5 --ez includeDialTimeInCallDuration true --ez clearExisting false -n com.jmd.autotext/.receiver.TaskAlarmReceiver"
+```
+
+### 7. Complete Task Database Purge (`ACTION_DELETE_ALL_TASKS`)
+Instantly deletes all scheduled tasks, unregisters alarms, and purges campaign queue:
+```bash
+adb shell am broadcast -a com.jmd.autotext.ACTION_DELETE_ALL_TASKS -n com.jmd.autotext/.receiver.TaskAlarmReceiver
 ```
 
 ---

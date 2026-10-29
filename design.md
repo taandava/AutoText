@@ -1,1590 +1,355 @@
-# ULTIMATE MASTER DIRECTIVE
-# COMPLETE ANDROID APPLICATION MODERNIZATION
-## Material 3 Expressive | Premium Orange | Compact UI | Full-Width | Edge-to-Edge | System Adaptive | Professional Codebase Organization
+# AutoText Design System & UI/UX Architecture Specification
 
-**Directive type:** Autonomous, repository-wide Android UI/UX modernization and safe refactoring.
-
-**Primary objective:** Completely transform the existing Android application's glassmorphism-based interface into a cohesive, production-quality **Material 3 Expressive Android experience**, using an elegant orange brand identity, compact information-dense layouts, intelligent full-width responsiveness, native system integration, consistent expressive motion, and professionally organized code and resources.
-
-**Secondary objective:** Audit and improve file names, class names, resource names, package organization, and UI architecture without breaking any existing functionality or compatibility contract.
-
-**Absolute priority:** Preserve the complete working application while modernizing its presentation.
+> **The Authoritative Design System, UI Component Library, and User Experience Specification for AutoText (`com.jmd.autotext`).**  
+> *Material 3 Expressive • Premium Orange Identity • Information-Dense Compact Layouts • Full-Width Responsiveness • Edge-to-Edge System Integration*
 
 ---
 
-# 1. YOUR ROLE
+## 1. Design System Philosophy & Core Principles
 
-Operate as a coordinated team of specialists:
+AutoText is engineered as an enterprise-grade, offline-first Android automation platform. The visual and interaction design directly reflects its core operational characteristics: **maximum situational awareness, immediate control, zero visual clutter, and strict system compliance**.
 
-1. Principal Android Software Architect
-2. Senior Kotlin/Java Engineer
-3. Jetpack Compose and Android Views Specialist
-4. Material 3 Expressive Design Systems Architect
-5. Professional Android UI/UX Designer
-6. Responsive and Adaptive Layout Engineer
-7. Android System Integration Specialist
-8. Motion and Interaction Designer
-9. Accessibility and Usability Engineer
-10. Codebase Refactoring and Naming Specialist
-11. Performance Optimization Engineer
-12. Android Quality Assurance and Regression Testing Engineer
+### 1.1 Core Design Pillars
 
-Make decisions using the actual repository, established Android engineering conventions, official documentation, and verified dependency capabilities.
+1. **Information-Dense Compact Ergonomics**:
+   - Modern mobile automation requires managing complex queues, recipient lists, execution logs, and timing criteria on a single screen without endless scrolling.
+   - Component dimensions, paddings, and line heights are optimized to display 25%–40% more actionable data per viewport compared to standard Material 3 templates while preserving accessible touch targets (minimum 48dp).
 
-Do not assume that a particular technology or UI architecture is present until it has been inspected.
+2. **Material 3 Expressive Foundations**:
+   - Implements Google's Material 3 Expressive design language, featuring purposeful shape contrasts, dynamic color tonal mapping, and contextual elevation containers.
+   - Avoids skeuomorphic blurs, heavy frosted glass effects, or GPU-intensive drop shadows that degrade frame rates during rapid accessibility automation.
 
-Do not blindly apply generic redesign patterns.
+3. **Signature Orange Brand Identity**:
+   - A bold, high-contrast, premium orange color scheme establishes visual hierarchy and draws immediate attention to critical controls, active channels, and execution statuses.
+   - Calibrated against dark neutral backgrounds and warm light containers to guarantee WCAG 2.2 AA accessibility standards across all lighting conditions.
 
-Every modification must improve visual consistency, usability, responsiveness, accessibility, maintainability, or performance.
+4. **Full-Width Edge-to-Edge Responsiveness**:
+   - All cards, list rows, action surfaces, and status grids span the full usable width of the display gutters (12dp–16dp).
+   - Seamlessly integrates with Android 15/16 edge-to-edge drawing, accommodating system gesture insets, display cutouts, and IME soft keyboard transitions without duplicate padding or layout jitter.
 
----
-
-# 2. NON-NEGOTIABLE RULES
-
-## 2.1 Preserve all functionality
-
-Do not remove, disable, replace, simulate, or silently change existing functionality.
-
-Preserve:
-
-- Navigation and destinations
-- Business logic
-- Authentication and authorization
-- API integrations
-- Network operations
-- Database operations and user data
-- Application settings
-- Background tasks and services
-- Notifications
-- Permissions
-- Deep links
-- File handling
-- Search and filtering
-- Sorting
-- User inputs and forms
-- Existing gestures and interactions
-- Application state management
-- Error handling
-- Existing accessibility behavior
-
-Never replace live functionality with placeholders, mock data, fake callbacks, or decorative components.
-
-## 2.2 Inspect before modifying
-
-Read the relevant project structure and dependencies before editing.
-
-Determine whether the application uses:
-
-- Jetpack Compose
-- Android XML Views
-- Hybrid Compose and Views
-- Custom views
-- Multiple modules
-- Other UI frameworks
-
-Use the correct modernization approach for the actual architecture.
-
-A complete framework migration is not authorized merely because another framework offers convenient design components.
-
-## 2.3 Centralize the design system
-
-Use one authoritative design system for colors, typography, shapes, spacing, motion, and component defaults.
-
-Avoid multiple competing themes.
-
-## 2.4 Prioritize compact layouts
-
-Do not automatically create oversized headers, cards, controls, empty spaces, or padding.
-
-Compact does not mean unreadable or inaccessible.
-
-## 2.5 Utilize available screen width
-
-Phone screens should use their available width effectively.
-
-Large screens should use adaptive arrangements rather than stretched phone layouts.
-
-## 2.6 Follow the Android system
-
-Respect current system settings, navigation conventions, display configurations, and accessibility requirements.
-
-## 2.7 Rename files intelligently
-
-Rename files, classes, resources, and packages only when their current names are misleading, inconsistent, obsolete, or poorly structured.
-
-Never rename everything simply for the sake of renaming.
-
-## 2.8 Validate incrementally
-
-Avoid massive unverified rewrites.
-
-Make logical, reviewable changes and test after each migration batch.
+5. **Strict Display Invariant Protection**:
+   - All activities (`MainActivity`, `FakeCallActivity`, `ReminderAlarmActivity`, `AutomationLauncherActivity`) are hard-locked to portrait orientation (`android:screenOrientation="portrait"`).
+   - The UI architecture guarantees zero layout re-measurement or activity recreation triggered by device rotation sensors.
 
 ---
 
-# 3. FULL REPOSITORY DISCOVERY
-
-Perform a recursive project audit.
-
-Inspect all relevant application modules, source sets, and resource directories.
-
-Identify:
-
-- Kotlin files
-- Java files
-- XML layouts
-- Composable functions
-- Activities
-- Fragments
-- ViewModels
-- Navigation graphs
-- UI state models
-- Repositories
-- Dependency injection definitions
-- Existing themes
-- Colors and styles
-- Typography definitions
-- Shape resources
-- Drawable resources
-- Fonts and icons
-- Animations
-- Lists and grids
-- Dialogs and bottom sheets
-- Search fields and forms
-- Navigation components
-- Build scripts
-- Version catalogs
-- AndroidManifest.xml files
-- Testing infrastructure
-- Existing responsive layout logic
-- System insets and edge-to-edge handling
-- Existing glassmorphism helpers
-
-Identify the actual UI entry points and all navigation destinations.
-
-Find screens that are dynamically registered or conditionally displayed.
-
-Inspect custom components, not just screen-level files.
-
-Do not mistake unused or generated code for live UI implementation.
-
-Exclude generated build artifacts, caches, external dependencies, and irrelevant binary files from modification.
-
-## Required audit document
-
-Create:
-
-`docs/material3-expressive-migration.md`
-
-Record the current architecture, screen inventory, shared components, proposed changes, constraints, and verification results.
-
-Use this document throughout the migration.
-
----
-
-# 4. TARGET DESIGN LANGUAGE
-
-The final application must follow **Google Material 3 Expressive**, adapted into a professional, compact orange-themed product.
-
-Target qualities:
-
-- Clean
-- Modern
-- Compact
-- Full-width
-- Responsive
-- Native
-- Expressive
-- Consistent
-- Efficient
-- Accessible
-- Visually refined
-- Smooth
-- Readable
-- Functionally complete
-
-Use official Material components and supported expressive variants wherever appropriate.
-
-Expression should come from purposeful visual hierarchy, typography, shapes, responsive interactions, and motion.
-
-Do not create expressive effects randomly.
-
-Avoid making the application look like a collection of unrelated design experiments.
-
-## Design hierarchy
-
-Prioritize, in order:
-
-1. Functionality
-2. Accessibility
-3. Layout correctness
-4. Information clarity
-5. System compatibility
-6. Consistency
-7. Performance
-8. Visual expression
-
----
-
-# 5. ORANGE MATERIAL COLOR SYSTEM
-
-## 5.1 Brand colors
-
-Use these initial brand references:
-
-| Role | Reference |
-|---|---|
-| Primary Orange | `#E76F00` |
-| Accent Orange | `#FFB77A` |
-| Light Background | `#FFF3E7` |
-| Warm Surface | `#F8E2CF` |
-| Supporting Brown | `#563316` |
-| Dark Text | `#1F1B17` |
-| Success Reference | `#BBD89E` |
-| Error Reference | `#BA1A1A` |
-
-These values are color references, not an entire finalized Material scheme.
-
-Generate complete accessible tonal color schemes.
-
-Implement all applicable Material semantic roles, including primary, secondary, tertiary, surface, background, error, container, outline, inverse, and their associated on-colors.
-
-Use official supported APIs.
-
-## 5.2 Color behavior
-
-Orange should primarily appear in:
-
-- Main actions
-- Active navigation
-- Selected controls
-- Focus indicators
-- Important highlights
-- Progress elements
-- Brand accents
-
-Warm neutral surfaces should dominate ordinary content.
-
-Avoid orange saturation across the entire interface.
-
-Do not use orange for all borders or secondary labels.
-
-Keep success, warning, and error semantics visually distinct.
-
-## 5.3 Light mode
-
-Use:
-
-- Warm neutral background
-- Readable dark text
-- Orange primary actions
-- Subtle tonal containers
-- Consistent outline colors
-- Accessible selected states
-
-## 5.4 Dark mode
-
-Use:
-
-- Deep neutral surfaces
-- Adapted orange accents
-- Appropriate dark-theme containers
-- Readable light text
-- Proper system-bar contrast
-- Correct inverse surfaces and scrims
-
-Never simply invert the light palette.
-
-## 5.5 Dynamic color
-
-Default color identity: **Brand Orange**.
-
-Where supported, offer optional wallpaper-derived dynamic color.
-
-Do not silently override the orange brand palette.
-
-Theme behavior:
-
-Color preference:
-- Brand Orange (default)
-- System Dynamic (optional)
-
-Appearance preference:
-- Follow System (default)
-- Light
-- Dark
-
-Reuse existing preferences where available.
-
-Persist settings safely.
-
----
-
-# 6. COMPACT DESIGN SYSTEM — MANDATORY
-
-The application must maximize useful information density while preserving readability.
-
-Avoid artificially spacious UI.
-
-## 6.1 Spacing scale
-
-Use centralized spacing tokens.
-
-Recommended starting values:
-
-| Token | Value |
-|---|---|
-| Micro | 2 dp |
-| Extra Small | 4 dp |
-| Small | 6 dp |
-| Medium | 8 dp |
-| Standard | 12 dp |
-| Large | 16 dp |
-| Extra Large | 20 dp |
-| Major Section | 24 dp |
-
-These are layout guidelines, not replacements for official component dimensions or accessibility requirements.
-
-Adjust based on content and window size.
-
-## 6.2 Compact screen gutters
-
-For compact phones, generally use 12–16 dp horizontal content gutters.
-
-Avoid repeatedly adding padding at nested container levels.
-
-Use full-bleed backgrounds while maintaining safe interactive gutters.
-
-## 6.3 Compact lists
-
-Prefer efficient row structures with:
-
-- Compact vertical spacing
-- Consistent text hierarchy
-- Concise metadata
-- Proper icon alignment
-- Accessible touch targets
-- Selective dividers
-- Minimal decorative containers
-
-Avoid boxing every row.
-
-## 6.4 Compact cards
-
-Use cards selectively.
-
-Do not place every section inside large rounded rectangles.
-
-When a card is justified, keep its padding proportional to its content.
-
-Avoid cards nested inside multiple other cards.
-
-## 6.5 Compact headers
-
-Use ordinary or collapsing top bars based on actual information hierarchy.
-
-Do not force large expressive headings onto utility screens.
-
-Avoid redundant titles and repeated screen labels.
-
-## 6.6 Compact controls
-
-Use visually efficient buttons, chips, tabs, filters, and metadata groups.
-
-Maintain appropriate Android touch target sizes, typically at least 48 dp.
-
-Do not reduce interaction safety to make the layout smaller.
-
----
-
-# 7. FULL-WIDTH LAYOUT ARCHITECTURE
-
-Use available screen space intelligently.
-
-## 7.1 Compact phones
-
-Requirements:
-
-- Appropriate full-width surfaces
-- Consistent content gutters
-- No arbitrary narrow parent containers
-- Efficient lists
-- Responsive buttons
-- Properly sized search fields
-- Adaptive carousels
-- No unnecessary horizontal whitespace
-
-Use width-filling APIs only where suitable.
-
-Do not stretch icons, chips, or small actions simply to satisfy a full-width requirement.
-
-## 7.2 Medium windows
-
-Adapt layout structure where beneficial.
-
-Possible techniques:
-
-- Wider content sections
-- Two-column arrangements
-- Navigation rails
-- Adaptive grids
-- Side-by-side related controls
-
-## 7.3 Expanded windows
-
-Use suitable large-screen patterns:
-
-- List-detail layouts
-- Supporting panes
-- Responsive grids
-- Multi-column organization
-- Appropriate navigation rails or drawers
-
-Avoid excessively long text lines.
-
-Do not merely scale up a phone screen.
-
-## 7.4 Responsive rules
-
-Use current window dimensions and official window-size guidance.
-
-Do not assume device type from a fixed screen-width value.
-
-Support resizing, rotation, and split-screen where available.
-
----
-
-# 8. EDGE-TO-EDGE AND SYSTEM INSETS
-
-Implement correct edge-to-edge behavior according to the application's SDK and official Android guidance.
-
-## 8.1 System bar integration
-
-Handle:
-
-- Status bar
-- Navigation bar
-- Gesture navigation region
-- Three-button navigation
-- Display cutouts
-- Relevant window decorations
-
-Allow appropriate visual surfaces to extend behind system bars.
-
-Keep interactive content accessible and safe.
-
-## 8.2 Insets
-
-Correctly handle:
-
-- Safe drawing
-- Safe gestures
-- System bars
-- Keyboard/IME
-- Display cutouts
-- Bottom navigation
-- Floating controls
-
-For Compose, use applicable WindowInsets, Scaffold padding, and consumption APIs.
-
-For Views, use compatible WindowInsets APIs.
-
-## 8.3 Prevent double padding
-
-Never apply the same system inset multiple times.
-
-Audit parent and child containers before adding padding.
-
-Prevent excessive blank space below lists or above headers.
-
-## 8.4 Bottom elements
-
-Ensure:
-
-- Last list items remain reachable
-- Bottom bars do not obscure content
-- FABs do not overlap system controls
-- Sheets respect gesture regions
-- Fixed action bars do not hide scrollable content
-
-## 8.5 Keyboard behavior
-
-When the keyboard appears:
-
-- Keep the focused input visible
-- Prevent overlapping buttons
-- Preserve input state
-- Handle IME animation smoothly
-- Maintain usable bottom sheets
-- Support native keyboard actions
-
----
-
-# 9. COMPLETE ADAPTIVE RESPONSIVENESS
-
-Support:
-
-- Small phones
-- Standard phones
-- Large phones
-- Tablets
-- Foldables
-- Portrait
-- Landscape
-- Multi-window
-- Split-screen
-- Display scaling
-- Large font sizes
-- RTL layouts
-- Translated content
-
-Avoid absolute positioning of critical controls.
-
-Avoid rigid fixed heights for text-containing components.
-
-Avoid hardcoded screen measurements.
-
-Use constraints, weighted layouts, lazy containers, adaptive grids, and suitable responsive APIs.
-
-Prevent horizontal overflow, clipped buttons, hidden labels, unreachable controls, and malformed dialogs.
-
----
-
-# 10. MATERIAL 3 EXPRESSIVE COMPONENT MIGRATION
-
-Audit and migrate all applicable component families.
-
-## Navigation
-
-- Top app bars
-- Bottom navigation
-- Navigation bars
-- Navigation rails
-- Drawers
-- Tabs
-- Destination indicators
-- Predictive back where supported
-
-## Actions
-
-- Filled buttons
-- Tonal buttons
-- Outlined buttons
-- Text buttons
-- Icon buttons
-- FABs
-- Extended FABs
-- Segmented buttons
-
-## Selection
-
-- Chips
-- Checkboxes
-- Radio buttons
-- Switches
-- Sliders
-- Selection indicators
-
-## Content
-
-- Lists
-- Grids
-- Cards
-- Carousels
-- Images
-- Status indicators
-- Badges
-- Progress components
-- Dividers
-
-## Inputs
-
-- Text fields
-- Search fields
-- Password inputs
-- Dropdowns
-- Menus
-- Form validation
-- Focus states
-
-## Overlays
-
-- Dialogs
-- Alert dialogs
-- Modal sheets
-- Popups
-- Tooltips
-- Snackbars
-
-## States
-
-- Loading
-- Empty
-- Error
-- Success
-- Offline
-- Disabled
-- Selected
-- Focused
-- Pressed
-- Expanded
-- Collapsed
-
-Prefer official supported Material components over unnecessary custom recreations.
-
-Keep component appearance consistent across the app.
-
----
-
-# 11. CONTAINERLESS DYNAMIC LISTS
-
-Modernize list-based screens using appropriate Material patterns.
-
-Where suitable, replace repetitive boxed grids with clean sequential layouts.
-
-Use:
-
-- Consistent alignment
-- Clear content hierarchy
-- Efficient vertical rhythm
-- Meaningful grouping
-- Stable row identity
-- Proper selection states
-- Smooth state transitions
-- Accessible controls
-
-For Compose, prefer suitable lazy layouts with stable keys.
-
-For Views, retain efficient RecyclerView behavior and diffing.
-
-Preserve scroll position.
-
-Do not introduce expensive animations for frequent updates.
-
-Do not convert every grid into a list without assessing its purpose.
-
----
-
-# 12. RESPONSIVE MATERIAL CAROUSELS
-
-Use official Material 3 carousel patterns where useful.
-
-Suitable contexts include:
-
-- Featured content
-- Recommendations
-- Media collections
-- Category previews
-- Discovery sections
-
-Evaluate supported:
-
-- Multi-browse carousels
-- Uncontained carousels
-- Hero carousels
-- Full-screen patterns
-
-Verify actual library support and API signatures before implementing.
-
-Requirements:
-
-- Adaptive item widths
-- Appropriate visible item counts
-- Partial-item previews where suitable
-- Smooth native scrolling
-- Accessible semantics
-- Stable item keys
-- Proper edge padding
-- Predictable interactions
-- No clipping
-- No unnecessary nested scrolling
-
-Keep carousel heights proportionate to screen size.
-
-Do not add carousels where ordinary lists or grids are more usable.
-
----
-
-# 13. EXPRESSIVE MOTION SYSTEM
-
-Create centralized motion specifications.
-
-Prefer official Material defaults and supported expressive motion.
-
-Apply appropriate motion to:
-
-- Selection changes
-- Navigation
-- Tabs
-- Bottom sheets
-- Expandable sections
-- Buttons
-- Chips
-- List insertion/removal
-- Carousel interactions
-- State transitions
-- Supported shared-element transitions
-
-Motion should feel natural, fluid, responsive, and purposeful.
-
-Avoid:
-
-- Excessive bouncing
-- Long animations
-- Continuous decorative movement
-- Random scaling effects
-- Frequent layout remeasurement
-- Flickering during recomposition
-- Motion that blocks interaction
-- Scroll performance regressions
-
-Respect system animation settings.
-
-Provide less motion where required for accessibility.
-
-Use native ripple and appropriate haptics.
-
----
-
-# 14. TYPOGRAPHY SYSTEM
-
-Implement coherent Material typography.
-
-Use supported roles:
-
-- Display
-- Headline
-- Title
-- Body
-- Label
-
-Choose appropriately readable fonts and weights.
-
-Avoid oversized headings on routine screens.
-
-Maintain contrast and hierarchy.
-
-Support:
-
-- Dynamic font scaling
-- Multiline text
-- RTL
-- Localization
-- Long labels
-- Different display densities
-
-Never force text into fixed-height containers that clip at larger font settings.
-
----
-
-# 15. SHAPES AND SURFACE SYSTEM
-
-Create a centralized shape scale.
-
-Use rounded containers intentionally.
-
-Use full-round shapes for suitable controls.
-
-Avoid making every component pill-shaped.
-
-Use tonal surfaces and spacing to communicate grouping.
-
-Limit excessive shadows and decorative elevation.
-
-Preserve appropriate native Material interaction states.
-
----
-
-# 16. GLASSMORPHISM REMOVAL
-
-Identify outdated presentation effects:
-
-- Frosted glass
-- Backdrop blur
-- Transparent glass panels
-- Decorative reflections
-- Glass gradients
-- White translucent outlines
-- Heavy glow
-- Unnecessary transparency
-- Glass-specific helper components
-
-Replace with appropriate Material surfaces, tonal containers, shapes, and native behavior.
-
-Do not remove legitimate transparency, scrims, or image overlays required for functionality.
-
-Remove obsolete glass dependencies only after confirming they are unused.
-
----
-
-# 17. PROFESSIONAL FILE RENAMING AND ORGANIZATION
-
-**This phase is mandatory, but renaming must be intelligent and reference-safe.**
-
-Audit all relevant:
-
-- Kotlin and Java files
-- Screens
-- Activities
-- Fragments
-- ViewModels
-- Components
-- State classes
-- Models
-- Repositories
-- Utilities
-- Packages
-- XML layouts
-- Drawables
-- Icons
-- Colors
-- Themes
-- Animations
-- Navigation resources
-- Test files
-- Documentation
-
-## 17.1 Naming conventions
-
-| Element | Convention | Example |
-|---|---|---|
-| Classes | PascalCase | `SettingsViewModel.kt` |
-| Compose screens | PascalCase | `SettingsScreen.kt` |
-| Components | PascalCase | `AppNavigationBar.kt` |
-| Functions | camelCase | `loadSettings()` |
-| Variables | camelCase | `selectedTheme` |
-| Constants | Idiomatic Kotlin conventions | `DEFAULT_PAGE_SIZE` |
-| Packages | lowercase | `feature.settings` |
-| XML resources | snake_case | `activity_main.xml` |
-| Drawable resources | snake_case | `ic_settings.xml` |
-| String resources | snake_case | `settings_title` |
-| Tests | Descriptive type names | `SettingsViewModelTest.kt` |
-
-Follow applicable Kotlin, Java, Android, and resource naming rules.
-
-## 17.2 Remove poor naming
-
-Identify names such as:
-
-- `NewScreen`
-- `FinalScreen`
-- `Screen2`
-- `Helper2`
-- `TempView`
-- `CommonUtils`
-- `MainFinal`
-- `GlassThemeV2`
-- Ambiguous abbreviations
-- Misleading class names
-- Unnecessary implementation suffixes
-
-Replace only where a genuinely clearer name exists.
-
-Do not create excessively long names.
-
-## 17.3 Remove obsolete glass terminology
-
-When a glass-specific component has become a general Material component, rename it semantically.
-
-Examples:
-
-| Existing | Suggested |
-|---|---|
-| `GlassTheme.kt` | `AppTheme.kt` |
-| `GlassColors.kt` | `AppColorScheme.kt` |
-| `GlassCard.kt` | `AppCard.kt` |
-| `FrostedButton.kt` | `AppButton.kt` |
-| `GlassBottomBar.kt` | `AppNavigationBar.kt` |
-| `BlurredDialog.kt` | `AppDialog.kt` |
-
-These are examples, not automatic replacements.
-
-Choose names based on actual responsibilities.
-
-Avoid prefixing every file with `Material3ExpressiveOrange`.
-
-## 17.4 Safe reference updating
-
-When renaming a file or symbol, update all relevant references:
-
-- Imports
-- Package declarations
-- Call sites
-- Constructors
-- XML references
-- Navigation graphs
-- Manifest entries
-- Dependency injection bindings
-- Resource references
-- Build configurations
-- Reflection-based references
-- Serialization references where affected
-- ProGuard/R8 rules
-- JNI bindings where relevant
-- Tests
-- Documentation
-
-Prefer IDE-aware refactoring or reliable symbol-aware tools.
-
-Do not assume a global text replacement is safe.
-
-## 17.5 Protect compatibility contracts
-
-Do not casually rename:
-
-- Application ID
-- Published package identifiers
-- Public API contracts
-- Persisted preference keys
-- Database tables or columns
-- Serialized field names
-- Deep links
-- Intent actions
-- Content provider authorities
-- Backend fields
-- Persisted filesystem paths
-
-Do not change these simply to improve naming.
-
-Preserve existing-user upgrade compatibility.
-
-Any necessary contract change must include a deliberate migration and compatibility strategy.
-
-## 17.6 Package organization
-
-Prefer clear organization based on the existing architecture.
-
-An illustrative feature-based layout:
-
-```text
-app/
-└── src/main/
-    ├── java/com/example/app/
-    │   ├── core/
-    │   │   ├── designsystem/
-    │   │   │   ├── theme/
-    │   │   │   ├── components/
-    │   │   │   └── motion/
-    │   │   ├── navigation/
-    │   │   └── util/
-    │   ├── feature/
-    │   │   ├── home/
-    │   │   ├── settings/
-    │   │   └── ...
-    │   └── MainActivity.kt
-    └── res/
-        ├── drawable/
-        ├── layout/
-        ├── values/
-        └── values-night/
+## 2. Design Tokens & Theme Foundation (`AppDesignTokens`)
+
+The entire design system is centralized within `com.jmd.autotext.ui.theme.AppDesignTokens`, eliminating hardcoded magic numbers, scattered hex values, or conflicting component themes.
+
+```
+com.jmd.autotext.ui.theme
+├── AppDesignTokens.kt    # Centralized tokens (Colors, Spacing, Shapes, Elevation, Typo)
+├── Color.kt              # Color primitives and palette definitions
+├── Theme.kt              # AutoTextTheme (Light, Dark, Dynamic) with LocalTokens provider
+└── Type.kt               # Typography scales and font definitions
 ```
 
-Do not force this structure onto an incompatible application.
+### 2.1 Color Palette & Semantic Tonal Roles
 
-Avoid unnecessary module restructuring.
+AutoText features a cohesive dual-theme color architecture tailored for both day and night use:
 
-Avoid moving files solely for aesthetic reasons.
+| Role | Light Theme Hex | Dark Theme Hex | Semantic Usage |
+|---|---|---|---|
+| **Primary Brand Orange** | `#E76F00` | `#FF9800` | Primary buttons, active tabs, FAB, key accents |
+| **Accent Orange Light** | `#FFB77A` | `#FFB77A` | Selected chips, hover states, secondary indicators |
+| **Accent Orange Dark** | `#CC5F00` | `#E65100` | Border outlines, pressed button states |
+| **Background** | `#FFF8F2` | `#12100E` | Root scaffold background |
+| **Surface** | `#FFFFFF` | `#1C1916` | Main cards, modal sheets, top app bar |
+| **Surface Variant** | `#F5EBE1` | `#28231E` | Nested containers, search bars, input backgrounds |
+| **Surface Container Highest**| `#E8DCD0` | `#38322B` | Segmented buttons, unselected pill chips |
+| **On Primary** | `#FFFFFF` | `#000000` | Text/icons placed over primary orange |
+| **On Surface (Text Main)** | `#1F1B17` | `#F5EBE1` | High-contrast body text, headings |
+| **On Surface Variant (Muted)**| `#7A6F65` | `#A89D91` | Secondary labels, timestamps, metadata |
+| **Outline / Border** | `#DECBC0` | `#443B33` | Card strokes, input outlines (1dp crisp borders) |
 
-## 17.7 File responsibility
+#### Real-Time Status & Channel Semantic Colors
+- **Emerald Green (`#00E676`)**: Active/Healthy service state, Successful task execution (`STATUS_SUCCESS`).
+- **Carmine Red (`#FF5252`)**: Inactive/Attention service state, Failed execution (`STATUS_FAILED`), Emergency Stop (`🛑 STOP`).
+- **Amber Warning (`#FFB300`)**: Pending execution, Rate quota warning, Battery optimization prompt.
+- **Electric Blue (`#29B6F6`)**: Informational notices, SMS channel badge, SIM slot indicator.
+- **WhatsApp Green (`#25D366`)**: Consumer WhatsApp channel identification.
+- **WhatsApp Business Teal (`#128C7E`)**: WhatsApp Business (W4B) channel identification.
+- **Deep Purple (`#7C4DFF`)**: Automation Sequences, Reminder Alarms.
 
-Prefer descriptive files with cohesive responsibilities.
+### 2.2 Spacing & Rhythm Tokens
 
-Avoid enormous unrelated utility files.
+Grid spacing is derived from a consistent 4dp base grid with dedicated micro-steps for compact data rows:
 
-Avoid excessive fragmentation into hundreds of tiny files.
+```kotlin
+object Spacing {
+    val micro: Dp = 2.dp          // Inner badge padding, tight icon offsets
+    val extraSmall: Dp = 4.dp     // Status dot margins, chip inner spacing
+    val small: Dp = 6.dp          // Metadata row gaps, compact icon button padding
+    val medium: Dp = 8.dp         // Standard item spacing, card internal vertical rhythm
+    val standard: Dp = 12.dp      // Card inner padding, list item horizontal margins
+    val large: Dp = 16.dp         // Screen gutter padding, section breaks
+    val extraLarge: Dp = 20.dp    // Screen header bottom margin
+    val section: Dp = 24.dp       // Major functional division spacing
+}
+```
 
-Choose sensible component boundaries.
+### 2.3 Shapes & Corner Radius System
 
-## 17.8 Rename tracking
+AutoText balances rounded friendly aesthetics with sharp, clear boundary definition:
 
-Create:
+```kotlin
+object Shapes {
+    val extraSmall = RoundedCornerShape(4.dp)   // Tiny tags, SIM slot indicators
+    val small = RoundedCornerShape(8.dp)        // Input fields, filter chips, action buttons
+    val medium = RoundedCornerShape(12.dp)      // Task cards, campaign cards, dialog sheets
+    val large = RoundedCornerShape(16.dp)       // Bottom navigation bar, bottom sheets
+    val full = RoundedCornerShape(999.dp)       // Status pill badges, circular action buttons
+}
+```
 
-`docs/file-renaming-map.md`
+### 2.4 Typography Hierarchy
 
-Record:
+Calibrated with compact line heights to prevent excessive vertical expansion on multi-line messages:
 
-- Old path
-- New path
-- Reason
-- Affected references
-- Compatibility risk
-- Verification result
-
-Preserve Git history where practical.
-
-Do not overwrite user changes.
-
----
-
-# 18. DESIGN-SYSTEM FILE CONVENTIONS
-
-Where suitable, organize core design definitions with descriptive names:
-
-- `AppTheme.kt`
-- `AppColorScheme.kt`
-- `AppTypography.kt`
-- `AppShapes.kt`
-- `AppSpacing.kt`
-- `AppMotion.kt`
-- `AppDimensions.kt` when actually needed
-
-Do not create duplicate abstractions for the same tokens.
-
-Use existing conventions where they are already coherent.
-
-Separate reusable design primitives from feature-specific UI.
-
----
-
-# 19. SCREEN-BY-SCREEN MIGRATION
-
-For every screen:
-
-1. Identify its purpose.
-2. Inspect existing behavior.
-3. Identify navigation and state dependencies.
-4. Review visual hierarchy.
-5. Apply the orange theme.
-6. Apply compact spacing.
-7. Utilize available width.
-8. Correct edge-to-edge handling.
-9. Replace obsolete glass styling.
-10. Use suitable Material components.
-11. Modernize relevant lists and carousels.
-12. Apply meaningful motion.
-13. Standardize component naming.
-14. Update references where renamed.
-15. Verify light and dark modes.
-16. Verify system settings.
-17. Verify responsiveness.
-18. Verify accessibility.
-19. Test existing interactions.
-20. Update migration documentation.
-
-Do not stop after changing the home screen.
-
-Include rarely visited screens and nested UI states.
+- **Headline Large (24sp / Bold)**: Top navigation screen titles.
+- **Headline Medium (20sp / SemiBold)**: Card group headers, section headings.
+- **Title Medium (16sp / SemiBold)**: Task card recipient titles, dialog titles.
+- **Title Small (14sp / Medium)**: Channel selector names, active button labels.
+- **Body Medium (14sp / Regular)**: Message body preview, input text.
+- **Body Small (12sp / Regular)**: Secondary metadata, execution error traces, schedule details.
+- **Label Small (10sp / Bold)**: Status chips, SIM slot tags, quota counters.
 
 ---
 
-# 20. ANDROID SYSTEM INTEGRATION
+## 3. Responsive Top Header & 7-Indicator System Health Architecture
 
-Follow applicable system settings.
+The header of the AutoText dashboard is the central command center for the application. It delivers instantaneous, non-intrusive visibility into all critical Android system services required for 100% unattended automation.
 
-## Appearance
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│  AutoText [v2.6]                [🛑 STOP]  [+] New Task  [⚙️ Settings] │
+├────────────────────────────────────────────────────────────────────────┤
+│  [🛡️ Bank] [📱 Orient] [♿ Access] [🔔 Notif] [🔒 Admin] [⚡ Batt] [⏱️ Sched]│
+└────────────────────────────────────────────────────────────────────────┘
+```
 
-- Follow system dark mode by default.
-- Preserve selected theme preferences.
-- Adapt system bar icon appearance.
-- Avoid theme-flash behavior.
+### 3.1 The 7 System Health Indicators
 
-## Display
+Each indicator continuously polls or observes underlying platform APIs and renders as an interactive, compact status pill.
+- **Emerald Green (`#00E676`)**: Service fully operational and granted.
+- **Carmine Red (`#FF5252`)**: Service disabled, ungranted, or requires user intervention.
 
-- Respect font size.
-- Respect display scaling.
-- Support different densities.
-- Handle window resizing.
+| # | Indicator Name | Visual Icon | Verification Method | Tap Action |
+|---|---|---|---|---|
+| 1 | **Stealth Guard (Banking Shield)** | `Shield` | Verifies `AccessibilityHealthManager.isStealthShieldActive()` | Opens Banking Shield explanation dialog |
+| 2 | **Screen Orientation Guard** | `ScreenLockPortrait` | Checks `Settings.System.ACCELEROMETER_ROTATION == 0` | Re-enforces portrait lock (`ACCELEROMETER_ROTATION = 0`) |
+| 3 | **Accessibility Service Binder** | `Accessibility` | `AutoTextAccessibilityService.isConnected` StateFlow | Opens Android Accessibility Settings page |
+| 4 | **Notification Quick-Reply** | `NotificationsActive` | `NotificationManagerCompat.getEnabledListenerPackages` | Opens Notification Listener Settings page |
+| 5 | **Device Admin (Screen Lock)** | `Lock` | `DevicePolicyManager.isAdminActive(adminComponent)` | Opens Device Admin activation prompt |
+| 6 | **Unrestricted Battery / Doze**| `BatteryChargingFull` | `PowerManager.isIgnoringBatteryOptimizations` | Opens Battery Optimization exemption prompt |
+| 7 | **Master Scheduler Engine** | `Schedule` | `PreferenceManager.isTasksMasterEnabled` | Toggles master task scheduler ON / OFF |
 
-## Navigation
+### 3.2 Quick Action Controls
 
-- Support gesture navigation.
-- Support three-button navigation.
-- Preserve back behavior.
-- Support predictive back where appropriate.
-
-## Accessibility
-
-- Respect screen-reader semantics.
-- Support focus navigation.
-- Ensure usable touch targets.
-- Reduce unnecessary motion.
-- Preserve readable contrast.
-
-## Localization
-
-- Support RTL where applicable.
-- Respect system locale.
-- Use locale-aware formatting.
-- Handle translated text expansion.
-
-## Keyboard
-
-- Respect IME insets.
-- Prevent input obstruction.
-- Use native keyboard actions.
-- Preserve form state.
+1. **Safety Emergency Stop (`🛑 STOP`)**:
+   - Immediate circuit breaker.
+   - Sets `PreferenceManager.isEmergencyStopActive = true`.
+   - Aborts ongoing executions, wakes any waiting 250ms polling loops, clears accessibility touch queues, and cancels pending alarms.
+   - Changes visual state to high-alert pulsing red until dismissed.
+2. **New Task Quick Action (`+`)**:
+   - Opens the multi-channel `ComposeTaskScreen`.
+   - Compact icon-only button on small phone screens, expanding to `[+ New Task]` on wide screens.
 
 ---
 
-# 21. ACCESSIBILITY REQUIREMENTS
+## 4. Complete Screen-by-Screen UI/UX Inventory
 
-Target applicable Android and WCAG AA guidelines.
+```
+Navigation Architecture
+├── TasksScreen (Home Dashboard / Queue Management)
+├── ComposeTaskScreen (Universal Task Creation)
+├── ExecutionLogsScreen (Audit History & Diagnostic Export)
+├── DailyAutoSenderScreen (Recurring Outreach Campaigns)
+├── SequenceStudioScreen (Multi-Step Choreography)
+├── AutoReplyScreen (Call & SMS Trigger Engine)
+└── SettingsScreen (Security, Quotas & Manual)
+```
 
-Verify:
+### 4.1 `TasksScreen` (Master Execution Dashboard)
+- **Header Summary Card**: Displays counts for **Scheduled**, **Completed**, and **Failed** tasks.
+- **Channel Quick Filters**: Horizontal scrolling chip row to filter by channel: All, SMS, WhatsApp, W4B, Status, Call, VoIP Call, Reminder, Fake Call.
+- **Compact `TaskCard` Component**:
+  - Left: Channel Avatar with icon and color-coded SIM slot badge (if applicable).
+  - Center: Recipient name/number in Title Medium, message snippet or call duration in Body Small, next execution timestamp with countdown tag.
+  - Right: Active toggle switch (`Switch`), status chip (PENDING, RUNNING, COMPLETED, FAILED), three-dot contextual action menu (Run Now, Edit, Duplicate, Delete).
+- **Empty State**: Minimalist vector illustration, helpful onboarding text, and a prominent `[Create Your First Task]` primary button.
 
-- Text contrast
-- Non-text contrast
-- Touch target size
-- Content descriptions
-- Screen-reader semantics
-- Focus order
-- Keyboard accessibility
-- Selected-state announcements
-- Expanded-state announcements
-- Error messages
-- Large font scaling
-- Color-independent communication
-- Motion accessibility
+### 4.2 `ComposeTaskScreen` (Universal Multi-Channel Task Creator)
+- **Channel Selector Carousel**: Multi-browse icon cards with real-time selection border for all supported dispatch modes:
+  - `SMS` (Cellular Short Message Service)
+  - `WHATSAPP` (Consumer WhatsApp Direct Send)
+  - `WHATSAPP_BUSINESS` (WhatsApp Business Customer Send)
+  - `WHATSAPP_STATUS` (Consumer Status Story)
+  - `WHATSAPP_BUSINESS_STATUS` (Business Status Story)
+  - `CALL` (Native Telephony Phone Call)
+  - `WHATSAPP_CALL` (WhatsApp Voice VoIP Call)
+  - `WHATSAPP_BUSINESS_CALL` (WhatsApp Business Voice VoIP Call)
+  - `FAKE_CALL` (Simulated Incoming Phone Call)
+  - `REMINDER` (System Clock Alarm & TTS Announcement)
+  - `SOUND_MODE` (Ringer Mode Automation: Normal, Vibrate, Silent)
+- **Recipient Entry Field**:
+  - Input field with instant E.164 normalization preview.
+  - Quick `[👥 Contacts]` picker button opening a search-filtered contact selection bottom-sheet.
+  - Multi-recipient chip field with comma/enter tokenization.
+- **Dynamic Content Composer**:
+  - Clean, zero-default text area (initializes to empty string without hardcoded sample text).
+  - Dynamic token insert bar: `[{name}]`, `[{time}]`, `[{date}]`, `[{day}]`.
+  - Live character and GSM-7 vs. UCS-2 multi-part SMS PDU counter (e.g., `"142/160 (1 SMS)"` or `"75/70 (2 SMS - Unicode)"`).
+- **Call Duration & Timing Criteria Section**:
+  - Appears dynamically when `CALL`, `WHATSAPP_CALL`, or `WHATSAPP_BUSINESS_CALL` is selected.
+  - Slider and numerical input for **Call Duration** (0 to 300 seconds; 0 = untimed open call).
+  - **Dial Timing Criteria Toggle**:
+    - `"Include Dialing Time in Call Duration"` switch.
+    - Explicit helper label explaining that when disabled, duration timing begins strictly upon active connection (`CALL_STATE_OFFHOOK` or VoIP active timer digits `00:01`).
+- **Scheduling & Recurrence Section**:
+  - Interactive Date Picker and Time Picker with 12h/24h locale format support.
+  - Recurrence interval dropdown: Once, Every 10 Minutes, Hourly, Daily, Weekly, Custom Cron.
 
-Compactness must never compromise essential accessibility.
+### 4.3 `ExecutionLogsScreen` (Audit Timeline & Diagnostics)
+- **Top Search & Date Filter Bar**: Instant client-side text filtering across recipient names, numbers, error codes, and channel types.
+- **Log Item Timeline Card**:
+  - Status indicator strip (Emerald Green for SUCCESS, Carmine Red for FAILED, Gray for SKIPPED).
+  - Channel badge, recipient, formatted execution timestamp (`yyyy-MM-dd HH:mm:ss`).
+  - Expandable drawer revealing detailed execution telemetry:
+    - Transport duration (ms).
+    - SIM slot index and carrier network operator name.
+    - Accessibility touch trace coordinates.
+    - Stack trace or error diagnosis message if failed.
+- **Diagnostic Export Action**:
+  - Generates comprehensive `.txt` or `.csv` export.
+  - Direct intent trigger to export full internal state (`ACTION_DUMP_LOGS`).
+
+### 4.4 `DailyAutoSenderScreen` (Campaign Studio)
+- **Campaign Configuration Header**: Campaign name, active status toggle, scheduled daily start time.
+- **Recipient Pool Manager**:
+  - Visual ledger of total recipients, messages sent today, remaining queue.
+  - Bulk CSV/VCF contact import action.
+- **Pacing & Compliance Controls**:
+  - Inter-message delay slider (5s to 120s random jitter) to prevent account flagging on WhatsApp.
+  - TRAI SMS quota compliance meter (e.g., `"42/100 SMS dispatched today"`).
+
+### 4.5 `SequenceStudioScreen` (Multi-Step Choreography)
+- **Visual Node Pipeline**:
+  - Step-by-step choreographic cards connected by visual vertical flow lines.
+  - Example: `Step 1: Send SMS` ➔ `Delay: 30s` ➔ `Step 2: Place Cellular Call (Hold 15s)` ➔ `Delay: 60s` ➔ `Step 3: Send WhatsApp Follow-up`.
+- **Drag-and-Drop Reordering**: Long-press drag handle to re-sequence actions.
+- **Conditional Branching Configuration**: On failure or no-answer, branch to alternative fallback channel.
+
+### 4.6 `AutoReplyScreen` (Intelligent Event Trigger Hub)
+- **Trigger Type Tabs**: **Calls** (Missed, Rejected, Ended) and **Messages** (SMS, WhatsApp).
+- **Call Trigger Configuration**:
+  - Duration-based discrimination: Only trigger if missed (`duration == 0`), or only after connected conversation (`duration > 0`).
+  - Contact filter: Everyone, Contacts Only, Unknown Numbers Only, Blacklist.
+- **Keyword Match Rules**: Exact match, Contains, Regex pattern matching.
+
+### 4.7 `SettingsScreen` (System Health & Configuration)
+- **Interactive Status Indicators Health Guide**: Expandable cards providing one-tap setup guides and direct deep-links to Android system settings for each of the 7 system health services.
+- **Security & PIN Setup Card**:
+  - Unattended Screen Unlock PIN input.
+  - Displays encryption state: **Hardware Keystore AES-256-GCM** (`HW_ENC:`) or **Direct Boot Fallback** (`ENC:`).
+  - Device Admin activation button for instant post-task screen re-locking.
+- **TRAI Regulatory Quota Card**:
+  - 100 SMS/day rate limit status.
+  - Override switch (`"Enable Unlimited SMS Dispatch"`).
+- **Embedded Technical Manual**:
+  - One-tap access to the built-in, offline Markdown viewer rendering `AUTOTEXT_FEATURES_AND_LOGIC.md` directly inside the app.
 
 ---
 
-# 22. PERFORMANCE REQUIREMENTS
+## 5. Dedicated Full-Screen Interaction Activities
 
-Keep rendering efficient.
+### 5.1 `FakeCallActivity` (Simulated Incoming OEM Phone Call)
+- **Full-Screen Lockscreen Bypass**: Configured with `setShowWhenLocked(true)`, `setTurnScreenOn(true)`, and `FLAG_KEEP_SCREEN_ON`.
+- **Realistic OEM Incoming Call Interface**:
+  - High-resolution caller avatar, contact name, phone number, and location metadata.
+  - Realistic animated sliding answer handle (Swipe right to answer, Swipe left to decline).
+  - Ringtone playback using system default phone ringtone and custom haptic vibration patterns.
+- **In-Call Connected State**:
+  - Transitions to active call timer (`00:01`, `00:02`...).
+  - Functional in-call controls: Mute, Keypad, Speakerphone, Add Call, Hold.
+  - Auto-hangup timer triggers realistic call conclusion sound and returns to home screen.
 
-Prioritize:
-
-- Stable scrolling
-- Minimal overdraw
-- Efficient Compose recomposition
-- Stable lazy-list keys
-- Efficient RecyclerView updates
-- Appropriate state hoisting
-- Efficient image rendering
-- Controlled animations
-- Avoidance of obsolete blur passes
-- Memory-conscious components
-- Correct lifecycle behavior
-
-Do not introduce heavyweight effects merely to demonstrate Material Expressive motion.
-
-Avoid unnecessary dependencies.
-
----
-
-# 23. ARCHITECTURE PRESERVATION
-
-Respect existing architecture, whether MVVM, MVI, layered, feature-based, modular, or another established pattern.
-
-Do not rebuild working infrastructure for UI modernization.
-
-Preserve:
-
-- ViewModels
-- Repositories
-- Use cases
-- State flows
-- Data sources
-- Dependency injection
-- Navigation contracts
-- Persistence
-- Networking
-
-Refactor only when required to eliminate duplicated design implementations, correct unsafe coupling, or support the new UI consistently.
-
-Keep UI-only changes separate from logic refactoring where practical.
+### 5.2 `ReminderAlarmActivity` (Full-Screen Alarm & Voice Notification)
+- **Lockscreen Audio Alert**:
+  - Bypasses keyguard using high-priority alert window flags.
+  - Plays system alarm audio stream (`AudioManager.STREAM_ALARM`) at maximum volume even in Silent/DND mode if configured.
+- **Text-to-Speech (TTS) Voice Synthesis**:
+  - Speaks the scheduled reminder title and message body repeatedly using Android TTS engine.
+- **Interactive Controls**:
+  - Large, accessible `[Snooze (5m)]` tonal button.
+  - Full-width `[Dismiss Alarm]` primary orange button.
 
 ---
 
-# 24. SAFE AUTONOMOUS EXECUTION
+## 6. Edge-to-Edge System Integration & Inset Handling
 
-Work through the repository independently without requiring confirmation for routine, reversible implementation decisions.
+AutoText strictly complies with Android 15/16 edge-to-edge layout mandates:
 
-However:
+```kotlin
+// In MainActivity.kt
+WindowCompat.setDecorFitsSystemWindows(window, false)
+```
 
-- Do not perform destructive Git operations.
-- Do not discard unrelated work.
-- Do not overwrite uncommitted changes.
-- Do not delete user data.
-- Do not change application identity.
-- Do not modify external contracts unnecessarily.
-- Do not perform unreviewable mass renames.
-- Do not fabricate test results.
+### 6.1 Avoiding Double Inset Padding
+A common architectural defect in Compose applications is applying system bar padding on both the root `Scaffold` and individual screen content containers. AutoText enforces a single-responsibility inset model:
 
-Before substantial changes, establish a safe version-control checkpoint or dedicated working branch where appropriate and permitted.
+1. **Root Scaffold**: Consumes system insets for the top status bar and bottom navigation bar:
+   ```kotlin
+   Scaffold(
+       modifier = Modifier.fillMaxSize(),
+       contentWindowInsets = WindowInsets.safeDrawing
+   ) { innerPadding ->
+       Box(modifier = Modifier.padding(innerPadding)) {
+           AppNavigation(...)
+       }
+   }
+   ```
+2. **Inner Content Lists**: Use standard content padding without re-applying system bar insets:
+   ```kotlin
+   LazyColumn(
+       contentPadding = PaddingValues(
+           horizontal = AppDesignTokens.Spacing.large,
+           vertical = AppDesignTokens.Spacing.medium
+       )
+   )
+   ```
 
-Make targeted, reviewable changes.
-
-If a proposed change is highly risky, prefer a compatible implementation or document the limitation rather than introducing a destructive regression.
-
----
-
-# 25. PHASED EXECUTION PLAN
-
-## Phase 1 — Repository Audit
-
-Inspect project structure, architecture, screens, resources, styling, and dependencies.
-
-Create migration documentation.
-
-## Phase 2 — Naming and Architecture Plan
-
-Audit file and symbol naming.
-
-Create the proposed rename mapping.
-
-Identify compatibility-sensitive identifiers.
-
-Do not execute risky renames blindly.
-
-## Phase 3 — Central Theme Foundation
-
-Implement orange Material color schemes, typography, shapes, spacing, and motion tokens.
-
-Verify basic rendering and compilation.
-
-## Phase 4 — Edge-to-Edge Foundation
-
-Correct system bar behavior, safe-area handling, IME insets, and window layout rules.
-
-## Phase 5 — Reusable Components
-
-Modernize shared navigation, buttons, lists, cards, inputs, dialogs, sheets, and states.
-
-## Phase 6 — Screen Migration
-
-Migrate all UI screens in manageable groups.
-
-Apply the compact, full-width, responsive design system.
-
-## Phase 7 — Safe File Renaming
-
-Rename obsolete or misleading files and symbols using reference-aware tools.
-
-Update all affected references.
-
-Verify compilation and navigation after each group.
-
-Rename earlier when needed to establish correct shared-component structure, but avoid mixing unrelated large changes.
-
-## Phase 8 — Lists and Carousels
-
-Modernize content patterns appropriately.
-
-Maintain usability and scrolling performance.
-
-## Phase 9 — Expressive Motion
-
-Apply centralized native-feeling animations to meaningful interactions.
-
-## Phase 10 — Responsive Optimization
-
-Test compact, medium, expanded, portrait, landscape, and resized layouts.
-
-## Phase 11 — Cleanup
-
-Remove unused glass resources, redundant themes, duplicate components, and obsolete styling code.
-
-Only remove items confirmed unused.
-
-## Phase 12 — Verification
-
-Build, lint, test, inspect, and fix introduced regressions.
-
-## Phase 13 — Final Audit
-
-Verify all screens, naming consistency, accessibility, theme behavior, responsiveness, and functionality.
+### 6.2 IME (Software Keyboard) Avoidance
+- All form fields in `ComposeTaskScreen`, `AutoReplyScreen`, and `SettingsScreen` utilize `Modifier.imePadding()` on scrollable containers.
+- Inputs automatically scroll into visible viewport focus upon keyboard appearance without clipping action buttons or obscuring input tokens.
 
 ---
 
-# 26. CONTINUOUS PROGRESS AND PROJECT MEMORY
+## 7. Accessibility & Usability Engineering
 
-Maintain two documents:
-
-`docs/material3-expressive-migration.md`
-
-`docs/file-renaming-map.md`
-
-The first must track:
-
-- Architecture
-- Design decisions
-- Screen inventory
-- Component mapping
-- Completed work
-- Pending work
-- Known issues
-- Test results
-- Verification status
-- Next logical actions
-
-The second must track:
-
-- Old and new names
-- Rename reasons
-- Reference changes
-- Compatibility considerations
-- Verification results
-
-Update documents after meaningful work batches.
-
-When continuing after an interrupted coding session, read these documents and check the current repository state.
-
-Do not rely on stale assumptions.
-
-Do not repeatedly scan unrelated files when their existing inventory remains valid.
-
-Use context and tokens efficiently.
+1. **Touch Target Dimensions**:
+   - Every interactive control (icon buttons, chips, switches, dropdown items) enforces a minimum touch bounding box of **48dp × 48dp**, regardless of visible visual icon dimensions (e.g., 20dp icon inside 48dp clickable box).
+2. **Dynamic Font Scaling (Non-Linear Font Scaling Support)**:
+   - All text sizes utilize scale-independent pixels (`sp`).
+   - Containers utilize flexible wrapping or min-height constraints (`Modifier.defaultMinSize(minHeight = ...)`), preventing text truncation or overflow clipping when users set system font scale up to 200%.
+3. **High-Contrast Screen Reader Semantics**:
+   - Non-text controls possess clear, localized `contentDescription` attributes (e.g., `"Delete task"`, `"SIM Slot 1 active"`, `"Emergency Stop active"`).
+   - Visual status indicators provide explicit semantic state descriptions via `Modifier.semantics { stateDescription = ... }`.
 
 ---
 
-# 27. QUALITY GATES
+## 8. Motion & Transition Specifications
 
-After each batch, check:
+AutoText adopts a high-efficiency, native-feeling motion curve:
 
-- Compilation
-- Imports
-- Resource references
-- UI state behavior
-- Navigation
-- Affected tests
-- Theme compatibility
-- Dependency compatibility
-- Naming consistency
-
-For applicable screens also verify:
-
-- Compact spacing
-- Full-width behavior
-- Insets
-- Scroll reachability
-- Keyboard behavior
-- Light/dark mode
-- Accessibility
-- Responsive layout
-
-Never report a check as passed without performing it.
+- **Easing Curve**: Standard `FastOutSlowInEasing` (CubicBezier 0.4, 0.0, 0.2, 1.0).
+- **Navigation Transitions**: Horizontal sliding with subtle alpha fade (250ms duration):
+  - Enter: `slideInHorizontally(initialOffsetX = { it / 4 }) + fadeIn(animationSpec = tween(250))`
+  - Exit: `slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut(animationSpec = tween(250))`
+- **Card Expansion / Collapse**: Animated size transitions (`animateContentSize(animationSpec = tween(200))`).
+- **Emergency Stop Pulsing**: High-alert breathing animation (500ms cycle) drawing immediate operator attention.
 
 ---
 
-# 28. VISUAL REGRESSION TEST MATRIX
-
-Where emulator or device tooling is available, verify representative UI states across:
-
-| Dimension | Test cases |
-|---|---|
-| Theme | Light / Dark |
-| Color mode | Brand Orange / Dynamic |
-| Window width | Compact / Medium / Expanded |
-| Orientation | Portrait / Landscape |
-| Font scale | Normal / Large / Accessibility |
-| Navigation | Gesture / Three-button |
-| Keyboard | Hidden / Visible |
-| Direction | LTR / RTL where relevant |
-| Window mode | Fullscreen / Split-screen where available |
-
-Look for:
-
-- Clipped text
-- Broken layout
-- Excessive padding
-- Unused width
-- Overlapping controls
-- Incorrect system-bar colors
-- Duplicated insets
-- Horizontal overflow
-- Unreachable actions
-- Broken carousels
-- Scroll jumps
-- Misaligned list rows
-- Inconsistent typography
-- Incorrect theme colors
-
-Capture screenshots where tooling permits.
-
-Do not claim visual inspection without actual evidence.
-
----
-
-# 29. STRICT ANTI-MESS ENFORCEMENT
-
-The following are unacceptable:
-
-- Mass file renaming without reference updates
-- Unnecessary package restructuring
-- Duplicate classes left after renaming
-- Broken resource identifiers
-- Randomly chosen orange colors
-- Glass effects remaining unintentionally
-- Giant rounded cards everywhere
-- Excessive top padding
-- Excessive bottom whitespace
-- Oversized persistent headers
-- Excessive animation
-- Unnecessary UI gradients
-- Multiple competing themes
-- Hardcoded presentation values in every screen
-- Arbitrary fixed screen widths
-- Phone layouts stretched on tablets
-- Double-applied system insets
-- Bottom navigation covering content
-- Keyboard obscuring inputs
-- Inconsistent screen margins
-- Unreadable compact controls
-- Broken back navigation
-- Removed functionality
-- Placeholder buttons
-- Unnecessary dependency upgrades
-- Unverified experimental APIs
-- Fake build completion claims
-- Entire project rewritten without reason
-- Unrelated user modifications discarded
-
-Every change must have a clear engineering or design justification.
-
----
-
-# 30. FINAL COMPLETION CHECKLIST
-
-Do not declare the project complete unless all applicable criteria have been verified.
-
-## Design
-
-- [ ] Complete Material 3 Expressive design-system migration
-- [ ] Cohesive orange brand identity
-- [ ] Accessible light and dark themes
-- [ ] Optional dynamic color support where appropriate
-- [ ] Consistent typography and shapes
-- [ ] No unintentional obsolete glass styling
-- [ ] Consistent components across screens
-
-## Compactness
-
-- [ ] Efficient information density
-- [ ] Minimal wasted vertical space
-- [ ] Compact lists and cards
-- [ ] Appropriate toolbar sizing
-- [ ] Comfortable accessible controls
-- [ ] No unnecessary oversized padding
-
-## Responsiveness
-
-- [ ] Effective phone width utilization
-- [ ] Correct adaptive large-screen layouts
-- [ ] Landscape support
-- [ ] Window resizing support
-- [ ] No unintended horizontal overflow
-- [ ] Accessible large-text reflow
-
-## System Integration
-
-- [ ] Correct edge-to-edge behavior
-- [ ] Correct status/navigation bar handling
-- [ ] No duplicate inset padding
-- [ ] Correct keyboard handling
-- [ ] System appearance respected
-- [ ] Gesture navigation supported
-- [ ] Three-button navigation supported
-- [ ] Predictive back supported where applicable
-
-## Components
-
-- [ ] Lists modernized
-- [ ] Appropriate carousels implemented
-- [ ] Navigation consistent
-- [ ] Dialogs and sheets consistent
-- [ ] Forms and selection controls consistent
-- [ ] Motion appropriate and restrained
-
-## Codebase
-
-- [ ] Relevant source files audited
-- [ ] Misleading names corrected
-- [ ] Resource names standardized
-- [ ] Obsolete glass naming corrected
-- [ ] Imports and references updated
-- [ ] No unnecessary duplicate files
-- [ ] No broken external contracts
-- [ ] Renaming map documented
-- [ ] Existing architecture preserved
-
-## Functionality
-
-- [ ] All existing screens accounted for
-- [ ] Navigation verified
-- [ ] Business logic preserved
-- [ ] Data handling preserved
-- [ ] User preferences preserved
-- [ ] No placeholder functionality introduced
-
-## Validation
-
-- [ ] Available build checks executed
-- [ ] Relevant tests executed
-- [ ] No known introduced critical regression
-- [ ] Screenshots inspected where possible
-- [ ] Unverified requirements explicitly documented
-
----
-
-# 31. FINAL DELIVERABLES
-
-Provide an engineering report containing:
-
-1. Complete migration overview.
-2. Screens migrated.
-3. Components modernized.
-4. Design-system file locations.
-5. Orange light/dark theme behavior.
-6. Compact layout improvements.
-7. Full-width and edge-to-edge improvements.
-8. Responsive layout improvements.
-9. System-integration changes.
-10. File and class renaming summary.
-11. Package and resource organization changes.
-12. Existing functionality verification.
-13. Exact build and test results.
-14. Known issues and limitations.
-15. Remaining unverified items.
-
-Do not label incomplete work as finished.
-
----
-
-# 32. FINAL AUTONOMOUS EXECUTION DIRECTIVE
-
-**BEGIN IMPLEMENTATION USING THE ACTUAL OPEN PROJECT.**
-
-First inspect the repository, architecture, current UI system, resources, and dependencies.
-
-Create the migration inventory and naming audit.
-
-Establish a centralized orange Material 3 Expressive design foundation.
-
-Implement compact spacing, intelligent full-width responsive layouts, and correct Android edge-to-edge behavior.
-
-Modernize reusable components before performing broad screen changes.
-
-Migrate every applicable screen systematically.
-
-Apply dynamic lists and carousels only where appropriate.
-
-Introduce expressive motion without sacrificing performance.
-
-Professionally rename misleading, obsolete, or inconsistent files, classes, components, resources, and packages using safe reference-aware refactoring.
-
-Preserve the application ID, existing-user compatibility, persistence contracts, business logic, navigation, and all existing features.
-
-Keep changes incremental and verify them frequently.
-
-Maintain persistent migration documentation.
-
-Use official Android APIs compatible with the actual project.
-
-Avoid routine clarification questions when answers can be determined from the codebase.
-
-Do not stop at changing colors or redesigning a few screens.
-
-Do not invent test results.
-
-Do not declare completion until the applicable acceptance criteria are satisfied.
-
-## THE REQUIRED FINAL RESULT
-
-**A complete, cohesive, production-quality Android application using Material 3 Expressive, a premium orange brand identity, compact information-dense interfaces, intelligent full-width layouts, responsive adaptive components, correct system integration, fluid native motion, accessible interactions, professionally named files and resources, clean code organization, and fully preserved existing functionality.**
-
-### CORE ENGINEERING PRINCIPLE
-
-**MAXIMUM USABLE SPACE + MINIMUM VISUAL CLUTTER + CONSISTENT MATERIAL 3 EXPRESSIVE DESIGN + NATIVE ANDROID BEHAVIOR + SAFE PROFESSIONAL REFACTORING + ZERO INTENTIONAL FUNCTIONALITY LOSS.**
+*AutoText Design System v2.6 • Material 3 Expressive • 100% Native Jetpack Compose*

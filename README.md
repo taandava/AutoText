@@ -65,13 +65,20 @@ AutoText is a modern Android application written entirely in Kotlin with Jetpack
 - `SequentialTaskEngine.ensureDeviceAwakeAndUnlocked` verifies interactive display state and keyguard status before dispatching WhatsApp, Status, Call, or VoIP tasks.
 - Integrates with `AutomationLauncherActivity` in `EXTRA_WAKE_ONLY` mode to wake display, dismiss keyguard, and trigger PIN auto-unlock without race conditions or duplicate intent dispatches.
 - `WhatsAppDirectSendEngine` and `WhatsAppCallEngine` dispatch physical touches directly onto resolved screen bounds (`getBoundsInScreen()`), supporting multi-step WhatsApp Business call bottom-sheets (`audio_call_item` -> confirmation dialog) and auto-discarding stale voice note recordings before dialing.
-- `SequentialTaskEngine` strictly enforces call duration criteria across cellular and WhatsApp VoIP calls: supports both immediate dial-time inclusion and connected-conversation timing (`includeDialTimeInCallDuration`), monitors multi-SIM states, detects early hangup, and terminates calls automatically only when configured duration criteria are legitimately satisfied.
 
-### 10. Hardware Keystore AES-256-GCM Encryption
+### 10. Call Duration Criteria & Multi-SIM Telephony Enforcement
+- **Multi-SIM Active Subscription Polling (`TelephonyManagerCompat`)**: Evaluates `SubscriptionManager.activeSubscriptionInfoList` and inspects each active subscription's `createForSubscriptionId(subId).callStateForSubscription` on API 31–36+, combined with `TelecomManager.isInCall` and in-call UI verification.
+- **Dial Timing Criteria Invariants**:
+  - `includeDialTimeInCallDuration = true`: Timer starts upon dial initiation. Monitored via 250ms sliced polling; if either party hangs up early (after a 3.5s dial window), the loop exits immediately without false auto-hangup commands or notifications.
+  - `includeDialTimeInCallDuration = false`: Waits up to 40s for active conversation (`CALL_STATE_OFFHOOK`). If the call is unanswered, rejected, or dropped before connect, duration holding is bypassed entirely. If answered, the timer holds for the full talk duration with early termination detection.
+  - `callDurationSeconds = 0`: Treated as open/untimed calls with zero auto-hangup.
+- **WhatsApp VoIP Conversation Detection**: Slices VoIP duration holding into 250ms chunks, tracking conversation timers (`isVoipCallConnected()`) versus dialing states (`"Calling..."`, `"Ringing..."`), preventing false hangups on unestablished or early-ended calls.
+
+### 11. Hardware Keystore AES-256-GCM Encryption
 - Auto-unlock PIN stored with 256-bit AES encryption managed by `AndroidKeyStore` (`HW_ENC:`).
 - Dual-tier Direct Boot fallback (`ENC:`) stored in device-protected storage (`dePrefs`) ensures keyguard auto-unlock functions reliably even across cold reboots before first user unlock.
 
-### 11. Responsive Dashboard Header Layout
+### 12. Responsive Dashboard Header Layout
 - Compact, icon-only action buttons for **New Task** (`+`) and **Emergency Stop** (`🛑`).
 - Responsive header grid gracefully accommodates all 7 real-time system health indicators without clipping across varying screen sizes.
 
@@ -120,7 +127,7 @@ The top header bar displays 7 real-time status indicator icons:
 
 ### Build Commands
 ```bash
-# Compile and run all 60 unit tests
+# Compile and run all 61 unit tests
 .\gradlew.bat testDebugUnitTest
 
 # Assemble signed production release APK and copy to root
@@ -132,8 +139,9 @@ adb -s <DEVICE_ID> install -r app-release.apk
 
 ---
 
-## 📋 Comprehensive Technical Blueprint
+## 📋 Comprehensive Technical Blueprint & Documentation
 
-For full architectural diagrams, algorithmic state machines, SQL schemas, and diagnostic commands, see the authoritative internal specification:
-- [`app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md`](file:///d:/New%20folder/apps/Automation/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md)
-*(Also rendered directly in the app under **Settings -> Technical Manual & Logic Guide**).*
+For full architectural diagrams, algorithmic state machines, SQL schemas, design system tokens, and diagnostic commands, see the authoritative internal specifications:
+- [`app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md`](file:///d:/New%20folder/apps/Automation/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md): Master Technical Blueprint & Architecture Specification *(also rendered offline inside the app under **Settings -> Technical Manual & Logic Guide**)*.
+- [`design.md`](file:///d:/New%20folder/apps/Automation/design.md): Material 3 Expressive Design System, Compact UI/UX Specifications & Component Inventory.
+- [`agent.md`](file:///d:/New%20folder/apps/Automation/agent.md): Master Engineering Directive, Defect Remediation Log, Hardware Verification Matrix & Operational Runbook.
