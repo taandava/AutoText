@@ -347,7 +347,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             if (intent.hasExtra("autoLock")) {
                 PreferenceManager(context).isAutoLockAfterSendEnabled = intent.getBooleanExtra("autoLock", true)
             }
-            val fakeCallerName = intent.getStringExtra("fakeCallerName") ?: if (msgText.isNotBlank()) msgText else "Incoming Call"
+            val fakeCallerName = intent.getStringExtra("fakeCallerName") ?: msgText.ifBlank { "Incoming Call" }
             val fakeCallerNumber = intent.getStringExtra("fakeCallerNumber") ?: recipientsParam.firstOrNull() ?: "+1 (555) 019-2834"
             val soundMode = intent.getStringExtra("soundModeSetting") ?: "NORMAL"
             val mediaUri = intent.getStringExtra("mediaUri") ?: ""
