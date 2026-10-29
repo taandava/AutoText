@@ -515,6 +515,10 @@ To eliminate automation timeouts when tasks trigger while the device is sleeping
    - Applies `setTurnScreenOn(true)` and `setShowWhenLocked(true)`, arms the hardware keystore PIN auto-unlock if configured, requests keyguard dismissal via `requestDismissKeyguard`, and cleanly finishes after 500ms without dispatching duplicate intents or causing race conditions.
 3. **Dual-Tier WhatsApp Send Button Bounds Dispatch**:
    - `WhatsAppDirectSendEngine` detects send button nodes and dispatches both an accessibility `ACTION_CLICK` and a physical touch gesture tap directly on the resolved screen bounds (`sendNode.getBoundsInScreen()`), followed by an active bounds re-tap if the composer draft persists, guaranteeing 100% delivery across consumer WhatsApp and custom WhatsApp Business layouts.
+4. **WhatsApp Business VoIP Multi-Tier Call Sheet & Stale Voice Note Clearing**:
+   - `WhatsAppCallEngine` resolves the multi-step bottom-sheet popup architecture in WhatsApp Business ('Select call type' -> 'Voice call' (`audio_call_item`) -> 'Start voice call?' (`android:id/button1`)).
+   - Targets inner item bounds directly (`dRect.left + 300f` for wide bottom-sheet rows) with physical gesture taps, preventing missed clicks on high-DPI displays.
+   - Automatically detects and discards stale unsent voice note recordings (`voice_note_cancel_btn_v2`) before initiating calls to release microphone hardware and audio focus.
 
 ### Responsive Dashboard Header & Icon-Only Action Buttons
 To accommodate the comprehensive 7-indicator system health monitor on devices of varying screen widths:

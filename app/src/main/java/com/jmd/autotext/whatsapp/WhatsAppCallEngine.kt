@@ -105,6 +105,17 @@ class WhatsAppCallEngine(
             }
         }
 
+        // Discard stale unsent voice note draft if blocking voice call
+        findDiscardVoiceNoteButton(candidateRoots)?.let { discardBtn ->
+            Log.i(loggerTag, "Discarding stale voice note draft blocking voice call...")
+            val dRect = Rect()
+            discardBtn.getBoundsInScreen(dRect)
+            AccessibilityNodeUtils.clickElement(discardBtn, service)
+            if (dRect.width() > 0 && dRect.height() > 0) {
+                AccessibilityNodeUtils.dispatchPhysicalTap(service, dRect.centerX().toFloat(), dRect.centerY().toFloat())
+            }
+        }
+
         // 2. If initial header call button has already been clicked, verify VoIP transition or confirmation dialog
         if (hasAttemptedCallClick) {
             // 2a. Prioritize verifying if VoIP call screen is active
@@ -124,7 +135,22 @@ class WhatsAppCallEngine(
                     ?: "OK/Call"
                 Log.i(loggerTag, "Found WhatsApp call confirmation/popup action button: '$btnLabel'. Clicking...")
                 AppFileLogger.action(service, loggerTag, "Confirming WhatsApp call dialog button '$btnLabel' for $pendingRecipient")
+                val targetNode = if (callDialogButton.childCount > 0) {
+                    (0 until callDialogButton.childCount).mapNotNull { callDialogButton.getChild(it) }
+                        .firstOrNull { it.text?.toString()?.contains("voice", ignoreCase = true) == true || it.contentDescription?.toString()?.contains("voice", ignoreCase = true) == true }
+                        ?: callDialogButton
+                } else {
+                    callDialogButton
+                }
+                val dRect = Rect()
+                targetNode.getBoundsInScreen(dRect)
                 AccessibilityNodeUtils.clickElement(callDialogButton, service)
+                if (dRect.width() > 0 && dRect.height() > 0) {
+                    val tapX = if (dRect.width() > 600) (dRect.left + 300f) else dRect.centerX().toFloat()
+                    val tapY = dRect.centerY().toFloat()
+                    AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                    Log.d(loggerTag, "Dispatched physical gesture tap on call dialog button at ($tapX, $tapY)")
+                }
                 onRetry(600L)
                 return
             }
@@ -136,7 +162,14 @@ class WhatsAppCallEngine(
                 Log.w(loggerTag, "Neither popup nor VoIP screen appeared after 15 attempts; retrying header call button click...")
                 val voiceCallNode = findVoiceCallButton(root, pkg, windows)
                 if (voiceCallNode != null) {
+                    val vRect = Rect()
+                    voiceCallNode.getBoundsInScreen(vRect)
                     AccessibilityNodeUtils.clickElement(voiceCallNode, service)
+                    if (vRect.width() > 0 && vRect.height() > 0) {
+                        val tapX = vRect.centerX().toFloat()
+                        val tapY = vRect.centerY().toFloat()
+                        AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                    }
                     onRetry(700L)
                     return
                 }
@@ -156,7 +189,15 @@ class WhatsAppCallEngine(
         if (voiceCallNode != null) {
             Log.i(loggerTag, "Found Voice call button in chat header. Clicking voice call...")
             AppFileLogger.action(service, loggerTag, "Clicking Voice Call button in WhatsApp header for $pendingRecipient")
+            val vRect = Rect()
+            voiceCallNode.getBoundsInScreen(vRect)
             AccessibilityNodeUtils.clickElement(voiceCallNode, service)
+            if (vRect.width() > 0 && vRect.height() > 0) {
+                val tapX = vRect.centerX().toFloat()
+                val tapY = vRect.centerY().toFloat()
+                AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                Log.d(loggerTag, "Dispatched physical gesture tap on voice call button at ($tapX, $tapY)")
+            }
             hasAttemptedCallClick = true
             onRetry(600L)
             return
@@ -332,18 +373,20 @@ class WhatsAppCallEngine(
                         id.endsWith("confirm_button") ||
                         id.endsWith("call_btn") ||
                         id.endsWith("start_call") ||
+                        id.endsWith("audio_call_item") ||
+                        id.endsWith("voice_call_item") ||
                         id.endsWith("permission_allow_foreground_only_button") ||
                         id.endsWith("permission_allow_button")
 
                 if (isPositiveId) {
                     val isActionWord = actionWords.any { text.equals(it, ignoreCase = true) || desc.equals(it, ignoreCase = true) }
-                    if (isActionWord || text.isNotBlank() || node.isClickable) {
+                    if (isActionWord || text.isNotBlank() || node.isClickable || desc.isNotBlank()) {
                         return if (node.isClickable) node else node.parent ?: node
                     }
                 }
 
                 // 2. Action text/desc match (e.g. "Call", "Voice call", "OK", "Continue", "While using the app")
-                val isLayoutContainer = id.contains("main_layout") || id.contains("conversation") || id.contains("root") || rect.height() > 300 || rect.width() > 1000
+                val isLayoutContainer = id.contains("main_layout") || id.contains("conversation") || id.contains("root") || rect.height() > 350
                 if (!isTopHeader && !isLayoutContainer && (node.isClickable || node.parent?.isClickable == true || node.className?.contains("Button") == true)) {
                     val matchesAction = actionWords.any { text.equals(it, ignoreCase = true) || desc.equals(it, ignoreCase = true) }
                     if (matchesAction) {
@@ -356,6 +399,25 @@ class WhatsAppCallEngine(
                     }
                 }
 
+                for (i in 0 until node.childCount) {
+                    node.getChild(i)?.let { q.add(it) }
+                }
+            }
+        }
+        return null
+    }
+
+    private fun findDiscardVoiceNoteButton(candidateRoots: List<AccessibilityNodeInfo>): AccessibilityNodeInfo? {
+        for (candRoot in candidateRoots) {
+            val q = java.util.ArrayDeque<AccessibilityNodeInfo>()
+            q.add(candRoot)
+            while (q.isNotEmpty()) {
+                val node = q.removeFirst()
+                val id = node.viewIdResourceName?.lowercase().orEmpty()
+                val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
+                if (id.contains("voice_note_cancel") || desc.contains("discard voice message") || desc.contains("cancel voice message")) {
+                    return if (node.isClickable) node else node.parent ?: node
+                }
                 for (i in 0 until node.childCount) {
                     node.getChild(i)?.let { q.add(it) }
                 }
@@ -464,7 +526,15 @@ class WhatsAppCallEngine(
             if (endButton != null) {
                 Log.i(loggerTag, "Found WhatsApp VoIP End Call button. Clicking to hang up...")
                 AppFileLogger.action(service, loggerTag, "Terminating active WhatsApp VoIP call via End Call button")
-                return AccessibilityNodeUtils.clickElement(endButton, service)
+                val bRect = Rect()
+                endButton.getBoundsInScreen(bRect)
+                val res = AccessibilityNodeUtils.clickElement(endButton, service)
+                if (bRect.width() > 0 && bRect.height() > 0) {
+                    val tapX = bRect.centerX().toFloat()
+                    val tapY = bRect.centerY().toFloat()
+                    AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                }
+                return res
             }
         }
         return false
