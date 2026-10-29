@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AutoText</string>
+    <string name="accessibility_service_label">AutoText Automation Engine</string>
+    <string name="accessibility_service_description">AutoText automation assistance engine for hands-free messaging, scheduled dispatches, and device automation. Completely isolated from banking, payment, UPI, and financial applications.</string>
+    <string name="notification_channel_tasks">Scheduled Tasks</string>
+    <string name="notification_channel_tasks_desc">Notifications for sent and pending automated tasks</string>
+    <string name="notification_channel_reminders">Alarms &amp; Reminders</string>
+    <string name="notification_channel_reminders_desc">Full screen alerts and reminders</string>
+    <string name="device_admin_description">Allows AutoText to automatically lock the device after scheduled messaging tasks and campaigns complete.</string>
+</resources>
