@@ -336,6 +336,63 @@ class WhatsAppCallEngine(
     }
 
     /**
+     * Determines whether the active VoIP call is confirmed connected (answered) rather than still dialing or ringing.
+     *
+     * @param root Active window root node.
+     * @param windows List of window infos from accessibility service.
+     * @return True if VoIP call has connected and ongoing conversation timer is active.
+     */
+    fun isVoipCallConnected(
+        root: AccessibilityNodeInfo,
+        windows: List<AccessibilityWindowInfo>?
+    ): Boolean {
+        if (!isInVoipCallScreen(root, windows)) return false
+
+        val candidateRoots = if (!windows.isNullOrEmpty()) {
+            AccessibilityNodeUtils.getTargetRoots(service, windows)
+        } else {
+            listOf(root)
+        }
+
+        var isDialingOrRinging = false
+        var hasActiveCallIndicator = false
+        val durationRegex = Regex("^(\\d{1,2}:)?\\d{1,2}:\\d{2}$")
+
+        for (candRoot in candidateRoots) {
+            val q = java.util.ArrayDeque<AccessibilityNodeInfo>()
+            q.add(candRoot)
+            while (q.isNotEmpty()) {
+                val node = q.removeFirst()
+                val id = node.viewIdResourceName?.lowercase().orEmpty()
+                val text = node.text?.toString().orEmpty()
+                val desc = node.contentDescription?.toString().orEmpty()
+
+                if (text.startsWith("Calling", ignoreCase = true) ||
+                    text.startsWith("Ringing", ignoreCase = true) ||
+                    text.startsWith("Connecting", ignoreCase = true) ||
+                    desc.startsWith("Calling", ignoreCase = true) ||
+                    desc.startsWith("Ringing", ignoreCase = true)) {
+                    isDialingOrRinging = true
+                }
+
+                if (durationRegex.matches(text.trim()) ||
+                    id.endsWith("call_time") ||
+                    id.endsWith("elapsed_time") ||
+                    id.endsWith("call_duration") ||
+                    id.endsWith("call_timer")) {
+                    hasActiveCallIndicator = true
+                }
+
+                for (i in 0 until node.childCount) {
+                    node.getChild(i)?.let { q.add(it) }
+                }
+            }
+        }
+
+        return hasActiveCallIndicator || (!isDialingOrRinging && isInVoipCallScreen(root, windows))
+    }
+
+    /**
      * Searches across all candidate roots (including alert dialogs, bottom sheets, and permission prompts)
      * for positive confirmation actions to initiate or allow the voice call.
      */

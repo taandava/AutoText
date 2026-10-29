@@ -1075,43 +1075,63 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         android.Manifest.permission.READ_PHONE_STATE,
                     ) == PackageManager.PERMISSION_GRANTED
 
-                    val waitForCallDuration: suspend (Long) -> Unit = { totalMs ->
+                    // Helper to check if cellular call is still active on the device
+                    val isCellularCallOngoing: () -> Boolean = {
+                        val stateActive = com.jmd.autotext.compat.TelephonyManagerCompat.isCallActiveOrRinging(appContext, telephonyManager)
+                        val uiActive = AutoTextAccessibilityService.isPhoneCallUiActive()
+                        stateActive || uiActive
+                    }
+
+                    // Sliced delay polling checking master pause and early call termination
+                    // Returns true if duration fully elapsed while call was active; false if ended early or aborted
+                    val waitForCallDurationWithEarlyCheck: suspend (Long, Long) -> Boolean = { totalMs, graceMs ->
                         var elapsed = 0L
                         val step = 250L
+                        var completedNormally = true
                         while (elapsed < totalMs) {
                             val livePrefs = PreferenceManager(appContext)
                             if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
                                 AppFileLogger.w(appContext, TAG, "Call duration holding interrupted: Master switch disabled or emergency stop active.")
+                                completedNormally = false
+                                break
+                            }
+                            // After grace period, detect if the call ended early (caller or callee hung up)
+                            if (elapsed >= graceMs && !isCellularCallOngoing()) {
+                                AppFileLogger.action(appContext, TAG, "Call for $cleanPhone ended early (${elapsed / 1000}s into ${durationSec}s limit). Exiting wait loop.")
+                                completedNormally = false
                                 break
                             }
                             val chunk = minOf(step, totalMs - elapsed)
                             delay(chunk.milliseconds)
                             elapsed += chunk
                         }
+                        completedNormally
                     }
+
+                    var durationCriteriaSatisfied = false
 
                     if (task.includeDialTimeInCallDuration) {
                         // Timer starts immediately when call placement initiates
                         AppFileLogger.action(appContext, TAG, "Call duration limit of ${durationSec}s (including dialing time) holding for $cleanPhone...")
-                        waitForCallDuration(durationSec * 1000L)
+                        durationCriteriaSatisfied = waitForCallDurationWithEarlyCheck(durationSec * 1000L, 3500L)
                     } else if (telephonyManager != null && hasPhoneStatePerm) {
                         // Timer starts ONLY once the call is confirmed answered/connected (OFFHOOK)
                         AppFileLogger.action(appContext, TAG, "Awaiting call connection (OFFHOOK) for $cleanPhone before starting ${durationSec}s call duration...")
                         val dialTimeoutMs = 40_000L
-                        val pollIntervalMs = 600L
+                        val pollIntervalMs = 500L
                         var dialElapsedMs = 0L
                         var connected = false
 
                         while (dialElapsedMs < dialTimeoutMs) {
                             val livePrefs = PreferenceManager(appContext)
                             if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) break
-                            val state = com.jmd.autotext.compat.TelephonyManagerCompat.getCallState(appContext, telephonyManager)
-                            if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
+
+                            if (com.jmd.autotext.compat.TelephonyManagerCompat.isCallConnected(appContext, telephonyManager)) {
                                 connected = true
-                                AppFileLogger.action(appContext, TAG, "Call to $cleanPhone connected (OFFHOOK)! Holding for configured ${durationSec}s duration...")
+                                AppFileLogger.action(appContext, TAG, "Call to $cleanPhone connected (OFFHOOK)! Starting configured ${durationSec}s call duration timer...")
                                 break
-                            } else if (dialElapsedMs >= 4000L && state == TelephonyManager.CALL_STATE_IDLE) {
-                                AppFileLogger.action(appContext, TAG, "Call to $cleanPhone disconnected or rejected before connect.")
+                            } else if (dialElapsedMs >= 4000L && !isCellularCallOngoing()) {
+                                AppFileLogger.action(appContext, TAG, "Call to $cleanPhone disconnected, rejected, or cancelled before connect. Skipping duration hold.")
                                 break
                             }
                             delay(pollIntervalMs.milliseconds)
@@ -1119,30 +1139,36 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         }
 
                         if (connected) {
-                            waitForCallDuration(durationSec * 1000L)
+                            durationCriteriaSatisfied = waitForCallDurationWithEarlyCheck(durationSec * 1000L, 1000L)
+                        } else {
+                            AppFileLogger.action(appContext, TAG, "Call to $cleanPhone did not connect within timeout ($dialElapsedMs ms). Duration limit criteria not triggered.")
                         }
                     } else {
-                        // Fallback: wait configured duration
-                        waitForCallDuration(durationSec * 1000L)
+                        // Fallback when phone state perm is absent: wait configured duration
+                        durationCriteriaSatisfied = waitForCallDurationWithEarlyCheck(durationSec * 1000L, 3500L)
                     }
 
-                    // Duration elapsed! Terminate the active call immediately
-                    AppFileLogger.action(appContext, TAG, "Configured call duration (${durationSec}s) elapsed for $cleanPhone. Hanging up call now...")
-                    val hungUp = AutoTextAccessibilityService.endPhoneCall(appContext)
-                    AppFileLogger.action(appContext, TAG, "Hangup request for $cleanPhone: result=$hungUp")
+                    // Only terminate active call and notify IF duration actually elapsed per configured criteria
+                    if (durationCriteriaSatisfied && isCellularCallOngoing()) {
+                        AppFileLogger.action(appContext, TAG, "Configured call duration (${durationSec}s) elapsed for $cleanPhone. Hanging up call now...")
+                        val hungUp = AutoTextAccessibilityService.endPhoneCall(appContext)
+                        AppFileLogger.action(appContext, TAG, "Hangup request for $cleanPhone: result=$hungUp")
 
-                    try {
-                        val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                        val endNotif = NotificationCompat.Builder(appContext, AutoTextApplication.CHANNEL_TASKS)
-                            .setSmallIcon(android.R.drawable.ic_menu_call)
-                            .setContentTitle("Call Duration Elapsed (${durationSec}s)")
-                            .setContentText("Scheduled call with $cleanPhone concluded.")
-                            .setPriority(NotificationCompat.PRIORITY_HIGH)
-                            .setAutoCancel(true)
-                            .build()
-                        nm?.notify((task.id + index + 50000).toInt(), endNotif)
-                    } catch (e: Exception) {
-                        Log.d(TAG, "Call duration notification error: ${e.message}")
+                        try {
+                            val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+                            val endNotif = NotificationCompat.Builder(appContext, AutoTextApplication.CHANNEL_TASKS)
+                                .setSmallIcon(android.R.drawable.ic_menu_call)
+                                .setContentTitle("Call Duration Elapsed (${durationSec}s)")
+                                .setContentText("Scheduled call with $cleanPhone concluded.")
+                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                .setAutoCancel(true)
+                                .build()
+                            nm?.notify((task.id + index + 50000).toInt(), endNotif)
+                        } catch (e: Exception) {
+                            Log.d(TAG, "Call duration notification error: ${e.message}")
+                        }
+                    } else {
+                        AppFileLogger.action(appContext, TAG, "Call to $cleanPhone ended naturally or did not trigger auto-hangup (criteriaSatisfied=$durationCriteriaSatisfied).")
                     }
 
                     // Allow 2 seconds for audio/telephony channel to disconnect cleanly
@@ -1343,26 +1369,104 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     anyCallPlaced = true
                     AppFileLogger.action(appContext, TAG, "WhatsApp voice call #${index + 1} initiated successfully to $cleanPhone")
 
-                    // If duration is specified, hold for the configured call duration and then hang up
+                    // If duration is specified, hold for configured call duration and then hang up
                     if (task.callDurationSeconds > 0) {
                         val durationSec = task.callDurationSeconds
-                        AppFileLogger.action(appContext, TAG, "Holding WhatsApp voice call for configured duration of ${durationSec}s...")
-                        delay((durationSec * 1000L).milliseconds)
-
                         val targetPkg = when (task.channel) {
                             ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_CALL -> "com.whatsapp.w4b"
                             else -> "com.whatsapp"
                         }
-                        var hungUp = AutoTextAccessibilityService.endWhatsAppCall(targetPkg)
-                        if (!hungUp) {
-                            for (r in 1..3) {
-                                delay(600L.milliseconds)
-                                hungUp = AutoTextAccessibilityService.endWhatsAppCall(targetPkg)
-                                if (hungUp) break
+
+                        // Sliced delay polling checking master pause and early VoIP call termination
+                        val waitForVoipDurationWithEarlyCheck: suspend (Long, Long) -> Boolean = { totalMs, graceMs ->
+                            var elapsed = 0L
+                            val step = 250L
+                            var completedNormally = true
+                            while (elapsed < totalMs) {
+                                val livePrefs = PreferenceManager(appContext)
+                                if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+                                    AppFileLogger.w(appContext, TAG, "WhatsApp call duration holding interrupted: Master switch disabled or emergency stop active.")
+                                    completedNormally = false
+                                    break
+                                }
+                                if (elapsed >= graceMs && !AutoTextAccessibilityService.isInWhatsAppCall()) {
+                                    AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call for $cleanPhone ended early (${elapsed / 1000}s into ${durationSec}s limit). Exiting wait loop.")
+                                    completedNormally = false
+                                    break
+                                }
+                                val chunk = minOf(step, totalMs - elapsed)
+                                delay(chunk.milliseconds)
+                                elapsed += chunk
+                            }
+                            completedNormally
+                        }
+
+                        var durationCriteriaSatisfied = false
+
+                        if (task.includeDialTimeInCallDuration) {
+                            // Timer starts immediately when VoIP call screen is displayed
+                            AppFileLogger.action(appContext, TAG, "Holding WhatsApp voice call for configured duration of ${durationSec}s (including dialing time)...")
+                            durationCriteriaSatisfied = waitForVoipDurationWithEarlyCheck(durationSec * 1000L, 3500L)
+                        } else {
+                            // Timer starts ONLY once the VoIP call is confirmed connected (answered)
+                            AppFileLogger.action(appContext, TAG, "Awaiting WhatsApp VoIP call connection for $cleanPhone before starting ${durationSec}s duration...")
+                            val dialTimeoutMs = 40_000L
+                            val pollIntervalMs = 500L
+                            var dialElapsedMs = 0L
+                            var connected = false
+
+                            while (dialElapsedMs < dialTimeoutMs) {
+                                val livePrefs = PreferenceManager(appContext)
+                                if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) break
+
+                                if (AutoTextAccessibilityService.isWhatsAppCallConnected()) {
+                                    connected = true
+                                    AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call to $cleanPhone connected! Starting configured ${durationSec}s duration timer...")
+                                    break
+                                } else if (dialElapsedMs >= 4000L && !AutoTextAccessibilityService.isInWhatsAppCall()) {
+                                    AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call to $cleanPhone disconnected, declined, or cancelled before connect. Skipping duration hold.")
+                                    break
+                                }
+                                delay(pollIntervalMs.milliseconds)
+                                dialElapsedMs += pollIntervalMs
+                            }
+
+                            if (connected) {
+                                durationCriteriaSatisfied = waitForVoipDurationWithEarlyCheck(durationSec * 1000L, 1000L)
+                            } else {
+                                AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call to $cleanPhone did not connect within timeout. Duration limit criteria not triggered.")
                             }
                         }
-                        AppFileLogger.action(appContext, TAG, "Auto-hangup WhatsApp VoIP call after ${durationSec}s: result=$hungUp")
-                        delay(1000L.milliseconds)
+
+                        // Only auto-hangup if duration criteria actually elapsed and call remains active
+                        if (durationCriteriaSatisfied && AutoTextAccessibilityService.isInWhatsAppCall()) {
+                            var hungUp = AutoTextAccessibilityService.endWhatsAppCall(targetPkg)
+                            if (!hungUp) {
+                                for (r in 1..3) {
+                                    delay(600L.milliseconds)
+                                    hungUp = AutoTextAccessibilityService.endWhatsAppCall(targetPkg)
+                                    if (hungUp) break
+                                }
+                            }
+                            AppFileLogger.action(appContext, TAG, "Auto-hangup WhatsApp VoIP call after ${durationSec}s: result=$hungUp")
+
+                            try {
+                                val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+                                val endNotif = NotificationCompat.Builder(appContext, AutoTextApplication.CHANNEL_TASKS)
+                                    .setSmallIcon(android.R.drawable.ic_menu_call)
+                                    .setContentTitle("WhatsApp Call Duration Elapsed (${durationSec}s)")
+                                    .setContentText("Scheduled WhatsApp call with $cleanPhone concluded.")
+                                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                    .setAutoCancel(true)
+                                    .build()
+                                nm?.notify((task.id + index + 60000).toInt(), endNotif)
+                            } catch (e: Exception) {
+                                Log.d(TAG, "WhatsApp call duration notification error: ${e.message}")
+                            }
+                            delay(1000L.milliseconds)
+                        } else {
+                            AppFileLogger.action(appContext, TAG, "WhatsApp call to $cleanPhone ended naturally or did not trigger auto-hangup (criteriaSatisfied=$durationCriteriaSatisfied).")
+                        }
                     } else {
                         // Indefinite call: await VoIP call conclusion or maximum 120s timeout
                         val maxWaitMs = 120_000L

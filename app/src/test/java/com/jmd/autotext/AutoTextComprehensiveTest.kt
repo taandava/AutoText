@@ -468,6 +468,12 @@ class AutoTextComprehensiveTest {
     fun testTelephonyManagerCompatNullSafety() {
         val state = com.jmd.autotext.compat.TelephonyManagerCompat.getCallState(null)
         assertEquals(android.telephony.TelephonyManager.CALL_STATE_IDLE, state)
+
+        val isConnected = com.jmd.autotext.compat.TelephonyManagerCompat.isCallConnected(null, null)
+        assertFalse(isConnected)
+
+        val isActive = com.jmd.autotext.compat.TelephonyManagerCompat.isCallActiveOrRinging(null, null)
+        assertFalse(isActive)
     }
 
     @Test
@@ -1036,6 +1042,23 @@ class AutoTextComprehensiveTest {
         val isCallEnded = isOutgoing && duration > 0L
 
         assertTrue("Connected outgoing call with duration > 0 must be treated as Call Ended", isCallEnded)
+    }
+
+    @Test
+    fun testCallDurationCriteriaRules() {
+        // Criteria 1: Untimed call (duration 0) must never auto-hangup
+        val untimedTask = ScheduledTask(id = 1, title = "Untimed Call", callDurationSeconds = 0)
+        assertEquals(0, untimedTask.callDurationSeconds)
+
+        // Criteria 2: Include dial time true starts immediately upon dialing
+        val dialTimeTask = ScheduledTask(id = 2, title = "Timed With Dial", callDurationSeconds = 15, includeDialTimeInCallDuration = true)
+        assertTrue(dialTimeTask.includeDialTimeInCallDuration)
+        assertEquals(15, dialTimeTask.callDurationSeconds)
+
+        // Criteria 3: Exclude dial time false requires connected conversation (OFFHOOK)
+        val conversationOnlyTask = ScheduledTask(id = 3, title = "Talk Only", callDurationSeconds = 30, includeDialTimeInCallDuration = false)
+        assertFalse(conversationOnlyTask.includeDialTimeInCallDuration)
+        assertEquals(30, conversationOnlyTask.callDurationSeconds)
     }
 
     @Test

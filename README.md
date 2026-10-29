@@ -65,6 +65,7 @@ AutoText is a modern Android application written entirely in Kotlin with Jetpack
 - `SequentialTaskEngine.ensureDeviceAwakeAndUnlocked` verifies interactive display state and keyguard status before dispatching WhatsApp, Status, Call, or VoIP tasks.
 - Integrates with `AutomationLauncherActivity` in `EXTRA_WAKE_ONLY` mode to wake display, dismiss keyguard, and trigger PIN auto-unlock without race conditions or duplicate intent dispatches.
 - `WhatsAppDirectSendEngine` and `WhatsAppCallEngine` dispatch physical touches directly onto resolved screen bounds (`getBoundsInScreen()`), supporting multi-step WhatsApp Business call bottom-sheets (`audio_call_item` -> confirmation dialog) and auto-discarding stale voice note recordings before dialing.
+- `SequentialTaskEngine` strictly enforces call duration criteria across cellular and WhatsApp VoIP calls: supports both immediate dial-time inclusion and connected-conversation timing (`includeDialTimeInCallDuration`), monitors multi-SIM states, detects early hangup, and terminates calls automatically only when configured duration criteria are legitimately satisfied.
 
 ### 10. Hardware Keystore AES-256-GCM Encryption
 - Auto-unlock PIN stored with 256-bit AES encryption managed by `AndroidKeyStore` (`HW_ENC:`).

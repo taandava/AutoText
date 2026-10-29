@@ -678,6 +678,32 @@ class AutoTextAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * Checks whether WhatsApp is currently rendering an active, answered VoIP call with conversation timer.
+         */
+        @JvmStatic
+        fun isWhatsAppCallConnected(): Boolean {
+            val inst = instance ?: return false
+            val root = inst.rootInActiveWindow ?: return false
+            return inst.whatsAppCallEngine.isVoipCallConnected(root, inst.windows)
+        }
+
+        /**
+         * Checks whether a native cellular in-call or dialer screen is actively rendered.
+         */
+        @JvmStatic
+        fun isPhoneCallUiActive(): Boolean {
+            val inst = instance ?: return false
+            val targetRoots = AccessibilityNodeUtils.getTargetRoots(inst, inst.windows)
+            for (root in targetRoots) {
+                val pkg = root.packageName?.toString().orEmpty().lowercase()
+                if (pkg.contains("incall") || pkg.contains("dialer") || pkg.contains("phone") || pkg.contains("telecom")) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        /**
          * Diagnostic tool locking the phone immediately and triggering automated unlock 4 seconds later to verify setup.
          *
          * @param context Local Android context.

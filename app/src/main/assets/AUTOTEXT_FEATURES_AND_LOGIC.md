@@ -379,13 +379,15 @@ If the device lacks `READ_CALL_LOG` permission or the provider returns no record
 ### 4. Direct Native Telephony Calls (`SequentialTaskEngine`)
 - **Automated Outgoing Calling**: Initiates calls via `android.intent.action.CALL` with multi-SIM subscription bindings.
 - **Custom Call Duration & Auto-Hangup**: Automatically hangs up active phone calls via `TelecomManager.endCall()` or accessibility action when the configured duration expires.
-- **Dial Timing Invariant**: Allows user to specify whether duration timing begins immediately upon dialing (`includeDialTimeInCallDuration = true`) or once the call connects.
+- **Dial Timing Invariant**: Allows user to specify whether duration timing begins immediately upon dialing (`includeDialTimeInCallDuration = true`) or once the call connects (`includeDialTimeInCallDuration = false`).
+- **Early Termination & Connection Detection**: Continuously monitors multi-SIM `TelephonyManager`, `TelecomManager.isInCall()`, and in-call UI. If a call disconnects or is rejected prior to connecting, duration holding is skipped and no false elapsed notifications are fired. If an active call ends early before the timer expires, the delay loop exits immediately.
 - **Sequential Multi-Recipient Pacing**: Enforces configurable inter-call delays (`delayBetweenCallsSeconds`, default: 5s) between sequential numbers.
 
 ### 5. WhatsApp VoIP Voice Calls (`WhatsAppCallEngine`)
 - Initiates voice calls inside WhatsApp conversations via the voice call action button (`com.whatsapp:id/voice_call` / `action_call`).
 - Automatically confirms WhatsApp's "Start voice call?" confirmation dialog.
 - Supports both classic VoIP layouts and modern `VoipActivityV2` layouts (`com.whatsapp:id/end_call_button` / `end_call_btn` and localized labels: `"Leave call"`, `"End call"`, `"Hang up"`).
+- **VoIP Call Duration Criteria Enforcement**: Slices VoIP duration holding into 250ms chunks, supporting both dial-time inclusion (`includeDialTimeInCallDuration = true`) and connected-conversation timing (`includeDialTimeInCallDuration = false` via active call timer detection). Automatically exits if the call ends early or fails to connect, preventing false hangup commands.
 - Retries VoIP teardown up to 3 times to ensure clean disconnection and auto-hangup matching user-configured durations.
 
 ### 6. Simulated Fake Incoming Calls (`FakeCallActivity`)
