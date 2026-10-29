@@ -495,7 +495,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             while (waited < 10000L) {
                 delay(500.milliseconds)
                 waited += 500L
-                if (km.isKeyguardLocked == false) {
+                if (!km.isKeyguardLocked) {
                     AppFileLogger.action(
                         appContext,
                         TAG,
