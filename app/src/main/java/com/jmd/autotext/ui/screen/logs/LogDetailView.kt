@@ -59,6 +59,7 @@ fun logDetailView(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     var isRetrying by remember { mutableStateOf(false) }
     var retryResult by remember { mutableStateOf<String?>(null) }
     val isSuccess = log.status.equals("SUCCESS", ignoreCase = true)
@@ -153,7 +154,7 @@ fun logDetailView(
                 ) {
                     Text("Message Snippet", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                     IconButton(onClick = {
-                        val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                         com.jmd.autotext.compat.ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("Dispatched Message", log.messageSnippet))
                         context.showAppToast("Message copied")
                     }) {
@@ -209,10 +210,10 @@ fun logDetailView(
                     )
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    if (retryResult != null) {
+                    retryResult?.let { result ->
                         Text(
-                            text = retryResult!!,
-                            color = if (retryResult!!.contains("success", ignoreCase = true) || retryResult!!.contains("sent", ignoreCase = true)) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+                            text = result,
+                            color = if (result.contains("success", ignoreCase = true) || result.contains("sent", ignoreCase = true)) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(bottom = 8.dp)
@@ -224,7 +225,6 @@ fun logDetailView(
                         onClick = {
                             isRetrying = true
                             retryResult = null
-                            val coroutineScope = CoroutineScope(Dispatchers.Main)
                             val cleanTargetPhone = PhoneNumberNormalizer.extractRawPhoneNumber(log.recipient)
                             if (log.channel.equals("SMS", ignoreCase = true)) {
                                 coroutineScope.launch {

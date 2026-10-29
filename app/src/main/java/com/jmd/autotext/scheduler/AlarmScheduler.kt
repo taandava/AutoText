@@ -39,7 +39,8 @@ import java.util.Calendar
  */
 class AlarmScheduler(private val context: Context) {
 
-    private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    private val alarmManager = (context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager)
+        ?: (context.getSystemService(AlarmManager::class.java))
 
     // --- 1-word / 2-word shortened function aliases ---
     fun schedule(task: ScheduledTask) = scheduleTask(task)
@@ -195,7 +196,9 @@ class AlarmScheduler(private val context: Context) {
         }
         try {
             com.jmd.autotext.engine.SequentialTaskEngine.getInstance(context).cancelTask(taskId)
-        } catch (_: Throwable) {}
+        } catch (t: Throwable) {
+            AppFileLogger.w(context, TAG, "Failed to cancel task #$taskId in SequentialTaskEngine: ${t.message}")
+        }
     }
 
     /**

@@ -61,7 +61,7 @@ object SmsManagerCompat {
     private fun resolveLegacyDefault(): SmsManager {
         return try {
             val method = SmsManager::class.java.getMethod("getDefault")
-            method.invoke(null) as SmsManager
+            (method.invoke(null) as? SmsManager) ?: throw IllegalStateException("Unable to resolve default SmsManager on device")
         } catch (_: Throwable) {
             throw IllegalStateException("Unable to resolve default SmsManager on device")
         }

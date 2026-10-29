@@ -17,6 +17,7 @@ package com.jmd.autotext.data.prefs
 
 import android.content.*
 import androidx.core.content.edit
+import android.util.Log
 import java.util.UUID
 
 /**
@@ -35,6 +36,7 @@ class PreferenceManager(private val context: Context) {
     }
 
     companion object {
+        private const val TAG = "PreferenceManager"
         private const val KEY_APP_LOCK_ENABLED = "app_lock_enabled"
         private const val KEY_DEFAULT_SIM = "default_sim_slot"
 
@@ -284,7 +286,11 @@ class PreferenceManager(private val context: Context) {
         }
         set(value) {
             prefs.edit { putBoolean(KEY_AUTO_UNLOCK_ENABLED, value) }
-            try { dePrefs.edit { putBoolean(KEY_AUTO_UNLOCK_ENABLED, value) } } catch (_: Exception) {}
+            try {
+                dePrefs.edit { putBoolean(KEY_AUTO_UNLOCK_ENABLED, value) }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to update device-protected auto-unlock enabled: ${e.message}")
+            }
         }
 
     var autoUnlockType: String
@@ -301,7 +307,11 @@ class PreferenceManager(private val context: Context) {
         }
         set(value) {
             prefs.edit { putString(KEY_AUTO_UNLOCK_TYPE, value) }
-            try { dePrefs.edit { putString(KEY_AUTO_UNLOCK_TYPE, value) } } catch (_: Exception) {}
+            try {
+                dePrefs.edit { putString(KEY_AUTO_UNLOCK_TYPE, value) }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to update device-protected auto-unlock type: ${e.message}")
+            }
         }
 
     var deviceUnlockPin: String

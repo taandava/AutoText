@@ -174,7 +174,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 val info = service.serviceInfo ?: return
                 info.eventTypes = if (standby) STANDBY_EVENT_MASK else ACTIVE_AUTOMATION_EVENT_MASK
                 service.serviceInfo = info
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to update serviceInfo eventTypes: ${e.message}")
+            }
         }
 
         private fun setAutomatingState(automating: Boolean) {
@@ -847,7 +849,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 Log.d(TAG, "Released unlock WakeLock")
             }
             unlockWakeLock = null
-        } catch (_: Throwable) {}
+        } catch (t: Throwable) {
+            Log.w(TAG, "Failed to release unlock wake lock: ${t.message}")
+        }
     }
 
     private val masterDisarmRunnable = Runnable {

@@ -78,9 +78,6 @@ object DailyCampaignScheduler {
             set(Calendar.MILLISECOND, 0)
         }
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-        val todayStr = dateFormat.format(now.time)
-
         if (target.before(now)) {
             // Target time has already passed today. Advance to tomorrow's window.
             // Never spontaneously trigger immediate message batches on system events / reboot.

@@ -831,8 +831,7 @@ fun templatePickerSheet(
     }
 
     // Delete Confirmation Dialog
-    if (deleteCandidate != null) {
-        val cand = deleteCandidate!!
+    deleteCandidate?.let { cand ->
         AlertDialog(
             onDismissRequest = { deleteCandidate = null },
             title = {

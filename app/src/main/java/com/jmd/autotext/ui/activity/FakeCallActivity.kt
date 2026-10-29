@@ -44,8 +44,8 @@ class FakeCallActivity : ComponentActivity() {
 
         // Acquire wake lock to ensure CPU remains active during incoming call simulation
         try {
-            val pm = getSystemService(POWER_SERVICE) as PowerManager
-            wakeLock = pm.newWakeLock(
+            val pm = getSystemService(PowerManager::class.java)
+            wakeLock = pm?.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
                 "AutoText:FakeCallWakeLock",
             )
@@ -59,8 +59,8 @@ class FakeCallActivity : ComponentActivity() {
         setTurnScreenOn(true)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        val keyguardManager = getSystemService(KEYGUARD_SERVICE) as KeyguardManager
-        keyguardManager.requestDismissKeyguard(this, null)
+        val keyguardManager = getSystemService(KeyguardManager::class.java)
+        keyguardManager?.requestDismissKeyguard(this, null)
 
         val callerName = intent.getStringExtra("caller_name") ?: "Incoming Call"
         val callerNumber = intent.getStringExtra("caller_number") ?: "+1 (555) 019-2834"
@@ -104,7 +104,7 @@ class FakeCallActivity : ComponentActivity() {
             val pattern = longArrayOf(0, 1000, 1000)
             vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("FakeCallActivity", "Error starting fake call ring/vibration", e)
         }
     }
 

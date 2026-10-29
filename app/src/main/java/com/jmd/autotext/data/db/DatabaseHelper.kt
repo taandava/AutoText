@@ -19,6 +19,7 @@ package com.jmd.autotext.data.db
 
 import android.content.*
 import android.database.Cursor
+import android.util.Log
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
@@ -333,25 +334,24 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
      * @param typeDef SQLite type and optional default value declaration (e.g. "TEXT DEFAULT ''").
      */
     private fun addColumnIfNotExists(db: SQLiteDatabase, table: String, column: String, typeDef: String) {
-        var cursor: Cursor? = null
         try {
-            cursor = db.rawQuery("PRAGMA table_info($table)", null)
-            val nameIndex = cursor.getColumnIndex("name")
             var exists = false
-            if (nameIndex != -1) {
-                while (cursor.moveToNext()) {
-                    if (cursor.getString(nameIndex).equals(column, ignoreCase = true)) {
-                        exists = true
-                        break
+            db.rawQuery("PRAGMA table_info($table)", null).use { cursor ->
+                val nameIndex = cursor.getColumnIndex("name")
+                if (nameIndex != -1) {
+                    while (cursor.moveToNext()) {
+                        if (cursor.getString(nameIndex).equals(column, ignoreCase = true)) {
+                            exists = true
+                            break
+                        }
                     }
                 }
             }
             if (!exists) {
                 db.execSQL("ALTER TABLE $table ADD COLUMN $column $typeDef")
             }
-        } catch (_: Exception) {
-        } finally {
-            cursor?.close()
+        } catch (e: Exception) {
+            Log.w("DatabaseHelper", "Failed to add column $column to $table: ${e.message}")
         }
     }
 

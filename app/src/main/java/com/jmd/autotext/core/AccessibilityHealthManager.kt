@@ -60,7 +60,9 @@ object AccessibilityHealthManager {
                     try {
                         val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "settings put system accelerometer_rotation 0"))
                         process.waitFor(500L, java.util.concurrent.TimeUnit.MILLISECONDS)
-                    } catch (_: Exception) {}
+                    } catch (e: Exception) {
+                        Log.d(TAG, "su accelerometer_rotation reset not available: ${e.message}")
+                    }
                 }
             }
         } catch (e: Exception) {

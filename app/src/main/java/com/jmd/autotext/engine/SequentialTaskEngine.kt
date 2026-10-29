@@ -1554,7 +1554,9 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     private fun executeSoundModeTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val success = try {
-            val audioManager = appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            val audioManager = appContext.getSystemService(AudioManager::class.java)
+                ?: (appContext.getSystemService(Context.AUDIO_SERVICE) as? AudioManager)
+                ?: return false
             val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
             val modeSetting = task.soundModeSetting.lowercase()
 

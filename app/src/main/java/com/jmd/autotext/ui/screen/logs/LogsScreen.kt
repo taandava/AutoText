@@ -88,13 +88,14 @@ fun logsView(
         }
     }
 
-    if (selectedLogDetail != null) {
+    val currentDetail = selectedLogDetail
+    if (currentDetail != null) {
         BackHandler {
             selectedLogDetail = null
             logs = repository.getAllLogs()
         }
         logDetailView(
-            log = selectedLogDetail!!,
+            log = currentDetail,
             repository = repository,
             onBack = {
                 selectedLogDetail = null

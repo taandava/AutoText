@@ -216,6 +216,8 @@
                 <action android:name="com.jmd.autotext.ACTION_SETUP_ALL_TASKS" />
                 <action android:name="com.jmd.autotext.ACTION_DUMP_LOGS" />
                 <action android:name="com.jmd.autotext.ACTION_DELETE_ALL_TASKS" />
+                <action android:name="com.jmd.autotext.ACTION_FIRE_CAMPAIGN" />
+                <action android:name="com.jmd.autotext.ACTION_SETUP_CAMPAIGN_CONTACTS" />
             </intent-filter>
         </receiver>
 
