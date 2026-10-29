@@ -56,16 +56,21 @@ AutoText is a modern Android application written entirely in Kotlin with Jetpack
 - Auto-pruning in `LogRepository` caps execution logs to a maximum of 5,000 entries and a 45-day retention window.
 - Opportunistically invoked in the background every 100 log writes, preventing database bloat over long-term operation.
 
-### 8. Accessibility Standby Event Throttling
-- When idle (`isAutomating == false`), `AutoTextAccessibilityService` throttles its event mask to touch and window state changes only (`STANDBY_EVENT_MASK`).
-- Discards scroll, window content, and text change events from other apps, drastically slashing background CPU and battery consumption.
-- Switches dynamically to `TYPES_ALL_MASK` only during active automation sequences.
+### 8. Accessibility Standby Event Throttling & In-Memory Pipeline Guard
+- When idle (`isAutomating == false`), `AutoTextAccessibilityService` throttles event consumption in memory, discarding background window content and scroll events from other applications in sub-microsecond time.
+- Avoids dynamic IPC `serviceInfo` reconfiguration calls, preserving OS framework binder stability and preventing unbinding on Android 15/16 and vendor firmware (e.g., Vivo FuntouchOS / OriginOS).
+- Automatically lifts throttling during active task execution to perform full UI node traversal and button targeting.
 
-### 9. Hardware Keystore AES-256-GCM Encryption
+### 9. Synchronous Screen Wake & Keyguard Dismiss Guard
+- `SequentialTaskEngine.ensureDeviceAwakeAndUnlocked` verifies interactive display state and keyguard status before dispatching WhatsApp, Status, Call, or VoIP tasks.
+- Integrates with `AutomationLauncherActivity` in `EXTRA_WAKE_ONLY` mode to wake display, dismiss keyguard, and trigger PIN auto-unlock without race conditions or duplicate intent dispatches.
+- `WhatsAppDirectSendEngine` dispatches physical touches directly onto resolved send button screen bounds (`getBoundsInScreen()`), followed by continuous bounds re-tapping until draft clearance is confirmed.
+
+### 10. Hardware Keystore AES-256-GCM Encryption
 - Auto-unlock PIN stored with 256-bit AES encryption managed by `AndroidKeyStore` (`HW_ENC:`).
 - Dual-tier Direct Boot fallback (`ENC:`) stored in device-protected storage (`dePrefs`) ensures keyguard auto-unlock functions reliably even across cold reboots before first user unlock.
 
-### 10. Responsive Dashboard Header Layout
+### 11. Responsive Dashboard Header Layout
 - Compact, icon-only action buttons for **New Task** (`+`) and **Emergency Stop** (`🛑`).
 - Responsive header grid gracefully accommodates all 7 real-time system health indicators without clipping across varying screen sizes.
 

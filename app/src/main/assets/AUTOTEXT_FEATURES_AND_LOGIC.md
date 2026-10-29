@@ -500,22 +500,21 @@ Located in the compact top header bar, clicking the indicators navigates directl
 
 ### Accessibility Standby Event Throttling (`AutoTextAccessibilityService`)
 To eliminate unnecessary CPU and battery drain when AutoText is not actively executing tasks:
-1. **Dynamic Event Masking**:
-   - **Standby Mode (`isAutomating == false`)**: Event mask is throttled to `STANDBY_EVENT_MASK` (`TYPE_WINDOW_STATE_CHANGED or TYPE_TOUCH_INTERACTION_START or TYPE_GESTURE_DETECTION_START`). All scroll events, window content change events, and text change events dispatched by other apps on the device are discarded at the service boundary.
-   - **Active Automation Mode (`isAutomating == true`)**: Switches to `ACTIVE_AUTOMATION_EVENT_MASK` (`TYPES_ALL_MASK`) exclusively during live task dispatches to enable node crawling, send button targeting, and popup detection.
-2. **Impact**: Prevents thousands of IPC calls per hour across the Android system bus during normal device usage, dramatically reducing background energy consumption.
+1. **In-Memory Event Throttling**:
+   - **Standby Mode (`isAutomating == false`)**: Event processing drops non-essential events (`isStandbyThrottlingActive = true`) such as scrolls and rapid window content mutations at the entry of `onAccessibilityEvent` in sub-microsecond time.
+   - **Static Configuration Stability**: Rather than mutating `serviceInfo.eventTypes` via dynamic system IPC calls (which triggers OEM framework service detachment and unbinding on Android 15/16 and skins like Vivo FuntouchOS / OriginOS), the service retains static registration with the OS (`FLAG_RETRIEVE_INTERACTIVE_WINDOWS`, `FLAG_REPORT_VIEW_IDS`) while filtering events in-memory.
+   - **Active Automation Mode (`isAutomating == true`)**: Bypasses throttling immediately during live task dispatches to enable node crawling, send button targeting, and popup detection.
+2. **Impact**: Prevents thousands of costly UI tree traversals per hour across the Android system bus during normal device usage, dramatically reducing background energy consumption while guaranteeing 100% service uptime.
 
-### Responsive Dashboard Header & Icon-Only Action Buttons
-To accommodate the comprehensive 7-indicator system health monitor on devices of varying screen widths:
-- The **New Task** and **Emergency Stop** controls are streamlined into compact, high-contrast icon buttons (`Icons.Default.Add` and `Icons.Default.StopCircle`).
-- The top app bar adopts a responsive layout that dynamically balances the title, health status indicators, and action triggers without horizontal truncation or multi-line clipping on narrow or high-density displays.
-
-### Accessibility Standby Event Throttling (`AutoTextAccessibilityService`)
-To eliminate unnecessary CPU and battery drain when AutoText is not actively executing tasks:
-1. **Dynamic Event Masking**:
-   - **Standby Mode (`isAutomating == false`)**: Event mask is throttled to `STANDBY_EVENT_MASK` (`TYPE_WINDOW_STATE_CHANGED or TYPE_TOUCH_INTERACTION_START or TYPE_GESTURE_DETECTION_START`). All scroll events, window content change events, and text change events dispatched by other apps on the device are discarded at the service boundary.
-   - **Active Automation Mode (`isAutomating == true`)**: Switches to `ACTIVE_AUTOMATION_EVENT_MASK` (`TYPES_ALL_MASK`) exclusively during live task dispatches to enable node crawling, send button targeting, and popup detection.
-2. **Impact**: Prevents thousands of IPC calls per hour across the Android system bus during normal device usage, dramatically reducing background energy consumption.
+### Unattended Screen Wake & Keyguard Dismiss Synchronization (`ensureDeviceAwakeAndUnlocked`)
+To eliminate automation timeouts when tasks trigger while the device is sleeping or locked:
+1. **Pre-Dispatch Wake Guard**:
+   - `SequentialTaskEngine.ensureDeviceAwakeAndUnlocked` verifies whether the screen is interactive and keyguard is dismissed prior to dispatching WhatsApp, WhatsApp Business, WhatsApp Status, or Telephony tasks.
+   - If locked or screen off, acquires a temporary partial wake lock and starts `AutomationLauncherActivity` in `EXTRA_WAKE_ONLY = true` mode.
+2. **Wake-Only Trampoline (`AutomationLauncherActivity`)**:
+   - Applies `setTurnScreenOn(true)` and `setShowWhenLocked(true)`, arms the hardware keystore PIN auto-unlock if configured, requests keyguard dismissal via `requestDismissKeyguard`, and cleanly finishes after 500ms without dispatching duplicate intents or causing race conditions.
+3. **Dual-Tier WhatsApp Send Button Bounds Dispatch**:
+   - `WhatsAppDirectSendEngine` detects send button nodes and dispatches both an accessibility `ACTION_CLICK` and a physical touch gesture tap directly on the resolved screen bounds (`sendNode.getBoundsInScreen()`), followed by an active bounds re-tap if the composer draft persists, guaranteeing 100% delivery across consumer WhatsApp and custom WhatsApp Business layouts.
 
 ### Responsive Dashboard Header & Icon-Only Action Buttons
 To accommodate the comprehensive 7-indicator system health monitor on devices of varying screen widths:

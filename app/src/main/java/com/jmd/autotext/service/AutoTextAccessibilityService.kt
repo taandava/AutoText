@@ -163,20 +163,24 @@ class AutoTextAccessibilityService : AccessibilityService() {
 
         private const val STANDBY_EVENT_MASK =
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
+            AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or
             AccessibilityEvent.TYPE_TOUCH_INTERACTION_START or
             AccessibilityEvent.TYPE_GESTURE_DETECTION_START
 
-        private const val ACTIVE_AUTOMATION_EVENT_MASK = AccessibilityEvent.TYPES_ALL_MASK
+        private const val ACTIVE_AUTOMATION_EVENT_MASK =
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
+            AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or
+            AccessibilityEvent.TYPE_VIEW_CLICKED or
+            AccessibilityEvent.TYPE_VIEW_SCROLLED or
+            AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED or
+            AccessibilityEvent.TYPE_TOUCH_INTERACTION_START or
+            AccessibilityEvent.TYPE_GESTURE_DETECTION_START
+
+        @Volatile
+        private var isStandbyThrottlingActive = true
 
         fun setStandbyEventMask(standby: Boolean) {
-            try {
-                val service = getInstance() ?: return
-                val info = service.serviceInfo ?: return
-                info.eventTypes = if (standby) STANDBY_EVENT_MASK else ACTIVE_AUTOMATION_EVENT_MASK
-                service.serviceInfo = info
-            } catch (e: Exception) {
-                Log.w(TAG, "Failed to update serviceInfo eventTypes: ${e.message}")
-            }
+            isStandbyThrottlingActive = standby
         }
 
         private fun setAutomatingState(automating: Boolean) {
@@ -1132,7 +1136,11 @@ class AutoTextAccessibilityService : AccessibilityService() {
         try {
             val info = serviceInfo ?: android.accessibilityservice.AccessibilityServiceInfo()
             info.packageNames = null
-            info.eventTypes = if (isAutomating) ACTIVE_AUTOMATION_EVENT_MASK else STANDBY_EVENT_MASK
+            info.flags = info.flags or
+                android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
+                android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
+                android.accessibilityservice.AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
+            info.eventTypes = ACTIVE_AUTOMATION_EVENT_MASK
             serviceInfo = info
         } catch (_: Exception) {}
         isServiceRunning = true
@@ -1161,7 +1169,11 @@ class AutoTextAccessibilityService : AccessibilityService() {
         try {
             val info = serviceInfo ?: android.accessibilityservice.AccessibilityServiceInfo()
             info.packageNames = null
-            info.eventTypes = if (isAutomating) ACTIVE_AUTOMATION_EVENT_MASK else STANDBY_EVENT_MASK
+            info.flags = info.flags or
+                android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
+                android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
+                android.accessibilityservice.AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
+            info.eventTypes = ACTIVE_AUTOMATION_EVENT_MASK
             serviceInfo = info
         } catch (_: Exception) {}
         AccessibilityHealthManager.recordHeartbeat()
@@ -1240,6 +1252,15 @@ class AutoTextAccessibilityService : AccessibilityService() {
             }
 
             val eventType = event.eventType
+
+            // Standby Event Throttling: When idle and not automating or unlocking, filter non-interaction events
+            if (isStandbyThrottlingActive && !isAutomating && !isUnlockPending) {
+                if (eventType != AccessibilityEvent.TYPE_TOUCH_INTERACTION_START &&
+                    eventType != AccessibilityEvent.TYPE_GESTURE_DETECTION_START &&
+                    eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+                    return
+                }
+            }
 
             // 0a. Detect Genuine Human Touch Interactions without false scroll/layout flags
             val isGenuineUserTouch = when (eventType) {

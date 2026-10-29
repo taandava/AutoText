@@ -304,6 +304,12 @@ class DailyCampaignWorker(
                         AutoTextAccessibilityService.clearPending()
                         AutoTextAccessibilityService.markDispatchPending()
 
+                        SequentialTaskEngine.getInstance(applicationContext).ensureDeviceAwakeAndUnlocked(
+                            taskId = config.id,
+                            channel = waChannel,
+                            targetRecipient = item.phone
+                        )
+
                         val dispatched = waSender?.send(
                             taskId = config.id,
                             channel = waChannel,

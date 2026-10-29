@@ -84,6 +84,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         fun setupAllTasks(
             context: Context,
             recipients: List<String> = listOf("9769602020", "9930604542"),
+            message: String = "jai mata di",
             staggerSeconds: Int = 10,
             repeatIntervalSeconds: Int = 10,
             executeFirstImmediately: Boolean = false,
@@ -117,7 +118,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                     channel = channel,
                     recipients = targetRecipients,
                     recipientNames = targetRecipients,
-                    messageText = "AutoText test ${channel.displayName} message at {time}",
+                    messageText = message.ifBlank { "jai mata di" },
                     triggerTimeMillis = trigger,
                     recurrence = RecurrenceType.REPEAT_SECONDS,
                     customIntervalMinutes = repeatIntervalSeconds,
@@ -290,6 +291,9 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             val recipientsParam = intent.getStringArrayExtra("recipients")?.toList()
                 ?: intent.getStringExtra("recipients")?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
                 ?: listOf("9769602020", "9930604542")
+            val messageParam = intent.getStringExtra("message")?.ifBlank { "jai mata di" }
+                ?: intent.getStringExtra("messageText")?.ifBlank { "jai mata di" }
+                ?: "jai mata di"
             val staggerSec = intent.getIntExtra("staggerSeconds", 10)
             val repeatIntervalSec = intent.getIntExtra("repeatIntervalSeconds", 10)
             val executeImmediately = intent.getBooleanExtra("executeImmediately", false)
@@ -300,6 +304,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             setupAllTasks(
                 context = context,
                 recipients = recipientsParam,
+                message = messageParam,
                 staggerSeconds = staggerSec,
                 repeatIntervalSeconds = repeatIntervalSec,
                 executeFirstImmediately = executeImmediately,

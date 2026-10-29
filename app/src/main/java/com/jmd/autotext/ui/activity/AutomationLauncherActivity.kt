@@ -51,6 +51,7 @@ class AutomationLauncherActivity : Activity() {
         const val EXTRA_IS_TEST_UNLOCK = "extra_is_test_unlock"
         const val EXTRA_PIN = "extra_pin"
         const val EXTRA_MEDIA_URI = "extra_media_uri"
+        const val EXTRA_WAKE_ONLY = "extra_wake_only"
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -120,6 +121,30 @@ class AutomationLauncherActivity : Activity() {
         val recipient = intent.getStringExtra(EXTRA_RECIPIENT) ?: ""
         val message = intent.getStringExtra(EXTRA_MESSAGE) ?: ""
         val mediaUri = intent.getStringExtra(EXTRA_MEDIA_URI) ?: ""
+
+        val isWakeOnly = intent.getBooleanExtra(EXTRA_WAKE_ONLY, false)
+        if (isWakeOnly) {
+            val isLockedNow = keyguardManager.isKeyguardLocked || keyguardManager.isDeviceLocked ||
+                    AutoTextAccessibilityService.isKeyguardWindowShowing()
+            AppFileLogger.action(this, TAG, "Wake-only trampoline invoked. Locked: $isLockedNow, Task: #$taskId, Channel: $channelStr")
+
+            if (isLockedNow && prefs.isAutoUnlockEnabled) {
+                val pinToUse = if (prefs.autoUnlockType != "SWIPE") prefs.deviceUnlockPin else ""
+                AutoTextAccessibilityService.armAutoUnlock(
+                    pin = pinToUse,
+                    shouldRelockAfterSend = false,
+                )
+            }
+            keyguardManager.requestDismissKeyguard(this, null)
+            handler.postDelayed({
+                runCatching {
+                    wakeLock?.release()
+                    wakeLock = null
+                }
+                finish()
+            }, 500L)
+            return
+        }
 
         val shouldRelock = intent.getBooleanExtra(EXTRA_RELOCK, prefs.isAutoLockAfterSendEnabled)
         val isLocked = keyguardManager.isKeyguardLocked || keyguardManager.isDeviceLocked ||

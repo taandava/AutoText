@@ -118,7 +118,16 @@ class WhatsAppDirectSendEngine(
                     AppFileLogger.action(service, loggerTag, "WhatsApp composer draft cleared; UI submission confirmed.")
                     onSuccess()
                 } else if (sendAttemptCount <= 25) {
-                    if (sendAttemptCount % 2 == 0) {
+                    val sendBtn = findSendButton(root, pkg, windows, inputNode)
+                    if (sendBtn != null) {
+                        val sRect = Rect()
+                        sendBtn.getBoundsInScreen(sRect)
+                        if (sRect.width() > 0 && sRect.height() > 0) {
+                            AccessibilityNodeUtils.dispatchPhysicalTap(service, sRect.centerX().toFloat(), sRect.centerY().toFloat())
+                        } else {
+                            dispatchSendCoordinateFallback(inputNode, service, loggerTag)
+                        }
+                    } else if (sendAttemptCount % 2 == 0) {
                         dispatchSendCoordinateFallback(inputNode, service, loggerTag)
                     }
                     onRetry(500L)
@@ -170,6 +179,13 @@ class WhatsAppDirectSendEngine(
 
                 val a11yClicked = sendNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                 Log.d(loggerTag, "Tier 1 Send button A11y ACTION_CLICK result: $a11yClicked (bounds=$rect)")
+
+                if (hasBounds) {
+                    val tapX = rect.centerX().toFloat()
+                    val tapY = rect.centerY().toFloat()
+                    AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                    Log.d(loggerTag, "Dispatched physical gesture tap on send bounds at ($tapX, $tapY)")
+                }
 
                 if (!a11yClicked) {
                     Log.d(loggerTag, "Tier 1 A11y ACTION_CLICK returned false; escalating to Tier 2 & 3...")

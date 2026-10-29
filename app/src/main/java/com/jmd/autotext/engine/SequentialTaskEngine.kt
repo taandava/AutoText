@@ -436,6 +436,81 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         return success
     }
 
+    suspend fun ensureDeviceAwakeAndUnlocked(
+        task: ScheduledTask,
+        targetRecipient: String = ""
+    ): Boolean = ensureDeviceAwakeAndUnlocked(task.id, task.channel, targetRecipient)
+
+    /**
+     * Verifies whether the screen is interactive and keyguard is unlocked.
+     * If the screen is off or keyguard is locked, turns on the display and initiates
+     * keyguard dismiss or automated PIN entry via [AutomationLauncherActivity].
+     */
+    suspend fun ensureDeviceAwakeAndUnlocked(
+        taskId: Long,
+        channel: ChannelType,
+        targetRecipient: String = ""
+    ): Boolean {
+        val km = appContext.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
+        val pm = appContext.getSystemService(Context.POWER_SERVICE) as? PowerManager
+        val isScreenOn = pm?.isInteractive == true
+        val isLocked = (km?.isKeyguardLocked == true) || (km?.isDeviceLocked == true) || (!isScreenOn)
+
+        if (!isLocked) return true
+
+        AppFileLogger.action(
+            appContext,
+            TAG,
+            "Device is locked/screen off before executing ${channel.displayName} for Task #$taskId. Initiating screen wake & keyguard unlock..."
+        )
+
+        try {
+            val wakeLock = pm?.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK,
+                "AutoText:ExecutionWakeLock",
+            )
+            wakeLock?.acquire(45000L)
+        } catch (e: Exception) {
+            Log.w(TAG, "ExecutionWakeLock acquire error: ${e.message}")
+        }
+
+        val prefs = PreferenceManager(appContext)
+        val launchIntent = Intent(appContext, AutomationLauncherActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(AutomationLauncherActivity.EXTRA_TASK_ID, taskId)
+            putExtra(AutomationLauncherActivity.EXTRA_CHANNEL, channel.name)
+            putExtra(AutomationLauncherActivity.EXTRA_RECIPIENT, targetRecipient)
+            putExtra(AutomationLauncherActivity.EXTRA_WAKE_ONLY, true)
+        }
+
+        if (prefs.isAutoUnlockEnabled && km?.isKeyguardLocked == true) {
+            val pin = if (prefs.autoUnlockType != "SWIPE") prefs.deviceUnlockPin else ""
+            AutoTextAccessibilityService.armAutoUnlock(
+                pin = pin,
+                shouldRelockAfterSend = prefs.isAutoLockAfterSendEnabled
+            )
+            appContext.startActivity(launchIntent)
+
+            var waited = 0L
+            while (waited < 10000L) {
+                delay(500.milliseconds)
+                waited += 500L
+                if (km.isKeyguardLocked == false) {
+                    AppFileLogger.action(
+                        appContext,
+                        TAG,
+                        "Device unlocked successfully before executing ${channel.displayName} for Task #$taskId."
+                    )
+                    break
+                }
+            }
+        } else {
+            appContext.startActivity(launchIntent)
+            delay(1200.milliseconds)
+        }
+        return true
+    }
+
     private suspend fun executeWhatsAppTaskWithRetries(
         repository: AppRepository,
         task: ScheduledTask,
@@ -528,6 +603,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 }
 
                 AccessibilityHealthManager.ensureServiceAlive(appContext)
+                ensureDeviceAwakeAndUnlocked(task, task.recipients.firstOrNull() ?: "")
                 delay(300.milliseconds)
 
                 val waSender = WhatsAppAutomationSender(appContext)
@@ -878,56 +954,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
             val success = try {
                 // 1. Lockscreen Wake & Keyguard Dismiss Guard
-                val km = appContext.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
-                val pm = appContext.getSystemService(Context.POWER_SERVICE) as? PowerManager
-                val isScreenOn = pm?.isInteractive == true
-                val isLocked = (km?.isKeyguardLocked == true) || (km?.isDeviceLocked == true) || (!isScreenOn)
-
-                if (isLocked) {
-                    AppFileLogger.action(appContext, TAG, "Device is locked/screen off before placing call to $cleanPhone. Initiating screen wake & keyguard unlock...")
-                    try {
-                        val callWakeLock = pm?.newWakeLock(
-                            PowerManager.PARTIAL_WAKE_LOCK,
-                            "AutoText:CallExecutionWakeLock",
-                        )
-                        callWakeLock?.acquire(45000L)
-                    } catch (e: Exception) {
-                        Log.w(TAG, "CallExecutionWakeLock: ${e.message}")
-                    }
-
-                    val prefs = PreferenceManager(appContext)
-                    if (prefs.isAutoUnlockEnabled && km?.isKeyguardLocked == true) {
-                        val pin = if (prefs.autoUnlockType != "SWIPE") prefs.deviceUnlockPin else ""
-                        AutoTextAccessibilityService.armAutoUnlock(pin = pin, shouldRelockAfterSend = prefs.isAutoLockAfterSendEnabled)
-                        val launchIntent = Intent(appContext, AutomationLauncherActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            putExtra(AutomationLauncherActivity.EXTRA_TASK_ID, task.id)
-                            putExtra(AutomationLauncherActivity.EXTRA_CHANNEL, ChannelType.CALL.name)
-                            putExtra(AutomationLauncherActivity.EXTRA_RECIPIENT, cleanPhone)
-                        }
-                        appContext.startActivity(launchIntent)
-
-                        // Await lockscreen clearance up to 10 seconds
-                        var waited = 0L
-                        while (waited < 10000L) {
-                            delay(500.milliseconds)
-                            waited += 500L
-                            if (!km.isKeyguardLocked) {
-                                AppFileLogger.action(appContext, TAG, "Device unlocked successfully before placing call to $cleanPhone.")
-                                break
-                            }
-                        }
-                    } else {
-                        val launchIntent = Intent(appContext, AutomationLauncherActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            putExtra(AutomationLauncherActivity.EXTRA_TASK_ID, task.id)
-                            putExtra(AutomationLauncherActivity.EXTRA_CHANNEL, ChannelType.CALL.name)
-                            putExtra(AutomationLauncherActivity.EXTRA_RECIPIENT, cleanPhone)
-                        }
-                        appContext.startActivity(launchIntent)
-                        delay(1200.milliseconds)
-                    }
-                }
+                ensureDeviceAwakeAndUnlocked(task, cleanPhone)
 
                 val telecomManager = appContext.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
                 val uri = Uri.fromParts("tel", cleanPhone, null)
@@ -1301,55 +1328,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
             val isLast = (index + 1) == rawRecipients.size
             val success = try {
-                val km = appContext.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
-                val pm = appContext.getSystemService(Context.POWER_SERVICE) as? PowerManager
-                val isScreenOn = pm?.isInteractive == true
-                val isLocked = (km?.isKeyguardLocked == true) || (km?.isDeviceLocked == true) || (!isScreenOn)
-
-                if (isLocked) {
-                    AppFileLogger.action(appContext, TAG, "Device is locked/screen off before placing WhatsApp call to $cleanPhone. Initiating wake & unlock...")
-                    try {
-                        val callWakeLock = pm?.newWakeLock(
-                            PowerManager.PARTIAL_WAKE_LOCK,
-                            "AutoText:WACallExecutionWakeLock",
-                        )
-                        callWakeLock?.acquire(45000L)
-                    } catch (e: Exception) {
-                        Log.w(TAG, "WACallExecutionWakeLock: ${e.message}")
-                    }
-
-                    val prefs = PreferenceManager(appContext)
-                    if (prefs.isAutoUnlockEnabled && km?.isKeyguardLocked == true) {
-                        val pin = if (prefs.autoUnlockType != "SWIPE") prefs.deviceUnlockPin else ""
-                        AutoTextAccessibilityService.armAutoUnlock(pin = pin, shouldRelockAfterSend = prefs.isAutoLockAfterSendEnabled)
-                        val launchIntent = Intent(appContext, AutomationLauncherActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            putExtra(AutomationLauncherActivity.EXTRA_TASK_ID, task.id)
-                            putExtra(AutomationLauncherActivity.EXTRA_CHANNEL, task.channel.name)
-                            putExtra(AutomationLauncherActivity.EXTRA_RECIPIENT, cleanPhone)
-                        }
-                        appContext.startActivity(launchIntent)
-
-                        var waited = 0L
-                        while (waited < 10000L) {
-                            delay(500.milliseconds)
-                            waited += 500L
-                            if (!km.isKeyguardLocked) {
-                                AppFileLogger.action(appContext, TAG, "Device unlocked successfully before placing WhatsApp call to $cleanPhone.")
-                                break
-                            }
-                        }
-                    } else {
-                        val launchIntent = Intent(appContext, AutomationLauncherActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            putExtra(AutomationLauncherActivity.EXTRA_TASK_ID, task.id)
-                            putExtra(AutomationLauncherActivity.EXTRA_CHANNEL, task.channel.name)
-                            putExtra(AutomationLauncherActivity.EXTRA_RECIPIENT, cleanPhone)
-                        }
-                        appContext.startActivity(launchIntent)
-                        delay(1200.milliseconds)
-                    }
-                }
+                ensureDeviceAwakeAndUnlocked(task, cleanPhone)
 
                 val dispatched = WhatsAppIntentDispatcher.launchWhatsAppCall(
                     context = appContext,
