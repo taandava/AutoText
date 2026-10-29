@@ -10,6 +10,7 @@ local.properties
 *.keystore
 keystore.properties
 *.apk
+!app-release.apk
 app/src/main/assets/project_source.zip
 
 # IntelliJ "Inspect Code" report exports (generated artefacts in root or audit - never commit these)
