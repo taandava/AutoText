@@ -391,4 +391,48 @@ The **Privacy & App Visibility** interface (`PrivacySettingsScreen.kt`) provides
 
 ---
 
+## 10. Standardized Input Box, Dropdown & Stepper Alignment Architecture
+
+### 10.1 Uniform Sizing Invariants
+To prevent vertical misalignment, jumpy UI bounds, and layout shifts when forms transition between empty and populated states, AutoText enforces mathematical sizing uniformity across all form controls:
+
+1. **Fixed 46dp Single-Line Container Height**:
+   - Both `glassInputField` (when `singleLine = true`) and `glassDropdownField` enforce an exact container height of **46.dp**.
+   - Multiline text fields use `Modifier.defaultMinSize(minHeight = 46.dp)` with top-aligned content.
+2. **Elimination of Bounding Box Expansion**:
+   - Internal icon buttons (clear text `Icons.Default.Clear`, password toggle `Icons.Default.Visibility`, and trailing action icons) omit `minimumInteractiveComponentSize()`, which in Material 3 would dynamically expand clickable boxes to 48dp+ and cause input boxes to unexpectedly stretch vertically upon typing.
+   - Internal touch targets use `.size(28.dp).clip(CircleShape)` centered within the 46dp parent container.
+3. **Identical Label Hierarchy & Font Metrics**:
+   - Both `glassInputField` and `glassDropdownField` render identical top-aligned labels:
+     ```kotlin
+     Text(
+         text = label,
+         fontSize = 12.5.sp,
+         fontWeight = FontWeight.SemiBold,
+         color = if (isFocused) effectiveAccent else MaterialTheme.colorScheme.onSurfaceVariant,
+         modifier = Modifier.padding(start = 2.dp, bottom = 2.dp)
+     )
+     ```
+   - When placed side-by-side in a `Row`, the labels align on the top baseline, and the 46dp input/dropdown boxes align directly underneath with pixel perfection.
+4. **Standardized Dropdown Selector (`glassDropdownField`)**:
+   - Provides a glassmorphic selection field matching the exact shape (`AppDesignTokens.ShapeSmall` / 8dp), border stroke (`1.dp`), and animated container colors of `glassInputField`.
+   - Displays the current selection formatted via `displayValue` with an animated dropdown arrow icon (`Icons.Default.ArrowDropDown`) and contextual Material 3 menu.
+
+### 10.2 Sibling Row Alignment Patterns
+When placing inputs alongside buttons or steppers in horizontal rows:
+- **Input + Dropdown (Both Labeled)**:
+  - Parent container: `Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top)`
+  - Left child: `glassInputField(..., modifier = Modifier.weight(1f))`
+  - Right child: `glassDropdownField(..., modifier = Modifier.weight(1.2f))`
+- **Input + Action Button (`glassButton`)**:
+  - Parent container: `Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom)`
+  - Left child: `glassInputField(label = "...", modifier = Modifier.weight(1f))`
+  - Right child: `glassButton(..., modifier = Modifier.height(46.dp))`
+  - By using `Alignment.Bottom`, the 46dp button aligns with the 46dp input box below the top label without ad-hoc top padding.
+- **Input + Stepper Controls (`[-] [+]`)**:
+  - Parent container: `Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp))`
+  - Stepper container: `Row(modifier = Modifier.height(46.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp))`
+  - Stepper buttons: `Box(modifier = Modifier.size(36.dp).clip(AppDesignTokens.ShapeSmall)...)`
+
+---
 *AutoText Design System v2.6 • Material 3 Expressive • 100% Native Jetpack Compose*

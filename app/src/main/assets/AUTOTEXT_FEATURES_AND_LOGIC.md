@@ -699,4 +699,18 @@ adb shell am broadcast -a com.jmd.autotext.ACTION_DELETE_ALL_TASKS -n com.jmd.au
 ```
 
 ---
+
+## 13. UI Component Standardization & Baseline Alignment Architecture
+
+### Form Input & Dropdown Standardization
+1. **Mathematical Height Invariant (46dp)**:
+   - All single-line text input fields (`glassInputField`) and dropdown selectors (`glassDropdownField`) share a strictly enforced container height of **46.dp**.
+   - Inner clear buttons (`Icons.Default.Clear`), visibility toggles, and trailing icons use `.size(28.dp).clip(CircleShape)` without `minimumInteractiveComponentSize()`, preventing dynamic height jumps when input text transitions between empty and populated states.
+2. **Unified Label Geometry**:
+   - Both input fields and dropdowns share identical label typography (`12.5.sp`, `FontWeight.SemiBold`, `start = 2.dp, bottom = 2.dp`), ensuring that two side-by-side fields align perfectly on their top text baselines and bottom container boundaries.
+3. **Structured Sibling Row Alignment**:
+   - When placing input boxes next to action buttons (`glassButton`) or numeric steppers (`[-] [+]`), parent containers use `verticalAlignment = Alignment.Bottom`, and sibling buttons/steppers explicitly set `.height(46.dp)`.
+   - This eliminates ad-hoc vertical padding compensations and guarantees consistent baseline alignment across all screen sizes and font scaling factors.
+
+---
 *AutoText Engine v2.6 • Master Technical Blueprint & Architecture Specification • 100% On-Device Sovereignty*

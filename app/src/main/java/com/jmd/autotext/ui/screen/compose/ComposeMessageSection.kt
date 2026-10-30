@@ -282,27 +282,26 @@ fun composeRecipientsAndMessageCard(
         // Manual Recipient Entry with Add Action
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Bottom
         ) {
-            Box(modifier = Modifier.weight(1f)) {
-                glassInputField(
-                    value = recipientsInput,
-                    onValueChange = onRecipientsInputChange,
-                    label = "Add Recipient Manually",
-                    placeholder = "Enter phone number...",
-                    leadingIcon = Icons.Default.Phone,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    accentColor = MaterialTheme.colorScheme.primary
-                )
-            }
-            Spacer(modifier = Modifier.width(6.dp))
+            glassInputField(
+                value = recipientsInput,
+                onValueChange = onRecipientsInputChange,
+                label = "Add Recipient Manually",
+                placeholder = "Enter phone number...",
+                leadingIcon = Icons.Default.Phone,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                accentColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             glassButton(
                 text = "Add",
                 onClick = onAddManualRecipient,
                 variant = GlassButtonVariant.PRIMARY,
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 7.dp),
+                contentPadding = PaddingValues(horizontal = 14.dp),
                 shape = AppDesignTokens.ShapeSmall,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.height(46.dp)
             )
         }
 

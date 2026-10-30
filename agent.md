@@ -108,6 +108,18 @@ During comprehensive codebase auditing and live device testing, several critical
   5. **Sensitive Content Masking**: Added `maskSensitiveText` and `maskPhoneNumber` in `PrivacyManager`, `ClipDescription.EXTRA_IS_SENSITIVE` on Android 13+, and `NotificationCompat.VISIBILITY_PRIVATE`.
   6. **Unit Test Verification**: Added 7 comprehensive privacy tests to `AutoTextComprehensiveTest` bringing the test suite to 68/68 passing (100%).
 
+### Defect 10: Form Input Box, Dropdown & Stepper Alignment Inconsistencies
+- **Symptom**: On ComposeTaskScreen, the Repeat Interval Configuration row displayed an unaligned dropdown selector next to the interval number input; the dropdown had no label, used an ad-hoc 52dp height, and misaligned vertically against the labeled interval box. Similarly, buttons and steppers on other screens suffered from uneven vertical offsets.
+- **Root Cause**:
+  1. glassInputField lacked an explicit fixed height for single-line inputs and included minimumInteractiveComponentSize() on internal clear and password toggle buttons. In Material 3, minimumInteractiveComponentSize() enforces 48dp minimum bounds, causing the input box to dynamically enlarge from ~34dp to ~62dp whenever text was typed and the clear button appeared.
+  2. The unit selector in ComposeScheduleCard.kt was an ad-hoc custom Row with no label, a hardcoded 52dp height, and a mismatched corner radius (10dp vs 8dp).
+  3. Parent rows mixed erticalAlignment = Alignment.CenterVertically with hardcoded padding(top = 16.dp) or padding(top = 8.dp) to compensate for input labels, leading to misalignment across different screen sizes and font scales.
+- **Remediation**:
+  - Enforced a strict **46dp height** on single-line glassInputField containers (if (singleLine) Modifier.height(46.dp) else Modifier.defaultMinSize(minHeight = 46.dp)).
+  - Removed minimumInteractiveComponentSize() from internal icon buttons in glassInputField, keeping input boxes strictly at 46dp regardless of content or state.
+  - Created a standardized, reusable glassDropdownField component in Pickers.kt matching the exact label metrics, 46dp container height, AppDesignTokens.ShapeSmall (8dp) shape, and borders of glassInputField.
+  - Standardized sibling alignment rules: applied erticalAlignment = Alignment.Top for side-by-side labeled fields, and erticalAlignment = Alignment.Bottom with Modifier.height(46.dp) for input fields placed alongside action buttons (glassButton) or stepper controls across ComposeScheduleCard, ComposeCallSection, ComposeMessageSection, AutoReplyCards, DailyCampaignCards, DailyCampaignDialogs, and ContactSequenceStudio.
+
 ---
 
 ## 3. Live Hardware Verification Matrix (iQOO I2401, Android 16)

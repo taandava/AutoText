@@ -422,7 +422,11 @@ fun contactSequenceStudio(
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
                         glassInputField(
                             value = contactName,
                             onValueChange = { contactName = it },

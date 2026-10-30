@@ -409,27 +409,26 @@ fun composePhoneCallCard(
         // Manual Number Entry (Single or comma/newline-separated multiple numbers)
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Bottom
         ) {
-            Box(modifier = Modifier.weight(1f)) {
-                glassInputField(
-                    value = recipientsInput,
-                    onValueChange = onRecipientsInputChange,
-                    label = "Add Target Phone Number(s)",
-                    placeholder = "Enter number(s) e.g. +91 9876..., 91234...",
-                    leadingIcon = Icons.Default.Phone,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    accentColor = MaterialTheme.colorScheme.primary
-                )
-            }
-            Spacer(modifier = Modifier.width(6.dp))
+            glassInputField(
+                value = recipientsInput,
+                onValueChange = onRecipientsInputChange,
+                label = "Add Target Phone Number(s)",
+                placeholder = "Enter number(s) e.g. +91 9876..., 91234...",
+                leadingIcon = Icons.Default.Phone,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                accentColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             glassButton(
                 text = "Add Number",
                 onClick = onAddManualRecipient,
                 variant = GlassButtonVariant.PRIMARY,
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 7.dp),
+                contentPadding = PaddingValues(horizontal = 14.dp),
                 shape = AppDesignTokens.ShapeSmall,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.height(46.dp)
             )
         }
 

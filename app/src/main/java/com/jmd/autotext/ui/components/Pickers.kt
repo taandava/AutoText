@@ -336,6 +336,7 @@ fun glassInputField(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .then(if (singleLine) Modifier.height(46.dp) else Modifier.defaultMinSize(minHeight = 46.dp))
                 .clip(AppDesignTokens.ShapeSmall)
                 .background(animatedBgColor)
                 .border(
@@ -343,7 +344,8 @@ fun glassInputField(
                     color = animatedBorderColor,
                     shape = AppDesignTokens.ShapeSmall
                 )
-                .padding(horizontal = 9.dp, vertical = 7.dp)
+                .padding(horizontal = 10.dp, vertical = if (singleLine) 0.dp else 8.dp),
+            contentAlignment = if (singleLine) Alignment.CenterStart else Alignment.TopStart
         ) {
             Row(
                 verticalAlignment = if (singleLine) Alignment.CenterVertically else Alignment.Top,
@@ -355,13 +357,14 @@ fun glassInputField(
                         contentDescription = null,
                         tint = if (isFocused) effectiveAccent else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
-                            .padding(end = 6.dp)
-                            .size(16.dp),
+                            .padding(end = 8.dp)
+                            .size(17.dp),
                     )
                 }
 
                 Box(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = if (singleLine) Alignment.CenterStart else Alignment.TopStart
                 ) {
                     if (value.isEmpty() && placeholder.isNotEmpty()) {
                         Text(
@@ -396,8 +399,7 @@ fun glassInputField(
                 if (isPassword) {
                     Box(
                         modifier = Modifier
-                            .minimumInteractiveComponentSize()
-                            .size(26.dp)
+                            .size(28.dp)
                             .clip(CircleShape)
                             .clickable { passwordVisible = !passwordVisible },
                         contentAlignment = Alignment.Center
@@ -412,8 +414,7 @@ fun glassInputField(
                 } else if (showClearButton && value.isNotEmpty()) {
                     Box(
                         modifier = Modifier
-                            .minimumInteractiveComponentSize()
-                            .size(26.dp)
+                            .size(28.dp)
                             .clip(CircleShape)
                             .clickable { onValueChange("") },
                         contentAlignment = Alignment.Center
@@ -428,8 +429,7 @@ fun glassInputField(
                 } else if (trailingIcon != null) {
                     Box(
                         modifier = Modifier
-                            .minimumInteractiveComponentSize()
-                            .size(26.dp)
+                            .size(28.dp)
                             .clip(CircleShape)
                             .clickable(enabled = onTrailingIconClick != null) { onTrailingIconClick?.invoke() },
                         contentAlignment = Alignment.Center
@@ -441,6 +441,139 @@ fun glassInputField(
                             modifier = Modifier.size(15.dp)
                         )
                     }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Standardized glassmorphic dropdown selection field matching the visual metrics, heights,
+ * borders, and shape tokens of [glassInputField].
+ *
+ * Guarantees pixel-perfect horizontal and baseline alignment when paired side-by-side with [glassInputField].
+ *
+ * @param selectedValue Currently selected item of type [T].
+ * @param onValueChange Callback invoked when the user selects an option.
+ * @param options List of selectable options.
+ * @param modifier Layout [Modifier].
+ * @param label Optional text label placed above the dropdown field, identical to [glassInputField]'s label.
+ * @param displayValue Transformer function returning human-readable text for each option.
+ * @param leadingIcon Optional icon placed at start of dropdown container.
+ * @param enabled Whether dropdown interaction is enabled.
+ * @param accentColor Theme accent color for focus borders and selected option highlight.
+ */
+@Composable
+fun <T> glassDropdownField(
+    selectedValue: T,
+    onValueChange: (T) -> Unit,
+    options: List<T>,
+    modifier: Modifier = Modifier,
+    label: String? = null,
+    displayValue: (T) -> String = { it.toString() },
+    leadingIcon: ImageVector? = null,
+    enabled: Boolean = true,
+    accentColor: Color = Color.Unspecified
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val effectiveAccent = if (accentColor != Color.Unspecified) accentColor else MaterialTheme.colorScheme.primary
+
+    val targetBorderColor = if (expanded) effectiveAccent else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+    val animatedBorderColor by animateColorAsState(
+        targetValue = targetBorderColor,
+        animationSpec = tween(durationMillis = 220),
+        label = "glassDropdownBorder"
+    )
+    val animatedBgColor by animateColorAsState(
+        targetValue = if (expanded) MaterialTheme.colorScheme.surfaceContainerHighest else MaterialTheme.colorScheme.surfaceContainerHigh,
+        animationSpec = tween(durationMillis = 220),
+        label = "glassDropdownBg"
+    )
+
+    Column(modifier = modifier) {
+        if (!label.isNullOrBlank()) {
+            Text(
+                text = label,
+                fontSize = 12.5.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = if (expanded) effectiveAccent else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 2.dp, bottom = 2.dp)
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(46.dp)
+                .clip(AppDesignTokens.ShapeSmall)
+                .background(animatedBgColor)
+                .border(
+                    width = if (expanded) 1.5.dp else 1.dp,
+                    color = animatedBorderColor,
+                    shape = AppDesignTokens.ShapeSmall
+                )
+                .clickable(enabled = enabled) { expanded = true }
+                .padding(horizontal = 10.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f, fill = false)
+                ) {
+                    if (leadingIcon != null) {
+                        Icon(
+                            imageVector = leadingIcon,
+                            contentDescription = null,
+                            tint = if (expanded) effectiveAccent else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .size(17.dp)
+                        )
+                    }
+                    Text(
+                        text = displayValue(selectedValue),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Expand dropdown",
+                    tint = if (expanded) effectiveAccent else MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
+            ) {
+                options.forEach { option ->
+                    val isSelected = option == selectedValue
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = displayValue(option),
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                color = if (isSelected) effectiveAccent else MaterialTheme.colorScheme.onSurface,
+                                fontSize = 14.sp
+                            )
+                        },
+                        onClick = {
+                            onValueChange(option)
+                            expanded = false
+                        }
+                    )
                 }
             }
         }

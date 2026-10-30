@@ -154,7 +154,7 @@ fun createDailyCampaignSheet(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
                 glassInputField(
                     value = dailyLimitText,

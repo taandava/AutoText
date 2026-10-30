@@ -79,7 +79,6 @@ fun composeScheduleOptionsCard(
                 if (customIntervalMinutes > 0) customIntervalMinutes.toString() else "1"
             )
         }
-        var showUnitDropdown by remember { mutableStateOf(false) }
 
         appCard(
             modifier = Modifier.fillMaxWidth(),
@@ -182,95 +181,55 @@ fun composeScheduleOptionsCard(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
-                    // Number Input Box
-                    Box(modifier = Modifier.weight(1f)) {
-                        glassInputField(
-                            value = intervalCountText,
-                            onValueChange = { newStr ->
-                                val digits = newStr.filter { it.isDigit() }.take(4)
-                                intervalCountText = digits
-                                val count = digits.toIntOrNull() ?: 1
-                                onCustomIntervalMinutesChanged(count)
-                                val targetRec = when (selectedUnit) {
-                                    RepeatUnit.SECONDS -> RecurrenceType.REPEAT_SECONDS
-                                    RepeatUnit.MINUTES -> RecurrenceType.REPEAT_MINUTES
-                                    RepeatUnit.HOURS -> RecurrenceType.REPEAT_HOURS
-                                    RepeatUnit.DAYS -> RecurrenceType.REPEAT_DAYS
-                                    RepeatUnit.WEEKS -> RecurrenceType.REPEAT_WEEKS
-                                    RepeatUnit.MONTHS -> RecurrenceType.REPEAT_MONTHS
-                                }
-                                onRecurrenceChanged(targetRec)
-                            },
-                            label = "Interval",
-                            placeholder = "1",
-                            leadingIcon = Icons.Default.Repeat,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            accentColor = MaterialTheme.colorScheme.tertiary
-                        )
-                    }
-
-                    // Unit Dropdown Selector
-                    Box(modifier = Modifier.weight(1.3f)) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(52.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(10.dp))
-                                .clickable { showUnitDropdown = true }
-                                .padding(horizontal = 12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = selectedUnit.displayName,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.tertiary
-                            )
-                            Icon(
-                                Icons.Default.ArrowDropDown,
-                                contentDescription = "Select Unit",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-
-                        DropdownMenu(
-                            expanded = showUnitDropdown,
-                            onDismissRequest = { showUnitDropdown = false },
-                            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
-                        ) {
-                            RepeatUnit.entries.forEach { unit ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            unit.displayName,
-                                            fontWeight = if (selectedUnit == unit) FontWeight.Bold else FontWeight.Normal,
-                                            color = if (selectedUnit == unit) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
-                                        )
-                                    },
-                                    onClick = {
-                                        selectedUnit = unit
-                                        showUnitDropdown = false
-                                        val count = intervalCountText.toIntOrNull() ?: 1
-                                        onCustomIntervalMinutesChanged(count)
-                                        val targetRec = when (unit) {
-                                            RepeatUnit.SECONDS -> RecurrenceType.REPEAT_SECONDS
-                                            RepeatUnit.MINUTES -> RecurrenceType.REPEAT_MINUTES
-                                            RepeatUnit.HOURS -> RecurrenceType.REPEAT_HOURS
-                                            RepeatUnit.DAYS -> RecurrenceType.REPEAT_DAYS
-                                            RepeatUnit.WEEKS -> RecurrenceType.REPEAT_WEEKS
-                                            RepeatUnit.MONTHS -> RecurrenceType.REPEAT_MONTHS
-                                        }
-                                        onRecurrenceChanged(targetRec)
-                                    }
-                                )
+                    glassInputField(
+                        value = intervalCountText,
+                        onValueChange = { newStr ->
+                            val digits = newStr.filter { it.isDigit() }.take(4)
+                            intervalCountText = digits
+                            val count = digits.toIntOrNull() ?: 1
+                            onCustomIntervalMinutesChanged(count)
+                            val targetRec = when (selectedUnit) {
+                                RepeatUnit.SECONDS -> RecurrenceType.REPEAT_SECONDS
+                                RepeatUnit.MINUTES -> RecurrenceType.REPEAT_MINUTES
+                                RepeatUnit.HOURS -> RecurrenceType.REPEAT_HOURS
+                                RepeatUnit.DAYS -> RecurrenceType.REPEAT_DAYS
+                                RepeatUnit.WEEKS -> RecurrenceType.REPEAT_WEEKS
+                                RepeatUnit.MONTHS -> RecurrenceType.REPEAT_MONTHS
                             }
-                        }
-                    }
+                            onRecurrenceChanged(targetRec)
+                        },
+                        label = "Interval",
+                        placeholder = "1",
+                        leadingIcon = Icons.Default.Repeat,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        accentColor = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    glassDropdownField(
+                        selectedValue = selectedUnit,
+                        onValueChange = { unit ->
+                            selectedUnit = unit
+                            val count = intervalCountText.toIntOrNull() ?: 1
+                            onCustomIntervalMinutesChanged(count)
+                            val targetRec = when (unit) {
+                                RepeatUnit.SECONDS -> RecurrenceType.REPEAT_SECONDS
+                                RepeatUnit.MINUTES -> RecurrenceType.REPEAT_MINUTES
+                                RepeatUnit.HOURS -> RecurrenceType.REPEAT_HOURS
+                                RepeatUnit.DAYS -> RecurrenceType.REPEAT_DAYS
+                                RepeatUnit.WEEKS -> RecurrenceType.REPEAT_WEEKS
+                                RepeatUnit.MONTHS -> RecurrenceType.REPEAT_MONTHS
+                            }
+                            onRecurrenceChanged(targetRec)
+                        },
+                        options = RepeatUnit.entries,
+                        label = "Time Unit",
+                        displayValue = { it.displayName },
+                        accentColor = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier.weight(1.2f)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))

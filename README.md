@@ -90,6 +90,12 @@ AutoText is a modern Android application written entirely in Kotlin with Jetpack
 - **Granular Per-App Configuration**: Dedicated **Privacy & App Visibility** settings with multi-select application picker, category chips (`ALL`, `EXCLUDED`, `BANKING`, `SYSTEM`, `USER`), and 7 isolation dimensions (Automation, Overlays, Notifications, Clipboard, Content Masking, Rules).
 - **Sensitive Data Concealment**: Masks message snippets and phone numbers in execution logs, marks clipboards with `ClipDescription.EXTRA_IS_SENSITIVE`, and enforces `NotificationCompat.VISIBILITY_PRIVATE` on lock screens.
 
+### 14. Standardized Form Sizing, Dropdowns & Baseline-Aligned Controls
+- **Standardized 46dp Height Invariant**: Single-line text inputs (`glassInputField`) and dropdown selectors (`glassDropdownField`) enforce an exact 46dp container height, preventing vertical layout shifts or uneven rows.
+- **No Inner Button Bounds Expansion**: Removed `minimumInteractiveComponentSize` from internal clear buttons and password toggles, preventing text input boxes from expanding vertically when text is entered.
+- **Unified Label Metrics**: Labels use identical font sizes (`12.5.sp`), weights (`SemiBold`), and padding (`start = 2.dp, bottom = 2.dp`), ensuring side-by-side components align both at their top labels and bottom input boxes.
+- **Baseline Alignment for Action Buttons & Steppers**: Parent containers use `verticalAlignment = Alignment.Bottom` when placing inputs beside buttons or steppers, while sibling buttons and steppers enforce `Modifier.height(46.dp)`, eliminating ad-hoc vertical padding hacks.
+
 ---
 
 ## 🏗️ Architecture & Package Layout

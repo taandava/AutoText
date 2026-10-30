@@ -834,7 +834,7 @@ fun dailyCampaignConfigCard(
         // Daily Batch Limit (PROPER ENTRY FIELD + STEPPERS + CHIPS)
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             glassInputField(
@@ -859,14 +859,14 @@ fun dailyCampaignConfigCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.height(46.dp)
             ) {
                 Box(
                     modifier = Modifier
                         .size(36.dp)
-                        .clip(CircleShape)
+                        .clip(AppDesignTokens.ShapeSmall)
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .border(1.dp, campaignThemeColor.copy(alpha = 0.5f), CircleShape)
+                        .border(1.dp, campaignThemeColor.copy(alpha = 0.5f), AppDesignTokens.ShapeSmall)
                         .clickable {
                             val next = (config.dailyLimit - 5).coerceAtLeast(1)
                             dailyLimitText = next.toString()
@@ -882,9 +882,9 @@ fun dailyCampaignConfigCard(
                 Box(
                     modifier = Modifier
                         .size(36.dp)
-                        .clip(CircleShape)
+                        .clip(AppDesignTokens.ShapeSmall)
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .border(1.dp, campaignThemeColor.copy(alpha = 0.5f), CircleShape)
+                        .border(1.dp, campaignThemeColor.copy(alpha = 0.5f), AppDesignTokens.ShapeSmall)
                         .clickable {
                             val next = (config.dailyLimit + 5).coerceAtMost(1000)
                             dailyLimitText = next.toString()
@@ -1056,7 +1056,7 @@ fun dailyCampaignConfigCard(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             glassInputField(
@@ -1080,15 +1080,15 @@ fun dailyCampaignConfigCard(
             // Stepper controls [-] [+]
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.padding(top = 8.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.height(46.dp)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
+                        .size(36.dp)
+                        .clip(AppDesignTokens.ShapeSmall)
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .border(1.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f), CircleShape)
+                        .border(1.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f), AppDesignTokens.ShapeSmall)
                         .clickable {
                             val next = (config.intervalSeconds - 2).coerceAtLeast(minSec)
                             intervalSecondsText = next.toString()
@@ -1097,16 +1097,16 @@ fun dailyCampaignConfigCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "-", color = MaterialTheme.colorScheme.tertiary, fontSize = 17.sp, fontWeight = FontWeight.Bold
+                        "-", color = MaterialTheme.colorScheme.tertiary, fontSize = 18.sp, fontWeight = FontWeight.Bold
                     )
                 }
 
                 Box(
                     modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
+                        .size(36.dp)
+                        .clip(AppDesignTokens.ShapeSmall)
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .border(1.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f), CircleShape)
+                        .border(1.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f), AppDesignTokens.ShapeSmall)
                         .clickable {
                             val next = (config.intervalSeconds + 2).coerceAtMost(maxSec)
                             intervalSecondsText = next.toString()
@@ -1115,7 +1115,7 @@ fun dailyCampaignConfigCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "+", color = MaterialTheme.colorScheme.tertiary, fontSize = 17.sp, fontWeight = FontWeight.Bold
+                        "+", color = MaterialTheme.colorScheme.tertiary, fontSize = 18.sp, fontWeight = FontWeight.Bold
                     )
                 }
             }
