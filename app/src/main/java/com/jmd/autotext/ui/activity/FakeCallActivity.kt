@@ -36,6 +36,7 @@ import com.jmd.autotext.ui.screen.fakeCallScreen
 class FakeCallActivity : ComponentActivity() {
 
     private var mediaPlayer: MediaPlayer? = null
+    private var fallbackRingtone: android.media.Ringtone? = null
     private var vibrator: Vibrator? = null
     private var wakeLock: PowerManager.WakeLock? = null
 
@@ -88,12 +89,34 @@ class FakeCallActivity : ComponentActivity() {
      */
     private fun startRinging() {
         try {
-            val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-            mediaPlayer = MediaPlayer.create(this, ringtoneUri).apply {
-                isLooping = true
-                start()
+            val ringtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this, RingtoneManager.TYPE_RINGTONE)
+                ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+                ?: android.provider.Settings.System.DEFAULT_RINGTONE_URI
+
+            var playerStarted = false
+            try {
+                mediaPlayer = MediaPlayer.create(this, ringtoneUri)?.apply {
+                    isLooping = true
+                    start()
+                }
+                playerStarted = mediaPlayer != null
+            } catch (e: Exception) {
+                Log.w("FakeCallActivity", "MediaPlayer.create failed for $ringtoneUri: ${e.message}")
             }
 
+            if (!playerStarted) {
+                fallbackRingtone = RingtoneManager.getRingtone(this, ringtoneUri)?.apply {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        isLooping = true
+                    }
+                    play()
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("FakeCallActivity", "Error starting fake call ringtone audio", e)
+        }
+
+        try {
             vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val vm = getSystemService(VibratorManager::class.java)
                 vm?.defaultVibrator
@@ -104,7 +127,7 @@ class FakeCallActivity : ComponentActivity() {
             val pattern = longArrayOf(0, 1000, 1000)
             vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
         } catch (e: Exception) {
-            Log.e("FakeCallActivity", "Error starting fake call ring/vibration", e)
+            Log.e("FakeCallActivity", "Error starting fake call vibration", e)
         }
     }
 
@@ -116,9 +139,20 @@ class FakeCallActivity : ComponentActivity() {
             mediaPlayer?.stop()
             mediaPlayer?.release()
             mediaPlayer = null
-            vibrator?.cancel()
         } catch (e: Exception) {
-            Log.w("FakeCallActivity", "Error stopping ringing: ${e.message}")
+            Log.w("FakeCallActivity", "Error stopping mediaPlayer: ${e.message}")
+        }
+        try {
+            fallbackRingtone?.stop()
+            fallbackRingtone = null
+        } catch (e: Exception) {
+            Log.w("FakeCallActivity", "Error stopping fallbackRingtone: ${e.message}")
+        }
+        try {
+            vibrator?.cancel()
+            vibrator = null
+        } catch (e: Exception) {
+            Log.w("FakeCallActivity", "Error stopping vibrator: ${e.message}")
         }
     }
 
