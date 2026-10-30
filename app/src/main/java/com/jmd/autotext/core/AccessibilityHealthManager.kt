@@ -221,6 +221,12 @@ object AccessibilityHealthManager {
             Log.w(TAG, "autoHealAccessibility: WRITE_SECURE_SETTINGS not granted")
             return false
         }
+        val prefs = PreferenceManager(context)
+        val fg = AutoTextAccessibilityService.currentForegroundPackage
+        if (prefs.isDynamicA11yOnDemandEnabled || (prefs.isBankingShieldEnabled && fg != null && AutoTextAccessibilityService.isFinancialOrBankingPackage(fg))) {
+            Log.i(TAG, "autoHealAccessibility: Skipped because Banking Shield / Dynamic A11y is active (fg=$fg)")
+            return false
+        }
         return try {
             val cr = context.contentResolver
             val expected = "${context.packageName}/${AutoTextAccessibilityService::class.java.name}"
@@ -342,13 +348,18 @@ object AccessibilityHealthManager {
             val a11yExpected = "${context.packageName}/${AutoTextAccessibilityService::class.java.name}"
             val a11yCurrent = Settings.Secure.getString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
 
-            if (!a11yCurrent.contains(a11yExpected)) {
-                val a11yUpdated = if (a11yCurrent.isBlank()) a11yExpected else "$a11yCurrent:$a11yExpected"
-                Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, a11yUpdated)
-                Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "1")
-                Log.i(TAG, "Directly enabled Accessibility Service in settings via WRITE_SECURE_SETTINGS")
-            } else if (!isServiceRunning()) {
-                autoHealAccessibility(context)
+            val prefs = PreferenceManager(context)
+            if (!prefs.isDynamicA11yOnDemandEnabled) {
+                if (!a11yCurrent.contains(a11yExpected)) {
+                    val a11yUpdated = if (a11yCurrent.isBlank()) a11yExpected else "$a11yCurrent:$a11yExpected"
+                    Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, a11yUpdated)
+                    Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "1")
+                    Log.i(TAG, "Directly enabled Accessibility Service in settings via WRITE_SECURE_SETTINGS")
+                } else if (!isServiceRunning()) {
+                    autoHealAccessibility(context)
+                }
+            } else {
+                Log.d(TAG, "Dynamic On-Demand A11y active: skipping persistent enablement in settings")
             }
 
             val notifExpected = ComponentName(context, AutoTextNotificationListenerService::class.java).flattenToString()

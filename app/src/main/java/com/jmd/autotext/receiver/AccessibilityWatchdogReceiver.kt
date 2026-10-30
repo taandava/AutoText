@@ -45,10 +45,13 @@ class AccessibilityWatchdogReceiver : BroadcastReceiver() {
             val isBankingShield = prefs.isBankingShieldEnabled
             val isA11yDead = !AccessibilityHealthManager.isServiceRunning() || heartbeatStale
 
-            if (isA11yDead) {
+            val isDynamicA11y = prefs.isDynamicA11yOnDemandEnabled
+            if (isA11yDead && !isBankingShield && !isDynamicA11y) {
                 Log.d(TAG, "Watchdog heartbeat tick: A11y dead or stale (stale=$heartbeatStale). Reviving services...")
+                AccessibilityHealthManager.ensureAllServicesActive(context)
+            } else if (isBankingShield || isDynamicA11y) {
+                Log.d(TAG, "Watchdog heartbeat tick: Dynamic a11y or banking shield active; skipping auto-heal.")
             }
-            AccessibilityHealthManager.ensureAllServicesActive(context)
             AccessibilityHealthManager.healNotificationListener(context)
             AccessibilityHealthManager.recordHeartbeat()
             if (!AutoTextDeviceAdminReceiver.isAdminActive(context)) {

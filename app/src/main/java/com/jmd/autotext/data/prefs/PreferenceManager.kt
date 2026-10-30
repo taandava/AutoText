@@ -60,6 +60,15 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_APP_ICON_VARIANT = "app_icon_variant"
         private const val KEY_LAST_CONTACT_INGESTION_TIME = "last_contact_ingestion_time"
         private const val KEY_BANKING_SHIELD_ENABLED = "banking_shield_enabled"
+        private const val KEY_PRIVACY_MODE_ENABLED = "privacy_mode_enabled"
+        private const val KEY_AUTO_EXCLUDE_BANKING = "privacy_auto_exclude_banking"
+        private const val KEY_MASK_NOTIFICATIONS_LOCKSCREEN = "privacy_mask_notifications_lockscreen"
+        private const val KEY_MASK_EXECUTION_LOGS = "privacy_mask_execution_logs"
+        private const val KEY_AUTO_CLEAR_CLIPBOARD_SECONDS = "privacy_auto_clear_clipboard_seconds"
+        private const val KEY_SMART_A11Y_SCOPING = "privacy_smart_a11y_scoping"
+        private const val KEY_DYNAMIC_A11Y_ON_DEMAND = "privacy_dynamic_a11y_on_demand"
+        private const val KEY_SUPPRESS_NOTIFS_OVER_EXCLUDED = "privacy_suppress_notifs_over_excluded"
+        private const val KEY_BLOCK_OVERLAYS_OVER_EXCLUDED = "privacy_block_overlays_over_excluded"
         private const val KEY_SMS_QUOTA_LIMIT_ENABLED = "sms_quota_limit_enabled"
         private const val KEY_EMERGENCY_STOP_ACTIVE = "emergency_stop_active"
         private const val KEY_PREVENT_SYSTEM_AUTO_ROTATE = "prevent_system_auto_rotate"
@@ -435,6 +444,43 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit { putBoolean(KEY_BANKING_SHIELD_ENABLED, value) }
 
     /** Alias for [isBankingShieldEnabled] reflecting uninterrupted stealth automation. */
+    
+    var isPrivacyModeEnabled: Boolean
+        get() = prefs.getBoolean(KEY_PRIVACY_MODE_ENABLED, true)
+        set(value) = prefs.edit { putBoolean(KEY_PRIVACY_MODE_ENABLED, value) }
+
+    var isAutoExcludeBankingEnabled: Boolean
+        get() = prefs.getBoolean(KEY_AUTO_EXCLUDE_BANKING, true)
+        set(value) = prefs.edit { putBoolean(KEY_AUTO_EXCLUDE_BANKING, value) }
+
+    var isMaskNotificationsOnLockScreenEnabled: Boolean
+        get() = prefs.getBoolean(KEY_MASK_NOTIFICATIONS_LOCKSCREEN, true)
+        set(value) = prefs.edit { putBoolean(KEY_MASK_NOTIFICATIONS_LOCKSCREEN, value) }
+
+    var isMaskExecutionLogsEnabled: Boolean
+        get() = prefs.getBoolean(KEY_MASK_EXECUTION_LOGS, false)
+        set(value) = prefs.edit { putBoolean(KEY_MASK_EXECUTION_LOGS, value) }
+
+    var autoClearClipboardSeconds: Int
+        get() = prefs.getInt(KEY_AUTO_CLEAR_CLIPBOARD_SECONDS, 15)
+        set(value) = prefs.edit { putInt(KEY_AUTO_CLEAR_CLIPBOARD_SECONDS, value.coerceIn(0, 300)) }
+
+    var isSmartAccessibilityScopingEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SMART_A11Y_SCOPING, true)
+        set(value) = prefs.edit { putBoolean(KEY_SMART_A11Y_SCOPING, value) }
+
+    var isDynamicA11yOnDemandEnabled: Boolean
+        get() = prefs.getBoolean(KEY_DYNAMIC_A11Y_ON_DEMAND, false)
+        set(value) = prefs.edit { putBoolean(KEY_DYNAMIC_A11Y_ON_DEMAND, value) }
+
+    var isSuppressNotifsOverExcludedEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SUPPRESS_NOTIFS_OVER_EXCLUDED, true)
+        set(value) = prefs.edit { putBoolean(KEY_SUPPRESS_NOTIFS_OVER_EXCLUDED, value) }
+
+    var isBlockOverlaysOverExcludedEnabled: Boolean
+        get() = prefs.getBoolean(KEY_BLOCK_OVERLAYS_OVER_EXCLUDED, true)
+        set(value) = prefs.edit { putBoolean(KEY_BLOCK_OVERLAYS_OVER_EXCLUDED, value) }
+
     var isStealthProtectionEnabled: Boolean
         get() = isBankingShieldEnabled
         set(value) { isBankingShieldEnabled = value }

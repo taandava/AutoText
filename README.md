@@ -82,6 +82,14 @@ AutoText is a modern Android application written entirely in Kotlin with Jetpack
 - Compact, icon-only action buttons for **New Task** (`+`) and **Emergency Stop** (`🛑`).
 - Responsive header grid gracefully accommodates all 7 real-time system health indicators without clipping across varying screen sizes.
 
+### 13. Privacy, App Visibility & Stealth Isolation Engine
+- **Threat Model Mitigation**: Prevents aggressive banking/UPI security scanners (Saraswat Bank / GOMONxT, SBI YONO, Google Pay, PhonePe, Paytm, etc.) from flagging AutoText as malicious accessibility software.
+- **Smart Accessibility Scoping (`info.packageNames`)**: Automatically scopes the accessibility service whitelist to exclude banking, payment, and user-isolated apps, completely dropping events from non-whitelisted apps at framework level.
+- **Dynamic On-Demand Mode (`WRITE_SECURE_SETTINGS`)**: Keeps the accessibility service completely unregistered in system settings during idle standby, dynamically registering only for 3–5 seconds during active WhatsApp automation, and unregistering immediately after.
+- **Immediate Retraction on Banking Foreground**: Instantly detects when a banking or excluded app enters the foreground and retracts the accessibility service registration, ensuring banking security checks pass cleanly.
+- **Granular Per-App Configuration**: Dedicated **Privacy & App Visibility** settings with multi-select application picker, category chips (`ALL`, `EXCLUDED`, `BANKING`, `SYSTEM`, `USER`), and 7 isolation dimensions (Automation, Overlays, Notifications, Clipboard, Content Masking, Rules).
+- **Sensitive Data Concealment**: Masks message snippets and phone numbers in execution logs, marks clipboards with `ClipDescription.EXTRA_IS_SENSITIVE`, and enforces `NotificationCompat.VISIBILITY_PRIVATE` on lock screens.
+
 ---
 
 ## 🏗️ Architecture & Package Layout
@@ -127,7 +135,7 @@ The top header bar displays 7 real-time status indicator icons:
 
 ### Build Commands
 ```bash
-# Compile and run all 61 unit tests
+# Compile and run all 68 unit tests
 .\gradlew.bat testDebugUnitTest
 
 # Assemble signed production release APK and copy to root

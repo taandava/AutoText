@@ -377,6 +377,27 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             return false
         }
 
+        val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(appContext)
+        val targetPkg = when (task.channel) {
+            ChannelType.WHATSAPP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_GROUP -> "com.whatsapp"
+            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "com.whatsapp.w4b"
+            else -> null
+        }
+        if (targetPkg != null && privacyMgr.isAutomationBlockedForPackage(targetPkg)) {
+            AppFileLogger.w(appContext, TAG, "Task #${task.id} (${task.channel.displayName}) aborted: Target package $targetPkg is excluded by Privacy & App Visibility Policy.")
+            repository.insertLog(
+                ExecutionLog(
+                    taskId = task.id,
+                    channel = task.channel.displayName,
+                    recipient = task.recipients.joinToString(),
+                    messageSnippet = "[BLOCKED BY PRIVACY POLICY]",
+                    status = TaskStatus.FAILED.name,
+                    details = "Execution blocked: Package $targetPkg is excluded by Privacy Policy"
+                )
+            )
+            return false
+        }
+
         // 0. Pre-flight Idle Check: Only trigger and complete task when idle!
         if (!AutomationSafetyManager.isDeviceIdle(appContext)) {
             val idleSince = (System.currentTimeMillis() - AutomationSafetyManager.lastHumanInteractionTimestamp.get()) / 1000
@@ -394,7 +415,12 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             ChannelType.WHATSAPP_BUSINESS_STATUS,
             -> {
                 uiAutomationMutex.withLock {
-                    executeWhatsAppTaskWithRetries(repository, task)
+                    privacyMgr.prepareAccessibilityForAutomation()
+                    try {
+                        executeWhatsAppTaskWithRetries(repository, task)
+                    } finally {
+                        privacyMgr.releaseAccessibilityAfterAutomation()
+                    }
                 }
             }
             ChannelType.SMS -> {
@@ -409,7 +435,12 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             ChannelType.WHATSAPP_BUSINESS_CALL,
             -> {
                 uiAutomationMutex.withLock {
-                    executeWhatsAppCallTask(repository, task)
+                    privacyMgr.prepareAccessibilityForAutomation()
+                    try {
+                        executeWhatsAppCallTask(repository, task)
+                    } finally {
+                        privacyMgr.releaseAccessibilityAfterAutomation()
+                    }
                 }
             }
             ChannelType.REMINDER -> {

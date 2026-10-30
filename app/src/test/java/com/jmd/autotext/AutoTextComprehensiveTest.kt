@@ -1147,7 +1147,107 @@ class AutoTextComprehensiveTest {
         assertEquals(androidx.compose.ui.graphics.Color(0xFF00E676), com.jmd.autotext.ui.components.IndicatorActiveGreen)
         assertEquals(androidx.compose.ui.graphics.Color(0xFFFF5252), com.jmd.autotext.ui.components.IndicatorInactiveRed)
     }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 17. PRIVACY, APP VISIBILITY & COMPATIBILITY ENGINEERING TESTS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testAppPrivacyConfigDefaults() {
+        val config = AppPrivacyConfig(
+            packageName = "com.example.secureapp",
+            appName = "Secure App"
+        )
+        assertEquals("com.example.secureapp", config.packageName)
+        assertEquals("Secure App", config.appName)
+        assertTrue("isExcluded must default to true", config.isExcluded)
+        assertTrue("disableAutomation must default to true", config.disableAutomation)
+        assertTrue("blockOverlays must default to true", config.blockOverlays)
+        assertTrue("suppressNotifications must default to true", config.suppressNotifications)
+        assertTrue("disableClipboard must default to true", config.disableClipboard)
+        assertTrue("maskSensitiveContent must default to true", config.maskSensitiveContent)
+        assertTrue("disableRules must default to true", config.disableRules)
+        assertEquals("", config.customNotes)
+    }
+
+    @Test
+    fun testSensitiveTextMasking() {
+        assertEquals("", com.jmd.autotext.core.PrivacyManager.maskSensitiveText(""))
+        assertEquals("**", com.jmd.autotext.core.PrivacyManager.maskSensitiveText("hi"))
+        assertEquals("j***i", com.jmd.autotext.core.PrivacyManager.maskSensitiveText("jai mata di"))
+        assertEquals("P***d", com.jmd.autotext.core.PrivacyManager.maskSensitiveText("Password"))
+    }
+
+    @Test
+    fun testPhoneNumberMasking() {
+        assertEquals("9769***020", com.jmd.autotext.core.PrivacyManager.maskPhoneNumber("9769602020"))
+        assertEquals("9930***542", com.jmd.autotext.core.PrivacyManager.maskPhoneNumber("+91 99306 04542"))
+        assertEquals("***", com.jmd.autotext.core.PrivacyManager.maskPhoneNumber("123"))
+    }
+
+    @Test
+    fun testBankingPackageDetection() {
+        // Banking & UPI apps
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.saraswatbank.gomobile"))
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.sbi.lotusintouch"))
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.google.android.apps.nbu.paisa.user"))
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.phonepe.app"))
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("net.one97.paytm"))
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.hdfcbank.mobilebanking"))
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.csam.icici.bank.imobile"))
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.axis.mobile"))
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.kotak.bank"))
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("in.org.npci.upiapp"))
+        assertTrue(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.cred.app"))
+
+        // Non-banking standard apps
+        assertFalse(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.whatsapp"))
+        assertFalse(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.whatsapp.w4b"))
+        assertFalse(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.google.android.dialer"))
+        assertFalse(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.android.settings"))
+        assertFalse(com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage("com.jmd.autotext"))
+    }
+
+    @Test
+    fun testBaseAutomationTargetPackages() {
+        val targets = com.jmd.autotext.core.PrivacyManager.BASE_AUTOMATION_TARGET_PACKAGES
+        assertTrue(targets.contains("com.whatsapp"))
+        assertTrue(targets.contains("com.whatsapp.w4b"))
+        assertTrue(targets.contains("com.android.systemui"))
+        assertTrue(targets.contains("com.google.android.dialer"))
+        // Excluded banking packages must NEVER be in base targets
+        assertFalse(targets.contains("com.saraswatbank.gomobile"))
+        assertFalse(targets.contains("net.one97.paytm"))
+    }
+
+    @Test
+    fun testGlobalPrivacySettingsDefaults() {
+        val settings = GlobalPrivacySettings()
+        assertTrue(settings.isPrivacyModeEnabled)
+        assertTrue(settings.autoExcludeBankingApps)
+        assertTrue(settings.maskNotificationsOnLockScreen)
+        assertFalse(settings.maskExecutionLogs)
+        assertEquals(15, settings.autoClearClipboardSeconds)
+        assertTrue(settings.smartAccessibilityScoping)
+        assertFalse(settings.dynamicA11yOnDemand)
+        assertTrue(settings.suppressNotifsOverExcluded)
+        assertTrue(settings.blockOverlaysOverExcluded)
+    }
+
+    @Test
+    fun testPrivacyConfigCopyAndModifications() {
+        val original = AppPrivacyConfig(
+            packageName = "com.sample.app",
+            appName = "Sample"
+        )
+        val modified = original.copy(
+            isExcluded = false,
+            blockOverlays = false,
+            customNotes = "User whitelisted"
+        )
+        assertFalse(modified.isExcluded)
+        assertFalse(modified.blockOverlays)
+        assertTrue(modified.disableAutomation)
+        assertEquals("User whitelisted", modified.customNotes)
+    }
 }
-
-
-

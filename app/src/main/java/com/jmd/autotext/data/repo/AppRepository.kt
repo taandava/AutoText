@@ -60,6 +60,7 @@ class AppRepository(private val context: Context) {
     val templateRepo = TemplateRepository(context)
     val recipientRepo = RecipientRepository(context)
     val whatsAppRepo = WhatsAppRepository(context)
+    val privacyRepo = PrivacyRepository(context)
 
     // ==================== TASKS ====================
     fun insertTask(task: ScheduledTask): Long = taskRepo.insertTask(task)

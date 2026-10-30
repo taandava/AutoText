@@ -28,7 +28,8 @@ import kotlin.time.Duration.Companion.milliseconds
 fun settingsBankingShieldCard(
     context: Context,
     prefs: PreferenceManager,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenPrivacySettings: () -> Unit = {}
 ) {
     var stealthGuard by remember { mutableStateOf(prefs.isBankingShieldEnabled) }
     var a11yRunning by remember {
@@ -133,6 +134,16 @@ fun settingsBankingShieldCard(
         }
 
         Spacer(modifier = Modifier.height(10.dp))
+
+        glassButton(
+            text = "Configure Privacy & App Visibility",
+            onClick = onOpenPrivacySettings,
+            emoji = "🛡️",
+            variant = GlassButtonVariant.PRIMARY,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),

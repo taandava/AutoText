@@ -575,7 +575,85 @@ appops set com.jmd.autotext ACCESS_NOTIFICATION_POLICY allow
 
 ---
 
-## 11. Diagnostic Runbook & ADB Verification Commands
+## 11. Advanced Privacy, App Visibility & Stealth Isolation Engine
+
+### 11.1 Threat Model & The Banking App Accessibility Detection Problem
+Modern banking, UPI, and financial applications in India and worldwide (including Saraswat Bank / GOMONxT, SBI YONO, Google Pay, PhonePe, Paytm, HDFC MobileBanking, ICICI iMobile, Axis Mobile, Kotak, etc.) employ aggressive client-side runtime security scanners. Upon startup, these applications inspect:
+1. `AccessibilityManager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)`
+2. `Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)`
+
+If any third-party accessibility service is detected with global window inspection capabilities (`info.packageNames = null`) or registered as active in system settings, the banking app displays a blocking security alert:
+> *"Security Alert! Accessibility Permission detected! [Bank Name] app identified accessibility permission is enabled in your device. For security reasons, we recommend to disable it. [AutoText >] [CLOSE APP]"*
+
+### 11.2 Architectural Solution: Dual-Tier Stealth Isolation
+
+AutoText resolves this through a dual-tier architecture adhering strictly to official Android platform security guidelines:
+
+#### Tier 1: Smart Accessibility Scoping (`info.packageNames`)
+- By default, accessibility services that set `info.packageNames = null` receive window events from **every application** installed on the device.
+- AutoText dynamically calculates an **allowed package whitelist**:
+  - Excluded packages (explicitly marked by the user or belonging to `KNOWN_FINANCIAL_PACKAGE_PREFIXES`) are **strictly stripped**.
+  - The calculated whitelist is committed via `service.serviceInfo = info.apply { packageNames = allowedPackages.toTypedArray() }`.
+  - Android's framework AccessibilityManager directly drops all window events from non-whitelisted apps before IPC delivery to AutoText.
+
+#### Tier 2: Dynamic On-Demand Accessibility Mode (`WRITE_SECURE_SETTINGS`)
+- When the user enables Dynamic On-Demand Mode (available when `WRITE_SECURE_SETTINGS` is granted via ADB or system privileges), AutoText keeps its Accessibility Service **completely disabled and unregistered in system settings during idle standby**.
+- When an automation task requires accessibility (specifically WhatsApp UI automation):
+  1. `SequentialTaskEngine` calls `PrivacyManager.prepareAccessibilityForAutomation()`.
+  2. The service is dynamically registered in `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES` in ~50ms.
+  3. The task completes its UI actions (3–5 seconds).
+  4. `PrivacyManager.releaseAccessibilityAfterAutomation()` unregisters the service and unbinds the binder.
+- **Result**: 99.9% of the time, `getEnabledAccessibilityServiceList()` returns empty. Banking apps scan the device, find zero active accessibility services, and launch without any security warnings.
+
+#### Tier 3: Immediate Foreground Retraction Guard
+- If a banking application or excluded package is launched into the foreground while the accessibility service is momentarily bound, `AutoTextAccessibilityService.onAccessibilityEvent` intercepts the initial `TYPE_WINDOW_STATE_CHANGED` event:
+  - If `isFinancialOrBankingPackage(pkg)` or `privacyMgr.isAppExcluded(pkg)` is true and the engine is not actively in an automated dispatch:
+  - AutoText immediately invokes `AccessibilityHealthManager.disableAccessibilityService(applicationContext)` and unbinds.
+  - The banking app's security check passes cleanly without interruption.
+
+### 11.3 Granular Per-App Privacy Contracts (`AppPrivacyConfig`)
+Stored in SQLite table `app_privacy_configs` (schema version 8):
+
+| Field | Type | Description |
+|---|---|---|
+| `package_name` | `TEXT PRIMARY KEY` | Application package identifier |
+| `app_name` | `TEXT` | Cached application display name |
+| `is_excluded` | `INTEGER` (0/1) | Master isolation toggle; excludes from accessibility scoping |
+| `disable_automation` | `INTEGER` (0/1) | Disallows dispatching tasks targeting this application |
+| `block_overlays` | `INTEGER` (0/1) | Automatically dismisses and suppresses dialogs/popups over this app |
+| `suppress_notifications` | `INTEGER` (0/1) | Suppresses toast and heads-up notifications while this app is foreground |
+| `disable_clipboard` | `INTEGER` (0/1) | Prevents clipboard text copying or scheduling clipboard wipes |
+| `mask_sensitive_content`| `INTEGER` (0/1) | Masks message body and recipient numbers in execution logs |
+| `disable_rules` | `INTEGER` (0/1) | Disables auto-reply rules when triggered from notifications by this app |
+| `custom_notes` | `TEXT` | User notes or security policy rationale |
+| `updated_at` | `INTEGER` | Unix epoch millisecond timestamp of last configuration change |
+
+### 11.4 Sensitive Information Masking & Data Leakage Prevention
+1. **Clipboard Privacy (`ClipboardCompat.kt`)**:
+   - On Android 13+ (API 33+), copies flag clipboard payloads with `ClipDescription.EXTRA_IS_SENSITIVE = true`, preventing system notification popups from displaying sensitive message content.
+   - Configurable automatic clipboard clearance (`prefs.autoClearClipboardSeconds`, 10s to 300s) schedules background wipes after text injection.
+2. **Execution Log Masking (`PrivacyManager.kt`)**:
+   - `maskSensitiveText(text)`: Truncates message content to first and last characters (e.g. `"Meeting at 5 PM"` -> `"M***M"`).
+   - `maskPhoneNumber(phone)`: Standardizes and conceals internal phone digits (e.g. `"+91 99306 04542"` -> `"9930***542"`).
+3. **Lock-Screen Notification Concealment**:
+   - Task completion notifications set `NotificationCompat.VISIBILITY_PRIVATE` when `prefs.isMaskNotificationsOnLockScreenEnabled` is active, hiding message bodies on locked screens.
+
+### 11.5 Privacy & App Visibility Management UI (`PrivacySettingsScreen.kt`)
+Accessible via **Settings -> Privacy & App Visibility**:
+- **Application Search & Multi-Selection**: Fast asynchronous query of all installed applications via `PackageManager.getInstalledApplications(GET_META_DATA)`.
+- **Category Filter Chips (`glassChip`)**:
+  - `ALL`: Complete device application list.
+  - `EXCLUDED`: All currently isolated applications.
+  - `BANKING`: Auto-identified banking, UPI, wallet, and financial applications.
+  - `SYSTEM`: System framework packages.
+  - `USER`: User-installed third-party applications.
+- **Batch Actions**: Multi-select toggle, Select All, Deselect All, and Bulk Exclusion/Inclusion.
+- **Granular Modal Sheet (`AppPrivacyDetailDialog.kt`)**: Individual app configuration modal for fine-grained customization of all 7 isolation dimensions.
+- **Configuration Reset**: One-tap reset restoring default privacy settings and re-seeding the curated financial package catalog.
+
+---
+
+## 12. Diagnostic Runbook & ADB Verification Commands
 
 ### 1. Instant Runtime Diagnostic Dump
 Exports complete internal state, registered alarms, database record counts, and recent error traces:

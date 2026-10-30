@@ -352,4 +352,43 @@ AutoText adopts a high-efficiency, native-feeling motion curve:
 
 ---
 
+## 9. Privacy & App Visibility Management UI Specifications
+
+### 9.1 Overview & Ergonomics
+The **Privacy & App Visibility** interface (`PrivacySettingsScreen.kt`) provides comprehensive oversight of which applications AutoText interacts with or isolates from. It is engineered with information-dense compact ergonomics and responsive edge-to-edge drawing.
+
+### 9.2 Key Component Hierarchy
+1. **Global Stealth & Visibility Control Card**:
+   - Master switches for **Smart Accessibility Scoping**, **Dynamic On-Demand Accessibility Mode**, **Lockscreen Notification Masking**, **Execution Log Masking**, **Overlay Suppression**, and **Clipboard Auto-Clear Timer** slider (10s to 300s).
+   - High-contrast visual cards featuring informational tooltips and ADB privilege indicators (`WRITE_SECURE_SETTINGS`).
+2. **Search & Category Filtering Toolbar**:
+   - Real-time search text field querying application names and package IDs.
+   - Horizontal scrolling category filter row utilizing `glassChip`:
+     - `ALL`: Complete package catalog.
+     - `EXCLUDED`: Active stealth isolation targets.
+     - `BANKING`: Auto-tagged banking, UPI, and financial apps with high-visibility security shield badges.
+     - `SYSTEM`: Android system packages.
+     - `USER`: User-installed applications.
+3. **Application List Rows (`AppInfoItem`)**:
+   - 40dp rounded application icon loaded asynchronously via `AsyncImage` / `rememberAsyncImagePainter` with bitmap caching.
+   - Two-line typography: Primary application title (`titleMedium`) and monospace package identifier (`bodySmall`).
+   - Active status badges (`EXCLUDED`, `ISOLATED`, `BANKING`) in semantic alert colors.
+   - Checkbox for multi-selection and click-through navigation to detailed configuration.
+4. **Multi-Selection Floating Action Bar**:
+   - Slides up when one or more applications are selected.
+   - Quick batch actions: **Exclude All**, **Include All**, **Select All**, and **Clear Selection**.
+5. **Granular Per-App Configuration Sheet (`AppPrivacyDetailDialog.kt`)**:
+   - Material 3 modal bottom sheet with 7 distinct isolation switches:
+     - *Exclude from Automation* (Master switch)
+     - *Disable Direct Automation*
+     - *Block Floating Overlays*
+     - *Suppress Notifications*
+     - *Disable Clipboard Access*
+     - *Mask Content in Logs*
+     - *Disable Auto-Reply Rules*
+   - Custom notes input field for team/operator auditing.
+   - Clean Action Bar with Save and Cancel actions.
+
+---
+
 *AutoText Design System v2.6 • Material 3 Expressive • 100% Native Jetpack Compose*

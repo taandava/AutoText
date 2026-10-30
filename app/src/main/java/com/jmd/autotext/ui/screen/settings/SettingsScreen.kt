@@ -34,6 +34,7 @@ fun settingsView(
     repository: AppRepository,
     prefs: PreferenceManager,
     onThemeChanged: (String) -> Unit = {},
+    onOpenPrivacySettings: () -> Unit = {},
     onOpenDocumentation: () -> Unit = {},
     onBack: () -> Unit
 ) {
@@ -122,7 +123,8 @@ fun settingsView(
             item {
                 settingsBankingShieldCard(
                     context = context,
-                    prefs = prefs
+                    prefs = prefs,
+                    onOpenPrivacySettings = onOpenPrivacySettings
                 )
             }
 

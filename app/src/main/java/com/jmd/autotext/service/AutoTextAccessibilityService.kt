@@ -87,6 +87,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
         @Volatile
         var isTestUnlockMode = false
 
+        @Volatile
+        var currentForegroundPackage: String? = null
+
         private var instance: AutoTextAccessibilityService? = null
 
         /**
@@ -111,6 +114,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             "com.csam.icici.",
             "com.yono.",
             "com.bank.",
+            "com.saraswatbank.",
             "com.freecharge.",
             "com.mobikwik.",
             "com.bajajfinserv.",
@@ -121,7 +125,13 @@ class AutoTextAccessibilityService : AccessibilityService() {
             "com.indusind.",
             "com.canarabank.",
             "com.pnb.",
-            "com.bob."
+            "com.bob.",
+            "com.unionbankofindia.",
+            "com.bankofbaroda.",
+            "com.idbi.",
+            "com.federalbank.",
+            "com.yesbank.",
+            "com.aubank."
         )
 
         /**
@@ -133,7 +143,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             for (prefix in KNOWN_FINANCIAL_PACKAGE_PREFIXES) {
                 if (lower.startsWith(prefix) || lower == prefix) return true
             }
-            return lower.contains("banking") || lower.contains(".bank.") || lower.endsWith(".bank") ||
+            return lower.contains("saraswat") || lower.contains("banking") || lower.contains("bank") ||
                 lower.contains(".yono.") || lower.contains("npci.bhim") || lower.contains(".upi.") ||
                 lower.contains("mobikwik") || lower.contains("paytm") || lower.contains("phonepe") ||
                 lower.contains("paisa") || lower.contains("cred.app")
@@ -1029,9 +1039,10 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
 
                 val curPkg = activeRoot.packageName?.toString() ?: ""
-                // Stealth Protection Guard: Instantly drop if a financial or banking app is foregrounded
-                if (isFinancialOrBankingPackage(curPkg)) {
-                    Log.d(TAG, "sendRunnable: Banking/financial app foregrounded ($curPkg); skipping window inspection")
+                val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(this@AutoTextAccessibilityService)
+                // Stealth Protection Guard: Instantly drop if an excluded or banking app is foregrounded
+                if (privacyMgr.isAppExcluded(curPkg) || isFinancialOrBankingPackage(curPkg)) {
+                    Log.d(TAG, "sendRunnable: Excluded or banking app foregrounded ($curPkg); skipping window inspection")
                     return
                 }
 
@@ -1161,13 +1172,13 @@ class AutoTextAccessibilityService : AccessibilityService() {
         super.onServiceConnected()
         try {
             val info = serviceInfo ?: android.accessibilityservice.AccessibilityServiceInfo()
-            info.packageNames = null
             info.flags = info.flags or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
             info.eventTypes = ACTIVE_AUTOMATION_EVENT_MASK
             serviceInfo = info
+            com.jmd.autotext.core.PrivacyManager.getInstance(this).updateAccessibilityScoping()
         } catch (_: Exception) {}
         isServiceRunning = true
         instance = this
@@ -1194,13 +1205,13 @@ class AutoTextAccessibilityService : AccessibilityService() {
         instance = this
         try {
             val info = serviceInfo ?: android.accessibilityservice.AccessibilityServiceInfo()
-            info.packageNames = null
             info.flags = info.flags or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
             info.eventTypes = ACTIVE_AUTOMATION_EVENT_MASK
             serviceInfo = info
+            com.jmd.autotext.core.PrivacyManager.getInstance(this).updateAccessibilityScoping()
         } catch (_: Exception) {}
         AccessibilityHealthManager.recordHeartbeat()
         Log.i(TAG, "AutoText Accessibility Service Re-bound by OS and Active")
@@ -1271,9 +1282,24 @@ class AutoTextAccessibilityService : AccessibilityService() {
             }
             val currentPkg = event.packageName?.toString() ?: return
 
-            // Stealth Protection Guard: Completely isolate accessibility from banking & UPI apps
-            // Never inspect, read, or process events from financial applications
-            if (isFinancialOrBankingPackage(currentPkg)) {
+            if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+                currentForegroundPackage = currentPkg
+            }
+
+            // Privacy & Banking Shield Guard: Completely isolate accessibility from excluded & banking apps
+            // Never inspect, read, or process events from financial or excluded applications
+            val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(this)
+            if (privacyMgr.isAppExcluded(currentPkg) || isFinancialOrBankingPackage(currentPkg)) {
+                if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+                    val prefs = com.jmd.autotext.data.prefs.PreferenceManager(this)
+                    if ((prefs.isBankingShieldEnabled || prefs.isDynamicA11yOnDemandEnabled) &&
+                        com.jmd.autotext.core.AccessibilityHealthManager.hasWriteSecureSettings(this) &&
+                        !isAutomating
+                    ) {
+                        Log.i(TAG, "Banking Shield: Bank app foreground ($currentPkg), safely retracting accessibility registration")
+                        com.jmd.autotext.core.AccessibilityHealthManager.disableAccessibilityService(applicationContext)
+                    }
+                }
                 return
             }
 

@@ -72,6 +72,13 @@ object PopupShield {
 
             val curPkg = root.packageName?.toString().orEmpty().lowercase()
 
+            val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(service)
+            if (privacyMgr.isAppExcluded(curPkg) || privacyMgr.isOverlayBlockedForActiveApp()) {
+                Log.d(TAG, "PopupShield: Excluded or overlay-blocked app in foreground ($curPkg); aborting popup shield")
+                onComplete()
+                return
+            }
+
             // 1. Clear any active notification shade or floating overlays (Truecaller, Messenger, system prompts)
             if (clearOverlaysAndNotificationShade(service)) {
                 handler.postDelayed({ clearPass(service, pass + 1, maxPasses, onComplete) }, 350L)

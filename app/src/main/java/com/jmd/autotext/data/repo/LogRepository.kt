@@ -24,7 +24,7 @@ import com.jmd.autotext.data.model.ExecutionLog
  *
  * @param context Application context.
  */
-class LogRepository(context: Context) {
+class LogRepository(private val context: Context) {
 
     companion object {
         private const val TAG = "LogRepository"
@@ -113,11 +113,22 @@ class LogRepository(context: Context) {
      * @return Generated database row ID.
      */
     fun insertLog(log: ExecutionLog): Long {
+        val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(context)
+        val maskedSnippet = if (privacyMgr.shouldMaskSensitiveContent()) {
+            privacyMgr.maskSensitiveText(log.messageSnippet)
+        } else {
+            log.messageSnippet
+        }
+        val maskedRecipient = if (privacyMgr.shouldMaskSensitiveContent()) {
+            privacyMgr.maskPhoneNumber(log.recipient)
+        } else {
+            log.recipient
+        }
         return logExecution(
             taskId = log.taskId,
             channel = log.channel,
-            recipient = log.recipient,
-            messageSnippet = log.messageSnippet,
+            recipient = maskedRecipient,
+            messageSnippet = maskedSnippet,
             status = log.status,
             details = log.details,
             segments = log.segments

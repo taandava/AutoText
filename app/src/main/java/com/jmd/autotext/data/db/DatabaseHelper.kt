@@ -46,7 +46,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
 
     companion object {
         const val DATABASE_NAME = "autotext.db"
-        const val DATABASE_VERSION = 6
+        const val DATABASE_VERSION = 8
 
         @Volatile
         private var instance: DatabaseHelper? = null
@@ -79,6 +79,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         const val TABLE_WHATSAPP_GROUPS = "whatsapp_groups"
         const val TABLE_DAILY_CAMPAIGN_SENT = "daily_campaign_sent_ledger"
         const val TABLE_TASK_DELIVERIES = "task_recipient_deliveries"
+        const val TABLE_APP_PRIVACY_CONFIGS = "app_privacy_configs"
     }
 
     /**
@@ -104,6 +105,41 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("CREATE TABLE $TABLE_TASKS (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, channel TEXT, recipients TEXT, recipient_names TEXT, message_text TEXT, trigger_time INTEGER, recurrence TEXT, custom_interval_minutes INTEGER, days_of_week TEXT, status TEXT, sim_slot INTEGER, ask_before_send INTEGER, sound_mode TEXT, fake_caller_name TEXT, fake_caller_number TEXT, fake_call_style TEXT, created_at INTEGER, last_executed INTEGER, execution_count INTEGER, media_uri TEXT, call_duration_seconds INTEGER DEFAULT 0, include_dial_time INTEGER DEFAULT 0, call_sequence_mode TEXT DEFAULT 'GIVEN', delay_between_calls_seconds INTEGER DEFAULT 5, call_failure_policy TEXT DEFAULT 'CONTINUE')")
         try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_status_trigger ON $TABLE_TASKS(status, trigger_time)") } catch (_: Exception) {}
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_APP_PRIVACY_CONFIGS (
+                package_name TEXT PRIMARY KEY,
+                app_name TEXT NOT NULL DEFAULT '',
+                is_excluded INTEGER NOT NULL DEFAULT 0,
+                disable_automation INTEGER NOT NULL DEFAULT 0,
+                block_overlays INTEGER NOT NULL DEFAULT 0,
+                suppress_notifications INTEGER NOT NULL DEFAULT 0,
+                disable_clipboard INTEGER NOT NULL DEFAULT 0,
+                mask_sensitive_content INTEGER NOT NULL DEFAULT 0,
+                disable_rules INTEGER NOT NULL DEFAULT 0,
+                custom_notes TEXT NOT NULL DEFAULT '',
+                updated_at INTEGER NOT NULL DEFAULT 0
+            )
+        """.trimIndent())
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (_: Exception) {}
+
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_APP_PRIVACY_CONFIGS (
+                package_name TEXT PRIMARY KEY,
+                app_name TEXT NOT NULL,
+                is_excluded INTEGER NOT NULL DEFAULT 1,
+                disable_automation INTEGER NOT NULL DEFAULT 1,
+                block_overlays INTEGER NOT NULL DEFAULT 1,
+                suppress_notifications INTEGER NOT NULL DEFAULT 1,
+                disable_clipboard INTEGER NOT NULL DEFAULT 1,
+                mask_sensitive_content INTEGER NOT NULL DEFAULT 1,
+                disable_rules INTEGER NOT NULL DEFAULT 1,
+                custom_notes TEXT DEFAULT '',
+                updated_at INTEGER NOT NULL
+            )
+        """.trimIndent())
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (_: Exception) {}
 
         db.execSQL("CREATE TABLE $TABLE_RECIPIENTS (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, phone_or_email TEXT, group_name TEXT)")
 
@@ -217,7 +253,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                     SELECT MIN(id)
                     FROM $TABLE_DYNAMIC_POOL
                     GROUP BY normalized_number
-        
+                )
             """.trimIndent())
 
             // 2. Deduplicate group items in dynamic_contact_pool by group name
@@ -229,7 +265,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                     FROM $TABLE_DYNAMIC_POOL
                     WHERE normalized_number LIKE 'group:%'
                     GROUP BY LOWER(TRIM(name))
-        
+                )
             """.trimIndent())
 
             // 3. Deduplicate whatsapp_groups by group name
@@ -239,7 +275,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                     SELECT MIN(id)
                     FROM $TABLE_WHATSAPP_GROUPS
                     GROUP BY LOWER(TRIM(name))
-        
+                )
             """.trimIndent())
 
             // 4. Deduplicate recipients table by phone_or_email
@@ -249,7 +285,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                     SELECT MIN(id)
                     FROM $TABLE_RECIPIENTS
                     GROUP BY phone_or_email
-        
+                )
             """.trimIndent())
 
             // 5. Ensure UNIQUE indexes exist to permanently prevent future duplicate inserts
@@ -587,6 +623,23 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         } catch (_: Exception) {}
         try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_task_deliv_lookup ON $TABLE_TASK_DELIVERIES(task_id, occurrence_id, normalized_number)") } catch (_: Exception) {}
         try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_status_trigger ON $TABLE_TASKS(status, trigger_time)") } catch (_: Exception) {}
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_APP_PRIVACY_CONFIGS (
+                package_name TEXT PRIMARY KEY,
+                app_name TEXT NOT NULL DEFAULT '',
+                is_excluded INTEGER NOT NULL DEFAULT 0,
+                disable_automation INTEGER NOT NULL DEFAULT 0,
+                block_overlays INTEGER NOT NULL DEFAULT 0,
+                suppress_notifications INTEGER NOT NULL DEFAULT 0,
+                disable_clipboard INTEGER NOT NULL DEFAULT 0,
+                mask_sensitive_content INTEGER NOT NULL DEFAULT 0,
+                disable_rules INTEGER NOT NULL DEFAULT 0,
+                custom_notes TEXT NOT NULL DEFAULT '',
+                updated_at INTEGER NOT NULL DEFAULT 0
+            )
+        """.trimIndent())
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (_: Exception) {}
     }
 
     /**

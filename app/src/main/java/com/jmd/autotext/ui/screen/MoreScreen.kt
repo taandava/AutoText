@@ -109,11 +109,27 @@ fun moreScreen(
             }
         }
         "PERMISSIONS" -> permissionCenterView(context) { navigateToSubSection("MENU") }
+        "PRIVACY" -> com.jmd.autotext.ui.screen.privacy.PrivacySettingsScreen(
+            context = context,
+            prefs = prefs,
+            onBack = {
+                if (previousSubSection == "SETTINGS") {
+                    previousSubSection = "MENU"
+                    navigateToSubSection("SETTINGS")
+                } else {
+                    navigateToSubSection("MENU")
+                }
+            }
+        )
         "SETTINGS" -> settingsView(
             context = context,
             repository = repository,
             prefs = prefs,
             onThemeChanged = onThemeChanged,
+            onOpenPrivacySettings = {
+                previousSubSection = "SETTINGS"
+                navigateToSubSection("PRIVACY")
+            },
             onOpenDocumentation = {
                 previousSubSection = "SETTINGS"
                 navigateToSubSection("DOCS")
@@ -250,6 +266,15 @@ fun moreScreen(
                         MaterialTheme.colorScheme.primary
                     ) {
                         navigateToSubSection("PERMISSIONS")
+                    }
+                }
+                item {
+                    menuItemCard(
+                        "Privacy & App Visibility",
+                        "🛡️",
+                        Color(0xFFE65100)
+                    ) {
+                        navigateToSubSection("PRIVACY")
                     }
                 }
                 item {

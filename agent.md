@@ -16,7 +16,7 @@ AutoText is a mission-critical, enterprise-grade Android automation application 
 - **UI Framework**: Modern Jetpack Compose with Material 3 Expressive
 - **Compiler Compliance**: Kotlin 2.4.21 / AGP 8.9.2 — **0 Warnings, 0 Errors**
 - **Static Analysis**: Android Lint (`lintDebug`) — **No issues found**
-- **Unit Test Suite**: `AutoTextComprehensiveTest` — **61 of 61 Tests Passing (100%)**
+- **Unit Test Suite**: `AutoTextComprehensiveTest` — **68 of 68 Tests Passing (100%)**
 - **Connected Test Device**: Vivo / iQOO I2401 (`10BF1G0HCD0024R`) running **Android 16 (API Level 36)**
 - **Hardware Test Matrix**: 13/13 Task Types Verified Successfully on Hardware
 - **Post-Test State**: 0 residual tasks in SQLite database (`autotext.db`)
@@ -94,6 +94,19 @@ During comprehensive codebase auditing and live device testing, several critical
   - Targeted physical screen bounds (`node.getBoundsInScreen(rect)`) to dispatch physical gestures directly on resolved screen coordinates.
   - Implemented multi-stage resolution to detect and confirm secondary call confirmation dialogs.
   - Auto-discards stale voice note recordings before dialing.
+
+### Defect 9: Banking & Financial Application Accessibility Detection (Saraswat Bank / GOMONxT, SBI, Google Pay, PhonePe, Paytm, etc.)
+- **Symptom**: Banking apps display "Security Alert! Accessibility Permission detected!" and refuse to open or block users whenever AutoText accessibility service is enabled.
+- **Root Cause**:
+  1. `AutoTextAccessibilityService.kt` registered with global window inspection (`info.packageNames = null`), triggering Android to announce AutoText in `AccessibilityManager.getEnabledAccessibilityServiceList` to all running apps.
+  2. Banking apps actively query `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES` or register accessibility display clients, identifying any non-screen-reader third-party service.
+- **Remediation**:
+  1. **Smart Accessibility Scoping**: In `AutoTextAccessibilityService.kt`, replaced blanket `packageNames = null` with dynamic whitelist scoping (`info.packageNames = allowedPackages.toTypedArray()`), automatically omitting all banking, financial, and user-excluded packages.
+  2. **Dynamic On-Demand Accessibility Mode**: When `WRITE_SECURE_SETTINGS` is available, AutoText keeps its accessibility service completely disabled in system settings during idle standby. The service is dynamically enabled for only 3–5 seconds during active WhatsApp dispatches and immediately disabled post-execution.
+  3. **Immediate Foreground Retraction Guard**: The instant a banking app (e.g. Saraswat Bank / `com.saraswatbank.*`, SBI, etc.) produces a `TYPE_WINDOW_STATE_CHANGED` event, AutoText immediately unbinds and removes itself from `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES` before the bank's security scan completes.
+  4. **Privacy & App Visibility Management System**: Implemented full privacy subsystem (`PrivacyManager`, `PrivacyRepository`, `PrivacySettingsScreen`, `AppPrivacyDetailDialog`) with SQLite schema version 8 (`app_privacy_configs`) and 7 per-app isolation toggles.
+  5. **Sensitive Content Masking**: Added `maskSensitiveText` and `maskPhoneNumber` in `PrivacyManager`, `ClipDescription.EXTRA_IS_SENSITIVE` on Android 13+, and `NotificationCompat.VISIBILITY_PRIVATE`.
+  6. **Unit Test Verification**: Added 7 comprehensive privacy tests to `AutoTextComprehensiveTest` bringing the test suite to 68/68 passing (100%).
 
 ---
 
