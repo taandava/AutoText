@@ -143,10 +143,16 @@ class AutoTextAccessibilityService : AccessibilityService() {
             for (prefix in KNOWN_FINANCIAL_PACKAGE_PREFIXES) {
                 if (lower.startsWith(prefix) || lower == prefix) return true
             }
-            return lower.contains("saraswat") || lower.contains("banking") || lower.contains("bank") ||
-                lower.contains(".yono.") || lower.contains("npci.bhim") || lower.contains(".upi.") ||
-                lower.contains("mobikwik") || lower.contains("paytm") || lower.contains("phonepe") ||
-                lower.contains("paisa") || lower.contains("cred.app")
+            return lower.contains("saraswat") || lower.contains("gomonxt") || lower.contains("banking") ||
+                lower.contains("bank") || lower.contains(".yono.") || lower.contains("npci.bhim") ||
+                lower.contains(".upi.") || lower.contains("mobikwik") || lower.contains("paytm") ||
+                lower.contains("phonepe") || lower.contains("paisa") || lower.contains("cred.app") ||
+                lower.contains("axis") || lower.contains("icici") || lower.contains("kotak") ||
+                lower.contains("hdfc") || lower.contains("pnb") || lower.contains("canara") ||
+                lower.contains("indusind") || lower.contains("baroda") || lower.contains("unionbank") ||
+                lower.contains("bajaj") || lower.contains("navi") || lower.contains("groww") ||
+                lower.contains("zerodha") || lower.contains("angelone") || lower.contains("dhan") ||
+                lower.contains("upstox")
         }
         /**
          * Checks whether the active window belongs to the system keyguard or Android SystemUI lockscreen.
@@ -1291,12 +1297,8 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(this)
             if (privacyMgr.isAppExcluded(currentPkg) || isFinancialOrBankingPackage(currentPkg)) {
                 if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-                    val prefs = com.jmd.autotext.data.prefs.PreferenceManager(this)
-                    if ((prefs.isBankingShieldEnabled || prefs.isDynamicA11yOnDemandEnabled) &&
-                        com.jmd.autotext.core.AccessibilityHealthManager.hasWriteSecureSettings(this) &&
-                        !isAutomating
-                    ) {
-                        Log.i(TAG, "Banking Shield: Bank app foreground ($currentPkg), safely retracting accessibility registration")
+                    if (com.jmd.autotext.core.AccessibilityHealthManager.hasWriteSecureSettings(this) && !isAutomating) {
+                        Log.i(TAG, "Banking/Shielded app foreground ($currentPkg), immediately retracting accessibility registration")
                         com.jmd.autotext.core.AccessibilityHealthManager.disableAccessibilityService(applicationContext)
                     }
                 }

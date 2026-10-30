@@ -38,7 +38,7 @@ class RecipientRepository(context: Context) {
         val list = mutableListOf<RecipientItem>()
         db.query(DatabaseHelper.TABLE_RECIPIENTS, null, null, null, null, null, "name ASC").use { c ->
             while (c.moveToNext()) {
-                val groupColIndex = c.getColumnIndex("group_name").takeIf { it != -1 } ?: c.getColumnIndex("notes")
+                val groupColIndex = c.getColumnIndex("group_name")
                 val group = if (groupColIndex != -1) c.getString(groupColIndex) ?: "General" else "General"
                 list.add(
                     RecipientItem(

@@ -32,6 +32,8 @@ fun settingsBankingShieldCard(
     onOpenPrivacySettings: () -> Unit = {}
 ) {
     var stealthGuard by remember { mutableStateOf(prefs.isBankingShieldEnabled) }
+    var dynamicA11y by remember { mutableStateOf(prefs.isDynamicA11yOnDemandEnabled) }
+    val hasWriteSecure = remember { AccessibilityHealthManager.hasWriteSecureSettings(context) }
     var a11yRunning by remember {
         mutableStateOf(AccessibilityHealthManager.isServiceOperational())
     }
@@ -40,6 +42,7 @@ fun settingsBankingShieldCard(
         while (true) {
             a11yRunning = AccessibilityHealthManager.isServiceOperational()
             stealthGuard = prefs.isBankingShieldEnabled
+            dynamicA11y = prefs.isDynamicA11yOnDemandEnabled
             kotlinx.coroutines.delay(2000L.milliseconds)
         }
     }
@@ -125,6 +128,58 @@ fun settingsBankingShieldCard(
                     prefs.isBankingShieldEnabled = enable
                     AccessibilityHealthManager.ensureAllServicesActive(context)
                     context.showAppToast(if (enable) "Stealth Guard Active: Complete Banking Isolation" else "Standard Automation Mode")
+                },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.primary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
+                )
+            )
+        }
+
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Dynamic Zero-Detection Mode",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    if (hasWriteSecure) {
+                        appBadge(text = "ZERO DETECTION", color = MaterialTheme.colorScheme.primary)
+                    } else {
+                        appBadge(text = "NEEDS PERMISSION", color = MaterialTheme.colorScheme.outline)
+                    }
+                }
+                Text(
+                    text = if (dynamicA11y)
+                        "Active • Accessibility kept OFF when idle. Auto-enables for 2s only during WhatsApp dispatches, then retracts. Banking apps cannot detect AutoText."
+                    else
+                        "Keeps accessibility service disabled when idle. Enables for 2-3s only during WhatsApp dispatches, then detaches. Eliminates banking security warnings.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 11.sp
+                )
+            }
+            Switch(
+                checked = dynamicA11y,
+                enabled = hasWriteSecure,
+                onCheckedChange = { enable ->
+                    dynamicA11y = enable
+                    prefs.isDynamicA11yOnDemandEnabled = enable
+                    if (enable) {
+                        AccessibilityHealthManager.disableAccessibilityService(context)
+                        context.showAppToast("Dynamic Zero-Detection Active: A11y Off When Idle")
+                    } else {
+                        AccessibilityHealthManager.enableAccessibilityService(context)
+                        context.showAppToast("Continuous Accessibility Active")
+                    }
                 },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = MaterialTheme.colorScheme.primary,

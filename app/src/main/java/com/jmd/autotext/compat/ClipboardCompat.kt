@@ -76,7 +76,7 @@ object ClipboardCompat {
                     clipData.description.extras = (clipData.description.extras ?: PersistableBundle()).apply {
                         putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
                     }
-                } catch (_: Throwable) {}
+                } catch (e: Throwable) { Log.d(TAG, "Clipboard operation note: ${e.message}") }
             }
 
             cm.setPrimaryClip(clipData)
@@ -130,6 +130,6 @@ object ClipboardCompat {
             } else {
                 cm.setPrimaryClip(ClipData.newPlainText("", ""))
             }
-        } catch (_: Throwable) {}
+        } catch (e: Throwable) { Log.d(TAG, "Clipboard operation note: ${e.message}") }
     }
 }

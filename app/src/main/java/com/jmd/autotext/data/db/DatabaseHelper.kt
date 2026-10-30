@@ -45,6 +45,7 @@ import android.database.sqlite.SQLiteOpenHelper
 class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(context.applicationContext, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
+        private const val TAG = "DatabaseHelper"
         const val DATABASE_NAME = "autotext.db"
         const val DATABASE_VERSION = 8
 
@@ -104,7 +105,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
      */
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("CREATE TABLE $TABLE_TASKS (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, channel TEXT, recipients TEXT, recipient_names TEXT, message_text TEXT, trigger_time INTEGER, recurrence TEXT, custom_interval_minutes INTEGER, days_of_week TEXT, status TEXT, sim_slot INTEGER, ask_before_send INTEGER, sound_mode TEXT, fake_caller_name TEXT, fake_caller_number TEXT, fake_call_style TEXT, created_at INTEGER, last_executed INTEGER, execution_count INTEGER, media_uri TEXT, call_duration_seconds INTEGER DEFAULT 0, include_dial_time INTEGER DEFAULT 0, call_sequence_mode TEXT DEFAULT 'GIVEN', delay_between_calls_seconds INTEGER DEFAULT 5, call_failure_policy TEXT DEFAULT 'CONTINUE')")
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_status_trigger ON $TABLE_TASKS(status, trigger_time)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_status_trigger ON $TABLE_TASKS(status, trigger_time)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_APP_PRIVACY_CONFIGS (
                 package_name TEXT PRIMARY KEY,
@@ -120,26 +121,9 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                 updated_at INTEGER NOT NULL DEFAULT 0
             )
         """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
-        db.execSQL("""
-            CREATE TABLE IF NOT EXISTS $TABLE_APP_PRIVACY_CONFIGS (
-                package_name TEXT PRIMARY KEY,
-                app_name TEXT NOT NULL,
-                is_excluded INTEGER NOT NULL DEFAULT 1,
-                disable_automation INTEGER NOT NULL DEFAULT 1,
-                block_overlays INTEGER NOT NULL DEFAULT 1,
-                suppress_notifications INTEGER NOT NULL DEFAULT 1,
-                disable_clipboard INTEGER NOT NULL DEFAULT 1,
-                mask_sensitive_content INTEGER NOT NULL DEFAULT 1,
-                disable_rules INTEGER NOT NULL DEFAULT 1,
-                custom_notes TEXT DEFAULT '',
-                updated_at INTEGER NOT NULL
-            )
-        """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (_: Exception) {}
 
         db.execSQL("CREATE TABLE $TABLE_RECIPIENTS (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, phone_or_email TEXT, group_name TEXT)")
 
@@ -289,8 +273,8 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             """.trimIndent())
 
             // 5. Ensure UNIQUE indexes exist to permanently prevent future duplicate inserts
-            try { db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_pool_unique_norm ON $TABLE_DYNAMIC_POOL(normalized_number)") } catch (_: Exception) {}
-            try { db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_groups_unique_name ON $TABLE_WHATSAPP_GROUPS(name)") } catch (_: Exception) {}
+            try { db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_pool_unique_norm ON $TABLE_DYNAMIC_POOL(normalized_number)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+            try { db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_groups_unique_name ON $TABLE_WHATSAPP_GROUPS(name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         }
     }
 
@@ -422,11 +406,11 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                 created_at INTEGER NOT NULL
             )
         """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_normalized ON $TABLE_DYNAMIC_POOL(normalized_number)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_last_sent ON $TABLE_DYNAMIC_POOL(last_sent_at)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_normalized ON $TABLE_DYNAMIC_POOL(normalized_number)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_last_sent ON $TABLE_DYNAMIC_POOL(last_sent_at)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "wa_last_sent_at", "INTEGER DEFAULT 0")
         addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "wa_send_count", "INTEGER DEFAULT 0")
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_wa_last_sent ON $TABLE_DYNAMIC_POOL(wa_last_sent_at)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_wa_last_sent ON $TABLE_DYNAMIC_POOL(wa_last_sent_at)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "last_sms_sent", "INTEGER DEFAULT 0")
         addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "sms_sent_count", "INTEGER DEFAULT 0")
         addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "last_wa_sent", "INTEGER DEFAULT 0")
@@ -436,11 +420,11 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "sms_retry_priority", "INTEGER DEFAULT 0")
         addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "wa_retry_priority", "INTEGER DEFAULT 0")
         addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "photo_uri", "TEXT DEFAULT ''")
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_sms_priority ON $TABLE_DYNAMIC_POOL(sms_retry_priority)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_wa_priority ON $TABLE_DYNAMIC_POOL(wa_retry_priority)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_enabled_name ON $TABLE_DYNAMIC_POOL(enabled, name)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_wa_status ON $TABLE_DYNAMIC_POOL(enabled, wa_send_count, wa_status)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_sms_status ON $TABLE_DYNAMIC_POOL(enabled, send_count, sms_status)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_sms_priority ON $TABLE_DYNAMIC_POOL(sms_retry_priority)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_wa_priority ON $TABLE_DYNAMIC_POOL(wa_retry_priority)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_enabled_name ON $TABLE_DYNAMIC_POOL(enabled, name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_wa_status ON $TABLE_DYNAMIC_POOL(enabled, wa_send_count, wa_status)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_sms_status ON $TABLE_DYNAMIC_POOL(enabled, send_count, sms_status)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_DAILY_CAMPAIGN_SENT (
@@ -457,9 +441,9 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             )
         """.trimIndent())
         addColumnIfNotExists(db, TABLE_DAILY_CAMPAIGN_SENT, "segments", "INTEGER DEFAULT 1")
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_dc_sent_camp ON $TABLE_DAILY_CAMPAIGN_SENT(campaign_id)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_dc_sent_camp_contact ON $TABLE_DAILY_CAMPAIGN_SENT(campaign_id, contact_id)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_dc_sent_camp_norm ON $TABLE_DAILY_CAMPAIGN_SENT(campaign_id, normalized_number)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_dc_sent_camp ON $TABLE_DAILY_CAMPAIGN_SENT(campaign_id)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_dc_sent_camp_contact ON $TABLE_DAILY_CAMPAIGN_SENT(campaign_id, contact_id)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_dc_sent_camp_norm ON $TABLE_DAILY_CAMPAIGN_SENT(campaign_id, normalized_number)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_DAILY_CAMPAIGN (
@@ -552,7 +536,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         """.trimIndent())
         try {
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_reply_history_lookup ON $TABLE_AUTO_REPLY_HISTORY(rule_id, phone_number, date_str)")
-        } catch (_: Exception) {}
+        } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_CONTACT_SEQUENCES (
@@ -577,7 +561,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                 sim_slot INTEGER DEFAULT 0
             )
         """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_seq_steps ON $TABLE_SEQUENCE_STEPS(sequence_id)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_seq_steps ON $TABLE_SEQUENCE_STEPS(sequence_id)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_WHATSAPP_GROUPS (
@@ -588,7 +572,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                 created_at INTEGER NOT NULL
             )
         """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_wa_groups_name ON $TABLE_WHATSAPP_GROUPS(name)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_wa_groups_name ON $TABLE_WHATSAPP_GROUPS(name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         addColumnIfNotExists(db, TABLE_WHATSAPP_GROUPS, "group_jid", "TEXT DEFAULT ''")
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_TASK_DELIVERIES (
@@ -620,9 +604,9 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                     }
                 }
             }
-        } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_task_deliv_lookup ON $TABLE_TASK_DELIVERIES(task_id, occurrence_id, normalized_number)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_status_trigger ON $TABLE_TASKS(status, trigger_time)") } catch (_: Exception) {}
+        } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_task_deliv_lookup ON $TABLE_TASK_DELIVERIES(task_id, occurrence_id, normalized_number)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_status_trigger ON $TABLE_TASKS(status, trigger_time)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_APP_PRIVACY_CONFIGS (
                 package_name TEXT PRIMARY KEY,
@@ -638,8 +622,8 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                 updated_at INTEGER NOT NULL DEFAULT 0
             )
         """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (_: Exception) {}
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (_: Exception) {}
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
     }
 
     /**

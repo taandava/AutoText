@@ -159,3 +159,29 @@ For full architectural diagrams, algorithmic state machines, SQL schemas, design
 - [`app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md`](file:///d:/New%20folder/apps/Automation/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md): Master Technical Blueprint & Architecture Specification *(also rendered offline inside the app under **Settings -> Technical Manual & Logic Guide**)*.
 - [`design.md`](file:///d:/New%20folder/apps/Automation/design.md): Material 3 Expressive Design System, Compact UI/UX Specifications & Component Inventory.
 - [`agent.md`](file:///d:/New%20folder/apps/Automation/agent.md): Master Engineering Directive, Defect Remediation Log, Hardware Verification Matrix & Operational Runbook.
+
+
+---
+
+## 🛡️ Master Universal Project Audit & Dynamic Zero-Detection Stealth
+
+## 14. Master Universal Project Audit & Root-Cause Remediation Specification
+
+### A. Dynamic Zero-Detection Stealth Architecture
+- **Problem Formulation**: Traditional static accessibility exclusions (such as package name filtering in `AccessibilityServiceInfo`) do not conceal the service's presence from third-party banking/UPI applications (e.g., Saraswat Bank GOMONxT, SBI YONO, HDFC, PhonePe). External apps query `AccessibilityManager.getEnabledAccessibilityServiceList()` or inspect `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES`, detecting non-system accessibility services and halting execution with security alert dialogs.
+- **Architectural Solution**:
+  1. **Dynamic On-Demand Lifecycle**: Leveraging privileged `WRITE_SECURE_SETTINGS`, AutoText keeps its accessibility service registration completely purged from `ENABLED_ACCESSIBILITY_SERVICES` during idle periods, simultaneously writing `ACCESSIBILITY_ENABLED = "0"` if no other service is active.
+  2. **Just-In-Time Re-Registration**: When an exact AlarmManager alarm fires for a WhatsApp dispatch, `SequentialTaskEngine` calls `prepareAccessibilityForAutomation()`, re-enabling AutoText in Secure Settings and awaiting framework binder connection (up to 2500ms).
+  3. **Immediate Post-Dispatch Detachment**: In the execution `finally` block, `releaseAccessibilityAfterAutomation()` calls `disableAccessibilityService()`, restoring zero accessibility footprint across the entire OS.
+  4. **Instant Foreground Window Retraction**: In continuous monitoring mode, if an excluded or banking app package (`saraswat`, `gomonxt`, `yono`, `axis`, `icici`, `hdfc`, etc.) is detected via `TYPE_WINDOW_STATE_CHANGED`, the service immediately unregisters itself via `disableAccessibilityService()` before external security checks complete.
+
+### B. Database Schema & Migration Normalization
+- **Duplicate Table Declaration Elimination**: In `DatabaseHelper.kt:onCreate()`, duplicate `CREATE TABLE IF NOT EXISTS app_privacy_configs` statements with conflicting default values were purged. Table creation and dynamic column provisioning are unified under `ensureDynamicPoolTables()`.
+- **Dead Query Column Cleanup**: In `RecipientRepository.kt`, removed obsolete fallback querying `c.getColumnIndex("notes")`, standardizing on `group_name` with `"General"` default.
+
+### C. Intent Filter & Diagnostic Runbook Alignment
+- **Explicit & Implicit ADB Broadcasts**: Added `<action android:name="com.jmd.autotext.ACTION_SET_PREF" />`, `<action android:name="com.jmd.autotext.ACTION_EMERGENCY_STOP" />`, and `<action android:name="com.jmd.autotext.ACTION_RESET_EMERGENCY_STOP" />` to `AndroidManifest.xml` under `TaskAlarmReceiver`.
+- **Runtime Emergency Handlers**: Wired `ACTION_EMERGENCY_STOP` to `AutomationSafetyManager.triggerEmergencyStop(context, reason)` and `ACTION_RESET_EMERGENCY_STOP` to `resetEmergencyStop(context)` with full file/logcat logging.
+
+### D. Exception Swallowing Remediation
+- Replaced 51 empty catch blocks (`catch (_: Exception) {}`) across `DatabaseHelper.kt`, `AutomationSafetyManager.kt`, `ClipboardCompat.kt`, `AppFileLogger.kt`, and `PrivacyManager.kt` with structured diagnostic logging (`Log.d`, `Log.w`, `AppFileLogger.e`).

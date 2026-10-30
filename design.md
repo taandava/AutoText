@@ -436,3 +436,10 @@ When placing inputs alongside buttons or steppers in horizontal rows:
 
 ---
 *AutoText Design System v2.6 • Material 3 Expressive • 100% Native Jetpack Compose*
+
+
+---
+
+## 9. Form Container Alignment Specification
+- Standardized `46.dp` container heights across `glassInputField` and `glassDropdownField`.
+- Unified label header geometry (`12.5.sp`, `FontWeight.SemiBold`) to guarantee baseline alignment.

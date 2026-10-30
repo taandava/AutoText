@@ -181,7 +181,10 @@ object AccessibilityHealthManager {
                     .filter { it.isNotBlank() && (it != expected) }
                     .joinToString(":")
                 Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, withoutMe)
-                Log.i(TAG, "Banking Shield: Removed accessibility service from secure settings")
+                if (withoutMe.isBlank()) {
+                    Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "0")
+                }
+                Log.i(TAG, "Banking Shield: Removed accessibility service from secure settings (remaining=$withoutMe)")
             }
             return true
         } catch (e: Exception) {
@@ -196,11 +199,21 @@ object AccessibilityHealthManager {
     fun enableAccessibilityService(context: Context): Boolean {
         try {
             PreferenceManager(context).isBankingShieldEnabled = false
-            return if (hasWriteSecureSettings(context)) {
-                autoHealAccessibility(context)
-            } else {
-                false
+            if (!hasWriteSecureSettings(context)) {
+                Log.w(TAG, "enableAccessibilityService: WRITE_SECURE_SETTINGS not granted")
+                return false
             }
+            val cr = context.contentResolver
+            val expected = "${context.packageName}/${AutoTextAccessibilityService::class.java.name}"
+            val current = Settings.Secure.getString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
+            val withoutMe = current.splitToSequence(":")
+                .filter { it.isNotBlank() && (it != expected) }
+                .joinToString(":")
+            val updated = if (withoutMe.isBlank()) expected else "$withoutMe:$expected"
+            Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, updated)
+            Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "1")
+            Log.i(TAG, "enableAccessibilityService: Successfully enabled accessibility service via Secure Settings")
+            return true
         } catch (e: Exception) {
             Log.w(TAG, "enableAccessibilityService error: ${e.message}")
             return false

@@ -372,7 +372,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
                     }
                 }
             }
-        } catch (_: Throwable) {}
+        } catch (e: Throwable) { Log.d(TAG, "Foreground detection probe note: ${e.message}") }
 
         // Priority 3: ActivityManager running tasks fallback
         try {
@@ -384,7 +384,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
                     return fgProcess.processName
                 }
             }
-        } catch (_: Throwable) {}
+        } catch (e: Throwable) { Log.d(TAG, "Foreground detection probe note: ${e.message}") }
 
         return null
     }
@@ -425,7 +425,16 @@ class PrivacyManager private constructor(private val appContext: Context) {
     fun prepareAccessibilityForAutomation(): Boolean {
         if (!prefs.isDynamicA11yOnDemandEnabled) return true
         return try {
-            AccessibilityHealthManager.enableAccessibilityService(appContext)
+            val enabled = AccessibilityHealthManager.enableAccessibilityService(appContext)
+            if (!enabled) return false
+            var waitMs = 0
+            while (AutoTextAccessibilityService.getInstance() == null && waitMs < 2500) {
+                Thread.sleep(100)
+                waitMs += 100
+            }
+            val ready = AutoTextAccessibilityService.getInstance() != null
+            Log.d(TAG, "prepareAccessibilityForAutomation: service ready=$ready (waited ${waitMs}ms)")
+            ready
         } catch (e: Exception) {
             Log.w(TAG, "prepareAccessibilityForAutomation error: ${e.message}")
             false

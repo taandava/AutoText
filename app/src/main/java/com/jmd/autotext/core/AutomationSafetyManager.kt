@@ -57,7 +57,7 @@ object AutomationSafetyManager {
                     isEmergencyStopActive.set(true)
                     return true
                 }
-            } catch (_: Exception) {}
+            } catch (e: Exception) { Log.d(TAG, "Failed reading emergency stop state: ${e.message}") }
         }
         return false
     }
@@ -257,7 +257,7 @@ object AutomationSafetyManager {
         isEmergencyStopActive.set(true)
         try {
             PreferenceManager(context).isEmergencyStopActive = true
-        } catch (_: Exception) {}
+        } catch (e: Exception) { Log.w(TAG, "Failed writing emergency stop state: ${e.message}") }
         Log.e(TAG, "EMERGENCY STOP TRIGGERED: $reason")
         AppFileLogger.e(context, TAG, "EMERGENCY STOP TRIGGERED: $reason")
 
@@ -316,7 +316,7 @@ object AutomationSafetyManager {
         if (context != null) {
             try {
                 PreferenceManager(context).isEmergencyStopActive = false
-            } catch (_: Exception) {}
+            } catch (e: Exception) { Log.w(TAG, "Failed clearing emergency stop state: ${e.message}") }
         }
         failureCounts.clear()
         circuitBreakerTripped.clear()

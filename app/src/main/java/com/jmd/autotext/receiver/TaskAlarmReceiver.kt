@@ -45,7 +45,10 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         const val ACTION_DUMP_LOGS = "com.jmd.autotext.ACTION_DUMP_LOGS"
         const val ACTION_DELETE_ALL_TASKS = "com.jmd.autotext.ACTION_DELETE_ALL_TASKS"
         const val ACTION_SETUP_CAMPAIGN_CONTACTS = "com.jmd.autotext.ACTION_SETUP_CAMPAIGN_CONTACTS"
-        const val ACTION_FIRE_CAMPAIGN = "com.jmd.autotext.ACTION_FIRE_CAMPAIGN" 
+        const val ACTION_FIRE_CAMPAIGN = "com.jmd.autotext.ACTION_FIRE_CAMPAIGN"
+        const val ACTION_SET_PREF = "com.jmd.autotext.ACTION_SET_PREF"
+        const val ACTION_EMERGENCY_STOP = "com.jmd.autotext.ACTION_EMERGENCY_STOP"
+        const val ACTION_RESET_EMERGENCY_STOP = "com.jmd.autotext.ACTION_RESET_EMERGENCY_STOP" 
 
         /**
          * Cancels all scheduled alarms and deletes all tasks from the SQLite database.
@@ -316,13 +319,28 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        if (intent.action == "com.jmd.autotext.ACTION_SET_PREF") {
+        if (intent.action == ACTION_SET_PREF || intent.action == "com.jmd.autotext.ACTION_SET_PREF") {
             val key = intent.getStringExtra("key")
             if (key == "autoLock") {
                 val value = intent.getBooleanExtra("value", true)
                 PreferenceManager(context).isAutoLockAfterSendEnabled = value
                 AppFileLogger.action(context, TAG, "ACTION_SET_PREF: isAutoLockAfterSendEnabled=$value")
             }
+            return
+        }
+
+        if (intent.action == ACTION_EMERGENCY_STOP) {
+            val reason = intent.getStringExtra("reason") ?: "Broadcast Trigger"
+            AutomationSafetyManager.triggerEmergencyStop(context, reason)
+            AppFileLogger.e(context, TAG, "ACTION_EMERGENCY_STOP triggered via broadcast: $reason")
+            Log.e(TAG, "ACTION_EMERGENCY_STOP triggered via broadcast: $reason")
+            return
+        }
+
+        if (intent.action == ACTION_RESET_EMERGENCY_STOP) {
+            AutomationSafetyManager.resetEmergencyStop(context)
+            AppFileLogger.action(context, TAG, "ACTION_RESET_EMERGENCY_STOP triggered via broadcast")
+            Log.i(TAG, "ACTION_RESET_EMERGENCY_STOP triggered via broadcast")
             return
         }
 

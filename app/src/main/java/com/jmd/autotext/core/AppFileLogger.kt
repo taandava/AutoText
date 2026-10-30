@@ -336,7 +336,7 @@ object AppFileLogger {
                     oldFile.delete()
                 }
                 file.renameTo(oldFile)
-            } catch (_: Exception) {}
+            } catch (e: Exception) { Log.d(TAG, "File rotation note: ${e.message}") }
         }
     }
 }
