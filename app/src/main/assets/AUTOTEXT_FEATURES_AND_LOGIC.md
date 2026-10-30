@@ -717,6 +717,7 @@ adb shell am broadcast -a com.jmd.autotext.ACTION_DELETE_ALL_TASKS -n com.jmd.au
 
 
 ## 14. Master Universal Project Audit & Root-Cause Remediation Specification
+& Root-Cause Remediation Specification
 
 ### A. Dynamic Zero-Detection Stealth Architecture
 - **Problem Formulation**: Traditional static accessibility exclusions (such as package name filtering in `AccessibilityServiceInfo`) do not conceal the service's presence from third-party banking/UPI applications (e.g., Saraswat Bank GOMONxT, SBI YONO, HDFC, PhonePe). External apps query `AccessibilityManager.getEnabledAccessibilityServiceList()` or inspect `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES`, detecting non-system accessibility services and halting execution with security alert dialogs.
