@@ -90,6 +90,7 @@ During comprehensive codebase auditing and live device testing, several critical
   - Built `AutoTextA11yTileService` Quick Settings Tile for 1-tap pause/resume from the Android notification shade.
   - Redesigned `SettingsBankingShieldCard` with live Google Pay safety status, 1-tap pause button, and copyable ADB commands for zero-detection mode.
   - Updated `SystemIndicatorResolver` so dynamic stealth mode displays an Emerald Green "GPay Safe" operational badge instead of a false Red alarm.
+  - Guarded `AccessibilityWatchdogWorker`, `BootReceiver`, `MainActivity.onResume()`, and `AutoTextApplication.onCreate()` to prevent automatic re-enablement when dynamic stealth, banking shield, or user paused states are active.
 
 ---
 
