@@ -24,7 +24,25 @@ import java.util.UUID
  * Encapsulated storage manager for user preferences and direct-boot security configurations.
  */
 class PreferenceManager(private val context: Context) {
-    private val prefs: SharedPreferences = context.getSharedPreferences("autotext_settings", Context.MODE_PRIVATE)
+    private val prefs: SharedPreferences by lazy {
+        try {
+            val userManager = context.getSystemService(Context.USER_SERVICE) as? android.os.UserManager
+            val isUnlocked = userManager?.isUserUnlocked != false
+            if (isUnlocked) {
+                context.getSharedPreferences("autotext_settings", Context.MODE_PRIVATE)
+            } else {
+                val deContext = context.createDeviceProtectedStorageContext()
+                deContext.getSharedPreferences("autotext_settings", Context.MODE_PRIVATE)
+            }
+        } catch (_: Exception) {
+            try {
+                val deContext = context.createDeviceProtectedStorageContext()
+                deContext.getSharedPreferences("autotext_settings", Context.MODE_PRIVATE)
+            } catch (_: Exception) {
+                context.getSharedPreferences("autotext_settings", Context.MODE_PRIVATE)
+            }
+        }
+    }
 
     private val dePrefs: SharedPreferences by lazy {
         try {
