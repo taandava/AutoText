@@ -1314,7 +1314,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             // Never inspect, read, or process events from financial or excluded applications
             val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(this)
             if (privacyMgr.isAppExcluded(currentPkg) || isFinancialOrBankingPackage(currentPkg)) {
-                if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && !isAutomating) {
+                if (!isAutomating) {
                     Log.i(TAG, "Banking/Shielded app foreground ($currentPkg), immediately retracting accessibility registration")
                     disableService()
                     if (com.jmd.autotext.core.AccessibilityHealthManager.hasWriteSecureSettings(this)) {

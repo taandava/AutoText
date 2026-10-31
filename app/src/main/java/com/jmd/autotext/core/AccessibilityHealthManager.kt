@@ -376,6 +376,10 @@ object AccessibilityHealthManager {
                 }
             } else {
                 Log.d(TAG, "Dynamic On-Demand A11y / Banking Shield active: skipping persistent enablement in settings")
+                if (hasWriteSecureSettings(context) && a11yCurrent.contains(a11yExpected)) {
+                    disableAccessibilityService(context)
+                    Log.i(TAG, "Dynamic On-Demand A11y: Automatically cleaned up lingering accessibility service from secure settings.")
+                }
             }
 
             val notifExpected = ComponentName(context, AutoTextNotificationListenerService::class.java).flattenToString()

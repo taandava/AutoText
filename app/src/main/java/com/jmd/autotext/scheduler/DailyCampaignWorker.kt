@@ -116,7 +116,9 @@ class DailyCampaignWorker(
             else -> "Daily SMS Campaign"
         }
 
+        val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(applicationContext)
         if (isWhatsApp) {
+            privacyMgr.prepareAccessibilityForAutomation()
             val isA11yActive = AccessibilityHealthManager.waitForServiceReadiness(applicationContext, 4000L)
             if (!isA11yActive) {
                 val errorMsg = "Accessibility Service is not operational. Waiting for service reconnection before dispatching WhatsApp campaign."
@@ -131,6 +133,7 @@ class DailyCampaignWorker(
                     )
                 )
                 AppFileLogger.w(applicationContext, TAG, errorMsg)
+                privacyMgr.releaseAccessibilityAfterAutomation()
                 return Result.retry()
             }
         } else {
@@ -156,6 +159,7 @@ class DailyCampaignWorker(
             }
         }
 
+        try {
         val alreadySentCampaign = if (isWhatsApp) {
             repo.getSentCountForCampaignToday(config.id)
         } else {
@@ -604,5 +608,10 @@ class DailyCampaignWorker(
         )
 
         return Result.success()
+        } finally {
+            if (isWhatsApp) {
+                privacyMgr.releaseAccessibilityAfterAutomation()
+            }
+        }
     }
 }
