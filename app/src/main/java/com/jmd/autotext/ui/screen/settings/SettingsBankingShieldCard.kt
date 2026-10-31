@@ -312,7 +312,7 @@ fun settingsBankingShieldCard(
                         IconButton(
                             onClick = {
                                 val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                                cm?.setPrimaryClip(ClipData.newPlainText("ADB Command", adbCmd))
+                                com.jmd.autotext.compat.ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("ADB Command", adbCmd))
                                 context.showAppToast("Copied ADB command to clipboard!")
                             },
                             modifier = Modifier.size(24.dp)
