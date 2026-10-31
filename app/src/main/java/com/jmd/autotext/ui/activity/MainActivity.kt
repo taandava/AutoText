@@ -115,7 +115,10 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         // Ensure accessibility and notification services are silently auto-healed in background
         CoroutineScope(Dispatchers.IO).launch {
-            AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
+            val prefs = PreferenceManager(applicationContext)
+            if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
+                AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
+            }
         }
         triggerBackgroundContactIngestion()
         AccessibilityHealthManager.enforceAutoRotateInvariant(applicationContext)

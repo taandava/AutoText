@@ -111,7 +111,9 @@ class AutoTextApplication : Application() {
                 AccessibilityWatchdogScheduler.scheduleHeartbeat(this)
 
                 // Proactively verify and request binding for Accessibility and NotificationListener services
-                AccessibilityHealthManager.ensureAllServicesActive(this)
+                if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
+                    AccessibilityHealthManager.ensureAllServicesActive(this)
+                }
                 AccessibilityHealthManager.enforceAutoRotateInvariant(this)
 
                 // Self-heal and purge any individual contacts that were previously misclassified as groups

@@ -119,7 +119,9 @@ class BootReceiver : BroadcastReceiver() {
                 return
             }
             AppFileLogger.action(context, TAG, "Device boot/package replace ($action) detected. Rescheduling active alarms and campaigns.")
-            AccessibilityHealthManager.ensureAllServicesActive(context)
+            if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
+                AccessibilityHealthManager.ensureAllServicesActive(context)
+            }
             AccessibilityHealthManager.enforceAutoRotateInvariant(context)
             AlarmScheduler(context).rescheduleAllPending()
             DailyCampaignScheduler.scheduleAll(context)

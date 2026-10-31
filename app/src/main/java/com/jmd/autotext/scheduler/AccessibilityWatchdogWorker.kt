@@ -36,7 +36,12 @@ class AccessibilityWatchdogWorker(
     override suspend fun doWork(): Result {
         return try {
             // Uninterrupted background automation: keep accessibility and notification services active
-            AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
+            val prefs = PreferenceManager(applicationContext)
+            if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
+                AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
+            } else {
+                Log.d(TAG, "Watchdog skipping auto-heal: stealth or shield active")
+            }
             AccessibilityHealthManager.healNotificationListener(applicationContext)
             AccessibilityHealthManager.recordHeartbeat()
             AccessibilityWatchdogScheduler.scheduleHeartbeat(applicationContext)

@@ -223,7 +223,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
         prefs.isMaskExecutionLogsEnabled = false
         prefs.autoClearClipboardSeconds = 15
         prefs.isSmartAccessibilityScopingEnabled = true
-        prefs.isDynamicA11yOnDemandEnabled = false
+        prefs.isDynamicA11yOnDemandEnabled = true
         prefs.isSuppressNotifsOverExcludedEnabled = true
         prefs.isBlockOverlaysOverExcludedEnabled = true
 
@@ -424,6 +424,10 @@ class PrivacyManager private constructor(private val appContext: Context) {
      */
     fun prepareAccessibilityForAutomation(): Boolean {
         if (!prefs.isDynamicA11yOnDemandEnabled) return true
+        if (!AccessibilityHealthManager.hasWriteSecureSettings(appContext)) {
+            // Cannot dynamically attach without WRITE_SECURE_SETTINGS; verify if user has service running manually
+            return AutoTextAccessibilityService.getInstance() != null
+        }
         return try {
             val enabled = AccessibilityHealthManager.enableAccessibilityService(appContext)
             if (!enabled) return false
@@ -446,6 +450,10 @@ class PrivacyManager private constructor(private val appContext: Context) {
      */
     fun releaseAccessibilityAfterAutomation() {
         if (!prefs.isDynamicA11yOnDemandEnabled) return
+        if (!AccessibilityHealthManager.hasWriteSecureSettings(appContext)) {
+            // Without WRITE_SECURE_SETTINGS, do not disableSelf() automatically because the app cannot re-enable itself!
+            return
+        }
         try {
             AccessibilityHealthManager.disableAccessibilityService(appContext)
             Log.i(TAG, "Dynamic on-demand accessibility service disabled after automation")
