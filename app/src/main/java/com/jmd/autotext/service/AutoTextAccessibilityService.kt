@@ -131,7 +131,23 @@ class AutoTextAccessibilityService : AccessibilityService() {
             "com.idbi.",
             "com.federalbank.",
             "com.yesbank.",
-            "com.aubank."
+            "com.aubank.",
+            "com.google.android.apps.walletnfcrel",
+            "in.amazon.mShop.android.shopping",
+            "com.phonepe.app",
+            "com.dreamplug.androidapp",
+            "com.slicepay",
+            "com.jupiter.money",
+            "com.fi.money",
+            "money.paytmmoney",
+            "com.zerodha.kite3",
+            "com.nextbillion.groww",
+            "com.angelbroking",
+            "com.dhan.live",
+            "com.upstox",
+            "in.niyo",
+            "com.payzapp",
+            "com.saraswat."
         )
 
         /**
@@ -152,7 +168,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 lower.contains("indusind") || lower.contains("baroda") || lower.contains("unionbank") ||
                 lower.contains("bajaj") || lower.contains("navi") || lower.contains("groww") ||
                 lower.contains("zerodha") || lower.contains("angelone") || lower.contains("dhan") ||
-                lower.contains("upstox")
+                lower.contains("upstox") || lower.contains("wallet") ||
+                lower.contains("slicepay") || lower.contains("jupiter.money") ||
+                lower.contains("fi.money")
         }
         /**
          * Checks whether the active window belongs to the system keyguard or Android SystemUI lockscreen.
@@ -1296,9 +1314,10 @@ class AutoTextAccessibilityService : AccessibilityService() {
             // Never inspect, read, or process events from financial or excluded applications
             val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(this)
             if (privacyMgr.isAppExcluded(currentPkg) || isFinancialOrBankingPackage(currentPkg)) {
-                if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-                    if (com.jmd.autotext.core.AccessibilityHealthManager.hasWriteSecureSettings(this) && !isAutomating) {
-                        Log.i(TAG, "Banking/Shielded app foreground ($currentPkg), immediately retracting accessibility registration")
+                if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && !isAutomating) {
+                    Log.i(TAG, "Banking/Shielded app foreground ($currentPkg), immediately retracting accessibility registration")
+                    disableService()
+                    if (com.jmd.autotext.core.AccessibilityHealthManager.hasWriteSecureSettings(this)) {
                         com.jmd.autotext.core.AccessibilityHealthManager.disableAccessibilityService(applicationContext)
                     }
                 }

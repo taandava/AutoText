@@ -210,6 +210,18 @@
             android:exported="false"
             android:stopWithTask="false" />
 
+        <!-- Quick Settings Tile: 1-Tap Pause & Resume Accessibility for Google Pay / Banking Safety -->
+        <service
+            android:name=".service.AutoTextA11yTileService"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/tile_a11y_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
         <!-- Alarm Receiver for Exact Scheduling & Automation Setup -->
         <receiver
             android:name=".receiver.TaskAlarmReceiver"

@@ -913,7 +913,16 @@ class AutoTextComprehensiveTest {
             "com.yono.sbi",
             "com.cred.app",
             "com.freecharge.android",
-            "com.mobikwik_new"
+            "com.mobikwik_new",
+            "com.google.android.apps.walletnfcrel",
+            "com.slicepay",
+            "com.jupiter.money",
+            "com.fi.money",
+            "money.paytmmoney",
+            "com.zerodha.kite3",
+            "com.nextbillion.groww",
+            "com.dhan.live",
+            "com.saraswat.app"
         )
 
         for (pkg in bankingPackages) {

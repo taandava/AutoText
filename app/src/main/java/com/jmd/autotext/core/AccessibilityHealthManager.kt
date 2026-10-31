@@ -101,6 +101,11 @@ object AccessibilityHealthManager {
      * cleanly differentiating between Android Settings configuration and real-time binder liveliness.
      */
     fun getServiceState(context: Context): ServiceState {
+        val prefs = PreferenceManager(context)
+        if (prefs.isDynamicA11yOnDemandEnabled && hasWriteSecureSettings(context)) {
+            // Under dynamic stealth, being detached during idle is the expected healthy operational state
+            return ServiceState.OPERATIONAL
+        }
         val settingEnabled = isAccessibilityEnabledInSystem(context)
         val operational = isServiceOperational()
         return when {
@@ -168,7 +173,6 @@ object AccessibilityHealthManager {
      */
     fun disableAccessibilityService(context: Context): Boolean {
         try {
-            PreferenceManager(context).isBankingShieldEnabled = true
             // 1. Ask service binder to disableSelf()
             AutoTextAccessibilityService.disableServiceIfActive()
 
@@ -198,7 +202,6 @@ object AccessibilityHealthManager {
      */
     fun enableAccessibilityService(context: Context): Boolean {
         try {
-            PreferenceManager(context).isBankingShieldEnabled = false
             if (!hasWriteSecureSettings(context)) {
                 Log.w(TAG, "enableAccessibilityService: WRITE_SECURE_SETTINGS not granted")
                 return false
@@ -236,8 +239,8 @@ object AccessibilityHealthManager {
         }
         val prefs = PreferenceManager(context)
         val fg = AutoTextAccessibilityService.currentForegroundPackage
-        if (prefs.isDynamicA11yOnDemandEnabled || (prefs.isBankingShieldEnabled && fg != null && AutoTextAccessibilityService.isFinancialOrBankingPackage(fg))) {
-            Log.i(TAG, "autoHealAccessibility: Skipped because Banking Shield / Dynamic A11y is active (fg=$fg)")
+        if (prefs.isDynamicA11yOnDemandEnabled || prefs.isBankingShieldEnabled || prefs.isA11yUserPaused || (fg != null && AutoTextAccessibilityService.isFinancialOrBankingPackage(fg))) {
+            Log.i(TAG, "autoHealAccessibility: Skipped because Banking Shield / Dynamic A11y / User Paused is active (fg=$fg)")
             return false
         }
         return try {
@@ -362,7 +365,7 @@ object AccessibilityHealthManager {
             val a11yCurrent = Settings.Secure.getString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
 
             val prefs = PreferenceManager(context)
-            if (!prefs.isDynamicA11yOnDemandEnabled) {
+            if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
                 if (!a11yCurrent.contains(a11yExpected)) {
                     val a11yUpdated = if (a11yCurrent.isBlank()) a11yExpected else "$a11yCurrent:$a11yExpected"
                     Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, a11yUpdated)
@@ -372,7 +375,7 @@ object AccessibilityHealthManager {
                     autoHealAccessibility(context)
                 }
             } else {
-                Log.d(TAG, "Dynamic On-Demand A11y active: skipping persistent enablement in settings")
+                Log.d(TAG, "Dynamic On-Demand A11y / Banking Shield active: skipping persistent enablement in settings")
             }
 
             val notifExpected = ComponentName(context, AutoTextNotificationListenerService::class.java).flattenToString()

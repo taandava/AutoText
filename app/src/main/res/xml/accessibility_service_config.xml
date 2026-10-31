@@ -5,5 +5,6 @@
     android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows|flagReportViewIds|flagIncludeNotImportantViews"
     android:canRetrieveWindowContent="true"
     android:canPerformGestures="true"
+    android:packageNames="com.whatsapp,com.whatsapp.w4b,com.google.android.dialer,com.android.dialer,com.android.phone,com.android.server.telecom,com.android.incallui,com.samsung.android.dialer,com.samsung.android.incallui,com.vivo.upslide,com.oplus.dialer,com.coloros.phoneno,com.miui.voiceassist,com.android.systemui,com.google.android.systemui,com.android.permissioncontroller,com.google.android.permissioncontroller,com.android.packageinstaller,com.jmd.autotext"
     android:description="@string/accessibility_service_description"
     android:notificationTimeout="100" />

@@ -74,6 +74,23 @@ During comprehensive codebase auditing and live device testing, several critical
   - Enforced a uniform **46.dp** fixed height invariant across both components.
   - Synchronized label headers (`12.5.sp`, `FontWeight.SemiBold`, `start = 2.dp, bottom = 2.dp`) to ensure pixel-perfect baseline alignment.
 
+### Defect 7: Google Pay & UPI Banking Apps "Suspicious Activity / Payments Blocked" Alert
+- **Symptom**: Opening Google Pay (`com.google.android.apps.nbu.paisa.user`) displayed a full-screen block: *"Payments blocked due to suspicious activity, take immediate action. 2. Go to your phone settings > Accessibility > Downloaded apps. 3. Turn off Accessibility for all unknown apps"*.
+- **Root Cause**:
+  1. `accessibility_service_config.xml` lacked `android:packageNames`, making the service globally visible to all apps on the system with window-content extraction flags.
+  2. `isDynamicA11yOnDemandEnabled` defaulted to `false`, causing accessibility to stay permanently active in `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES`.
+  3. `MainActivity.onResume()` and `AutoTextApplication.onCreate()` ran `ensureAllServicesActive()`, forcefully re-attaching the accessibility service in secure settings even if paused.
+  4. Foreground retraction in `AutoTextAccessibilityService` only called `disableAccessibilityService()` when `hasWriteSecureSettings` was true, leaving non-ADB users stranded with active services.
+  5. Top-header status indicator displayed a false Red alarm when the service was detached during idle periods.
+- **Remediation**:
+  - Explicitly scoped `accessibility_service_config.xml` with `android:packageNames` covering WhatsApp, WhatsApp Business, system dialers, and Keyguard SystemUI. Excluded all financial applications at the OS framework level.
+  - Set `isDynamicA11yOnDemandEnabled` to `true` by default so accessibility remains 100% detached during idle periods.
+  - Updated `ensureAllServicesActive()` and `AccessibilityWatchdogReceiver` to respect dynamic mode, banking shield, and user paused states.
+  - Configured `AutoTextAccessibilityService.onAccessibilityEvent` to execute `disableService()` (`disableSelf()`) unconditionally upon detecting any banking or payment window state.
+  - Built `AutoTextA11yTileService` Quick Settings Tile for 1-tap pause/resume from the Android notification shade.
+  - Redesigned `SettingsBankingShieldCard` with live Google Pay safety status, 1-tap pause button, and copyable ADB commands for zero-detection mode.
+  - Updated `SystemIndicatorResolver` so dynamic stealth mode displays an Emerald Green "GPay Safe" operational badge instead of a false Red alarm.
+
 ---
 
 ## 3. Dynamic Zero-Detection Stealth Architecture (Banking Shield)

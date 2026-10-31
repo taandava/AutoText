@@ -67,6 +67,7 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_AUTO_CLEAR_CLIPBOARD_SECONDS = "privacy_auto_clear_clipboard_seconds"
         private const val KEY_SMART_A11Y_SCOPING = "privacy_smart_a11y_scoping"
         private const val KEY_DYNAMIC_A11Y_ON_DEMAND = "privacy_dynamic_a11y_on_demand"
+        private const val KEY_A11Y_USER_PAUSED = "a11y_user_paused"
         private const val KEY_SUPPRESS_NOTIFS_OVER_EXCLUDED = "privacy_suppress_notifs_over_excluded"
         private const val KEY_BLOCK_OVERLAYS_OVER_EXCLUDED = "privacy_block_overlays_over_excluded"
         private const val KEY_SMS_QUOTA_LIMIT_ENABLED = "sms_quota_limit_enabled"
@@ -470,8 +471,12 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit { putBoolean(KEY_SMART_A11Y_SCOPING, value) }
 
     var isDynamicA11yOnDemandEnabled: Boolean
-        get() = prefs.getBoolean(KEY_DYNAMIC_A11Y_ON_DEMAND, false)
+        get() = prefs.getBoolean(KEY_DYNAMIC_A11Y_ON_DEMAND, true)
         set(value) = prefs.edit { putBoolean(KEY_DYNAMIC_A11Y_ON_DEMAND, value) }
+
+    var isA11yUserPaused: Boolean
+        get() = prefs.getBoolean(KEY_A11Y_USER_PAUSED, false)
+        set(value) = prefs.edit { putBoolean(KEY_A11Y_USER_PAUSED, value) }
 
     var isSuppressNotifsOverExcludedEnabled: Boolean
         get() = prefs.getBoolean(KEY_SUPPRESS_NOTIFS_OVER_EXCLUDED, true)

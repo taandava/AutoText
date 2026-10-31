@@ -37,6 +37,8 @@ import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
 import com.jmd.autotext.service.AutoTextNotificationListenerService
 import com.jmd.autotext.core.AutomationSafetyManager
 import com.jmd.autotext.data.prefs.PreferenceManager
+import com.jmd.autotext.service.AutoTextAccessibilityService
+import com.jmd.autotext.core.showAppToast
 
 /**
  * Vivid status indicator color palette strictly conforming to specification:
@@ -63,8 +65,29 @@ object SystemIndicatorResolver {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
         val isBatteryUnrestricted = powerManager?.isIgnoringBatteryOptimizations(context.packageName) == true
 
-        val isA11yOperational = AccessibilityHealthManager.isAccessibilitySettingEnabled(context) &&
-            AccessibilityHealthManager.isServiceOperational()
+        val hasWriteSecure = AccessibilityHealthManager.hasWriteSecureSettings(context)
+        val isDynamicStealth = prefs.isDynamicA11yOnDemandEnabled && hasWriteSecure
+        val isA11yRunning = AccessibilityHealthManager.isServiceOperational()
+        val isA11ySettingOn = AccessibilityHealthManager.isAccessibilitySettingEnabled(context)
+        val isA11yHealthy = when {
+            isDynamicStealth -> true
+            prefs.isA11yUserPaused -> false
+            else -> isA11yRunning || isA11ySettingOn
+        }
+
+        val a11yName = when {
+            isDynamicStealth -> "Accessibility Engine (Dynamic Stealth • GPay Safe)"
+            prefs.isA11yUserPaused -> "Accessibility Engine (Paused for GPay)"
+            isA11yRunning -> "Accessibility Engine (Active Continuous)"
+            else -> "Accessibility Service Engine"
+        }
+
+        val a11yDesc = when {
+            isDynamicStealth -> "Zero-Detection Mode: Kept OFF when idle so Google Pay & Bank apps run with 0 warnings. Auto-enables for 2s only during scheduled WhatsApp dispatches."
+            prefs.isA11yUserPaused -> "Accessibility is temporarily paused so Google Pay can process transactions without interference. Tap to resume."
+            isA11yRunning -> "Active in background for WhatsApp automation. Note: Turn on Dynamic Stealth or tap Pause before paying in Google Pay."
+            else -> "Enables automated UI interaction for WhatsApp messaging. Tap to enable."
+        }
 
         val isNotificationListenerActive = AutoTextNotificationListenerService.isListenerConnected ||
             androidx.core.app.NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.packageName)
@@ -107,17 +130,37 @@ object SystemIndicatorResolver {
             ),
             SystemIndicator(
                 id = "accessibility",
-                name = "Accessibility Service Engine",
-                description = "Enables automated UI interaction, touch simulation, WhatsApp navigation, and message dispatch. When inactive, only SMS and call dispatch operate.",
+                name = a11yName,
+                description = a11yDesc,
                 icon = Icons.Default.AccessibilityNew,
-                isActive = isA11yOperational,
-                actionLabel = if (!isA11yOperational) "Open Accessibility Settings" else null,
+                isActive = isA11yHealthy,
+                actionLabel = when {
+                    isDynamicStealth -> null
+                    prefs.isA11yUserPaused && hasWriteSecure -> "Resume Accessibility"
+                    prefs.isA11yUserPaused -> "Enable in Settings"
+                    isA11yRunning -> "Pause for Google Pay"
+                    else -> "Enable in Settings"
+                },
                 onAction = { ctx ->
-                    runCatching {
-                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    if (isA11yRunning) {
+                        prefs.isA11yUserPaused = true
+                        AutoTextAccessibilityService.disableServiceIfActive()
+                        if (hasWriteSecure) {
+                            AccessibilityHealthManager.disableAccessibilityService(ctx)
                         }
-                        ctx.startActivity(intent)
+                        ctx.showAppToast("Accessibility paused. Google Pay & Bank apps unblocked.")
+                    } else if (prefs.isA11yUserPaused && hasWriteSecure) {
+                        prefs.isA11yUserPaused = false
+                        AccessibilityHealthManager.enableAccessibilityService(ctx)
+                        ctx.showAppToast("Accessibility resumed.")
+                    } else {
+                        prefs.isA11yUserPaused = false
+                        runCatching {
+                            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            ctx.startActivity(intent)
+                        }
                     }
                 }
             ),
