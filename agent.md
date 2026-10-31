@@ -100,17 +100,18 @@ During comprehensive codebase auditing and live device testing, several critical
 Modern banking, UPI, and trading applications (e.g., Saraswat Bank GOMONxT, SBI YONO, HDFC, ICICI, PhonePe, Google Pay) execute runtime security audits checking `AccessibilityManager.getEnabledAccessibilityServiceList()` or inspecting `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES`. If any non-system accessibility service is active, they trigger a blocking security alert and close.
 
 ### Two-Tiered Stealth Solution
-1. **Dynamic On-Demand Lifecycle**:
+1. **Fully Automatic Dynamic On-Demand Lifecycle**:
    - Utilizes `WRITE_SECURE_SETTINGS` to keep AutoText's accessibility service completely detached from `ENABLED_ACCESSIBILITY_SERVICES` during idle periods.
    - When no other service is active, `ACCESSIBILITY_ENABLED` is written as `"0"`.
-   - When a scheduled WhatsApp alarm triggers:
+   - On application startup, boot, and idle return, `AccessibilityHealthManager` and lifecycle receivers proactively clean up lingering secure settings entries.
+   - When a scheduled WhatsApp alarm or batch campaign triggers:
      1. `prepareAccessibilityForAutomation()` re-registers the service via Secure Settings.
      2. Awaits binder connection (`AutoTextAccessibilityService.getInstance() != null`).
      3. Executes the WhatsApp automation cleanly.
      4. In the `finally` block, `releaseAccessibilityAfterAutomation()` immediately detaches the service.
 2. **Foreground Window State Retraction**:
    - Expanded banking keywords to cover: `saraswat`, `gomonxt`, `yono`, `axis`, `icici`, `kotak`, `hdfc`, `pnb`, `canara`, `indusind`, `baroda`, `unionbank`, `bajaj`, `navi`, `groww`, `zerodha`, `angelone`, `dhan`, `upstox`.
-   - If an excluded or banking app opens while continuous monitoring is active, `TYPE_WINDOW_STATE_CHANGED` immediately invokes `disableAccessibilityService()` to withdraw the service before banking security scanners complete.
+   - `accessibility_service_config.xml` includes major Indian payment and banking packages (`com.google.android.apps.nbu.paisa.user`, `com.phonepe.app`, `net.one97.paytm`, etc.) so any event from a banking app immediately triggers reactive shutdown via `disableSelf()`.
 
 ---
 
