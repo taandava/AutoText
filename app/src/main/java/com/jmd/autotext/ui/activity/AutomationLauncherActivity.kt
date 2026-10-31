@@ -85,9 +85,13 @@ class AutomationLauncherActivity : Activity() {
             nm.cancel(9988)
         }
 
-        // Verify or heal accessibility service just-in-time if dead
+        // Verify or enable accessibility service just-in-time for lockscreen automation
         runCatching {
-            AccessibilityHealthManager.ensureServiceAlive(this)
+            if (!AccessibilityHealthManager.isServiceRunning() && AccessibilityHealthManager.hasWriteSecureSettings(this)) {
+                AccessibilityHealthManager.enableAccessibilityService(this)
+            } else {
+                AccessibilityHealthManager.ensureServiceAlive(this)
+            }
         }
 
         val prefs = PreferenceManager(this)

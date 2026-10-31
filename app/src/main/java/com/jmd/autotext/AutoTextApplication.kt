@@ -85,6 +85,9 @@ class AutoTextApplication : Application() {
         // 1. Register system notification channels required on Android 8.0 (API 26) and above
         createNotificationChannels()
 
+        // 1a. Ensure accessibility service component is active in PackageManager
+        AccessibilityHealthManager.ensureServiceComponentEnabled(this)
+
         // Sync persisted emergency stop state
         val initialPrefs = PreferenceManager(this)
         if (initialPrefs.isEmergencyStopActive) {

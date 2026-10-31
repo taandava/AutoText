@@ -182,6 +182,7 @@
             android:name=".service.AutoTextAccessibilityService"
             android:label="@string/accessibility_service_label"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:enabled="true"
             android:stopWithTask="false"
             android:directBootAware="true"
             android:exported="true">
@@ -240,6 +241,7 @@
                 <action android:name="com.jmd.autotext.ACTION_SET_PREF" />
                 <action android:name="com.jmd.autotext.ACTION_EMERGENCY_STOP" />
                 <action android:name="com.jmd.autotext.ACTION_RESET_EMERGENCY_STOP" />
+                <action android:name="com.jmd.autotext.ACTION_TEST_AUTO_UNLOCK" />
             </intent-filter>
         </receiver>
 

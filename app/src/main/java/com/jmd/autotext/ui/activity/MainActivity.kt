@@ -113,6 +113,7 @@ class MainActivity : ComponentActivity() {
      */
     override fun onResume() {
         super.onResume()
+        AccessibilityHealthManager.ensureServiceComponentEnabled(applicationContext)
         // Ensure accessibility and notification services are silently auto-healed in background
         CoroutineScope(Dispatchers.IO).launch {
             val prefs = PreferenceManager(applicationContext)

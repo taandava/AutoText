@@ -27,11 +27,17 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
+import android.provider.Settings
 import android.telecom.TelecomManager
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.core.content.ContextCompat
 import com.jmd.autotext.AutoTextApplication
 import com.jmd.autotext.ui.activity.AutomationLauncherActivity
@@ -46,6 +52,7 @@ import com.jmd.autotext.data.model.ExecutionLog
 import com.jmd.autotext.data.model.PickedChatInfo
 import com.jmd.autotext.data.model.PickedChatType
 import com.jmd.autotext.data.model.TaskStatus
+import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.data.repo.AppRepository
 import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
 import com.jmd.autotext.whatsapp.AccessibilityNodeUtils
@@ -220,6 +227,16 @@ class AutoTextAccessibilityService : AccessibilityService() {
         private fun setAutomatingState(automating: Boolean) {
             isAutomating = automating
             setStandbyEventMask(!automating)
+            if (!automating) {
+                instance?.let { s ->
+                    val prefs = PreferenceManager(s.applicationContext ?: s)
+                    if (prefs.isDynamicA11yOnDemandEnabled && !isUnlockPending && !isTestUnlockMode) {
+                        s.scheduleIdleDetach(3000L)
+                    }
+                }
+            } else {
+                instance?.cancelIdleDetach()
+            }
         }
 
         /**
@@ -744,18 +761,51 @@ class AutoTextAccessibilityService : AccessibilityService() {
          * @param pin Secret lockscreen PIN to test.
          */
         fun testLockAndAutoUnlock(context: Context, pin: String) {
-            if (!isServiceRunning) {
-                context.showAppToast("Enable Accessibility first", isLong = true)
+            val appContext = context.applicationContext
+            val prefs = PreferenceManager(appContext)
+            val effectivePin = pin.ifBlank { prefs.deviceUnlockPin }.trim()
+
+            if (effectivePin.isBlank() && prefs.autoUnlockType != "SWIPE") {
+                context.showAppToast("⚠️ Please enter your screen lock PIN first", isLong = true)
                 return
             }
-            isTestUnlockMode = true
-            context.showAppToast("🔒 Locking screen now... Auto-unlock test will trigger in 4 seconds. Keep phone steady!", isLong = true)
 
-            lockScreenNow()
+            CoroutineScope(Dispatchers.Main).launch {
+                // 1. Ensure service component is enabled in PackageManager
+                AccessibilityHealthManager.ensureServiceComponentEnabled(appContext)
 
-            val appContext = context.applicationContext
-            val mainHandler = Handler(Looper.getMainLooper())
-            mainHandler.postDelayed({
+                // 2. If service is not running, attempt on-demand activation via WRITE_SECURE_SETTINGS or prompt user
+                if (!isServiceRunning) {
+                    if (AccessibilityHealthManager.hasWriteSecureSettings(appContext)) {
+                        context.showAppToast("⚡ Connecting assistant for unlock test...", isLong = false)
+                        withContext(Dispatchers.IO) {
+                            AccessibilityHealthManager.enableAccessibilityService(appContext)
+                        }
+                        val start = System.currentTimeMillis()
+                        while (!isServiceRunning && (System.currentTimeMillis() - start) < 3000L) {
+                            delay(150L) // NON-BLOCKING SUSPEND! Allows Main Looper to process onServiceConnected!
+                        }
+                    }
+                }
+
+                if (!isServiceRunning) {
+                    context.showAppToast("Please enable Message Helper in Settings > Accessibility first", isLong = true)
+                    runCatching {
+                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        context.startActivity(intent)
+                    }
+                    return@launch
+                }
+
+                isTestUnlockMode = true
+                context.showAppToast("🔒 Locking screen now... Auto-unlock will trigger in 4 seconds. Keep phone steady!", isLong = true)
+
+                lockScreenNow()
+
+                delay(3500L)
+
                 try {
                     val pm = appContext.getSystemService(POWER_SERVICE) as? PowerManager
 
@@ -767,16 +817,16 @@ class AutoTextAccessibilityService : AccessibilityService() {
 
                     val testIntent = Intent(appContext, AutomationLauncherActivity::class.java).apply {
                         putExtra(AutomationLauncherActivity.EXTRA_IS_TEST_UNLOCK, true)
-                        putExtra(AutomationLauncherActivity.EXTRA_PIN, pin)
+                        putExtra(AutomationLauncherActivity.EXTRA_PIN, effectivePin)
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     }
                     appContext.startActivity(testIntent)
 
-                    armAutoUnlock(pin = pin, shouldRelockAfterSend = false)
+                    armAutoUnlock(pin = effectivePin, shouldRelockAfterSend = false)
                 } catch (t: Throwable) {
                     Log.e(TAG, "Error initiating test auto unlock", t)
                 }
-            }, 3500L)
+            }
         }
 
         /**
@@ -883,6 +933,27 @@ class AutoTextAccessibilityService : AccessibilityService() {
             AppFileLogger.e(this, TAG, "Error disabling accessibility service", e)
             false
         }
+    }
+
+        private val idleDetachRunnable = Runnable {
+        try {
+            val prefs = PreferenceManager(applicationContext ?: this)
+            if (prefs.isDynamicA11yOnDemandEnabled && !isAutomating && !isUnlockPending && !isTestUnlockMode) {
+                Log.i(TAG, "Idle detach: No active automation, safely detaching accessibility to protect Google Pay & banking apps")
+                AccessibilityHealthManager.disableAccessibilityService(applicationContext ?: this)
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "idleDetachRunnable error: ${e.message}")
+        }
+    }
+
+    fun scheduleIdleDetach(delayMs: Long = 4000L) {
+        handler.removeCallbacks(idleDetachRunnable)
+        handler.postDelayed(idleDetachRunnable, delayMs)
+    }
+
+    fun cancelIdleDetach() {
+        handler.removeCallbacks(idleDetachRunnable)
     }
 
     private var hasAttemptedSendClick = false
@@ -996,6 +1067,10 @@ class AutoTextAccessibilityService : AccessibilityService() {
         if (isTestUnlockMode) {
             isTestUnlockMode = false
             showAppToast("Auto-unlock verified!", isLong = true)
+            val prefs = PreferenceManager(applicationContext ?: this)
+            if (prefs.isDynamicA11yOnDemandEnabled) {
+                scheduleIdleDetach(3500L)
+            }
         }
 
         if (pendingUnlockTaskId != -1L || pendingUnlockRecipient.isNotBlank()) {
@@ -1209,8 +1284,14 @@ class AutoTextAccessibilityService : AccessibilityService() {
         Log.d(TAG, "AutoText Accessibility Service Connected & Active (Global Interaction & Idle Guard Active)")
         // A task may have been queued while Android was still binding this service.
         if (isAutomating) {
+            cancelIdleDetach()
             handler.removeCallbacks(sendRunnable)
             handler.postDelayed(sendRunnable, 500L)
+        } else {
+            val prefs = PreferenceManager(applicationContext ?: this)
+            if (prefs.isDynamicA11yOnDemandEnabled && !isUnlockPending && !isTestUnlockMode) {
+                scheduleIdleDetach(5000L)
+            }
         }
     }
 

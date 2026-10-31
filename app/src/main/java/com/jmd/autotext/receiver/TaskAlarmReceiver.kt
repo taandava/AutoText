@@ -48,7 +48,8 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         const val ACTION_FIRE_CAMPAIGN = "com.jmd.autotext.ACTION_FIRE_CAMPAIGN"
         const val ACTION_SET_PREF = "com.jmd.autotext.ACTION_SET_PREF"
         const val ACTION_EMERGENCY_STOP = "com.jmd.autotext.ACTION_EMERGENCY_STOP"
-        const val ACTION_RESET_EMERGENCY_STOP = "com.jmd.autotext.ACTION_RESET_EMERGENCY_STOP" 
+        const val ACTION_RESET_EMERGENCY_STOP = "com.jmd.autotext.ACTION_RESET_EMERGENCY_STOP"
+        const val ACTION_TEST_AUTO_UNLOCK = "com.jmd.autotext.ACTION_TEST_AUTO_UNLOCK" 
 
         /**
          * Cancels all scheduled alarms and deletes all tasks from the SQLite database.
@@ -348,6 +349,13 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             val count = deleteAllTasks(context)
             AppFileLogger.action(context, TAG, "ACTION_DELETE_ALL_TASKS: Successfully deleted $count tasks.")
             Log.i(TAG, "ACTION_DELETE_ALL_TASKS: Successfully deleted $count tasks.")
+            return
+        }
+
+        if (intent.action == ACTION_TEST_AUTO_UNLOCK) {
+            val pin = intent.getStringExtra("pin") ?: PreferenceManager(context).deviceUnlockPin
+            Log.i(TAG, "Triggering testLockAndAutoUnlock via ACTION_TEST_AUTO_UNLOCK...")
+            com.jmd.autotext.service.AutoTextAccessibilityService.testLockAndAutoUnlock(context, pin)
             return
         }
 

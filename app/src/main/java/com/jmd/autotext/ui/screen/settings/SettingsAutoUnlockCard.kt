@@ -154,12 +154,8 @@ fun settingsAutoUnlockCard(
                 glassButton(
                     text = "Test Screen Lock",
                     onClick = {
-                        if (AutoTextAccessibilityService.isServiceRunning) {
-                            context.showAppToast("Locking phone...")
-                            AutoTextAccessibilityService.lockScreenNow()
-                        } else {
-                            context.showAppToast("Enable Accessibility Service first")
-                        }
+                        context.showAppToast("Locking phone...")
+                        AutoTextAccessibilityService.lockScreenNow()
                     },
                     emoji = "🔒",
                     variant = GlassButtonVariant.SECONDARY,
@@ -169,6 +165,10 @@ fun settingsAutoUnlockCard(
                     text = "Test Screen Unlock",
                     onClick = {
                         val currentPin = unlockPin.ifBlank { prefs.deviceUnlockPin }
+                        if (!isAutoUnlock) {
+                            isAutoUnlock = true
+                            prefs.isAutoUnlockEnabled = true
+                        }
                         AutoTextAccessibilityService.testLockAndAutoUnlock(context, currentPin)
                     },
                     emoji = "🔓",

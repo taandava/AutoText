@@ -93,7 +93,7 @@ fun settingsBankingShieldCard(
                 }
             }
             appBadge(
-                text = if (hasWriteSecure && dynamicA11y) "STEALTH ZERO-DETECTION"
+                text = if (hasWriteSecure && dynamicA11y) "SMART STANDBY (BANK SAFE)"
                        else if (userPaused || !a11yRunning) "GPAY SAFE (PAUSED)"
                        else "A11Y RUNNING",
                 color = if (hasWriteSecure && dynamicA11y) MaterialTheme.colorScheme.primary
@@ -114,7 +114,7 @@ fun settingsBankingShieldCard(
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     Text(
-                        text = "✅ 100% Automatic Zero-Detection Active",
+                        text = "✅ 100% Automatic Smart Standby Active",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp
@@ -126,6 +126,45 @@ fun settingsBankingShieldCard(
                         fontSize = 11.sp,
                         lineHeight = 15.sp
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        glassButton(
+                            text = "🧹 Clear GPay Cache",
+                            onClick = {
+                                try {
+                                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                        data = android.net.Uri.parse("package:com.google.android.apps.nbu.paisa.user")
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    }
+                                    context.startActivity(intent)
+                                    context.showAppToast("Tap 'Force stop' and 'Storage > Clear cache' to remove GPay's old cached warning.")
+                                } catch (_: Throwable) {
+                                    context.showAppToast("Could not open Google Pay app info.")
+                                }
+                            },
+                            emoji = "🧹",
+                            variant = GlassButtonVariant.SECONDARY,
+                            modifier = Modifier.weight(1f)
+                        )
+                        glassButton(
+                            text = "💳 Open GPay",
+                            onClick = {
+                                val gpayIntent = context.packageManager.getLaunchIntentForPackage("com.google.android.apps.nbu.paisa.user")
+                                if (gpayIntent != null) {
+                                    gpayIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    context.startActivity(gpayIntent)
+                                } else {
+                                    context.showAppToast("Google Pay is not installed.")
+                                }
+                            },
+                            emoji = "💳",
+                            variant = GlassButtonVariant.PRIMARY,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
         } else if (a11yRunning) {

@@ -423,22 +423,44 @@ class KeyguardUnlockEngine(
     private fun swipeUpToRevealBouncer(onComplete: () -> Unit) {
         try {
             val dm = service.resources.displayMetrics
-            val startX = dm.widthPixels * 0.5f
-            val startY = dm.heightPixels * 0.85f
-            val endY = dm.heightPixels * 0.20f
+            val width = dm.widthPixels.toFloat()
+            val height = dm.heightPixels.toFloat()
+            val startY = height * 0.85f
+            val endY = height * 0.20f
 
-            val path = Path().apply {
-                moveTo(startX, startY)
-                lineTo(startX, endY)
+            // Dispatch two parallel strokes (two-finger swipe)
+            // Satisfies OEM requirements like Vivo's "Swipe up with two fingers to unlock"
+            // while functioning as a standard upward swipe on all Android devices
+            val path1 = Path().apply {
+                moveTo(width * 0.40f, startY)
+                lineTo(width * 0.40f, endY)
             }
-            val stroke = GestureDescription.StrokeDescription(path, 0, 180L)
-            val gesture = GestureDescription.Builder().addStroke(stroke).build()
-            service.dispatchGesture(gesture, null, null)
-            Log.d(loggerTag, "Dispatched swipe up bouncer gesture")
-            handler.postDelayed({ onComplete() }, 250L)
+            val path2 = Path().apply {
+                moveTo(width * 0.60f, startY)
+                lineTo(width * 0.60f, endY)
+            }
+            val stroke1 = GestureDescription.StrokeDescription(path1, 0, 220L)
+            val stroke2 = GestureDescription.StrokeDescription(path2, 0, 220L)
+            val gesture = GestureDescription.Builder()
+                .addStroke(stroke1)
+                .addStroke(stroke2)
+                .build()
+
+            service.dispatchGesture(gesture, object : AccessibilityService.GestureResultCallback() {
+                override fun onCompleted(gestureDescription: GestureDescription?) {
+                    Log.d(loggerTag, "Two-finger swipe completed")
+                    handler.postDelayed({ onComplete() }, 250L)
+                }
+
+                override fun onCancelled(gestureDescription: GestureDescription?) {
+                    Log.w(loggerTag, "Two-finger swipe cancelled")
+                    handler.postDelayed({ onComplete() }, 250L)
+                }
+            }, null)
+            Log.d(loggerTag, "Dispatched two-finger swipe up bouncer gesture")
         } catch (t: Throwable) {
-                Log.e(loggerTag, "Failed swipeUpToRevealBouncer", t)
-                handler.postDelayed({ onComplete() }, 250L)
-            }
+            Log.e(loggerTag, "Failed swipeUpToRevealBouncer", t)
+            handler.postDelayed({ onComplete() }, 250L)
+        }
     }
 }

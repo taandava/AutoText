@@ -65,28 +65,32 @@ object SystemIndicatorResolver {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
         val isBatteryUnrestricted = powerManager?.isIgnoringBatteryOptimizations(context.packageName) == true
 
+        val isComponentEnabled = AccessibilityHealthManager.isServiceComponentEnabled(context)
         val hasWriteSecure = AccessibilityHealthManager.hasWriteSecureSettings(context)
         val isDynamicStealth = prefs.isDynamicA11yOnDemandEnabled && hasWriteSecure
         val isA11yRunning = AccessibilityHealthManager.isServiceOperational()
         val isA11ySettingOn = AccessibilityHealthManager.isAccessibilitySettingEnabled(context)
         val isA11yHealthy = when {
+            !isComponentEnabled -> false
             isDynamicStealth -> true
             prefs.isA11yUserPaused -> false
             else -> isA11yRunning || isA11ySettingOn
         }
 
         val a11yName = when {
-            isDynamicStealth -> "Accessibility Engine (Dynamic Stealth • GPay Safe)"
-            prefs.isA11yUserPaused -> "Accessibility Engine (Paused for GPay)"
-            isA11yRunning -> "Accessibility Engine (Active Continuous)"
-            else -> "Accessibility Service Engine"
+            !isComponentEnabled -> "Message Assistant (Disabled in System)"
+            isDynamicStealth -> "Message Assistant (Smart Standby • GPay Safe)"
+            prefs.isA11yUserPaused -> "Message Assistant (Paused for Payments)"
+            isA11yRunning -> "Message Assistant (Active Continuous)"
+            else -> "Message Assistant"
         }
 
         val a11yDesc = when {
-            isDynamicStealth -> "Zero-Detection Mode: Kept OFF when idle so Google Pay & Bank apps run with 0 warnings. Auto-enables for 2s only during scheduled WhatsApp dispatches."
-            prefs.isA11yUserPaused -> "Accessibility is temporarily paused so Google Pay can process transactions without interference. Tap to resume."
-            isA11yRunning -> "Active in background for WhatsApp automation. Note: Turn on Dynamic Stealth or tap Pause before paying in Google Pay."
-            else -> "Enables automated UI interaction for WhatsApp messaging. Tap to enable."
+            !isComponentEnabled -> "The assistant service component was disabled by the system. Tap to re-enable in system settings."
+            isDynamicStealth -> "Bank-Safe Standby: Kept inactive while idle so Google Pay & Bank apps run with 0 warnings. Automatically connects for 2s only during scheduled WhatsApp dispatches."
+            prefs.isA11yUserPaused -> "Assistant is temporarily paused so Google Pay can process transactions without interference. Tap to resume."
+            isA11yRunning -> "Active in background for messaging automation. Turn on Smart Standby to keep payment apps safe."
+            else -> "Enables hands-free message sending and lockscreen assistance. Tap to enable."
         }
 
         val isNotificationListenerActive = AutoTextNotificationListenerService.isListenerConnected ||
@@ -135,14 +139,23 @@ object SystemIndicatorResolver {
                 icon = Icons.Default.AccessibilityNew,
                 isActive = isA11yHealthy,
                 actionLabel = when {
-                    isDynamicStealth -> null
+                    isDynamicStealth && isA11yRunning -> "Safe Detach"
+                    isDynamicStealth -> "Test Connection"
                     prefs.isA11yUserPaused && hasWriteSecure -> "Resume Accessibility"
                     prefs.isA11yUserPaused -> "Enable in Settings"
                     isA11yRunning -> "Pause for Google Pay"
                     else -> "Enable in Settings"
                 },
                 onAction = { ctx ->
-                    if (isA11yRunning) {
+                    if (isDynamicStealth) {
+                        if (isA11yRunning) {
+                            AccessibilityHealthManager.disableAccessibilityService(ctx)
+                            ctx.showAppToast("Safe Standby: Assistant detached for banking safety.")
+                        } else {
+                            AccessibilityHealthManager.enableAccessibilityService(ctx)
+                            ctx.showAppToast("⚡ Connected! Auto-detaches in 5s to keep banking safe.")
+                        }
+                    } else if (isA11yRunning) {
                         prefs.isA11yUserPaused = true
                         AutoTextAccessibilityService.disableServiceIfActive()
                         if (hasWriteSecure) {
@@ -155,6 +168,7 @@ object SystemIndicatorResolver {
                         ctx.showAppToast("Accessibility resumed.")
                     } else {
                         prefs.isA11yUserPaused = false
+                        AccessibilityHealthManager.ensureServiceComponentEnabled(ctx)
                         runCatching {
                             val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

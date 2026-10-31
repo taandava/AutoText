@@ -97,10 +97,49 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * Inspects whether the Accessibility Service component is enabled in the PackageManager.
+     */
+    fun isServiceComponentEnabled(context: Context): Boolean {
+        return try {
+            val component = ComponentName(context, AutoTextAccessibilityService::class.java)
+            val state = context.packageManager.getComponentEnabledSetting(component)
+            state != PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+        } catch (_: Exception) {
+            true
+        }
+    }
+
+    /**
+     * Ensures the Accessibility Service component is explicitly enabled in the PackageManager.
+     * Prevents OEM security scanners or previous disable commands from making the service invisible in Settings.
+     */
+    fun ensureServiceComponentEnabled(context: Context) {
+        try {
+            val component = ComponentName(context, AutoTextAccessibilityService::class.java)
+            val pm = context.packageManager
+            val state = pm.getComponentEnabledSetting(component)
+            if (state != PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+                pm.setComponentEnabledSetting(
+                    component,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP
+                )
+                Log.i(TAG, "ensureServiceComponentEnabled: Set component state to ENABLED in PackageManager")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to ensure service component enabled: ${e.message}")
+        }
+    }
+
+    /**
      * Evaluates the comprehensive lifecycle state of the Accessibility Service,
-     * cleanly differentiating between Android Settings configuration and real-time binder liveliness.
+     * cleanly differentiating between Android Settings configuration, PackageManager component state,
+     * and real-time binder liveliness.
      */
     fun getServiceState(context: Context): ServiceState {
+        if (!isServiceComponentEnabled(context)) {
+            return ServiceState.DISABLED
+        }
         val prefs = PreferenceManager(context)
         if (prefs.isDynamicA11yOnDemandEnabled && hasWriteSecureSettings(context)) {
             // Under dynamic stealth, being detached during idle is the expected healthy operational state
@@ -202,6 +241,7 @@ object AccessibilityHealthManager {
      */
     fun enableAccessibilityService(context: Context): Boolean {
         try {
+            ensureServiceComponentEnabled(context)
             if (!hasWriteSecureSettings(context)) {
                 Log.w(TAG, "enableAccessibilityService: WRITE_SECURE_SETTINGS not granted")
                 return false
@@ -331,8 +371,8 @@ object AccessibilityHealthManager {
         }
 
         if (hasWriteSecureSettings(context)) {
-            Log.i(TAG, "Accessibility Service binder is dropped or inactive. Auto-healing now via WRITE_SECURE_SETTINGS...")
-            val healed = autoHealAccessibility(context)
+            Log.i(TAG, "Accessibility Service binder is inactive. Enabling on-demand via WRITE_SECURE_SETTINGS...")
+            val healed = enableAccessibilityService(context)
             if (healed) {
                 val start = System.currentTimeMillis()
                 while (!isServiceRunning() && (System.currentTimeMillis() - start) < 2500L) {
@@ -355,6 +395,7 @@ object AccessibilityHealthManager {
      * @return True if secure write succeeded and services are bound.
      */
     fun ensureAllServicesActive(context: Context): Boolean {
+        ensureServiceComponentEnabled(context)
         if (!hasWriteSecureSettings(context)) {
             return false
         }

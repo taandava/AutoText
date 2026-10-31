@@ -265,11 +265,15 @@ fun whatsAppSetupAndAutoUnlockView(
                         glassButton(
                             text = "Test Screen Unlock",
                             onClick = {
+                                val currentPin = pinCode.ifBlank { prefs.deviceUnlockPin }
+                                if (!isAutoUnlock) {
+                                    isAutoUnlock = true
+                                    prefs.isAutoUnlockEnabled = true
+                                }
                                 scope.launch {
                                     withContext(Dispatchers.IO) {
                                         AccessibilityHealthManager.ensureServiceAlive(context)
                                     }
-                                    val currentPin = pinCode.ifBlank { prefs.deviceUnlockPin }
                                     AutoTextAccessibilityService.testLockAndAutoUnlock(context, currentPin)
                                 }
                             },

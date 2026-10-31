@@ -96,6 +96,9 @@ object AccessibilityNodeUtils {
         if (root == null) return emptyList()
         val possibleIds = listOf(
             "$targetPkg:id/$idName",
+            "com.vivo.systemuiplugin:id/$idName",
+            "com.vivo.fingerprintui:id/$idName",
+            "com.android.systemui:id/$idName",
             "com.whatsapp:id/$idName",
             "com.whatsapp.w4b:id/$idName",
             "android:id/$idName"
