@@ -789,7 +789,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
 
                 if (!isServiceRunning) {
-                    context.showAppToast("Please enable Message Helper in Settings > Accessibility first", isLong = true)
+                    context.showAppToast("Please enable AutoText Assistant in Settings > Accessibility first", isLong = true)
                     runCatching {
                         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -809,8 +809,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 try {
                     val pm = appContext.getSystemService(POWER_SERVICE) as? PowerManager
 
+                    @Suppress("DEPRECATION")
                     val wakeLock = pm?.newWakeLock(
-                        PowerManager.PARTIAL_WAKE_LOCK,
+                        PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
                         "AutoText:TestUnlockWakeLock"
                     )
                     wakeLock?.acquire(15000L)
@@ -937,10 +938,12 @@ class AutoTextAccessibilityService : AccessibilityService() {
 
         private val idleDetachRunnable = Runnable {
         try {
-            val prefs = PreferenceManager(applicationContext ?: this)
-            if (prefs.isDynamicA11yOnDemandEnabled && !isAutomating && !isUnlockPending && !isTestUnlockMode) {
+            val appContext = applicationContext ?: this
+            val prefs = PreferenceManager(appContext)
+            // Only detach dynamically if WRITE_SECURE_SETTINGS is held so the service can auto-reconnect on demand
+            if (prefs.isDynamicA11yOnDemandEnabled && AccessibilityHealthManager.hasWriteSecureSettings(appContext) && !isAutomating && !isUnlockPending && !isTestUnlockMode) {
                 Log.i(TAG, "Idle detach: No active automation, safely detaching accessibility to protect Google Pay & banking apps")
-                AccessibilityHealthManager.disableAccessibilityService(applicationContext ?: this)
+                AccessibilityHealthManager.disableAccessibilityService(appContext)
             }
         } catch (e: Exception) {
             Log.w(TAG, "idleDetachRunnable error: ${e.message}")

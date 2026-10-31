@@ -63,8 +63,9 @@ class AutomationLauncherActivity : Activity() {
         // Acquire wake lock to ensure CPU remains active during unlock execution
         try {
             val pm = getSystemService(POWER_SERVICE) as PowerManager
+            @Suppress("DEPRECATION")
             wakeLock = pm.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK,
+                PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
                 "AutoText:LauncherWakeLock",
             )
             wakeLock?.acquire(15000L)

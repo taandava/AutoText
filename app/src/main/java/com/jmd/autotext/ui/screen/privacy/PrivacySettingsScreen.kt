@@ -133,7 +133,7 @@ fun PrivacySettingsScreen(
         topBar = {
             appSubScreenHeader(
                 title = "Privacy & App Visibility",
-                subtitle = "App exclusions, content masking & stealth shielding",
+                subtitle = "App exclusions, content masking & payment protection",
                 onBack = onBack
             )
         },
@@ -211,7 +211,7 @@ fun PrivacySettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                             Text(text = "Master Privacy Mode", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
-                            Text(text = "Enforces application exclusions, stealth shielding, and accessibility isolation.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(text = "Enforces application exclusions, payment protection, and accessibility isolation.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Switch(
                             checked = privacyModeEnabled,
@@ -591,7 +591,7 @@ fun PrivacySettingsScreen(
         AlertDialog(
             onDismissRequest = { showResetDialog = false },
             title = { Text("Reset Privacy Settings?", fontWeight = FontWeight.Bold) },
-            text = { Text("This will restore default banking shields and clear custom exclusions.", fontSize = 12.sp) },
+            text = { Text("This will restore default payment app protections and clear custom exclusions.", fontSize = 12.sp) },
             confirmButton = {
                 TextButton(
                     onClick = {

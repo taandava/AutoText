@@ -51,7 +51,7 @@ fun settingsAutoUnlockCard(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text("Auto-Unlock When Locked", color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.Medium)
-                Text("Bypasses lock screen when scheduled messages fire", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
+                Text("Unlocks screen when scheduled messages fire", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
             }
             Switch(
                 checked = isAutoUnlock,
@@ -180,7 +180,7 @@ fun settingsAutoUnlockCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             glassButton(
-                text = "Emergency Stop All Automation",
+                text = "Emergency Stop All Scheduled Tasks",
                 onClick = {
                     AutoTextAccessibilityService.clearPending()
                     context.showAppToast("Automation stopped")

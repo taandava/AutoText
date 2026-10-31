@@ -150,22 +150,25 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                 }
             }
 
-            // 5. Accessibility Automation Service
+            // 5. Accessibility Assistant Service
             item {
                 val a11yState = AccessibilityHealthManager.getServiceState(context)
-                val isA11y = a11yState == AccessibilityHealthManager.ServiceState.OPERATIONAL
+                val isA11y = a11yState == AccessibilityHealthManager.ServiceState.OPERATIONAL || a11yState == AccessibilityHealthManager.ServiceState.STANDBY
                 val a11yTitle = when (a11yState) {
-                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Accessibility Automation: Active"
-                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Accessibility: Enabled (Binder Paused)"
-                    AccessibilityHealthManager.ServiceState.DISABLED -> "Accessibility Automation Service"
+                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "AutoText Assistant: Active"
+                    AccessibilityHealthManager.ServiceState.STANDBY -> "AutoText Assistant: Bank-Safe Standby"
+                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "AutoText Assistant: Enabled (Binder Paused)"
+                    AccessibilityHealthManager.ServiceState.DISABLED -> "AutoText Assistant Service"
                 }
                 val a11yDesc = when (a11yState) {
-                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Required to auto-send scheduled WhatsApp messages and auto-unlock phone via lockscreen PIN."
-                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Accessibility is enabled in Settings, but the Android background binder is paused. Tap to re-toggle in Settings, or use Auto-Heal below."
-                    AccessibilityHealthManager.ServiceState.DISABLED -> "Required to auto-send scheduled WhatsApp messages and auto-unlock phone via lockscreen PIN."
+                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Active in background to auto-send scheduled WhatsApp messages and unlock screen."
+                    AccessibilityHealthManager.ServiceState.STANDBY -> "Bank-Safe Standby: Connects on demand for ~2s during tasks only. Google Pay and bank apps detect 0 third-party services."
+                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Accessibility is enabled in Settings, but the background binder is connecting. Tap to toggle in Settings if needed."
+                    AccessibilityHealthManager.ServiceState.DISABLED -> "Required to auto-send scheduled WhatsApp messages and assist with screen unlock."
                 }
                 val a11yBtnText = when (a11yState) {
-                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Accessibility Active"
+                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Assistant Active"
+                    AccessibilityHealthManager.ServiceState.STANDBY -> "Bank-Safe Ready"
                     AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Toggle in Settings"
                     AccessibilityHealthManager.ServiceState.DISABLED -> "Accessibility Settings"
                 }

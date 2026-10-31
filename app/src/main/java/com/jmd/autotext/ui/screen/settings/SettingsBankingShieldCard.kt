@@ -80,20 +80,20 @@ fun settingsBankingShieldCard(
                 )
                 Column {
                     Text(
-                        text = "Google Pay & Banking Shield",
+                        text = "Google Pay & Payment Compatibility",
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp
                     )
                     Text(
-                        text = "Isolates automation from UPI & banking applications",
+                        text = "Ensures Google Pay, PhonePe, and banking apps run smoothly without security alerts",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp
                     )
                 }
             }
             appBadge(
-                text = if (hasWriteSecure && dynamicA11y) "SMART STANDBY (BANK SAFE)"
+                text = if (hasWriteSecure && dynamicA11y) "BANK-SAFE STANDBY"
                        else if (userPaused || !a11yRunning) "GPAY SAFE (PAUSED)"
                        else "A11Y RUNNING",
                 color = if (hasWriteSecure && dynamicA11y) MaterialTheme.colorScheme.primary
@@ -316,14 +316,14 @@ fun settingsBankingShieldCard(
             Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Dynamic Zero-Detection Mode",
+                        text = "Bank-Safe Smart Standby Mode",
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     if (hasWriteSecure) {
-                        appBadge(text = "ZERO DETECTION READY", color = MaterialTheme.colorScheme.primary)
+                        appBadge(text = "BANK-SAFE READY", color = MaterialTheme.colorScheme.primary)
                     } else {
                         appBadge(text = "NEEDS ADB GRANT", color = MaterialTheme.colorScheme.outline)
                     }
@@ -345,7 +345,7 @@ fun settingsBankingShieldCard(
                     prefs.isDynamicA11yOnDemandEnabled = enable
                     if (enable) {
                         AccessibilityHealthManager.disableAccessibilityService(context)
-                        context.showAppToast("Dynamic Zero-Detection Active: A11y Off When Idle")
+                        context.showAppToast("Smart Standby Active: A11y Off When Idle")
                     } else {
                         AccessibilityHealthManager.enableAccessibilityService(context)
                         context.showAppToast("Continuous Accessibility Active")
@@ -368,7 +368,7 @@ fun settingsBankingShieldCard(
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     Text(
-                        text = "🚀 Want 100% Automatic Zero-Detection? (No manual pausing!)",
+                        text = "🚀 100% Automatic Bank-Safe Standby (Zero Manual Pausing Required)",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 11.5.sp

@@ -92,6 +92,7 @@ object AccessibilityHealthManager {
 
     enum class ServiceState {
         OPERATIONAL,
+        STANDBY,
         ENABLED_BUT_NOT_BOUND,
         DISABLED
     }
@@ -140,15 +141,16 @@ object AccessibilityHealthManager {
         if (!isServiceComponentEnabled(context)) {
             return ServiceState.DISABLED
         }
-        val prefs = PreferenceManager(context)
-        if (prefs.isDynamicA11yOnDemandEnabled && hasWriteSecureSettings(context)) {
-            // Under dynamic stealth, being detached during idle is the expected healthy operational state
+        if (isServiceOperational()) {
             return ServiceState.OPERATIONAL
         }
+        val prefs = PreferenceManager(context)
+        if (prefs.isDynamicA11yOnDemandEnabled && hasWriteSecureSettings(context)) {
+            // Under dynamic bank-safe standby, being detached during idle is healthy and expected
+            return ServiceState.STANDBY
+        }
         val settingEnabled = isAccessibilityEnabledInSystem(context)
-        val operational = isServiceOperational()
         return when {
-            operational -> ServiceState.OPERATIONAL
             settingEnabled -> ServiceState.ENABLED_BUT_NOT_BOUND
             else -> ServiceState.DISABLED
         }
@@ -227,7 +229,7 @@ object AccessibilityHealthManager {
                 if (withoutMe.isBlank()) {
                     Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "0")
                 }
-                Log.i(TAG, "Banking Shield: Removed accessibility service from secure settings (remaining=$withoutMe)")
+                Log.i(TAG, "Payment Guard: Detached accessibility service from secure settings (remaining=$withoutMe)")
             }
             return true
         } catch (e: Exception) {

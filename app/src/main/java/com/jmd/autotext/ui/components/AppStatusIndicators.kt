@@ -77,12 +77,13 @@ object SystemIndicatorResolver {
             else -> isA11yRunning || isA11ySettingOn
         }
 
+        val a11yState = AccessibilityHealthManager.getServiceState(context)
         val a11yName = when {
-            !isComponentEnabled -> "Message Assistant (Disabled in System)"
-            isDynamicStealth -> "Message Assistant (Smart Standby • GPay Safe)"
-            prefs.isA11yUserPaused -> "Message Assistant (Paused for Payments)"
-            isA11yRunning -> "Message Assistant (Active Continuous)"
-            else -> "Message Assistant"
+            !isComponentEnabled -> "AutoText Assistant (Disabled in System)"
+            isDynamicStealth -> "AutoText Assistant (Bank-Safe Standby)"
+            prefs.isA11yUserPaused -> "AutoText Assistant (Paused for Payments)"
+            isA11yRunning -> "AutoText Assistant (Active Continuous)"
+            else -> "AutoText Assistant"
         }
 
         val a11yDesc = when {
@@ -112,11 +113,11 @@ object SystemIndicatorResolver {
         return listOf(
             SystemIndicator(
                 id = "stealth_guard",
-                name = "Stealth Guard (Banking Shield)",
-                description = "Isolates automation from banking, payment, and UPI apps so your bank apps remain functional without accessibility alerts. Always active by default.",
+                name = "Payment Compatibility Guard",
+                description = "Protects banking and payment applications (Google Pay, PhonePe, Paytm) from accessibility alerts by keeping AutoText isolated or detached when idle.",
                 icon = Icons.Default.Security,
                 isActive = isStealthActive,
-                actionLabel = if (!isStealthActive) "Enable Shield" else null,
+                actionLabel = if (!isStealthActive) "Enable Guard" else null,
                 onAction = { _ ->
                     prefs.isBankingShieldEnabled = true
                 }

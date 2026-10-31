@@ -286,7 +286,7 @@ fun whatsAppSetupAndAutoUnlockView(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     glassButton(
-                        text = "Emergency Stop All Automation",
+                        text = "Emergency Stop All Scheduled Tasks",
                         onClick = {
                             AutoTextAccessibilityService.clearPending()
                             context.showAppToast("Automation stopped")

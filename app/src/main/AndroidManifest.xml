@@ -76,7 +76,7 @@
         <intent>
             <action android:name="android.settings.SECURITY_SETTINGS" />
         </intent>
-        <!-- OEM Battery Optimizer packages for Device Admin & Auto-Start permissions (per multi-OEM trampoline spec) -->
+        <!-- OEM Battery Optimizer packages for Device Admin & Auto-Start permissions -->
         <package android:name="com.vivo.permissionmanager" />
         <package android:name="com.miui.securitycenter" />
         <package android:name="com.coloros.safecenter" />
@@ -123,7 +123,7 @@
         </activity>
 
 
-        <!-- Fake Incoming Call Simulator Activity (Internal app simulation only) -->
+        <!-- Simulated Incoming Call Activity (Internal simulation only) -->
         <activity
             android:name=".ui.activity.FakeCallActivity"
             android:exported="false"
@@ -147,7 +147,7 @@
             android:launchMode="singleTop"
             android:theme="@style/Theme.AutoText" />
 
-        <!-- Automation Screen-On / Keyguard Dismiss Trampoline Activity (Internal automation only) -->
+        <!-- Screen-On / Keyguard Dismiss Dispatch Activity (Internal dispatch only) -->
         <activity
             android:name=".ui.activity.AutomationLauncherActivity"
             android:exported="false"
@@ -177,7 +177,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- Accessibility Automation Service (WhatsApp, WA Business) -->
+        <!-- Accessibility Message Assistant Service (WhatsApp, WA Business) -->
         <service
             android:name=".service.AutoTextAccessibilityService"
             android:label="@string/accessibility_service_label"
@@ -211,7 +211,7 @@
             android:exported="false"
             android:stopWithTask="false" />
 
-        <!-- Quick Settings Tile: 1-Tap Pause & Resume Accessibility for Google Pay / Banking Safety -->
+        <!-- Quick Settings Tile: 1-Tap Pause & Resume Accessibility for Payment App Compatibility -->
         <service
             android:name=".service.AutoTextA11yTileService"
             android:icon="@mipmap/ic_launcher"
