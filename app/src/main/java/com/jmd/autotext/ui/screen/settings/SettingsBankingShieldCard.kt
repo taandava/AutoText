@@ -166,6 +166,41 @@ fun settingsBankingShieldCard(
                         variant = GlassButtonVariant.PRIMARY,
                         modifier = Modifier.fillMaxWidth()
                     )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    glassButton(
+                        text = "🧹 Clear GPay Cache (Force Stop)",
+                        onClick = {
+                            try {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = android.net.Uri.parse("package:com.google.android.apps.nbu.paisa.user")
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                context.startActivity(intent)
+                                context.showAppToast("Tap 'Force stop' and 'Storage > Clear cache' to clear Google Pay's block.")
+                            } catch (_: Throwable) {
+                                context.showAppToast("Could not open Google Pay app info.")
+                            }
+                        },
+                        emoji = "🧹",
+                        variant = GlassButtonVariant.SECONDARY,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    glassButton(
+                        text = "💳 Open Google Pay",
+                        onClick = {
+                            val gpayIntent = context.packageManager.getLaunchIntentForPackage("com.google.android.apps.nbu.paisa.user")
+                            if (gpayIntent != null) {
+                                gpayIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                context.startActivity(gpayIntent)
+                            } else {
+                                context.showAppToast("Google Pay is not installed.")
+                            }
+                        },
+                        emoji = "💳",
+                        variant = GlassButtonVariant.PRIMARY,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         } else {
@@ -209,6 +244,22 @@ fun settingsBankingShieldCard(
                         },
                         emoji = "⚡",
                         variant = GlassButtonVariant.SECONDARY,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    glassButton(
+                        text = "💳 Open Google Pay",
+                        onClick = {
+                            val gpayIntent = context.packageManager.getLaunchIntentForPackage("com.google.android.apps.nbu.paisa.user")
+                            if (gpayIntent != null) {
+                                gpayIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                context.startActivity(gpayIntent)
+                            } else {
+                                context.showAppToast("Google Pay is not installed.")
+                            }
+                        },
+                        emoji = "💳",
+                        variant = GlassButtonVariant.PRIMARY,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
