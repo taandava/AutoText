@@ -18,7 +18,9 @@
 package com.jmd.autotext.service
 
 import android.accessibilityservice.AccessibilityService
+import android.app.AlarmManager
 import android.app.KeyguardManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -27,6 +29,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
 import android.provider.Settings
 import android.telecom.TelecomManager
 import android.util.Log
@@ -766,8 +769,13 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val effectivePin = pin.ifBlank { prefs.deviceUnlockPin }.trim()
 
             if (effectivePin.isBlank() && prefs.autoUnlockType != "SWIPE") {
-                context.showAppToast("âš ï¸ Please enter your screen lock PIN first", isLong = true)
+                context.showAppToast("Please enter your screen lock PIN first", isLong = true)
                 return
+            }
+
+            if (effectivePin.isNotBlank()) {
+                prefs.deviceUnlockPin = effectivePin
+                prefs.isAutoUnlockEnabled = true
             }
 
             CoroutineScope(Dispatchers.Main).launch {
@@ -777,7 +785,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 // 2. If service is not running, attempt on-demand activation via WRITE_SECURE_SETTINGS or prompt user
                 if (!isServiceRunning) {
                     if (AccessibilityHealthManager.hasWriteSecureSettings(appContext)) {
-                        context.showAppToast("âš¡ Connecting assistant for unlock test...", isLong = false)
+                        context.showAppToast("Connecting assistant for unlock test...", isLong = false)
                         withContext(Dispatchers.IO) {
                             AccessibilityHealthManager.enableAccessibilityService(appContext)
                         }
@@ -800,31 +808,62 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
 
                 isTestUnlockMode = true
-                context.showAppToast("ðŸ”’ Locking screen now... Auto-unlock will trigger in 4 seconds. Keep phone steady!", isLong = true)
+                instance?.cancelIdleDetach()
 
+                context.showAppToast("Locking screen now... Auto-unlock will trigger in 4 seconds. Keep phone steady!", isLong = true)
+
+                // 1. Acquire PARTIAL_WAKE_LOCK BEFORE locking so CPU CANNOT sleep during countdown
+                val pm = appContext.getSystemService(POWER_SERVICE) as? PowerManager
+                val cpuWakeLock = pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AutoText:TestCountdownWakeLock")
+                cpuWakeLock?.acquire(15000L)
+
+                // 2. Lock physical screen
                 lockScreenNow()
 
-                delay(3500L)
-
-                try {
-                    val pm = appContext.getSystemService(POWER_SERVICE) as? PowerManager
-
-                    @Suppress("DEPRECATION")
-                    val wakeLock = pm?.newWakeLock(
-                        PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
-                        "AutoText:TestUnlockWakeLock"
-                    )
-                    wakeLock?.acquire(15000L)
-
-                    val testIntent = Intent(appContext, AutomationLauncherActivity::class.java).apply {
-                        putExtra(AutomationLauncherActivity.EXTRA_IS_TEST_UNLOCK, true)
-                        putExtra(AutomationLauncherActivity.EXTRA_PIN, effectivePin)
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    }
-                    appContext.startActivity(testIntent)
-                } catch (t: Throwable) {
-                    Log.e(TAG, "Error initiating test auto unlock", t)
+                // 3. Hardware RTC AlarmManager guarantee
+                val alarmManager = appContext.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+                val testIntent = Intent(appContext, AutomationLauncherActivity::class.java).apply {
+                    putExtra(AutomationLauncherActivity.EXTRA_IS_TEST_UNLOCK, true)
+                    putExtra(AutomationLauncherActivity.EXTRA_PIN, effectivePin)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
+                val pendingIntent = PendingIntent.getActivity(
+                    appContext,
+                    8899,
+                    testIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+
+                val triggerAt = SystemClock.elapsedRealtime() + 3500L
+                try {
+                    alarmManager?.setExactAndAllowWhileIdle(
+                        AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+                } catch (se: SecurityException) {
+                    Log.w(TAG, "Cannot set exact alarm: ${se.message}, relying on WakeLock handler")
+                }
+
+                // 4. Handler countdown under WakeLock
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    try {
+                        @Suppress("DEPRECATION")
+                        val screenWakeLock = pm?.newWakeLock(
+                            PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
+                            "AutoText:TestUnlockWakeLock"
+                        )
+                        screenWakeLock?.acquire(15000L)
+                        appContext.startActivity(testIntent)
+                    } catch (t: Throwable) {
+                        Log.e(TAG, "Error initiating test auto unlock", t)
+                    } finally {
+                        runCatching {
+                            if (cpuWakeLock?.isHeld == true) cpuWakeLock.release()
+                        }
+                    }
+                }, 3500L)
             }
         }
 

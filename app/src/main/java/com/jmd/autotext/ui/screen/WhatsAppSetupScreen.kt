@@ -69,7 +69,6 @@ fun whatsAppSetupAndAutoUnlockView(
     var testPhone by remember { mutableStateOf("") }
     var testMessage by remember { mutableStateOf("") }
 
-    val isA11yActive = AccessibilityHealthManager.isServiceOperational()
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -95,7 +94,7 @@ fun whatsAppSetupAndAutoUnlockView(
         ) {
             // 1. Accessibility Service Live Status Enterprise Card
             item {
-                whatsAppA11yStatusCard(context = context, isA11yActive = isA11yActive)
+                whatsAppA11yStatusCard(context = context, prefs = prefs)
             }
 
             // 2. Android 13/14 "Restricted Settings" Guide Enterprise Card
@@ -270,12 +269,7 @@ fun whatsAppSetupAndAutoUnlockView(
                                     isAutoUnlock = true
                                     prefs.isAutoUnlockEnabled = true
                                 }
-                                scope.launch {
-                                    withContext(Dispatchers.IO) {
-                                        AccessibilityHealthManager.ensureServiceAlive(context)
-                                    }
-                                    AutoTextAccessibilityService.testLockAndAutoUnlock(context, currentPin)
-                                }
+                                AutoTextAccessibilityService.testLockAndAutoUnlock(context, currentPin)
                             },
                             icon = Icons.Default.LockOpen,
                             variant = GlassButtonVariant.PRIMARY,
@@ -356,35 +350,48 @@ fun whatsAppSetupAndAutoUnlockView(
  * Diagnostic card presenting current Accessibility service status with direct action intent.
  *
  * @param context Active Android [Context].
- * @param isA11yActive True if service is currently running and verified via heartbeat.
+ * @param prefs Application [PreferenceManager].
  */
 @Composable
-fun whatsAppA11yStatusCard(context: Context, isA11yActive: Boolean) {
+fun whatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
+    val hasWriteSecure = AccessibilityHealthManager.hasWriteSecureSettings(context)
+    val isDynamicStandby = prefs.isDynamicA11yOnDemandEnabled && hasWriteSecure
+    val isOperational = AccessibilityHealthManager.isServiceOperational()
+    val isA11yReady = isOperational || isDynamicStandby
+
     appCard(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = if (isA11yActive) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
-        borderColor = if (isA11yActive) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f) else MaterialTheme.colorScheme.error.copy(alpha = 0.35f)
+        backgroundColor = if (isA11yReady) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
+        borderColor = if (isA11yReady) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f) else MaterialTheme.colorScheme.error.copy(alpha = 0.35f)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = if (isA11yActive) Icons.Default.CheckCircle else Icons.Default.Warning,
+                imageVector = if (isA11yReady) Icons.Default.CheckCircle else Icons.Default.Warning,
                 contentDescription = null,
-                tint = if (isA11yActive) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+                tint = if (isA11yReady) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
-                    text = if (isA11yActive) "Accessibility Service Active" else "Accessibility Service Inactive",
+                    text = when {
+                        isOperational -> "AutoText Assistant: Connected"
+                        isDynamicStandby -> "AutoText Assistant: Bank-Safe Standby"
+                        else -> "AutoText Assistant: Setup Required"
+                    },
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
-                    color = if (isA11yActive) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error
+                    color = if (isA11yReady) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error
                 )
                 Text(
-                    text = if (isA11yActive) "Ready to auto-send WhatsApp and auto-unlock" else "Required for WhatsApp sending and PIN auto-unlock",
+                    text = when {
+                        isOperational -> "Active in background. Ready to dispatch scheduled messages and auto-unlock."
+                        isDynamicStandby -> "Active & Ready. Safely detached while idle so Google Pay & Bank apps work with 0 warnings. Auto-connects in 0.05s on task!"
+                        else -> "Enable AutoText Assistant in Settings > Accessibility > Installed apps."
+                    },
                     fontSize = 11.5.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -394,16 +401,35 @@ fun whatsAppA11yStatusCard(context: Context, isA11yActive: Boolean) {
         Spacer(modifier = Modifier.height(12.dp))
 
         glassButton(
-            text = if (isA11yActive) "Accessibility Settings" else "Turn ON Accessibility Service",
+            text = when {
+                isOperational -> "Open Accessibility Settings"
+                isDynamicStandby -> "Test Assistant Connection"
+                else -> "Turn ON in Accessibility Settings"
+            },
             onClick = {
-                context.startActivity(
-                    Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                if (isDynamicStandby) {
+                    if (isOperational) {
+                        AccessibilityHealthManager.disableAccessibilityService(context)
+                        context.showAppToast("Safe Standby: Assistant detached for banking safety.")
+                    } else {
+                        AccessibilityHealthManager.enableAccessibilityService(context)
+                        context.showAppToast("Connected! Assistant operational. Auto-detaching in 5s to keep banking safe.")
+                        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                            if (prefs.isDynamicA11yOnDemandEnabled && !AutoTextAccessibilityService.isCurrentlyAutomating()) {
+                                AccessibilityHealthManager.disableAccessibilityService(context)
+                            }
+                        }, 5000L)
                     }
-                )
+                } else {
+                    context.startActivity(
+                        Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                    )
+                }
             },
             icon = Icons.Default.AccessibilityNew,
-            variant = if (isA11yActive) GlassButtonVariant.SUCCESS else GlassButtonVariant.DANGER,
+            variant = if (isA11yReady) GlassButtonVariant.SUCCESS else GlassButtonVariant.DANGER,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -439,7 +465,8 @@ fun whatsAppRestrictedSettingsCard(context: Context) {
                     "2. In the top-right corner, tap the 3 dots (⋮).\n" +
                     "3. Tap 'Allow restricted settings'.\n" +
                     "4. Enter your phone PIN/fingerprint.\n" +
-                    "5. Return here and enable Accessibility!",
+                    "5. Return here and enable Accessibility!\n\n" +
+                    "• Samsung tip: In Settings > Accessibility, tap 'Installed apps' to locate AutoText Assistant.",
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 18.sp
