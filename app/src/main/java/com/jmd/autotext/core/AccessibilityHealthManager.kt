@@ -70,6 +70,13 @@ object AccessibilityHealthManager {
         }
     }
 
+    private fun isAutoTextToken(token: String, pkg: String): Boolean {
+        val t = token.trim()
+        return t == "$pkg/.service.AutoTextAccessibilityService" ||
+               t == "$pkg/${AutoTextAccessibilityService::class.java.name}" ||
+               (t.startsWith("$pkg/") && t.contains("AutoTextAccessibilityService"))
+    }
+
     /**
      * Inspects system secure settings to verify whether this app's accessibility service is enabled.
      *
@@ -78,12 +85,11 @@ object AccessibilityHealthManager {
      */
     fun isAccessibilityEnabledInSystem(context: Context): Boolean {
         return try {
-            val expected = "${context.packageName}/${AutoTextAccessibilityService::class.java.name}"
             val enabledServices = Settings.Secure.getString(
                 context.contentResolver,
                 Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
             ) ?: ""
-            enabledServices.contains(expected)
+            enabledServices.split(":").any { isAutoTextToken(it, context.packageName) }
         } catch (e: Exception) {
             Log.w(TAG, "Error checking enabled accessibility services: ${e.message}")
             false
@@ -220,16 +226,17 @@ object AccessibilityHealthManager {
             // 2. If WRITE_SECURE_SETTINGS is present, remove AutoText from ENABLED_ACCESSIBILITY_SERVICES
             if (hasWriteSecureSettings(context)) {
                 val cr = context.contentResolver
-                val expected = "${context.packageName}/${AutoTextAccessibilityService::class.java.name}"
                 val current = Settings.Secure.getString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
                 val withoutMe = current.splitToSequence(":")
-                    .filter { it.isNotBlank() && (it != expected) }
+                    .map { it.trim() }
+                    .filter { it.isNotBlank() && !isAutoTextToken(it, context.packageName) }
+                    .distinct()
                     .joinToString(":")
                 Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, withoutMe)
                 if (withoutMe.isBlank()) {
                     Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "0")
                 }
-                Log.i(TAG, "Payment Guard: Detached accessibility service from secure settings (remaining=$withoutMe)")
+                Log.i(TAG, "Bank Shield: Detached accessibility service from secure settings (remaining=$withoutMe)")
             }
             return true
         } catch (e: Exception) {
@@ -239,7 +246,7 @@ object AccessibilityHealthManager {
     }
 
     /**
-     * Deactivates Banking Shield and enables the accessibility service.
+     * Connects the accessibility service on-demand via Secure Settings.
      */
     fun enableAccessibilityService(context: Context): Boolean {
         try {
@@ -249,15 +256,20 @@ object AccessibilityHealthManager {
                 return false
             }
             val cr = context.contentResolver
-            val expected = "${context.packageName}/${AutoTextAccessibilityService::class.java.name}"
+            val canonical = ComponentName(context, AutoTextAccessibilityService::class.java).flattenToString()
             val current = Settings.Secure.getString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
+
+            // Clean out any stale or duplicate AutoText tokens first
             val withoutMe = current.splitToSequence(":")
-                .filter { it.isNotBlank() && (it != expected) }
+                .map { it.trim() }
+                .filter { it.isNotBlank() && !isAutoTextToken(it, context.packageName) }
+                .distinct()
                 .joinToString(":")
-            val updated = if (withoutMe.isBlank()) expected else "$withoutMe:$expected"
+
+            val updated = if (withoutMe.isBlank()) canonical else "$withoutMe:$canonical"
             Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, updated)
             Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "1")
-            Log.i(TAG, "enableAccessibilityService: Successfully enabled accessibility service via Secure Settings")
+            Log.i(TAG, "enableAccessibilityService: Successfully attached accessibility service via Secure Settings ($updated)")
             return true
         } catch (e: Exception) {
             Log.w(TAG, "enableAccessibilityService error: ${e.message}")
@@ -287,18 +299,20 @@ object AccessibilityHealthManager {
         }
         return try {
             val cr = context.contentResolver
-            val expected = "${context.packageName}/${AutoTextAccessibilityService::class.java.name}"
+            val canonical = ComponentName(context, AutoTextAccessibilityService::class.java).flattenToString()
             val current = Settings.Secure.getString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
 
             val withoutMe = current.splitToSequence(":")
-                .filter { it.isNotBlank() && (it != expected) }
+                .map { it.trim() }
+                .filter { it.isNotBlank() && !isAutoTextToken(it, context.packageName) }
+                .distinct()
                 .joinToString(":")
 
             // Silently cycle service registration to force framework binder detachment
             Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, withoutMe)
-            runCatching { Thread.sleep(150) }
+            runCatching { Thread.sleep(120) }
 
-            val updated = if (withoutMe.isBlank()) expected else "$withoutMe:$expected"
+            val updated = if (withoutMe.isBlank()) canonical else "$withoutMe:$canonical"
             Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, updated)
             Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "1")
 
@@ -408,9 +422,20 @@ object AccessibilityHealthManager {
             val a11yCurrent = Settings.Secure.getString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
 
             val prefs = PreferenceManager(context)
-            if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
-                if (!a11yCurrent.contains(a11yExpected)) {
-                    val a11yUpdated = if (a11yCurrent.isBlank()) a11yExpected else "$a11yCurrent:$a11yExpected"
+            if (prefs.isDynamicA11yOnDemandEnabled) {
+                // Bank-Safe Dynamic Mode: Keep service detached from ENABLED_ACCESSIBILITY_SERVICES while idle
+                // so that Google Pay, PhonePe, Paytm, and banking apps operate with 0 interference and 0 security blocks.
+                // The service will be dynamically attached on-demand (<50ms) right when a scheduled task or test runs.
+                val hasMe = a11yCurrent.split(":").any { isAutoTextToken(it, context.packageName) }
+                if (hasMe && !AutoTextAccessibilityService.isCurrentlyAutomating()) {
+                    disableAccessibilityService(context)
+                    Log.i(TAG, "Bank-Safe Standby: Kept accessibility service detached while idle")
+                }
+            } else if (!prefs.isA11yUserPaused) {
+                val canonical = ComponentName(context, AutoTextAccessibilityService::class.java).flattenToString()
+                val hasMe = a11yCurrent.split(":").any { isAutoTextToken(it, context.packageName) }
+                if (!hasMe) {
+                    val a11yUpdated = if (a11yCurrent.isBlank()) canonical else "$a11yCurrent:$canonical"
                     Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, a11yUpdated)
                     Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "1")
                     Log.i(TAG, "Directly enabled Accessibility Service in settings via WRITE_SECURE_SETTINGS")
@@ -418,11 +443,7 @@ object AccessibilityHealthManager {
                     autoHealAccessibility(context)
                 }
             } else {
-                Log.d(TAG, "Dynamic On-Demand A11y / Banking Shield active: skipping persistent enablement in settings")
-                if (hasWriteSecureSettings(context) && a11yCurrent.contains(a11yExpected)) {
-                    disableAccessibilityService(context)
-                    Log.i(TAG, "Dynamic On-Demand A11y: Automatically cleaned up lingering accessibility service from secure settings.")
-                }
+                Log.d(TAG, "Accessibility Service is explicitly paused by user: respecting paused state")
             }
 
             val notifExpected = ComponentName(context, AutoTextNotificationListenerService::class.java).flattenToString()

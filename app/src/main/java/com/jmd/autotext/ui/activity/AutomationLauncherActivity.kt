@@ -106,17 +106,21 @@ class AutomationLauncherActivity : Activity() {
         if (isTestUnlock) {
             val passedPin = intent.getStringExtra(EXTRA_PIN) ?: prefs.deviceUnlockPin
             AutoTextAccessibilityService.isTestUnlockMode = true
-            AutoTextAccessibilityService.armAutoUnlock(
-                pin = passedPin,
-                shouldRelockAfterSend = false,
-            )
-
             keyguardManager.requestDismissKeyguard(this, null)
-            runCatching {
-                wakeLock?.release()
-                wakeLock = null
-            }
-            finish()
+
+            // Post armAutoUnlock with slight delay to ensure activity window is fully torn down
+            // before physical gesture taps are dispatched to the lockscreen bouncer
+            window.decorView.postDelayed({
+                AutoTextAccessibilityService.armAutoUnlock(
+                    pin = passedPin,
+                    shouldRelockAfterSend = false,
+                )
+                runCatching {
+                    wakeLock?.release()
+                    wakeLock = null
+                }
+                finish()
+            }, 300L)
             return
         }
 

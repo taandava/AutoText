@@ -328,14 +328,14 @@ object AccessibilityNodeUtils {
         y: Float,
         durationMs: Long = 50L,
         onComplete: (() -> Unit)? = null
-    ) {
+    ): Boolean {
         val path = Path().apply {
             moveTo(x, y)
         }
         val stroke = GestureDescription.StrokeDescription(path, 0, durationMs)
         val gesture = GestureDescription.Builder().addStroke(stroke).build()
 
-        service.dispatchGesture(gesture, object : AccessibilityService.GestureResultCallback() {
+        return service.dispatchGesture(gesture, object : AccessibilityService.GestureResultCallback() {
             override fun onCompleted(gestureDescription: GestureDescription?) {
                 Log.d(TAG, "Physical tap completed at ($x, $y)")
                 onComplete?.invoke()

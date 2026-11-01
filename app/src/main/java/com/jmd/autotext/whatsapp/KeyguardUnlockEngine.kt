@@ -250,26 +250,51 @@ class KeyguardUnlockEngine(
             if (index < pin.length) {
                 val digitChar = pin[index]
                 val currentRoots = AccessibilityNodeUtils.getTargetRoots(service)
-                var digitClicked = false
+                var digitTapped = false
 
                 for (r in currentRoots) {
                     val digitNode = findKeypadDigitNode(r, digitChar)
                     if (digitNode != null) {
-                        digitClicked = AccessibilityNodeUtils.clickElement(digitNode, service)
-                        if (digitClicked) {
-                            Log.i(loggerTag, "Element-based click on digit '$digitChar' [${index + 1}/${pin.length}]")
-                            break
+                        val rect = android.graphics.Rect()
+                        digitNode.getBoundsInScreen(rect)
+                        if (rect.width() > 0 && rect.height() > 0) {
+                            val tapX = rect.centerX().toFloat()
+                            val tapY = rect.centerY().toFloat()
+                            digitTapped = AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                            if (digitTapped) {
+                                Log.i(loggerTag, "Dispatched physical tap on digit '$digitChar' at ($tapX, $tapY) [${index + 1}/${pin.length}]")
+                                break
+                            }
                         }
                     }
                 }
 
-                if (!digitClicked) {
-                    Log.w(loggerTag, "Could not find/click element for digit '$digitChar'")
+                if (!digitTapped) {
+                    val dm = service.resources.displayMetrics
+                    val width = dm.widthPixels.toFloat()
+                    val height = dm.heightPixels.toFloat()
+                    val (colRatio, rowRatio) = when (digitChar) {
+                        '1' -> Pair(0.222f, 0.524f)
+                        '2' -> Pair(0.500f, 0.524f)
+                        '3' -> Pair(0.778f, 0.524f)
+                        '4' -> Pair(0.222f, 0.619f)
+                        '5' -> Pair(0.500f, 0.619f)
+                        '6' -> Pair(0.778f, 0.619f)
+                        '7' -> Pair(0.222f, 0.714f)
+                        '8' -> Pair(0.500f, 0.714f)
+                        '9' -> Pair(0.778f, 0.714f)
+                        '0' -> Pair(0.500f, 0.809f)
+                        else -> Pair(0.500f, 0.809f)
+                    }
+                    val tapX = width * colRatio
+                    val tapY = height * rowRatio
+                    AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                    Log.i(loggerTag, "Coordinate fallback physical tap for digit '$digitChar' at ($tapX, $tapY) [${index + 1}/${pin.length}]")
                 }
 
                 handler.postDelayed({
                     tapNextDigit(index + 1)
-                }, 400L)
+                }, 220L)
             } else {
                 handler.postDelayed({
                     val checkKm = service.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
@@ -281,29 +306,52 @@ class KeyguardUnlockEngine(
                         return@postDelayed
                     }
 
+                    var okTapped = false
                     val currentRoots = AccessibilityNodeUtils.getTargetRoots(service)
                     for (r in currentRoots) {
-                        if (clickKeypadEnter(r)) {
-                            Log.i(loggerTag, "Submitted Enter/OK element")
-                            break
+                        val enterNode = findKeypadEnterNode(r)
+                        if (enterNode != null) {
+                            val rect = android.graphics.Rect()
+                            enterNode.getBoundsInScreen(rect)
+                            if (rect.width() > 0 && rect.height() > 0) {
+                                val tapX = rect.centerX().toFloat()
+                                val tapY = rect.centerY().toFloat()
+                                okTapped = AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                                if (okTapped) {
+                                    Log.i(loggerTag, "Dispatched physical tap on Enter/OK element at ($tapX, $tapY)")
+                                    break
+                                }
+                            }
                         }
                     }
 
-                    handler.postDelayed({
+                    if (!okTapped) {
+                        val dm = service.resources.displayMetrics
+                        val tapX = dm.widthPixels * 0.746f
+                        val tapY = dm.heightPixels * 0.809f
+                        AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                        Log.i(loggerTag, "Coordinate fallback physical tap on Enter/OK at ($tapX, $tapY)")
+                    }
+
+                    fun pollUnlockVerification(attempt: Int) {
                         val finalKm = service.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
                         if (finalKm?.isKeyguardLocked == false) {
-                            Log.d(loggerTag, "Device unlocked following Enter element click")
+                            Log.i(loggerTag, "Device confirmed unlocked following Enter submission (attempt $attempt)")
                             isEnteringPinDigits = false
                             isUnlockPending = false
                             onUnlockSuccess()
+                        } else if (attempt < 5) {
+                            handler.postDelayed({ pollUnlockVerification(attempt + 1) }, 350L)
                         } else {
-                            Log.w(loggerTag, "Device still locked after single submission. Stopping to avoid lockout.")
+                            Log.w(loggerTag, "Device still locked after submission and 1.8s timeout. Stopping.")
                             isUnlockPending = false
                             isEnteringPinDigits = false
-                            onUnlockAbort("PIN entered once but remained locked")
+                            onUnlockAbort("Device remained locked after PIN submission")
                         }
-                    }, 400L)
-                }, 350L)
+                    }
+
+                    handler.postDelayed({ pollUnlockVerification(1) }, 400L)
+                }, 300L)
             }
         }
 
@@ -334,6 +382,26 @@ class KeyguardUnlockEngine(
         return null
     }
 
+    private fun findKeypadEnterNode(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        val enterIds = listOf(
+            "key_enter_text", "key_enter", "sec_key_enter", "sec_btn_ok",
+            "sec_key_ok", "sec_pin_ok", "sec_pin_enter", "btn_ok", "ok",
+            "VivoPinkey0right", "vivopinkey0right", "button_next", "check", "enter",
+            "coui_keyboard_confirm", "btn_confirm", "done", "key_submit"
+        )
+        for (id in enterIds) {
+            val nodes = AccessibilityNodeUtils.findNodesByViewId(root, "com.android.systemui", id)
+            if (nodes.isNotEmpty()) return nodes.first()
+        }
+
+        val textNode = AccessibilityNodeUtils.findNodeByTextOrDesc(
+            root,
+            listOf("ok", "enter", "done", "confirm", "submit", "✓", "check"),
+            exact = true
+        )
+        return textNode
+    }
+
     /**
      * Locates and clicks the "Enter", "OK", or checkmark button on the lockscreen PIN keypad.
      *
@@ -341,25 +409,16 @@ class KeyguardUnlockEngine(
      * @return `true` if an Enter/Confirm button was found and clicked successfully; `false` otherwise.
      */
     fun clickKeypadEnter(root: AccessibilityNodeInfo): Boolean {
-        val enterIds = listOf(
-            "VivoPinkey0right", "vivopinkey0right", "key_enter", "btn_ok", "ok",
-            "button_next", "check", "enter", "sec_key_enter", "sec_btn_ok",
-            "sec_key_ok", "sec_pin_ok", "sec_pin_enter", "coui_keyboard_confirm",
-            "btn_confirm", "done", "key_submit"
-        )
-        for (id in enterIds) {
-            val nodes = AccessibilityNodeUtils.findNodesByViewId(root, "com.android.systemui", id)
-            if (nodes.isNotEmpty()) {
-                if (AccessibilityNodeUtils.clickElement(nodes.first(), service)) return true
+        val enterNode = findKeypadEnterNode(root)
+        if (enterNode != null) {
+            val rect = android.graphics.Rect()
+            enterNode.getBoundsInScreen(rect)
+            if (rect.width() > 0 && rect.height() > 0) {
+                return AccessibilityNodeUtils.dispatchPhysicalTap(service, rect.centerX().toFloat(), rect.centerY().toFloat())
             }
+            return AccessibilityNodeUtils.clickElement(enterNode, service)
         }
-
-        val textNode = AccessibilityNodeUtils.findNodeByTextOrDesc(
-            root,
-            listOf("enter", "ok", "done", "confirm", "submit", "✓", "check"),
-            exact = true
-        )
-        return textNode != null && AccessibilityNodeUtils.clickElement(textNode, service)
+        return false
     }
 
     private fun findPinInputField(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {

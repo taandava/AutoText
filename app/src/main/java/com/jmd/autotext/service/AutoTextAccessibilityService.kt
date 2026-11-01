@@ -766,7 +766,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val effectivePin = pin.ifBlank { prefs.deviceUnlockPin }.trim()
 
             if (effectivePin.isBlank() && prefs.autoUnlockType != "SWIPE") {
-                context.showAppToast("⚠️ Please enter your screen lock PIN first", isLong = true)
+                context.showAppToast("âš ï¸ Please enter your screen lock PIN first", isLong = true)
                 return
             }
 
@@ -777,7 +777,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 // 2. If service is not running, attempt on-demand activation via WRITE_SECURE_SETTINGS or prompt user
                 if (!isServiceRunning) {
                     if (AccessibilityHealthManager.hasWriteSecureSettings(appContext)) {
-                        context.showAppToast("⚡ Connecting assistant for unlock test...", isLong = false)
+                        context.showAppToast("âš¡ Connecting assistant for unlock test...", isLong = false)
                         withContext(Dispatchers.IO) {
                             AccessibilityHealthManager.enableAccessibilityService(appContext)
                         }
@@ -800,7 +800,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
 
                 isTestUnlockMode = true
-                context.showAppToast("🔒 Locking screen now... Auto-unlock will trigger in 4 seconds. Keep phone steady!", isLong = true)
+                context.showAppToast("ðŸ”’ Locking screen now... Auto-unlock will trigger in 4 seconds. Keep phone steady!", isLong = true)
 
                 lockScreenNow()
 
@@ -822,8 +822,6 @@ class AutoTextAccessibilityService : AccessibilityService() {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     }
                     appContext.startActivity(testIntent)
-
-                    armAutoUnlock(pin = effectivePin, shouldRelockAfterSend = false)
                 } catch (t: Throwable) {
                     Log.e(TAG, "Error initiating test auto unlock", t)
                 }
@@ -870,7 +868,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         /**
          * Checks whether accessibility automation is currently running an active dispatch workflow.
          */
-        fun isCurrentlyAutomating(): Boolean = isAutomating
+        fun isCurrentlyAutomating(): Boolean = isAutomating || isUnlockPending || isTestUnlockMode
 
         /**
          * Safely aborts active accessibility automation upon detected human interaction.
@@ -1053,6 +1051,10 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 if (isTestUnlockMode) {
                     isTestUnlockMode = false
                     showAppToast("Auto-unlock aborted: $reason", isLong = true)
+                    val prefs = PreferenceManager(applicationContext ?: this)
+                    if (prefs.isDynamicA11yOnDemandEnabled) {
+                        scheduleIdleDetach(1500L)
+                    }
                 }
             }
         )
@@ -1809,7 +1811,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
 
         val subLower = convSubtitle.lowercase()
         val isSubGroup = (subLower.contains("participant") || subLower.contains("member") ||
-                subLower.contains("tap here for group info") || subLower.contains("सदस्य")) &&
+                subLower.contains("tap here for group info") || subLower.contains("à¤¸à¤¦à¤¸à¥à¤¯")) &&
                 !subLower.contains("online") && !subLower.contains("typing") && !subLower.contains("last seen")
 
         val isSubBroadcast = subLower.contains("recipient") || subLower.contains("broadcast")

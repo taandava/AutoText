@@ -155,6 +155,11 @@ object SystemIndicatorResolver {
                         } else {
                             AccessibilityHealthManager.enableAccessibilityService(ctx)
                             ctx.showAppToast("⚡ Connected! Auto-detaches in 5s to keep banking safe.")
+                            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                                if (prefs.isDynamicA11yOnDemandEnabled && !AutoTextAccessibilityService.isCurrentlyAutomating()) {
+                                    AccessibilityHealthManager.disableAccessibilityService(ctx)
+                                }
+                            }, 5000L)
                         }
                     } else if (isA11yRunning) {
                         prefs.isA11yUserPaused = true
