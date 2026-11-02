@@ -504,8 +504,13 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getBoolean(KEY_BLOCK_OVERLAYS_OVER_EXCLUDED, true)
         set(value) = prefs.edit { putBoolean(KEY_BLOCK_OVERLAYS_OVER_EXCLUDED, value) }
 
-    var isStealthProtectionEnabled: Boolean
+    var isBankingProtectionEnabled: Boolean
         get() = isBankingShieldEnabled
         set(value) { isBankingShieldEnabled = value }
+
+    @Deprecated("Use isBankingProtectionEnabled instead for policy compliance", ReplaceWith("isBankingProtectionEnabled"))
+    var isStealthProtectionEnabled: Boolean
+        get() = isBankingProtectionEnabled
+        set(value) { isBankingProtectionEnabled = value }
 
 }

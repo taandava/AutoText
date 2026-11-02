@@ -1500,4 +1500,68 @@ class AutoTextComprehensiveTest {
         assertTrue(TaskStatus.PAUSED.isPaused)
         assertFalse(TaskStatus.RUNNING.isPaused)
     }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 34. POLICY REFACTORING & TERMINOLOGY COMPLIANCE TESTS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testChannelTypeCallSimulationCompatibility() {
+        // Primary policy-compliant enum name
+        assertEquals("CALL_SIMULATION", ChannelType.CALL_SIMULATION.name)
+        assertEquals("Call Simulation", ChannelType.CALL_SIMULATION.displayName)
+
+        // Backward compatibility: FAKE_CALL alias resolves to CALL_SIMULATION
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.FAKE_CALL)
+
+        // String parsing compatibility for database records and broadcasts
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("CALL_SIMULATION"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("call_simulation"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("FAKE_CALL"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("fake_call"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("SIMULATION"))
+    }
+
+    @Test
+    fun testSimulatedCallerModelProperties() {
+        val task = ScheduledTask(
+            id = 101L,
+            title = "Rescue Simulation",
+            channel = ChannelType.CALL_SIMULATION,
+            fakeCallerName = "Meeting Organizer",
+            fakeCallerNumber = "+1 (555) 019-2834",
+            fakeCallStyle = "PIXEL"
+        )
+
+        // Verify policy-compliant accessors reflect underlying stored values
+        assertEquals("Meeting Organizer", task.simulatedCallerName)
+        assertEquals("+1 (555) 019-2834", task.simulatedCallerNumber)
+        assertEquals("PIXEL", task.simulatedCallStyle)
+
+        // Verify authorization under ProtectedApplicationManager
+        assertTrue(ProtectedApplicationManager.isTaskTargetAuthorized(task))
+    }
+
+    @Test
+    fun testProtectedAppExclusionGuaranteesForSimulationAndBanking() {
+        // Verify known payment apps are strictly protected
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.google.android.apps.nbu.paisa.user"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.phonepe.app"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("net.one97.paytm"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.sbi.lotusintouch"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.saraswatbank.gomobile"))
+
+        // Verify banking apps cannot be authorized automation targets
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.google.android.apps.nbu.paisa.user"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.phonepe.app"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.saraswat.app"))
+
+        // Verify context check rejects interactions in banking apps
+        assertFalse(ProtectedApplicationManager.verifyContextBeforeInteraction("com.google.android.apps.nbu.paisa.user", "com.whatsapp"))
+        assertFalse(ProtectedApplicationManager.verifyContextBeforeInteraction("com.phonepe.app", null))
+
+        // Verify overlay suppression is active for protected apps
+        assertTrue(ProtectedApplicationManager.shouldBlockOverlays("com.google.android.apps.nbu.paisa.user"))
+        assertTrue(ProtectedApplicationManager.shouldBlockOverlays("com.phonepe.app"))
+    }
 }

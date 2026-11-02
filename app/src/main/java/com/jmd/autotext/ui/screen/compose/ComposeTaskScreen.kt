@@ -385,7 +385,7 @@ fun composeTaskScreen(
             }
             finalRecipients = listOf("Self")
             finalRecipientNames = listOf(title.ifBlank { "Local Device Alarm" })
-        } else if (finalPhoneList.isEmpty() && selectedChannel !in listOf(ChannelType.FAKE_CALL, ChannelType.REMINDER, ChannelType.SOUND_MODE)) {
+        } else if (finalPhoneList.isEmpty() && selectedChannel !in listOf(ChannelType.CALL_SIMULATION, ChannelType.REMINDER, ChannelType.SOUND_MODE)) {
             context.showAppToast("Select a recipient", isLong = true)
             return@saveTaskAction
         } else {
@@ -543,8 +543,8 @@ fun composeTaskScreen(
                         onMessageTextChange = { messageText = it }
                     )
                 }
-                ChannelType.FAKE_CALL, ChannelType.SOUND_MODE -> {
-                    composeFakeCallAndSoundCard(
+                ChannelType.CALL_SIMULATION, ChannelType.SOUND_MODE -> {
+                    composeCallSimulationAndSoundCard(
                         selectedChannel = selectedChannel,
                         fakeCallerName = fakeCallerName,
                         onFakeCallerNameChange = { fakeCallerName = it },

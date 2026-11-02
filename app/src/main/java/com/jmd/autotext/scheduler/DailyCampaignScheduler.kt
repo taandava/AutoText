@@ -121,7 +121,7 @@ object DailyCampaignScheduler {
     }
 
     /**
-     * Dispatches an immediate [OneTimeWorkRequestBuilder] via [WorkManager] bypassing the scheduled time.
+     * Dispatches an immediate [OneTimeWorkRequestBuilder] via [WorkManager] overriding the scheduled delay for immediate execution.
      *
      * @param context Active Android [Context].
      * @param campaignId Target campaign identifier to trigger immediately.

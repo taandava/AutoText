@@ -29,6 +29,8 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,6 +69,72 @@ import kotlinx.coroutines.withContext
  */
 @Composable
 fun permissionCenterView(context: Context, onBack: () -> Unit) {
+    var showA11yDisclosureDialog by remember { mutableStateOf(false) }
+
+    if (showA11yDisclosureDialog) {
+        AlertDialog(
+            onDismissRequest = { showA11yDisclosureDialog = false },
+            title = {
+                Text(
+                    text = "Accessibility Service Prominent Disclosure",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "AutoText uses Android's AccessibilityService API solely for the following explicit user-directed capabilities:",
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = "• Hands-free automated message preparation and delivery in user-authorized messaging apps (WhatsApp and WhatsApp Business) at user-scheduled times.\n" +
+                               "• Unattended device wake and user-configured PIN assistance when scheduled tasks trigger while locked.\n" +
+                               "• Automatic return to home screen and screen lock upon task completion.",
+                        fontSize = 12.5.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Privacy & Safety Commitments:",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "• AutoText does NOT collect, store, or transmit your private chat messages, keystrokes, personal passwords, or screen contents.\n" +
+                               "• AutoText strictly isolates itself from and NEVER inspects, reads, or interacts with banking, payment, or UPI apps (such as Google Pay, PhonePe, Paytm, or net banking apps).\n" +
+                               "• 100% on-device operation: Zero cloud analytics or third-party tracking.\n" +
+                               "• You retain full control and may pause or revoke this service at any time.",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showA11yDisclosureDialog = false
+                        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        })
+                    }
+                ) {
+                    Text("Agree & Open Settings", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showA11yDisclosureDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
@@ -175,7 +243,11 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                     btnText = a11yBtnText,
                     isGranted = isA11y,
                 ) {
-                    context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
+                    if (isA11y) {
+                        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
+                    } else {
+                        showA11yDisclosureDialog = true
+                    }
                 }
             }
 
@@ -331,7 +403,7 @@ fun superAutoHealAndPermissionFixerCard(context: Context) {
                     isHealing = true
                     scope.launch {
                         val healed = withContext(Dispatchers.IO) {
-                            AccessibilityHealthManager.autoApproveAllPermissions(context)
+                            AccessibilityHealthManager.ensureAllServicesActive(context)
                             AccessibilityHealthManager.ensureServiceAlive(context)
                         }
                         hasSecurePerm = AccessibilityHealthManager.hasWriteSecureSettings(context)

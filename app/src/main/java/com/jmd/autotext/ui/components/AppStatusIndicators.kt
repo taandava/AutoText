@@ -58,13 +58,13 @@ object SystemIndicatorResolver {
 
         val isComponentEnabled = AccessibilityHealthManager.isServiceComponentEnabled(context)
         val hasWriteSecure = AccessibilityHealthManager.hasWriteSecureSettings(context)
-        val isDynamicStealth = prefs.isDynamicA11yOnDemandEnabled && hasWriteSecure
+        val isDynamicStandby = prefs.isDynamicA11yOnDemandEnabled && hasWriteSecure
         val isA11yRunning = AccessibilityHealthManager.isServiceOperational()
         val isA11ySettingOn = AccessibilityHealthManager.isAccessibilitySettingEnabled(context)
         val isA11yHealthy = when {
             !isComponentEnabled -> false
             prefs.isA11yUserPaused -> false
-            isDynamicStealth -> true
+            isDynamicStandby -> true
             else -> isA11yRunning || isA11ySettingOn
         }
 
@@ -72,7 +72,7 @@ object SystemIndicatorResolver {
         val a11yName = when {
             !isComponentEnabled -> "AutoText Assistant (Disabled in System)"
             prefs.isA11yUserPaused -> "AutoText Assistant (Paused for Payments)"
-            isDynamicStealth && !isA11yRunning -> "AutoText Scheduled Assistant (Bank-Safe Standby)"
+            isDynamicStandby && !isA11yRunning -> "AutoText Scheduled Assistant (Bank-Safe Standby)"
             isA11yRunning -> "AutoText Scheduled Assistant (Active)"
             else -> "AutoText Scheduled Assistant"
         }
@@ -80,7 +80,7 @@ object SystemIndicatorResolver {
         val a11yDesc = when {
             !isComponentEnabled -> "The assistant service component was disabled by the system. Tap to re-enable in system settings."
             prefs.isA11yUserPaused -> "Assistant is temporarily paused so Google Pay can process transactions without interference. Tap to resume."
-            isDynamicStealth && !isA11yRunning -> "Bank-Safe Standby: Kept inactive while idle so Google Pay & Bank apps run with zero warnings. Automatically connects only during scheduled dispatches."
+            isDynamicStandby && !isA11yRunning -> "Bank-Safe Standby: Kept inactive while idle so Google Pay & Bank apps run with zero warnings. Automatically connects only during scheduled dispatches."
             isA11yRunning -> "Active in background for scheduled message delivery. Isolated from banking and payment apps."
             else -> "Enables hands-free message sending and lockscreen assistance. Tap to enable."
         }
@@ -92,7 +92,7 @@ object SystemIndicatorResolver {
 
         val isSchedulerActive = prefs.isTasksMasterEnabled && !AutomationSafetyManager.isEmergencyStopActive(context)
 
-        val isStealthActive = prefs.isBankingShieldEnabled
+        val isBankingShieldActive = prefs.isBankingShieldEnabled
 
         val isAutoRotateOff = try {
             Settings.System.getInt(context.contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0) == 0
@@ -103,12 +103,12 @@ object SystemIndicatorResolver {
 
         return listOf(
             SystemIndicator(
-                id = "stealth_guard",
+                id = "banking_shield_guard",
                 name = "Payment Compatibility Guard",
                 description = "Protects banking and payment applications (Google Pay, PhonePe, Paytm) from accessibility alerts by keeping AutoText isolated or detached when idle.",
                 icon = Icons.Default.Security,
-                isActive = isStealthActive,
-                actionLabel = if (!isStealthActive) "Enable Guard" else null,
+                isActive = isBankingShieldActive,
+                actionLabel = if (!isBankingShieldActive) "Enable Guard" else null,
                 onAction = { _ ->
                     prefs.isBankingShieldEnabled = true
                 }
@@ -131,8 +131,8 @@ object SystemIndicatorResolver {
                 icon = Icons.Default.AccessibilityNew,
                 isActive = isA11yHealthy,
                 actionLabel = when {
-                    isDynamicStealth && isA11yRunning -> "Safe Detach"
-                    isDynamicStealth -> "Test Connection"
+                    isDynamicStandby && isA11yRunning -> "Safe Detach"
+                    isDynamicStandby -> "Test Connection"
                     prefs.isA11yUserPaused && hasWriteSecure -> "Resume Assistant"
                     prefs.isA11yUserPaused -> "Enable in Settings"
                     isA11yRunning -> "Pause for Google Pay"
@@ -140,7 +140,7 @@ object SystemIndicatorResolver {
                     else -> "Enable in Settings"
                 },
                 onAction = { ctx ->
-                    if (isDynamicStealth) {
+                    if (isDynamicStandby) {
                         if (isA11yRunning) {
                             AccessibilityHealthManager.disableAccessibilityService(ctx)
                             ctx.showAppToast("Safe Standby: Assistant detached for banking safety.")

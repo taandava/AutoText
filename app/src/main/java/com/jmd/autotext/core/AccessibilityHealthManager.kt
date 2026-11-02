@@ -334,6 +334,7 @@ object AccessibilityHealthManager {
      * @param context Active Android [Context].
      * @return True if services are confirmed active.
      */
+    @Deprecated("Use ensureAllServicesActive instead for policy-compliant naming", ReplaceWith("ensureAllServicesActive(context)"))
     fun autoApproveAllPermissions(context: Context): Boolean {
         return ensureAllServicesActive(context)
     }

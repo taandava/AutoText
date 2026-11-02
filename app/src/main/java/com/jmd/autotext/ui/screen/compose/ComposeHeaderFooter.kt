@@ -70,7 +70,7 @@ fun composeTopHeader(
                 ChannelType.WHATSAPP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL -> MaterialTheme.colorScheme.tertiary
                 ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> MaterialTheme.colorScheme.secondary
                 ChannelType.CALL, ChannelType.REMINDER -> MaterialTheme.colorScheme.primary
-                ChannelType.FAKE_CALL -> MaterialTheme.colorScheme.error
+                ChannelType.CALL_SIMULATION -> MaterialTheme.colorScheme.error
                 ChannelType.SOUND_MODE -> MaterialTheme.colorScheme.primary
                 else -> MaterialTheme.colorScheme.primary
             }

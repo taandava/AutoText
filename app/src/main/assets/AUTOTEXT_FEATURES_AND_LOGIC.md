@@ -14,7 +14,7 @@ AutoText is an enterprise-grade, offline-first Android automation platform engin
 4. **WhatsApp Status Story Publishing (Media & Text for Personal and Business)**
 5. **Direct Native Telephony Calls (Custom Call Duration, Dial Timing & Auto-Hangup)**
 6. **WhatsApp VoIP Voice Calls (Automated Call Placement & Active Call Hangup)**
-7. **Simulated Fake Incoming Calls (High-Priority Wake Lock, Lockscreen Bypass & Realistic OEM Themes)**
+7. **Simulated Incoming Calls (High-Priority Alert, Lockscreen Display & Realistic OEM Themes)**
 8. **Scheduled Audio Alarms & Reminders (Native Clock App Sync & TTS Voice Announcements)**
 
 ### Foundational Principles
@@ -82,7 +82,7 @@ com.jmd.autotext
 │   ├── AutoTextNotificationListenerService.kt # Notification auto-reply listener & quick-action trigger
 │   └── TaskForegroundService.kt      # Legacy notification cleanup & lifecycle manager
 ├── ui/                          # Jetpack Compose Modern Presentation Layer
-│   ├── activity/                # MainActivity, AutomationLauncherActivity, FakeCallActivity, ReminderAlarmActivity
+│   ├── activity/                # MainActivity, AutomationLauncherActivity, CallSimulationActivity (FakeCallActivity), ReminderAlarmActivity
 │   ├── components/              # AppStatusIndicators, GlassComponents, Avatars, Pickers, AppCard
 │   ├── screen/                  # Modular Compose screens (Tasks, Compose, Settings, AutoReply, Campaigns)
 │   │   ├── autoreply/           # AutoReplyScreen, AutoReplyCards, AutoReplyDialogs
@@ -116,7 +116,7 @@ The application uses an on-device SQLite database named `autotext.db` (`Database
 ```sql
 CREATE TABLE tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    channel TEXT NOT NULL,                  -- 'SMS', 'WHATSAPP', 'WHATSAPP_BUSINESS', 'WHATSAPP_STATUS', 'WHATSAPP_BUSINESS_STATUS', 'CALL', 'WHATSAPP_CALL', 'FAKE_CALL', 'REMINDER'
+    channel TEXT NOT NULL,                  -- 'SMS', 'WHATSAPP', 'WHATSAPP_BUSINESS', 'WHATSAPP_STATUS', 'WHATSAPP_BUSINESS_STATUS', 'CALL', 'WHATSAPP_CALL', 'CALL_SIMULATION' ('FAKE_CALL'), 'REMINDER', 'SOUND_MODE'
     title TEXT DEFAULT '',                  -- User label or task description
     recipient_phone TEXT NOT NULL,          -- Comma-separated normalized phone numbers or group titles
     recipient_name TEXT DEFAULT '',         -- Comma-separated recipient display names
@@ -128,8 +128,8 @@ CREATE TABLE tasks (
     sim_slot INTEGER DEFAULT 0,             -- 0 = SIM 1, 1 = SIM 2, -1 = default system SIM
     media_uri TEXT DEFAULT '',              -- Local image/video URI for Status or MMS attachments
     sound_mode TEXT DEFAULT 'NORMAL',       -- 'NORMAL', 'VIBRATE', 'SILENT' (for reminders/calls)
-    fake_caller_name TEXT DEFAULT '',       -- Name displayed on Fake Call incoming screen
-    fake_caller_number TEXT DEFAULT '',     -- Number displayed on Fake Call incoming screen
+    fake_caller_name TEXT DEFAULT '',       -- Name displayed on Call Simulation incoming screen
+    fake_caller_number TEXT DEFAULT '',     -- Number displayed on Call Simulation incoming screen
     fake_call_style TEXT DEFAULT 'Modern',  -- 'Modern', 'Pixel', 'Samsung', 'iOS'
     call_duration_seconds INTEGER DEFAULT 0,-- Outgoing call duration before auto-hangup (0 = manual hangup)
     include_dial_time INTEGER DEFAULT 1,    -- 1 = duration counts from dial; 0 = counts from connection
@@ -249,7 +249,7 @@ AutoText establishes an unconditional, self-enforcing system invariant:
    ```xml
    android:screenOrientation="portrait"
    ```
-   Applied to `MainActivity`, `FakeCallActivity`, `ReminderAlarmActivity`, and `AutomationLauncherActivity`.
+   Applied to `MainActivity`, `CallSimulationActivity`, `ReminderAlarmActivity`, and `AutomationLauncherActivity`.
 2. **System UI Shielding in `PopupShield.kt`**:
    The dismiss button crawler explicitly verifies that the active root node does **not** belong to system UI packages:
    ```kotlin
@@ -404,7 +404,7 @@ If the device lacks `READ_CALL_LOG` permission or the provider returns no record
   - Automatically exits if the call ends early or fails to connect, preventing false hangup commands.
 - Retries VoIP teardown up to 3 times via `endWhatsAppCall()` to ensure clean disconnection matching user-configured durations.
 
-### 6. Simulated Fake Incoming Calls (`FakeCallActivity`)
+### 6. Simulated Incoming Calls (`CallSimulationActivity`)
 - Simulates realistic incoming phone calls with high-priority wake locks and full-screen display flags (`FLAG_SHOW_WHEN_LOCKED`, `FLAG_TURN_SCREEN_ON`).
 - Customizable caller identities (Name, Number) and UI themes (Pixel, Samsung, iOS, Modern).
 - Loops system ringtone and vibration; terminates cleanly upon answer or decline.
@@ -482,7 +482,7 @@ Status indicators adhere strictly to a vivid two-color specification:
 ### 7 System Health Indicators
 Located in the compact top header bar, clicking the indicators navigates directly to the comprehensive Settings status guide:
 
-1. **Stealth Guard (Banking Shield)** (`Icons.Default.Security`):
+1. **Banking Shield (Payment Protection Guard)** (`Icons.Default.Security`):
    - Isolates automation from banking, payment, and UPI applications so they never flag accessibility alerts. Active by default.
 2. **Screen Orientation Guard** (`Icons.Default.ScreenLockRotation`):
    - Protects system display settings, ensures auto-rotate remains disabled (`0`), and maintains portrait alignment.
@@ -506,7 +506,7 @@ To eliminate unnecessary CPU and battery drain when AutoText is not actively exe
 1. **In-Memory Event Throttling**:
    - **Standby Mode (`isAutomating == false`)**: Event processing drops non-essential events (`isStandbyThrottlingActive = true`) such as scrolls and rapid window content mutations at the entry of `onAccessibilityEvent` in sub-microsecond time.
    - **Static Configuration Stability**: Rather than mutating `serviceInfo.eventTypes` via dynamic system IPC calls (which triggers OEM framework service detachment and unbinding on Android 15/16 and skins like Vivo FuntouchOS / OriginOS), the service retains static registration with the OS (`FLAG_RETRIEVE_INTERACTIVE_WINDOWS`, `FLAG_REPORT_VIEW_IDS`) while filtering events in-memory.
-   - **Active Automation Mode (`isAutomating == true`)**: Bypasses throttling immediately during live task dispatches to enable node crawling, send button targeting, and popup detection.
+   - **Active Automation Mode (`isAutomating == true`)**: Suspends standby throttling immediately during live task dispatches to enable node crawling, send button targeting, and popup detection.
 2. **Impact**: Prevents thousands of costly UI tree traversals per hour across the Android system bus during normal device usage, dramatically reducing background energy consumption while guaranteeing 100% service uptime.
 
 ### Unattended Screen Wake & Keyguard Dismiss Synchronization (`ensureDeviceAwakeAndUnlocked`)
@@ -552,30 +552,15 @@ Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, up
 Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "1")
 ```
 
-### Privileged Permission Granting via Root (`su`)
-On rooted devices, `AccessibilityHealthManager.autoApproveAllPermissions()` automatically grants runtime permissions and AppOps privileges asynchronously:
+### Developer & Standard ADB Permission Verification
+AutoText adheres strictly to official Android permission models. Optional developer permissions (such as `WRITE_SECURE_SETTINGS` for dynamic accessibility standby) can be granted via standard ADB:
 ```bash
-pm grant com.jmd.autotext android.permission.SEND_SMS
-pm grant com.jmd.autotext android.permission.RECEIVE_SMS
-pm grant com.jmd.autotext android.permission.READ_SMS
-pm grant com.jmd.autotext android.permission.CALL_PHONE
-pm grant com.jmd.autotext android.permission.READ_PHONE_STATE
-pm grant com.jmd.autotext android.permission.READ_CALL_LOG
-pm grant com.jmd.autotext android.permission.READ_CONTACTS
-pm grant com.jmd.autotext android.permission.ANSWER_PHONE_CALLS
-pm grant com.jmd.autotext android.permission.POST_NOTIFICATIONS
-pm grant com.jmd.autotext android.permission.SCHEDULE_EXACT_ALARM
-pm grant com.jmd.autotext android.permission.WRITE_SETTINGS
-pm grant com.jmd.autotext android.permission.WRITE_SECURE_SETTINGS
-appops set com.jmd.autotext SYSTEM_ALERT_WINDOW allow
-appops set com.jmd.autotext GET_USAGE_STATS allow
-appops set com.jmd.autotext MANAGE_EXTERNAL_STORAGE allow
-appops set com.jmd.autotext ACCESS_NOTIFICATION_POLICY allow
+adb shell pm grant com.jmd.autotext android.permission.WRITE_SECURE_SETTINGS
 ```
 
 ---
 
-## 11. Advanced Privacy, App Visibility & Stealth Isolation Engine
+## 11. Advanced Privacy, App Visibility & Banking Isolation Engine
 
 ### 11.1 Threat Model & The Banking App Accessibility Detection Problem
 Modern banking, UPI, and financial applications in India and worldwide (including Saraswat Bank / GOMONxT, SBI YONO, Google Pay, PhonePe, Paytm, HDFC MobileBanking, ICICI iMobile, Axis Mobile, Kotak, etc.) employ aggressive client-side runtime security scanners. Upon startup, these applications inspect:
@@ -585,7 +570,7 @@ Modern banking, UPI, and financial applications in India and worldwide (includin
 If any third-party accessibility service is detected with global window inspection capabilities (`info.packageNames = null`) or registered as active in system settings, the banking app displays a blocking security alert:
 > *"Security Alert! Accessibility Permission detected! [Bank Name] app identified accessibility permission is enabled in your device. For security reasons, we recommend to disable it. [AutoText >] [CLOSE APP]"*
 
-### 11.2 Architectural Solution: Dual-Tier Stealth Isolation
+### 11.2 Architectural Solution: Dual-Tier Banking Protection & Isolation
 
 AutoText resolves this through a dual-tier architecture adhering strictly to official Android platform security guidelines:
 
@@ -682,7 +667,7 @@ adb shell am broadcast -a com.jmd.autotext.ACTION_EMERGENCY_STOP -n com.jmd.auto
 ### 5. Automated Single Task Verification Trigger (`ACTION_TEST_TASK`)
 Dispatches a single immediate task for any supported channel type:
 ```bash
-# Channels: SMS, WHATSAPP, WHATSAPP_BUSINESS, WHATSAPP_STATUS, WHATSAPP_BUSINESS_STATUS, CALL, WHATSAPP_CALL, WHATSAPP_BUSINESS_CALL, FAKE_CALL, REMINDER, SOUND_MODE
+# Channels: SMS, WHATSAPP, WHATSAPP_BUSINESS, WHATSAPP_STATUS, WHATSAPP_BUSINESS_STATUS, CALL, WHATSAPP_CALL, WHATSAPP_BUSINESS_CALL, CALL_SIMULATION, REMINDER, SOUND_MODE
 adb shell "am broadcast -a com.jmd.autotext.ACTION_TEST_TASK --es channel CALL --es recipients 9769602020 --ei callDuration 5 -n com.jmd.autotext/.receiver.TaskAlarmReceiver"
 ```
 
@@ -719,7 +704,7 @@ adb shell am broadcast -a com.jmd.autotext.ACTION_DELETE_ALL_TASKS -n com.jmd.au
 ## 14. Master Universal Project Audit & Root-Cause Remediation Specification
 & Root-Cause Remediation Specification
 
-### A. Dynamic Zero-Detection Stealth Architecture
+### A. Dynamic On-Demand Payment App Isolation Architecture
 - **Problem Formulation**: Traditional static accessibility exclusions (such as package name filtering in `AccessibilityServiceInfo`) do not conceal the service's presence from third-party banking/UPI applications (e.g., Saraswat Bank GOMONxT, SBI YONO, HDFC, PhonePe). External apps query `AccessibilityManager.getEnabledAccessibilityServiceList()` or inspect `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES`, detecting non-system accessibility services and halting execution with security alert dialogs.
 - **Architectural Solution**:
   1. **Dynamic On-Demand Lifecycle**: Leveraging privileged `WRITE_SECURE_SETTINGS`, AutoText keeps its accessibility service registration completely purged from `ENABLED_ACCESSIBILITY_SERVICES` during idle periods, simultaneously writing `ACCESSIBILITY_ENABLED = "0"` if no other service is active.

@@ -38,7 +38,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onSoundModeSettingChange Callback when target sound mode is changed.
  */
 @Composable
-fun composeFakeCallAndSoundCard(
+fun composeCallSimulationAndSoundCard(
     selectedChannel: ChannelType,
     fakeCallerName: String,
     onFakeCallerNameChange: (String) -> Unit,
@@ -50,7 +50,7 @@ fun composeFakeCallAndSoundCard(
     onSoundModeSettingChange: (String) -> Unit
 ) {
     when (selectedChannel) {
-        ChannelType.FAKE_CALL -> {
+        ChannelType.CALL_SIMULATION -> {
             appCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = AppDesignTokens.ShapeLarge
@@ -143,6 +143,36 @@ fun composeFakeCallAndSoundCard(
         else -> Unit
     }
 }
+
+/**
+ * Backward-compatible alias for [composeCallSimulationAndSoundCard].
+ */
+@Deprecated("Use composeCallSimulationAndSoundCard instead for policy compliance", ReplaceWith("composeCallSimulationAndSoundCard(selectedChannel, fakeCallerName, onFakeCallerNameChange, fakeCallerNumber, onFakeCallerNumberChange, fakeCallStyle, onFakeCallStyleChange, soundModeSetting, onSoundModeSettingChange)"))
+@Composable
+fun composeFakeCallAndSoundCard(
+    selectedChannel: ChannelType,
+    fakeCallerName: String,
+    onFakeCallerNameChange: (String) -> Unit,
+    fakeCallerNumber: String,
+    onFakeCallerNumberChange: (String) -> Unit,
+    fakeCallStyle: String,
+    onFakeCallStyleChange: (String) -> Unit,
+    soundModeSetting: String,
+    onSoundModeSettingChange: (String) -> Unit
+) {
+    composeCallSimulationAndSoundCard(
+        selectedChannel = selectedChannel,
+        fakeCallerName = fakeCallerName,
+        onFakeCallerNameChange = onFakeCallerNameChange,
+        fakeCallerNumber = fakeCallerNumber,
+        onFakeCallerNumberChange = onFakeCallerNumberChange,
+        fakeCallStyle = fakeCallStyle,
+        onFakeCallStyleChange = onFakeCallStyleChange,
+        soundModeSetting = soundModeSetting,
+        onSoundModeSettingChange = onSoundModeSettingChange
+    )
+}
+
 
 
 

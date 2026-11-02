@@ -58,7 +58,7 @@ fun taskCard(
         ChannelType.CALL -> MaterialTheme.colorScheme.primary to "📞"
         ChannelType.WHATSAPP_CALL -> MaterialTheme.colorScheme.tertiary to "📞"
         ChannelType.WHATSAPP_BUSINESS_CALL -> MaterialTheme.colorScheme.secondary to "📞💼"
-        ChannelType.FAKE_CALL -> MaterialTheme.colorScheme.error to "🎭"
+        ChannelType.CALL_SIMULATION -> MaterialTheme.colorScheme.error to "🎭"
         ChannelType.REMINDER -> MaterialTheme.colorScheme.primary to "⏰"
         ChannelType.SOUND_MODE -> MaterialTheme.colorScheme.secondary to "🔊"
     }

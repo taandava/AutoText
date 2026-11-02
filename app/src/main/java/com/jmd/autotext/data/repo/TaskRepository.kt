@@ -296,7 +296,7 @@ class TaskRepository(context: Context) {
         return ScheduledTask(
             id = c.getLong(c.getColumnIndexOrThrow("id")),
             title = c.getString(c.getColumnIndexOrThrow("title")).orEmpty(),
-            channel = runCatching { ChannelType.valueOf(c.getString(c.getColumnIndexOrThrow("channel"))) }.getOrDefault(ChannelType.SMS),
+            channel = ChannelType.fromString(c.getString(c.getColumnIndexOrThrow("channel"))),
             recipients = recipientList,
             recipientNames = nameList,
             messageText = c.getString(c.getColumnIndexOrThrow("message_text")).orEmpty(),

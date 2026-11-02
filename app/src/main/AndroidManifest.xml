@@ -96,7 +96,8 @@
 
 
         <!-- Simulated Incoming Call Activity (Internal simulation only) -->
-        <activity android:name=".ui.activity.FakeCallActivity" android:exported="false" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:launchMode="singleTop" android:theme="@style/Theme.AutoText.FullScreen" />
+        <activity android:name=".ui.activity.CallSimulationActivity" android:exported="false" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:launchMode="singleTop" android:theme="@style/Theme.AutoText.FullScreen" />
+        <activity-alias android:name=".ui.activity.FakeCallActivity" android:targetActivity=".ui.activity.CallSimulationActivity" android:exported="false" />
 
         <!-- Heads Up Reminder / Alarm Activity (Internal app alarm only) -->
         <activity android:name=".ui.activity.ReminderAlarmActivity" android:exported="false" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:launchMode="singleTop" android:theme="@style/Theme.AutoText" />

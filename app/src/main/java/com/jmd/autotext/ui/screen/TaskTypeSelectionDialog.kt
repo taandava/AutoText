@@ -110,7 +110,7 @@ fun taskTypeSelectionDialog(
             description = "Simulate incoming call alert with custom caller name and ring style",
             emoji = "🎭",
             color = MaterialTheme.colorScheme.error,
-            channel = ChannelType.FAKE_CALL,
+            channel = ChannelType.CALL_SIMULATION,
         ),
         TaskTypeItem(
             title = "Contact Sequence (Multi-Task)",

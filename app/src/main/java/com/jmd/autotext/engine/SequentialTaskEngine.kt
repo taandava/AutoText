@@ -38,6 +38,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.jmd.autotext.AutoTextApplication
+import com.jmd.autotext.ui.activity.CallSimulationActivity
 import com.jmd.autotext.ui.activity.FakeCallActivity
 import com.jmd.autotext.ui.activity.AutomationLauncherActivity
 import com.jmd.autotext.core.AccessibilityHealthManager
@@ -463,8 +464,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             ChannelType.REMINDER -> {
                 executeReminderTask(repository, task)
             }
-            ChannelType.FAKE_CALL -> {
-                executeFakeCallTask(repository, task)
+            ChannelType.CALL_SIMULATION -> {
+                executeCallSimulationTask(repository, task)
             }
             ChannelType.SOUND_MODE -> {
                 executeSoundModeTask(repository, task)
@@ -477,7 +478,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             AutomationSafetyManager.recordFailure(task.channel, appContext)
         }
 
-        if (task.channel != ChannelType.FAKE_CALL && prefs.isAutoLockAfterSendEnabled) {
+        if (task.channel != ChannelType.CALL_SIMULATION && prefs.isAutoLockAfterSendEnabled) {
             executeDeviceLockPostcondition(appContext, task.title)
         }
         AccessibilityHealthManager.enforceAutoRotateInvariant(appContext)
@@ -1644,15 +1645,15 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         return success
     }
 
-    private fun executeFakeCallTask(repository: AppRepository, task: ScheduledTask): Boolean {
+    private fun executeCallSimulationTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val success = try {
-            val fakeIntent = Intent(appContext, FakeCallActivity::class.java).apply {
+            val simulationIntent = Intent(appContext, CallSimulationActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 putExtra("caller_name", task.fakeCallerName.ifBlank { "Unknown Caller" })
                 putExtra("caller_number", task.fakeCallerNumber.ifBlank { "+1 555-0199" })
                 putExtra("caller_style", task.fakeCallStyle.ifBlank { "Modern" })
             }
-            appContext.startActivity(fakeIntent)
+            appContext.startActivity(simulationIntent)
             repository.insertLog(
                 ExecutionLog(
                     taskId = task.id,
@@ -1682,6 +1683,10 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         completeOrRescheduleTask(appContext, repository, task, success)
         return success
     }
+
+    @Deprecated("Use executeCallSimulationTask instead", ReplaceWith("executeCallSimulationTask(repository, task)"))
+    private fun executeFakeCallTask(repository: AppRepository, task: ScheduledTask): Boolean =
+        executeCallSimulationTask(repository, task)
 
     private fun executeSoundModeTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val success = try {

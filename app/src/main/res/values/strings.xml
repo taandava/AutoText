@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AutoText</string>
     <string name="accessibility_service_label">AutoText Scheduled Assistant</string>
-    <string name="accessibility_service_description">Provides hands-free assistance to prepare and deliver user-scheduled messages in approved communication applications.</string>
+    <string name="accessibility_service_description">AutoText uses the Accessibility Service API exclusively to assist users by automating scheduled messages in approved communication apps and waking the screen for user-configured tasks. AutoText does not collect, store, or transmit your conversations, personal data, or keystrokes, and strictly isolates itself from all banking and payment applications.</string>
     <string name="notification_channel_tasks">Scheduled Messages</string>
     <string name="notification_channel_tasks_desc">Notifications for scheduled message dispatches and delivery status</string>
     <string name="notification_channel_reminders">Alarms &amp; Reminders</string>

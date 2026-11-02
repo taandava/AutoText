@@ -273,7 +273,7 @@ object ProtectedApplicationManager {
         return when (task.channel) {
             ChannelType.SMS,
             ChannelType.CALL,
-            ChannelType.FAKE_CALL,
+            ChannelType.CALL_SIMULATION,
             ChannelType.REMINDER,
             ChannelType.SOUND_MODE -> true
             ChannelType.WHATSAPP,

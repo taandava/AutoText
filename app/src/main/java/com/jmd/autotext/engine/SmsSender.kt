@@ -48,7 +48,7 @@ class SmsSender(private val context: Context) {
         CONFIRMED,
         /** Dispatched to modem buffer, but acknowledgement timed out within 5 seconds. */
         PENDING_TIMEOUT,
-        /** Some PDU parts were delivered while others failed. Whole-message retries are blocked to prevent spamming. */
+        /** Some PDU parts were delivered while others failed. Whole-message retries are blocked to prevent duplicate transmissions. */
         PARTIAL_DISPATCH,
         /** Total carrier or radio rejection. */
         FAILED

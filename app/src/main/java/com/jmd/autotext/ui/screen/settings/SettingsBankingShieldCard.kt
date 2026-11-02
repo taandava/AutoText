@@ -45,7 +45,7 @@ fun settingsBankingShieldCard(
     modifier: Modifier = Modifier,
     onOpenPrivacySettings: () -> Unit = {}
 ) {
-    var stealthGuard by remember { mutableStateOf(prefs.isBankingShieldEnabled) }
+    var isBankingShieldActive by remember { mutableStateOf(prefs.isBankingShieldEnabled) }
     var dynamicA11y by remember { mutableStateOf(prefs.isDynamicA11yOnDemandEnabled) }
     val hasWriteSecure = remember { AccessibilityHealthManager.hasWriteSecureSettings(context) }
     var a11yRunning by remember {
@@ -56,7 +56,7 @@ fun settingsBankingShieldCard(
     LaunchedEffect(Unit) {
         while (true) {
             a11yRunning = AccessibilityHealthManager.isServiceOperational()
-            stealthGuard = prefs.isBankingShieldEnabled
+            isBankingShieldActive = prefs.isBankingShieldEnabled
             dynamicA11y = prefs.isDynamicA11yOnDemandEnabled
             userPaused = prefs.isA11yUserPaused
             kotlinx.coroutines.delay(2000L.milliseconds)
@@ -66,7 +66,7 @@ fun settingsBankingShieldCard(
     appCard(
         modifier = modifier.fillMaxWidth(),
         backgroundColor = MaterialTheme.colorScheme.surface,
-        borderColor = if (stealthGuard) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant
+        borderColor = if (isBankingShieldActive) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

@@ -83,9 +83,26 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
     CALL("Phone Call", "📞"),
     WHATSAPP_CALL("WhatsApp Call", "📞"),
     WHATSAPP_BUSINESS_CALL("WA Business Call", "📞💼"),
-    FAKE_CALL("Call Simulation", "🎭"),
+    CALL_SIMULATION("Call Simulation", "🎭"),
     REMINDER("Reminder", "⏰"),
-    SOUND_MODE("Sound Mode", "🔊")
+    SOUND_MODE("Sound Mode", "🔊");
+
+    companion object {
+        /**
+         * Backward-compatible alias for [CALL_SIMULATION].
+         */
+        @JvmField
+        val FAKE_CALL: ChannelType = CALL_SIMULATION
+
+        fun fromString(value: String?): ChannelType {
+            if (value.isNullOrBlank()) return SMS
+            val clean = value.trim().uppercase()
+            return when (clean) {
+                "CALL_SIMULATION", "SIMULATION", "FAKE_CALL", "FAKECALL" -> CALL_SIMULATION
+                else -> entries.firstOrNull { it.name == clean } ?: SMS
+            }
+        }
+    }
 }
 
 // ==================== EXECUTION LOG DATA MODELS ====================
@@ -343,7 +360,16 @@ data class ScheduledTask(
     val callSequenceMode: String = "GIVEN", // "GIVEN" or "RANDOM"
     val delayBetweenCallsSeconds: Int = 5,
     val callFailurePolicy: String = "CONTINUE" // "CONTINUE" or "STOP_ON_FAILURE"
-)
+) {
+    /** Policy-compliant alias for [fakeCallerName]. */
+    val simulatedCallerName: String get() = fakeCallerName
+
+    /** Policy-compliant alias for [fakeCallerNumber]. */
+    val simulatedCallerNumber: String get() = fakeCallerNumber
+
+    /** Policy-compliant alias for [fakeCallStyle]. */
+    val simulatedCallStyle: String get() = fakeCallStyle
+}
 
 // ==================== MESSAGE TEMPLATE DATA MODELS ====================
 
