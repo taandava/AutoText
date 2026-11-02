@@ -58,7 +58,7 @@ private enum class AppListFilter {
 }
 
 @Composable
-fun PrivacySettingsScreen(
+fun privacySettingsScreen(
     context: Context,
     prefs: PreferenceManager,
     onBack: () -> Unit
@@ -522,7 +522,7 @@ fun PrivacySettingsScreen(
                 }
             } else {
                 items(filteredApps, key = { it.packageName }) { appItem ->
-                    AppRowItem(
+                    appRowItem(
                         context = context,
                         appItem = appItem,
                         onToggleExclusion = { excluded ->
@@ -569,7 +569,7 @@ fun PrivacySettingsScreen(
             appName = appInfo.appName,
             isExcluded = appInfo.isExcluded
         )
-        AppPrivacyDetailDialog(
+        appPrivacyDetailDialog(
             appInfo = appInfo,
             initialConfig = existingConfig,
             onSave = { updated ->
@@ -619,7 +619,7 @@ fun PrivacySettingsScreen(
 }
 
 @Composable
-private fun AppRowItem(
+private fun appRowItem(
     context: Context,
     appItem: AppInfoItem,
     onToggleExclusion: (Boolean) -> Unit,

@@ -976,7 +976,7 @@ class AutoTextComprehensiveTest {
 
     @Test
     fun testAllTwelveChannelsValidationAcceptsTextPayload() {
-        val channels = com.jmd.autotext.data.model.ChannelType.values()
+        val channels = com.jmd.autotext.data.model.ChannelType.entries
         assertEquals(12, channels.size)
 
         for (channel in channels) {
@@ -995,7 +995,7 @@ class AutoTextComprehensiveTest {
 
     @Test
     fun testRepeatUnitsRoundTripAndRecurrenceTypeMapping() {
-        for (unit in com.jmd.autotext.data.model.RepeatUnit.values()) {
+        for (unit in com.jmd.autotext.data.model.RepeatUnit.entries) {
             val mappedRecurrence = unit.toRecurrenceType()
             assertNotNull(mappedRecurrence)
             val parsed = com.jmd.autotext.data.model.RepeatUnit.fromString(unit.name)
@@ -1030,14 +1030,19 @@ class AutoTextComprehensiveTest {
     // 17. CALL ENDED VS UNANSWERED OUTGOING DIAL LOGIC TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    private fun isCallEndedTransition(callType: Int, durationSeconds: Long): Boolean {
+        val isOutgoing = callType == android.provider.CallLog.Calls.OUTGOING_TYPE
+        return isOutgoing && durationSeconds > 0L
+    }
+
+    private fun isMissedCallEvent(callType: Int, durationSeconds: Long): Boolean {
+        return callType == android.provider.CallLog.Calls.MISSED_TYPE || (callType != android.provider.CallLog.Calls.OUTGOING_TYPE && durationSeconds == 0L)
+    }
+
     @Test
     fun testOutgoingCallWithZeroDurationIsNotCallEnded() {
         // Simulating the user placing an outgoing call (type = 2) where remote party does not answer (duration = 0)
-        val outgoingType = android.provider.CallLog.Calls.OUTGOING_TYPE
-        val duration = 0L
-
-        val isOutgoing = outgoingType == android.provider.CallLog.Calls.OUTGOING_TYPE
-        val isCallEnded = isOutgoing && duration > 0L
+        val isCallEnded = isCallEndedTransition(android.provider.CallLog.Calls.OUTGOING_TYPE, 0L)
         val isMissedCall = false
 
         assertFalse("Unanswered outgoing dial with duration 0 must NOT be treated as Call Ended", isCallEnded)
@@ -1047,11 +1052,7 @@ class AutoTextComprehensiveTest {
     @Test
     fun testOutgoingCallWithPositiveDurationIsCallEnded() {
         // Simulating user dialing an outgoing call that was answered and spoke for 45 seconds
-        val outgoingType = android.provider.CallLog.Calls.OUTGOING_TYPE
-        val duration = 45L
-
-        val isOutgoing = outgoingType == android.provider.CallLog.Calls.OUTGOING_TYPE
-        val isCallEnded = isOutgoing && duration > 0L
+        val isCallEnded = isCallEndedTransition(android.provider.CallLog.Calls.OUTGOING_TYPE, 45L)
 
         assertTrue("Connected outgoing call with duration > 0 must be treated as Call Ended", isCallEnded)
     }
@@ -1076,10 +1077,7 @@ class AutoTextComprehensiveTest {
     @Test
     fun testIncomingMissedCallLogic() {
         // Incoming call that rang but was not answered
-        val incomingType = android.provider.CallLog.Calls.MISSED_TYPE
-        val duration = 0L
-
-        val isMissed = incomingType == android.provider.CallLog.Calls.MISSED_TYPE || duration == 0L
+        val isMissed = isMissedCallEvent(android.provider.CallLog.Calls.MISSED_TYPE, 0L)
         assertTrue("Missed incoming call must be recognized", isMissed)
     }
 

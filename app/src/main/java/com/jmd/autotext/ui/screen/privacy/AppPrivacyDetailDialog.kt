@@ -27,7 +27,7 @@ import com.jmd.autotext.ui.components.glassButton
 import com.jmd.autotext.ui.components.GlassButtonVariant
 
 @Composable
-fun AppPrivacyDetailDialog(
+fun appPrivacyDetailDialog(
     appInfo: AppInfoItem,
     initialConfig: AppPrivacyConfig,
     onSave: (AppPrivacyConfig) -> Unit,
@@ -99,7 +99,7 @@ fun AppPrivacyDetailDialog(
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     // 1. Master Isolation Switch
-                    PrivacyControlToggle(
+                    privacyControlToggle(
                         title = "Shield & Exclude Application",
                         subtitle = "Isolates AutoText completely from this app and omits it from accessibility targets.",
                         checked = isExcluded,
@@ -107,7 +107,7 @@ fun AppPrivacyDetailDialog(
                     )
 
                     // 2. Block Automation Actions
-                    PrivacyControlToggle(
+                    privacyControlToggle(
                         title = "Block AutoText Automation Actions",
                         subtitle = "Prevents any simulated taps, message dispatches, or navigation targeted at this app.",
                         checked = disableAutomation,
@@ -116,7 +116,7 @@ fun AppPrivacyDetailDialog(
                     )
 
                     // 3. Block Overlays & Wake Windows
-                    PrivacyControlToggle(
+                    privacyControlToggle(
                         title = "Block Overlays & Wake Windows",
                         subtitle = "Suppresses floating banners, popups, and call simulation alerts while using this app.",
                         checked = blockOverlays,
@@ -125,7 +125,7 @@ fun AppPrivacyDetailDialog(
                     )
 
                     // 4. Suppress Notifications
-                    PrivacyControlToggle(
+                    privacyControlToggle(
                         title = "Suppress Heads-Up Notifications",
                         subtitle = "Mutes non-critical notification alerts while this application is in the foreground.",
                         checked = suppressNotifications,
@@ -134,7 +134,7 @@ fun AppPrivacyDetailDialog(
                     )
 
                     // 5. Disable Clipboard Read/Write
-                    PrivacyControlToggle(
+                    privacyControlToggle(
                         title = "Disable Clipboard Operations",
                         subtitle = "Never copies, pastes, or reads clipboard content when interacting with this app.",
                         checked = disableClipboard,
@@ -143,7 +143,7 @@ fun AppPrivacyDetailDialog(
                     )
 
                     // 6. Mask Sensitive Content
-                    PrivacyControlToggle(
+                    privacyControlToggle(
                         title = "Mask Sensitive Content in Audit Logs",
                         subtitle = "Obfuscates message bodies and phone numbers with asterisks in execution history.",
                         checked = maskSensitiveContent,
@@ -152,7 +152,7 @@ fun AppPrivacyDetailDialog(
                     )
 
                     // 7. Disable Trigger Rules
-                    PrivacyControlToggle(
+                    privacyControlToggle(
                         title = "Disable Incoming Trigger Rules",
                         subtitle = "Ignores notification auto-replies or automated triggers originating from this app.",
                         checked = disableRules,
@@ -226,7 +226,7 @@ fun AppPrivacyDetailDialog(
 }
 
 @Composable
-private fun PrivacyControlToggle(
+private fun privacyControlToggle(
     title: String,
     subtitle: String,
     checked: Boolean,

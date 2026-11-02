@@ -109,7 +109,7 @@ fun moreScreen(
             }
         }
         "PERMISSIONS" -> permissionCenterView(context) { navigateToSubSection("MENU") }
-        "PRIVACY" -> com.jmd.autotext.ui.screen.privacy.PrivacySettingsScreen(
+        "PRIVACY" -> com.jmd.autotext.ui.screen.privacy.privacySettingsScreen(
             context = context,
             prefs = prefs,
             onBack = {
