@@ -329,22 +329,27 @@ object AccessibilityNodeUtils {
         durationMs: Long = 50L,
         onComplete: (() -> Unit)? = null
     ): Boolean {
-        val path = Path().apply {
-            moveTo(x, y)
+        return try {
+            val path = Path().apply {
+                moveTo(x, y)
+            }
+            val stroke = GestureDescription.StrokeDescription(path, 0, durationMs)
+            val gesture = GestureDescription.Builder().addStroke(stroke).build()
+
+            service.dispatchGesture(gesture, object : AccessibilityService.GestureResultCallback() {
+                override fun onCompleted(gestureDescription: GestureDescription?) {
+                    Log.d(TAG, "Physical tap completed at ($x, $y)")
+                    onComplete?.invoke()
+                }
+
+                override fun onCancelled(gestureDescription: GestureDescription?) {
+                    Log.w(TAG, "Physical tap cancelled at ($x, $y)")
+                }
+            }, null)
+        } catch (t: Throwable) {
+            Log.e(TAG, "dispatchPhysicalTap failed: ${t.message}")
+            false
         }
-        val stroke = GestureDescription.StrokeDescription(path, 0, durationMs)
-        val gesture = GestureDescription.Builder().addStroke(stroke).build()
-
-        return service.dispatchGesture(gesture, object : AccessibilityService.GestureResultCallback() {
-            override fun onCompleted(gestureDescription: GestureDescription?) {
-                Log.d(TAG, "Physical tap completed at ($x, $y)")
-                onComplete?.invoke()
-            }
-
-            override fun onCancelled(gestureDescription: GestureDescription?) {
-                Log.w(TAG, "Physical tap cancelled at ($x, $y)")
-            }
-        }, null)
     }
 
     /**

@@ -260,7 +260,7 @@ class KeyguardUnlockEngine(
                         if (rect.width() > 0 && rect.height() > 0) {
                             val tapX = rect.centerX().toFloat()
                             val tapY = rect.centerY().toFloat()
-                            digitTapped = AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                            digitTapped = dispatchPhysicalTap(tapX, tapY)
                             if (digitTapped) {
                                 Log.i(loggerTag, "Dispatched physical tap on digit '$digitChar' at ($tapX, $tapY) [${index + 1}/${pin.length}]")
                                 break
@@ -288,7 +288,7 @@ class KeyguardUnlockEngine(
                     }
                     val tapX = width * colRatio
                     val tapY = height * rowRatio
-                    AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                    dispatchPhysicalTap(tapX, tapY)
                     Log.i(loggerTag, "Coordinate fallback physical tap for digit '$digitChar' at ($tapX, $tapY) [${index + 1}/${pin.length}]")
                 }
 
@@ -316,7 +316,7 @@ class KeyguardUnlockEngine(
                             if (rect.width() > 0 && rect.height() > 0) {
                                 val tapX = rect.centerX().toFloat()
                                 val tapY = rect.centerY().toFloat()
-                                okTapped = AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                                okTapped = dispatchPhysicalTap(tapX, tapY)
                                 if (okTapped) {
                                     Log.i(loggerTag, "Dispatched physical tap on Enter/OK element at ($tapX, $tapY)")
                                     break
@@ -329,7 +329,7 @@ class KeyguardUnlockEngine(
                         val dm = service.resources.displayMetrics
                         val tapX = dm.widthPixels * 0.746f
                         val tapY = dm.heightPixels * 0.809f
-                        AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                        dispatchPhysicalTap(tapX, tapY)
                         Log.i(loggerTag, "Coordinate fallback physical tap on Enter/OK at ($tapX, $tapY)")
                     }
 
@@ -411,11 +411,23 @@ class KeyguardUnlockEngine(
             val rect = android.graphics.Rect()
             enterNode.getBoundsInScreen(rect)
             if (rect.width() > 0 && rect.height() > 0) {
-                return AccessibilityNodeUtils.dispatchPhysicalTap(service, rect.centerX().toFloat(), rect.centerY().toFloat())
+                return dispatchPhysicalTap(rect.centerX().toFloat(), rect.centerY().toFloat())
             }
             return AccessibilityNodeUtils.clickElement(enterNode, service)
         }
         return false
+    }
+
+    private fun dispatchPhysicalTap(x: Float, y: Float, durationMs: Long = 50L): Boolean {
+        return try {
+            val path = Path().apply { moveTo(x, y) }
+            val stroke = GestureDescription.StrokeDescription(path, 0, durationMs)
+            val gesture = GestureDescription.Builder().addStroke(stroke).build()
+            service.dispatchGesture(gesture, null, null)
+        } catch (t: Throwable) {
+            Log.e(loggerTag, "dispatchPhysicalTap failed: ${t.message}")
+            false
+        }
     }
 
     private fun findPinInputField(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
