@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">AutoText</string>
-    <string name="accessibility_service_label">AutoText Assistant</string>
-    <string name="accessibility_service_description">Provides hands-free assistance to help individuals interact with messaging applications and send scheduled messages.</string>
+    <string name="accessibility_service_label">AutoText Scheduled Assistant</string>
+    <string name="accessibility_service_description">Provides hands-free assistance to prepare and deliver user-scheduled messages in approved communication applications.</string>
     <string name="notification_channel_tasks">Scheduled Messages</string>
     <string name="notification_channel_tasks_desc">Notifications for scheduled message dispatches and delivery status</string>
     <string name="notification_channel_reminders">Alarms &amp; Reminders</string>
     <string name="notification_channel_reminders_desc">Full screen alerts and reminders</string>
-    <string name="device_admin_description">Allows AutoText to turn off and secure the display after scheduled messaging tasks conclude.</string>
+    <string name="device_admin_description">Allows AutoText to turn off the screen after scheduled messaging tasks conclude.</string>
     <string name="tile_a11y_label">Assistant Pause</string>
 </resources>

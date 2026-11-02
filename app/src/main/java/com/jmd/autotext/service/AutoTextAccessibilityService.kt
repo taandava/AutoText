@@ -41,6 +41,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.core.content.ContextCompat
 import com.jmd.autotext.AutoTextApplication
 import com.jmd.autotext.ui.activity.AutomationLauncherActivity
@@ -791,7 +792,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                         }
                         val start = System.currentTimeMillis()
                         while (!isServiceRunning && (System.currentTimeMillis() - start) < 3000L) {
-                            delay(150L) // NON-BLOCKING SUSPEND! Allows Main Looper to process onServiceConnected!
+                            delay(150.milliseconds) // NON-BLOCKING SUSPEND! Allows Main Looper to process onServiceConnected!
                         }
                     }
                 }
@@ -845,25 +846,24 @@ class AutoTextAccessibilityService : AccessibilityService() {
                     Log.w(TAG, "Cannot set exact alarm: ${se.message}, relying on WakeLock handler")
                 }
 
-                // 4. Handler countdown under WakeLock
-                val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed({
-                    try {
-                        @Suppress("DEPRECATION")
-                        val screenWakeLock = pm?.newWakeLock(
-                            PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
-                            "AutoText:TestUnlockWakeLock"
-                        )
-                        screenWakeLock?.acquire(15000L)
-                        appContext.startActivity(testIntent)
-                    } catch (t: Throwable) {
-                        Log.e(TAG, "Error initiating test auto unlock", t)
-                    } finally {
-                        runCatching {
-                            if (cpuWakeLock?.isHeld == true) cpuWakeLock.release()
-                        }
+                // 4. Delay using Duration and launch AutomationLauncherActivity
+                delay(3500.milliseconds)
+
+                try {
+                    @Suppress("DEPRECATION")
+                    val screenWakeLock = pm?.newWakeLock(
+                        PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
+                        "AutoText:TestUnlockWakeLock"
+                    )
+                    screenWakeLock?.acquire(15000L)
+                    appContext.startActivity(testIntent)
+                } catch (t: Throwable) {
+                    Log.e(TAG, "Error initiating test auto unlock", t)
+                } finally {
+                    runCatching {
+                        if (cpuWakeLock?.isHeld == true) cpuWakeLock.release()
                     }
-                }, 3500L)
+                }
             }
         }
 

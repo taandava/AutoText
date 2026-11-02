@@ -372,14 +372,11 @@ class KeyguardUnlockEngine(
             if (nodes.isNotEmpty()) return nodes.first()
         }
 
-        val textMatch = AccessibilityNodeUtils.findNodeByTextOrDesc(
+        return AccessibilityNodeUtils.findNodeByTextOrDesc(
             root,
             listOf(digit.toString()),
             exact = true
         )
-        if (textMatch != null) return textMatch
-
-        return null
     }
 
     private fun findKeypadEnterNode(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
