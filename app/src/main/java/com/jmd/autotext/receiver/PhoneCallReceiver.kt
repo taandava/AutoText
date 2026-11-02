@@ -65,7 +65,7 @@ class PhoneCallReceiver : BroadcastReceiver() {
     }
 
     /**
-     * Intercepts `ACTION_PHONE_STATE_CHANGED` broadcasts to detect state transitions
+     * Listens to `ACTION_PHONE_STATE_CHANGED` broadcasts to detect state transitions
      * between RINGING, OFFHOOK, and IDLE.
      *
      * Identifies missed calls and completed incoming/outgoing calls, dispatches background coroutines
@@ -416,7 +416,8 @@ class PhoneCallReceiver : BroadcastReceiver() {
             cursor?.use {
                 if (it.moveToFirst()) it.getString(0) else null
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.d(TAG, "Contact lookup note: ${e.message}")
             null
         }
     }

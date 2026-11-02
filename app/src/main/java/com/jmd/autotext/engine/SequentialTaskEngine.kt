@@ -1649,7 +1649,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             val simulationIntent = Intent(appContext, CallSimulationActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 putExtra("caller_name", task.simulatedCallerName.ifBlank { "Unknown Caller" })
-                putExtra("caller_number", task.simulatedCallerNumber.ifBlank { "+1 555-0199" })
+                putExtra("caller_number", task.simulatedCallerNumber.ifBlank { "+91 98765 43210" })
                 putExtra("caller_style", task.simulatedCallStyle.ifBlank { "Modern" })
             }
             appContext.startActivity(simulationIntent)

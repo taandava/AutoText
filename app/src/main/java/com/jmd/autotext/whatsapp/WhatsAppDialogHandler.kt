@@ -4,7 +4,7 @@
  * Package: com.jmd.autotext.whatsapp
  * Module: WhatsApp Automation Subsystem
  *
- * WhatsApp dialog and confirmation interceptor. Gracefully handles in-app modal prompts,
+ * WhatsApp dialog and confirmation handler. Gracefully handles in-app modal prompts,
  * "Continue" or "OK" disclaimers, and network/session popups strictly scoped to WhatsApp packages.
  *
  * Linked With:
@@ -21,7 +21,7 @@ import com.jmd.autotext.data.model.ExecutionLog
 import com.jmd.autotext.data.repo.AppRepository
 
 /**
- * Intercepts and resolves known WhatsApp popup dialogs without disturbing user security boundaries.
+ * Resolves known WhatsApp popup dialogs without disturbing user security boundaries.
  */
 object WhatsAppDialogHandler {
 

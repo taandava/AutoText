@@ -84,6 +84,21 @@ object ProtectedApplicationManager {
         "com.yesbank",                               // YES BANK
         "com.aubank.aupay",                          // AU 0101
         "com.rblbank.mobank",                        // MoBank RBL
+        "com.boi.mobile",                            // Bank of India BOI Mobile
+        "com.infrasofttech.centmobile",              // Central Bank of India Cent Mobile
+        "com.infrasofttech.indianbank",              // Indian Bank IndOASIS
+        "com.lcode.ucobank",                         // UCO Bank UCO mBanking Plus
+        "com.psb.unic",                              // Punjab & Sind Bank PSB UnIC
+        "com.mahamb",                                // Bank of Maharashtra Maha Mobile
+        "com.sib.mirrorplus",                        // South Indian Bank SIB Mirror+
+        "com.karnatakabank.kblmobile",               // Karnataka Bank KBL Mobile Plus
+        "com.kvb.mobilebanking",                     // Karur Vysya Bank DLite
+        "com.cub.corporate",                         // City Union Bank
+        "com.cub.mobile",                            // City Union Bank Mobile Plus
+        "com.bandhan.mpassbook",                     // Bandhan Bank mPassbook
+        "com.bandhanbank.digital",                   // Bandhan Bank Digital
+        "com.csb.mobile",                            // CSB Bank Mobile
+        "com.idfcfirstbank.optimus",                 // IDFC FIRST Bank
 
         // Wealth, Brokerage & Mutual Funds
         "com.zerodha.kite3",                         // Zerodha Kite
@@ -92,13 +107,18 @@ object ProtectedApplicationManager {
         "com.dhan.live",                             // Dhan
         "com.upstox",                                // Upstox
         "com.navi.mutualfund",                       // Navi Mutual Fund
+        "com.naviapp",                               // Navi Loans & UPI
+        "com.coindcx",                               // CoinDCX
+        "com.coinswitch.kuber",                      // CoinSwitch Kuber
 
-        // Neobanks & Credit Lines
+        // Neobanks, Payment Ecosystem & Credit Lines
         "com.slicepay",                              // Slice
         "com.jupiter.money",                         // Jupiter
         "com.fi.money",                              // Fi Money
         "in.niyo",                                   // Niyo
-        "com.bajajfinserv.experia"                   // Bajaj Finserv
+        "com.bajajfinserv.experia",                  // Bajaj Finserv
+        "com.jio.finance",                           // JioFinance
+        "com.tatadigital.tcp"                        // Tata Neu
     )
 
     /**
@@ -136,13 +156,30 @@ object ProtectedApplicationManager {
         "com.federalbank.",
         "com.yesbank.",
         "com.aubank.",
+        "com.boi.",
+        "com.infrasofttech.",
+        "com.lcode.",
+        "com.psb.",
+        "com.mahamb",
+        "com.sib.",
+        "com.karnatakabank.",
+        "com.kvb.",
+        "com.cub.",
+        "com.bandhan",
+        "com.csb.",
+        "com.idfcfirstbank.",
+        "com.jio.finance",
+        "com.tatadigital.",
         "com.slicepay",
         "com.jupiter.",
         "com.fi.money",
         "com.zerodha.",
         "com.nextbillion.",
         "com.dhan.",
-        "com.upstox"
+        "com.upstox",
+        "com.navi",
+        "com.coindcx",
+        "com.coinswitch"
     )
 
     /**
@@ -155,7 +192,7 @@ object ProtectedApplicationManager {
         "com.whatsapp",
         "com.whatsapp.w4b",
 
-        // Native Telephony & In-Call Handlers
+        // Native & Indian OEM Telephony Handlers (Google, Samsung, Xiaomi, Realme, Oppo, OnePlus, Vivo)
         "com.android.dialer",
         "com.google.android.dialer",
         "com.android.phone",
@@ -163,6 +200,12 @@ object ProtectedApplicationManager {
         "com.samsung.android.dialer",
         "com.samsung.android.incallui",
         "com.sec.phone",
+        "com.coloros.dialer",
+        "com.oplus.dialer",
+        "com.vivo.upslide",
+        "com.bbk.phone",
+        "com.miui.telephony",
+        "com.miui.contacts",
 
         // Android System UI & Lockscreen (for unattended keyguard PIN unlock only)
         "com.android.systemui",

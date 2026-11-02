@@ -348,7 +348,7 @@ data class ScheduledTask(
     val askBeforeSend: Boolean = false,
     val soundModeSetting: String = "NORMAL",
     val simulatedCallerName: String = "Incoming Call",
-    val simulatedCallerNumber: String = "+1 (555) 019-2834",
+    val simulatedCallerNumber: String = "+91 98765 43210",
     val simulatedCallStyle: String = "PIXEL",
     val createdAtMillis: Long = System.currentTimeMillis(),
     val lastExecutedMillis: Long = 0,

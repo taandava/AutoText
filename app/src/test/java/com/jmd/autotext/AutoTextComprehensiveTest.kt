@@ -315,7 +315,10 @@ class AutoTextComprehensiveTest {
 
     @Test
     fun testEmergencyNumberRejection() {
-        val emergencyNumbers = listOf("112", "911", "100", "101", "102", "108", "999")
+        val emergencyNumbers = listOf(
+            "112", "100", "101", "102", "108", "1090", "1091", "1098", "1930",
+            "1075", "1070", "1077", "1072", "1073", "139", "911", "999"
+        )
         for (num in emergencyNumbers) {
             assertTrue("Expected $num to be identified as emergency number", PhoneNumberNormalizer.isEmergencyNumber(num))
             assertEquals("Emergency number $num must normalize to empty string", "", PhoneNumberNormalizer.normalize(num))
@@ -1524,23 +1527,27 @@ class AutoTextComprehensiveTest {
 
     @Test
     fun testSimulatedCallerModelProperties() {
+        // Default ScheduledTask must use Indian mobile number format
+        val defaultTask = ScheduledTask()
+        assertEquals("+91 98765 43210", defaultTask.simulatedCallerNumber)
+
         val task = ScheduledTask(
             id = 101L,
             title = "Rescue Simulation",
             channel = ChannelType.CALL_SIMULATION,
             simulatedCallerName = "Meeting Organizer",
-            simulatedCallerNumber = "+1 (555) 019-2834",
+            simulatedCallerNumber = "+91 98765 43210",
             simulatedCallStyle = "PIXEL"
         )
 
         // Verify policy-compliant accessors reflect underlying stored values
         assertEquals("Meeting Organizer", task.simulatedCallerName)
-        assertEquals("+1 (555) 019-2834", task.simulatedCallerNumber)
+        assertEquals("+91 98765 43210", task.simulatedCallerNumber)
         assertEquals("PIXEL", task.simulatedCallStyle)
 
         // Verify backward compatibility alias accessors
         assertEquals("Meeting Organizer", task.fakeCallerName)
-        assertEquals("+1 (555) 019-2834", task.fakeCallerNumber)
+        assertEquals("+91 98765 43210", task.fakeCallerNumber)
         assertEquals("PIXEL", task.fakeCallStyle)
 
         // Verify authorization under ProtectedApplicationManager
@@ -1616,8 +1623,23 @@ class AutoTextComprehensiveTest {
         assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.whatsapp.w4b"))
         assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.android.dialer"))
         assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.google.android.dialer"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.samsung.android.dialer"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.coloros.dialer"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.oplus.dialer"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.vivo.upslide"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.miui.telephony"))
         assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.android.systemui"))
         assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.jmd.autotext"))
+
+        // Indian banking & payment applications must be strictly protected and denied from automation targets
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.boi.mobile"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.sbi.lotusintouch"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.tatadigital.tcp"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.naviapp"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.boi.mobile"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.sbi.lotusintouch"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.tatadigital.tcp"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.naviapp"))
 
         // Unauthorized third-party apps, browsers, games must be denied
         assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.instagram.android"))

@@ -253,7 +253,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
     }
 
     /**
-     * Intercepts wakeful alarm broadcasts from AlarmManager, validates task existence and state,
+     * Receives wakeful alarm broadcasts from AlarmManager, validates task existence and state,
      * checks cancellation flags, and enqueues the task ID into [SequentialTaskEngine].
      *
      * @param context Active Context.
@@ -381,7 +381,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             val simulatedCallerName = intent.getStringExtra("simulatedCallerName")
                 ?: intent.getStringExtra("fakeCallerName") ?: msgText.ifBlank { "Incoming Call" }
             val simulatedCallerNumber = intent.getStringExtra("simulatedCallerNumber")
-                ?: intent.getStringExtra("fakeCallerNumber") ?: recipientsParam.firstOrNull() ?: "+1 (555) 019-2834"
+                ?: intent.getStringExtra("fakeCallerNumber") ?: recipientsParam.firstOrNull() ?: "+91 98765 43210"
             val soundMode = intent.getStringExtra("soundModeSetting") ?: "NORMAL"
             val mediaUri = intent.getStringExtra("mediaUri") ?: ""
 

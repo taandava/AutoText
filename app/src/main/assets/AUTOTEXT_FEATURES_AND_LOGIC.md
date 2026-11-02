@@ -34,7 +34,7 @@ AutoText is structured into specialized, domain-driven Kotlin packages:
 
 ```
 com.jmd.autotext
-├── AutoTextApplication.kt       # Application root, crash interception & daemon initialization
+├── AutoTextApplication.kt       # Application root, crash diagnostics & daemon initialization
 ├── compat/                      # Android API level compatibility layers
 │   ├── AccessibilityCompat.kt   # Dynamic gesture dispatch & window traversal
 │   ├── ClipboardCompat.kt       # Secure clip data handling & text delivery
@@ -68,7 +68,7 @@ com.jmd.autotext
 │   ├── BootReceiver.kt               # Post-boot alarm rescheduling & Direct Boot auto-unlock
 │   ├── TimeChangeReceiver.kt         # Clock drift & timezone adjustment handler
 │   ├── PhoneCallReceiver.kt          # Telephony call state listener with duration-based auto-reply
-│   ├── SmsReceiver.kt                # Incoming SMS auto-reply & forward interceptor
+│   ├── SmsReceiver.kt                # Incoming SMS auto-reply & forward receiver
 │   ├── AccessibilityWatchdogReceiver.kt # 15-minute exact watchdog heartbeat tick
 │   └── AutoTextDeviceAdminReceiver.kt# Immediate screen locking & device administration
 ├── scheduler/                   # Exact Time & WorkManager Schedulers
@@ -591,7 +591,7 @@ AutoText resolves this through a dual-tier architecture adhering strictly to off
 - **Result**: 99.9% of the time, `getEnabledAccessibilityServiceList()` returns empty. Banking apps scan the device, find zero active accessibility services, and launch without any security warnings.
 
 #### Tier 3: Immediate Foreground Retraction Guard
-- If a banking application or excluded package is launched into the foreground while the accessibility service is momentarily bound, `AutoTextAccessibilityService.onAccessibilityEvent` intercepts the initial `TYPE_WINDOW_STATE_CHANGED` event:
+- If a banking application or excluded package is launched into the foreground while the accessibility service is momentarily bound, `AutoTextAccessibilityService.onAccessibilityEvent` observes the initial `TYPE_WINDOW_STATE_CHANGED` event:
   - If `isFinancialOrBankingPackage(pkg)` or `privacyMgr.isAppExcluded(pkg)` is true and the engine is not actively in an automated dispatch:
   - AutoText immediately invokes `AccessibilityHealthManager.disableAccessibilityService(applicationContext)` and unbinds.
   - The banking app's security check passes cleanly without interruption.

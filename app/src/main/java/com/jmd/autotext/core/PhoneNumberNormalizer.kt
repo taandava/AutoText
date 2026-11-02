@@ -229,14 +229,18 @@ object PhoneNumberNormalizer {
     }
 
     /**
-     * Identifies emergency service numbers (112, 911, 100, 101, 102, 108, 999) to strictly block automated dispatch.
+     * Identifies emergency service numbers (112, 100, 101, 102, 108, 1090, 1091, 1098, 1930, 1075, 1070, 1077, 1072, 1073, 139, 911, 999)
+     * to strictly block automated dispatch and protect national emergency helplines.
      *
      * @param raw Target phone string.
      * @return True if identified as emergency number, false otherwise.
      */
     fun isEmergencyNumber(raw: String): Boolean {
         val digits = raw.filter(Char::isDigit)
-        return digits in setOf("112", "911", "100", "101", "102", "108", "999")
+        return digits in setOf(
+            "112", "100", "101", "102", "108", "1090", "1091", "1098", "1930",
+            "1075", "1070", "1077", "1072", "1073", "139", "911", "999"
+        )
     }
 
     /**

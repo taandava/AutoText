@@ -1440,7 +1440,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
     }
 
     /**
-     * Primary accessibility event handler intercepting window changes, user interactions, and popups across targeted packages.
+     * Primary accessibility event handler processing window changes, user interactions, and popups across targeted packages.
      *
      * @param event The accessibility event dispatched by Android framework.
      */

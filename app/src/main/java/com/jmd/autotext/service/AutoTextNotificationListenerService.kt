@@ -4,7 +4,7 @@
  * Package: com.jmd.autotext.service
  * Module: Notification Listener Service Layer
  *
- * Intercepts incoming notifications across messaging apps (WhatsApp, WhatsApp Business, SMS, Telegram, Messenger)
+ * Processes incoming notifications across messaging apps (WhatsApp, WhatsApp Business, SMS, Telegram, Messenger)
  * and dispatches automated replies via inline [RemoteInput] actions without launching UI on screen.
  *
  * Linked With:
@@ -34,7 +34,7 @@ import java.util.Calendar
 import kotlinx.coroutines.*
 
 /**
- * System NotificationListenerService intercepting incoming messages to perform automated replies via RemoteInput.
+ * System NotificationListenerService processing incoming messages to perform automated replies via RemoteInput.
  */
 class AutoTextNotificationListenerService : NotificationListenerService() {
 
@@ -66,7 +66,7 @@ class AutoTextNotificationListenerService : NotificationListenerService() {
     }
 
     /**
-     * Intercepts posted status bar notifications, inspects text or call events, evaluates matching rules, and triggers replies.
+     * Processes posted status bar notifications, inspects text or call events, evaluates matching rules, and triggers replies.
      *
      * @param sbn Notification container posted by the Android notification subsystem.
      */

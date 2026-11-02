@@ -70,7 +70,7 @@ open class CallSimulationActivity : ComponentActivity() {
             ?: intent.getStringExtra("simulatedCallerNumber")
             ?: intent.getStringExtra("fake_caller_number")
             ?: intent.getStringExtra("fakeCallerNumber")
-            ?: "+1 (555) 019-2834"
+            ?: "+91 98765 43210"
         val callerStyle = intent.getStringExtra("caller_style")
             ?: intent.getStringExtra("simulatedCallStyle")
             ?: intent.getStringExtra("fake_call_style")

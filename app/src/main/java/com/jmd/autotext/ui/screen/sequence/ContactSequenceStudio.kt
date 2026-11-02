@@ -431,7 +431,7 @@ fun contactSequenceStudio(
                             value = contactName,
                             onValueChange = { contactName = it },
                             label = "Contact Name",
-                            placeholder = "e.g. John Doe, Client, Lead",
+                            placeholder = "e.g. Rahul Sharma, Client, Lead",
                             leadingIcon = Icons.Default.Badge,
                             modifier = Modifier.weight(1f),
                             accentColor = MaterialTheme.colorScheme.primary

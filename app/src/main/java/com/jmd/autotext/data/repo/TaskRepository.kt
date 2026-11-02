@@ -311,7 +311,7 @@ class TaskRepository(context: Context) {
             ?: "Incoming Call"
         val resolvedSimNum = (if (simNumIdx >= 0) c.getString(simNumIdx) else null)?.ifBlank { null }
             ?: (if (fakeNumIdx >= 0) c.getString(fakeNumIdx) else null)?.ifBlank { null }
-            ?: "+1 (555) 019-2834"
+            ?: "+91 98765 43210"
         val resolvedSimStyle = (if (simStyleIdx >= 0) c.getString(simStyleIdx) else null)?.ifBlank { null }
             ?: (if (fakeStyleIdx >= 0) c.getString(fakeStyleIdx) else null)?.ifBlank { null }
             ?: "PIXEL"

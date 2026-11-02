@@ -519,10 +519,4 @@ class PreferenceManager(private val context: Context) {
     var isBankSafeProtectionEnabled: Boolean
         get() = isBankingProtectionEnabled
         set(value) { isBankingProtectionEnabled = value }
-
-    @Deprecated("Use isBankingProtectionEnabled or isBankSafeProtectionEnabled instead for policy compliance", ReplaceWith("isBankingProtectionEnabled"))
-    var isStealthProtectionEnabled: Boolean
-        get() = isBankingProtectionEnabled
-        set(value) { isBankingProtectionEnabled = value }
-
 }

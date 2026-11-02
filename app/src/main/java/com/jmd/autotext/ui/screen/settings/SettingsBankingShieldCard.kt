@@ -137,7 +137,15 @@ fun settingsBankingShieldCard(
                             onClick = {
                                 try {
                                     val pm = context.packageManager
-                                    val candidatePackages = listOf("com.google.android.apps.nbu.paisa.user", "com.phonepe.app", "net.one97.paytm")
+                                    val candidatePackages = listOf(
+                                        "com.google.android.apps.nbu.paisa.user",
+                                        "com.phonepe.app",
+                                        "net.one97.paytm",
+                                        "in.org.npci.upiapp",
+                                        "com.sbi.lotusintouch",
+                                        "com.yono.sbi",
+                                        "com.dreamplug.androidapp"
+                                    )
                                     val target = candidatePackages.firstOrNull { pkg ->
                                         try { pm.getPackageInfo(pkg, 0); true } catch (_: Throwable) { false }
                                     } ?: "com.google.android.apps.nbu.paisa.user"
