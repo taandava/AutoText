@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
 /**
- * Global automation safety manager, emergency kill switch, and circuit breaker.
+ * Global automation safety manager, emergency stop control, and circuit breaker.
  * Ensures the device never gets locked into an automation loop, rapid relaunch cycle,
  * or unresponsive state.
  *
@@ -247,7 +247,7 @@ object AutomationSafetyManager {
     }
 
     /**
-     * Arms the global emergency kill switch, canceling active automation queues,
+     * Arms the global emergency stop control, canceling active automation queues,
      * resetting picker listeners, tripping circuit breakers, and minimizing to launcher home.
      *
      * @param context Active Android [Context].
@@ -307,7 +307,7 @@ object AutomationSafetyManager {
     }
 
     /**
-     * Resets the emergency kill switch and clears all channel circuit breakers, restoring normal operation.
+     * Resets the emergency stop control and clears all channel circuit breakers, restoring normal operation.
      *
      * @param context Active Android [Context] (optional, used for logging and user feedback).
      */
@@ -389,7 +389,7 @@ object AutomationSafetyManager {
      * Pre-flight gatekeeper verifying whether a channel is eligible to execute.
      *
      * @param channel Target [ChannelType].
-     * @return True if safe to proceed, false if kill switch is active or circuit breaker is tripped.
+     * @return True if safe to proceed, false if emergency stop is active or circuit breaker is tripped.
      */
     fun canExecute(channel: ChannelType): Boolean {
         if (isEmergencyStopActive.get()) return false

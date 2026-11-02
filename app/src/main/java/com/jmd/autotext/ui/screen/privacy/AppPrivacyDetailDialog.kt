@@ -118,7 +118,7 @@ fun AppPrivacyDetailDialog(
                     // 3. Block Overlays & Wake Windows
                     PrivacyControlToggle(
                         title = "Block Overlays & Wake Windows",
-                        subtitle = "Suppresses floating banners, popups, and fake call alerts while using this app.",
+                        subtitle = "Suppresses floating banners, popups, and call simulation alerts while using this app.",
                         checked = blockOverlays,
                         enabled = isExcluded,
                         onCheckedChange = { blockOverlays = it }

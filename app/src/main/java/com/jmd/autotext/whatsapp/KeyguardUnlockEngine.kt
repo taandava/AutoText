@@ -26,7 +26,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 
 /**
- * Autonomous keyguard bypass and security relock engine.
+ * Autonomous keyguard unlock and security relock engine.
  *
  * Handles detection of active lockscreens, executing upward swipe gestures to invoke
  * the PIN bouncer, sequentially entering PIN digits via element actions, confirming entry,

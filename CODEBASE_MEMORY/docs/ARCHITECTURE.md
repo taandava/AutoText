@@ -60,7 +60,7 @@
 ### 2.4 Data Persistence Layer (`com.jmd.autotext.data`)
 - `DatabaseHelper`: Thread-safe SQLite OpenHelper with WAL enabled, managing 15 relational tables across schema migrations.
 - `Repositories`: Clean data access abstractions (`TaskRepository`, `PrivacyRepository`, `AppRepository`, `DailyCampaignRepository`, `AutoReplyRepository`, `LogRepository`, `SequenceRepository`, `TemplateRepository`, `WhatsAppRepository`).
-- `PreferenceManager`: SharedPreferences backing for application configuration, stealth options, and auto-unlock credentials.
+- `PreferenceManager`: SharedPreferences backing for application configuration, standby shield options, and auto-unlock credentials.
 
 ### 2.5 Services & Receivers (`com.jmd.autotext.service`, `com.jmd.autotext.receiver`)
 - `AutoTextAccessibilityService`: Background accessibility service for physical UI interaction, window inspection, and keyguard unlock.

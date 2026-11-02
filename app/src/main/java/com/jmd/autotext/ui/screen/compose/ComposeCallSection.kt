@@ -56,7 +56,7 @@ fun composeFakeCallAndSoundCard(
                 shape = AppDesignTokens.ShapeLarge
             ) {
                 Text(
-                    "Fake Call Simulation Settings",
+                    "Call Simulation Settings",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 12.5.sp,
                     color = MaterialTheme.colorScheme.onSurface

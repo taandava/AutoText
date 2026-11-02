@@ -11,7 +11,7 @@
 1. **Device Re-Attachment Testing:**
    - If a physical Android device is connected via ADB, run the live verification runbook commands documented in `agent.md`.
    - Verify hardware keyguard unlock and WhatsApp direct message delivery.
-2. **Periodic Dynamic Stealth Audit:**
+2. **Periodic Dynamic Standby Audit:**
    - Keep `ProtectedApplicationManager.KNOWN_PROTECTED_PACKAGES` updated with newly launched financial and banking packages.
 3. **Android 16+ Framework Tracking:**
    - Continuously monitor upcoming platform changes in `AccessibilityService`, `TelecomManager`, and `NotificationListenerService`.

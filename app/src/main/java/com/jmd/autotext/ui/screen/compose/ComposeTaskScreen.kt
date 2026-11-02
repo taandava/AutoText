@@ -51,7 +51,7 @@ import com.jmd.autotext.whatsapp.*
 
 /**
  * Unified task composition screen providing authoring environments for SMS, WhatsApp direct messages,
- * WhatsApp Status updates, WhatsApp Groups, Phone Calls, Fake Calls, and Reminders.
+ * WhatsApp Status updates, WhatsApp Groups, Phone Calls, Call Simulations, and Reminders.
  *
  * @param initialChannel Channel pre-selected upon launching the composer.
  * @param initialMessage Initial text pre-filled into the message body.

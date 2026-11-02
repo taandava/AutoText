@@ -140,27 +140,13 @@ class AutoTextDeviceAdminReceiver : DeviceAdminReceiver() {
         }
 
         /**
-         * Verifies or activates device administrator status, checking if root/privileged activation is feasible.
+         * Verifies whether device administrator status is active.
          *
          * @param context Active context.
          * @return `true` if active or successfully activated; `false` otherwise.
          */
         fun ensureActive(context: Context): Boolean {
-            if (isAdminActive(context)) return true
-            Log.d(TAG, "Device Admin is inactive; checking privileged activation...")
-            return try {
-                val comp = getComponentName(context).flattenToString()
-                val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "dpm set-active-admin $comp"))
-                val completed = process.waitFor(1200L, java.util.concurrent.TimeUnit.MILLISECONDS)
-                if (!completed) {
-                    process.destroy()
-                    return false
-                }
-                isAdminActive(context)
-            } catch (e: Exception) {
-                Log.d(TAG, "Privileged dpm activation not supported: ${e.message}")
-                false
-            }
+            return isAdminActive(context)
         }
 
         /**

@@ -138,7 +138,7 @@ class MainActivity : ComponentActivity() {
 
         val lastScan = prefs.lastContactIngestionTime
         val now = System.currentTimeMillis()
-        // If pool is empty, bypass throttle and ingest immediately! Otherwise throttle 6 hours
+        // If pool is empty, skip throttle and ingest immediately! Otherwise throttle 6 hours
         if ((!isPoolEmpty) && ((now - lastScan) < (6 * 3600 * 1000L))) {
             return
         }

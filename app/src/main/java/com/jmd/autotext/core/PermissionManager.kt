@@ -174,7 +174,7 @@ object PermissionManager {
             canWorkWithout = true,
             isRuntimeApproval = false,
             requiresSpecialUserAction = true,
-            deniedImpact = "Cellular SMS, calls, alarms, and fake calls work normally. WhatsApp automated clicks are disabled.",
+            deniedImpact = "Cellular SMS, calls, alarms, and call simulations work normally. WhatsApp automated clicks are disabled.",
             revocationSafety = "Can be safely disabled anytime; dynamic on-demand mode automatically keeps it detached during idle.",
             category = PermissionCategory.SYSTEM
         ),

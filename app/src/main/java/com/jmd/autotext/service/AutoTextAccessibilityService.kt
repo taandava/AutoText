@@ -76,7 +76,7 @@ import com.jmd.autotext.core.AutomationSafetyManager
  * Implements strict security invariants:
  * - Never modifies device auto-rotate or unrelated display settings.
  * - Safely recovers from lockouts, dialog traps, or blocked numbers.
- * - Supports emergency kill-switch via [AutomationSafetyManager].
+ * - Supports emergency stop via [AutomationSafetyManager].
  */
 class AutoTextAccessibilityService : AccessibilityService() {
 
@@ -1200,7 +1200,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
 
                 val curPkg = activeRoot.packageName?.toString() ?: ""
                 val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(this@AutoTextAccessibilityService)
-                // Stealth Protection Guard: Instantly drop if an excluded or banking app is foregrounded
+                // Bank-Safe Shield Guard: Instantly drop if an excluded or banking app is foregrounded
                 if (privacyMgr.isAppExcluded(curPkg) || isFinancialOrBankingPackage(curPkg) || com.jmd.autotext.core.ProtectedApplicationManager.isProtectedPackage(curPkg)) {
                     Log.d(TAG, "sendRunnable: Excluded or banking app foregrounded ($curPkg); skipping window inspection")
                     com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(this@AutoTextAccessibilityService, curPkg, "sendRunnable")
@@ -1536,7 +1536,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
             }
 
-            // 0. Global Automation Kill Switch
+            // 0. Global Automation Emergency Stop
             val prefs = com.jmd.autotext.data.prefs.PreferenceManager(this)
             val isEmergencyStop = AutomationSafetyManager.isEmergencyStopActive(this)
             if (isEmergencyStop || !prefs.isTasksMasterEnabled) {

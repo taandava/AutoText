@@ -4,7 +4,7 @@
  *
  * Modal task picker displaying clear, categorized task types:
  * SMS, WhatsApp, WhatsApp Business, WhatsApp Status (sub-flow for Personal vs Business W4B),
- * Phone Calls, WhatsApp Voice Calls, Fake Calls, Contact Sequences, Daily Campaigns, Alarms, and Sound Modes.
+ * Phone Calls, WhatsApp Voice Calls, Call Simulations, Contact Sequences, Daily Campaigns, Alarms, and Sound Modes.
  *
  * Linked With:
  * - Screens: `TasksScreen`, `DailyCampaignScreen`,
@@ -40,7 +40,7 @@ import com.jmd.autotext.ui.theme.*
  *
  * Supported Dispatch Pathways:
  * - Direct Messaging: SMS via SIM, WhatsApp Chat, WhatsApp Business Chat, WhatsApp Group dispatch.
- * - Calling Automation: Cellular Phone Calls, WhatsApp VoIP Voice Calls, Incoming Fake Call simulation.
+ * - Calling Automation: Cellular Phone Calls, WhatsApp VoIP Voice Calls, Incoming Call simulation.
  * - Media Updates: Personal WhatsApp Status, WhatsApp Business Status updates with captions.
  * - Advanced Outreach: Multi-step Contact Sequences, Automated Unique Contact Daily Campaigns.
  * - Device Controls: Timed Alarms and Scheduled Device Sound Mode toggles.
@@ -106,8 +106,8 @@ fun taskTypeSelectionDialog(
             isWaCall = true,
         ),
         TaskTypeItem(
-            title = "Fake Call Simulator",
-            description = "Simulate incoming call alert with custom name and ring style",
+            title = "Call Simulation",
+            description = "Simulate incoming call alert with custom caller name and ring style",
             emoji = "🎭",
             color = MaterialTheme.colorScheme.error,
             channel = ChannelType.FAKE_CALL,

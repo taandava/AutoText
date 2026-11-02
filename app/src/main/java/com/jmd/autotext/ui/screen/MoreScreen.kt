@@ -4,7 +4,7 @@
  * Package: com.jmd.autotext.ui.screen
  * Module: UI More / Navigation Screen Layer
  *
- * Hub screen navigating to secondary features: Settings, Documentation, Fake Call,
+ * Hub screen navigating to secondary features: Settings, Documentation, Call Simulation,
  * Templates, Auto-Reply, and System Diagnostics.
  *
  * Linked With:

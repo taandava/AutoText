@@ -2,7 +2,7 @@
 
 /**
  * Package: com.jmd.autotext.ui.screen
- * Module: UI Fake Call Fullscreen Screen Layer
+ * Module: UI Incoming Call Simulation Fullscreen Screen Layer
  *
  * Incoming simulated phone call user interface rendering caller photo/avatar, contact name,
  * and animated accept/decline action triggers.

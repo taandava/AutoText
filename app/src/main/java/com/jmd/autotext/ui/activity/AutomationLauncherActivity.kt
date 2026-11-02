@@ -290,7 +290,7 @@ class AutomationLauncherActivity : Activity() {
 }
 
 // ============================================================================
-// FAKE CALL SIMULATOR ACTIVITY
+// CALL SIMULATOR ACTIVITY
 // ============================================================================
 
 

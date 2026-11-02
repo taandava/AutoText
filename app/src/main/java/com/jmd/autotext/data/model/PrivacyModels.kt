@@ -58,7 +58,7 @@ data class AppInfoItem(
 /**
  * Global operational preferences controlling application-wide privacy, visibility, and system integration.
  *
- * @property isPrivacyModeEnabled Master kill switch for all privacy restrictions.
+ * @property isPrivacyModeEnabled Master safety toggle for all privacy restrictions.
  * @property autoExcludeBankingApps Automatically includes known banking and UPI applications in privacy shielding.
  * @property maskNotificationsOnLockScreen Replaces sensitive message text on lockscreen notifications with generic status text.
  * @property maskExecutionLogs Masks message snippets in execution audit logs (e.g., replacement with asterisks).

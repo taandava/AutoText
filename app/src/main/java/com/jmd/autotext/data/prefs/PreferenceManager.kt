@@ -454,7 +454,7 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit { putBoolean("dispatch_notification_sound", value) }
 
     /**
-     * Stealth Protection & Uninterrupted Mode: Active by default.
+     * Bank-Safe Standby & Uninterrupted Mode: Active by default.
      * Ensures all scheduled tasks (Calls, SMS, WhatsApp, Alarms) run uninterrupted while
      * strictly isolating from banking, payment, and UPI applications so they never detect or flag accessibility.
      */
@@ -462,7 +462,7 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getBoolean(KEY_BANKING_SHIELD_ENABLED, true)
         set(value) = prefs.edit { putBoolean(KEY_BANKING_SHIELD_ENABLED, value) }
 
-    /** Alias for [isBankingShieldEnabled] reflecting uninterrupted stealth automation. */
+    /** Alias for [isBankingShieldEnabled] reflecting uninterrupted standby automation. */
     
     var isPrivacyModeEnabled: Boolean
         get() = prefs.getBoolean(KEY_PRIVACY_MODE_ENABLED, true)

@@ -5,7 +5,7 @@
 - **Decision:** AutoText requires zero internet/network permissions (`android.permission.INTERNET` is omitted from `AndroidManifest.xml`). All message composition, contact processing, database operations, and task scheduling remain 100% local on the physical hardware.
 - **Consequence:** Zero remote cloud attack vectors. Complete compliance with enterprise and privacy standards.
 
-## ADR-002: Dynamic Zero-Detection Stealth Architecture (Banking Shield)
+## ADR-002: Dynamic Bank-Safe Standby Architecture (Banking Shield)
 - **Context:** Modern banking and UPI apps (Google Pay, PhonePe, Paytm, YONO SBI, HDFC Bank, etc.) inspect `AccessibilityManager.getEnabledAccessibilityServiceList()` and block operations if any third-party accessibility service is enabled.
 - **Decision:** 
   1. Accessibility configuration is strictly scoped with `android:packageNames` in `accessibility_service_config.xml` to WhatsApp, Phone/Dialer, and SystemUI.
@@ -20,7 +20,7 @@
 - **Consequence:** Complete isolation of banking, investment, wallet, and UPI workflows.
 
 ## ADR-004: Sliced Polling with Early Call Termination Detection
-- **Context:** Monolithic delay loops (`delay(duration * 1000L)`) during calls caused two major bugs: (1) false "Call Duration Elapsed" alarms and unnecessary hangup attempts if the call was rejected, busy, or hung up early; (2) inability to respond to Emergency Stop kill switches in real-time.
+- **Context:** Monolithic delay loops (`delay(duration * 1000L)`) during calls caused two major bugs: (1) false "Call Duration Elapsed" alarms and unnecessary hangup attempts if the call was rejected, busy, or hung up early; (2) inability to respond to Emergency Stop emergency stopes in real-time.
 - **Decision:** Replaced monolithic delays with 250ms sliced polling loops observing `TelephonyManagerCompat` (multi-SIM call state), TelecomManager, and in-call accessibility nodes. If the call concludes early or Emergency Stop is asserted, the wait loop terminates immediately.
 - **Consequence:** Responsive, error-free call holding and prompt emergency stop reaction.
 

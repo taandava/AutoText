@@ -145,7 +145,7 @@ fun composeBottomBar(
 
 
 /**
- * Configuration card managing caller simulation parameters for Fake Calls and system ringer sound profiles.
+ * Configuration card managing caller simulation parameters for Call Simulations and system ringer sound profiles.
  *
  * @param selectedChannel Active channel type (FAKE_CALL or SOUND_MODE).
  * @param fakeCallerName Simulated caller contact name.

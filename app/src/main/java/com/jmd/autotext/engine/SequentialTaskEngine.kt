@@ -1656,23 +1656,23 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             repository.insertLog(
                 ExecutionLog(
                     taskId = task.id,
-                    channel = "Fake Call",
+                    channel = task.channel.displayName,
                     recipient = task.fakeCallerNumber.ifBlank { "Simulated" },
                     messageSnippet = "Incoming simulated call from ${task.fakeCallerName}",
                     status = "SUCCESS",
                 ),
             )
-            AppFileLogger.action(appContext, TAG, "Task #${task.id}: Triggered Fake Call Simulation")
+            AppFileLogger.action(appContext, TAG, "Task #${task.id}: Triggered Call Simulation")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to launch Fake Call: ${e.message}", e)
-            AppFileLogger.e(appContext, TAG, "Failed to launch Fake Call: ${e.message}", e)
+            Log.e(TAG, "Failed to launch Call Simulation: ${e.message}", e)
+            AppFileLogger.e(appContext, TAG, "Failed to launch Call Simulation: ${e.message}", e)
             repository.insertLog(
                 ExecutionLog(
                     taskId = task.id,
-                    channel = "Fake Call",
+                    channel = task.channel.displayName,
                     recipient = task.fakeCallerNumber.ifBlank { "Simulated" },
-                    messageSnippet = "Fake call simulation failed: ${e.message}",
+                    messageSnippet = "Call simulation failed: ${e.message}",
                     status = "FAILED",
                 ),
             )

@@ -19,4 +19,4 @@ This vault contains all persistent knowledge of the AutoText application. To rev
 - **Static Analysis:** Android Lint (`lintDebug`) — **0 Errors, 0 Warnings** ("No issues found")
 - **Unit Test Suite:** `AutoTextComprehensiveTest` — **76 of 76 Tests Passing (100%)**
 - **Production Build:** Signed release APK generated at `D:\GPU-D\apps\Automation\app-release.apk`
-- **Banking Protection:** Dedicated `ProtectedApplicationManager` enforcing strict default-deny policy and zero-detection stealth.
+- **Banking Protection:** Dedicated `ProtectedApplicationManager` enforcing strict default-deny policy and bank-safe smart standby.

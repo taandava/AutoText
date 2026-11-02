@@ -83,7 +83,7 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
     CALL("Phone Call", "📞"),
     WHATSAPP_CALL("WhatsApp Call", "📞"),
     WHATSAPP_BUSINESS_CALL("WA Business Call", "📞💼"),
-    FAKE_CALL("Fake Call", "🎭"),
+    FAKE_CALL("Call Simulation", "🎭"),
     REMINDER("Reminder", "⏰"),
     SOUND_MODE("Sound Mode", "🔊")
 }

@@ -368,7 +368,7 @@ object AccessibilityHealthManager {
     }
 
     /**
-     * Ensures required services are enabled, healthy, and bound, maintaining stealth isolation.
+     * Ensures required services are enabled, healthy, and bound, maintaining bank-safe standby isolation.
      *
      * @param context Active Android [Context].
      * @return True if secure write succeeded and services are bound.

@@ -390,7 +390,7 @@ fun PrivacySettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                             Text(text = "Block Overlays Over Excluded Apps", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)
-                            Text(text = "Prevents floating popups, wake-windows, or fake calls while an excluded app is open.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(text = "Prevents floating popups, wake-windows, or call simulation alerts while an excluded app is open.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Switch(
                             checked = blockOverlaysOverExcluded,

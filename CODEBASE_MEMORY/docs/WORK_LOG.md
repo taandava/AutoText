@@ -5,7 +5,7 @@
 ### Phase 1: Codebase Discovery & Assessment
 - Recursively surveyed all 133 source files in `app/src` including 100% Kotlin codebase (0% Java).
 - Inspected `AndroidManifest.xml`, Gradle configuration, database schema, services, receivers, and background workers.
-- Audited git commit log and staged changes: verified that previous baseline resolved call early hangup bugs, multi-SIM telephony states, VoIP timer detection, and initial Google Pay zero-detection stealth.
+- Audited git commit log and staged changes: verified that previous baseline resolved call early hangup bugs, multi-SIM telephony states, VoIP timer detection, and initial Google Pay bank-safe smart standby.
 
 ### Phase 2: Architecture & Security Engineering
 - Created `ProtectedApplicationManager.kt` implementing Part 8 strict banking isolation:

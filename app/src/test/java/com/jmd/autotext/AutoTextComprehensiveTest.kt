@@ -897,7 +897,7 @@ class AutoTextComprehensiveTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════
-    // 19. STEALTH PROTECTION & BANKING PACKAGE ISOLATION TESTS
+    // 19. BANKING PROTECTION & FINANCIAL PACKAGE ISOLATION TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
     @Test
@@ -930,7 +930,7 @@ class AutoTextComprehensiveTest {
 
         for (pkg in bankingPackages) {
             assertTrue(
-                "Package $pkg must be identified as banking/financial package for stealth isolation",
+                "Package $pkg must be identified as banking/financial package for standby isolation",
                 com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage(pkg)
             )
         }
@@ -1353,7 +1353,7 @@ class AutoTextComprehensiveTest {
             )
         )
 
-        // Cross-app mismatch rejection (prevents UI confusion / hijacking)
+        // Cross-app mismatch rejection (prevents UI confusion / unexpected targets)
         assertFalse(
             "Cross-package interaction must be rejected when foreground app does not match target",
             ProtectedApplicationManager.verifyContextBeforeInteraction(

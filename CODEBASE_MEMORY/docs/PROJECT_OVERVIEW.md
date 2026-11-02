@@ -32,9 +32,9 @@
 15. **Auto-Reply Engine:** Notification listener and broadcast-based keyword auto-reply rules for WhatsApp and SMS with cooldown guards.
 
 ## 4. Security & Safety Pillars
-- **Zero-Detection Dynamic Stealth Guard:** Dynamic on-demand detachment of Accessibility Service to ensure banking and UPI applications (Google Pay, PhonePe, Paytm, Saraswat Bank, YONO SBI, HDFC, ICICI, etc.) operate with zero interference or alerts.
+- **Bank-Safe Smart Standby Guard:** Dynamic on-demand detachment of Accessibility Service to ensure banking and UPI applications (Google Pay, PhonePe, Paytm, Saraswat Bank, YONO SBI, HDFC, ICICI, etc.) operate with zero interference or alerts.
 - **Dedicated Protected Application Manager:** Strict default-deny policy, real-time context verification before any UI action, zero traversal or inspection of financial apps, and instant callback cancellation.
 - **Automated Screen Wake & Keyguard Dismiss Engine:** Physical gesture-based PIN unlock for unattended scheduled automation execution.
-- **Emergency Stop & Circuit Breakers:** Instant global kill switch via persistent UI buttons or secure system broadcasts.
+- **Emergency Stop & Circuit Breakers:** Instant global emergency stop via persistent UI buttons or secure system broadcasts.
 - **Orientation Invariant Guard:** Hard-locked portrait orientation ensuring UI automation coordinate consistency.
 

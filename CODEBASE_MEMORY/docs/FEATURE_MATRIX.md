@@ -44,12 +44,12 @@
 | **Banking Protection** | Default-Deny UI Policy | `ProtectedApplicationManager.kt` | **PASS** | Only authorized targets receive UI taps |
 | | Financial App Catalog | `ProtectedApplicationManager.KNOWN_PROTECTED_PACKAGES` | **PASS** | 60+ Indian and global banking/UPI apps |
 | | Pre-Action Context Check | `ProtectedApplicationManager.verifyContextBeforeInteraction` | **PASS** | Verifies foreground package before taps |
-| | Dynamic Stealth Detachment | `AccessibilityHealthManager.kt` | **PASS** | Detaches a11y service during idle periods |
+| | Dynamic Standby Detachment | `AccessibilityHealthManager.kt` | **PASS** | Detaches a11y service during idle periods |
 | | Google Pay Zero Block | `SettingsBankingShieldCard.kt`, `accessibility_service_config.xml` | **PASS** | Scoped packageNames, 1-tap pause tile |
 | **Screen Auto-Unlock** | Screen Wake & Keyguard Dismiss | `AutomationLauncherActivity.kt` | **PASS** | PowerManager wake lock & KeyguardManager |
 | | Physical Tap PIN Unlock | `KeyguardUnlockEngine.kt` | **PASS** | Enters PIN digits via gesture coordinates |
 | | Auto-Relock Postcondition | `SequentialTaskEngine.executeDeviceLockPostcondition` | **PASS** | Minimizes to home, triggers lockNow |
-| **Safety & Control** | Global Emergency Stop | `AutomationSafetyManager.kt` | **PASS** | Instant kill switch via broadcast or UI |
+| **Safety & Control** | Global Emergency Stop | `AutomationSafetyManager.kt` | **PASS** | Instant emergency stop via broadcast or UI |
 | | Human Touch Detection | `AutoTextAccessibilityService.kt` | **PASS** | Yields to human user, auto-postpones task |
 | | Portrait Orientation Guard | `AccessibilityHealthManager.enforceAutoRotateInvariant` | **PASS** | Restores portrait lock (ACCELEROMETER_ROTATION=0) |
 | **Persistence & Logs** | Thread-Safe SQLite WAL | `DatabaseHelper.kt` | **PASS** | 15 tables with transactional integrity |

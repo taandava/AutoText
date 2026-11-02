@@ -40,7 +40,7 @@ class AccessibilityWatchdogWorker(
             if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
                 AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
             } else {
-                Log.d(TAG, "Watchdog skipping auto-heal: stealth or shield active")
+                Log.d(TAG, "Watchdog skipping auto-heal: standby shield active")
             }
             AccessibilityHealthManager.healNotificationListener(applicationContext)
             AccessibilityHealthManager.recordHeartbeat()

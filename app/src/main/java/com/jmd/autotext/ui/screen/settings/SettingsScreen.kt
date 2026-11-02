@@ -18,7 +18,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
 
 /**
  * Application settings and operational configuration screen providing controls for
- * automated lockscreen bypass PIN, accessibility stealth guard, fallback touch coordinates,
+ * automated lockscreen PIN unlock, accessibility banking guard, fallback touch coordinates,
  * carrier preferences, and database backup/restore.
  *
  * @param context Android context for resolving system services and content resolvers.
@@ -86,7 +86,7 @@ fun settingsView(
         topBar = {
             appSubScreenHeader(
                 title = "Settings & Security",
-                subtitle = "Hardware identity, lockscreen bypass, banking guard & backups",
+                subtitle = "Hardware identity, lockscreen unlock, banking guard & backups",
                 onBack = onBack
             )
         },
@@ -119,7 +119,7 @@ fun settingsView(
                 )
             }
 
-            // 3. Bank App Shield & Accessibility Stealth Guard
+            // 3. Bank App Shield & Accessibility Standby Guard
             item {
                 settingsBankingShieldCard(
                     context = context,

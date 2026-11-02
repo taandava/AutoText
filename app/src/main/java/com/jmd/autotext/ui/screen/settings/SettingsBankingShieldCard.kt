@@ -33,7 +33,7 @@ import com.jmd.autotext.ui.components.glassButton
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
- * Controller for Stealth Automation Guard and uninterrupted background execution.
+ * Controller for Banking Shield Guard and uninterrupted background execution.
  *
  * Ensures all automations (Calls, SMS, WhatsApp, Alarms) run uninterrupted 24/7
  * while strictly isolating from and never inspecting banking, payment, or UPI applications.
