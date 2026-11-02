@@ -211,7 +211,9 @@ object PhoneNumberNormalizer {
             cursor?.use {
                 if (it.moveToFirst()) return true
             }
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            android.util.Log.d("PhoneNumberNormalizer", "Contacts contract lookup note: ${e.message}")
+        }
 
         // Check dynamic contact pool as fallback
         return try {

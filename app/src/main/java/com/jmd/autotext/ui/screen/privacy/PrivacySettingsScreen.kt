@@ -632,7 +632,9 @@ private fun appRowItem(
             try {
                 val drawable = context.packageManager.getApplicationIcon(appItem.packageName)
                 iconBitmap = drawableToBitmap(drawable)
-            } catch (_: Throwable) {}
+            } catch (t: Throwable) {
+                android.util.Log.d("PrivacySettingsScreen", "Failed to load icon for ${appItem.packageName}: ${t.message}")
+            }
         }
     }
 

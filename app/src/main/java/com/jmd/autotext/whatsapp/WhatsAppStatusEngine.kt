@@ -511,7 +511,9 @@ class WhatsAppStatusEngine(
             if (focused != null && focused.isVisibleToUser && (focused.isEditable || focused.className?.toString()?.contains("EditText", ignoreCase = true) == true)) {
                 return focused
             }
-        } catch (_: Throwable) {}
+        } catch (t: Throwable) {
+            Log.d("WhatsAppStatusEngine", "findFocus exception: ${t.message}")
+        }
 
         val q = ArrayDeque<AccessibilityNodeInfo>()
         q.add(root)

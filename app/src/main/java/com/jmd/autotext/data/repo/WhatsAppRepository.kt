@@ -486,7 +486,9 @@ class WhatsAppRepository(private val context: Context) {
                             if (realPhone != null) {
                                 try {
                                     db.delete(DatabaseHelper.TABLE_WHATSAPP_GROUPS, "LOWER(TRIM(name)) = LOWER(TRIM(?))", arrayOf(gName))
-                                } catch (_: Exception) {}
+                                } catch (e: Exception) {
+                                    android.util.Log.d("WhatsAppRepository", "delete group row failed: ${e.message}")
+                                }
                             } else {
                                 map[dedupeKey] = WhatsAppContactItem(
                                     name = gName,

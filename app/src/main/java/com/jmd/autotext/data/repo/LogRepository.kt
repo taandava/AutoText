@@ -101,7 +101,9 @@ class LogRepository(private val context: Context) {
         if (insertCounter.incrementAndGet() % 100 == 0) {
             try {
                 pruneOldLogs()
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                android.util.Log.w("LogRepository", "pruneOldLogs failed: ${e.message}")
+            }
         }
         return rowId
     }

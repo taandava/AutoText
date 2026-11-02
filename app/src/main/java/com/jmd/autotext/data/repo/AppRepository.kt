@@ -557,7 +557,9 @@ class AppRepository(private val context: Context) {
                                 taskRepo.updateTaskStatus(taskId, TaskStatus.CANCELLED)
                                 try {
                                     com.jmd.autotext.engine.SequentialTaskEngine.getInstance(context).cancelTask(taskId)
-                                } catch (_: Throwable) {}
+                                } catch (t: Throwable) {
+                                    android.util.Log.d("AppRepository", "cancelTask on engine for #$taskId: ${t.message}")
+                                }
                             }
                         } else {
                             if (currentStatus == TaskStatus.CANCELLED.name && triggerTime > now) {

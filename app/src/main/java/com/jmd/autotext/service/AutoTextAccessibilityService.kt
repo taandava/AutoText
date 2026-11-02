@@ -1345,7 +1345,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
             info.eventTypes = ACTIVE_AUTOMATION_EVENT_MASK
             serviceInfo = info
             com.jmd.autotext.core.PrivacyManager.getInstance(this).updateAccessibilityScoping()
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed configuring serviceInfo or scoping: ${e.message}")
+        }
         isServiceRunning = true
         instance = this
         Log.d(TAG, "AutoText Accessibility Service Connected & Active (Global Interaction & Idle Guard Active)")
@@ -1384,7 +1386,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
             info.eventTypes = ACTIVE_AUTOMATION_EVENT_MASK
             serviceInfo = info
             com.jmd.autotext.core.PrivacyManager.getInstance(this).updateAccessibilityScoping()
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed configuring serviceInfo or scoping: ${e.message}")
+        }
         AccessibilityHealthManager.recordHeartbeat()
         Log.i(TAG, "AutoText Accessibility Service Re-bound by OS and Active")
         AppFileLogger.i(this, TAG, "AutoText Accessibility Service Re-bound by OS and Active")

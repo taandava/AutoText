@@ -24,12 +24,16 @@ fun Context.showAppToast(message: String, isLong: Boolean = false) {
     if (Looper.myLooper() == Looper.getMainLooper()) {
         try {
             Toast.makeText(this, message, duration).show()
-        } catch (_: Throwable) {}
+        } catch (t: Throwable) {
+            android.util.Log.d("AppExtensions", "showAppToast suppressed: ${t.message}")
+        }
     } else {
         Handler(Looper.getMainLooper()).post {
             try {
                 Toast.makeText(this, message, duration).show()
-            } catch (_: Throwable) {}
+            } catch (t: Throwable) {
+                android.util.Log.d("AppExtensions", "showAppToast background suppressed: ${t.message}")
+            }
         }
     }
 }

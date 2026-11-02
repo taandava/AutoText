@@ -189,7 +189,9 @@ class PreferenceManager(private val context: Context) {
                 System.arraycopy(ciphertext, 0, combined, iv.size, ciphertext.size)
                 return "HW_ENC:" + android.util.Base64.encodeToString(combined, android.util.Base64.NO_WRAP)
             }
-        } catch (_: Throwable) {}
+        } catch (t: Throwable) {
+            android.util.Log.d(TAG, "Hardware Keystore encryption unavailable; using derived fallback: ${t.message}")
+        }
 
         // 2. Secondary fallback: Package-derived AES-GCM (Direct Boot & unit test compatibility)
         return encryptSecretWithDerivedKey(secret)
@@ -225,7 +227,9 @@ class PreferenceManager(private val context: Context) {
                         return String(decryptedBytes, Charsets.UTF_8)
                     }
                 }
-            } catch (_: Throwable) {}
+            } catch (t: Throwable) {
+                android.util.Log.d(TAG, "Hardware Keystore decryption error: ${t.message}")
+            }
         }
 
         if (!stored.startsWith("ENC:")) return stored // transparent legacy plain migration
@@ -245,8 +249,10 @@ class PreferenceManager(private val context: Context) {
                 try {
                     val upgraded = encryptSecret(legacyDecrypted)
                     prefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, upgraded) }
-                    try { dePrefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, encryptSecretWithDerivedKey(legacyDecrypted)) } } catch (_: Exception) {}
-                } catch (_: Exception) {}
+                    try { dePrefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, encryptSecretWithDerivedKey(legacyDecrypted)) } } catch (e: Exception) { android.util.Log.d(TAG, "Direct boot PIN mirror failed: ${e.message}") }
+                } catch (e: Exception) {
+                    android.util.Log.d(TAG, "Keystore PIN upgrade failed: ${e.message}")
+                }
             }
             legacyDecrypted
         } catch (_: Exception) {
@@ -362,7 +368,9 @@ class PreferenceManager(private val context: Context) {
                 // For Direct Boot storage, store derived-key ciphertext so it is readable pre-unlock
                 val deEnc = encryptSecretWithDerivedKey(value)
                 dePrefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, deEnc) }
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                android.util.Log.d(TAG, "Direct boot PIN save failed: ${e.message}")
+            }
         }
 
     var isAutoLockAfterSendEnabled: Boolean
@@ -397,7 +405,7 @@ class PreferenceManager(private val context: Context) {
         }
         set(value) {
             prefs.edit { putString(KEY_APP_THEME, value) }
-            try { dePrefs.edit { putString(KEY_APP_THEME, value) } } catch (_: Exception) {}
+            try { dePrefs.edit { putString(KEY_APP_THEME, value) } } catch (e: Exception) { android.util.Log.d(TAG, "Direct boot theme save failed: ${e.message}") }
         }
 
     var isDynamicColorEnabled: Boolean
