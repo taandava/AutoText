@@ -1683,10 +1683,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         return success
     }
 
-    @Deprecated("Use executeCallSimulationTask instead", ReplaceWith("executeCallSimulationTask(repository, task)"))
-    private fun executeFakeCallTask(repository: AppRepository, task: ScheduledTask): Boolean =
-        executeCallSimulationTask(repository, task)
-
     private fun executeSoundModeTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val success = try {
             val audioManager = appContext.getSystemService(AudioManager::class.java)

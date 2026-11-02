@@ -389,7 +389,7 @@ fun whatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
                 Text(
                     text = when {
                         isOperational -> "Active in background. Ready to dispatch scheduled messages and auto-unlock."
-                        isDynamicStandby -> "Active & Ready. Safely detached while idle so Google Pay & Bank apps work with 0 warnings. Auto-connects in 0.05s on task!"
+                        isDynamicStandby -> "Active & Ready. Safely detached while idle so banking and payment apps work with 0 warnings. Auto-connects in 0.05s on task!"
                         else -> "Enable AutoText Assistant in Settings > Accessibility > Installed apps."
                     },
                     fontSize = 11.5.sp,

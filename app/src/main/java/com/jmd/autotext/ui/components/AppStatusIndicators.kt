@@ -79,8 +79,8 @@ object SystemIndicatorResolver {
 
         val a11yDesc = when {
             !isComponentEnabled -> "The assistant service component was disabled by the system. Tap to re-enable in system settings."
-            prefs.isA11yUserPaused -> "Assistant is temporarily paused so Google Pay can process transactions without interference. Tap to resume."
-            isDynamicStandby && !isA11yRunning -> "Bank-Safe Standby: Kept inactive while idle so Google Pay & Bank apps run with zero warnings. Automatically connects only during scheduled dispatches."
+            prefs.isA11yUserPaused -> "Assistant is temporarily paused so banking and payment apps process transactions without interference. Tap to resume."
+            isDynamicStandby && !isA11yRunning -> "Bank-Safe Standby: Kept inactive while idle so payment and banking apps run with zero warnings. Automatically connects only during scheduled dispatches."
             isA11yRunning -> "Active in background for scheduled message delivery. Isolated from banking and payment apps."
             else -> "Enables hands-free message sending and lockscreen assistance. Tap to enable."
         }
@@ -105,7 +105,7 @@ object SystemIndicatorResolver {
             SystemIndicator(
                 id = "banking_shield_guard",
                 name = "Payment Compatibility Guard",
-                description = "Protects banking and payment applications (Google Pay, PhonePe, Paytm) from accessibility alerts by keeping AutoText isolated or detached when idle.",
+                description = "Protects banking and payment applications (UPI, wallets, net banking) from accessibility alerts by keeping AutoText isolated or detached when idle.",
                 icon = Icons.Default.Security,
                 isActive = isBankingShieldActive,
                 actionLabel = if (!isBankingShieldActive) "Enable Guard" else null,
@@ -135,7 +135,7 @@ object SystemIndicatorResolver {
                     isDynamicStandby -> "Test Connection"
                     prefs.isA11yUserPaused && hasWriteSecure -> "Resume Assistant"
                     prefs.isA11yUserPaused -> "Enable in Settings"
-                    isA11yRunning -> "Pause for Google Pay"
+                    isA11yRunning -> "Pause for Banking Apps"
                     hasWriteSecure -> "Enable Assistant"
                     else -> "Enable in Settings"
                 },
@@ -154,7 +154,7 @@ object SystemIndicatorResolver {
                         if (hasWriteSecure) {
                             AccessibilityHealthManager.disableAccessibilityService(ctx)
                         }
-                        ctx.showAppToast("Assistant paused. Google Pay & Bank apps unblocked.")
+                        ctx.showAppToast("Assistant paused. Banking and payment apps isolated.")
                     } else if (hasWriteSecure) {
                         prefs.isA11yUserPaused = false
                         AccessibilityHealthManager.enableAccessibilityService(ctx)

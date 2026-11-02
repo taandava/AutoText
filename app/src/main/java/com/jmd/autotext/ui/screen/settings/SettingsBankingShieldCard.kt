@@ -81,13 +81,13 @@ fun settingsBankingShieldCard(
                 )
                 Column {
                     Text(
-                        text = "Google Pay & Payment Compatibility",
+                        text = "Banking & Payment App Shield",
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp
                     )
                     Text(
-                        text = "Ensures Google Pay, PhonePe, and banking apps run smoothly without security alerts",
+                        text = "Ensures UPI, payment, and banking apps run smoothly without accessibility conflicts",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp
                     )
@@ -95,7 +95,7 @@ fun settingsBankingShieldCard(
             }
             appBadge(
                 text = if (hasWriteSecure && dynamicA11y) "BANK-SAFE STANDBY"
-                       else if (userPaused || !a11yRunning) "GPAY SAFE (PAUSED)"
+                       else if (userPaused || !a11yRunning) "BANK-SAFE (PAUSED)"
                        else "A11Y RUNNING",
                 color = if (hasWriteSecure && dynamicA11y) MaterialTheme.colorScheme.primary
                         else if (userPaused || !a11yRunning) MaterialTheme.colorScheme.primary
@@ -122,7 +122,7 @@ fun settingsBankingShieldCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Accessibility is kept 100% detached during idle periods. Google Pay, PhonePe, Paytm, and bank apps will NEVER show 'Suspicious activity' warnings. When a scheduled WhatsApp message runs, AutoText attaches for ~2 seconds and immediately detaches.",
+                        text = "Accessibility is kept 100% detached during idle periods. UPI, payment, and banking apps will run without accessibility warnings. When a scheduled automation task runs, AutoText attaches for ~2 seconds and immediately detaches.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         lineHeight = 15.sp
@@ -133,17 +133,22 @@ fun settingsBankingShieldCard(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         glassButton(
-                            text = "🧹 Clear GPay Cache",
+                            text = "🧹 Clear App Cache",
                             onClick = {
                                 try {
+                                    val pm = context.packageManager
+                                    val candidatePackages = listOf("com.google.android.apps.nbu.paisa.user", "com.phonepe.app", "net.one97.paytm")
+                                    val target = candidatePackages.firstOrNull { pkg ->
+                                        try { pm.getPackageInfo(pkg, 0); true } catch (_: Throwable) { false }
+                                    } ?: "com.google.android.apps.nbu.paisa.user"
                                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                        data = "package:com.google.android.apps.nbu.paisa.user".toUri()
+                                        data = "package:$target".toUri()
                                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                     }
                                     context.startActivity(intent)
-                                    context.showAppToast("Tap 'Force stop' and 'Storage > Clear cache' to remove GPay's old cached warning.")
+                                    context.showAppToast("Tap 'Force stop' and 'Storage > Clear cache' to remove cached warnings.")
                                 } catch (_: Throwable) {
-                                    context.showAppToast("Could not open Google Pay app info.")
+                                    context.showAppToast("Could not open payment app info.")
                                 }
                             },
                             emoji = "🧹",
@@ -151,14 +156,31 @@ fun settingsBankingShieldCard(
                             modifier = Modifier.weight(1f)
                         )
                         glassButton(
-                            text = "💳 Open GPay",
+                            text = "💳 Open Payment App",
                             onClick = {
-                                val gpayIntent = context.packageManager.getLaunchIntentForPackage("com.google.android.apps.nbu.paisa.user")
-                                if (gpayIntent != null) {
-                                    gpayIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                    context.startActivity(gpayIntent)
-                                } else {
-                                    context.showAppToast("Google Pay is not installed.")
+                                val pm = context.packageManager
+                                val paymentPackages = listOf("com.google.android.apps.nbu.paisa.user", "com.phonepe.app", "net.one97.paytm", "in.org.npci.upiapp")
+                                var launched = false
+                                for (pkg in paymentPackages) {
+                                    val launchIntent = pm.getLaunchIntentForPackage(pkg)
+                                    if (launchIntent != null) {
+                                        launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                        context.startActivity(launchIntent)
+                                        launched = true
+                                        break
+                                    }
+                                }
+                                if (!launched) {
+                                    val upiIntent = Intent(Intent.ACTION_VIEW, "upi://pay".toUri()).apply {
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    }
+                                    if (upiIntent.resolveActivity(pm) != null) {
+                                        context.startActivity(Intent.createChooser(upiIntent, "Open Payment App").apply {
+                                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                        })
+                                    } else {
+                                        context.showAppToast("No banking or payment application found.")
+                                    }
                                 }
                             },
                             emoji = "💳",
@@ -184,14 +206,14 @@ fun settingsBankingShieldCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Google Pay blocks payments when ANY third-party accessibility service is running on the device. Tap 'Pause for Google Pay' below before opening Google Pay, or enable Automatic Zero-Detection via ADB.",
+                        text = "Some banking and UPI payment apps flag active third-party accessibility services. Tap 'Pause Assistant for Banking' below before opening your banking apps, or enable Bank-Safe Smart Standby via ADB.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         lineHeight = 15.sp
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     glassButton(
-                        text = "🛑 Pause Accessibility for Google Pay",
+                        text = "🛑 Pause Assistant for Banking",
                         onClick = {
                             prefs.isA11yUserPaused = true
                             AutoTextAccessibilityService.disableServiceIfActive()
@@ -200,7 +222,7 @@ fun settingsBankingShieldCard(
                             }
                             a11yRunning = false
                             userPaused = true
-                            context.showAppToast("Accessibility paused! Google Pay and banking apps unblocked.")
+                            context.showAppToast("Accessibility paused! Banking and payment apps isolated.")
                         },
                         emoji = "🛑",
                         variant = GlassButtonVariant.PRIMARY,
@@ -208,17 +230,22 @@ fun settingsBankingShieldCard(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     glassButton(
-                        text = "🧹 Clear GPay Cache (Force Stop)",
+                        text = "🧹 Clear Payment App Cache",
                         onClick = {
                             try {
+                                val pm = context.packageManager
+                                val candidatePackages = listOf("com.google.android.apps.nbu.paisa.user", "com.phonepe.app", "net.one97.paytm")
+                                val target = candidatePackages.firstOrNull { pkg ->
+                                    try { pm.getPackageInfo(pkg, 0); true } catch (_: Throwable) { false }
+                                } ?: "com.google.android.apps.nbu.paisa.user"
                                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                    data = "package:com.google.android.apps.nbu.paisa.user".toUri()
+                                    data = "package:$target".toUri()
                                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                 }
                                 context.startActivity(intent)
-                                context.showAppToast("Tap 'Force stop' and 'Storage > Clear cache' to clear Google Pay's block.")
+                                context.showAppToast("Tap 'Force stop' and 'Storage > Clear cache' to clear cached blocks.")
                             } catch (_: Throwable) {
-                                context.showAppToast("Could not open Google Pay app info.")
+                                context.showAppToast("Could not open payment app info.")
                             }
                         },
                         emoji = "🧹",
@@ -227,14 +254,31 @@ fun settingsBankingShieldCard(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     glassButton(
-                        text = "💳 Open Google Pay",
+                        text = "💳 Open Payment App",
                         onClick = {
-                            val gpayIntent = context.packageManager.getLaunchIntentForPackage("com.google.android.apps.nbu.paisa.user")
-                            if (gpayIntent != null) {
-                                gpayIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                context.startActivity(gpayIntent)
-                            } else {
-                                context.showAppToast("Google Pay is not installed.")
+                            val pm = context.packageManager
+                            val paymentPackages = listOf("com.google.android.apps.nbu.paisa.user", "com.phonepe.app", "net.one97.paytm", "in.org.npci.upiapp")
+                            var launched = false
+                            for (pkg in paymentPackages) {
+                                val launchIntent = pm.getLaunchIntentForPackage(pkg)
+                                if (launchIntent != null) {
+                                    launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    context.startActivity(launchIntent)
+                                    launched = true
+                                    break
+                                }
+                            }
+                            if (!launched) {
+                                val upiIntent = Intent(Intent.ACTION_VIEW, "upi://pay".toUri()).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                if (upiIntent.resolveActivity(pm) != null) {
+                                    context.startActivity(Intent.createChooser(upiIntent, "Open Payment App").apply {
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    })
+                                } else {
+                                    context.showAppToast("No banking or payment application found.")
+                                }
                             }
                         },
                         emoji = "💳",
@@ -251,14 +295,14 @@ fun settingsBankingShieldCard(
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     Text(
-                        text = "✅ Google Pay & Banking Safe (A11y is Off)",
+                        text = "✅ Banking & Payment Safe (Assistant is Off)",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Accessibility is currently paused or detached. Google Pay and banking transactions will complete without any interference.",
+                        text = "Accessibility is currently paused or detached. Banking and payment transactions will complete without any interference.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         lineHeight = 15.sp
@@ -288,14 +332,31 @@ fun settingsBankingShieldCard(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     glassButton(
-                        text = "💳 Open Google Pay",
+                        text = "💳 Open Payment App",
                         onClick = {
-                            val gpayIntent = context.packageManager.getLaunchIntentForPackage("com.google.android.apps.nbu.paisa.user")
-                            if (gpayIntent != null) {
-                                gpayIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                context.startActivity(gpayIntent)
-                            } else {
-                                context.showAppToast("Google Pay is not installed.")
+                            val pm = context.packageManager
+                            val paymentPackages = listOf("com.google.android.apps.nbu.paisa.user", "com.phonepe.app", "net.one97.paytm", "in.org.npci.upiapp")
+                            var launched = false
+                            for (pkg in paymentPackages) {
+                                val launchIntent = pm.getLaunchIntentForPackage(pkg)
+                                if (launchIntent != null) {
+                                    launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    context.startActivity(launchIntent)
+                                    launched = true
+                                    break
+                                }
+                            }
+                            if (!launched) {
+                                val upiIntent = Intent(Intent.ACTION_VIEW, "upi://pay".toUri()).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                if (upiIntent.resolveActivity(pm) != null) {
+                                    context.startActivity(Intent.createChooser(upiIntent, "Open Payment App").apply {
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    })
+                                } else {
+                                    context.showAppToast("No banking or payment application found.")
+                                }
                             }
                         },
                         emoji = "💳",
@@ -331,9 +392,9 @@ fun settingsBankingShieldCard(
                 }
                 Text(
                     text = if (dynamicA11y && hasWriteSecure)
-                        "Active • Accessibility kept OFF when idle. Auto-enables for 2s only during WhatsApp dispatches, then retracts. Eliminates Google Pay blocks."
+                        "Active • Accessibility kept OFF when idle. Auto-enables briefly during task dispatches, then retracts. Eliminates banking and payment app conflicts."
                     else
-                        "Keeps accessibility service disabled when idle. Enables for 2-3s only during WhatsApp dispatches, then detaches. Eliminates banking security warnings.",
+                        "Keeps accessibility service disabled when idle. Enables briefly only during task dispatches, then detaches. Eliminates banking and payment security warnings.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 11.sp
                 )
@@ -376,7 +437,7 @@ fun settingsBankingShieldCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Run this one-time command via ADB on your PC or Shizuku to grant Secure Settings. AutoText will automatically turn Accessibility on ONLY when sending WhatsApp messages (2s) and keep it off when idle so Google Pay never flags it:",
+                        text = "Run this one-time command via ADB on your PC or Shizuku to grant Secure Settings. AutoText will automatically turn Accessibility on ONLY when sending messages and keep it off when idle so banking and payment apps never flag it:",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 10.5.sp,
                         lineHeight = 14.sp

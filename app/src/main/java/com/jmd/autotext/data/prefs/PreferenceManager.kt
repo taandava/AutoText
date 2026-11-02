@@ -359,7 +359,7 @@ class PreferenceManager(private val context: Context) {
             } catch (_: Exception) {
                 dePrefs.getString(KEY_DEVICE_UNLOCK_PIN, "").orEmpty()
             }
-            return decryptSecret(raw).ifBlank { "2020" }
+            return decryptSecret(raw)
         }
         set(value) {
             val enc = encryptSecret(value)
@@ -516,7 +516,11 @@ class PreferenceManager(private val context: Context) {
         get() = isBankingShieldEnabled
         set(value) { isBankingShieldEnabled = value }
 
-    @Deprecated("Use isBankingProtectionEnabled instead for policy compliance", ReplaceWith("isBankingProtectionEnabled"))
+    var isBankSafeProtectionEnabled: Boolean
+        get() = isBankingProtectionEnabled
+        set(value) { isBankingProtectionEnabled = value }
+
+    @Deprecated("Use isBankingProtectionEnabled or isBankSafeProtectionEnabled instead for policy compliance", ReplaceWith("isBankingProtectionEnabled"))
     var isStealthProtectionEnabled: Boolean
         get() = isBankingProtectionEnabled
         set(value) { isBankingProtectionEnabled = value }

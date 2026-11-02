@@ -321,7 +321,7 @@ enum class TaskStatus(val displayName: String) {
                 VALIDATING -> to == READY || to == FAILED || to == CANCELLED
                 READY -> to == SCHEDULED || to == RUNNING || to == CANCELLED || to == PAUSED
                 SCHEDULED, PENDING -> to == RUNNING || to == PAUSED || to == CANCELLED
-                RUNNING -> to == SUCCESS || to == DONE || to == FAILED || to == CANCELLED || to == SCHEDULED || to == PENDING || to == PENDING_CONFIRMATION
+                RUNNING -> to == SUCCESS || to == DONE || to == FAILED || to == CANCELLED || to == PAUSED || to == SCHEDULED || to == PENDING || to == PENDING_CONFIRMATION
                 PAUSED -> to == SCHEDULED || to == PENDING || to == CANCELLED
                 SUCCESS, DONE -> to == SCHEDULED || to == PENDING || to == RUNNING
                 FAILED -> to == SCHEDULED || to == PENDING || to == RUNNING

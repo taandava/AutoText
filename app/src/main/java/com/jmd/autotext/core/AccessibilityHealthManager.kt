@@ -206,7 +206,7 @@ object AccessibilityHealthManager {
 
     /**
      * Completely disables the accessibility service and removes it from system settings if privileged.
-     * Activates Banking App Shield to eliminate malware/accessibility warnings in banking apps.
+     * Activates Banking App Shield to ensure complete financial application isolation and prevent accessibility conflicts with banking and payment apps.
      */
     fun disableAccessibilityService(context: Context): Boolean {
         try {

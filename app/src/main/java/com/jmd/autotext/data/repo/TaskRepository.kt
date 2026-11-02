@@ -62,9 +62,12 @@ class TaskRepository(context: Context) {
             put("sim_slot", task.simSlot)
             put("ask_before_send", if (task.askBeforeSend) 1 else 0)
             put("sound_mode", task.soundModeSetting)
-            put("fake_caller_name", task.fakeCallerName)
-            put("fake_caller_number", task.fakeCallerNumber)
-            put("fake_call_style", task.fakeCallStyle)
+            put("simulated_caller_name", task.simulatedCallerName)
+            put("simulated_caller_number", task.simulatedCallerNumber)
+            put("simulated_call_style", task.simulatedCallStyle)
+            put("fake_caller_name", task.simulatedCallerName)
+            put("fake_caller_number", task.simulatedCallerNumber)
+            put("fake_call_style", task.simulatedCallStyle)
             put("created_at", task.createdAtMillis)
             put("last_executed", task.lastExecutedMillis)
             put("execution_count", task.executionCount)
@@ -101,9 +104,12 @@ class TaskRepository(context: Context) {
             put("sim_slot", task.simSlot)
             put("ask_before_send", if (task.askBeforeSend) 1 else 0)
             put("sound_mode", task.soundModeSetting)
-            put("fake_caller_name", task.fakeCallerName)
-            put("fake_caller_number", task.fakeCallerNumber)
-            put("fake_call_style", task.fakeCallStyle)
+            put("simulated_caller_name", task.simulatedCallerName)
+            put("simulated_caller_number", task.simulatedCallerNumber)
+            put("simulated_call_style", task.simulatedCallStyle)
+            put("fake_caller_name", task.simulatedCallerName)
+            put("fake_caller_number", task.simulatedCallerNumber)
+            put("fake_call_style", task.simulatedCallStyle)
             put("last_executed", task.lastExecutedMillis)
             put("execution_count", task.executionCount)
             put("media_uri", task.mediaUri)
@@ -293,6 +299,23 @@ class TaskRepository(context: Context) {
         val failurePolicyIdx = c.getColumnIndex("call_failure_policy")
         val callFailurePolicy = if (failurePolicyIdx >= 0) c.getString(failurePolicyIdx).orEmpty().ifBlank { "CONTINUE" } else "CONTINUE"
 
+        val simNameIdx = c.getColumnIndex("simulated_caller_name")
+        val fakeNameIdx = c.getColumnIndex("fake_caller_name")
+        val simNumIdx = c.getColumnIndex("simulated_caller_number")
+        val fakeNumIdx = c.getColumnIndex("fake_caller_number")
+        val simStyleIdx = c.getColumnIndex("simulated_call_style")
+        val fakeStyleIdx = c.getColumnIndex("fake_call_style")
+
+        val resolvedSimName = (if (simNameIdx >= 0) c.getString(simNameIdx) else null)?.ifBlank { null }
+            ?: (if (fakeNameIdx >= 0) c.getString(fakeNameIdx) else null)?.ifBlank { null }
+            ?: "Incoming Call"
+        val resolvedSimNum = (if (simNumIdx >= 0) c.getString(simNumIdx) else null)?.ifBlank { null }
+            ?: (if (fakeNumIdx >= 0) c.getString(fakeNumIdx) else null)?.ifBlank { null }
+            ?: "+1 (555) 019-2834"
+        val resolvedSimStyle = (if (simStyleIdx >= 0) c.getString(simStyleIdx) else null)?.ifBlank { null }
+            ?: (if (fakeStyleIdx >= 0) c.getString(fakeStyleIdx) else null)?.ifBlank { null }
+            ?: "PIXEL"
+
         return ScheduledTask(
             id = c.getLong(c.getColumnIndexOrThrow("id")),
             title = c.getString(c.getColumnIndexOrThrow("title")).orEmpty(),
@@ -308,9 +331,9 @@ class TaskRepository(context: Context) {
             simSlot = c.getInt(c.getColumnIndexOrThrow("sim_slot")),
             askBeforeSend = c.getInt(c.getColumnIndexOrThrow("ask_before_send")) == 1,
             soundModeSetting = c.getString(c.getColumnIndexOrThrow("sound_mode")) ?: "NORMAL",
-            simulatedCallerName = c.getString(c.getColumnIndexOrThrow("fake_caller_name")) ?: "Incoming Call",
-            simulatedCallerNumber = c.getString(c.getColumnIndexOrThrow("fake_caller_number")) ?: "+1 (555) 019-2834",
-            simulatedCallStyle = c.getString(c.getColumnIndexOrThrow("fake_call_style")) ?: "PIXEL",
+            simulatedCallerName = resolvedSimName,
+            simulatedCallerNumber = resolvedSimNum,
+            simulatedCallStyle = resolvedSimStyle,
             createdAtMillis = c.getLong(c.getColumnIndexOrThrow("created_at")),
             lastExecutedMillis = c.getLong(c.getColumnIndexOrThrow("last_executed")),
             executionCount = c.getInt(c.getColumnIndexOrThrow("execution_count")),

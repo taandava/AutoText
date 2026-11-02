@@ -227,7 +227,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                 }
                 val a11yDesc = when (a11yState) {
                     AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Active in background to auto-send scheduled WhatsApp messages and unlock screen."
-                    AccessibilityHealthManager.ServiceState.STANDBY -> "Bank-Safe Standby: Connects on demand for ~2s during tasks only. Google Pay and bank apps detect 0 third-party services."
+                    AccessibilityHealthManager.ServiceState.STANDBY -> "Bank-Safe Standby: Connects on demand for ~2s during tasks only. Banking and payment apps detect 0 third-party services."
                     AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Accessibility is enabled in Settings, but the background binder is connecting. Tap to toggle in Settings if needed."
                     AccessibilityHealthManager.ServiceState.DISABLED -> "Required to auto-send scheduled WhatsApp messages and assist with screen unlock."
                 }

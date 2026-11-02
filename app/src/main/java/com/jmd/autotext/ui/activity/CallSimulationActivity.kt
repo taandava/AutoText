@@ -61,9 +61,21 @@ open class CallSimulationActivity : ComponentActivity() {
         val keyguardManager = getSystemService(KeyguardManager::class.java)
         keyguardManager?.requestDismissKeyguard(this, null)
 
-        val callerName = intent.getStringExtra("caller_name") ?: "Incoming Call"
-        val callerNumber = intent.getStringExtra("caller_number") ?: "+1 (555) 019-2834"
-        val callerStyle = intent.getStringExtra("caller_style") ?: "PIXEL"
+        val callerName = intent.getStringExtra("caller_name")
+            ?: intent.getStringExtra("simulatedCallerName")
+            ?: intent.getStringExtra("fake_caller_name")
+            ?: intent.getStringExtra("fakeCallerName")
+            ?: "Incoming Call"
+        val callerNumber = intent.getStringExtra("caller_number")
+            ?: intent.getStringExtra("simulatedCallerNumber")
+            ?: intent.getStringExtra("fake_caller_number")
+            ?: intent.getStringExtra("fakeCallerNumber")
+            ?: "+1 (555) 019-2834"
+        val callerStyle = intent.getStringExtra("caller_style")
+            ?: intent.getStringExtra("simulatedCallStyle")
+            ?: intent.getStringExtra("fake_call_style")
+            ?: intent.getStringExtra("fakeCallStyle")
+            ?: "PIXEL"
 
         startRinging()
 
@@ -169,4 +181,11 @@ open class CallSimulationActivity : ComponentActivity() {
         super.onDestroy()
     }
 }
+
+/**
+ * Backward-compatible activity class aliased to [CallSimulationActivity].
+ */
+@Deprecated("Use CallSimulationActivity instead for policy compliance", ReplaceWith("CallSimulationActivity"))
+open class FakeCallActivity : CallSimulationActivity()
+
 

@@ -82,7 +82,7 @@ com.jmd.autotext
 │   ├── AutoTextNotificationListenerService.kt # Notification auto-reply listener & quick-action trigger
 │   └── TaskForegroundService.kt      # Legacy notification cleanup & lifecycle manager
 ├── ui/                          # Jetpack Compose Modern Presentation Layer
-│   ├── activity/                # MainActivity, AutomationLauncherActivity, CallSimulationActivity (FakeCallActivity), ReminderAlarmActivity
+│   ├── activity/                # MainActivity, AutomationLauncherActivity, CallSimulationActivity, ReminderAlarmActivity
 │   ├── components/              # AppStatusIndicators, GlassComponents, Avatars, Pickers, AppCard
 │   ├── screen/                  # Modular Compose screens (Tasks, Compose, Settings, AutoReply, Campaigns)
 │   │   ├── autoreply/           # AutoReplyScreen, AutoReplyCards, AutoReplyDialogs
@@ -116,7 +116,7 @@ The application uses an on-device SQLite database named `autotext.db` (`Database
 ```sql
 CREATE TABLE tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    channel TEXT NOT NULL,                  -- 'SMS', 'WHATSAPP', 'WHATSAPP_BUSINESS', 'WHATSAPP_STATUS', 'WHATSAPP_BUSINESS_STATUS', 'CALL', 'WHATSAPP_CALL', 'CALL_SIMULATION' ('FAKE_CALL'), 'REMINDER', 'SOUND_MODE'
+    channel TEXT NOT NULL,                  -- 'SMS', 'WHATSAPP', 'WHATSAPP_BUSINESS', 'WHATSAPP_STATUS', 'WHATSAPP_BUSINESS_STATUS', 'CALL', 'WHATSAPP_CALL', 'CALL_SIMULATION' (legacy 'FAKE_CALL'), 'REMINDER', 'SOUND_MODE'
     title TEXT DEFAULT '',                  -- User label or task description
     recipient_phone TEXT NOT NULL,          -- Comma-separated normalized phone numbers or group titles
     recipient_name TEXT DEFAULT '',         -- Comma-separated recipient display names
@@ -128,9 +128,9 @@ CREATE TABLE tasks (
     sim_slot INTEGER DEFAULT 0,             -- 0 = SIM 1, 1 = SIM 2, -1 = default system SIM
     media_uri TEXT DEFAULT '',              -- Local image/video URI for Status or MMS attachments
     sound_mode TEXT DEFAULT 'NORMAL',       -- 'NORMAL', 'VIBRATE', 'SILENT' (for reminders/calls)
-    fake_caller_name TEXT DEFAULT '',       -- Name displayed on Call Simulation incoming screen
-    fake_caller_number TEXT DEFAULT '',     -- Number displayed on Call Simulation incoming screen
-    fake_call_style TEXT DEFAULT 'Modern',  -- 'Modern', 'Pixel', 'Samsung', 'iOS'
+    simulated_caller_name TEXT DEFAULT '',  -- Name displayed on Call Simulation incoming screen (also mirrored to legacy fake_caller_name)
+    simulated_caller_number TEXT DEFAULT '',-- Number displayed on Call Simulation incoming screen (mirrored to fake_caller_number)
+    simulated_call_style TEXT DEFAULT 'PIXEL', -- 'PIXEL', 'SAMSUNG', 'WHATSAPP' (mirrored to fake_call_style)
     call_duration_seconds INTEGER DEFAULT 0,-- Outgoing call duration before auto-hangup (0 = manual hangup)
     include_dial_time INTEGER DEFAULT 1,    -- 1 = duration counts from dial; 0 = counts from connection
     delay_between_calls_seconds INTEGER DEFAULT 5, -- Pacing delay between sequential multi-recipient calls

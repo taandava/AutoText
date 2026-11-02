@@ -996,7 +996,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val prefs = PreferenceManager(appContext)
             // Only detach dynamically if WRITE_SECURE_SETTINGS is held so the service can auto-reconnect on demand
             if (prefs.isDynamicA11yOnDemandEnabled && AccessibilityHealthManager.hasWriteSecureSettings(appContext) && !isAutomating && !isUnlockPending && !isTestUnlockMode) {
-                Log.i(TAG, "Idle detach: No active automation, safely detaching accessibility to protect Google Pay & banking apps")
+                Log.i(TAG, "Idle detach: No active automation, safely detaching accessibility for banking app isolation")
                 AccessibilityHealthManager.disableAccessibilityService(appContext)
             }
         } catch (e: Exception) {

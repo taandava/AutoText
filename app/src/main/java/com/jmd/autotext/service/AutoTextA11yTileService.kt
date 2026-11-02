@@ -14,7 +14,7 @@ import com.jmd.autotext.data.prefs.PreferenceManager
 /**
  * System Quick Settings Tile for AutoText Accessibility Service.
  *
- * Allows users to 1-tap pause Accessibility (via disableSelf) before opening Google Pay or banking apps,
+ * Allows users to 1-tap pause Accessibility (via disableSelf) before opening banking or payment apps,
  * and 1-tap resume or open Accessibility Settings.
  */
 class AutoTextA11yTileService : TileService() {
@@ -32,13 +32,13 @@ class AutoTextA11yTileService : TileService() {
         val isRunning = AccessibilityHealthManager.isServiceOperational()
 
         if (isRunning) {
-            // Tap to pause accessibility immediately for Google Pay / Banking security
+            // Tap to pause accessibility immediately for Banking / Payment security
             prefs.isA11yUserPaused = true
             AutoTextAccessibilityService.disableServiceIfActive()
             if (AccessibilityHealthManager.hasWriteSecureSettings(context)) {
                 AccessibilityHealthManager.disableAccessibilityService(context)
             }
-            showAppToast("AutoText A11y Paused. Google Pay & Bank apps unblocked.")
+            showAppToast("AutoText A11y Paused. Banking & payment apps protected.")
             updateTileState()
         } else {
             // Tap to resume / enable accessibility
@@ -80,13 +80,13 @@ class AutoTextA11yTileService : TileService() {
             tile.state = Tile.STATE_ACTIVE
             tile.label = "AutoText A11y"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.subtitle = "Active (Tap to Pause for GPay)"
+                tile.subtitle = "Active (Tap to Pause for Banking)"
             }
         } else {
             tile.state = Tile.STATE_INACTIVE
             tile.label = "AutoText A11y"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.subtitle = "Paused (Safe for GPay)"
+                tile.subtitle = "Paused (Bank-Safe)"
             }
         }
         tile.updateTile()

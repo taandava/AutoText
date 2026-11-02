@@ -1569,4 +1569,66 @@ class AutoTextComprehensiveTest {
         assertTrue(ProtectedApplicationManager.shouldBlockOverlays("com.google.android.apps.nbu.paisa.user"))
         assertTrue(ProtectedApplicationManager.shouldBlockOverlays("com.phonepe.app"))
     }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 35. TASK LIFECYCLE & STATE TRANSITION TESTS (PART 5 & PART 8)
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testTaskLifecycleTransitions() {
+        // Valid forward transitions
+        assertTrue(TaskStatus.canTransition(TaskStatus.DRAFT, TaskStatus.VALIDATING))
+        assertTrue(TaskStatus.canTransition(TaskStatus.VALIDATING, TaskStatus.READY))
+        assertTrue(TaskStatus.canTransition(TaskStatus.READY, TaskStatus.SCHEDULED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.SCHEDULED, TaskStatus.RUNNING))
+        assertTrue(TaskStatus.canTransition(TaskStatus.RUNNING, TaskStatus.SUCCESS))
+        assertTrue(TaskStatus.canTransition(TaskStatus.RUNNING, TaskStatus.FAILED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.RUNNING, TaskStatus.PAUSED))
+
+        // Same-status transitions always valid
+        assertTrue(TaskStatus.canTransition(TaskStatus.RUNNING, TaskStatus.RUNNING))
+        assertTrue(TaskStatus.canTransition(TaskStatus.SCHEDULED, TaskStatus.SCHEDULED))
+
+        // Cancellation paths
+        assertTrue(TaskStatus.canTransition(TaskStatus.DRAFT, TaskStatus.CANCELLED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.READY, TaskStatus.CANCELLED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.SCHEDULED, TaskStatus.CANCELLED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.RUNNING, TaskStatus.CANCELLED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.PAUSED, TaskStatus.CANCELLED))
+
+        // Invalid direct jumps
+        assertFalse(TaskStatus.canTransition(TaskStatus.DRAFT, TaskStatus.RUNNING))
+        assertFalse(TaskStatus.canTransition(TaskStatus.DRAFT, TaskStatus.SUCCESS))
+
+        // Terminal states
+        assertTrue(TaskStatus.SUCCESS.isTerminal)
+        assertTrue(TaskStatus.DONE.isTerminal)
+        assertTrue(TaskStatus.FAILED.isTerminal)
+        assertTrue(TaskStatus.CANCELLED.isTerminal)
+        assertFalse(TaskStatus.RUNNING.isTerminal)
+        assertFalse(TaskStatus.SCHEDULED.isTerminal)
+    }
+
+    @Test
+    fun testDefaultDenyAndAuthorizedTargets() {
+        // Explicitly authorized targets under Default-Deny
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.whatsapp"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.whatsapp.w4b"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.android.dialer"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.google.android.dialer"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.android.systemui"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.jmd.autotext"))
+
+        // Unauthorized third-party apps, browsers, games must be denied
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.instagram.android"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.facebook.katana"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.google.android.youtube"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.unknown.malicious.app"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.android.chrome"))
+
+        // Verification before interaction rejects unauthorized targets
+        assertFalse(ProtectedApplicationManager.verifyContextBeforeInteraction("com.instagram.android", "com.whatsapp"))
+        assertFalse(ProtectedApplicationManager.verifyContextBeforeInteraction(null, "com.whatsapp"))
+        assertFalse(ProtectedApplicationManager.verifyContextBeforeInteraction("", "com.whatsapp"))
+    }
 }

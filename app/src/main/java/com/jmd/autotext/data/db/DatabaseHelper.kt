@@ -104,7 +104,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
      * @param db Target SQLiteDatabase instance.
      */
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL("CREATE TABLE $TABLE_TASKS (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, channel TEXT, recipients TEXT, recipient_names TEXT, message_text TEXT, trigger_time INTEGER, recurrence TEXT, custom_interval_minutes INTEGER, days_of_week TEXT, status TEXT, sim_slot INTEGER, ask_before_send INTEGER, sound_mode TEXT, fake_caller_name TEXT, fake_caller_number TEXT, fake_call_style TEXT, created_at INTEGER, last_executed INTEGER, execution_count INTEGER, media_uri TEXT, call_duration_seconds INTEGER DEFAULT 0, include_dial_time INTEGER DEFAULT 0, call_sequence_mode TEXT DEFAULT 'GIVEN', delay_between_calls_seconds INTEGER DEFAULT 5, call_failure_policy TEXT DEFAULT 'CONTINUE')")
+        db.execSQL("CREATE TABLE $TABLE_TASKS (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, channel TEXT, recipients TEXT, recipient_names TEXT, message_text TEXT, trigger_time INTEGER, recurrence TEXT, custom_interval_minutes INTEGER, days_of_week TEXT, status TEXT, sim_slot INTEGER, ask_before_send INTEGER, sound_mode TEXT, simulated_caller_name TEXT DEFAULT '', simulated_caller_number TEXT DEFAULT '', simulated_call_style TEXT DEFAULT 'PIXEL', fake_caller_name TEXT DEFAULT '', fake_caller_number TEXT DEFAULT '', fake_call_style TEXT DEFAULT 'PIXEL', created_at INTEGER, last_executed INTEGER, execution_count INTEGER, media_uri TEXT, call_duration_seconds INTEGER DEFAULT 0, include_dial_time INTEGER DEFAULT 0, call_sequence_mode TEXT DEFAULT 'GIVEN', delay_between_calls_seconds INTEGER DEFAULT 5, call_failure_policy TEXT DEFAULT 'CONTINUE')")
         try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_status_trigger ON $TABLE_TASKS(status, trigger_time)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_APP_PRIVACY_CONFIGS (
@@ -385,6 +385,9 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         addColumnIfNotExists(db, TABLE_TASKS, "media_uri", "TEXT DEFAULT ''")
         addColumnIfNotExists(db, TABLE_TASKS, "custom_interval_minutes", "INTEGER DEFAULT 60")
         addColumnIfNotExists(db, TABLE_TASKS, "sound_mode", "TEXT DEFAULT 'NORMAL'")
+        addColumnIfNotExists(db, TABLE_TASKS, "simulated_caller_name", "TEXT DEFAULT ''")
+        addColumnIfNotExists(db, TABLE_TASKS, "simulated_caller_number", "TEXT DEFAULT ''")
+        addColumnIfNotExists(db, TABLE_TASKS, "simulated_call_style", "TEXT DEFAULT 'PIXEL'")
         addColumnIfNotExists(db, TABLE_TASKS, "fake_caller_name", "TEXT DEFAULT ''")
         addColumnIfNotExists(db, TABLE_TASKS, "fake_caller_number", "TEXT DEFAULT ''")
         addColumnIfNotExists(db, TABLE_TASKS, "fake_call_style", "TEXT DEFAULT 'PIXEL'")
