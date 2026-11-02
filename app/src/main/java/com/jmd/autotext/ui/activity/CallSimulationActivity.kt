@@ -169,3 +169,4 @@ open class CallSimulationActivity : ComponentActivity() {
         super.onDestroy()
     }
 }
+

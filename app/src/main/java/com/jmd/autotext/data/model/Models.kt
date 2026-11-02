@@ -96,8 +96,7 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
 
         fun fromString(value: String?): ChannelType {
             if (value.isNullOrBlank()) return SMS
-            val clean = value.trim().uppercase()
-            return when (clean) {
+            return when (val clean = value.trim().uppercase()) {
                 "CALL_SIMULATION", "SIMULATION", "FAKE_CALL", "FAKECALL" -> CALL_SIMULATION
                 else -> entries.firstOrNull { it.name == clean } ?: SMS
             }
