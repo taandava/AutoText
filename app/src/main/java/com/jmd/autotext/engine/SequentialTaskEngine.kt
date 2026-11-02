@@ -39,7 +39,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.jmd.autotext.AutoTextApplication
 import com.jmd.autotext.ui.activity.CallSimulationActivity
-import com.jmd.autotext.ui.activity.FakeCallActivity
 import com.jmd.autotext.ui.activity.AutomationLauncherActivity
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.AppFileLogger
@@ -349,7 +348,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     /**
      * Top-level safe execution handler routing tasks to appropriate channel engines
-     * (SMS, WhatsApp, Calls, Reminders, Fake Calls, Sound Modes) with circuit-breaker protection.
+     * (SMS, WhatsApp, Calls, Reminders, Call Simulations, Sound Modes) with circuit-breaker protection.
      *
      * @param repository The central application repository.
      * @param task The scheduled task to execute.
@@ -1649,17 +1648,17 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val success = try {
             val simulationIntent = Intent(appContext, CallSimulationActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                putExtra("caller_name", task.fakeCallerName.ifBlank { "Unknown Caller" })
-                putExtra("caller_number", task.fakeCallerNumber.ifBlank { "+1 555-0199" })
-                putExtra("caller_style", task.fakeCallStyle.ifBlank { "Modern" })
+                putExtra("caller_name", task.simulatedCallerName.ifBlank { "Unknown Caller" })
+                putExtra("caller_number", task.simulatedCallerNumber.ifBlank { "+1 555-0199" })
+                putExtra("caller_style", task.simulatedCallStyle.ifBlank { "Modern" })
             }
             appContext.startActivity(simulationIntent)
             repository.insertLog(
                 ExecutionLog(
                     taskId = task.id,
                     channel = task.channel.displayName,
-                    recipient = task.fakeCallerNumber.ifBlank { "Simulated" },
-                    messageSnippet = "Incoming simulated call from ${task.fakeCallerName}",
+                    recipient = task.simulatedCallerNumber.ifBlank { "Simulated" },
+                    messageSnippet = "Incoming simulated call from ${task.simulatedCallerName}",
                     status = "SUCCESS",
                 ),
             )
@@ -1672,7 +1671,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 ExecutionLog(
                     taskId = task.id,
                     channel = task.channel.displayName,
-                    recipient = task.fakeCallerNumber.ifBlank { "Simulated" },
+                    recipient = task.simulatedCallerNumber.ifBlank { "Simulated" },
                     messageSnippet = "Call simulation failed: ${e.message}",
                     status = "FAILED",
                 ),

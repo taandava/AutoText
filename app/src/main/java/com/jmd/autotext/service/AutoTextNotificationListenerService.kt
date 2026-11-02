@@ -211,7 +211,7 @@ class AutoTextNotificationListenerService : NotificationListenerService() {
     }
 
     /**
-     * Injects text directly into the notification's [RemoteInput] reply action without waking screen.
+     * Delivers text directly into the notification's [RemoteInput] reply action without waking screen.
      *
      * @param notification Target notification object containing reply action.
      * @param replyText Generated message text to dispatch.

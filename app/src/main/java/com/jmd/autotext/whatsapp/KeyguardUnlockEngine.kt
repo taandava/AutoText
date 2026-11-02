@@ -58,7 +58,7 @@ class KeyguardUnlockEngine(
      *
      * Evaluates lock state via [KeyguardManager], checks for lockout errors or cooldowns,
      * performs upward swipes to reveal the bouncer if necessary, and dispatches numeric
-     * PIN entry or text injection.
+     * PIN entry or text input.
      *
      * @param onUnlockSuccess Callback invoked once the keyguard is verified unlocked.
      * @param onUnlockAbort Callback invoked with an error reason if unlock fails or cooldown is detected.

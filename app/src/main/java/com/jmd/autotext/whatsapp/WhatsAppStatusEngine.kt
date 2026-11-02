@@ -201,12 +201,12 @@ class WhatsAppStatusEngine(
                     val currentText = statusInput.text?.toString()?.replace("\r\n", "\n")?.trim().orEmpty()
                     val expectedText = pendingMessage.replace("\r\n", "\n").trim()
                     if (currentText != expectedText) {
-                        AppFileLogger.action(service, loggerTag, "Injecting/verifying exact status text in composer...")
-                        val injected = AccessibilityNodeUtils.setTextOnInput(statusInput, pendingMessage, service)
-                        if (!injected && sendAttemptCount > 22) {
-                            Log.w(loggerTag, "Unable to inject status text into the composer")
+                        AppFileLogger.action(service, loggerTag, "Setting/verifying exact status text in composer...")
+                        val textApplied = AccessibilityNodeUtils.setTextOnInput(statusInput, pendingMessage, service)
+                        if (!textApplied && sendAttemptCount > 22) {
+                            Log.w(loggerTag, "Unable to apply status text into the composer")
                             onTimeout()
-                        } else onRetry(if (injected) 450L else 350L)
+                        } else onRetry(if (textApplied) 450L else 350L)
                         return
                     }
                 }

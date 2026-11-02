@@ -8,7 +8,7 @@
  * Enforces Part 8 Invariants:
  * 1. Default-deny policy for all external UI interactions.
  * 2. Only explicitly authorized target applications (WhatsApp, WhatsApp Business, Phone/Dialer, Keyguard) may receive UI actions.
- * 3. Immediate pre-action context verification before every physical tap, click, or text injection.
+ * 3. Immediate pre-action context verification before every physical tap, click, or text entry.
  * 4. Zero inspection or traversal of protected applications' UI trees or window nodes.
  * 5. Instant cancellation of pending automation callbacks when a protected or non-authorized application is encountered.
  * 6. Zero collection of credentials, PINs, OTPs, card details, or screen contents.
@@ -224,7 +224,7 @@ object ProtectedApplicationManager {
 
     /**
      * Pre-action context verification:
-     * Immediately verified before every click, gesture, or text injection.
+     * Immediately verified before every click, gesture, or text entry.
      *
      * @param currentPackage The currently foreground/rendered package.
      * @param expectedTargetPackage The expected authorized target package for the active task.

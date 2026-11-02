@@ -8,7 +8,7 @@
  * - Accessibility Service
  * - Notification Listener Service
  * - Exact Alarm privileges
- * - Battery optimization whitelist
+ * - Battery optimization exemption (allowlist)
  * - Overlay permission
  * - Device Admin privileges
  *

@@ -130,8 +130,8 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                     includeDialTimeInCallDuration = includeDialTimeInCallDuration,
                     delayBetweenCallsSeconds = delayBetweenCallsSeconds,
                     soundModeSetting = "NORMAL",
-                    fakeCallerName = "AutoText Test",
-                    fakeCallerNumber = recipients.firstOrNull() ?: "9769602020",
+                    simulatedCallerName = "AutoText Test",
+                    simulatedCallerNumber = recipients.firstOrNull() ?: "9769602020",
                     status = TaskStatus.PENDING
                 )
                 val insertedId = repository.insertTask(task)
@@ -378,8 +378,10 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             if (intent.hasExtra("autoLock")) {
                 PreferenceManager(context).isAutoLockAfterSendEnabled = intent.getBooleanExtra("autoLock", true)
             }
-            val fakeCallerName = intent.getStringExtra("fakeCallerName") ?: msgText.ifBlank { "Incoming Call" }
-            val fakeCallerNumber = intent.getStringExtra("fakeCallerNumber") ?: recipientsParam.firstOrNull() ?: "+1 (555) 019-2834"
+            val simulatedCallerName = intent.getStringExtra("simulatedCallerName")
+                ?: intent.getStringExtra("fakeCallerName") ?: msgText.ifBlank { "Incoming Call" }
+            val simulatedCallerNumber = intent.getStringExtra("simulatedCallerNumber")
+                ?: intent.getStringExtra("fakeCallerNumber") ?: recipientsParam.firstOrNull() ?: "+1 (555) 019-2834"
             val soundMode = intent.getStringExtra("soundModeSetting") ?: "NORMAL"
             val mediaUri = intent.getStringExtra("mediaUri") ?: ""
 
@@ -394,8 +396,8 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                 includeDialTimeInCallDuration = includeDialTime,
                 delayBetweenCallsSeconds = delayBetweenCalls,
                 soundModeSetting = soundMode,
-                fakeCallerName = fakeCallerName,
-                fakeCallerNumber = fakeCallerNumber,
+                simulatedCallerName = simulatedCallerName,
+                simulatedCallerNumber = simulatedCallerNumber,
                 mediaUri = mediaUri,
                 status = TaskStatus.PENDING
             )

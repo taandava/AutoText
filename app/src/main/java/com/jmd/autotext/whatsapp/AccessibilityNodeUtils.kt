@@ -290,7 +290,7 @@ object AccessibilityNodeUtils {
 
     /**
      * Inputs text into an editable accessibility node, attempting ACTION_SET_TEXT first
-     * and falling back to clipboard copy-paste injection if direct text setting fails.
+     * and falling back to clipboard copy-paste delivery if direct text setting fails.
      *
      * @param node The editable [AccessibilityNodeInfo] target.
      * @param text The string content to populate.

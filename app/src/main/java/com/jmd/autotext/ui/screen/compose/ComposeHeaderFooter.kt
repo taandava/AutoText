@@ -142,18 +142,3 @@ fun composeBottomBar(
         }
     }
 }
-
-
-/**
- * Configuration card managing caller simulation parameters for Call Simulations and system ringer sound profiles.
- *
- * @param selectedChannel Active channel type (FAKE_CALL or SOUND_MODE).
- * @param fakeCallerName Simulated caller contact name.
- * @param onFakeCallerNameChange Callback when simulated name changes.
- * @param fakeCallerNumber Simulated incoming phone number.
- * @param onFakeCallerNumberChange Callback when simulated number changes.
- * @param fakeCallStyle Visual UI style for incoming call bouncer.
- * @param onFakeCallStyleChange Callback when call screen theme changes.
- * @param soundModeSetting Target sound profile (NORMAL, VIBRATE, SILENT).
- * @param onSoundModeSettingChange Callback when target sound mode is changed.
- */

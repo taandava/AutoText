@@ -54,7 +54,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
         }
 
         /**
-         * Standard whitelist of essential system and automation target packages that AutoText
+         * Standard allowlist of essential system and automation target packages that AutoText
          * requires for normal operation (unless explicitly excluded by the user).
          */
         val BASE_AUTOMATION_TARGET_PACKAGES = setOf(

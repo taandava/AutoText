@@ -255,10 +255,10 @@ fun composeTaskScreen(
     val prefs = remember { PreferenceManager(context) }
     var simSlot by remember { mutableIntStateOf(taskToEdit?.simSlot ?: prefs.defaultSimSlot) }
 
-    // Fake call specific
-    var fakeCallerName by remember { mutableStateOf(taskToEdit?.fakeCallerName ?: "") }
-    var fakeCallerNumber by remember { mutableStateOf(taskToEdit?.fakeCallerNumber ?: "") }
-    var fakeCallStyle by remember { mutableStateOf(taskToEdit?.fakeCallStyle ?: "PIXEL") }
+    // Call simulation specific
+    var simulatedCallerName by remember { mutableStateOf(taskToEdit?.simulatedCallerName ?: "") }
+    var simulatedCallerNumber by remember { mutableStateOf(taskToEdit?.simulatedCallerNumber ?: "") }
+    var simulatedCallStyle by remember { mutableStateOf(taskToEdit?.simulatedCallStyle ?: "PIXEL") }
 
     // Phone / WhatsApp call specific
     var callDurationSeconds by remember { mutableIntStateOf(taskToEdit?.callDurationSeconds ?: 0) }
@@ -423,9 +423,9 @@ fun composeTaskScreen(
                 selectedDaysOfWeek = selectedDaysOfWeek,
                 simSlot = simSlot,
                 askBeforeSend = false,
-                fakeCallerName = fakeCallerName,
-                fakeCallerNumber = fakeCallerNumber,
-                fakeCallStyle = fakeCallStyle,
+                simulatedCallerName = simulatedCallerName,
+                simulatedCallerNumber = simulatedCallerNumber,
+                simulatedCallStyle = simulatedCallStyle,
                 soundModeSetting = soundModeSetting,
                 mediaUri = mediaUri,
                 callDurationSeconds = callDurationSeconds,
@@ -459,9 +459,9 @@ fun composeTaskScreen(
                 selectedDaysOfWeek = selectedDaysOfWeek,
                 simSlot = simSlot,
                 askBeforeSend = false,
-                fakeCallerName = fakeCallerName,
-                fakeCallerNumber = fakeCallerNumber,
-                fakeCallStyle = fakeCallStyle,
+                simulatedCallerName = simulatedCallerName,
+                simulatedCallerNumber = simulatedCallerNumber,
+                simulatedCallStyle = simulatedCallStyle,
                 soundModeSetting = soundModeSetting,
                 mediaUri = mediaUri,
                 callDurationSeconds = callDurationSeconds,
@@ -546,12 +546,12 @@ fun composeTaskScreen(
                 ChannelType.CALL_SIMULATION, ChannelType.SOUND_MODE -> {
                     composeCallSimulationAndSoundCard(
                         selectedChannel = selectedChannel,
-                        fakeCallerName = fakeCallerName,
-                        onFakeCallerNameChange = { fakeCallerName = it },
-                        fakeCallerNumber = fakeCallerNumber,
-                        onFakeCallerNumberChange = { fakeCallerNumber = it },
-                        fakeCallStyle = fakeCallStyle,
-                        onFakeCallStyleChange = { fakeCallStyle = it },
+                        simulatedCallerName = simulatedCallerName,
+                        onSimulatedCallerNameChange = { simulatedCallerName = it },
+                        simulatedCallerNumber = simulatedCallerNumber,
+                        onSimulatedCallerNumberChange = { simulatedCallerNumber = it },
+                        simulatedCallStyle = simulatedCallStyle,
+                        onSimulatedCallStyleChange = { simulatedCallStyle = it },
                         soundModeSetting = soundModeSetting,
                         onSoundModeSettingChange = { soundModeSetting = it }
                     )

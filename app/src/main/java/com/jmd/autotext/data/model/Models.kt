@@ -347,9 +347,9 @@ data class ScheduledTask(
     val simSlot: Int = 0,
     val askBeforeSend: Boolean = false,
     val soundModeSetting: String = "NORMAL",
-    val fakeCallerName: String = "Incoming Call",
-    val fakeCallerNumber: String = "+1 (555) 019-2834",
-    val fakeCallStyle: String = "PIXEL",
+    val simulatedCallerName: String = "Incoming Call",
+    val simulatedCallerNumber: String = "+1 (555) 019-2834",
+    val simulatedCallStyle: String = "PIXEL",
     val createdAtMillis: Long = System.currentTimeMillis(),
     val lastExecutedMillis: Long = 0,
     val executionCount: Int = 0,
@@ -360,14 +360,14 @@ data class ScheduledTask(
     val delayBetweenCallsSeconds: Int = 5,
     val callFailurePolicy: String = "CONTINUE" // "CONTINUE" or "STOP_ON_FAILURE"
 ) {
-    /** Policy-compliant alias for [fakeCallerName]. */
-    val simulatedCallerName: String get() = fakeCallerName
+    /** Backward compatibility alias for [simulatedCallerName]. */
+    val fakeCallerName: String get() = simulatedCallerName
 
-    /** Policy-compliant alias for [fakeCallerNumber]. */
-    val simulatedCallerNumber: String get() = fakeCallerNumber
+    /** Backward compatibility alias for [simulatedCallerNumber]. */
+    val fakeCallerNumber: String get() = simulatedCallerNumber
 
-    /** Policy-compliant alias for [fakeCallStyle]. */
-    val simulatedCallStyle: String get() = fakeCallStyle
+    /** Backward compatibility alias for [simulatedCallStyle]. */
+    val fakeCallStyle: String get() = simulatedCallStyle
 }
 
 // ==================== MESSAGE TEMPLATE DATA MODELS ====================

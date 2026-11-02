@@ -5,7 +5,7 @@
  * Module: Accessibility Automation Service
  *
  * Background accessibility service delivering physical UI interaction, window inspection,
- * dynamic popup dismissal, text injection, and send button clicks across WhatsApp Messenger and WhatsApp Business.
+ * dynamic popup dismissal, text population, and send button clicks across WhatsApp Messenger and WhatsApp Business.
  *
  * Linked With:
  * - Engine: [com.jmd.autotext.engine.WhatsAppAutomationSender], [com.jmd.autotext.engine.SequentialTaskEngine]

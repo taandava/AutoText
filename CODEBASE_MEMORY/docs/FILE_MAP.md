@@ -86,7 +86,7 @@ app/src/main/
 │   │   │   └── UiModels.kt
 │   │   ├── screen/
 │   │   │   ├── DocumentationScreen.kt
-│   │   │   ├── FakeCallScreen.kt
+│   │   │   ├── CallSimulationScreen.kt
 │   │   │   ├── MainAppHost.kt
 │   │   │   ├── MoreScreen.kt
 │   │   │   ├── PermissionScreen.kt

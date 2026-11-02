@@ -48,7 +48,7 @@ import com.jmd.autotext.ui.theme.*
  * Guided onboarding and troubleshooting view for WhatsApp automation.
  *
  * Configures accessibility services, device lockscreen auto-unlock PINs, post-dispatch
- * auto-relock policies, battery optimization whitelists, and live end-to-end ping verification.
+ * auto-relock policies, battery optimization allowlists, and live end-to-end ping verification.
  *
  * @param context Active Android [Context].
  * @param prefs Storage manager for user preferences.

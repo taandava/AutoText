@@ -8,7 +8,7 @@
  * and animated accept/decline action triggers.
  *
  * Linked With:
- * - Activity: [com.jmd.autotext.ui.activity.FakeCallActivity]
+ * - Activity: [com.jmd.autotext.ui.activity.CallSimulationActivity]
  */
 package com.jmd.autotext.ui.screen
 

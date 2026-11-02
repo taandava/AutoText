@@ -29,23 +29,23 @@ import com.jmd.autotext.ui.theme.*
 
 /**
  * Card managing simulated incoming phone call timing and audio profile.
- * @param onFakeCallerNameChange Callback when simulated name changes.
- * @param fakeCallerNumber Simulated incoming phone number.
- * @param onFakeCallerNumberChange Callback when simulated number changes.
- * @param fakeCallStyle Visual UI style for incoming call bouncer.
- * @param onFakeCallStyleChange Callback when call screen theme changes.
+ * @param onSimulatedCallerNameChange Callback when simulated name changes.
+ * @param simulatedCallerNumber Simulated incoming phone number.
+ * @param onSimulatedCallerNumberChange Callback when simulated number changes.
+ * @param simulatedCallStyle Visual UI style for incoming call bouncer.
+ * @param onSimulatedCallStyleChange Callback when call screen theme changes.
  * @param soundModeSetting Target sound profile (NORMAL, VIBRATE, SILENT).
  * @param onSoundModeSettingChange Callback when target sound mode is changed.
  */
 @Composable
 fun composeCallSimulationAndSoundCard(
     selectedChannel: ChannelType,
-    fakeCallerName: String,
-    onFakeCallerNameChange: (String) -> Unit,
-    fakeCallerNumber: String,
-    onFakeCallerNumberChange: (String) -> Unit,
-    fakeCallStyle: String,
-    onFakeCallStyleChange: (String) -> Unit,
+    simulatedCallerName: String,
+    onSimulatedCallerNameChange: (String) -> Unit,
+    simulatedCallerNumber: String,
+    onSimulatedCallerNumberChange: (String) -> Unit,
+    simulatedCallStyle: String,
+    onSimulatedCallStyleChange: (String) -> Unit,
     soundModeSetting: String,
     onSoundModeSettingChange: (String) -> Unit
 ) {
@@ -64,8 +64,8 @@ fun composeCallSimulationAndSoundCard(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 glassInputField(
-                    value = fakeCallerName,
-                    onValueChange = onFakeCallerNameChange,
+                    value = simulatedCallerName,
+                    onValueChange = onSimulatedCallerNameChange,
                     label = "Caller Name",
                     placeholder = "Office / Manager / Home",
                     leadingIcon = Icons.Default.Person,
@@ -74,8 +74,8 @@ fun composeCallSimulationAndSoundCard(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 glassInputField(
-                    value = fakeCallerNumber,
-                    onValueChange = onFakeCallerNumberChange,
+                    value = simulatedCallerNumber,
+                    onValueChange = onSimulatedCallerNumberChange,
                     label = "Caller Phone Number",
                     placeholder = "+91 98765 43210",
                     leadingIcon = Icons.Default.Phone,
@@ -93,11 +93,11 @@ fun composeCallSimulationAndSoundCard(
                     listOf("PIXEL" to "Pixel", "SAMSUNG" to "Samsung", "WHATSAPP" to "WhatsApp").forEach { (style, label) ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { onFakeCallStyleChange(style) }
+                            modifier = Modifier.clickable { onSimulatedCallStyleChange(style) }
                         ) {
                             RadioButton(
-                                selected = fakeCallStyle == style,
-                                onClick = { onFakeCallStyleChange(style) },
+                                selected = simulatedCallStyle == style,
+                                onClick = { onSimulatedCallStyleChange(style) },
                                 colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.error)
                             )
                             Spacer(modifier = Modifier.width(2.dp))
@@ -162,12 +162,12 @@ fun composeFakeCallAndSoundCard(
 ) {
     composeCallSimulationAndSoundCard(
         selectedChannel = selectedChannel,
-        fakeCallerName = fakeCallerName,
-        onFakeCallerNameChange = onFakeCallerNameChange,
-        fakeCallerNumber = fakeCallerNumber,
-        onFakeCallerNumberChange = onFakeCallerNumberChange,
-        fakeCallStyle = fakeCallStyle,
-        onFakeCallStyleChange = onFakeCallStyleChange,
+        simulatedCallerName = fakeCallerName,
+        onSimulatedCallerNameChange = onFakeCallerNameChange,
+        simulatedCallerNumber = fakeCallerNumber,
+        onSimulatedCallerNumberChange = onFakeCallerNumberChange,
+        simulatedCallStyle = fakeCallStyle,
+        onSimulatedCallStyleChange = onFakeCallStyleChange,
         soundModeSetting = soundModeSetting,
         onSoundModeSettingChange = onSoundModeSettingChange
     )

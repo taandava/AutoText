@@ -713,8 +713,8 @@ class AutoTextComprehensiveTest {
                 includeDialTimeInCallDuration = true,
                 delayBetweenCallsSeconds = 5,
                 soundModeSetting = "NORMAL",
-                fakeCallerName = "AutoText Test",
-                fakeCallerNumber = testRecipients.first(),
+                simulatedCallerName = "AutoText Test",
+                simulatedCallerNumber = testRecipients.first(),
                 status = TaskStatus.PENDING
             )
         }
@@ -1528,15 +1528,20 @@ class AutoTextComprehensiveTest {
             id = 101L,
             title = "Rescue Simulation",
             channel = ChannelType.CALL_SIMULATION,
-            fakeCallerName = "Meeting Organizer",
-            fakeCallerNumber = "+1 (555) 019-2834",
-            fakeCallStyle = "PIXEL"
+            simulatedCallerName = "Meeting Organizer",
+            simulatedCallerNumber = "+1 (555) 019-2834",
+            simulatedCallStyle = "PIXEL"
         )
 
         // Verify policy-compliant accessors reflect underlying stored values
         assertEquals("Meeting Organizer", task.simulatedCallerName)
         assertEquals("+1 (555) 019-2834", task.simulatedCallerNumber)
         assertEquals("PIXEL", task.simulatedCallStyle)
+
+        // Verify backward compatibility alias accessors
+        assertEquals("Meeting Organizer", task.fakeCallerName)
+        assertEquals("+1 (555) 019-2834", task.fakeCallerNumber)
+        assertEquals("PIXEL", task.fakeCallStyle)
 
         // Verify authorization under ProtectedApplicationManager
         assertTrue(ProtectedApplicationManager.isTaskTargetAuthorized(task))

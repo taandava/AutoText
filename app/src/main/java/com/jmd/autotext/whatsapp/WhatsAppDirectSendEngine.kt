@@ -4,7 +4,7 @@
  * Package: com.jmd.autotext.whatsapp
  * Module: WhatsApp Automation Subsystem
  *
- * Direct message dispatcher executing accessibility tree inspection, input field text injection,
+ * Direct message dispatcher executing accessibility tree inspection, input field text population,
  * clipboard synchronization, and send button clicks across WhatsApp and WhatsApp Business conversations.
  *
  * Linked With:
@@ -33,7 +33,7 @@ class WhatsAppDirectSendEngine(
 ) {
 
     /**
-     * Traverses accessibility hierarchy, validates input text injection, protects voice notes, and clicks Send button.
+     * Traverses accessibility hierarchy, validates input text population, protects voice notes, and clicks Send button.
      *
      * @param root Active accessibility node root.
      * @param pkg Target WhatsApp package identifier.
@@ -155,9 +155,9 @@ class WhatsAppDirectSendEngine(
                     onTimeout()
                     return
                 }
-                val injected = AccessibilityNodeUtils.setTextOnInput(currentInput, pendingMessage, service)
-                Log.d(loggerTag, "Prepared pending message in input (success=$injected, empty=$isInputBlankOrHint, matches=$inputMatchesPending)")
-                onRetry(if (injected) 450L else 350L)
+                val textApplied = AccessibilityNodeUtils.setTextOnInput(currentInput, pendingMessage, service)
+                Log.d(loggerTag, "Prepared pending message in input (success=$textApplied, empty=$isInputBlankOrHint, matches=$inputMatchesPending)")
+                onRetry(if (textApplied) 450L else 350L)
                 return
             }
 
@@ -510,7 +510,7 @@ class WhatsAppDirectSendEngine(
                         putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, pendingRecipient)
                     }
                     val typed = searchInputNode.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)
-                    Log.i(loggerTag, "Injected '$pendingRecipient' into ContactPicker search field (result=$typed)")
+                    Log.i(loggerTag, "Populated '$pendingRecipient' into ContactPicker search field (result=$typed)")
                     return typed
                 }
             }

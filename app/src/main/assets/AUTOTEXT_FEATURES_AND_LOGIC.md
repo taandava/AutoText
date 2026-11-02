@@ -37,7 +37,7 @@ com.jmd.autotext
 ├── AutoTextApplication.kt       # Application root, crash interception & daemon initialization
 ├── compat/                      # Android API level compatibility layers
 │   ├── AccessibilityCompat.kt   # Dynamic gesture dispatch & window traversal
-│   ├── ClipboardCompat.kt       # Secure clip data handling & text injection
+│   ├── ClipboardCompat.kt       # Secure clip data handling & text delivery
 │   ├── SmsManagerCompat.kt      # Multi-SIM subscription routing & SMS dispatch
 │   └── TelephonyManagerCompat.kt# Network state & active telephony detection
 ├── core/                        # Core system controllers, safety & security
@@ -317,7 +317,7 @@ When an emergency stop or master pause occurs:
 2. Drains `taskChannel` completely so no subsequent tasks can fire.
 3. Invokes `AutoTextAccessibilityService.clearPending()`:
    - Resets `isAutomating = false`, `isUnlockPending = false`, `isBatchCampaignMode = false`.
-   - Clears pending package targets, recipient numbers, and text injection buffers.
+   - Clears pending package targets, recipient numbers, and text delivery buffers.
    - Clears keyguard watchdog timers and removes all pending handler callbacks.
 
 ### 4. Direct Boot & Post-Reboot Immunity
@@ -368,12 +368,12 @@ If the device lacks `READ_CALL_LOG` permission or the provider returns no record
 - **Unregistered Contact Handling**: Detects "Phone number isn't on WhatsApp" alert dialogs (`com.whatsapp:id/alertTitle`), dismisses the alert automatically, logs `FAILED_NOT_ON_WHATSAPP`, and returns cleanly.
 
 ### 3. WhatsApp Status Story Publishing (`WhatsAppStatusEngine`)
-- **Zero-Tap Media Publishing**: Shares local image or video URIs via `ACTION_SEND` targeting WhatsApp or WhatsApp Business status picker with strict 2-pass "My Status" selection and caption text injection.
+- **Zero-Tap Media Publishing**: Shares local image or video URIs via `ACTION_SEND` targeting WhatsApp or WhatsApp Business status picker with strict 2-pass "My Status" selection and caption text delivery.
 - **Text Status Story Composition**: Automates direct text status creation via WhatsApp Updates tab:
   1. Navigates to Updates tab in bottom navigation.
   2. Interacts with the pencil FAB (`com.whatsapp:id/extended_mini_fab`) using physical gesture coordinate fallback.
   3. Detects `ConsolidatedStatusComposerActivity` text status composer.
-  4. Injects verified message text into the status text entry field (`com.whatsapp:id/entry`).
+  4. Populates verified message text into the status text entry field (`com.whatsapp:id/entry`).
   5. Clicks the dynamic Send button (`com.whatsapp:id/send`) and verifies publication confirmation upon returning to the Updates tab.
 
 ### 4. Direct Native Telephony Calls (`SequentialTaskEngine`)
@@ -576,10 +576,10 @@ AutoText resolves this through a dual-tier architecture adhering strictly to off
 
 #### Tier 1: Smart Accessibility Scoping (`info.packageNames`)
 - By default, accessibility services that set `info.packageNames = null` receive window events from **every application** installed on the device.
-- AutoText dynamically calculates an **allowed package whitelist**:
+- AutoText dynamically calculates an **allowed package allowlist**:
   - Excluded packages (explicitly marked by the user or belonging to `KNOWN_FINANCIAL_PACKAGE_PREFIXES`) are **strictly stripped**.
-  - The calculated whitelist is committed via `service.serviceInfo = info.apply { packageNames = allowedPackages.toTypedArray() }`.
-  - Android's framework AccessibilityManager directly drops all window events from non-whitelisted apps before IPC delivery to AutoText.
+  - The calculated allowlist is committed via `service.serviceInfo = info.apply { packageNames = allowedPackages.toTypedArray() }`.
+  - Android's framework AccessibilityManager directly drops all window events from non-allowlisted apps before IPC delivery to AutoText.
 
 #### Tier 2: Dynamic On-Demand Accessibility Mode (`WRITE_SECURE_SETTINGS`)
 - When the user enables Dynamic On-Demand Mode (available when `WRITE_SECURE_SETTINGS` is granted via ADB or system privileges), AutoText keeps its Accessibility Service **completely disabled and unregistered in system settings during idle standby**.
@@ -616,7 +616,7 @@ Stored in SQLite table `app_privacy_configs` (schema version 8):
 ### 11.4 Sensitive Information Masking & Data Leakage Prevention
 1. **Clipboard Privacy (`ClipboardCompat.kt`)**:
    - On Android 13+ (API 33+), copies flag clipboard payloads with `ClipDescription.EXTRA_IS_SENSITIVE = true`, preventing system notification popups from displaying sensitive message content.
-   - Configurable automatic clipboard clearance (`prefs.autoClearClipboardSeconds`, 10s to 300s) schedules background wipes after text injection.
+   - Configurable automatic clipboard clearance (`prefs.autoClearClipboardSeconds`, 10s to 300s) schedules background wipes after text delivery.
 2. **Execution Log Masking (`PrivacyManager.kt`)**:
    - `maskSensitiveText(text)`: Truncates message content to first and last characters (e.g. `"Meeting at 5 PM"` -> `"M***M"`).
    - `maskPhoneNumber(phone)`: Standardizes and conceals internal phone digits (e.g. `"+91 99306 04542"` -> `"9930***542"`).
