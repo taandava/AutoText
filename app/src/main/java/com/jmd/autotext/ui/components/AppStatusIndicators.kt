@@ -1,13 +1,9 @@
 package com.jmd.autotext.ui.components
 
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
-import androidx.core.net.toUri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,13 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessibilityNew
-import androidx.compose.material.icons.filled.Bolt
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.NotificationsActive
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.ScreenLockRotation
-import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,13 +22,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.jmd.autotext.core.AccessibilityHealthManager
-import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
-import com.jmd.autotext.service.AutoTextNotificationListenerService
 import com.jmd.autotext.core.AutomationSafetyManager
-import com.jmd.autotext.data.prefs.PreferenceManager
-import com.jmd.autotext.service.AutoTextAccessibilityService
 import com.jmd.autotext.core.showAppToast
+import com.jmd.autotext.data.prefs.PreferenceManager
+import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
+import com.jmd.autotext.service.AutoTextAccessibilityService
+import com.jmd.autotext.service.AutoTextNotificationListenerService
 
 /**
  * Vivid status indicator color palette strictly conforming to specification:
@@ -72,25 +63,25 @@ object SystemIndicatorResolver {
         val isA11ySettingOn = AccessibilityHealthManager.isAccessibilitySettingEnabled(context)
         val isA11yHealthy = when {
             !isComponentEnabled -> false
-            isDynamicStealth -> true
             prefs.isA11yUserPaused -> false
+            isDynamicStealth -> true
             else -> isA11yRunning || isA11ySettingOn
         }
 
         val a11yState = AccessibilityHealthManager.getServiceState(context)
         val a11yName = when {
             !isComponentEnabled -> "AutoText Assistant (Disabled in System)"
-            isDynamicStealth -> "AutoText Assistant (Bank-Safe Standby)"
             prefs.isA11yUserPaused -> "AutoText Assistant (Paused for Payments)"
-            isA11yRunning -> "AutoText Assistant (Active Continuous)"
-            else -> "AutoText Assistant"
+            isDynamicStealth && !isA11yRunning -> "AutoText Scheduled Assistant (Bank-Safe Standby)"
+            isA11yRunning -> "AutoText Scheduled Assistant (Active)"
+            else -> "AutoText Scheduled Assistant"
         }
 
         val a11yDesc = when {
             !isComponentEnabled -> "The assistant service component was disabled by the system. Tap to re-enable in system settings."
-            isDynamicStealth -> "Bank-Safe Standby: Kept inactive while idle so Google Pay & Bank apps run with 0 warnings. Automatically connects for 2s only during scheduled WhatsApp dispatches."
             prefs.isA11yUserPaused -> "Assistant is temporarily paused so Google Pay can process transactions without interference. Tap to resume."
-            isA11yRunning -> "Active in background for messaging automation. Turn on Smart Standby to keep payment apps safe."
+            isDynamicStealth && !isA11yRunning -> "Bank-Safe Standby: Kept inactive while idle so Google Pay & Bank apps run with zero warnings. Automatically connects only during scheduled dispatches."
+            isA11yRunning -> "Active in background for scheduled message delivery. Isolated from banking and payment apps."
             else -> "Enables hands-free message sending and lockscreen assistance. Tap to enable."
         }
 
@@ -142,9 +133,10 @@ object SystemIndicatorResolver {
                 actionLabel = when {
                     isDynamicStealth && isA11yRunning -> "Safe Detach"
                     isDynamicStealth -> "Test Connection"
-                    prefs.isA11yUserPaused && hasWriteSecure -> "Resume Accessibility"
+                    prefs.isA11yUserPaused && hasWriteSecure -> "Resume Assistant"
                     prefs.isA11yUserPaused -> "Enable in Settings"
                     isA11yRunning -> "Pause for Google Pay"
+                    hasWriteSecure -> "Enable Assistant"
                     else -> "Enable in Settings"
                 },
                 onAction = { ctx ->
@@ -154,12 +146,7 @@ object SystemIndicatorResolver {
                             ctx.showAppToast("Safe Standby: Assistant detached for banking safety.")
                         } else {
                             AccessibilityHealthManager.enableAccessibilityService(ctx)
-                            ctx.showAppToast("⚡ Connected! Auto-detaches in 5s to keep banking safe.")
-                            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                                if (prefs.isDynamicA11yOnDemandEnabled && !AutoTextAccessibilityService.isCurrentlyAutomating()) {
-                                    AccessibilityHealthManager.disableAccessibilityService(ctx)
-                                }
-                            }, 5000L)
+                            ctx.showAppToast("⚡ Connected! AutoText Assistant is ready.")
                         }
                     } else if (isA11yRunning) {
                         prefs.isA11yUserPaused = true
@@ -167,11 +154,11 @@ object SystemIndicatorResolver {
                         if (hasWriteSecure) {
                             AccessibilityHealthManager.disableAccessibilityService(ctx)
                         }
-                        ctx.showAppToast("Accessibility paused. Google Pay & Bank apps unblocked.")
-                    } else if (prefs.isA11yUserPaused && hasWriteSecure) {
+                        ctx.showAppToast("Assistant paused. Google Pay & Bank apps unblocked.")
+                    } else if (hasWriteSecure) {
                         prefs.isA11yUserPaused = false
                         AccessibilityHealthManager.enableAccessibilityService(ctx)
-                        ctx.showAppToast("Accessibility resumed.")
+                        ctx.showAppToast("⚡ AutoText Scheduled Assistant Enabled!")
                     } else {
                         prefs.isA11yUserPaused = false
                         AccessibilityHealthManager.ensureServiceComponentEnabled(ctx)
@@ -235,11 +222,11 @@ object SystemIndicatorResolver {
             ),
             SystemIndicator(
                 id = "task_scheduler",
-                name = "Task Scheduler Engine",
-                description = "The master control engine coordinating scheduled tasks, repeating sequences, and daily campaigns. Turns red if master toggle is paused or emergency stop is active.",
+                name = "Scheduled Dispatcher",
+                description = "The master service coordinating scheduled messages, repeating sequences, and daily campaigns. Turns red if master toggle is paused or emergency stop is active.",
                 icon = Icons.Default.Schedule,
                 isActive = isSchedulerActive,
-                actionLabel = if (!isSchedulerActive) "Resume Engine" else null,
+                actionLabel = if (!isSchedulerActive) "Resume Dispatcher" else null,
                 onAction = { ctx ->
                     AutomationSafetyManager.resetEmergencyStop(ctx)
                     prefs.isTasksMasterEnabled = true

@@ -433,7 +433,7 @@ fun composeTaskScreen(
                 callSequenceMode = callSequenceMode,
                 delayBetweenCallsSeconds = delayBetweenCallsSeconds,
                 callFailurePolicy = callFailurePolicy,
-                status = TaskStatus.PENDING
+                status = TaskStatus.SCHEDULED
             )
             val updated = repository.updateTask(updatedTask)
             if (updated) {
@@ -468,7 +468,8 @@ fun composeTaskScreen(
                 includeDialTimeInCallDuration = includeDialTimeInCallDuration,
                 callSequenceMode = callSequenceMode,
                 delayBetweenCallsSeconds = delayBetweenCallsSeconds,
-                callFailurePolicy = callFailurePolicy
+                callFailurePolicy = callFailurePolicy,
+                status = TaskStatus.SCHEDULED
             )
             val insertedId = repository.insertTask(newTask)
             if (insertedId > 0) {

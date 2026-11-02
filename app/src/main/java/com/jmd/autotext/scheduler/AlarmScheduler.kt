@@ -55,8 +55,8 @@ class AlarmScheduler(private val context: Context) {
      * @param task [ScheduledTask] configuration to schedule.
      */
     fun scheduleTask(task: ScheduledTask) {
-        if (task.status == TaskStatus.CANCELLED) {
-            Log.w(TAG, "Refusing to schedule CANCELLED Task #${task.id}")
+        if (task.status == TaskStatus.CANCELLED || task.status == TaskStatus.PAUSED) {
+            Log.w(TAG, "Refusing to schedule ${task.status.name} Task #${task.id}")
             AlarmScheduler(context).cancelTask(task.id, task)
             return
         }

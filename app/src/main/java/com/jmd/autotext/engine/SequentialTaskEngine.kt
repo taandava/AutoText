@@ -398,6 +398,21 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             return false
         }
 
+        if (!com.jmd.autotext.core.ProtectedApplicationManager.isTaskTargetAuthorized(task)) {
+            AppFileLogger.w(appContext, TAG, "Task #${task.id} (${task.channel.displayName}) aborted: Channel target is not authorized under Protected Application Policy.")
+            repository.insertLog(
+                ExecutionLog(
+                    taskId = task.id,
+                    channel = task.channel.displayName,
+                    recipient = task.recipients.joinToString(),
+                    messageSnippet = "[BLOCKED BY PROTECTED APP POLICY]",
+                    status = TaskStatus.FAILED.name,
+                    details = "Target channel ${task.channel.displayName} refused by ProtectedApplicationManager"
+                )
+            )
+            return false
+        }
+
         // 0. Pre-flight Idle Check: Only trigger and complete task when idle!
         if (!AutomationSafetyManager.isDeviceIdle(appContext)) {
             val idleSince = (System.currentTimeMillis() - AutomationSafetyManager.lastHumanInteractionTimestamp.get()) / 1000
@@ -406,6 +421,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             AutomationSafetyManager.postponeTask(appContext, task.id, reason = msg)
             return false
         }
+
+        repository.updateTaskStatus(task.id, TaskStatus.RUNNING)
 
         val success = when (task.channel) {
             ChannelType.WHATSAPP,

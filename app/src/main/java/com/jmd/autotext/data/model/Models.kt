@@ -251,11 +251,69 @@ enum class RecurrenceType(val displayName: String) {
 }
 
 enum class TaskStatus(val displayName: String) {
+    DRAFT("Draft"),
+    VALIDATING("Validating"),
+    READY("Ready"),
+    SCHEDULED("Scheduled"),
     PENDING("Pending"),
-    PENDING_CONFIRMATION("Awaiting Confirmation"),
+    RUNNING("Running"),
+    SUCCESS("Success"),
     DONE("Sent / Done"),
     FAILED("Failed"),
-    CANCELLED("Cancelled")
+    CANCELLED("Cancelled"),
+    PAUSED("Paused"),
+    PENDING_CONFIRMATION("Awaiting Confirmation");
+
+    val isPendingOrScheduled: Boolean
+        get() = this == PENDING || this == SCHEDULED || this == READY
+
+    val isSuccessOrDone: Boolean
+        get() = this == SUCCESS || this == DONE
+
+    val isTerminal: Boolean
+        get() = this == SUCCESS || this == DONE || this == FAILED || this == CANCELLED
+
+    val isRunning: Boolean
+        get() = this == RUNNING
+
+    val isPaused: Boolean
+        get() = this == PAUSED
+
+    companion object {
+        fun fromString(value: String?): TaskStatus {
+            if (value.isNullOrBlank()) return PENDING
+            val clean = value.trim().uppercase()
+            return entries.firstOrNull { it.name == clean } ?: when {
+                clean == "DONE" || clean == "SUCCESS" || clean == "SENT" -> SUCCESS
+                clean == "PENDING" || clean == "SCHEDULED" || clean == "ACTIVE" -> SCHEDULED
+                clean == "FAILED" -> FAILED
+                clean == "CANCELLED" || clean == "CANCELED" -> CANCELLED
+                clean == "PAUSED" -> PAUSED
+                clean == "RUNNING" -> RUNNING
+                clean == "READY" -> READY
+                clean == "VALIDATING" -> VALIDATING
+                clean == "DRAFT" -> DRAFT
+                clean == "PENDING_CONFIRMATION" || clean.contains("CONFIRM") -> PENDING_CONFIRMATION
+                else -> PENDING
+            }
+        }
+
+        fun canTransition(from: TaskStatus, to: TaskStatus): Boolean {
+            if (from == to) return true
+            return when (from) {
+                DRAFT -> to == VALIDATING || to == CANCELLED
+                VALIDATING -> to == READY || to == FAILED || to == CANCELLED
+                READY -> to == SCHEDULED || to == RUNNING || to == CANCELLED || to == PAUSED
+                SCHEDULED, PENDING -> to == RUNNING || to == PAUSED || to == CANCELLED
+                RUNNING -> to == SUCCESS || to == DONE || to == FAILED || to == CANCELLED || to == SCHEDULED || to == PENDING || to == PENDING_CONFIRMATION
+                PAUSED -> to == SCHEDULED || to == PENDING || to == CANCELLED
+                SUCCESS, DONE -> to == SCHEDULED || to == PENDING || to == RUNNING
+                FAILED -> to == SCHEDULED || to == PENDING || to == RUNNING
+                CANCELLED -> to == SCHEDULED || to == PENDING
+                PENDING_CONFIRMATION -> to == SUCCESS || to == DONE || to == FAILED || to == CANCELLED
+            }
+        }
+    }
 }
 
 data class ScheduledTask(

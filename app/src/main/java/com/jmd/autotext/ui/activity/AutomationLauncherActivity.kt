@@ -19,7 +19,6 @@ package com.jmd.autotext.ui.activity
 import android.app.Activity
 import android.app.KeyguardManager
 import android.app.NotificationManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -27,7 +26,6 @@ import android.os.PowerManager
 import android.util.Log
 import android.view.WindowManager
 import androidx.core.graphics.drawable.toDrawable
-
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.data.model.ChannelType
@@ -77,6 +75,8 @@ class AutomationLauncherActivity : Activity() {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
 
         // Keep window completely transparent so lockscreen bouncer receives direct touches
         window.setBackgroundDrawable(android.graphics.Color.TRANSPARENT.toDrawable())
@@ -84,6 +84,11 @@ class AutomationLauncherActivity : Activity() {
         runCatching {
             val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             nm.cancel(9988)
+        }
+
+        val prefs = PreferenceManager(this)
+        if (intent.getBooleanExtra(EXTRA_IS_TEST_UNLOCK, false)) {
+            prefs.isA11yUserPaused = false
         }
 
         // Verify or enable accessibility service just-in-time for lockscreen automation
@@ -94,8 +99,6 @@ class AutomationLauncherActivity : Activity() {
                 AccessibilityHealthManager.ensureServiceAlive(this)
             }
         }
-
-        val prefs = PreferenceManager(this)
         val keyguardManager = getSystemService(KEYGUARD_SERVICE) as KeyguardManager
 
         // Dismiss keyguard
@@ -108,19 +111,19 @@ class AutomationLauncherActivity : Activity() {
             AutoTextAccessibilityService.isTestUnlockMode = true
             keyguardManager.requestDismissKeyguard(this, null)
 
-            // Post armAutoUnlock with slight delay to ensure activity window is fully torn down
-            // before physical gesture taps are dispatched to the lockscreen bouncer
-            window.decorView.postDelayed({
+            runCatching {
+                wakeLock?.release()
+                wakeLock = null
+            }
+            finish()
+
+            // Post armAutoUnlock with delay to ensure activity window is fully torn down
+            handler.postDelayed({
                 AutoTextAccessibilityService.armAutoUnlock(
                     pin = passedPin,
                     shouldRelockAfterSend = false,
                 )
-                runCatching {
-                    wakeLock?.release()
-                    wakeLock = null
-                }
-                finish()
-            }, 300L)
+            }, 350L)
             return
         }
 

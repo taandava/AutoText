@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import androidx.core.net.toUri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -136,7 +137,7 @@ fun settingsBankingShieldCard(
                             onClick = {
                                 try {
                                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                        data = android.net.Uri.parse("package:com.google.android.apps.nbu.paisa.user")
+                                        data = "package:com.google.android.apps.nbu.paisa.user".toUri()
                                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                     }
                                     context.startActivity(intent)
@@ -211,7 +212,7 @@ fun settingsBankingShieldCard(
                         onClick = {
                             try {
                                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                    data = android.net.Uri.parse("package:com.google.android.apps.nbu.paisa.user")
+                                    data = "package:com.google.android.apps.nbu.paisa.user".toUri()
                                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                 }
                                 context.startActivity(intent)

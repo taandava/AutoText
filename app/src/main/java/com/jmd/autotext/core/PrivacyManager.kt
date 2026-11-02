@@ -8,6 +8,7 @@
  */
 package com.jmd.autotext.core
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.usage.UsageStatsManager
 import android.content.Context
@@ -354,6 +355,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
     /**
      * Detects the currently active foreground application package using AccessibilityService or UsageStatsManager.
      */
+    @SuppressLint("MissingPermission")
     fun getActiveForegroundPackage(): String? {
         // Priority 1: Instant active package from Accessibility Service
         val a11yPkg = AutoTextAccessibilityService.currentForegroundPackage

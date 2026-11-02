@@ -19,19 +19,23 @@
  */
 package com.jmd.autotext.ui.screen
 
-import android.app.*
-import android.content.*
-import android.os.*
+import android.app.AlarmManager
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
-
-import android.widget.Toast
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.*
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.AutoFixHigh
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -41,13 +45,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import kotlinx.coroutines.*
-
-import com.jmd.autotext.core.*
-import com.jmd.autotext.receiver.*
-import com.jmd.autotext.service.*
-import com.jmd.autotext.ui.components.*
-import com.jmd.autotext.ui.theme.*
+import com.jmd.autotext.core.AccessibilityHealthManager
+import com.jmd.autotext.core.showAppToast
+import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
+import com.jmd.autotext.ui.components.GlassButtonVariant
+import com.jmd.autotext.ui.components.appCard
+import com.jmd.autotext.ui.components.appSubScreenHeader
+import com.jmd.autotext.ui.components.glassButton
+import com.jmd.autotext.ui.theme.AppDesignTokens
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -113,18 +121,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                 }
             }
 
-            // 3. Floating Button & Overlay Permission (SYSTEM_ALERT_WINDOW)
-            item {
-                val hasOverlay = OverlayPermissionHelper.canDrawOverlays(context)
-                permissionItem(
-                    title = if (hasOverlay) "Display Over Other Apps: Granted" else "Display Over Other Apps / Floating Window",
-                    desc = "Critical for Android 10+ and Vivo / Xiaomi / Samsung to wake the screen from sleep, launch over the lockscreen bouncer, and show countdown status.",
-                    btnText = if (hasOverlay) "Overlay Permission Granted" else "Grant Overlay Permission",
-                    isGranted = hasOverlay,
-                ) {
-                    context.startActivity(OverlayPermissionHelper.getManageOverlayIntent(context))
-                }
-            }
+
 
             // 4. Exact Alarms & Reminders Permission
             item {
@@ -265,12 +262,11 @@ fun superAutoHealAndPermissionFixerCard(context: Context) {
     val scope = rememberCoroutineScope()
     var hasSecurePerm by remember { mutableStateOf(AccessibilityHealthManager.hasWriteSecureSettings(context)) }
     val isAdminActive = AutoTextDeviceAdminReceiver.isAdminActive(context)
-    val hasOverlay = OverlayPermissionHelper.canDrawOverlays(context)
     val isA11yActive = AccessibilityHealthManager.isServiceOperational()
     var isHealing by remember { mutableStateOf(value = false) }
 
     // Safe ADB command: grants WRITE_SECURE_SETTINGS, runtime permissions, and key appops without destructively overwriting existing third-party accessibility services
-    val universalAdbCommand = "adb shell \"pm grant com.jmd.autotext android.permission.WRITE_SECURE_SETTINGS; pm grant com.jmd.autotext android.permission.READ_PHONE_STATE; pm grant com.jmd.autotext android.permission.CALL_PHONE; pm grant com.jmd.autotext android.permission.ANSWER_PHONE_CALLS; pm grant com.jmd.autotext android.permission.READ_CONTACTS; pm grant com.jmd.autotext android.permission.POST_NOTIFICATIONS; pm grant com.jmd.autotext android.permission.READ_SMS; pm grant com.jmd.autotext android.permission.SEND_SMS; appops set com.jmd.autotext SYSTEM_ALERT_WINDOW allow; appops set com.jmd.autotext TURN_SCREEN_ON allow; appops set com.jmd.autotext SCHEDULE_EXACT_ALARM allow; appops set com.jmd.autotext START_ACTIVITIES_FROM_BACKGROUND allow; appops set com.jmd.autotext ACCESS_RESTRICTED_SETTINGS allow; appops set com.jmd.autotext AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore; dumpsys deviceidle whitelist +com.jmd.autotext; dpm set-active-admin com.jmd.autotext/.AutoTextDeviceAdminReceiver\""
+    val universalAdbCommand = "adb shell \"pm grant com.jmd.autotext android.permission.WRITE_SECURE_SETTINGS; pm grant com.jmd.autotext android.permission.READ_PHONE_STATE; pm grant com.jmd.autotext android.permission.CALL_PHONE; pm grant com.jmd.autotext android.permission.ANSWER_PHONE_CALLS; pm grant com.jmd.autotext android.permission.READ_CONTACTS; pm grant com.jmd.autotext android.permission.POST_NOTIFICATIONS; pm grant com.jmd.autotext android.permission.READ_SMS; pm grant com.jmd.autotext android.permission.SEND_SMS; appops set com.jmd.autotext TURN_SCREEN_ON allow; appops set com.jmd.autotext SCHEDULE_EXACT_ALARM allow; appops set com.jmd.autotext START_ACTIVITIES_FROM_BACKGROUND allow; appops set com.jmd.autotext ACCESS_RESTRICTED_SETTINGS allow; appops set com.jmd.autotext AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore; dumpsys deviceidle whitelist +com.jmd.autotext; dpm set-active-admin com.jmd.autotext/.AutoTextDeviceAdminReceiver\""
 
     appCard(
         modifier = Modifier.fillMaxWidth(),
@@ -307,9 +303,12 @@ fun superAutoHealAndPermissionFixerCard(context: Context) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+            val canExactAlarm = (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) ||
+                    (alarmManager?.canScheduleExactAlarms() == true)
             statusPill("A11y", isA11yActive, Modifier.weight(1f))
             statusPill("Admin", isAdminActive, Modifier.weight(1f))
-            statusPill("Overlay", hasOverlay, Modifier.weight(1f))
+            statusPill("Alarms", canExactAlarm, Modifier.weight(1f))
             statusPill("Secure", hasSecurePerm, Modifier.weight(1f))
         }
 

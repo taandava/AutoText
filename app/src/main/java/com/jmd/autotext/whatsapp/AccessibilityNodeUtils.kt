@@ -198,6 +198,13 @@ object AccessibilityNodeUtils {
     ): Boolean {
         if (node == null) return false
 
+        val nodePkg = node.packageName?.toString()
+        if (com.jmd.autotext.core.ProtectedApplicationManager.isProtectedPackage(nodePkg)) {
+            Log.e(TAG, "clickElement REFUSED: Target node belongs to protected application: $nodePkg")
+            com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(service, nodePkg ?: "unknown", "clickElement")
+            return false
+        }
+
         val prefs = PreferenceManager(service)
         val strategy = prefs.fallbackClickStrategy
         val gestureEnabled = prefs.isGestureFallbackEnabled
@@ -296,6 +303,18 @@ object AccessibilityNodeUtils {
         service: AccessibilityService
     ): Boolean {
         if (node == null) return false
+        val nodePkg = node.packageName?.toString()
+        if (com.jmd.autotext.core.ProtectedApplicationManager.isProtectedPackage(nodePkg)) {
+            Log.e(TAG, "setTextOnInput REFUSED: Target node belongs to protected application: $nodePkg")
+            com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(service, nodePkg ?: "unknown", "setTextOnInput")
+            return false
+        }
+        val curPkg = service.rootInActiveWindow?.packageName?.toString()
+        if (com.jmd.autotext.core.ProtectedApplicationManager.isProtectedPackage(curPkg)) {
+            Log.e(TAG, "setTextOnInput REFUSED: Active window belongs to protected application: $curPkg")
+            com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(service, curPkg ?: "unknown", "setTextOnInput")
+            return false
+        }
         try {
             node.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
             val args = Bundle().apply {
@@ -329,6 +348,12 @@ object AccessibilityNodeUtils {
         durationMs: Long = 50L,
         onComplete: (() -> Unit)? = null
     ): Boolean {
+        val curPkg = service.rootInActiveWindow?.packageName?.toString()
+        if (com.jmd.autotext.core.ProtectedApplicationManager.isProtectedPackage(curPkg)) {
+            Log.e(TAG, "dispatchPhysicalTap REFUSED: Active window belongs to protected application: $curPkg")
+            com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(service, curPkg ?: "unknown", "dispatchPhysicalTap")
+            return false
+        }
         return try {
             val path = Path().apply {
                 moveTo(x, y)
@@ -367,6 +392,12 @@ object AccessibilityNodeUtils {
         endYRatio: Float = 0.25f,
         durationMs: Long = 280L
     ): Boolean {
+        val curPkg = service.rootInActiveWindow?.packageName?.toString()
+        if (com.jmd.autotext.core.ProtectedApplicationManager.isProtectedPackage(curPkg)) {
+            Log.e(TAG, "performVerticalSwipe REFUSED: Active window belongs to protected application: $curPkg")
+            com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(service, curPkg ?: "unknown", "performVerticalSwipe")
+            return false
+        }
         return try {
             val metrics = service.resources.displayMetrics
             val width = metrics.widthPixels.toFloat()

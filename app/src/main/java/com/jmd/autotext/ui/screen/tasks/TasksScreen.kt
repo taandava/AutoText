@@ -13,40 +13,42 @@ package com.jmd.autotext.ui.screen.tasks
 
 import android.content.Intent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.AltRoute
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.Inbox
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
-import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.showAppToast
-import com.jmd.autotext.data.model.*
+import com.jmd.autotext.data.model.ChannelType
+import com.jmd.autotext.data.model.ContactSequence
+import com.jmd.autotext.data.model.ScheduledTask
+import com.jmd.autotext.data.model.TaskStatus
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.data.repo.AppRepository
 import com.jmd.autotext.receiver.TaskAlarmReceiver
 import com.jmd.autotext.scheduler.AlarmScheduler
-import com.jmd.autotext.ui.components.*
+import com.jmd.autotext.ui.components.appCardElevated
+import com.jmd.autotext.ui.components.appEmptyState
+import com.jmd.autotext.ui.components.glassSearchField
+import com.jmd.autotext.ui.components.glassSegmentedControl
 import com.jmd.autotext.ui.screen.sequence.contactSequenceCard
 import com.jmd.autotext.ui.screen.sequence.contactSequenceStudio
 import com.jmd.autotext.ui.screen.taskTypeSelectionDialog
 import com.jmd.autotext.ui.theme.AppDesignTokens
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Primary task dashboard presenting scheduled single tasks and multi-step contact sequences.
@@ -121,8 +123,8 @@ fun tasksListScreen(
     val filteredTasks = remember(tasks, selectedTab, searchQuery) {
         tasks.filter { task ->
             val matchesTab = when (selectedTab) {
-                1 -> (task.status == TaskStatus.PENDING || task.status == TaskStatus.PENDING_CONFIRMATION)
-                2 -> task.status == TaskStatus.DONE
+                1 -> (task.status.isPendingOrScheduled || task.status == TaskStatus.PENDING_CONFIRMATION || task.status.isRunning)
+                2 -> task.status.isSuccessOrDone
                 3 -> task.status == TaskStatus.FAILED
                 else -> true
             }
@@ -194,14 +196,14 @@ fun tasksListScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
                                 Text(
-                                    "Task Scheduler Engine",
+                                    "Scheduled Dispatcher",
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    if (isTasksMasterEnabled) "Active • Automatic execution enabled"
-                                    else "Task Scheduler Engine Paused",
+                                    if (isTasksMasterEnabled) "Active • Scheduled delivery enabled"
+                                    else "Scheduled Dispatcher Paused",
                                     fontSize = 12.5.sp,
                                     color = if (isTasksMasterEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -237,8 +239,8 @@ fun tasksListScreen(
                 }
 
 
-                val pendingTasksCount = remember(tasks) { tasks.count { it.status == TaskStatus.PENDING || it.status == TaskStatus.PENDING_CONFIRMATION } }
-                val doneTasksCount = remember(tasks) { tasks.count { it.status == TaskStatus.DONE } }
+                val pendingTasksCount = remember(tasks) { tasks.count { it.status.isPendingOrScheduled || it.status == TaskStatus.PENDING_CONFIRMATION || it.status.isRunning } }
+                val doneTasksCount = remember(tasks) { tasks.count { it.status.isSuccessOrDone } }
                 val failedTasksCount = remember(tasks) { tasks.count { it.status == TaskStatus.FAILED } }
 
                 // Enterprise Modern Segmented Status Filter with Live Counts
@@ -285,7 +287,7 @@ fun tasksListScreen(
                                     tasks = repository.getAllTasks()
                                 },
                                 onToggle = { isChecked: Boolean ->
-                                    val newStatus = if (isChecked) TaskStatus.PENDING else TaskStatus.CANCELLED
+                                    val newStatus = if (isChecked) TaskStatus.SCHEDULED else TaskStatus.PAUSED
                                     val updated = task.copy(status = newStatus)
                                     repository.updateTask(updated)
                                     if (isChecked) {

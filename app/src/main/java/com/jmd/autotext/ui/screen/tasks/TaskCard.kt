@@ -64,11 +64,15 @@ fun taskCard(
     }
 
     val (statusColor, statusEmoji) = when (task.status) {
-        TaskStatus.PENDING -> MaterialTheme.colorScheme.primary to "⏱️"
-        TaskStatus.PENDING_CONFIRMATION -> MaterialTheme.colorScheme.secondary to "⏳"
-        TaskStatus.DONE -> MaterialTheme.colorScheme.tertiary to "✅"
+        TaskStatus.DRAFT -> MaterialTheme.colorScheme.outline to "📝"
+        TaskStatus.VALIDATING -> MaterialTheme.colorScheme.secondary to "🔍"
+        TaskStatus.READY -> MaterialTheme.colorScheme.primary to "✨"
+        TaskStatus.SCHEDULED, TaskStatus.PENDING -> MaterialTheme.colorScheme.primary to "⏱️"
+        TaskStatus.RUNNING -> MaterialTheme.colorScheme.tertiary to "⚡"
+        TaskStatus.SUCCESS, TaskStatus.DONE -> MaterialTheme.colorScheme.tertiary to "✅"
         TaskStatus.FAILED -> MaterialTheme.colorScheme.error to "❌"
-        TaskStatus.CANCELLED -> MaterialTheme.colorScheme.outline to "⏸️"
+        TaskStatus.PAUSED, TaskStatus.CANCELLED -> MaterialTheme.colorScheme.outline to "⏸️"
+        TaskStatus.PENDING_CONFIRMATION -> MaterialTheme.colorScheme.secondary to "⏳"
     }
 
     appCard(
@@ -110,7 +114,7 @@ fun taskCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     compactSwitch(
-                        checked = task.status == TaskStatus.PENDING || task.status == TaskStatus.PENDING_CONFIRMATION,
+                        checked = task.status.isPendingOrScheduled || task.status == TaskStatus.PENDING_CONFIRMATION,
                         onCheckedChange = onToggle,
                         activeColor = channelColor
                     )
@@ -244,7 +248,7 @@ fun taskCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     when (task.status) {
-                        TaskStatus.PENDING -> {
+                        TaskStatus.SCHEDULED, TaskStatus.PENDING, TaskStatus.READY -> {
                             glassButton(
                                 text = "Send Now",
                                 onClick = onRunNow,

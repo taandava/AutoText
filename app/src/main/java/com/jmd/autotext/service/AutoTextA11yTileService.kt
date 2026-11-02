@@ -1,5 +1,6 @@
 package com.jmd.autotext.service
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -16,7 +17,6 @@ import com.jmd.autotext.data.prefs.PreferenceManager
  * Allows users to 1-tap pause Accessibility (via disableSelf) before opening Google Pay or banking apps,
  * and 1-tap resume or open Accessibility Settings.
  */
-@RequiresApi(Build.VERSION_CODES.N)
 class AutoTextA11yTileService : TileService() {
 
     override fun onStartListening() {
@@ -24,6 +24,7 @@ class AutoTextA11yTileService : TileService() {
         updateTileState()
     }
 
+    @SuppressLint("StartActivityAndCollapseDeprecated")
     override fun onClick() {
         super.onClick()
         val context = applicationContext ?: this

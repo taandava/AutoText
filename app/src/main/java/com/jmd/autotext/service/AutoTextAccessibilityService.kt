@@ -910,6 +910,23 @@ class AutoTextAccessibilityService : AccessibilityService() {
         fun isCurrentlyAutomating(): Boolean = isAutomating || isUnlockPending || isTestUnlockMode
 
         /**
+         * Safely aborts active accessibility automation when a protected banking/financial app is encountered.
+         */
+        @JvmStatic
+        fun abortDueToProtectedApp(pkg: String) {
+            val taskId = pendingTaskId
+            Log.w(TAG, "Aborting accessibility automation due to protected app: $pkg (Task #$taskId)")
+            clearPending()
+            instance?.let { s ->
+                AppFileLogger.action(s, TAG, "Aborted automation for Task #$taskId: Protected app ($pkg) detected")
+                val prefs = PreferenceManager(s.applicationContext ?: s)
+                if (prefs.isDynamicA11yOnDemandEnabled && AccessibilityHealthManager.hasWriteSecureSettings(s)) {
+                    AccessibilityHealthManager.disableAccessibilityService(s.applicationContext ?: s)
+                }
+            }
+        }
+
+        /**
          * Safely aborts active accessibility automation upon detected human interaction.
          */
         fun abortDueToHumanInterruption() {
@@ -1184,8 +1201,14 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 val curPkg = activeRoot.packageName?.toString() ?: ""
                 val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(this@AutoTextAccessibilityService)
                 // Stealth Protection Guard: Instantly drop if an excluded or banking app is foregrounded
-                if (privacyMgr.isAppExcluded(curPkg) || isFinancialOrBankingPackage(curPkg)) {
+                if (privacyMgr.isAppExcluded(curPkg) || isFinancialOrBankingPackage(curPkg) || com.jmd.autotext.core.ProtectedApplicationManager.isProtectedPackage(curPkg)) {
                     Log.d(TAG, "sendRunnable: Excluded or banking app foregrounded ($curPkg); skipping window inspection")
+                    com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(this@AutoTextAccessibilityService, curPkg, "sendRunnable")
+                    return
+                }
+
+                if (!com.jmd.autotext.core.ProtectedApplicationManager.verifyContextBeforeInteraction(curPkg, targetPkg)) {
+                    Log.w(TAG, "sendRunnable: Context verification failed before interaction (curPkg=$curPkg, targetPkg=$targetPkg)")
                     return
                 }
 
@@ -1438,7 +1461,8 @@ class AutoTextAccessibilityService : AccessibilityService() {
             // Privacy & Banking Shield Guard: Completely isolate accessibility from excluded & banking apps
             // Never inspect, read, or process events from financial or excluded applications
             val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(this)
-            if (privacyMgr.isAppExcluded(currentPkg) || isFinancialOrBankingPackage(currentPkg)) {
+            if (privacyMgr.isAppExcluded(currentPkg) || isFinancialOrBankingPackage(currentPkg) || com.jmd.autotext.core.ProtectedApplicationManager.isProtectedPackage(currentPkg)) {
+                com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(this, currentPkg, "onAccessibilityEvent")
                 if (!isAutomating) {
                     Log.i(TAG, "Banking/Shielded app foreground ($currentPkg), immediately retracting accessibility registration")
                     disableService()

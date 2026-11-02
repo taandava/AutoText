@@ -234,7 +234,15 @@ class TaskRepository(context: Context) {
     }
 
     fun getPendingTasks(): List<ScheduledTask> {
-        return getTasksByStatus(TaskStatus.PENDING)
+        val db = dbHelper.readableDatabase
+        val tasks = mutableListOf<ScheduledTask>()
+        val cursor = db.query(DatabaseHelper.TABLE_TASKS, null, "status IN ('PENDING', 'SCHEDULED', 'READY')", null, null, null, "trigger_time ASC")
+        cursor.use {
+            while (it.moveToNext()) {
+                tasks.add(cursorToTask(it))
+            }
+        }
+        return tasks
     }
 
     fun getTasksByStatus(status: TaskStatus): List<ScheduledTask> {
@@ -296,7 +304,7 @@ class TaskRepository(context: Context) {
             recurrence = RecurrenceType.fromString(c.getString(c.getColumnIndexOrThrow("recurrence"))),
             customIntervalMinutes = c.getInt(c.getColumnIndexOrThrow("custom_interval_minutes")),
             selectedDaysOfWeek = dayList,
-            status = runCatching { TaskStatus.valueOf(c.getString(c.getColumnIndexOrThrow("status"))) }.getOrDefault(TaskStatus.PENDING),
+            status = TaskStatus.fromString(c.getString(c.getColumnIndexOrThrow("status"))),
             simSlot = c.getInt(c.getColumnIndexOrThrow("sim_slot")),
             askBeforeSend = c.getInt(c.getColumnIndexOrThrow("ask_before_send")) == 1,
             soundModeSetting = c.getString(c.getColumnIndexOrThrow("sound_mode")) ?: "NORMAL",

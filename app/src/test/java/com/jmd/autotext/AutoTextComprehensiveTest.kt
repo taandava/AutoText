@@ -1,5 +1,8 @@
 package com.jmd.autotext
 
+import com.jmd.autotext.core.ProtectedApplicationManager
+import com.jmd.autotext.core.PermissionManager
+
 import com.jmd.autotext.core.AutomationSafetyManager
 import com.jmd.autotext.core.DEFAULT_MESSAGE_TEXT
 import com.jmd.autotext.core.MessageTemplateResolver
@@ -1258,5 +1261,245 @@ class AutoTextComprehensiveTest {
         assertFalse(modified.blockOverlays)
         assertTrue(modified.disableAutomation)
         assertEquals("User whitelisted", modified.customNotes)
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 23. PROTECTED APPLICATION MANAGER (BANKING & PAYMENT ISOLATION) TESTS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testProtectedApplicationCatalogDetection() {
+        // Explicit banking & payment package verification
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.saraswatbank.gomobile"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.sbi.lotusintouch"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.google.android.apps.nbu.paisa.user"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.phonepe.app"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("net.one97.paytm"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.hdfcbank.mobilebanking"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.csam.icici.bank.imobile"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.axis.mobile"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.kotak.bank"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("in.org.npci.upiapp"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.cred.app"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.zerodha.kite3"))
+
+        // Keyword heuristics for uncataloged banking/wallet apps
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("org.somebank.mobilebanking"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.secure.mywallet.app"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.finance.crypto.trade"))
+        assertTrue(ProtectedApplicationManager.isProtectedPackage("com.newfintech.upi.payment"))
+
+        // Standard non-banking applications must NOT be flagged as protected
+        assertFalse(ProtectedApplicationManager.isProtectedPackage("com.whatsapp"))
+        assertFalse(ProtectedApplicationManager.isProtectedPackage("com.whatsapp.w4b"))
+        assertFalse(ProtectedApplicationManager.isProtectedPackage("com.google.android.dialer"))
+        assertFalse(ProtectedApplicationManager.isProtectedPackage("com.android.systemui"))
+        assertFalse(ProtectedApplicationManager.isProtectedPackage("com.jmd.autotext"))
+    }
+
+    @Test
+    fun testProtectedApplicationManagerDefaultDenyAllowlist() {
+        // Only authorized automation targets are permitted
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.whatsapp"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.whatsapp.w4b"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.google.android.dialer"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.android.phone"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.android.systemui"))
+        assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.jmd.autotext"))
+
+        // Default-deny policy: unauthorized applications must be rejected
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.saraswatbank.gomobile"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("net.one97.paytm"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.android.chrome"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.android.settings"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.google.android.gm"))
+        assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.instagram.android"))
+    }
+
+    @Test
+    fun testProtectedApplicationContextVerificationBeforeInteraction() {
+        // Valid same-target interaction on authorized app
+        assertTrue(
+            "Interaction allowed when foreground app matches target WhatsApp",
+            ProtectedApplicationManager.verifyContextBeforeInteraction(
+                currentPackage = "com.whatsapp",
+                expectedTargetPackage = "com.whatsapp"
+            )
+        )
+
+        // Valid System UI keyguard interaction
+        assertTrue(
+            "Interaction allowed for SystemUI dismiss keyguard",
+            ProtectedApplicationManager.verifyContextBeforeInteraction(
+                currentPackage = "com.android.systemui",
+                expectedTargetPackage = "com.whatsapp"
+            )
+        )
+
+        // CRITICAL SECURITY INVARIANT: Absolute rejection when foreground is banking/payment app
+        assertFalse(
+            "Interaction must be rejected when foreground app is Saraswat Bank",
+            ProtectedApplicationManager.verifyContextBeforeInteraction(
+                currentPackage = "com.saraswatbank.gomobile",
+                expectedTargetPackage = "com.whatsapp"
+            )
+        )
+        assertFalse(
+            "Interaction must be rejected when foreground app is Google Pay",
+            ProtectedApplicationManager.verifyContextBeforeInteraction(
+                currentPackage = "com.google.android.apps.nbu.paisa.user",
+                expectedTargetPackage = "com.google.android.apps.nbu.paisa.user"
+            )
+        )
+
+        // Cross-app mismatch rejection (prevents UI confusion / hijacking)
+        assertFalse(
+            "Cross-package interaction must be rejected when foreground app does not match target",
+            ProtectedApplicationManager.verifyContextBeforeInteraction(
+                currentPackage = "com.android.chrome",
+                expectedTargetPackage = "com.whatsapp"
+            )
+        )
+    }
+
+    @Test
+    fun testProtectedApplicationTaskTargetAuthorization() {
+        val validWhatsAppTask = ScheduledTask(
+            channel = ChannelType.WHATSAPP,
+            recipients = listOf("+919769602020"),
+            messageText = "Hello"
+        )
+        assertTrue(ProtectedApplicationManager.isTaskTargetAuthorized(validWhatsAppTask))
+
+        val validCallTask = ScheduledTask(
+            channel = ChannelType.CALL,
+            recipients = listOf("+919769602020")
+        )
+        assertTrue(ProtectedApplicationManager.isTaskTargetAuthorized(validCallTask))
+
+        val validSmsTask = ScheduledTask(
+            channel = ChannelType.SMS,
+            recipients = listOf("+919769602020"),
+            messageText = "SMS Message"
+        )
+        assertTrue(ProtectedApplicationManager.isTaskTargetAuthorized(validSmsTask))
+    }
+
+    @Test
+    fun testProtectedApplicationOverlayAndInterferenceRefusal() {
+        // Overlay suppression and strict blocking over financial and unauthorized applications
+        assertTrue(ProtectedApplicationManager.shouldBlockOverlays("com.google.android.apps.nbu.paisa.user"))
+        assertTrue(ProtectedApplicationManager.shouldBlockOverlays("com.saraswatbank.gomobile"))
+        assertTrue(ProtectedApplicationManager.shouldBlockOverlays("net.one97.paytm"))
+        assertTrue(ProtectedApplicationManager.shouldBlockOverlays("com.phonepe.app"))
+        assertTrue(ProtectedApplicationManager.shouldBlockOverlays("com.hdfcbank.mobilebanking"))
+        assertFalse(ProtectedApplicationManager.shouldBlockOverlays("com.whatsapp"))
+        assertFalse(ProtectedApplicationManager.shouldBlockOverlays("com.google.android.dialer"))
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 24. PERMISSION MANAGER CATALOG & MAPPING TESTS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testPermissionManagerCatalogCompleteness() {
+        val permissions = PermissionManager.getAllPermissions()
+        assertEquals(12, permissions.size)
+
+        val permMap = permissions.associateBy { it.permissionId }
+
+        // Accessibility check
+        val a11y = permMap[PermissionManager.ID_ACCESSIBILITY]
+        assertNotNull(a11y)
+        assertTrue(a11y!!.isCritical)
+        assertEquals("Accessibility Service", a11y.featureName)
+        assertFalse(a11y.deniedImpact.isEmpty())
+        assertFalse(a11y.revocationSafety.isEmpty())
+
+        // Exact alarms check
+        val exactAlarms = permMap[PermissionManager.ID_EXACT_ALARMS]
+        assertNotNull(exactAlarms)
+        assertTrue(exactAlarms!!.isCritical)
+
+        // Non-critical permissions
+        val contacts = permMap[PermissionManager.ID_READ_CONTACTS]
+        assertNotNull(contacts)
+        assertFalse(contacts!!.isCritical)
+
+        val notifications = permMap[PermissionManager.ID_POST_NOTIFICATIONS]
+        assertNotNull(notifications)
+        assertFalse(notifications!!.isCritical)
+
+        // Critical permissions list
+        assertEquals(2, PermissionManager.CRITICAL_PERMISSIONS.size)
+        assertTrue(PermissionManager.CRITICAL_PERMISSIONS.contains(PermissionManager.ID_ACCESSIBILITY))
+        assertTrue(PermissionManager.CRITICAL_PERMISSIONS.contains(PermissionManager.ID_EXACT_ALARMS))
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 25. TASK STATUS LIFECYCLE & STATE MACHINE TESTS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testTaskStatusStateTransitions() {
+        // DRAFT transitions
+        assertTrue(TaskStatus.canTransition(TaskStatus.DRAFT, TaskStatus.VALIDATING))
+        assertTrue(TaskStatus.canTransition(TaskStatus.DRAFT, TaskStatus.CANCELLED))
+        assertFalse(TaskStatus.canTransition(TaskStatus.DRAFT, TaskStatus.RUNNING))
+
+        // VALIDATING transitions
+        assertTrue(TaskStatus.canTransition(TaskStatus.VALIDATING, TaskStatus.READY))
+        assertTrue(TaskStatus.canTransition(TaskStatus.VALIDATING, TaskStatus.FAILED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.VALIDATING, TaskStatus.CANCELLED))
+        assertFalse(TaskStatus.canTransition(TaskStatus.VALIDATING, TaskStatus.RUNNING))
+
+        // READY transitions
+        assertTrue(TaskStatus.canTransition(TaskStatus.READY, TaskStatus.SCHEDULED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.READY, TaskStatus.RUNNING))
+        assertTrue(TaskStatus.canTransition(TaskStatus.READY, TaskStatus.CANCELLED))
+
+        // SCHEDULED transitions
+        assertTrue(TaskStatus.canTransition(TaskStatus.SCHEDULED, TaskStatus.RUNNING))
+        assertTrue(TaskStatus.canTransition(TaskStatus.SCHEDULED, TaskStatus.PAUSED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.SCHEDULED, TaskStatus.CANCELLED))
+
+        // RUNNING transitions
+        assertTrue(TaskStatus.canTransition(TaskStatus.RUNNING, TaskStatus.SUCCESS))
+        assertTrue(TaskStatus.canTransition(TaskStatus.RUNNING, TaskStatus.FAILED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.RUNNING, TaskStatus.CANCELLED))
+        assertFalse(TaskStatus.canTransition(TaskStatus.RUNNING, TaskStatus.READY))
+
+        // PAUSED transitions
+        assertTrue(TaskStatus.canTransition(TaskStatus.PAUSED, TaskStatus.SCHEDULED))
+        assertTrue(TaskStatus.canTransition(TaskStatus.PAUSED, TaskStatus.CANCELLED))
+        assertFalse(TaskStatus.canTransition(TaskStatus.PAUSED, TaskStatus.RUNNING))
+    }
+
+    @Test
+    fun testTaskStatusHelperPredicates() {
+        assertTrue(TaskStatus.SCHEDULED.isPendingOrScheduled)
+        assertTrue(TaskStatus.READY.isPendingOrScheduled)
+        assertTrue(TaskStatus.PENDING.isPendingOrScheduled)
+        assertFalse(TaskStatus.RUNNING.isPendingOrScheduled)
+        assertFalse(TaskStatus.SUCCESS.isPendingOrScheduled)
+
+        assertTrue(TaskStatus.SUCCESS.isSuccessOrDone)
+        assertTrue(TaskStatus.DONE.isSuccessOrDone)
+        assertFalse(TaskStatus.RUNNING.isSuccessOrDone)
+        assertFalse(TaskStatus.FAILED.isSuccessOrDone)
+
+        assertTrue(TaskStatus.SUCCESS.isTerminal)
+        assertTrue(TaskStatus.FAILED.isTerminal)
+        assertTrue(TaskStatus.CANCELLED.isTerminal)
+        assertFalse(TaskStatus.RUNNING.isTerminal)
+        assertFalse(TaskStatus.SCHEDULED.isTerminal)
+        assertFalse(TaskStatus.READY.isTerminal)
+
+        assertTrue(TaskStatus.RUNNING.isRunning)
+        assertFalse(TaskStatus.SCHEDULED.isRunning)
+
+        assertTrue(TaskStatus.PAUSED.isPaused)
+        assertFalse(TaskStatus.RUNNING.isPaused)
     }
 }
