@@ -384,13 +384,15 @@ fun mainAppHost(
                             Button(
                                 onClick = {
                                     com.jmd.autotext.core.AutomationSafetyManager.resetEmergencyStop(context)
+                                    val prefs = com.jmd.autotext.data.prefs.PreferenceManager(context)
+                                    prefs.isTasksMasterEnabled = true
                                     emergencyStopActive = false
                                 },
-                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
-                                modifier = Modifier.height(28.dp),
-                                shape = RoundedCornerShape(6.dp)
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                                modifier = Modifier.heightIn(min = 36.dp),
+                                shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text("RESUME", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                Text("RESUME", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
