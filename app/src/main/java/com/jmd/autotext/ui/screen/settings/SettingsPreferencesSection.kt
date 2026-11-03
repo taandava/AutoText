@@ -199,28 +199,6 @@ fun settingsPreferencesCards(
             }
         }
 
-        // WhatsApp Default Country Code
-        appCard(modifier = Modifier.fillMaxWidth()) {
-            Text("Default Country Code", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text("Auto-prepended to 10-digit numbers for WhatsApp routing.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            glassInputField(
-                value = countryCode,
-                onValueChange = {
-                    countryCode = it.filter { ch -> ch.isDigit() }
-                    prefs.defaultCountryCode = countryCode
-                },
-                label = "Country Code (e.g. 91, 1, 44)",
-                placeholder = "91",
-                leadingIcon = Icons.Default.Public,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                accentColor = MaterialTheme.colorScheme.primary
-            )
-        }
-
         // Automation Fallback & Failure Recovery Customisation
         appCard(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -386,6 +364,55 @@ fun settingsPreferencesCards(
                     }
                 }
             }
+        }
+
+        // Default Country Dialing Code (India +91)
+        appCard(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Default Country Code", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                appBadge(text = if (countryCode == "+91") "India 🇮🇳" else countryCode, color = MaterialTheme.colorScheme.primary)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text("Automatic dialing prefix applied when standardizing 10-digit mobile numbers for tasks and auto-replies.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+                listOf("+91" to "+91 India 🇮🇳", "+1" to "+1 US/CA", "+44" to "+44 UK", "+971" to "+971 UAE").forEach { (code, label) ->
+                    glassChip(
+                        selected = countryCode == code,
+                        onClick = {
+                            countryCode = code
+                            prefs.defaultCountryCode = code
+                        },
+                        label = label,
+                        activeColor = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+            var customCodeText by remember(countryCode) { mutableStateOf(countryCode) }
+            glassInputField(
+                value = customCodeText,
+                onValueChange = { newStr ->
+                    val clean = if (newStr.startsWith("+")) "+" + newStr.drop(1).filter(Char::isDigit) else "+" + newStr.filter(Char::isDigit)
+                    customCodeText = clean
+                    if (clean.length in 2..5) {
+                        countryCode = clean
+                        prefs.defaultCountryCode = clean
+                    }
+                },
+                label = "Custom Country Code",
+                placeholder = "+91",
+                leadingIcon = Icons.Default.Public,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                accentColor = MaterialTheme.colorScheme.primary
+            )
         }
 
         // Cellular SMS Quota & Safety Controls

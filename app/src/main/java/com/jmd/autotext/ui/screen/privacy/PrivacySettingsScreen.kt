@@ -10,7 +10,7 @@ package com.jmd.autotext.ui.screen.privacy
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
+import com.jmd.autotext.compat.PackageManagerCompat
 import android.graphics.Bitmap
 import androidx.core.graphics.createBitmap
 import android.graphics.Canvas
@@ -93,12 +93,7 @@ fun privacySettingsScreen(
             val intent = Intent(Intent.ACTION_MAIN, null).apply {
                 addCategory(Intent.CATEGORY_LAUNCHER)
             }
-            val resolveInfos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                pm.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0))
-            } else {
-                @Suppress("DEPRECATION")
-                pm.queryIntentActivities(intent, 0)
-            }
+            val resolveInfos = PackageManagerCompat.queryIntentActivities(pm, intent)
 
             val appMap = mutableMapOf<String, AppInfoItem>()
             for (ri in resolveInfos) {

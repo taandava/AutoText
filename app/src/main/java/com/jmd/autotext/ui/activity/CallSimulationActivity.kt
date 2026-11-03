@@ -63,18 +63,15 @@ open class CallSimulationActivity : ComponentActivity() {
 
         val callerName = intent.getStringExtra("caller_name")
             ?: intent.getStringExtra("simulatedCallerName")
-            ?: intent.getStringExtra("fake_caller_name")
-            ?: intent.getStringExtra("fakeCallerName")
+            ?: intent.getStringExtra("simulated_caller_name")
             ?: "Incoming Call"
         val callerNumber = intent.getStringExtra("caller_number")
             ?: intent.getStringExtra("simulatedCallerNumber")
-            ?: intent.getStringExtra("fake_caller_number")
-            ?: intent.getStringExtra("fakeCallerNumber")
+            ?: intent.getStringExtra("simulated_caller_number")
             ?: "+91 98765 43210"
         val callerStyle = intent.getStringExtra("caller_style")
             ?: intent.getStringExtra("simulatedCallStyle")
-            ?: intent.getStringExtra("fake_call_style")
-            ?: intent.getStringExtra("fakeCallStyle")
+            ?: intent.getStringExtra("simulated_call_style")
             ?: "PIXEL"
 
         startRinging()
@@ -185,7 +182,6 @@ open class CallSimulationActivity : ComponentActivity() {
 /**
  * Backward-compatible activity class aliased to [CallSimulationActivity].
  */
-@Deprecated("Use CallSimulationActivity instead for policy compliance", ReplaceWith("CallSimulationActivity"))
-open class FakeCallActivity : CallSimulationActivity()
+open class SimulatedCallActivity : CallSimulationActivity()
 
 

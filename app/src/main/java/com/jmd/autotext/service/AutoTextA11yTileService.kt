@@ -1,12 +1,10 @@
 package com.jmd.autotext.service
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
-import androidx.annotation.RequiresApi
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.showAppToast
 import com.jmd.autotext.data.prefs.PreferenceManager
@@ -24,7 +22,6 @@ class AutoTextA11yTileService : TileService() {
         updateTileState()
     }
 
-    @SuppressLint("StartActivityAndCollapseDeprecated")
     override fun onClick() {
         super.onClick()
         val context = applicationContext ?: this
@@ -52,23 +49,27 @@ class AutoTextA11yTileService : TileService() {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
                 showAppToast("Tap AutoText in Downloaded Apps to enable")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                    try {
-                        val pi = android.app.PendingIntent.getActivity(
-                            this,
-                            0,
-                            intent,
-                            android.app.PendingIntent.FLAG_IMMUTABLE
-                        )
-                        startActivityAndCollapse(pi)
-                    } catch (_: Throwable) {
-                        @Suppress("DEPRECATION")
-                        startActivityAndCollapse(intent)
-                    }
-                } else {
-                    @Suppress("DEPRECATION")
-                    startActivityAndCollapse(intent)
-                }
+                launchSettingsAndCollapse(intent)
+            }
+        }
+    }
+
+    private fun launchSettingsAndCollapse(intent: Intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val pi = android.app.PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+            startActivityAndCollapse(pi)
+        } else {
+            try {
+                val method = TileService::class.java.getMethod("startActivityAndCollapse", Intent::class.java)
+                method.invoke(this, intent)
+            } catch (e: Throwable) {
+                com.jmd.autotext.core.AppFileLogger.w("AutoTextA11yTileService", "startActivityAndCollapse fallback: ${e.message}")
+                startActivity(intent)
             }
         }
     }
@@ -78,15 +79,15 @@ class AutoTextA11yTileService : TileService() {
         val isRunning = AccessibilityHealthManager.isServiceOperational()
         if (isRunning) {
             tile.state = Tile.STATE_ACTIVE
-            tile.label = "AutoText A11y"
+            tile.label = "AutoText Assistant"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.subtitle = "Active (Tap to Pause for Banking)"
+                tile.subtitle = "Active (Tap to Pause)"
             }
         } else {
             tile.state = Tile.STATE_INACTIVE
-            tile.label = "AutoText A11y"
+            tile.label = "AutoText Assistant"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.subtitle = "Paused (Bank-Safe)"
+                tile.subtitle = "Paused (Banking Safe)"
             }
         }
         tile.updateTile()

@@ -137,7 +137,8 @@ fun settingsBackupRestoreCard(
                                 }
                                 context.startActivity(Intent.createChooser(shareIntent, "Save or Share AutoText Backup"))
                                 context.showAppToast("Backup file generated (${json.length} bytes)")
-                            } catch (_: Exception) {
+                            } catch (e: Exception) {
+                                com.jmd.autotext.core.AppFileLogger.w("SettingsBackupRestoreCard", "File share fallback to plain text: ${e.message}")
                                 val json = repository.exportDatabaseToJson()
                                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                     type = "text/plain"

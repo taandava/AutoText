@@ -206,7 +206,7 @@ object SystemIndicatorResolver {
             SystemIndicator(
                 id = "battery_opt",
                 name = "Unrestricted Battery & Power",
-                description = "Ensures the Android operating system never kills the background automation worker, drip campaigns, or scheduled alarms due to battery saver restrictions.",
+                description = "Ensures the Android operating system does not suspend background tasks, drip campaigns, or scheduled alarms due to battery saver restrictions.",
                 icon = Icons.Default.Bolt,
                 isActive = isBatteryUnrestricted,
                 actionLabel = if (!isBatteryUnrestricted) "Disable Battery Optimization" else null,

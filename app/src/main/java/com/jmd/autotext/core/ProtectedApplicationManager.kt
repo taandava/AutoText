@@ -68,16 +68,21 @@ object ProtectedApplicationManager {
         "com.saraswat.mobile",                       // Saraswat Mobile
         "com.hdfcbank.mobilebanking",                // HDFC Bank MobileBanking
         "com.hdfcbank.payzapp",                      // HDFC Payzapp
+        "com.snapwork.hdfc",                         // HDFC Bank Alt
         "com.csam.icici.bank.imobile",               // ICICI iMobile Pay
         "com.icicibank.mobile",                      // ICICI Bank
         "com.axis.mobile",                           // Axis Mobile
         "com.axis.open",                             // Axis Open
         "com.kotak.bank",                            // Kotak Mobile Banking
         "com.kotak.kotakbank",                       // Kotak Bank
+        "com.kotak.omni",                            // Kotak 811
+        "com.msf.kbank.mobile",                      // Kotak Bank Mobile
         "com.pnb.pnbone",                            // PNB ONE
+        "com.pnb.one",                               // PNB ONE Alt
         "com.bankofbaroda.mconnect",                 // BoB World
         "com.canarabank.ai1",                        // Canara ai1
         "com.unionbank.ecommerce.mobile.android",    // Union Bank Vyom
+        "com.unionbank.neomobile",                   // Union Bank Vyom Alt
         "com.indusind.mobile",                       // IndusInd Bank
         "com.idbi.go",                               // IDBI Go Mobile
         "com.federalbank.fedmobile",                 // FedMobile
@@ -99,26 +104,59 @@ object ProtectedApplicationManager {
         "com.bandhanbank.digital",                   // Bandhan Bank Digital
         "com.csb.mobile",                            // CSB Bank Mobile
         "com.idfcfirstbank.optimus",                 // IDFC FIRST Bank
+        "com.overseas.iob",                          // Indian Overseas Bank (IOB)
+        "com.infrasofttech.iob",                     // IOB Mobile Banking
+        "com.iob.mmp",                               // IOB Nanban
+        "com.fss.ippb",                              // India Post Payments Bank (IPPB)
+        "com.ujjivan.mobilebanking",                 // Ujjivan Small Finance Bank
+        "com.equitas.mobile",                        // Equitas Small Finance Bank
+        "com.janabank.mobilebanking",                // Jana Small Finance Bank
+        "com.suryoday.smile",                        // Suryoday Small Finance Bank
+        "com.esaf.digital",                          // ESAF Small Finance Bank
+        "com.myairtelapp",                           // Airtel Thanks / Airtel Payments Bank
 
         // Wealth, Brokerage & Mutual Funds
         "com.zerodha.kite3",                         // Zerodha Kite
         "com.nextbillion.groww",                     // Groww
         "com.msf.angelmobile",                       // Angel One
+        "com.angelbroking",                          // Angel One Legacy
         "com.dhan.live",                             // Dhan
         "com.upstox",                                // Upstox
+        "in.upstox.pro",                             // Upstox Pro
+        "in.upstox.app",                             // Upstox Mobile
+        "com.fivepaisa.trade",                       // 5Paisa
+        "com.motilaloswal.invest",                   // Motilal Oswal
+        "com.hdfcsec.sky",                           // HDFC SKY
+        "com.icicidirect.mobile",                    // ICICI Direct
+        "com.kotak.neo",                             // Kotak Neo
+        "com.kotak.cherry",                          // Kotak Cherry
+        "com.sharekhan",                             // Sharekhan
         "com.navi.mutualfund",                       // Navi Mutual Fund
         "com.naviapp",                               // Navi Loans & UPI
+        "com.navi.markets",                          // Navi Markets
+        "com.navifinance",                           // Navi Finance
         "com.coindcx",                               // CoinDCX
         "com.coinswitch.kuber",                      // CoinSwitch Kuber
+        "com.wrx.wazirx",                            // WazirX
 
         // Neobanks, Payment Ecosystem & Credit Lines
         "com.slicepay",                              // Slice
+        "com.theslice.app",                          // Slice App
         "com.jupiter.money",                         // Jupiter
+        "money.jupiter",                             // Jupiter Money
         "com.fi.money",                              // Fi Money
+        "money.fi",                                  // Fi Money App
         "in.niyo",                                   // Niyo
+        "com.niyo.bharat",                           // Niyo Bharat
         "com.bajajfinserv.experia",                  // Bajaj Finserv
         "com.jio.finance",                           // JioFinance
-        "com.tatadigital.tcp"                        // Tata Neu
+        "com.tatadigital.tcp",                       // Tata Neu
+
+        // Government & Financial Identity Portals (India)
+        "com.digilocker.android",                    // DigiLocker (National Digital Credentials)
+        "in.net.uidai.mAadhaarPlus",                 // mAadhaar (National Identity Vault)
+        "in.gov.umang.negd.g2c",                     // UMANG (Unified Government Services / EPFO)
+        "in.gov.incometax.ais"                       // Annual Information Statement (Income Tax India)
     )
 
     /**
@@ -179,7 +217,17 @@ object ProtectedApplicationManager {
         "com.upstox",
         "com.navi",
         "com.coindcx",
-        "com.coinswitch"
+        "com.coinswitch",
+        "com.digilocker.",
+        "in.net.uidai.",
+        "in.gov.umang.",
+        "in.gov.incometax.",
+        "com.fss.ippb",
+        "com.ujjivan.",
+        "com.equitas.",
+        "com.fivepaisa.",
+        "com.motilaloswal.",
+        "com.sharekhan"
     )
 
     /**
@@ -236,7 +284,8 @@ object ProtectedApplicationManager {
         if (lower.contains("banking") || lower.contains("gomonxt") || lower.contains("saraswat") ||
             lower.contains(".upi.") || lower.contains("npci.bhim") || lower.contains(".yono.") ||
             lower.contains("mobilebanking") || lower.contains("walletnfcrel") || lower.contains("paisa.user") ||
-            lower.contains("wallet") || lower.contains("crypto") || lower.contains("finance") || lower.contains("fintech")) {
+            lower.contains("wallet") || lower.contains("crypto") || lower.contains("finance") || lower.contains("fintech") ||
+            lower.contains("digilocker") || lower.contains("aadhaar") || lower.contains("umang") || lower.contains("incometax")) {
             return true
         }
 

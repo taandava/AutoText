@@ -102,7 +102,12 @@ fun templateFormView(
                     )
                     // Dynamic Variable Chips
                     Text("Dynamic Variables:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    val templateVariables = listOf("{name}", "{first_name}", "{phone}", "{date}", "{short_date}", "{time}", "{day}", "{short_day}", "{day_num}")
+                    val templateVariables = listOf(
+                        "{name}", "{first_name}", "{phone}",
+                        "{time}", "{date}", "{day}",
+                        "{greeting}", "{namaste}", "{rupee}",
+                        "{short_date}", "{short_day}", "{day_num}"
+                    )
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         templateVariables.chunked(3).forEach { rowVars ->
                             Row(

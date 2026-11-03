@@ -27,20 +27,20 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun settingsAutoUnlockCard(
+fun settingsScreenAssistCard(
     context: Context,
     prefs: PreferenceManager,
     modifier: Modifier = Modifier
 ) {
-    var isAutoUnlock by remember { mutableStateOf(prefs.isAutoUnlockEnabled) }
-    var unlockType by remember { mutableStateOf(prefs.autoUnlockType) }
-    var unlockPin by remember { mutableStateOf(prefs.deviceUnlockPin) }
+    var isAutoUnlock by remember { mutableStateOf(prefs.isScreenAssistEnabled) }
+    var unlockType by remember { mutableStateOf(prefs.screenAssistType) }
+    var unlockPin by remember { mutableStateOf(prefs.screenAssistPin) }
     var isAutoLockAfterSend by remember { mutableStateOf(prefs.isAutoLockAfterSendEnabled) }
 
     appCard(modifier = modifier.fillMaxWidth()) {
-        Text("Screen Auto-Unlock & Auto-Lock", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
+        Text("Screen Task Assistance & Auto-Lock", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
         Spacer(modifier = Modifier.height(4.dp))
-        Text("AutoText can wake the device, enter your screen PIN, dispatch messages, and re-lock the device automatically.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+        Text("AutoText can wake the device, assist with lockscreen entry during dispatches, and securely re-lock the device automatically.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -50,14 +50,14 @@ fun settingsAutoUnlockCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Auto-Unlock When Locked", color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.Medium)
-                Text("Unlocks screen when scheduled messages fire", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
+                Text("Screen Assistance When Locked", color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                Text("Wakes screen and assists entry when scheduled tasks fire", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
             }
             Switch(
                 checked = isAutoUnlock,
                 onCheckedChange = {
                     isAutoUnlock = it
-                    prefs.isAutoUnlockEnabled = it
+                    prefs.isScreenAssistEnabled = it
                 },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = MaterialTheme.colorScheme.primary,
@@ -114,7 +114,7 @@ fun settingsAutoUnlockCard(
                 )
 
                 Text(
-                    "Fingerprint Auto-Switch: If your device uses fingerprint, AutoText automatically swipes up to switch to number lock and unlocks using this entered PIN/Password.",
+                    "Biometric Transition: If your device uses fingerprint or face unlock, AutoText automatically swipes up to switch to PIN/Password entry for the scheduled task.",
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp)
@@ -162,7 +162,7 @@ fun settingsAutoUnlockCard(
                     modifier = Modifier.weight(1f)
                 )
                 glassButton(
-                    text = "Test Screen Unlock",
+                    text = "Test Screen Wake & Unlock",
                     onClick = {
                         val currentPin = unlockPin.ifBlank { prefs.deviceUnlockPin }
                         if (!isAutoUnlock) {
@@ -192,3 +192,16 @@ fun settingsAutoUnlockCard(
         }
     }
 }
+
+/**
+ * Backward-compatible alias for [settingsScreenAssistCard].
+ */
+@Composable
+fun settingsAutoUnlockCard(
+    context: Context,
+    prefs: PreferenceManager,
+    modifier: Modifier = Modifier
+) {
+    settingsScreenAssistCard(context, prefs, modifier)
+}
+

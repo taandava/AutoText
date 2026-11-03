@@ -86,7 +86,7 @@ fun settingsView(
         topBar = {
             appSubScreenHeader(
                 title = "Settings & Security",
-                subtitle = "Hardware identity, lockscreen unlock, banking guard & backups",
+                subtitle = "Security, screen assistance, banking shield & backups",
                 onBack = onBack
             )
         },
@@ -111,9 +111,9 @@ fun settingsView(
                 )
             }
 
-            // 1. Lock Screen Automation Card
+            // 1. Lock Screen Assistance Card
             item {
-                settingsAutoUnlockCard(
+                settingsScreenAssistCard(
                     context = context,
                     prefs = prefs
                 )

@@ -49,7 +49,8 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         const val ACTION_SET_PREF = "com.jmd.autotext.ACTION_SET_PREF"
         const val ACTION_EMERGENCY_STOP = "com.jmd.autotext.ACTION_EMERGENCY_STOP"
         const val ACTION_RESET_EMERGENCY_STOP = "com.jmd.autotext.ACTION_RESET_EMERGENCY_STOP"
-        const val ACTION_TEST_AUTO_UNLOCK = "com.jmd.autotext.ACTION_TEST_AUTO_UNLOCK" 
+        const val ACTION_TEST_AUTO_UNLOCK = "com.jmd.autotext.ACTION_TEST_AUTO_UNLOCK"
+        const val ACTION_TEST_SCREEN_ASSIST = "com.jmd.autotext.ACTION_TEST_SCREEN_ASSIST" 
 
         /**
          * Cancels all scheduled alarms and deletes all tasks from the SQLite database.
@@ -169,7 +170,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             val now = System.currentTimeMillis()
 
             Log.i(TAG, "========== [START EXECUTION LOG DUMP (count=${logs.size})] ==========")
-            logs.takeLast(60).forEach { log ->
+            logs.take(60).forEach { log ->
                 Log.i(TAG, "EXEC_LOG: id=${log.id} taskId=${log.taskId} channel=${log.channel} recipient=${log.recipient} status=${log.status} details=${log.details}")
             }
             Log.i(TAG, "========== [END EXECUTION LOG DUMP] ==========")
@@ -188,7 +189,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                         appendLine("[ID: ${t.id}] ${t.title} | Channel: ${t.channel.displayName} | Status: ${t.status} | Trigger: in ${triggerDiffSec}s | Recurrence: ${t.recurrence.displayName} (custom: ${t.customIntervalMinutes}) | Recipients: ${t.recipients}")
                     }
                     appendLine("\n=== EXECUTION LOGS (Total: ${logs.size}) ===")
-                    logs.takeLast(100).forEach { log ->
+                    logs.take(100).forEach { log ->
                         appendLine("[${log.timestampMillis}] [taskId=${log.taskId}] [${log.channel}] [${log.recipient}] status=${log.status} details=${log.details} snippet=${log.messageSnippet}")
                     }
                     appendLine("\n=== SYSTEM TRACE LOGS TAIL ===")
@@ -210,7 +211,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
          */
          fun setupDailyCampaignContacts(
             context: Context,
-            phoneNumbers: List<String> = listOf("9769602020", "9769402020", "9930604542", "9820098200", "9819098190"),
+            phoneNumbers: List<String> = listOf("9769602020", "9930604542"),
             triggerImmediately: Boolean = false
         ): Int {
             val repository = AppRepository(context)
@@ -284,7 +285,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         if (intent.action == ACTION_SETUP_CAMPAIGN_CONTACTS) {
             val numbersParam = intent.getStringArrayExtra("numbers")?.toList()
                 ?: intent.getStringExtra("numbers")?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
-                ?: listOf("9769602020", "9769402020", "9930604542", "9820098200", "9819098190")
+                ?: listOf("9769602020", "9930604542")
             val triggerNow = intent.getBooleanExtra("triggerNow", false)
             val count = setupDailyCampaignContacts(context, numbersParam, triggerNow)
             Log.i(TAG, "ACTION_SETUP_CAMPAIGN_CONTACTS: Processed $count contacts, triggerNow=$triggerNow")
@@ -352,10 +353,10 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        if (intent.action == ACTION_TEST_AUTO_UNLOCK) {
-            val pin = intent.getStringExtra("pin") ?: PreferenceManager(context).deviceUnlockPin
-            Log.i(TAG, "Triggering testLockAndAutoUnlock via ACTION_TEST_AUTO_UNLOCK...")
-            com.jmd.autotext.service.AutoTextAccessibilityService.testLockAndAutoUnlock(context, pin)
+        if (intent.action == ACTION_TEST_AUTO_UNLOCK || intent.action == ACTION_TEST_SCREEN_ASSIST) {
+            val pin = intent.getStringExtra("pin") ?: PreferenceManager(context).screenAssistPin
+            Log.i(TAG, "Triggering testScreenAssist via ${intent.action}...")
+            com.jmd.autotext.service.AutoTextAccessibilityService.testScreenAssist(context, pin)
             return
         }
 
@@ -370,7 +371,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             val channel = try { ChannelType.valueOf(channelStr.uppercase()) } catch (_: Exception) { ChannelType.CALL }
             val recipientsParam = intent.getStringArrayExtra("recipients")?.toList()
                 ?: intent.getStringExtra("recipients")?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
-                ?: listOf("9769602020", "9769402020")
+                ?: listOf("9769602020", "9930604542")
             val callDurationSec = intent.getIntExtra("callDurationSeconds", 10)
             val includeDialTime = intent.getBooleanExtra("includeDialTimeInCallDuration", true)
             val delayBetweenCalls = intent.getIntExtra("delayBetweenCallsSeconds", 5)
@@ -379,9 +380,12 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                 PreferenceManager(context).isAutoLockAfterSendEnabled = intent.getBooleanExtra("autoLock", true)
             }
             val simulatedCallerName = intent.getStringExtra("simulatedCallerName")
-                ?: intent.getStringExtra("fakeCallerName") ?: msgText.ifBlank { "Incoming Call" }
+                ?: intent.getStringExtra("simulated_caller_name")
+                ?: msgText.ifBlank { "Incoming Call" }
             val simulatedCallerNumber = intent.getStringExtra("simulatedCallerNumber")
-                ?: intent.getStringExtra("fakeCallerNumber") ?: recipientsParam.firstOrNull() ?: "+91 98765 43210"
+                ?: intent.getStringExtra("simulated_caller_number")
+                ?: recipientsParam.firstOrNull()
+                ?: "+91 98765 43210"
             val soundMode = intent.getStringExtra("soundModeSetting") ?: "NORMAL"
             val mediaUri = intent.getStringExtra("mediaUri") ?: ""
 

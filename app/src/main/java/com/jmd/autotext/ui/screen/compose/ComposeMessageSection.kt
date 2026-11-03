@@ -460,7 +460,12 @@ fun composeRecipientsAndMessageCard(
         Spacer(modifier = Modifier.height(10.dp))
         Text("Dynamic Variables:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(4.dp))
-        val variables = listOf("{name}", "{first_name}", "{phone}", "{date}", "{short_date}", "{time}", "{day}", "{short_day}", "{day_num}")
+        val variables = listOf(
+            "{name}", "{first_name}", "{phone}",
+            "{time}", "{date}", "{day}",
+            "{greeting}", "{namaste}", "{rupee}",
+            "{short_date}", "{short_day}", "{day_num}"
+        )
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             variables.chunked(3).forEach { rowVars ->
                 Row(

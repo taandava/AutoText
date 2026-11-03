@@ -8,9 +8,7 @@
  */
 package com.jmd.autotext.core
 
-import android.annotation.SuppressLint
 import android.app.ActivityManager
-import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -353,30 +351,14 @@ class PrivacyManager private constructor(private val appContext: Context) {
     fun maskPhoneNumber(phone: String): String = Companion.maskPhoneNumber(phone)
 
     /**
-     * Detects the currently active foreground application package using AccessibilityService or UsageStatsManager.
+     * Detects the currently active foreground application package using AccessibilityService or ActivityManager.
      */
-    @SuppressLint("MissingPermission")
     fun getActiveForegroundPackage(): String? {
         // Priority 1: Instant active package from Accessibility Service
         val a11yPkg = AutoTextAccessibilityService.currentForegroundPackage
         if (!a11yPkg.isNullOrBlank()) return a11yPkg
 
-        // Priority 2: UsageStatsManager (if permission granted)
-        try {
-            val usm = appContext.getSystemService(Context.USAGE_STATS_SERVICE) as? UsageStatsManager
-            if (usm != null) {
-                val now = System.currentTimeMillis()
-                val stats = usm.queryUsageStats(UsageStatsManager.INTERVAL_BEST, now - 10000, now)
-                if (!stats.isNullOrEmpty()) {
-                    val topStat = stats.maxByOrNull { it.lastTimeUsed }
-                    if (topStat != null && topStat.packageName != appContext.packageName) {
-                        return topStat.packageName
-                    }
-                }
-            }
-        } catch (e: Throwable) { Log.d(TAG, "Foreground detection probe note: ${e.message}") }
-
-        // Priority 3: ActivityManager running tasks fallback
+        // Priority 2: ActivityManager running tasks fallback
         try {
             val am = appContext.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
             val processes = am?.runningAppProcesses
@@ -434,7 +416,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
             val enabled = AccessibilityHealthManager.enableAccessibilityService(appContext)
             if (!enabled) return false
             var waitMs = 0
-            while (AutoTextAccessibilityService.getInstance() == null && waitMs < 2500) {
+            while (AutoTextAccessibilityService.getInstance() == null && waitMs < 4000) {
                 Thread.sleep(100)
                 waitMs += 100
             }

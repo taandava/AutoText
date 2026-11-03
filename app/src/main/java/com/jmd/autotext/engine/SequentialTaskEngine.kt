@@ -45,6 +45,7 @@ import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.core.AutomationSafetyManager
 import com.jmd.autotext.core.MessageTemplateResolver
 import com.jmd.autotext.core.PhoneNumberNormalizer
+import com.jmd.autotext.core.PrivacyManager
 import com.jmd.autotext.core.SmsQuotaManager
 import com.jmd.autotext.core.WhatsAppPackageHelper
 import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
@@ -531,9 +532,9 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             putExtra(AutomationLauncherActivity.EXTRA_WAKE_ONLY, true)
         }
 
-        if (prefs.isAutoUnlockEnabled && km?.isKeyguardLocked == true) {
-            val pin = if (prefs.autoUnlockType != "SWIPE") prefs.deviceUnlockPin else ""
-            AutoTextAccessibilityService.armAutoUnlock(
+        if (prefs.isScreenAssistEnabled && km?.isKeyguardLocked == true) {
+            val pin = if (prefs.screenAssistType != "SWIPE") prefs.screenAssistPin else ""
+            AutoTextAccessibilityService.armScreenAssist(
                 pin = pin,
                 shouldRelockAfterSend = prefs.isAutoLockAfterSendEnabled
             )
@@ -650,6 +651,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     return false
                 }
 
+                PrivacyManager.getInstance(appContext).prepareAccessibilityForAutomation()
                 AccessibilityHealthManager.ensureServiceAlive(appContext)
                 ensureDeviceAwakeAndUnlocked(task, task.recipients.firstOrNull() ?: "")
                 delay(300.milliseconds)

@@ -9,6 +9,7 @@ package com.jmd.autotext.core
 
 import android.content.Context
 import android.util.Log
+import com.jmd.autotext.AutoTextApplication
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
@@ -120,6 +121,14 @@ object AppFileLogger {
     fun w(context: Context, tag: String, message: String, t: Throwable? = null) = log(context, "WARN", tag, message, t)
 
     /**
+     * Overload for logging warnings without explicit Context (resolves application singleton).
+     */
+    fun w(tag: String, message: String, t: Throwable? = null) {
+        val ctx = runCatching { AutoTextApplication.instance }.getOrNull()
+        if (ctx != null) w(ctx, tag, message, t) else Log.w(tag, message, t)
+    }
+
+    /**
      * Logs a critical error or unhandled exception to both execution and dedicated error logs.
      *
      * @param context Active Android [Context].
@@ -128,6 +137,30 @@ object AppFileLogger {
      * @param t Optional exception with stack trace.
      */
     fun e(context: Context, tag: String, message: String, t: Throwable? = null) = log(context, "ERROR", tag, message, t)
+
+    /**
+     * Overload for logging errors without explicit Context (resolves application singleton).
+     */
+    fun e(tag: String, message: String, t: Throwable? = null) {
+        val ctx = runCatching { AutoTextApplication.instance }.getOrNull()
+        if (ctx != null) e(ctx, tag, message, t) else Log.e(tag, message, t)
+    }
+
+    /**
+     * Overload for logging info without explicit Context.
+     */
+    fun i(tag: String, message: String) {
+        val ctx = runCatching { AutoTextApplication.instance }.getOrNull()
+        if (ctx != null) i(ctx, tag, message) else Log.i(tag, message)
+    }
+
+    /**
+     * Overload for logging debug without explicit Context.
+     */
+    fun d(tag: String, message: String) {
+        val ctx = runCatching { AutoTextApplication.instance }.getOrNull()
+        if (ctx != null) d(ctx, tag, message) else Log.d(tag, message)
+    }
 
     /**
      * Appends an immutable audit record to the CSV campaign ledger.

@@ -50,11 +50,31 @@ object MessageTemplateResolver {
         val dayNumber = SimpleDateFormat("dd", locale).format(cal.time)
         val timeFormatted = SimpleDateFormat("hh:mm a", locale).format(cal.time)
 
+        val hour = cal.get(Calendar.HOUR_OF_DAY)
+        val timeGreeting = when (hour) {
+            in 4..11 -> "Good morning"
+            in 12..16 -> "Good afternoon"
+            else -> "Good evening"
+        }
+
         val cleanName = name.trim().ifBlank { "there" }
         val firstName = cleanName.split(Regex("\\s+")).firstOrNull() ?: cleanName
         val cleanPhone = PhoneNumberNormalizer.extractRawPhoneNumber(phone)
 
+        val istCal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Kolkata")).apply { timeInMillis = targetTimestamp }
+        val istTimeFormatted = SimpleDateFormat("hh:mm a 'IST'", Locale.forLanguageTag("en-IN")).apply {
+            timeZone = TimeZone.getTimeZone("Asia/Kolkata")
+        }.format(istCal.time)
+
         return template
+            .replace("{greeting}", timeGreeting, ignoreCase = true)
+            .replace("{time_greeting}", timeGreeting, ignoreCase = true)
+            .replace("{namaste}", "Namaste", ignoreCase = true)
+            .replace("{pranam}", "Pranam", ignoreCase = true)
+            .replace("{rupee}", "₹", ignoreCase = true)
+            .replace("{currency}", "INR", ignoreCase = true)
+            .replace("{today}", dateFormatted, ignoreCase = true)
+            .replace("{ist_time}", istTimeFormatted, ignoreCase = true)
             .replace("{day}", dayOfWeek, ignoreCase = true)
             .replace("{short_day}", shortDay, ignoreCase = true)
             .replace("{date}", dateFormatted, ignoreCase = true)

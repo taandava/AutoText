@@ -255,9 +255,8 @@ fun callSimulationScreen(
 /**
  * Backward-compatible alias for [callSimulationScreen].
  */
-@Deprecated("Use callSimulationScreen instead for policy compliance", ReplaceWith("callSimulationScreen(name, number, style, onAnswer, onDecline)"))
 @Composable
-fun fakeCallScreen(
+fun simulatedCallScreen(
     name: String,
     number: String,
     style: String,

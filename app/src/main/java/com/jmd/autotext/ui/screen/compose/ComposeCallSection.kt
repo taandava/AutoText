@@ -147,27 +147,26 @@ fun composeCallSimulationAndSoundCard(
 /**
  * Backward-compatible alias for [composeCallSimulationAndSoundCard].
  */
-@Deprecated("Use composeCallSimulationAndSoundCard instead for policy compliance", ReplaceWith("composeCallSimulationAndSoundCard(selectedChannel, fakeCallerName, onFakeCallerNameChange, fakeCallerNumber, onFakeCallerNumberChange, fakeCallStyle, onFakeCallStyleChange, soundModeSetting, onSoundModeSettingChange)"))
 @Composable
-fun composeFakeCallAndSoundCard(
+fun composeSimulatedCallAndSoundCard(
     selectedChannel: ChannelType,
-    fakeCallerName: String,
-    onFakeCallerNameChange: (String) -> Unit,
-    fakeCallerNumber: String,
-    onFakeCallerNumberChange: (String) -> Unit,
-    fakeCallStyle: String,
-    onFakeCallStyleChange: (String) -> Unit,
+    simulatedCallerName: String,
+    onSimulatedCallerNameChange: (String) -> Unit,
+    simulatedCallerNumber: String,
+    onSimulatedCallerNumberChange: (String) -> Unit,
+    simulatedCallStyle: String,
+    onSimulatedCallStyleChange: (String) -> Unit,
     soundModeSetting: String,
     onSoundModeSettingChange: (String) -> Unit
 ) {
     composeCallSimulationAndSoundCard(
         selectedChannel = selectedChannel,
-        simulatedCallerName = fakeCallerName,
-        onSimulatedCallerNameChange = onFakeCallerNameChange,
-        simulatedCallerNumber = fakeCallerNumber,
-        onSimulatedCallerNumberChange = onFakeCallerNumberChange,
-        simulatedCallStyle = fakeCallStyle,
-        onSimulatedCallStyleChange = onFakeCallStyleChange,
+        simulatedCallerName = simulatedCallerName,
+        onSimulatedCallerNameChange = onSimulatedCallerNameChange,
+        simulatedCallerNumber = simulatedCallerNumber,
+        onSimulatedCallerNumberChange = onSimulatedCallerNumberChange,
+        simulatedCallStyle = simulatedCallStyle,
+        onSimulatedCallStyleChange = onSimulatedCallStyleChange,
         soundModeSetting = soundModeSetting,
         onSoundModeSettingChange = onSoundModeSettingChange
     )

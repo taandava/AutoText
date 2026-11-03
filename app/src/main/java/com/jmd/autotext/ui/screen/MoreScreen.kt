@@ -89,7 +89,7 @@ fun moreScreen(
     when (selectedSubSection) {
         "DAILY_SMS" -> dailyAutoSenderScreen(initialCampaignId = 1L, onBack = { navigateToSubSection("MENU") })
         "DAILY_WHATSAPP" -> dailyAutoSenderScreen(initialCampaignId = 2L, onBack = { navigateToSubSection("MENU") })
-        "WHATSAPP_SETUP" -> whatsAppSetupAndAutoUnlockView(context, prefs) { navigateToSubSection("MENU") }
+        "WHATSAPP_SETUP" -> whatsAppSetupAndScreenAssistView(context, prefs) { navigateToSubSection("MENU") }
         "SEQUENCES" -> contactSequenceStudio(onDismiss = { navigateToSubSection("MENU") }) { navigateToSubSection("MENU") }
         "TEMPLATES" -> templatesView(repository) { navigateToSubSection("MENU") }
         "BULK_CONTACTS" -> bulkContactsView(repository) { navigateToSubSection("MENU") }
@@ -183,7 +183,7 @@ fun moreScreen(
                 }
                 item {
                     menuItemCard(
-                        "WhatsApp & Auto-Unlock",
+                        "WhatsApp & Screen Assistance",
                         "📱",
                         Color(0xFF0D9488),
                     ) {

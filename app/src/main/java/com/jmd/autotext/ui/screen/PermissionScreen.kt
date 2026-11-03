@@ -164,7 +164,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
             item {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text("Individual Permissions & System Access", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface)
-                Text("Ensure these are granted so WhatsApp auto-unlock, alarms, and background sending run smoothly.", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Ensure these are granted so WhatsApp screen assistance, alarms, and background sending run smoothly.", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             // 2. Device Administration (Auto-Lock phone after task completes)
@@ -294,8 +294,9 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         }
                         context.startActivity(intent)
-                    } catch (_: Exception) {
-                        // Restricted environment fallback
+                    } catch (e: Exception) {
+                        com.jmd.autotext.core.AppFileLogger.w("PermissionScreen", "Failed to launch battery optimization settings: ${e.message}")
+                        context.showAppToast("Unable to open battery optimization settings directly.")
                     }
                 }
             }
@@ -475,7 +476,7 @@ internal fun statusPill(label: String, isOk: Boolean, modifier: Modifier = Modif
 }
 
 /**
- * Information card instructing users how to lock the app into recent tasks to prevent aggressive OEM process killers.
+ * Information card instructing users how to lock the app into recent tasks to prevent aggressive OEM background task termination.
  *
  * @param context Local Android context for resolving OEM device care settings intent.
  */
@@ -485,11 +486,11 @@ fun keepOpenRecentAppsCard(context: Context = LocalContext.current) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("🔒", fontSize = 20.sp)
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Keep Open in Recent Apps (Prevent Killing)", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface)
+            Text("Keep Open in Recent Tasks (Prevent App Termination)", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface)
         }
         Spacer(modifier = Modifier.height(6.dp))
         Text(
-            text = "To prevent Samsung One UI, Xiaomi, or OnePlus from killing the app or stopping its accessibility engine:\n\n" +
+            text = "To prevent Samsung One UI, Xiaomi, or OnePlus from terminating the background service or stopping its task assistance engine:\n\n" +
                     "• Samsung: Open Recent Apps (||| button) -> Tap AutoText icon at top of the card -> Tap 'Keep open' (padlock icon).\n" +
                     "• Xiaomi / HyperOS: In Recent Apps -> Long-press AutoText card -> Tap Padlock icon.\n" +
                     "• Oppo / Vivo / OnePlus: In Recent Apps -> Tap 3 dots (⋮) on AutoText -> Select 'Lock'.",

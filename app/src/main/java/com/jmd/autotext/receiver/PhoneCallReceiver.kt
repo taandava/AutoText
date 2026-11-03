@@ -220,14 +220,16 @@ class PhoneCallReceiver : BroadcastReceiver() {
             }
         } else {
             // Fallback when CallLog entry is unavailable or unreadable
-            if (capturedWasRinging && !capturedWasAnswered) {
-                Log.i(TAG, "Fallback: Inbound ringing without answer detected -> Missed Call.")
-                isMissedCall = true
-                isCallEnded = false
-            } else if (capturedWasRinging && capturedWasAnswered) {
-                Log.i(TAG, "Fallback: Inbound ringing with answer detected -> Call Ended.")
-                isMissedCall = false
-                isCallEnded = true
+            if (capturedWasRinging) {
+                if (!capturedWasAnswered) {
+                    Log.i(TAG, "Fallback: Inbound ringing without answer detected -> Missed Call.")
+                    isMissedCall = true
+                    isCallEnded = false
+                } else {
+                    Log.i(TAG, "Fallback: Inbound ringing with answer detected -> Call Ended.")
+                    isMissedCall = false
+                    isCallEnded = true
+                }
             } else {
                 // Outgoing call without CallLog duration confirmation:
                 // DEFENSIVELY IGNORE to prevent false auto-replies on unanswered dials!

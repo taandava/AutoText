@@ -192,11 +192,11 @@ object PermissionManager {
         PermissionFeatureInfo(
             permissionId = ID_BATTERY_OPTIMIZATION,
             featureName = "Unrestricted Battery & Power",
-            purpose = "Prevents OEM aggressive process killer from terminating alarms, campaigns, and scheduled tasks.",
+            purpose = "Prevents OEM battery optimization from suspending alarms, campaigns, and scheduled tasks.",
             canWorkWithout = true,
             isRuntimeApproval = false,
             requiresSpecialUserAction = true,
-            deniedImpact = "OEM system may kill scheduled tasks or alarms when screen is off for extended periods.",
+            deniedImpact = "OEM system may suspend scheduled tasks or alarms when screen is off for extended periods.",
             revocationSafety = "Safe to revoke anytime.",
             category = PermissionCategory.SYSTEM
         ),

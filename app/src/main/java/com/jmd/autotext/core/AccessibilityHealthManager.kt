@@ -355,8 +355,8 @@ object AccessibilityHealthManager {
             val healed = enableAccessibilityService(context)
             if (healed) {
                 val start = System.currentTimeMillis()
-                while (!isServiceRunning() && (System.currentTimeMillis() - start) < 2500L) {
-                    runCatching { Thread.sleep(120) }
+                while (!isServiceRunning() && (System.currentTimeMillis() - start) < 4000L) {
+                    runCatching { Thread.sleep(100) }
                 }
                 if (isServiceRunning()) {
                     Log.i(TAG, "Accessibility Service binder successfully revived and confirmed connected!")

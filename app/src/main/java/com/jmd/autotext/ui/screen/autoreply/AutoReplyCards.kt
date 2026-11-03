@@ -423,7 +423,12 @@ fun autoReplyTemplateCard(
         Spacer(modifier = Modifier.height(10.dp))
         Text("Dynamic Variables:", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(4.dp))
-        val tagList = listOf("{name}", "{first_name}", "{phone}", "{time}", "{date}", "{day}", "{short_date}", "{day_num}", "{event}")
+        val tagList = listOf(
+            "{name}", "{first_name}", "{phone}",
+            "{time}", "{date}", "{day}",
+            "{greeting}", "{namaste}", "{rupee}",
+            "{short_date}", "{day_num}", "{event}"
+        )
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             tagList.chunked(3).forEach { rowVars ->
                 Row(

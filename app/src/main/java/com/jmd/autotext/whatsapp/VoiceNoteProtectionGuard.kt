@@ -33,6 +33,7 @@ object VoiceNoteProtectionGuard {
         "voice message", "voice note", "audio message", "voice msg", "sound", "micro",
         "microphone", "rec", "वॉयस", "बोलें", "रेकॉर्ड",
         "आवाज़", "ऑडियो", "वॉइस", "ध्वनि", "रिकॉर्ड", "माइक", "व्हॉइस",
+        "रेकॉर्ड करा", "ध्वनी रेकॉर्ड", "വോയ്‌സ്", "రికార్డ్", "ಧ್ವನಿ ರೆಕಾರ್ಡ್", "ਵੌਇਸ", "ভয়েস রেকর্ড",
         "grabando", "mensaje de voz", "nota de voz", "mensagem de voz", "message vocal", "sprachnachricht",
         "pesan suara", "golosovoe"
     )
@@ -40,7 +41,8 @@ object VoiceNoteProtectionGuard {
     val SEND_KEYWORDS = listOf(
         "send", "send message", "enviar", "envoyer", "envía", "kirim", "invia",
         "enviar mensagem", "wyślij", "mandar", "gửi", "отправить", "ارسال", "post",
-        "senden", "gönder", "भेजें", "पाठवा", "पाठान", "पंपु", "அனுப்பு", "మోకలో",
+        "senden", "gönder", "भेजें", "पाठवा", "পাঠান", "పంపు", "పంపండి", "அனுப்பு",
+        "મોકલો", "પહોંચાડો", "ಕಳುಹಿಸಿ", "അയക്കുക", "ਭੇਜੋ", "ପଠାନ୍ତୁ",
         "stuur", "odeslat", "lähetä", "skicka", "poslat", "trimite", "αποστολή", "küldés"
     )
 

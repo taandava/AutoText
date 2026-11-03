@@ -47,7 +47,7 @@ import com.jmd.autotext.ui.theme.*
 /**
  * Guided onboarding and troubleshooting view for WhatsApp automation.
  *
- * Configures accessibility services, device lockscreen auto-unlock PINs, post-dispatch
+ * Configures accessibility services, device lockscreen screen assistance PINs, post-dispatch
  * auto-relock policies, battery optimization allowlists, and live end-to-end ping verification.
  *
  * @param context Active Android [Context].
@@ -55,14 +55,14 @@ import com.jmd.autotext.ui.theme.*
  * @param onBack Callback invoked to exit setup view.
  */
 @Composable
-fun whatsAppSetupAndAutoUnlockView(
+fun whatsAppSetupAndScreenAssistView(
     context: Context,
     prefs: PreferenceManager,
     onBack: () -> Unit,
 ) {
-    var isAutoUnlock by remember { mutableStateOf(prefs.isAutoUnlockEnabled) }
-    var unlockType by remember { mutableStateOf(prefs.autoUnlockType) }
-    var pinCode by remember { mutableStateOf(prefs.deviceUnlockPin) }
+    var isAutoUnlock by remember { mutableStateOf(prefs.isScreenAssistEnabled) }
+    var unlockType by remember { mutableStateOf(prefs.screenAssistType) }
+    var pinCode by remember { mutableStateOf(prefs.screenAssistPin) }
     var isAutoLockAfterSend by remember { mutableStateOf(prefs.isAutoLockAfterSendEnabled) }
     var countryCode by remember { mutableStateOf(prefs.defaultCountryCode) }
 
@@ -75,8 +75,8 @@ fun whatsAppSetupAndAutoUnlockView(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             appSubScreenHeader(
-                title = "WhatsApp & Screen Auto-Unlock",
-                subtitle = "Accessibility & automation setup",
+                title = "WhatsApp & Screen Task Assistance",
+                subtitle = "Accessibility & task assistance setup",
                 onBack = onBack
             )
         },
@@ -119,7 +119,7 @@ fun whatsAppSetupAndAutoUnlockView(
                         Icon(Icons.Default.LockClock, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            "Screen Auto-Unlock & Auto-Lock",
+                            "Screen Task Assistance & Auto-Lock",
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -128,22 +128,22 @@ fun whatsAppSetupAndAutoUnlockView(
 
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "Allows AutoText to wake your screen, enter your device PIN when locked, send scheduled messages, and automatically lock the screen back.",
+                        "Allows AutoText to wake your screen, assist with PIN entry when locked, dispatch scheduled tasks, and securely re-lock the screen.",
                         fontSize = 11.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Toggle Auto-Unlock
+                    // Toggle Screen Assistance
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("Auto-Unlock When Locked", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.5.sp)
-                            Text("Wakes screen and unlocks device automatically", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
+                            Text("Screen Assistance When Locked", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.5.sp)
+                            Text("Wakes screen and assists entry for scheduled tasks", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                         }
                         Switch(
                             checked = isAutoUnlock,
@@ -262,14 +262,14 @@ fun whatsAppSetupAndAutoUnlockView(
                             modifier = Modifier.weight(1f)
                         )
                         glassButton(
-                            text = "Test Screen Unlock",
+                            text = "Test Screen Assist",
                             onClick = {
-                                val currentPin = pinCode.ifBlank { prefs.deviceUnlockPin }
+                                val currentPin = pinCode.ifBlank { prefs.screenAssistPin }
                                 if (!isAutoUnlock) {
                                     isAutoUnlock = true
-                                    prefs.isAutoUnlockEnabled = true
+                                    prefs.isScreenAssistEnabled = true
                                 }
-                                AutoTextAccessibilityService.testLockAndAutoUnlock(context, currentPin)
+                                AutoTextAccessibilityService.testScreenAssist(context, currentPin)
                             },
                             icon = Icons.Default.LockOpen,
                             variant = GlassButtonVariant.PRIMARY,
@@ -388,7 +388,7 @@ fun whatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
                 )
                 Text(
                     text = when {
-                        isOperational -> "Active in background. Ready to dispatch scheduled messages and auto-unlock."
+                        isOperational -> "Active in background. Ready to dispatch scheduled messages with screen assistance."
                         isDynamicStandby -> "Active & Ready. Safely detached while idle so banking and payment apps work with 0 warnings. Auto-connects in 0.05s on task!"
                         else -> "Enable AutoText Assistant in Settings > Accessibility > Installed apps."
                     },
@@ -521,7 +521,9 @@ fun whatsAppBatteryOptimizationCard(context: Context) {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
                     context.startActivity(intent)
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    com.jmd.autotext.core.AppFileLogger.w("WhatsAppSetupScreen", "Could not open battery optimization settings: ${e.message}")
+                    context.showAppToast("Unable to open battery optimization settings directly. Please check device Settings.")
                 }
             },
             icon = Icons.Default.BatteryChargingFull,
@@ -558,7 +560,7 @@ fun whatsAppLiveTestCard(
         }
 
         Spacer(modifier = Modifier.height(4.dp))
-        Text("Test sending a WhatsApp message right now. Lock your screen right after tapping if you want to test auto-unlock!", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text("Test sending a WhatsApp message right now. Lock your screen right after tapping if you want to test screen assistance!", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -622,4 +624,19 @@ fun whatsAppLiveTestCard(
         )
     }
 }
+
+/**
+ * Backward-compatible deprecated alias for [whatsAppSetupAndScreenAssistView].
+ */
+@Deprecated(
+    message = "Use whatsAppSetupAndScreenAssistView for policy-compliant naming",
+    replaceWith = ReplaceWith("whatsAppSetupAndScreenAssistView(context, prefs, onBack)")
+)
+@Composable
+fun whatsAppSetupAndAutoUnlockView(
+    context: Context,
+    prefs: PreferenceManager,
+    onBack: () -> Unit
+) = whatsAppSetupAndScreenAssistView(context, prefs, onBack)
+
 

@@ -61,9 +61,8 @@ class AutomationLauncherActivity : Activity() {
         // Acquire wake lock to ensure CPU remains active during unlock execution
         try {
             val pm = getSystemService(POWER_SERVICE) as PowerManager
-            @Suppress("DEPRECATION")
             wakeLock = pm.newWakeLock(
-                PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP or PowerManager.ON_AFTER_RELEASE,
+                PowerManager.PARTIAL_WAKE_LOCK,
                 "AutoText:LauncherWakeLock",
             )
             wakeLock?.acquire(15000L)
@@ -117,9 +116,9 @@ class AutomationLauncherActivity : Activity() {
             }
             finish()
 
-            // Post armAutoUnlock with delay to ensure activity window is fully torn down
+            // Post armScreenAssist with delay to ensure activity window is fully torn down
             handler.postDelayed({
-                AutoTextAccessibilityService.armAutoUnlock(
+                AutoTextAccessibilityService.armScreenAssist(
                     pin = passedPin,
                     shouldRelockAfterSend = false,
                 )
@@ -140,9 +139,9 @@ class AutomationLauncherActivity : Activity() {
                     AutoTextAccessibilityService.isKeyguardWindowShowing()
             AppFileLogger.action(this, TAG, "Wake-only trampoline invoked. Locked: $isLockedNow, Task: #$taskId, Channel: $channelStr")
 
-            if (isLockedNow && prefs.isAutoUnlockEnabled) {
-                val pinToUse = if (prefs.autoUnlockType != "SWIPE") prefs.deviceUnlockPin else ""
-                AutoTextAccessibilityService.armAutoUnlock(
+            if (isLockedNow && prefs.isScreenAssistEnabled) {
+                val pinToUse = if (prefs.screenAssistType != "SWIPE") prefs.screenAssistPin else ""
+                AutoTextAccessibilityService.armScreenAssist(
                     pin = pinToUse,
                     shouldRelockAfterSend = false,
                 )
@@ -165,9 +164,9 @@ class AutomationLauncherActivity : Activity() {
         Log.d(TAG, "Automation launcher created. Screen locked: $isLocked, Task: $taskId, To: $recipient, Media: $mediaUri")
         AppFileLogger.action(this, TAG, "Automation launcher activated. Locked: $isLocked, Task: #$taskId, Recipient: $recipient, Media: $mediaUri")
 
-        if (isLocked && prefs.isAutoUnlockEnabled) {
-            val pinToUse = if (prefs.autoUnlockType != "SWIPE") prefs.deviceUnlockPin else ""
-            AppFileLogger.action(this, TAG, "Arming auto-unlock routine for task #$taskId")
+        if (isLocked && prefs.isScreenAssistEnabled) {
+            val pinToUse = if (prefs.screenAssistType != "SWIPE") prefs.screenAssistPin else ""
+            AppFileLogger.action(this, TAG, "Arming screen task assistance routine for task #$taskId")
             AutoTextAccessibilityService.setPendingAutomation(
                 taskId = taskId,
                 channel = channel,
@@ -177,7 +176,7 @@ class AutomationLauncherActivity : Activity() {
                 isBatch = intent.getBooleanExtra(EXTRA_IS_BATCH, false),
                 mediaUri = mediaUri,
             )
-            AutoTextAccessibilityService.armAutoUnlock(
+            AutoTextAccessibilityService.armScreenAssist(
                 pin = pinToUse,
                 shouldRelockAfterSend = shouldRelock,
             )

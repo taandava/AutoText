@@ -167,7 +167,7 @@ fun autoReplyScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     appEmptyState(
-                        emoji = "🤖",
+                        emoji = "💬",
                         title = "No Auto-Reply Rules",
                         description = "Create automatic responder rules for missed phone calls, incoming SMS or WhatsApp chats.",
                         actionText = "Create Auto-Reply Rule",

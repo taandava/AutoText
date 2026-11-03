@@ -2,8 +2,8 @@
  * Package: com.jmd.autotext.core
  * Module: Core Automation Utilities
  *
- * Provides fail-safe protections, global emergency kill-switching, and channel-level
- * circuit breakers preventing automation runaway loops and device lockouts.
+ * Provides fail-safe protections, global emergency safety halt controls, and channel-level
+ * circuit breakers preventing task execution loops and unintended dispatches.
  */
 package com.jmd.autotext.core
 

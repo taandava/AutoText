@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- AutoText Android 13+ Themed Monochrome Icon (💬 Speech Balloon Silhouette with Cutout Dots) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M 54,26 C 68.9,26 81,35 81,46 C 81,57 68.9,66 54,66 C 48,66 43,65 39,63.5 C 35,66 32,71 31,74 C 32,69 31.5,63.5 29.5,58.5 C 27.8,55 27,50.7 27,46 C 27,35 39.1,26 54,26 Z M 41,42.7 A 3.3,3.3 0 1,1 41,49.3 A 3.3,3.3 0 1,1 41,42.7 Z M 54,42.7 A 3.3,3.3 0 1,1 54,49.3 A 3.3,3.3 0 1,1 54,42.7 Z M 67,42.7 A 3.3,3.3 0 1,1 67,49.3 A 3.3,3.3 0 1,1 67,42.7 Z" />
+
+</vector>
+

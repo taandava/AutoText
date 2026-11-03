@@ -387,7 +387,9 @@ class WhatsAppStatusEngine(
     ): AccessibilityNodeInfo? {
         val keywords = listOf(
             "my status", "mi estado", "mon statut", "mein status",
-            "mio stato", "meu status", "मेरा स्टेटस", "माझा स्टेटस", "ना स्टेटस"
+            "mio stato", "meu status", "मेरा स्टेटस", "माझा स्टेटस", "నా స్టేటస్",
+            "আমার স্ট্যাটাস", "எனது நிலை", "என் நிலை", "నా స్థితి", "મારું સ્ટેટસ",
+            "ನನ್ನ ಸ್ಥಿತಿ", "എന്റെ സ്റ്റാറ്റസ്", "ਮੇਰਾ ਸਟੇਟਸ", "ମୋର ସ୍ଥିତି"
         )
 
         // Pass 1: find node whose text or desc explicitly contains "my status"
@@ -587,7 +589,7 @@ class WhatsAppStatusEngine(
         }
         return AccessibilityNodeUtils.findNodeByTextOrDesc(
             root,
-            listOf("updates", "status", "novedades", "aktualisierungen", "अपडेट"),
+            listOf("updates", "status", "novedades", "aktualisierungen", "अपडेट", "अपडेट्स", "নবায়ন", "புதுப்பிப்புகள்", "నవీకరణలు", "ಅಪ್‌ಡೇಟ್‌ಗಳು", "സ്റ്റാറ്റസ്"),
             windows = windows
         )?.takeIf { it.isVisibleToUser }
     }

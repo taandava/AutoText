@@ -402,6 +402,7 @@ class WhatsAppCallEngine(
     ): AccessibilityNodeInfo? {
         val actionWords = listOf(
             "call", "start call", "start voice call", "voice call", "audio call",
+            "कॉल", "कॉल करें", "वॉयस कॉल", "कॉल करा", "व्हॉईस कॉल", "কল", "ভয়েস কল", "அழை", "குரல் அழைப்பு",
             "ok", "call anyway", "continue", "while using the app", "only this time",
             "allow", "yes", "confirm", "got it"
         )
@@ -533,7 +534,13 @@ class WhatsAppCallEngine(
                     desc.equals("Audio call", ignoreCase = true) ||
                     desc.equals("Start voice call", ignoreCase = true) ||
                     desc.equals("Start call", ignoreCase = true) ||
-                    (desc.equals("Call", ignoreCase = true) && !desc.contains("video", ignoreCase = true))
+                    desc.equals("वॉयस कॉल", ignoreCase = true) ||
+                    desc.equals("व्हॉईस कॉल", ignoreCase = true) ||
+                    desc.equals("ভয়েস কল", ignoreCase = true) ||
+                    desc.equals("குரல் அழைப்பு", ignoreCase = true) ||
+                    (desc.equals("Call", ignoreCase = true) && !desc.contains("video", ignoreCase = true)) ||
+                    desc.equals("कॉल करें", ignoreCase = true) ||
+                    desc.equals("कॉल करा", ignoreCase = true)
                 ) {
                     return node
                 }
@@ -544,7 +551,11 @@ class WhatsAppCallEngine(
                 }
 
                 // 3. Text matching "Voice call" / "Audio call"
-                if (text.equals("Voice call", ignoreCase = true) || text.equals("Audio call", ignoreCase = true) || (text.equals("Call", ignoreCase = true) && !desc.contains("video", ignoreCase = true))) {
+                if (text.equals("Voice call", ignoreCase = true) || text.equals("Audio call", ignoreCase = true) ||
+                    text.equals("वॉयस कॉल", ignoreCase = true) || text.equals("व्हॉईस कॉल", ignoreCase = true) ||
+                    (text.equals("Call", ignoreCase = true) && !desc.contains("video", ignoreCase = true)) ||
+                    text.equals("कॉल", ignoreCase = true)
+                ) {
                     return node
                 }
 

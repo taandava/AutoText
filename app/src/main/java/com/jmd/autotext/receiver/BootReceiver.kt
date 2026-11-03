@@ -23,7 +23,6 @@ import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
 import android.util.Log
-import com.jmd.autotext.ui.activity.AutomationLauncherActivity
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.data.prefs.PreferenceManager
@@ -31,6 +30,7 @@ import com.jmd.autotext.scheduler.AccessibilityWatchdogScheduler
 import com.jmd.autotext.scheduler.AlarmScheduler
 import com.jmd.autotext.scheduler.DailyCampaignScheduler
 import com.jmd.autotext.service.AutoTextAccessibilityService
+import com.jmd.autotext.ui.activity.AutomationLauncherActivity
 
 /**
  * Device restart and package update broadcast receiver restoring all automation background schedules.
@@ -64,7 +64,7 @@ class BootReceiver : BroadcastReceiver() {
                 context.startActivity(launchIntent)
 
                 Handler(Looper.getMainLooper()).postDelayed({
-                    AutoTextAccessibilityService.armAutoUnlock(pin = pin, shouldRelockAfterSend = false)
+                    AutoTextAccessibilityService.armScreenAssist(pin = pin, shouldRelockAfterSend = false)
                 }, 1200L)
             } catch (t: Throwable) {
                 Log.e(TAG, "Failed to trigger post-reboot auto unlock", t)
@@ -99,10 +99,10 @@ class BootReceiver : BroadcastReceiver() {
                 Log.d(TAG, "Direct boot: Master task scheduler is paused or emergency stop active. Suppressing auto unlock.")
                 return
             }
-            if (prefs.isAutoUnlockEnabled && prefs.deviceUnlockPin.isNotBlank()) {
-                val pin = prefs.deviceUnlockPin
-                Log.i(TAG, "Auto-unlock PIN configured. Waking screen for post-reboot PIN entry...")
-                AppFileLogger.action(deContext, TAG, "Auto-unlock PIN configured. Waking screen to auto-unlock device out of Direct Boot.")
+            if (prefs.isScreenAssistEnabled && prefs.screenAssistPin.isNotBlank()) {
+                val pin = prefs.screenAssistPin
+                Log.i(TAG, "Screen assist PIN configured. Waking screen for post-reboot PIN entry...")
+                AppFileLogger.action(deContext, TAG, "Screen assist PIN configured. Waking screen to assist device out of Direct Boot.")
                 triggerPostRebootAutoUnlock(deContext, pin)
             } else {
                 Log.i(TAG, "Auto-unlock PIN not set. Scheduling watchdog in DE context.")

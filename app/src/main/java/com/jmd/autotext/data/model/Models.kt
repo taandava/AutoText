@@ -92,12 +92,18 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
          * Backward-compatible alias for [CALL_SIMULATION].
          */
         @JvmField
+        val SIMULATED_CALL: ChannelType = CALL_SIMULATION
+
+        /**
+         * Backward-compatible alias for [CALL_SIMULATION].
+         */
+        @JvmField
         val FAKE_CALL: ChannelType = CALL_SIMULATION
 
         fun fromString(value: String?): ChannelType {
             if (value.isNullOrBlank()) return SMS
             return when (val clean = value.trim().uppercase()) {
-                "CALL_SIMULATION", "SIMULATION", "FAKE_CALL", "FAKECALL" -> CALL_SIMULATION
+                "CALL_SIMULATION", "SIMULATION", "SIMULATED_CALL", "FAKE_CALL", "FAKECALL" -> CALL_SIMULATION
                 else -> entries.firstOrNull { it.name == clean } ?: SMS
             }
         }

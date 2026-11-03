@@ -156,7 +156,7 @@ fun mainAppHost(
                         "ROCKET" -> "🚀"
                         "FIRE" -> "🔥"
                         "DIAMOND" -> "💎"
-                        "BOT" -> "🤖"
+                        "ASSISTANT", "COMPANION", "BOT" -> "✨"
                         else -> "⚡"
                     }
                     val iconColor = when (iconVariant) {
@@ -165,7 +165,7 @@ fun mainAppHost(
                         "ROCKET" -> Color(0xFFEF4444)
                         "FIRE" -> Color(0xFFF97316)
                         "DIAMOND" -> Color(0xFF06B6D4)
-                        "BOT" -> Color(0xFF8B5CF6)
+                        "ASSISTANT", "COMPANION", "BOT" -> Color(0xFF8B5CF6)
                         else -> MaterialTheme.colorScheme.primary
                     }
 
@@ -296,7 +296,7 @@ fun mainAppHost(
                     val navItems = listOf(
                         Triple(0, "Tasks", "📅"),
                         Triple(1, "Campaigns", "🚀"),
-                        Triple(2, "Smart Reply", "🤖"),
+                        Triple(2, "Auto-Reply", "💬"),
                         Triple(3, "Tools", "⚙️")
                     )
 

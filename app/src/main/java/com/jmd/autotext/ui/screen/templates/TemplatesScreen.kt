@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FormatQuote
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -85,12 +86,58 @@ fun templatesView(repository: AppRepository, onBack: () -> Unit) {
             containerColor = AppDesignTokens.VoidBackground
         ) { padding ->
             if (templates.isEmpty()) {
-                appEmptyState(
-                    title = "No Templates Saved",
-                    description = "Create reusable templates with dynamic tags like {name} and {date}.",
-                    icon = Icons.Default.FormatQuote,
-                    modifier = Modifier.fillMaxSize().padding(padding)
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .padding(horizontal = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    appEmptyState(
+                        title = "No Templates Saved",
+                        description = "Create reusable templates with dynamic tags like {name}, {greeting}, and {date}.",
+                        icon = Icons.Default.FormatQuote,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    com.jmd.autotext.ui.components.glassButton(
+                        text = "Load Starter India Templates 🇮🇳",
+                        emoji = "✨",
+                        variant = com.jmd.autotext.ui.components.GlassButtonVariant.PRIMARY,
+                        onClick = {
+                            val starters = listOf(
+                                MessageTemplate(
+                                    title = "Busy / In Meeting",
+                                    category = "Quick Replies",
+                                    content = "{greeting} {first_name}, I am currently in a meeting. Will call you back shortly. Thanks!"
+                                ),
+                                MessageTemplate(
+                                    title = "Festival Greetings",
+                                    category = "Festivals",
+                                    content = "Wishing you and your family a very joyful, peaceful, and prosperous celebration! Warm regards, {name}"
+                                ),
+                                MessageTemplate(
+                                    title = "Business Connect",
+                                    category = "Business",
+                                    content = "Namaste {first_name}, following up regarding our discussion. Please let me know when convenient to connect today."
+                                ),
+                                MessageTemplate(
+                                    title = "Payment / Due Reminder",
+                                    category = "Finance",
+                                    content = "Namaste {name}, gentle reminder regarding your pending invoice of {rupee} due on {date}. Kindly arrange the settlement. Thanks!"
+                                ),
+                                MessageTemplate(
+                                    title = "Appointment Confirmation",
+                                    category = "Appointments",
+                                    content = "Namaste {first_name}, your scheduled slot is confirmed for {time} on {date}. Thank you!"
+                                )
+                            )
+                            starters.forEach { repository.insertTemplate(it) }
+                            templates = repository.getAllTemplates()
+                        }
+                    )
+                }
             } else {
                 LazyColumn(
                     modifier = Modifier

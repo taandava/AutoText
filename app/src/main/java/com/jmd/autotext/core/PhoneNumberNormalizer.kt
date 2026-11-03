@@ -229,7 +229,9 @@ object PhoneNumberNormalizer {
     }
 
     /**
-     * Identifies emergency service numbers (112, 100, 101, 102, 108, 1090, 1091, 1098, 1930, 1075, 1070, 1077, 1072, 1073, 139, 911, 999)
+     * Identifies emergency service numbers and Indian national helplines
+     * (112, 100, 101, 102, 108, 1090, 1091, 1098, 1930, 1075, 1070, 1077, 1072, 1073, 139,
+     *  1947, 1909, 155260, 104, 1097, 1064, 1076, 14416, 1033, 1071, 1099, 182, 911, 999)
      * to strictly block automated dispatch and protect national emergency helplines.
      *
      * @param raw Target phone string.
@@ -239,8 +241,40 @@ object PhoneNumberNormalizer {
         val digits = raw.filter(Char::isDigit)
         return digits in setOf(
             "112", "100", "101", "102", "108", "1090", "1091", "1098", "1930",
-            "1075", "1070", "1077", "1072", "1073", "139", "911", "999"
+            "1075", "1070", "1077", "1072", "1073", "139", "1947", "1909", "155260",
+            "104", "1097", "1064", "1076", "14416", "1033", "1071", "1099", "182",
+            "911", "999"
         )
+    }
+
+    /**
+     * Verifies if a number represents an active Indian mobile subscriber (+91 followed by 10 digits starting with 6, 7, 8, or 9).
+     *
+     * @param raw Raw or formatted phone number.
+     * @return True if valid Indian mobile subscriber.
+     */
+    fun isIndianMobileNumber(raw: String?): Boolean {
+        if (raw.isNullOrBlank()) return false
+        val norm = normalize(raw, "+91")
+        if (!norm.startsWith("+91") || norm.length != 13) return false
+        val nationalPart = norm.drop(3)
+        return nationalPart.length == 10 && nationalPart[0] in listOf('6', '7', '8', '9')
+    }
+
+    /**
+     * Formats an Indian or international phone number for clean user interface rendering.
+     * For Indian numbers: transforms +919876543210 into "+91 98765 43210".
+     *
+     * @param raw Phone number string.
+     * @return User-friendly formatted phone string.
+     */
+    fun formatForDisplay(raw: String): String {
+        val norm = normalize(raw, "+91")
+        if (norm.startsWith("+91") && norm.length == 13) {
+            val digits = norm.drop(3)
+            return "+91 ${digits.take(5)} ${digits.drop(5)}"
+        }
+        return norm.ifBlank { raw.trim() }
     }
 
     /**

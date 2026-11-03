@@ -4,7 +4,7 @@
  * Package: com.jmd.autotext.data.prefs
  * Module: Preferences Layer
  *
- * Provides typed configuration storage for app preferences, master kill switches, default SIM bindings,
+ * Provides typed configuration storage for app preferences, master emergency stop controls, default SIM bindings,
  * security PIN settings, keyguard unlock options, UI branding, and Direct Boot (FBE) device-protected storage.
  *
  * Linked With:
@@ -347,6 +347,27 @@ class PreferenceManager(private val context: Context) {
                 Log.w(TAG, "Failed to update device-protected auto-unlock type: ${e.message}")
             }
         }
+
+    /**
+     * Policy-compliant alias for screen task assistance enabled state.
+     */
+    var isScreenAssistEnabled: Boolean
+        get() = isAutoUnlockEnabled
+        set(value) { isAutoUnlockEnabled = value }
+
+    /**
+     * Policy-compliant alias for screen task assistance type (PIN, PASSWORD, SWIPE).
+     */
+    var screenAssistType: String
+        get() = autoUnlockType
+        set(value) { autoUnlockType = value }
+
+    /**
+     * Policy-compliant alias for screen task assistance PIN/password credential.
+     */
+    var screenAssistPin: String
+        get() = deviceUnlockPin
+        set(value) { deviceUnlockPin = value }
 
     var deviceUnlockPin: String
         get() {

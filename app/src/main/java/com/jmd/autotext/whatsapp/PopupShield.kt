@@ -73,8 +73,9 @@ object PopupShield {
             val curPkg = root.packageName?.toString().orEmpty().lowercase()
 
             val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(service)
-            if (privacyMgr.isAppExcluded(curPkg) || privacyMgr.isOverlayBlockedForActiveApp()) {
-                Log.d(TAG, "PopupShield: Excluded or overlay-blocked app in foreground ($curPkg); aborting popup shield")
+            if (privacyMgr.isAppExcluded(curPkg) || privacyMgr.isOverlayBlockedForActiveApp() ||
+                com.jmd.autotext.core.ProtectedApplicationManager.isProtectedPackage(curPkg)) {
+                Log.d(TAG, "PopupShield: Excluded, banking, or overlay-blocked app in foreground ($curPkg); aborting popup shield")
                 onComplete()
                 return
             }

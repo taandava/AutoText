@@ -102,7 +102,13 @@ object WhatsAppDialogHandler {
                 "can't find this phone number",
                 "couldn't find this phone number",
                 "invite to whatsapp",
-                "invite friend"
+                "invite friend",
+                "व्हाट्सएप पर नहीं है",
+                "व्हाट्सऐप पर नहीं है",
+                "अमान्य फ़ोन नंबर",
+                "अमान्य फोन नंबर",
+                "आमंत्रित करें",
+                "व्हॉट्सॲपवर नाही"
             )
 
             var isDialogError = false

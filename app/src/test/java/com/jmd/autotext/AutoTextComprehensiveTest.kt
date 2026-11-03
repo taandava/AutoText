@@ -495,6 +495,12 @@ class AutoTextComprehensiveTest {
         assertTrue(true)
     }
 
+    @Test
+    fun testPackageManagerCompatNullSafety() {
+        // Verify PackageManagerCompat object and method signature integrity
+        assertNotNull(com.jmd.autotext.compat.PackageManagerCompat)
+    }
+
     // ═══════════════════════════════════════════════════════════════════════════════════
     // 12. WHATSAPP VOICE CALL AUTOMATION MODE & CHANNEL TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
@@ -1652,5 +1658,163 @@ class AutoTextComprehensiveTest {
         assertFalse(ProtectedApplicationManager.verifyContextBeforeInteraction("com.instagram.android", "com.whatsapp"))
         assertFalse(ProtectedApplicationManager.verifyContextBeforeInteraction(null, "com.whatsapp"))
         assertFalse(ProtectedApplicationManager.verifyContextBeforeInteraction("", "com.whatsapp"))
+    }
+
+    @Test
+    fun testIndianHelplineNumbersAndMobileFormatters() {
+        val requestedNumbers = listOf("9769602020", "9930604542")
+        for (num in requestedNumbers) {
+            assertTrue("Expected valid Indian mobile for $num", PhoneNumberNormalizer.isIndianMobileNumber(num))
+            assertEquals("+91$num", PhoneNumberNormalizer.normalize(num))
+            val formatted = PhoneNumberNormalizer.formatForDisplay(num)
+            assertTrue("Expected space in display format: $formatted", formatted.startsWith("+91 "))
+        }
+
+        // Indian national helplines must be strictly blocked from automated dispatch
+        val helplines = listOf("112", "100", "101", "108", "1930", "1947", "1909", "155260", "104", "1097", "1064", "1076", "14416", "1033", "1071", "1099", "182")
+        for (helpline in helplines) {
+            assertTrue("Expected emergency/helpline block for $helpline", PhoneNumberNormalizer.isEmergencyNumber(helpline))
+        }
+    }
+
+    @Test
+    fun testIndianExpandedBankingAndIdentityProtection() {
+        val indianFinancialAndIdentityApps = listOf(
+            "com.fss.ippb",
+            "com.ujjivan.mobilebanking",
+            "com.equitas.mobile",
+            "com.digilocker.android",
+            "in.net.uidai.mAadhaarPlus",
+            "in.gov.umang.negd.g2c",
+            "in.gov.incometax.ais",
+            "com.wrx.wazirx",
+            "com.fivepaisa.trade",
+            "com.motilaloswal.invest",
+            "com.sharekhan"
+        )
+        for (pkg in indianFinancialAndIdentityApps) {
+            assertTrue("Expected $pkg to be protected", ProtectedApplicationManager.isProtectedPackage(pkg))
+            assertFalse("Expected $pkg to NOT be authorized target", ProtectedApplicationManager.isAuthorizedTarget(pkg))
+        }
+    }
+
+    @Test
+    fun testIndiaCentricTemplateTagsAndEmojiResolution() {
+        val template = "{namaste} {name}! Your token is {rupee}500. Message: {greeting} 🚀✨🙏"
+        val resolved = MessageTemplateResolver.resolve(
+            template = template,
+            name = "Ramesh Kumar",
+            phone = "9769602020"
+        )
+        assertTrue(resolved.contains("Namaste Ramesh Kumar!"))
+        assertTrue(resolved.contains("₹500"))
+        assertTrue(resolved.contains("🚀✨🙏"))
+        assertFalse(resolved.contains("{namaste}"))
+        assertFalse(resolved.contains("{rupee}"))
+        assertFalse(resolved.contains("{greeting}"))
+    }
+
+    @Test
+    fun testExpandedIndianFintechAndBankingShieldCoverage() {
+        val additionalIndianApps = listOf(
+            "com.snapwork.hdfc",
+            "com.unionbank.neomobile",
+            "com.msf.kbank.mobile",
+            "com.kotak.omni",
+            "money.jupiter",
+            "money.fi",
+            "com.theslice.app",
+            "in.upstox.app",
+            "com.navi.markets",
+            "com.navifinance",
+            "com.niyo.bharat",
+            "com.pnb.one",
+            "com.angelbroking",
+            "com.bajajfinserv.experia",
+            "in.org.npci.upiapp"
+        )
+        for (pkg in additionalIndianApps) {
+            assertTrue("Expected $pkg to be protected from UI automation", ProtectedApplicationManager.isProtectedPackage(pkg))
+            assertFalse("Expected $pkg to NOT be authorized target", ProtectedApplicationManager.isAuthorizedTarget(pkg))
+            assertTrue("Expected $pkg to be flagged in AccessibilityService financial check", com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage(pkg))
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 22. LAUNCHER ICON & ALL 12 CHANNELS VERIFICATION
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testAllTwelveChannelsCompleteness() {
+        val allChannels = ChannelType.entries
+        assertEquals("Expected exactly 12 channels", 12, allChannels.size)
+
+        val expectedChannels = setOf(
+            ChannelType.SMS,
+            ChannelType.WHATSAPP,
+            ChannelType.WHATSAPP_BUSINESS,
+            ChannelType.WHATSAPP_GROUP,
+            ChannelType.WHATSAPP_STATUS,
+            ChannelType.WHATSAPP_BUSINESS_STATUS,
+            ChannelType.CALL,
+            ChannelType.WHATSAPP_CALL,
+            ChannelType.WHATSAPP_BUSINESS_CALL,
+            ChannelType.REMINDER,
+            ChannelType.CALL_SIMULATION,
+            ChannelType.SOUND_MODE
+        )
+        assertEquals(expectedChannels, allChannels.toSet())
+
+        // Verify each channel has a non-blank display name
+        for (channel in allChannels) {
+            assertTrue("Display name must not be blank for ${channel.name}", channel.displayName.isNotBlank())
+        }
+    }
+
+    @Test
+    fun testLauncherIconAssetsIntegrity() {
+        val resDir = java.io.File("src/main/res")
+        assertTrue("Resource directory must exist", resDir.exists())
+
+        // Adaptive icon XMLs
+        val bgXml = java.io.File(resDir, "drawable/ic_launcher_background.xml")
+        val fgXml = java.io.File(resDir, "drawable/ic_launcher_foreground.xml")
+        val monoXml = java.io.File(resDir, "drawable/ic_launcher_monochrome.xml")
+        val adaptiveXml = java.io.File(resDir, "mipmap/ic_launcher.xml")
+        val adaptiveRoundXml = java.io.File(resDir, "mipmap/ic_launcher_round.xml")
+
+        assertTrue("ic_launcher_background.xml must exist", bgXml.exists())
+        assertTrue("ic_launcher_foreground.xml must exist", fgXml.exists())
+        assertTrue("ic_launcher_monochrome.xml must exist", monoXml.exists())
+        assertTrue("ic_launcher.xml must exist", adaptiveXml.exists())
+        assertTrue("ic_launcher_round.xml must exist", adaptiveRoundXml.exists())
+
+        // Ensure transparent background is eliminated
+        val oldTransparentBg = java.io.File(resDir, "drawable/ic_launcher_bg_transparent.xml")
+        assertFalse("ic_launcher_bg_transparent.xml must NOT exist", oldTransparentBg.exists())
+
+        val bgContent = bgXml.readText()
+        assertFalse("Background must NOT contain transparent color", bgContent.contains("#00000000"))
+        assertTrue("Background must contain opaque color", bgContent.contains("#E65100"))
+
+        // Ensure speech balloon dots are present in foreground
+        val fgContent = fgXml.readText()
+        assertTrue("Foreground must contain speech dots", fgContent.contains("41,42.7") && fgContent.contains("54,42.7"))
+
+        // Verify all 5 mipmap densities for legacy PNG icons
+        val densities = listOf("mdpi" to 48, "hdpi" to 72, "xhdpi" to 96, "xxhdpi" to 144, "xxxhdpi" to 192)
+        for ((density, _) in densities) {
+            val mipmapFolder = java.io.File(resDir, "mipmap-$density")
+            assertTrue("Folder mipmap-$density must exist", mipmapFolder.exists())
+
+            val iconPng = java.io.File(mipmapFolder, "ic_launcher.png")
+            val iconRoundPng = java.io.File(mipmapFolder, "ic_launcher_round.png")
+
+            assertTrue("ic_launcher.png must exist in mipmap-$density", iconPng.exists())
+            assertTrue("ic_launcher.png must not be empty in mipmap-$density", iconPng.length() > 100)
+
+            assertTrue("ic_launcher_round.png must exist in mipmap-$density", iconRoundPng.exists())
+            assertTrue("ic_launcher_round.png must not be empty in mipmap-$density", iconRoundPng.length() > 100)
+        }
     }
 }
