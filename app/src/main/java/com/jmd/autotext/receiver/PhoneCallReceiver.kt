@@ -249,18 +249,36 @@ class PhoneCallReceiver : BroadcastReceiver() {
 
     private fun queryLatestCallLog(context: Context): CallRecord? {
         return try {
-            val cursor = context.contentResolver.query(
-                CallLog.Calls.CONTENT_URI,
-                arrayOf(
-                    CallLog.Calls.NUMBER,
-                    CallLog.Calls.TYPE,
-                    CallLog.Calls.DURATION,
-                    CallLog.Calls.DATE
-                ),
-                null,
-                null,
-                "${CallLog.Calls.DATE} DESC LIMIT 1"
+            val projection = arrayOf(
+                CallLog.Calls.NUMBER,
+                CallLog.Calls.TYPE,
+                CallLog.Calls.DURATION,
+                CallLog.Calls.DATE
             )
+            val cursor = try {
+                val bundle = android.os.Bundle().apply {
+                    putInt(android.content.ContentResolver.QUERY_ARG_LIMIT, 1)
+                    putString(
+                        android.content.ContentResolver.QUERY_ARG_SQL_SORT_ORDER,
+                        "${CallLog.Calls.DATE} DESC"
+                    )
+                }
+                context.contentResolver.query(
+                    CallLog.Calls.CONTENT_URI,
+                    projection,
+                    bundle,
+                    null
+                )
+            } catch (_: Exception) {
+                null
+            } ?: context.contentResolver.query(
+                CallLog.Calls.CONTENT_URI,
+                projection,
+                null,
+                null,
+                "${CallLog.Calls.DATE} DESC"
+            )
+
             cursor?.use {
                 if (it.moveToFirst()) {
                     val number = it.getString(0) ?: ""

@@ -75,7 +75,7 @@ data class GlobalPrivacySettings(
     val maskExecutionLogs: Boolean = false,
     val autoClearClipboardSeconds: Int = 15,
     val smartAccessibilityScoping: Boolean = true,
-    val dynamicA11yOnDemand: Boolean = false,
+    val dynamicA11yOnDemand: Boolean = true,
     val suppressNotifsOverExcluded: Boolean = true,
     val blockOverlaysOverExcluded: Boolean = true
 )

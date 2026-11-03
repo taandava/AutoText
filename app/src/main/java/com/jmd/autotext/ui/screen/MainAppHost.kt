@@ -66,6 +66,7 @@ fun mainAppHost(
     var composeChannel by remember { mutableStateOf(ChannelType.SMS) }
     var selectedDailyCampaignId by remember { mutableLongStateOf(0L) }
     var isToolsSubSectionOpen by remember { mutableStateOf(value = false) }
+    var toolsInitialSubSection by remember { mutableStateOf("MENU") }
     var isAutoReplyEditing by remember { mutableStateOf(value = false) }
     var isTasksStudioOpen by remember { mutableStateOf(value = false) }
     var tasksInitialCategory by remember { mutableIntStateOf(0) }
@@ -233,7 +234,10 @@ fun mainAppHost(
                             ) {
                                 appHeaderStatusIndicators(
                                     indicators = systemIndicators,
-                                    onClick = { currentTab = 3 }
+                                    onClick = {
+                                        toolsInitialSubSection = "PERMISSIONS"
+                                        currentTab = 3
+                                    }
                                 )
 
                                 // Icon-Only Emergency Stop Button
@@ -311,6 +315,9 @@ fun mainAppHost(
                                 }
                                 if (tabIndex == 1) {
                                     selectedDailyCampaignId = 0L
+                                }
+                                if (tabIndex == 3) {
+                                    toolsInitialSubSection = "MENU"
                                 }
                                 currentTab = tabIndex
                             },
@@ -421,7 +428,13 @@ fun mainAppHost(
                         onEditingStateChanged = { isAutoReplyEditing = it }
                     )
                     3 -> moreScreen(
-                        onSubSectionStateChanged = { isToolsSubSectionOpen = it },
+                        initialSubSection = toolsInitialSubSection,
+                        onSubSectionStateChanged = { isOpen ->
+                            isToolsSubSectionOpen = isOpen
+                            if (!isOpen) {
+                                toolsInitialSubSection = "MENU"
+                            }
+                        },
                         onThemeChanged = onThemeChanged
                     )
                 }

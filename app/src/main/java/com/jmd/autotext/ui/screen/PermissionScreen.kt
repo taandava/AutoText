@@ -19,6 +19,7 @@
  */
 package com.jmd.autotext.ui.screen
 
+import android.Manifest
 import android.app.AlarmManager
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -27,6 +28,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
@@ -48,6 +51,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.jmd.autotext.core.AccessibilityHealthManager
+import com.jmd.autotext.core.OverlayPermissionHelper
+import com.jmd.autotext.core.PermissionManager
 import com.jmd.autotext.core.showAppToast
 import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
 import com.jmd.autotext.ui.components.GlassButtonVariant
@@ -70,6 +75,28 @@ import kotlinx.coroutines.withContext
 @Composable
 fun permissionCenterView(context: Context, onBack: () -> Unit) {
     var showA11yDisclosureDialog by remember { mutableStateOf(false) }
+    var permissionsRefreshKey by remember { mutableIntStateOf(0) }
+
+    val coreRuntimePermissions = remember {
+        buildList {
+            add(Manifest.permission.READ_CONTACTS)
+            add(Manifest.permission.SEND_SMS)
+            add(Manifest.permission.RECEIVE_SMS)
+            add(Manifest.permission.CALL_PHONE)
+            add(Manifest.permission.READ_PHONE_STATE)
+            add(Manifest.permission.READ_CALL_LOG)
+            addAll(PermissionManager.getRequiredMediaPermissions())
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    val runtimePermissionsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        permissionsRefreshKey++
+    }
 
     if (showA11yDisclosureDialog) {
         AlertDialog(
@@ -189,6 +216,28 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                 }
             }
 
+            // 3. Display Over Other Apps (Overlay Permission)
+            item {
+                val hasOverlay = OverlayPermissionHelper.canDrawOverlays(context)
+                permissionItem(
+                    title = if (hasOverlay) "Display Over Other Apps: Granted" else "Display Over Other Apps (Overlay)",
+                    desc = "Allows AutoText to display privacy shields, countdown overlays, and incoming call simulation alerts over other applications.",
+                    btnText = if (hasOverlay) "Overlay Permission Active" else "Grant Overlay Permission",
+                    isGranted = hasOverlay,
+                ) {
+                    if (!hasOverlay) {
+                        try {
+                            context.startActivity(OverlayPermissionHelper.getManageOverlayIntent(context))
+                        } catch (e: Exception) {
+                            com.jmd.autotext.core.AppFileLogger.w("PermissionScreen", "Failed to launch overlay settings: ${e.message}")
+                            context.showAppToast("Unable to open overlay settings directly.")
+                        }
+                    } else {
+                        context.showAppToast("Overlay permission already granted")
+                    }
+                }
+            }
+
 
 
             // 4. Exact Alarms & Reminders Permission
@@ -301,18 +350,57 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                 }
             }
 
-            // 9. Contacts, SMS & Call Log Access
+            // 9. Contacts, SMS, Phone & Media Access
             item {
+                val hasRuntimePerms = remember(permissionsRefreshKey) {
+                    PermissionManager.hasContactsPermission(context) &&
+                        PermissionManager.hasSmsSendPermission(context) &&
+                        PermissionManager.hasCallPhonePermission(context) &&
+                        PermissionManager.hasPhoneStatePermission(context) &&
+                        PermissionManager.hasCallLogPermission(context) &&
+                        PermissionManager.hasMediaPermission(context) &&
+                        PermissionManager.hasPostNotificationsPermission(context)
+                }
+
                 permissionItem(
-                    title = "Contacts, SMS & Call Log Access",
-                    desc = "Required to auto-discover mobile contacts into the internal dynamic pool for daily SMS campaigns.",
-                    btnText = "App Permissions",
+                    title = if (hasRuntimePerms) "Contacts, SMS, Phone & Media Access: Active" else "Contacts, SMS, Phone & Media Access",
+                    desc = "Required to auto-discover mobile contacts into the internal dynamic pool for daily SMS campaigns, direct SMS dispatch, call automation, missed-call auto-replies, and photo/video attachments.",
+                    btnText = if (hasRuntimePerms) "Runtime Permissions Active" else "Grant Runtime Permissions",
+                    isGranted = hasRuntimePerms,
                 ) {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = "package:${context.packageName}".toUri()
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    if (!hasRuntimePerms) {
+                        runtimePermissionsLauncher.launch(coreRuntimePermissions.toTypedArray())
+                    } else {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = "package:${context.packageName}".toUri()
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        context.startActivity(intent)
                     }
-                    context.startActivity(intent)
+                }
+            }
+
+            // 10. Do Not Disturb / Notification Policy Access (Sound Mode Switcher)
+            item {
+                val hasDnd = PermissionManager.hasNotificationPolicyAccess(context)
+                permissionItem(
+                    title = if (hasDnd) "Do Not Disturb & Sound Policy: Active" else "Do Not Disturb / Notification Policy Access",
+                    desc = "Required by Android for the Sound Mode Switcher to toggle between Silent, Vibrate, and Normal sound profiles without interruption.",
+                    btnText = if (hasDnd) "Sound Policy Granted" else "Grant Sound Policy Access",
+                    isGranted = hasDnd,
+                ) {
+                    if (!hasDnd) {
+                        try {
+                            context.startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            })
+                        } catch (e: Exception) {
+                            com.jmd.autotext.core.AppFileLogger.w("PermissionScreen", "Failed to launch notification policy settings: ${e.message}")
+                            context.showAppToast("Unable to open notification policy settings directly.")
+                        }
+                    } else {
+                        context.showAppToast("Notification policy access active")
+                    }
                 }
             }
 
@@ -339,7 +427,7 @@ fun superAutoHealAndPermissionFixerCard(context: Context) {
     var isHealing by remember { mutableStateOf(value = false) }
 
     // Safe ADB command: grants WRITE_SECURE_SETTINGS, runtime permissions, and key appops without destructively overwriting existing third-party accessibility services
-    val universalAdbCommand = "adb shell \"pm grant com.jmd.autotext android.permission.WRITE_SECURE_SETTINGS; pm grant com.jmd.autotext android.permission.READ_PHONE_STATE; pm grant com.jmd.autotext android.permission.CALL_PHONE; pm grant com.jmd.autotext android.permission.ANSWER_PHONE_CALLS; pm grant com.jmd.autotext android.permission.READ_CONTACTS; pm grant com.jmd.autotext android.permission.POST_NOTIFICATIONS; pm grant com.jmd.autotext android.permission.READ_SMS; pm grant com.jmd.autotext android.permission.SEND_SMS; appops set com.jmd.autotext TURN_SCREEN_ON allow; appops set com.jmd.autotext SCHEDULE_EXACT_ALARM allow; appops set com.jmd.autotext START_ACTIVITIES_FROM_BACKGROUND allow; appops set com.jmd.autotext ACCESS_RESTRICTED_SETTINGS allow; appops set com.jmd.autotext AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore; dumpsys deviceidle whitelist +com.jmd.autotext; dpm set-active-admin com.jmd.autotext/.AutoTextDeviceAdminReceiver\""
+    val universalAdbCommand = "adb shell \"pm grant com.jmd.autotext android.permission.WRITE_SECURE_SETTINGS; pm grant com.jmd.autotext android.permission.READ_PHONE_STATE; pm grant com.jmd.autotext android.permission.CALL_PHONE; pm grant com.jmd.autotext android.permission.ANSWER_PHONE_CALLS; pm grant com.jmd.autotext android.permission.READ_CALL_LOG; pm grant com.jmd.autotext android.permission.READ_CONTACTS; pm grant com.jmd.autotext android.permission.POST_NOTIFICATIONS; pm grant com.jmd.autotext android.permission.READ_SMS; pm grant com.jmd.autotext android.permission.SEND_SMS; pm grant com.jmd.autotext android.permission.READ_MEDIA_IMAGES; pm grant com.jmd.autotext android.permission.READ_MEDIA_VIDEO; appops set com.jmd.autotext TURN_SCREEN_ON allow; appops set com.jmd.autotext SCHEDULE_EXACT_ALARM allow; appops set com.jmd.autotext START_ACTIVITIES_FROM_BACKGROUND allow; appops set com.jmd.autotext ACCESS_RESTRICTED_SETTINGS allow; appops set com.jmd.autotext AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore; dumpsys deviceidle whitelist +com.jmd.autotext; dpm set-active-admin com.jmd.autotext/.AutoTextDeviceAdminReceiver\""
 
     appCard(
         modifier = Modifier.fillMaxWidth(),
@@ -383,6 +471,20 @@ fun superAutoHealAndPermissionFixerCard(context: Context) {
             statusPill("Admin", isAdminActive, Modifier.weight(1f))
             statusPill("Alarms", canExactAlarm, Modifier.weight(1f))
             statusPill("Secure", hasSecurePerm, Modifier.weight(1f))
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            val hasOverlay = OverlayPermissionHelper.canDrawOverlays(context)
+            val hasNotif = androidx.core.app.NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.packageName)
+            val hasDnd = PermissionManager.hasNotificationPolicyAccess(context)
+            statusPill("Overlay", hasOverlay, Modifier.weight(1f))
+            statusPill("Listener", hasNotif, Modifier.weight(1f))
+            statusPill("Sound/DND", hasDnd, Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(10.dp))

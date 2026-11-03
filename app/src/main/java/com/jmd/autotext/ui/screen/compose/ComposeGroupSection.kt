@@ -147,7 +147,10 @@ fun whatsAppGroupPickerSheet(
                         glassButton(
                             text = "Pick Live from WhatsApp",
                             onClick = {
-                                AutoTextAccessibilityService.startManualChatPickerTitle(context) { title ->
+                                val installedPkg = WhatsAppPackageHelper.getInstalledWhatsAppPackage(context)
+                                val isBusiness = installedPkg == WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS
+                                val ch = if (isBusiness) ChannelType.WHATSAPP_BUSINESS else ChannelType.WHATSAPP
+                                AutoTextAccessibilityService.startManualChatPickerTitle(context, targetPackage = installedPkg, channel = ch) { title ->
                                     if (title.isNotBlank()) {
                                         onSelectGroup(title)
                                         onDismiss()

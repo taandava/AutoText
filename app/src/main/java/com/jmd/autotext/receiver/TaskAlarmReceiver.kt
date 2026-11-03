@@ -368,7 +368,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             }
             val repository = AppRepository(context)
             val channelStr = intent.getStringExtra("channel") ?: "CALL"
-            val channel = try { ChannelType.valueOf(channelStr.uppercase()) } catch (_: Exception) { ChannelType.CALL }
+            val channel = ChannelType.fromString(channelStr)
             val recipientsParam = intent.getStringArrayExtra("recipients")?.toList()
                 ?: intent.getStringExtra("recipients")?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
                 ?: listOf("9769602020", "9930604542")

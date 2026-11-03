@@ -145,35 +145,76 @@ fun contactSequenceStudio(
     ) { uri: Uri? ->
         if (uri != null) {
             try {
-                val cursor = context.contentResolver.query(uri, null, null, null, null)
-                cursor?.use {
-                    if (it.moveToFirst()) {
-                        val idIndex = it.getColumnIndex(ContactsContract.Contacts._ID)
-                        val nameIndex = it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
-                        val contactId = if (idIndex >= 0) it.getString(idIndex) else null
-                        val name = if (nameIndex >= 0) it.getString(nameIndex) else ""
-                        if (!name.isNullOrBlank()) contactName = name
+                var foundNumber = ""
+                var foundName = ""
 
-                        if (contactId != null) {
-                            val pCursor = context.contentResolver.query(
-                                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                                null,
-                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-                                arrayOf(contactId),
-                                null
-                            )
-                            pCursor?.use { pc ->
-                                if (pc.moveToFirst()) {
-                                    val numberIdx = pc.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
-                                    if (numberIdx >= 0) {
-                                        val number = pc.getString(numberIdx)
-                                        if (!number.isNullOrBlank()) {
-                                            contactPhone = number.replace("[^0-9+]".toRegex(), "")
+                // 1. Direct query via picked data URI
+                val dataUri = Uri.withAppendedPath(uri, ContactsContract.Contacts.Data.CONTENT_DIRECTORY)
+                try {
+                    context.contentResolver.query(
+                        dataUri,
+                        arrayOf(
+                            ContactsContract.CommonDataKinds.Phone.NUMBER,
+                            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                        ),
+                        "${ContactsContract.Data.MIMETYPE} = ?",
+                        arrayOf(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE),
+                        null
+                    )?.use { c ->
+                        if (c.moveToFirst()) {
+                            val numIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                            val nameIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                            if (numIdx >= 0) foundNumber = c.getString(numIdx).orEmpty()
+                            if (nameIdx >= 0) foundName = c.getString(nameIdx).orEmpty()
+                        }
+                    }
+                } catch (_: Exception) { }
+
+                // 2. Fallback query
+                if (foundNumber.isBlank()) {
+                    val cursor = context.contentResolver.query(uri, null, null, null, null)
+                    cursor?.use {
+                        if (it.moveToFirst()) {
+                            val idIndex = it.getColumnIndex(ContactsContract.Contacts._ID)
+                            val nameIndex = it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
+                            val contactId = if (idIndex >= 0) it.getString(idIndex) else null
+                            val name = if (nameIndex >= 0) it.getString(nameIndex) else ""
+                            if (name.isNotBlank() && foundName.isBlank()) foundName = name
+
+                            if (contactId != null) {
+                                try {
+                                    val pCursor = context.contentResolver.query(
+                                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                        null,
+                                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                                        arrayOf(contactId),
+                                        null
+                                    )
+                                    pCursor?.use { pc ->
+                                        if (pc.moveToFirst()) {
+                                            val numberIdx = pc.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                                            if (numberIdx >= 0) {
+                                                val number = pc.getString(numberIdx)
+                                                if (!number.isNullOrBlank()) {
+                                                    foundNumber = number
+                                                }
+                                            }
                                         }
                                     }
-                                }
+                                } catch (_: Exception) { }
                             }
                         }
+                    }
+                }
+
+                if (foundName.isNotBlank()) contactName = foundName
+                if (foundNumber.isNotBlank()) {
+                    contactPhone = foundNumber.replace("[^0-9+]".toRegex(), "")
+                } else if (foundName.isNotBlank()) {
+                    val repo = AppRepository(context)
+                    val phoneFromName = repo.findPhoneForContactName(foundName)
+                    if (phoneFromName != null) {
+                        contactPhone = phoneFromName.replace("[^0-9+]".toRegex(), "")
                     }
                 }
             } catch (e: Exception) {

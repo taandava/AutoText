@@ -149,7 +149,7 @@ fun whatsAppSetupAndScreenAssistView(
                             checked = isAutoUnlock,
                             onCheckedChange = {
                                 isAutoUnlock = it
-                                prefs.isAutoUnlockEnabled = it
+                                prefs.isScreenAssistEnabled = it
                             },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.primary,
@@ -177,7 +177,7 @@ fun whatsAppSetupAndScreenAssistView(
                                     selected = unlockType == type,
                                     onClick = {
                                         unlockType = type
-                                        prefs.autoUnlockType = type
+                                        prefs.screenAssistType = type
                                     },
                                     label = label,
                                     modifier = Modifier.weight(1f)
@@ -193,7 +193,7 @@ fun whatsAppSetupAndScreenAssistView(
                                 value = pinCode,
                                 onValueChange = {
                                     pinCode = if (isPinMode) it.filter { ch -> ch.isDigit() } else it
-                                    prefs.deviceUnlockPin = pinCode
+                                    prefs.screenAssistPin = pinCode
                                 },
                                 label = if (isPinMode) "Device Number Lock PIN" else "Device Lock Password",
                                 placeholder = if (isPinMode) "e.g. 1234" else "Enter lock password",
@@ -598,6 +598,7 @@ fun whatsAppLiveTestCard(
                     context.showAppToast("Please enter a phone number")
                     return@glassButton
                 }
+                val messageToSend = testMessage.trim().ifEmpty { "AutoText Test Ping: Automation is active!" }
                 scope.launch {
                     val mutex = SequentialTaskEngine.getUiAutomationMutex(context)
                     val success = mutex.withLock {
@@ -607,7 +608,7 @@ fun whatsAppLiveTestCard(
                                 taskId = 9999L,
                                 channel = ChannelType.WHATSAPP,
                                 recipientPhone = testPhone.trim(),
-                                messageText = testMessage.trim()
+                                messageText = messageToSend
                             )
                         }
                     }

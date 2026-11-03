@@ -56,6 +56,7 @@ class BackupRepository(context: Context) {
             DatabaseHelper.TABLE_LOGS,
             DatabaseHelper.TABLE_AUTO_REPLY_HISTORY,
             DatabaseHelper.TABLE_TASK_DELIVERIES,
+            DatabaseHelper.TABLE_APP_PRIVACY_CONFIGS,
         )
 
         for (table in tables) {
@@ -112,6 +113,7 @@ class BackupRepository(context: Context) {
                     DatabaseHelper.TABLE_LOGS,
                     DatabaseHelper.TABLE_AUTO_REPLY_HISTORY,
                     DatabaseHelper.TABLE_TASK_DELIVERIES,
+                    DatabaseHelper.TABLE_APP_PRIVACY_CONFIGS,
                 )
 
                 for (table in tables) {

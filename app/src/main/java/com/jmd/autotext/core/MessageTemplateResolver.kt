@@ -16,9 +16,9 @@ const val DEFAULT_MESSAGE_TEXT = ""
  * Dynamic message template token replacer.
  *
  * Supports contextual tokens:
- * - Date/Time: `{date}`, `{short_date}`, `{time}`, `{day}`, `{short_day}`, `{day_number}`, `{day_num}`
- * - Recipient: `{name}`, `{first_name}`, `{phone}`
- * - Contextual: `{event}`
+ * - Date/Time: `{date}`, `{short_date}`, `{time}`, `{day}`, `{short_day}`, `{day_number}`, `{day_num}`, `{today}`, `{ist_time}`
+ * - Recipient: `{name}`, `{first_name}`, `{phone}`, `{recipient_count}`
+ * - Contextual: `{event}`, `{greeting}`, `{time_greeting}`, `{namaste}`, `{pranam}`, `{rupee}`, `{currency}`, `{channel}`
  */
 object MessageTemplateResolver {
 
@@ -30,6 +30,8 @@ object MessageTemplateResolver {
      * @param phone Recipient's phone number or identifier.
      * @param event Associated event trigger description (e.g. "missed call").
      * @param targetTimestamp Milliseconds timestamp used for date/time formatting.
+     * @param channel Channel display name or type (e.g. "SMS", "WhatsApp").
+     * @param recipientCount Total recipients targeted in task/dispatch batch.
      * @return Fully resolved message string.
      */
     fun resolve(
@@ -38,6 +40,8 @@ object MessageTemplateResolver {
         phone: String = "",
         event: String = "",
         targetTimestamp: Long = System.currentTimeMillis(),
+        channel: String = "",
+        recipientCount: Int = 1,
     ): String {
         if (template.isEmpty()) return ""
         val cal = Calendar.getInstance().apply { timeInMillis = targetTimestamp }
@@ -86,5 +90,7 @@ object MessageTemplateResolver {
             .replace("{first_name}", firstName, ignoreCase = true)
             .replace("{phone}", cleanPhone, ignoreCase = true)
             .replace("{event}", event.ifBlank { "notification" }, ignoreCase = true)
+            .replace("{channel}", channel.ifBlank { "AutoText" }, ignoreCase = true)
+            .replace("{recipient_count}", recipientCount.toString(), ignoreCase = true)
     }
 }

@@ -8,6 +8,7 @@ This vault contains all persistent knowledge of the AutoText application. To rev
 - [ARCHITECTURE.md](./ARCHITECTURE.md): How AutoText is built (components, data flow, patterns).
 - [FILE_MAP.md](./FILE_MAP.md): Where everything lives (directory structure and module responsibilities).
 - [FEATURE_MATRIX.md](./FEATURE_MATRIX.md): Comprehensive feature inventory and acceptance matrix.
+- [CODEBLOCK_AUDIT.md](./CODEBLOCK_AUDIT.md): Detailed codeblock audit, feature utilization options, and component gap analysis.
 - [DECISIONS.md](./DECISIONS.md): Architectural decision records (ADRs).
 - [WORK_LOG.md](./WORK_LOG.md): Chronological record of all actions taken.
 - [NEXT_STEPS.md](./NEXT_STEPS.md): Maintenance backlog and future tracking.

@@ -352,36 +352,70 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 context.showAppToast("Emergency stop is active. Reset safeguards in Settings first.")
                 return
             }
-            currentMode = AutomationMode.MANUAL_PICK_CHAT
-            pendingPackageName = targetPkg
-            setAutomatingState(true)
-            sendAttemptCount = 0
-            onManualChatInfoPicked = onPicked
-            onManualChatPicked = null
-            AutomationSafetyManager.lastPickerLaunchTimestamp = System.currentTimeMillis()
-            try {
-                val launchIntent = context.packageManager.getLaunchIntentForPackage(targetPkg)
-                if (launchIntent != null) {
-                    launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    context.startActivity(launchIntent)
-                    context.showAppToast("Tap a chat in $appLabel to select", isLong = true)
 
-                    instance?.let { s ->
-                        s.handler.removeCallbacksAndMessages(null)
-                        s.handler.postDelayed({
-                            if (isAutomating && currentMode == AutomationMode.MANUAL_PICK_CHAT) {
-                                Log.i(TAG, "Manual chat picker safety timeout (30s) reached. Resetting mode.")
-                                clearPending()
-                            }
-                        }, 30_000L)
+            val appContext = context.applicationContext
+            CoroutineScope(Dispatchers.Main).launch {
+                AccessibilityHealthManager.ensureServiceComponentEnabled(appContext)
+
+                if (!isServiceRunning || instance == null) {
+                    if (AccessibilityHealthManager.hasWriteSecureSettings(appContext)) {
+                        context.showAppToast("Connecting assistant for chat picker...", isLong = false)
+                        withContext(Dispatchers.IO) {
+                            AccessibilityHealthManager.enableAccessibilityService(appContext)
+                        }
+                        val start = System.currentTimeMillis()
+                        while ((!isServiceRunning || instance == null) && (System.currentTimeMillis() - start) < 3000L) {
+                            delay(150.milliseconds)
+                        }
                     }
-                } else {
+                }
+
+                if (!isServiceRunning || instance == null) {
+                    context.showAppToast("Please enable AutoText Assistant in Settings > Accessibility to pick chats", isLong = true)
+                    runCatching {
+                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        context.startActivity(intent)
+                    }
+                    return@launch
+                }
+
+                instance?.cancelIdleDetach()
+                currentMode = AutomationMode.MANUAL_PICK_CHAT
+                pendingPackageName = targetPkg
+                setAutomatingState(true)
+                sendAttemptCount = 0
+                onManualChatInfoPicked = onPicked
+                onManualChatPicked = null
+                AutomationSafetyManager.lastPickerLaunchTimestamp = System.currentTimeMillis()
+                try {
+                    val launchIntent = context.packageManager.getLaunchIntentForPackage(targetPkg)
+                    if (launchIntent != null) {
+                        launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        context.startActivity(launchIntent)
+                        context.showAppToast("Tap a chat in $appLabel to select", isLong = true)
+
+                        instance?.let { s ->
+                            s.handler.removeCallbacksAndMessages(null)
+                            s.handler.postDelayed({
+                                if (isAutomating && currentMode == AutomationMode.MANUAL_PICK_CHAT) {
+                                    Log.i(TAG, "Manual chat picker safety timeout (45s) reached. Resetting mode.")
+                                    clearPending()
+                                    s.scheduleIdleDetach(3000L)
+                                }
+                            }, 45_000L)
+                        }
+                    } else {
+                        setAutomatingState(false)
+                        currentMode = AutomationMode.DIRECT_SEND
+                        context.showAppToast("Could not open $appLabel")
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to launch $appLabel for manual chat pick", e)
                     setAutomatingState(false)
                     currentMode = AutomationMode.DIRECT_SEND
-                    context.showAppToast("Could not open $appLabel")
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to launch $appLabel for manual chat pick", e)
             }
         }
 
@@ -442,31 +476,68 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 context.showAppToast("$appLabel is not installed")
                 return
             }
-            currentMode = AutomationMode.WHATSAPP_SCAN_CHATS
-            pendingPackageName = targetPkg
-            setAutomatingState(true)
-            sendAttemptCount = 0
-            instance?.let { s ->
-                s.whatsAppChatScanner.resetScanState(scanTarget)
-                s.handler.removeCallbacks(s.sendRunnable)
-                s.handler.postDelayed(s.sendRunnable, 650L)
+            if (AutomationSafetyManager.isEmergencyStopActive(context)) {
+                context.showAppToast("Emergency stop is active. Reset safeguards in Settings first.")
+                return
             }
-            try {
-                val launchIntent = context.packageManager.getLaunchIntentForPackage(targetPkg)
-                if (launchIntent != null) {
-                    launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    context.startActivity(launchIntent)
-                    Log.d(TAG, "startWhatsAppChatScan: Launched $targetPkg for chat scan")
-                    context.showAppToast("Scanning $appLabel chats...")
-                } else {
+
+            val appContext = context.applicationContext
+            CoroutineScope(Dispatchers.Main).launch {
+                AccessibilityHealthManager.ensureServiceComponentEnabled(appContext)
+
+                if (!isServiceRunning || instance == null) {
+                    if (AccessibilityHealthManager.hasWriteSecureSettings(appContext)) {
+                        context.showAppToast("Connecting assistant for chat scanner...", isLong = false)
+                        withContext(Dispatchers.IO) {
+                            AccessibilityHealthManager.enableAccessibilityService(appContext)
+                        }
+                        val start = System.currentTimeMillis()
+                        while ((!isServiceRunning || instance == null) && (System.currentTimeMillis() - start) < 3000L) {
+                            delay(150.milliseconds)
+                        }
+                    }
+                }
+
+                if (!isServiceRunning || instance == null) {
+                    context.showAppToast("Please enable AutoText Assistant in Settings > Accessibility to scan chats", isLong = true)
+                    runCatching {
+                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        context.startActivity(intent)
+                    }
+                    return@launch
+                }
+
+                instance?.cancelIdleDetach()
+                currentMode = AutomationMode.WHATSAPP_SCAN_CHATS
+                pendingPackageName = targetPkg
+                setAutomatingState(true)
+                sendAttemptCount = 0
+                instance?.let { s ->
+                    s.whatsAppChatScanner.resetScanState(scanTarget)
+                    s.handler.removeCallbacks(s.sendRunnable)
+                    s.handler.postDelayed(s.sendRunnable, 650L)
+                }
+                try {
+                    val launchIntent = context.packageManager.getLaunchIntentForPackage(targetPkg)
+                    if (launchIntent != null) {
+                        launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        context.startActivity(launchIntent)
+                        Log.d(TAG, "startWhatsAppChatScan: Launched $targetPkg for chat scan")
+                        context.showAppToast("Scanning $appLabel chats...")
+                    } else {
+                        setAutomatingState(false)
+                        currentMode = AutomationMode.DIRECT_SEND
+                        pendingPackageName = null
+                        lastSendResult = RESULT_INVALID
+                        context.showAppToast("Could not open $appLabel")
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to launch $appLabel for scan", e)
                     setAutomatingState(false)
                     currentMode = AutomationMode.DIRECT_SEND
-                    pendingPackageName = null
-                    lastSendResult = RESULT_INVALID
-                    context.showAppToast("Could not open $appLabel")
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to launch $appLabel for scan", e)
             }
         }
 
@@ -943,6 +1014,11 @@ class AutoTextAccessibilityService : AccessibilityService() {
          * Checks whether accessibility automation is currently running an active dispatch workflow.
          */
         fun isCurrentlyAutomating(): Boolean = isAutomating || isUnlockPending || isTestUnlockMode
+
+        /**
+         * Checks whether accessibility automation is currently in manual chat picker mode waiting for user touch.
+         */
+        fun isManualPickMode(): Boolean = isAutomating && currentMode == AutomationMode.MANUAL_PICK_CHAT
 
         /**
          * Safely aborts active accessibility automation when a protected banking/financial app is encountered.
@@ -1553,7 +1629,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 currentPkg.contains("nexuslauncher", ignoreCase = true) ||
                 currentPkg.contains("trebuchet", ignoreCase = true)
 
-            if (isAutomating) {
+            val isManualPick = isAutomating && currentMode == AutomationMode.MANUAL_PICK_CHAT
+
+            if (isAutomating && !isManualPick) {
                 // If user switched away from target automation package to an unrelated third-party app
                 if (!isAllowedAutomationPackage) {
                     Log.w(TAG, "Human interrupted automation! User navigated to: $currentPkg")
@@ -1566,7 +1644,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                     AutomationSafetyManager.recordHumanInteraction(this, "Physical touch interaction in $currentPkg")
                     return
                 }
-            } else {
+            } else if (!isAutomating) {
                 // When idle, only record interaction if screen is on and it's a real user touch event
                 val pm = getSystemService(POWER_SERVICE) as? PowerManager
                 val km = getSystemService(KEYGUARD_SERVICE) as? KeyguardManager
@@ -1620,8 +1698,10 @@ class AutoTextAccessibilityService : AccessibilityService() {
                         }
                     }
 
-                    // Only inspect active conversation header if user actually opened a conversation
-                    if (pickedName.isBlank() && root != null && event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+                    // Inspect active conversation header if user opened a conversation or window content changed
+                    if (pickedName.isBlank() && root != null &&
+                        (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED ||
+                         event.eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED)) {
                         if (isInsideActiveConversation(root)) {
                             pickedName = extractHeaderTitle(root)
                         }
@@ -1692,6 +1772,8 @@ class AutoTextAccessibilityService : AccessibilityService() {
                             }
                             if (appIntent != null) startActivity(appIntent)
                         }, 400L)
+
+                        scheduleIdleDetach(3000L)
                         return
                     }
                 }
@@ -1715,13 +1797,14 @@ class AutoTextAccessibilityService : AccessibilityService() {
     }
 
     private fun extractChatNameFromNode(node: AccessibilityNodeInfo): String {
-        val direct = searchChatNameInSubtree(node)
+        val repo = AppRepository(applicationContext)
+        val direct = searchChatNameInSubtree(node, repo)
         if (direct.isNotBlank()) return direct
 
         var parent = node.parent
         var levels = 0
-        while (parent != null && levels < 5) {
-            val fromParent = searchChatNameInSubtree(parent)
+        while (parent != null && levels < 6) {
+            val fromParent = searchChatNameInSubtree(parent, repo)
             if (fromParent.isNotBlank()) return fromParent
             parent = parent.parent
             levels++
@@ -1729,23 +1812,74 @@ class AutoTextAccessibilityService : AccessibilityService() {
         return ""
     }
 
-    private fun searchChatNameInSubtree(root: AccessibilityNodeInfo): String {
+    private fun searchChatNameInSubtree(root: AccessibilityNodeInfo, repo: AppRepository): String {
         val q = java.util.ArrayDeque<AccessibilityNodeInfo>()
         q.add(root)
+        val fallbackCandidates = mutableListOf<String>()
+
         while (q.isNotEmpty()) {
             val n = q.removeFirst()
             val id = n.viewIdResourceName?.lowercase().orEmpty()
+            val desc = n.contentDescription?.toString()?.trim().orEmpty()
+            val txt = n.text?.toString()?.trim().orEmpty()
+
+            // 1. Check known ID resource name suffixes
             if (id.endsWith("conversations_row_contact_name") || id.endsWith("chat_title") ||
                 id.endsWith("conversation_contact_name") || id.endsWith("contactpicker_row_name") ||
-                id.endsWith("contact_row_name") || id.endsWith("c_name")) {
-                val t = n.text?.toString()?.trim()
-                if (!t.isNullOrBlank()) return t
+                id.endsWith("contact_row_name") || id.endsWith("c_name") ||
+                id.endsWith("conversation_row_name") || id.endsWith("contact_name")
+            ) {
+                if (txt.isNotBlank() && repo.isValidPickedChatName(txt)) return txt
             }
+
+            // 2. Check avatar / profile picture content description
+            if (desc.isNotBlank()) {
+                val descLower = desc.lowercase()
+                val avatarPrefixes = listOf(
+                    "profile photo of ",
+                    "profile picture of ",
+                    "photo of ",
+                    "group profile photo of ",
+                    "group icon for ",
+                    "group photo of ",
+                    "icon for "
+                )
+                for (pfx in avatarPrefixes) {
+                    if (descLower.startsWith(pfx)) {
+                        val cand = desc.substring(pfx.length).trim()
+                        if (repo.isValidPickedChatName(cand)) return cand
+                    }
+                }
+
+                // 3. Check TalkBack aggregated row description ("Name, 10:30 AM, snippet")
+                if (desc.contains(",")) {
+                    val cand = desc.substringBefore(",").trim()
+                    if (repo.isValidPickedChatName(cand) && !cand.contains(":") && !cand.all { it.isDigit() }) {
+                        fallbackCandidates.add(cand)
+                    }
+                }
+            }
+
+            // 4. Collect text candidates from TextView nodes
+            val cls = n.className?.toString().orEmpty()
+            if ((cls.endsWith("TextView") || cls.endsWith("Text")) && txt.isNotBlank()) {
+                val isTimestamp = txt.contains(":") && txt.any { it.isDigit() }
+                val isCounter = txt.all { it.isDigit() } && txt.length <= 4
+                val isStatusNoise = txt.equals("typing...", ignoreCase = true) ||
+                        txt.equals("online", ignoreCase = true) ||
+                        txt.equals("draft", ignoreCase = true)
+
+                if (!isTimestamp && !isCounter && !isStatusNoise && repo.isValidPickedChatName(txt)) {
+                    fallbackCandidates.add(txt)
+                }
+            }
+
             for (i in 0 until n.childCount) {
                 n.getChild(i)?.let { q.add(it) }
             }
         }
-        return ""
+
+        return fallbackCandidates.firstOrNull().orEmpty()
     }
 
     private fun isInsideActiveConversation(root: AccessibilityNodeInfo): Boolean {
@@ -1754,8 +1888,12 @@ class AutoTextAccessibilityService : AccessibilityService() {
         while (q.isNotEmpty()) {
             val n = q.removeFirst()
             val id = n.viewIdResourceName?.lowercase().orEmpty()
+            val cls = n.className?.toString().orEmpty()
             if (id.endsWith("entry") || id.endsWith("conversation_text_entry") ||
-                id.endsWith("input_layout") || id.endsWith("send")) {
+                id.endsWith("input_layout") || id.endsWith("send") ||
+                id.endsWith("voice_note_btn") ||
+                cls == "android.widget.EditText"
+            ) {
                 return true
             }
             for (i in 0 until n.childCount) {
@@ -1766,22 +1904,60 @@ class AutoTextAccessibilityService : AccessibilityService() {
     }
 
     private fun extractHeaderTitle(root: AccessibilityNodeInfo): String {
+        val repo = AppRepository(applicationContext)
         val q = java.util.ArrayDeque<AccessibilityNodeInfo>()
         q.add(root)
+        val headerCandidates = mutableListOf<String>()
+
         while (q.isNotEmpty()) {
             val n = q.removeFirst()
             val id = n.viewIdResourceName?.lowercase().orEmpty()
-            // Strictly exclude generic action bar/toolbar titles (e.g. "WhatsApp", "Chats")
+            val txt = n.text?.toString()?.trim().orEmpty()
+            val desc = n.contentDescription?.toString()?.trim().orEmpty()
+
+            // 1. Direct ID match
             if (id.endsWith("conversation_contact_name") || id.endsWith("group_title") ||
-                id.endsWith("chat_title")) {
-                val t = n.text?.toString()?.trim()
-                if (!t.isNullOrBlank()) return t
+                id.endsWith("chat_title") || id.endsWith("conversation_title") ||
+                id.endsWith("toolbar_title") || id.endsWith("action_bar_title")
+            ) {
+                if (txt.isNotBlank() && repo.isValidPickedChatName(txt)) return txt
             }
+
+            // 2. Avatar / info content description
+            if (desc.isNotBlank()) {
+                val descLower = desc.lowercase()
+                val prefixes = listOf("profile photo of ", "profile picture of ", "photo of ", "group info for ", "group info")
+                for (pfx in prefixes) {
+                    if (descLower.startsWith(pfx)) {
+                        val cand = desc.substring(pfx.length).trim()
+                        if (repo.isValidPickedChatName(cand)) return cand
+                    }
+                }
+            }
+
+            // 3. Header toolbar region TextViews (bounds top < 450)
+            val rect = android.graphics.Rect()
+            n.getBoundsInScreen(rect)
+            val cls = n.className?.toString().orEmpty()
+            if (rect.top in 0..450 && rect.bottom in 1..600 &&
+                (cls.endsWith("TextView") || cls.endsWith("Text")) && txt.isNotBlank()
+            ) {
+                val isStatusNoise = txt.contains("online", ignoreCase = true) ||
+                        txt.contains("typing", ignoreCase = true) ||
+                        txt.contains("last seen", ignoreCase = true) ||
+                        txt.contains("tap here", ignoreCase = true)
+
+                if (!isStatusNoise && repo.isValidPickedChatName(txt)) {
+                    headerCandidates.add(txt)
+                }
+            }
+
             for (i in 0 until n.childCount) {
                 n.getChild(i)?.let { q.add(it) }
             }
         }
-        return ""
+
+        return headerCandidates.firstOrNull().orEmpty()
     }
 
     private fun analyzePickedChat(

@@ -12,6 +12,8 @@
 package com.jmd.autotext.ui.activity
 
 import android.app.KeyguardManager
+import android.content.Context
+import android.content.Intent
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.os.Build
@@ -32,6 +34,23 @@ import com.jmd.autotext.ui.screen.callSimulationScreen
  * Activity rendering incoming call simulation screen with audio and haptic feedback.
  */
 open class CallSimulationActivity : ComponentActivity() {
+
+    companion object {
+        fun start(
+            context: Context,
+            callerName: String = "Boss / Office",
+            callerNumber: String = "+91 98765 43210",
+            callerStyle: String = "PIXEL"
+        ) {
+            val intent = Intent(context, CallSimulationActivity::class.java).apply {
+                putExtra("caller_name", callerName)
+                putExtra("caller_number", callerNumber)
+                putExtra("caller_style", callerStyle)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
+    }
 
     private var mediaPlayer: MediaPlayer? = null
     private var fallbackRingtone: android.media.Ringtone? = null

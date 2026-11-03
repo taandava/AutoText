@@ -83,6 +83,13 @@ fun taskTypeSelectionDialog(
             channel = ChannelType.WHATSAPP_BUSINESS,
         ),
         TaskTypeItem(
+            title = "WhatsApp Group",
+            description = "Send automated WhatsApp group messages or announcements",
+            emoji = "👥",
+            color = MaterialTheme.colorScheme.tertiary,
+            channel = ChannelType.WHATSAPP_GROUP,
+        ),
+        TaskTypeItem(
             title = "Status Story",
             description = "Schedule auto-posting text or photo/video stories to Status",
             emoji = "📸",

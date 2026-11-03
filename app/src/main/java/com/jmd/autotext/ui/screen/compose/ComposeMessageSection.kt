@@ -463,8 +463,9 @@ fun composeRecipientsAndMessageCard(
         val variables = listOf(
             "{name}", "{first_name}", "{phone}",
             "{time}", "{date}", "{day}",
-            "{greeting}", "{namaste}", "{rupee}",
-            "{short_date}", "{short_day}", "{day_num}"
+            "{today}", "{ist_time}", "{greeting}",
+            "{namaste}", "{rupee}", "{short_date}",
+            "{short_day}", "{day_num}", "{time_greeting}"
         )
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             variables.chunked(3).forEach { rowVars ->

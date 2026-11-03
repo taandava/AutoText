@@ -47,11 +47,13 @@ import com.jmd.autotext.ui.theme.*
  * Hub navigation screen providing access to tools, diagnostic ledgers, settings,
  * message templates, in-app documentation, and secondary configuration views.
  *
+ * @param initialSubSection Child sub-section route to navigate to immediately on render.
  * @param onSubSectionStateChanged Callback signaling whether a child sub-section is active (hiding bottom navigation if true).
  * @param onThemeChanged Callback invoked when user alters theme palette preference.
  */
 @Composable
 fun moreScreen(
+    initialSubSection: String = "MENU",
     onSubSectionStateChanged: (Boolean) -> Unit = {},
     onThemeChanged: (String) -> Unit = {},
 ) {
@@ -59,7 +61,7 @@ fun moreScreen(
     val repository = remember { AppRepository(context) }
     val prefs = remember { PreferenceManager(context) }
 
-    var selectedSubSection by remember { mutableStateOf("MENU") }
+    var selectedSubSection by remember(initialSubSection) { mutableStateOf(initialSubSection) }
     var previousSubSection by remember { mutableStateOf("MENU") }
 
     fun navigateToSubSection(target: String) {
@@ -109,6 +111,17 @@ fun moreScreen(
             }
         }
         "PERMISSIONS" -> permissionCenterView(context) { navigateToSubSection("MENU") }
+        "CALL_SIMULATION" -> {
+            LaunchedEffect(Unit) {
+                com.jmd.autotext.ui.activity.CallSimulationActivity.start(
+                    context = context,
+                    callerName = "Boss / Office",
+                    callerNumber = "+91 98765 43210",
+                    callerStyle = "PIXEL"
+                )
+                navigateToSubSection("MENU")
+            }
+        }
         "PRIVACY" -> com.jmd.autotext.ui.screen.privacy.privacySettingsScreen(
             context = context,
             prefs = prefs,
@@ -266,6 +279,20 @@ fun moreScreen(
                         MaterialTheme.colorScheme.primary
                     ) {
                         navigateToSubSection("PERMISSIONS")
+                    }
+                }
+                item {
+                    menuItemCard(
+                        "Incoming Call Simulation",
+                        "🎭",
+                        Color(0xFFE91E63)
+                    ) {
+                        com.jmd.autotext.ui.activity.CallSimulationActivity.start(
+                            context = context,
+                            callerName = "Boss / Office",
+                            callerNumber = "+91 98765 43210",
+                            callerStyle = "PIXEL"
+                        )
                     }
                 }
                 item {

@@ -115,10 +115,51 @@ class WhatsAppRepository(private val context: Context) {
             return cleanName
         }
 
+        // Clean alphanumeric name for fuzzy matching (strips emojis and special symbols)
+        val alphaName = cleanName.replace(Regex("""[^\p{L}\p{Nd}\s]"""), "").trim()
+
         try {
             val db = dbHelper.readableDatabase
+            // 1. Exact match in dynamic contact pool
             db.rawQuery(
                 "SELECT phone FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE LOWER(TRIM(name)) = LOWER(TRIM(?)) AND phone != '' AND enabled = 1 LIMIT 1",
+                arrayOf(cleanName)
+            ).use { c ->
+                if (c.moveToNext()) {
+                    val p = c.getString(0)
+                    if (!p.isNullOrBlank()) return p
+                }
+            }
+
+            // 2. Alphanumeric match in dynamic contact pool
+            if (alphaName.isNotBlank() && alphaName != cleanName) {
+                db.rawQuery(
+                    "SELECT phone FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE LOWER(TRIM(name)) = LOWER(TRIM(?)) AND phone != '' AND enabled = 1 LIMIT 1",
+                    arrayOf(alphaName)
+                ).use { c ->
+                    if (c.moveToNext()) {
+                        val p = c.getString(0)
+                        if (!p.isNullOrBlank()) return p
+                    }
+                }
+            }
+
+            // 3. Prefix match in dynamic contact pool
+            if (alphaName.length >= 3) {
+                db.rawQuery(
+                    "SELECT phone FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE (LOWER(name) LIKE ? OR LOWER(?) LIKE '%' || LOWER(name) || '%') AND phone != '' AND enabled = 1 LIMIT 1",
+                    arrayOf("%${alphaName.lowercase()}%", alphaName.lowercase())
+                ).use { c ->
+                    if (c.moveToNext()) {
+                        val p = c.getString(0)
+                        if (!p.isNullOrBlank()) return p
+                    }
+                }
+            }
+
+            // 4. Exact match in saved custom recipients
+            db.rawQuery(
+                "SELECT phone_or_email FROM ${DatabaseHelper.TABLE_RECIPIENTS} WHERE LOWER(TRIM(name)) = LOWER(TRIM(?)) AND phone_or_email != '' LIMIT 1",
                 arrayOf(cleanName)
             ).use { c ->
                 if (c.moveToNext()) {
@@ -130,8 +171,10 @@ class WhatsAppRepository(private val context: Context) {
             Log.w("WhatsAppRepo", "findPhoneForContactName failed for $cleanName: ${e.message}")
         }
 
+        // 5. System ContactsContract resolution
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             try {
+                // Direct exact match
                 context.contentResolver.query(
                     ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                     arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
@@ -142,6 +185,22 @@ class WhatsAppRepository(private val context: Context) {
                     if (c.moveToNext()) {
                         val p = c.getString(0)
                         if (!p.isNullOrBlank()) return p
+                    }
+                }
+
+                // Alphanumeric/fuzzy wildcard match in device contacts
+                if (alphaName.length >= 3) {
+                    context.contentResolver.query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+                        "LOWER(${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME}) LIKE ? OR LOWER(${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY}) LIKE ?",
+                        arrayOf("%${alphaName.lowercase()}%", "%${alphaName.lowercase()}%"),
+                        null
+                    )?.use { c ->
+                        if (c.moveToNext()) {
+                            val p = c.getString(0)
+                            if (!p.isNullOrBlank()) return p
+                        }
                     }
                 }
             } catch (e: Exception) {

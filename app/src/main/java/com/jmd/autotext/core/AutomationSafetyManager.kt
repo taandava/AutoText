@@ -120,6 +120,11 @@ object AutomationSafetyManager {
 
         // If automation is actively running, signal interruption immediately to abort safely
         if (AutoTextAccessibilityService.isCurrentlyAutomating()) {
+            if (AutoTextAccessibilityService.isManualPickMode()) {
+                // User is actively touching the screen to pick a contact or chat in manual picker mode.
+                // Do not abort or postpone tasks.
+                return
+            }
             isInterruptedByHuman.set(true)
             val activeTaskId = AutoTextAccessibilityService.getActiveTaskId()
             AutoTextAccessibilityService.abortDueToHumanInterruption()

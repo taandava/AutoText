@@ -384,6 +384,8 @@ fun dailyAutoSenderScreen(
                                     repository.deleteDailyCampaignConfig(cmp.id)
                                     loadAllCampaigns()
                                     context.showAppToast("Campaign deleted")
+                                } else {
+                                    context.showAppToast("Default starter campaigns cannot be deleted, but you can keep them paused.")
                                 }
                             }
                         )

@@ -24,6 +24,7 @@ import android.os.Handler
 import android.telephony.SmsManager
 import android.telephony.SubscriptionManager
 import android.util.Log
+import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.core.SmsQuotaManager
 
 /**
@@ -246,10 +247,15 @@ class SmsSender(private val context: Context) {
         val targetSub = activeSubs?.find { it.simSlotIndex == targetPhysicalSlot }
 
         if (targetSub == null) {
-            throw IllegalStateException("Selected SIM $simSlot is not active or available on this device")
+            AppFileLogger.w(context, TAG, "Selected SIM $simSlot is not active/available. Falling back to default system SIM.")
+            return com.jmd.autotext.compat.SmsManagerCompat.getDefault(context)
         }
 
-        return com.jmd.autotext.compat.SmsManagerCompat.getForSubscriptionId(context, targetSub.subscriptionId)
-            ?: throw IllegalStateException("Unable to obtain SmsManager for subscription ${targetSub.subscriptionId}")
+        val slotSmsManager = com.jmd.autotext.compat.SmsManagerCompat.getForSubscriptionId(context, targetSub.subscriptionId)
+        if (slotSmsManager == null) {
+            AppFileLogger.w(context, TAG, "Unable to obtain SmsManager for sub ${targetSub.subscriptionId}. Falling back to default SIM.")
+            return com.jmd.autotext.compat.SmsManagerCompat.getDefault(context)
+        }
+        return slotSmsManager
     }
 }

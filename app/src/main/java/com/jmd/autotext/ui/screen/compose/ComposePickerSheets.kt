@@ -956,6 +956,7 @@ fun templatePickerSheet(
                             listOf(
                                 "{name}", "{first_name}", "{phone}",
                                 "{date}", "{short_date}", "{time}",
+                                "{today}", "{ist_time}", "{time_greeting}",
                                 "{day}", "{short_day}", "{day_num}"
                             ).chunked(3).forEach { rowTags ->
                                 Row(

@@ -109,8 +109,9 @@ class WhatsAppGroupEngine(
             if (sendAttemptCount in 6..18) {
                 val searchInput = findSearchInput(root)
                 if (searchInput != null) {
-                    val typed = AccessibilityNodeUtils.setTextOnInput(searchInput, pendingGroupRecipient, service)
-                    Log.d(loggerTag, "Typed search query '$pendingGroupRecipient' into search input: $typed")
+                    val cleanQueryText = stripGroupPrefix(pendingGroupRecipient)
+                    val typed = AccessibilityNodeUtils.setTextOnInput(searchInput, cleanQueryText, service)
+                    Log.d(loggerTag, "Typed search query '$cleanQueryText' into search input: $typed")
                     onRetry(650L)
                     return
                 } else {

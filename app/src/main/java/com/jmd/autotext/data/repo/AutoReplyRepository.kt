@@ -219,7 +219,7 @@ class AutoReplyRepository(context: Context) {
 
     private fun cursorToAutoReplyRule(c: Cursor): AutoReplyRule {
         val chanStr = c.getString(c.getColumnIndexOrThrow("channel"))
-        val channelEnum = runCatching { ChannelType.valueOf(chanStr) }.getOrDefault(ChannelType.WHATSAPP)
+        val channelEnum = ChannelType.fromString(chanStr)
 
         fun getColInt(primary: String, fallback: String): Int {
             val pIdx = c.getColumnIndex(primary)

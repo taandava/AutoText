@@ -217,7 +217,7 @@ fun autoReplyRuleDialog(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             appSubScreenHeader(
-                title = if (initialRule != null) "Edit Auto-Reply Rule" else "New Auto-Reply Rule",
+                title = if (initialRule != null && initialRule.id > 0L) "Edit Auto-Reply Rule" else "New Auto-Reply Rule",
                 subtitle = "Automated reply configuration",
                 onBack = onDismiss
             )
@@ -737,7 +737,7 @@ fun autoReplyRuleDialog(
                 )
 
                 glassButton(
-                    text = if (initialRule != null) "Update Rule" else "Save Rule",
+                    text = if (initialRule != null && initialRule.id > 0L) "Update Rule" else "Save Rule",
                     variant = GlassButtonVariant.PRIMARY,
                     emoji = "✅",
                     onClick = {

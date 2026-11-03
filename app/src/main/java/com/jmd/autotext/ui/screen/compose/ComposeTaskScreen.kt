@@ -173,46 +173,84 @@ fun composeTaskScreen(
     ) { contactUri: Uri? ->
         if (contactUri != null) {
             try {
-                var contactId: String? = null
                 var contactDisplayName = ""
+                var resolvedNumber = ""
 
-                context.contentResolver.query(
-                    contactUri,
-                    arrayOf(ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME),
-                    null,
-                    null,
-                    null
-                )?.use { cursor ->
-                    if (cursor.moveToFirst()) {
-                        val idIdx = cursor.getColumnIndex(ContactsContract.Contacts._ID)
-                        val nameIdx = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
-                        if (idIdx != -1) contactId = cursor.getString(idIdx)
-                        if (nameIdx != -1) contactDisplayName = cursor.getString(nameIdx).orEmpty()
-                    }
-                }
-
-                if (contactId != null) {
+                // 1. Query contact data directory via picked URI directly (inherits PickContact URI permission)
+                val dataUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Data.CONTENT_DIRECTORY)
+                try {
                     context.contentResolver.query(
-                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        dataUri,
                         arrayOf(
                             ContactsContract.CommonDataKinds.Phone.NUMBER,
                             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
                         ),
-                        "${ContactsContract.CommonDataKinds.Phone.CONTACT_ID} = ?",
-                        arrayOf(contactId),
+                        "${ContactsContract.Data.MIMETYPE} = ?",
+                        arrayOf(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE),
                         null
-                    )?.use { pCursor ->
-                        if (pCursor.moveToFirst()) {
-                            val numCol = pCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
-                            val nameCol = pCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
-                            val number = if (numCol != -1) pCursor.getString(numCol).orEmpty() else ""
-                            val pName = if (nameCol != -1) pCursor.getString(nameCol).orEmpty() else ""
-                            val finalName = pName.ifBlank { contactDisplayName }
-                            if (number.isNotBlank()) {
-                                tryAddRecipient(finalName, number)
-                            }
+                    )?.use { c ->
+                        if (c.moveToFirst()) {
+                            val numIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                            val nameIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                            if (numIdx >= 0) resolvedNumber = c.getString(numIdx).orEmpty()
+                            if (nameIdx >= 0) contactDisplayName = c.getString(nameIdx).orEmpty()
                         }
                     }
+                } catch (_: Exception) { }
+
+                // 2. Fallback to querying ContactsContract tables if phone number not yet found
+                if (resolvedNumber.isBlank()) {
+                    var contactId: String? = null
+                    try {
+                        context.contentResolver.query(
+                            contactUri,
+                            arrayOf(ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME),
+                            null,
+                            null,
+                            null
+                        )?.use { cursor ->
+                            if (cursor.moveToFirst()) {
+                                val idIdx = cursor.getColumnIndex(ContactsContract.Contacts._ID)
+                                val nameIdx = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
+                                if (idIdx >= 0) contactId = cursor.getString(idIdx)
+                                if (nameIdx >= 0 && contactDisplayName.isBlank()) contactDisplayName = cursor.getString(nameIdx).orEmpty()
+                            }
+                        }
+
+                        if (contactId != null) {
+                            context.contentResolver.query(
+                                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                                arrayOf(
+                                    ContactsContract.CommonDataKinds.Phone.NUMBER,
+                                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                                ),
+                                "${ContactsContract.CommonDataKinds.Phone.CONTACT_ID} = ?",
+                                arrayOf(contactId),
+                                null
+                            )?.use { pCursor ->
+                                if (pCursor.moveToFirst()) {
+                                    val numCol = pCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                                    val nameCol = pCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                                    if (numCol >= 0) resolvedNumber = pCursor.getString(numCol).orEmpty()
+                                    if (nameCol >= 0 && contactDisplayName.isBlank()) contactDisplayName = pCursor.getString(nameCol).orEmpty()
+                                }
+                            }
+                        }
+                    } catch (_: Exception) { }
+                }
+
+                if (resolvedNumber.isNotBlank()) {
+                    tryAddRecipient(contactDisplayName, resolvedNumber)
+                } else if (contactDisplayName.isNotBlank()) {
+                    val phoneFromName = repository.findPhoneForContactName(contactDisplayName)
+                    if (phoneFromName != null) {
+                        tryAddRecipient(contactDisplayName, phoneFromName)
+                    } else {
+                        tryAddRecipient(contactDisplayName, "")
+                        context.showAppToast("Contact added without phone number: $contactDisplayName")
+                    }
+                } else {
+                    context.showAppToast("No phone number found for selected contact")
                 }
             } catch (e: Exception) {
                 context.showAppToast("Error reading contact: ${e.message}")

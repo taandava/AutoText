@@ -39,6 +39,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.jmd.autotext.AutoTextApplication
 import com.jmd.autotext.ui.activity.CallSimulationActivity
+import com.jmd.autotext.ui.activity.ReminderAlarmActivity
 import com.jmd.autotext.ui.activity.AutomationLauncherActivity
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.AppFileLogger
@@ -1605,36 +1606,39 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val success = try {
             val label = AlarmScheduler.getSystemAlarmLabel(task)
 
-            // 1. Ensure native System Alarm is registered and active in Android's Clock app
-            AlarmScheduler.setDeviceSystemAlarm(appContext, task)
+            // 1. Launch the custom fullscreen ReminderAlarmActivity with Text-To-Speech announcement and Snooze controls
+            val reminderIntent = Intent(appContext, ReminderAlarmActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                putExtra("reminder_title", task.title.ifBlank { "Reminder" })
+                putExtra("reminder_text", task.messageText.ifBlank { task.title.ifBlank { "Reminder Alert" } })
+            }
+            appContext.startActivity(reminderIntent)
 
-            // 2. Open System Alarm/Clock if available to display alarms
+            // 2. Also register native System Alarm in Android's Clock app as secondary backup
             runCatching {
-                val clockIntent = Intent(AlarmClock.ACTION_SHOW_ALARMS).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-                appContext.startActivity(clockIntent)
+                AlarmScheduler.setDeviceSystemAlarm(appContext, task)
             }
 
             repository.insertLog(
                 ExecutionLog(
                     taskId = task.id,
                     channel = "Reminder",
-                    recipient = "System Clock",
-                    messageSnippet = "System Alarm: $label",
+                    recipient = "Local Device Alarm",
+                    messageSnippet = "Alarm: ${task.title.ifBlank { label }}",
                     status = "SUCCESS",
+                    details = "Launched fullscreen ReminderAlarmActivity with TTS and registered system clock alarm."
                 ),
             )
-            AppFileLogger.action(appContext, TAG, "Task #${task.id}: Triggered System Alarm Clock ($label)")
+            AppFileLogger.action(appContext, TAG, "Task #${task.id}: Launched ReminderAlarmActivity ($label)")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to trigger system reminder for task #${task.id}: ${e.message}", e)
-            AppFileLogger.e(appContext, TAG, "Failed to trigger system reminder: ${e.message}", e)
+            Log.e(TAG, "Failed to trigger reminder for task #${task.id}: ${e.message}", e)
+            AppFileLogger.e(appContext, TAG, "Failed to trigger reminder: ${e.message}", e)
             repository.insertLog(
                 ExecutionLog(
                     taskId = task.id,
                     channel = "Reminder",
-                    recipient = "System Clock",
+                    recipient = "Local Device Alarm",
                     messageSnippet = "Reminder failed: ${e.message}",
                     status = "FAILED",
                 ),
@@ -1708,18 +1712,59 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             )
 
             if (isDndTransition && !hasPolicyAccess) {
-                AppFileLogger.w(appContext, TAG, "Task #${task.id}: Cannot change sound mode from $currentRinger to $targetRinger without Do Not Disturb (Notification Policy) access.")
-                repository.insertLog(
-                    ExecutionLog(
-                        taskId = task.id,
-                        channel = "Sound Mode",
-                        recipient = "System",
-                        messageSnippet = "Permission needed: Do Not Disturb access required to set $modeSetting mode",
-                        status = "ACTION_REQUIRED",
-                        details = "Do Not Disturb access is required to change ringer mode across silent/vibrate/normal states. Please grant in Settings."
-                    ),
-                )
-                false
+                AppFileLogger.w(appContext, TAG, "Task #${task.id}: DND access not granted. Attempting graceful fallback to Vibrate mode.")
+                var fallbackSuccess = false
+                try {
+                    audioManager.ringerMode = AudioManager.RINGER_MODE_VIBRATE
+                    fallbackSuccess = true
+                } catch (e: Exception) {
+                    Log.d(TAG, "Vibrate fallback without policy access failed: ${e.message}")
+                }
+
+                // Post actionable notification prompting user to grant DND access in 1 tap
+                try {
+                    val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+                    val dndIntent = Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    val pi = PendingIntent.getActivity(appContext, 8822, dndIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                    val notif = NotificationCompat.Builder(appContext, AutoTextApplication.CHANNEL_REMINDERS)
+                        .setSmallIcon(android.R.drawable.ic_lock_silent_mode)
+                        .setContentTitle("Do Not Disturb Access Needed")
+                        .setContentText("Tap to grant Notification Policy access for AutoText Sound Mode tasks.")
+                        .setContentIntent(pi)
+                        .setAutoCancel(true)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .build()
+                    nm?.notify(8822, notif)
+                } catch (_: Exception) {}
+
+                if (fallbackSuccess) {
+                    repository.insertLog(
+                        ExecutionLog(
+                            taskId = task.id,
+                            channel = "Sound Mode",
+                            recipient = "System",
+                            messageSnippet = "Applied Vibrate mode (DND Silent fallback)",
+                            status = "SUCCESS",
+                            details = "DND access required for complete Silent mode; gracefully applied Vibrate fallback."
+                        )
+                    )
+                    AppFileLogger.action(appContext, TAG, "Task #${task.id}: Applied graceful Vibrate fallback.")
+                    true
+                } else {
+                    repository.insertLog(
+                        ExecutionLog(
+                            taskId = task.id,
+                            channel = "Sound Mode",
+                            recipient = "System",
+                            messageSnippet = "Permission needed: Do Not Disturb access required to set $modeSetting mode",
+                            status = "ACTION_REQUIRED",
+                            details = "Do Not Disturb access is required to change ringer mode across silent/vibrate/normal states. Please grant in Settings."
+                        ),
+                    )
+                    false
+                }
             } else {
                 if (currentRinger != targetRinger) {
                     audioManager.ringerMode = targetRinger

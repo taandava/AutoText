@@ -115,7 +115,7 @@ class SequenceRepository(context: Context) {
             val triggerTimeIdx = c.getColumnIndex("trigger_time")
             while (c.moveToNext()) {
                 val chanStr = c.getString(c.getColumnIndexOrThrow("channel"))
-                val channelEnum = runCatching { ChannelType.valueOf(chanStr) }.getOrDefault(ChannelType.WHATSAPP)
+                val channelEnum = ChannelType.fromString(chanStr)
                 val triggerTs = if (triggerTimeIdx >= 0) c.getLong(triggerTimeIdx) else 0L
                 steps.add(
                     ContactSequenceStep(

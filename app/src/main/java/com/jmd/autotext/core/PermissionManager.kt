@@ -69,6 +69,9 @@ object PermissionManager {
     const val ID_READ_PHONE_STATE = Manifest.permission.READ_PHONE_STATE
     const val ID_READ_CALL_LOG = Manifest.permission.READ_CALL_LOG
     const val ID_READ_CONTACTS = Manifest.permission.READ_CONTACTS
+    const val ID_READ_MEDIA_IMAGES = Manifest.permission.READ_MEDIA_IMAGES
+    const val ID_READ_MEDIA_VIDEO = Manifest.permission.READ_MEDIA_VIDEO
+    const val ID_READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE
     const val ID_POST_NOTIFICATIONS = Manifest.permission.POST_NOTIFICATIONS
     const val ID_EXACT_ALARMS = Manifest.permission.SCHEDULE_EXACT_ALARM
     const val ID_ACCESSIBILITY = "android.permission.BIND_ACCESSIBILITY_SERVICE"
@@ -210,6 +213,17 @@ object PermissionManager {
             deniedImpact = "Sound mode scheduler tasks will record ACTION_REQUIRED without crashing.",
             revocationSafety = "Safe to revoke anytime.",
             category = PermissionCategory.SYSTEM
+        ),
+        PermissionFeatureInfo(
+            permissionId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) ID_READ_MEDIA_IMAGES else ID_READ_EXTERNAL_STORAGE,
+            featureName = "Media & Attachment Access",
+            purpose = "Allows attaching photos and videos to scheduled WhatsApp and MMS automation tasks.",
+            canWorkWithout = true,
+            isRuntimeApproval = true,
+            requiresSpecialUserAction = false,
+            deniedImpact = "Text-only messaging and calling work normally; media file attachments cannot be loaded.",
+            revocationSafety = "Safe to revoke anytime.",
+            category = PermissionCategory.MEDIA
         )
     )
 
@@ -261,6 +275,29 @@ object PermissionManager {
      */
     fun hasContactsPermission(context: Context): Boolean =
         isPermissionGranted(context, Manifest.permission.READ_CONTACTS)
+
+    /**
+     * Checks if the app can access device media files for photo/video attachments.
+     */
+    fun hasMediaPermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            isPermissionGranted(context, Manifest.permission.READ_MEDIA_IMAGES) &&
+                isPermissionGranted(context, Manifest.permission.READ_MEDIA_VIDEO)
+        } else {
+            isPermissionGranted(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+    }
+
+    /**
+     * Resolves the list of runtime permissions needed for media attachments based on platform version.
+     */
+    fun getRequiredMediaPermissions(): List<String> {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO)
+        } else {
+            listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+    }
 
     /**
      * Checks if the app can post notifications on Android 13+ (API 33+).

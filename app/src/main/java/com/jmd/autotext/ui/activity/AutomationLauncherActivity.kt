@@ -128,7 +128,7 @@ class AutomationLauncherActivity : Activity() {
 
         val taskId = intent.getLongExtra(EXTRA_TASK_ID, -1L)
         val channelStr = intent.getStringExtra(EXTRA_CHANNEL) ?: ChannelType.WHATSAPP.name
-        val channel = runCatching { ChannelType.valueOf(channelStr) }.getOrDefault(ChannelType.WHATSAPP)
+        val channel = ChannelType.fromString(channelStr)
         val recipient = intent.getStringExtra(EXTRA_RECIPIENT) ?: ""
         val message = intent.getStringExtra(EXTRA_MESSAGE) ?: ""
         val mediaUri = intent.getStringExtra(EXTRA_MEDIA_URI) ?: ""

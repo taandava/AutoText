@@ -2,6 +2,7 @@ package com.jmd.autotext
 
 import com.jmd.autotext.core.ProtectedApplicationManager
 import com.jmd.autotext.core.PermissionManager
+import com.jmd.autotext.ui.model.TaskTypeItem
 
 import com.jmd.autotext.core.AutomationSafetyManager
 import com.jmd.autotext.core.DEFAULT_MESSAGE_TEXT
@@ -1248,7 +1249,7 @@ class AutoTextComprehensiveTest {
         assertFalse(settings.maskExecutionLogs)
         assertEquals(15, settings.autoClearClipboardSeconds)
         assertTrue(settings.smartAccessibilityScoping)
-        assertFalse(settings.dynamicA11yOnDemand)
+        assertTrue(settings.dynamicA11yOnDemand)
         assertTrue(settings.suppressNotifsOverExcluded)
         assertTrue(settings.blockOverlaysOverExcluded)
     }
@@ -1412,7 +1413,7 @@ class AutoTextComprehensiveTest {
     @Test
     fun testPermissionManagerCatalogCompleteness() {
         val permissions = PermissionManager.getAllPermissions()
-        assertEquals(12, permissions.size)
+        assertEquals(13, permissions.size)
 
         val permMap = permissions.associateBy { it.permissionId }
 
@@ -1816,5 +1817,424 @@ class AutoTextComprehensiveTest {
             assertTrue("ic_launcher_round.png must exist in mipmap-$density", iconRoundPng.exists())
             assertTrue("ic_launcher_round.png must not be empty in mipmap-$density", iconRoundPng.length() > 100)
         }
+    }
+
+    @Test
+    fun testManualPickModeInvariants() {
+        assertFalse(
+            "isManualPickMode must be false when service is idle",
+            com.jmd.autotext.service.AutoTextAccessibilityService.isManualPickMode()
+        )
+        val modes = com.jmd.autotext.service.AutoTextAccessibilityService.Companion.AutomationMode.entries.map { it.name }
+        assertTrue("AutomationMode.MANUAL_PICK_CHAT must be present", modes.contains("MANUAL_PICK_CHAT"))
+    }
+
+    @Test
+    fun testContactNameStrippingForDynamicPool() {
+        val testCases = listOf(
+            "Mom ❤️" to "Mom",
+            "Dr. John Doe" to "Dr John Doe",
+            "Client #4 (VIP)" to "Client 4 VIP",
+            "~Alice" to "Alice",
+            "  Bob  " to "Bob"
+        )
+        for ((raw, expectedClean) in testCases) {
+            val stripped = raw.trim().removePrefix("~").filter { it.isLetterOrDigit() || it.isWhitespace() }.replace("\\s+".toRegex(), " ").trim()
+            assertEquals("Normalized candidate for '$raw'", expectedClean, stripped)
+        }
+    }
+
+    @Test
+    fun testBlockedChatNamesLogic() {
+        val blockedExactOrPrefix = listOf(
+            "whatsapp", "whatsapp business", "wa business", "w4b",
+            "search", "chats", "updates", "calls", "tools", "camera", "settings",
+            "more options", "new chat", "back", "video call", "voice call",
+            "type a message", "message", "unread message", "create ads",
+            "reach potential", "get started", "dismiss", "online", "typing",
+            "last seen", "swipe down to reveal", "swipe down", "select all",
+            "starred messages", "linked devices", "clear call log", "mute notifications",
+            "yesterday", "today", "status", "my status", "channels", "communities",
+            "new group", "new community", "new broadcast"
+        )
+        val validNames = listOf(
+            "John Doe", "Mom ❤️", "Project Alpha", "+919876543210", "Alice Smith",
+            "Dr. Sharma", "Accountant office", "Client 123", "Emergency Contact"
+        )
+        for (name in validNames) {
+            val lower = name.trim().removePrefix("~").trim().lowercase()
+            val isBlocked = blockedExactOrPrefix.any { lower == it || lower.startsWith("$it ") || lower.startsWith("$it…") || lower.startsWith("$it...") }
+            assertFalse("Expected '$name' to be valid and NOT blocked", isBlocked)
+        }
+
+        val invalidNames = listOf(
+            "WhatsApp", "chats", "CHATS", "Type a message", "Search", "Search…", "Back", "more options", "Status", "My Status"
+        )
+        for (name in invalidNames) {
+            val lower = name.trim().removePrefix("~").trim().lowercase()
+            val isBlocked = blockedExactOrPrefix.any { lower == it || lower.startsWith("$it ") || lower.startsWith("$it…") || lower.startsWith("$it...") }
+            assertTrue("Expected '$name' to be recognized as blocked UI noise", isBlocked)
+        }
+    }
+
+    @Test
+    fun testTaskContentValidatorChannelRules() {
+        // SMS requires text; rejects empty
+        val smsEmpty = com.jmd.autotext.core.TaskContentValidator.validateContent(null, ChannelType.SMS, "", null)
+        assertTrue(smsEmpty is com.jmd.autotext.core.ContentValidationResult.Reject)
+
+        val smsValid = com.jmd.autotext.core.TaskContentValidator.validateContent(null, ChannelType.SMS, "Hello SMS", null)
+        assertTrue(smsValid is com.jmd.autotext.core.ContentValidationResult.AcceptTextOnly)
+
+        // WhatsApp allows text-only
+        val waText = com.jmd.autotext.core.TaskContentValidator.validateContent(null, ChannelType.WHATSAPP, "Hello WA", null)
+        assertTrue(waText is com.jmd.autotext.core.ContentValidationResult.AcceptTextOnly)
+
+        // WhatsApp rejects empty text with no media
+        val waEmpty = com.jmd.autotext.core.TaskContentValidator.validateContent(null, ChannelType.WHATSAPP, "   ", null)
+        assertTrue(waEmpty is com.jmd.autotext.core.ContentValidationResult.Reject)
+
+        // WhatsApp accepts media-only (content:// uri simulation)
+        val waMediaOnly = com.jmd.autotext.core.TaskContentValidator.validateContent(null, ChannelType.WHATSAPP, "", "content://media/external/images/media/123.jpg")
+        assertTrue("Expected AcceptMediaOnly for valid content URI without caption", waMediaOnly is com.jmd.autotext.core.ContentValidationResult.AcceptMediaOnly)
+
+        // WhatsApp accepts media with caption
+        val waMediaCaption = com.jmd.autotext.core.TaskContentValidator.validateContent(null, ChannelType.WHATSAPP, "Nice photo!", "content://media/external/images/media/123.jpg")
+        assertTrue(waMediaCaption is com.jmd.autotext.core.ContentValidationResult.AcceptMediaWithCaption)
+        assertEquals("Nice photo!", (waMediaCaption as com.jmd.autotext.core.ContentValidationResult.AcceptMediaWithCaption).caption)
+
+        // Unsupported scheme rejected
+        val badScheme = com.jmd.autotext.core.TaskContentValidator.validateContent(null, ChannelType.WHATSAPP, "Hello", "http://example.com/image.png")
+        assertTrue(badScheme is com.jmd.autotext.core.ContentValidationResult.Reject)
+    }
+
+    @Test
+    fun testAutoReplyPatternMatching() {
+        val wildcardRule = AutoReplyRule(
+            id = 1,
+            name = "Wildcard Reply",
+            channel = ChannelType.SMS,
+            replyText = "Thanks for your message!",
+            triggerPattern = "*",
+            isExactMatch = false
+        )
+        // Wildcard matches everything
+        val testIncoming = listOf("hi", "hello", "what is the price", "123", "Any message text")
+        for (incoming in testIncoming) {
+            val matches = wildcardRule.triggerPattern == "*" || incoming.contains(wildcardRule.triggerPattern, ignoreCase = true)
+            assertTrue("Wildcard must match '$incoming'", matches)
+        }
+
+        // Exact match rule
+        val exactRule = AutoReplyRule(
+            id = 2,
+            name = "Price Inquiry",
+            channel = ChannelType.WHATSAPP,
+            replyText = "Our starting price is ₹499",
+            triggerPattern = "price",
+            isExactMatch = true
+        )
+        val exactMatchText = "price"
+        val exactMatched = if (exactRule.isExactMatch) {
+            exactMatchText.trim().equals(exactRule.triggerPattern.trim(), ignoreCase = true)
+        } else {
+            exactMatchText.contains(exactRule.triggerPattern, ignoreCase = true)
+        }
+        assertTrue("Exact match should pass for 'price'", exactMatched)
+
+        val nonExactText = "what is your price list?"
+        val nonExactMatched = if (exactRule.isExactMatch) {
+            nonExactText.trim().equals(exactRule.triggerPattern.trim(), ignoreCase = true)
+        } else {
+            nonExactText.contains(exactRule.triggerPattern, ignoreCase = true)
+        }
+        assertFalse("Exact match should NOT pass for partial substring 'what is your price list?'", nonExactMatched)
+    }
+
+    @Test
+    fun testContactSequenceProgressiveDelayTiming() {
+        val baseTime = 1700000000000L
+        val steps = listOf(
+            ContactSequenceStep(stepOrder = 1, channel = ChannelType.SMS, messageText = "Step 1", delayMinutesFromPrevious = 0),
+            ContactSequenceStep(stepOrder = 2, channel = ChannelType.SMS, messageText = "Step 2", delayMinutesFromPrevious = 30),
+            ContactSequenceStep(stepOrder = 3, channel = ChannelType.SMS, messageText = "Step 3", delayMinutesFromPrevious = 120)
+        )
+
+        var currentTriggerTime = baseTime
+        val calculatedTimes = mutableListOf<Long>()
+        steps.forEachIndexed { index, step ->
+            if (index > 0) {
+                currentTriggerTime += step.delayMinutesFromPrevious * 60 * 1000L
+            }
+            calculatedTimes.add(currentTriggerTime)
+        }
+
+        assertEquals("Step 1 trigger time", baseTime, calculatedTimes[0])
+        assertEquals("Step 2 trigger time (+30m)", baseTime + (30 * 60 * 1000L), calculatedTimes[1])
+        assertEquals("Step 3 trigger time (+120m from Step 2)", baseTime + (150 * 60 * 1000L), calculatedTimes[2])
+    }
+
+    @Test
+    fun testAllChannelTypesCoverage() {
+        val allChannels = ChannelType.entries
+        assertEquals("There should be exactly 12 channel types", 12, allChannels.size)
+        assertTrue(allChannels.contains(ChannelType.SMS))
+        assertTrue(allChannels.contains(ChannelType.WHATSAPP))
+        assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS))
+        assertTrue(allChannels.contains(ChannelType.WHATSAPP_GROUP))
+        assertTrue(allChannels.contains(ChannelType.WHATSAPP_STATUS))
+        assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS_STATUS))
+        assertTrue(allChannels.contains(ChannelType.CALL))
+        assertTrue(allChannels.contains(ChannelType.WHATSAPP_CALL))
+        assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS_CALL))
+        assertTrue(allChannels.contains(ChannelType.CALL_SIMULATION))
+        assertTrue(allChannels.contains(ChannelType.REMINDER))
+        assertTrue(allChannels.contains(ChannelType.SOUND_MODE))
+
+        for (ch in allChannels) {
+            assertNotNull(ch.displayName)
+            assertTrue(ch.displayName.isNotBlank())
+        }
+    }
+
+    @Test
+    fun testWhatsAppGroupPrefixStripping() {
+        val stripGroupPrefix = { value: String ->
+            value.replaceFirst(Regex("^group\\s*:", RegexOption.IGNORE_CASE), "").trim()
+        }
+        val normalizeTitle = { value: String ->
+            stripGroupPrefix(value).replace(Regex("\\s+"), " ").lowercase()
+        }
+
+        assertEquals("Family", stripGroupPrefix("group:Family"))
+        assertEquals("Colleagues", stripGroupPrefix("GROUP: Colleagues"))
+        assertEquals("Project Alpha", stripGroupPrefix("group : Project Alpha"))
+        assertEquals("Football Team", stripGroupPrefix("Football Team"))
+        assertEquals("family", normalizeTitle("group: Family"))
+        assertEquals("project alpha", normalizeTitle("GROUP :  Project   Alpha "))
+    }
+
+    @Test
+    fun testPermissionManagerCatalogSpecifications() {
+        val specs = PermissionManager.ALL_SPECIFICATIONS
+        assertTrue("Permission specs should have at least 10 items", specs.size >= 10)
+
+        val permissionIds = specs.map { it.permissionId }.toSet()
+        assertTrue(permissionIds.contains(PermissionManager.ID_SMS))
+        assertTrue(permissionIds.contains(PermissionManager.ID_RECEIVE_SMS))
+        assertTrue(permissionIds.contains(PermissionManager.ID_CALL_PHONE))
+        assertTrue(permissionIds.contains(PermissionManager.ID_READ_PHONE_STATE))
+        assertTrue(permissionIds.contains(PermissionManager.ID_READ_CONTACTS))
+        assertTrue(permissionIds.contains(PermissionManager.ID_POST_NOTIFICATIONS))
+        assertTrue(permissionIds.contains(PermissionManager.ID_EXACT_ALARMS))
+        assertTrue(permissionIds.contains(PermissionManager.ID_ACCESSIBILITY))
+        assertTrue(permissionIds.contains(PermissionManager.ID_DEVICE_ADMIN))
+        assertTrue(permissionIds.contains(PermissionManager.ID_NOTIFICATION_POLICY))
+
+        for (spec in specs) {
+            assertTrue("Feature name must not be blank for ${spec.permissionId}", spec.featureName.isNotBlank())
+            assertTrue("Purpose must not be blank for ${spec.permissionId}", spec.purpose.isNotBlank())
+            assertTrue("Denied impact must not be blank for ${spec.permissionId}", spec.deniedImpact.isNotBlank())
+            assertTrue("Revocation safety must not be blank for ${spec.permissionId}", spec.revocationSafety.isNotBlank())
+        }
+
+        for (critical in PermissionManager.CRITICAL_PERMISSIONS) {
+            val matching = specs.find { it.permissionId == critical }
+            assertNotNull("Critical permission $critical must be in specifications", matching)
+            assertTrue("Critical permission $critical must have isCritical == true", matching!!.isCritical)
+        }
+    }
+
+    @Test
+    fun testTaskTypeSelectionItemDefinitions() {
+        val items = listOf(
+            TaskTypeItem(
+                title = "SMS Message",
+                description = "Schedule direct automated SMS via device SIM card",
+                emoji = "📩",
+                color = androidx.compose.ui.graphics.Color.Blue,
+                channel = ChannelType.SMS
+            ),
+            TaskTypeItem(
+                title = "WhatsApp Chat",
+                description = "Automated WhatsApp messages with optional media attachments",
+                emoji = "💬",
+                color = androidx.compose.ui.graphics.Color.Green,
+                channel = ChannelType.WHATSAPP
+            ),
+            TaskTypeItem(
+                title = "WhatsApp Business",
+                description = "Send automated WhatsApp Business direct messages with media",
+                emoji = "💼",
+                color = androidx.compose.ui.graphics.Color.Cyan,
+                channel = ChannelType.WHATSAPP_BUSINESS
+            ),
+            TaskTypeItem(
+                title = "WhatsApp Group",
+                description = "Send automated WhatsApp group messages or announcements",
+                emoji = "👥",
+                color = androidx.compose.ui.graphics.Color.Green,
+                channel = ChannelType.WHATSAPP_GROUP
+            ),
+            TaskTypeItem(
+                title = "Status Story",
+                description = "Schedule auto-posting text or photo/video stories to Status",
+                emoji = "📸",
+                color = androidx.compose.ui.graphics.Color.Magenta,
+                channel = null,
+                isStatus = true
+            ),
+            TaskTypeItem(
+                title = "Phone Call",
+                description = "Schedule direct phone call via device SIM card",
+                emoji = "📞",
+                color = androidx.compose.ui.graphics.Color.Yellow,
+                channel = ChannelType.CALL
+            ),
+            TaskTypeItem(
+                title = "WhatsApp Call",
+                description = "Schedule automated WhatsApp or WA Business voice call",
+                emoji = "📞",
+                color = androidx.compose.ui.graphics.Color.Green,
+                channel = null,
+                isWaCall = true
+            ),
+            TaskTypeItem(
+                title = "Call Simulation",
+                description = "Simulate incoming call alert with custom caller name",
+                emoji = "🎭",
+                color = androidx.compose.ui.graphics.Color.Red,
+                channel = ChannelType.CALL_SIMULATION
+            ),
+            TaskTypeItem(
+                title = "Contact Sequence (Multi-Task)",
+                description = "Step-by-step drip messages for a contact across SMS & WhatsApp",
+                emoji = "🔗",
+                color = androidx.compose.ui.graphics.Color.Blue,
+                channel = null,
+                isSequence = true
+            ),
+            TaskTypeItem(
+                title = "Daily Auto Campaign",
+                description = "High-speed paced automated outreach batch",
+                emoji = "⚡",
+                color = androidx.compose.ui.graphics.Color.Yellow,
+                channel = null,
+                isDailyCampaign = true
+            ),
+            TaskTypeItem(
+                title = "Alarm / Reminder",
+                description = "Local on-device audio alarm and reminder notification",
+                emoji = "⏰",
+                color = androidx.compose.ui.graphics.Color.Blue,
+                channel = ChannelType.REMINDER
+            ),
+            TaskTypeItem(
+                title = "Sound Mode Switcher",
+                description = "Automatically switch between Silent, Vibrate, and Normal sound",
+                emoji = "🔊",
+                color = androidx.compose.ui.graphics.Color.Cyan,
+                channel = ChannelType.SOUND_MODE
+            )
+        )
+
+        assertEquals(12, items.size)
+        val channels = items.mapNotNull { it.channel }.toSet()
+        assertTrue(channels.contains(ChannelType.SMS))
+        assertTrue(channels.contains(ChannelType.WHATSAPP))
+        assertTrue(channels.contains(ChannelType.WHATSAPP_BUSINESS))
+        assertTrue(channels.contains(ChannelType.WHATSAPP_GROUP))
+        assertTrue(channels.contains(ChannelType.CALL))
+        assertTrue(channels.contains(ChannelType.CALL_SIMULATION))
+        assertTrue(channels.contains(ChannelType.REMINDER))
+        assertTrue(channels.contains(ChannelType.SOUND_MODE))
+
+        // Ensure all items have non-blank title and emoji
+        for ((title, description, emoji) in items) {
+            assertTrue("Title must not be blank for $title", title.isNotBlank())
+            assertTrue("Emoji must not be blank for $title", emoji.isNotBlank())
+            assertTrue("Description must not be blank for $title", description.isNotBlank())
+        }
+    }
+
+    @Test
+    fun testExpandedMessageTemplateTokensAndContext() {
+        val template = "Dispatched via {channel} to {recipient_count} recipients on {today} at {ist_time}. {time_greeting}!"
+        val resolved = MessageTemplateResolver.resolve(
+            template = template,
+            name = "Priya Patel",
+            phone = "+919876500000",
+            channel = "WhatsApp Business",
+            recipientCount = 14
+        )
+        assertTrue("Channel token must resolve", resolved.contains("Dispatched via WhatsApp Business"))
+        assertTrue("Recipient count token must resolve", resolved.contains("to 14 recipients"))
+        assertFalse("Template should not contain unparsed {today}", resolved.contains("{today}"))
+        assertFalse("Template should not contain unparsed {ist_time}", resolved.contains("{ist_time}"))
+        assertFalse("Template should not contain unparsed {time_greeting}", resolved.contains("{time_greeting}"))
+        assertTrue(
+            "Time greeting should resolve to valid greeting",
+            resolved.contains("Good morning") || resolved.contains("Good afternoon") || resolved.contains("Good evening")
+        )
+
+        // Case-insensitivity check
+        val uppercaseTemplate = "{CHANNEL} - {RECIPIENT_COUNT} - {TODAY} - {IST_TIME} - {TIME_GREETING}"
+        val upperResolved = MessageTemplateResolver.resolve(
+            template = uppercaseTemplate,
+            channel = "SMS",
+            recipientCount = 3
+        )
+        assertTrue(upperResolved.contains("SMS - 3"))
+        assertFalse(upperResolved.contains("{TODAY}"))
+        assertFalse(upperResolved.contains("{IST_TIME}"))
+        assertFalse(upperResolved.contains("{TIME_GREETING}"))
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 21. PERMISSIONS & BACKUP REGISTRY INTEGRATION TESTS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testAppPrivacyConfigsTableConstants() {
+        assertEquals("app_privacy_configs", com.jmd.autotext.data.db.DatabaseHelper.TABLE_APP_PRIVACY_CONFIGS)
+    }
+
+    @Test
+    fun testPermissionManagerCallLogAndMediaSpecifications() {
+        val allSpecs = PermissionManager.getAllPermissions()
+        val hasCallLog = allSpecs.any { it.permissionId == PermissionManager.ID_READ_CALL_LOG }
+        val hasMedia = allSpecs.any { it.category == com.jmd.autotext.core.PermissionCategory.MEDIA }
+
+        assertTrue("PermissionManager must specify READ_CALL_LOG", hasCallLog)
+        assertTrue("PermissionManager must specify MEDIA category permission", hasMedia)
+
+        val mediaPermissions = PermissionManager.getRequiredMediaPermissions()
+        assertTrue("Required media permissions list must not be empty", mediaPermissions.isNotEmpty())
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 22. CHANNEL TYPE ALIAS RESOLUTION & QUERY COMPATIBILITY TESTS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testChannelTypeFromStringAliases() {
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("FAKE_CALL"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("fake_call"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("SIMULATED_CALL"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("simulated_call"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("CALL_SIMULATION"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("call_simulation"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("FAKECALL"))
+        assertEquals(ChannelType.SMS, ChannelType.fromString("SMS"))
+        assertEquals(ChannelType.SMS, ChannelType.fromString("sms"))
+        assertEquals(ChannelType.CALL, ChannelType.fromString("CALL"))
+        assertEquals(ChannelType.CALL, ChannelType.fromString("call"))
+        assertEquals(ChannelType.WHATSAPP, ChannelType.fromString("WHATSAPP"))
+        assertEquals(ChannelType.WHATSAPP_BUSINESS, ChannelType.fromString("WHATSAPP_BUSINESS"))
+        assertEquals(ChannelType.REMINDER, ChannelType.fromString("REMINDER"))
+        assertEquals(ChannelType.SOUND_MODE, ChannelType.fromString("SOUND_MODE"))
+        assertEquals(ChannelType.SMS, ChannelType.fromString(null))
+        assertEquals(ChannelType.SMS, ChannelType.fromString(""))
+        assertEquals(ChannelType.SMS, ChannelType.fromString("INVALID_UNKNOWN_CHANNEL"))
     }
 }

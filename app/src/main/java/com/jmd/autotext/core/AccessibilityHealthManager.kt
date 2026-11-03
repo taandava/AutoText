@@ -484,6 +484,12 @@ object AccessibilityHealthManager {
             }
             manufacturer.contains("vivo") || manufacturer.contains("iqoo") -> {
                 intentsToTry.add(Intent().apply {
+                    component = ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.PurviewTabActivity")
+                })
+                intentsToTry.add(Intent().apply {
+                    component = ComponentName("com.vivo.abe", "com.vivo.abe.ui.ExcessivePowerManagerActivity")
+                })
+                intentsToTry.add(Intent().apply {
                     component = ComponentName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.AddWhiteListActivity")
                 })
             }

@@ -54,5 +54,17 @@
 | | Portrait Orientation Guard | `AccessibilityHealthManager.enforceAutoRotateInvariant` | **PASS** | Restores portrait lock (ACCELEROMETER_ROTATION=0) |
 | **Persistence & Logs** | Thread-Safe SQLite WAL | `DatabaseHelper.kt` | **PASS** | 15 tables with transactional integrity |
 | | Execution History Audit | `LogRepository.kt`, `LogsScreen.kt` | **PASS** | Full audit log with recipient & status |
-| | Backup & Restoration | `BackupRepository.kt`, `SettingsBackupRestoreCard.kt` | **PASS** | JSON export and import of application state |
+| | Backup & Restoration | `BackupRepository.kt`, `SettingsBackupRestoreCard.kt` | **PASS** | JSON export and import of application state (including `TABLE_APP_PRIVACY_CONFIGS`) |
+| **Permissions & Diagnostics** | Runtime Permission Management | `PermissionManager.kt`, `PermissionScreen.kt` | **PASS** | Dynamic SDK-adaptive permissions including Call Log and Media |
+| | OEM Autostart Diagnostics | `AccessibilityHealthManager.kt` | **PASS** | Multi-OEM intents with Vivo/iQOO specific component fallbacks |
+| **Call Simulation & Alarms** | Pixel In-Call Simulation UI | `CallSimulationActivity.kt` | **PASS** | Answer, In-Call Timer (00:19), Mute, Speaker, End Call, and Decline buttons verified on physical device |
+| | Full-Screen Heads-Up Alarm | `AlarmReminderActivity.kt` | **PASS** | Fullscreen alarm display with interactive Dismiss button verified on physical device |
+| **UI & Navigation Controls** | Tasks Screen & Channel Selector | `MainAppHost.kt`, `TaskTypeSelectionDialog.kt` | **PASS** | Tabs, Single Tasks vs Sequences switcher, + button, 14-channel dialog, ComposeTaskScreen Cancel button |
+| | Campaigns & Sync Engine | `DailyCampaignScreen.kt` | **PASS** | Active campaigns list, recipient status, Sync Pool button, and batch limit steppers verified |
+| | Auto-Reply Control Engine | `AutoReplyScreen.kt` | **PASS** | Engine master enable switch, keyword rule dialogs, test broadcast verification |
+| | Tools & Diagnostics Suite | `MoreScreen.kt`, `TemplatesScreen.kt`, `LogsScreen.kt` | **PASS** | Message Templates (5), Execution History (200 records + SMS filters), System Traces (1500 records), Privacy & App Visibility (Banking Shield list) |
+| | Contacts & Groups Hub | `ContactsScreen.kt` | **PASS** | 3 tabs verified: Custom & CSV, Dynamic Pool (2518 phonebook leads with origin tags & sequence creators), and WA Groups |
+| | Settings & Security Suite | `SettingsScreen.kt`, `SettingsBackupRestoreCard.kt` | **PASS** | 7/7 Healthy cards, PIN screen assistance, Backup to SD card (`AutoText_Backup_*.json` - 2.21MB), In-app Markdown guide reader |
+
+
 

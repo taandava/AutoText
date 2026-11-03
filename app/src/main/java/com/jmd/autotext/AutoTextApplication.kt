@@ -18,6 +18,11 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.util.Log
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.AutomationSafetyManager
@@ -60,6 +65,8 @@ class AutoTextApplication : Application() {
             private set
     }
 
+    val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     /**
      * Initializes the application process, registers notification channels, and launches
      * background initialization routines without blocking the main UI thread.
@@ -94,38 +101,43 @@ class AutoTextApplication : Application() {
             AutomationSafetyManager.isEmergencyStopActive.set(true)
         }
 
-        // 2. Offload database queries, contact hygiene, and alarm reschedulings to background daemon thread
-        Thread {
+        // 2. Offload database queries, contact hygiene, and alarm reschedulings to structured background coroutine
+        val initExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            Log.e(TAG, "Unhandled exception during background initialization coroutine", throwable)
+            AppFileLogger.e(this, TAG, "Background init coroutine error: ${throwable.message}", throwable)
+        }
+
+        applicationScope.launch(initExceptionHandler) {
             try {
                 // Re-arm all active and pending task alarms across SMS, WhatsApp, Calls, and Reminders
-                val prefs = PreferenceManager(this)
-                if (!prefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(this)) {
+                val prefs = PreferenceManager(this@AutoTextApplication)
+                if (!prefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(this@AutoTextApplication)) {
                     Log.i(TAG, "Master task scheduler is paused or emergency stop active. Suppressing background schedule initialization.")
-                    AlarmScheduler(this).cancelAll()
-                    DailyCampaignScheduler.cancelAllCampaigns(this)
+                    AlarmScheduler(this@AutoTextApplication).cancelAll()
+                    DailyCampaignScheduler.cancelAllCampaigns(this@AutoTextApplication)
                 } else {
-                    AlarmScheduler(this).rescheduleAllPending()
+                    AlarmScheduler(this@AutoTextApplication).rescheduleAllPending()
 
-                // Arm daily campaign schedulers for automated outreach cycles
-                    DailyCampaignScheduler.scheduleAll(this)
+                    // Arm daily campaign schedulers for automated outreach cycles
+                    DailyCampaignScheduler.scheduleAll(this@AutoTextApplication)
                 }
 
                 // Start silent exact AlarmManager heartbeat for accessibility watchdog monitoring
-                AccessibilityWatchdogScheduler.scheduleHeartbeat(this)
+                AccessibilityWatchdogScheduler.scheduleHeartbeat(this@AutoTextApplication)
 
                 // Proactively verify and request binding for Accessibility and NotificationListener services
                 if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
-                    AccessibilityHealthManager.ensureAllServicesActive(this)
+                    AccessibilityHealthManager.ensureAllServicesActive(this@AutoTextApplication)
                 }
-                AccessibilityHealthManager.enforceAutoRotateInvariant(this)
+                AccessibilityHealthManager.enforceAutoRotateInvariant(this@AutoTextApplication)
 
                 // Self-heal and purge any individual contacts that were previously misclassified as groups
-                AppRepository(this).cleanupMistakenGroups()
+                AppRepository(this@AutoTextApplication).cleanupMistakenGroups()
             } catch (e: Exception) {
                 Log.e(TAG, "Error during background initialization", e)
-                AppFileLogger.e(this, TAG, "Non-fatal error during background initialization: ${e.message}", e)
+                AppFileLogger.e(this@AutoTextApplication, TAG, "Non-fatal error during background initialization: ${e.message}", e)
             }
-        }.start()
+        }
 
         // 3. Ensure any legacy persistent foreground notifications are cancelled
         try {

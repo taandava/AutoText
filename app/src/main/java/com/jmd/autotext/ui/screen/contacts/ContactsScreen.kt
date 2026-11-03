@@ -259,6 +259,9 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                         1 -> {
                             ExtendedFloatingActionButton(
                                 onClick = {
+                                    if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                                        context.showAppToast("Contacts permission required to sync lead pool")
+                                    }
                                     if (!isSyncingPool) {
                                         isSyncingPool = true
                                         scope.launch(Dispatchers.IO) {
@@ -281,10 +284,13 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                         else -> {
                             ExtendedFloatingActionButton(
                                 onClick = {
+                                    val installedPkg = WhatsAppPackageHelper.getInstalledWhatsAppPackage(context)
+                                    val isBiz = installedPkg == WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS
+                                    val ch = if (isBiz) ChannelType.WHATSAPP_BUSINESS else ChannelType.WHATSAPP
                                     AutoTextAccessibilityService.startWhatsAppChatScan(
                                         context,
-                                        targetPackage = WhatsAppPackageHelper.PACKAGE_WHATSAPP,
-                                        channel = ChannelType.WHATSAPP,
+                                        targetPackage = installedPkg,
+                                        channel = ch,
                                         scanTarget = WhatsAppChatScanner.ScanTarget.ALL_CHATS
                                     )
                                     context.showAppToast("Scanning chats for groups...")

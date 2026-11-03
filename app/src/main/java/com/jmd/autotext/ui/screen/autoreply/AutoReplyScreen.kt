@@ -230,7 +230,7 @@ fun autoReplyScreen(
             initialRule = editingRule,
             onDismiss = { showDialog = false },
             onSave = { finalRule ->
-                if (editingRule != null) {
+                if (finalRule.id > 0L) {
                     repository.updateAutoReplyRule(finalRule)
                 } else {
                     repository.insertAutoReplyRule(finalRule)
