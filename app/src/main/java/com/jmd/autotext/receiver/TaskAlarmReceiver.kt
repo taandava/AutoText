@@ -261,7 +261,8 @@ class TaskAlarmReceiver : BroadcastReceiver() {
      * @param intent Alarm trigger intent carrying task ID and flags.
      */
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == ACTION_FIRE_CAMPAIGN) {
+        try {
+            if (intent.action == ACTION_FIRE_CAMPAIGN) {
             val campId = intent.getLongExtra("campaign_id", 1L)
             val prefs = PreferenceManager(context)
             val repo = AppRepository(context)
@@ -506,6 +507,9 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             Log.w(TAG, "Task #$taskId is already active or queued in SequentialTaskEngine. Suppressing duplicate alarm dispatch.")
             AppFileLogger.w(context, TAG, "Task #$taskId already active in SequentialTaskEngine pipeline. Duplicate alarm trigger suppressed.")
         }
+    } catch (t: Throwable) {
+        Log.e(TAG, "Unexpected error in TaskAlarmReceiver onReceive", t)
     }
+}
 
 }

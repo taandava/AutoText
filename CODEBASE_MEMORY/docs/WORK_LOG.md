@@ -246,3 +246,22 @@
 
 
 
+
+
+### Phase 15: Extensive Multi-Axis Codebase & Runtime Audit
+- **Axis 1: Activity Lifecycle & Resource Cleanup**:
+  - `AutomationLauncherActivity.kt`: Added `onDestroy()` to cancel all pending handler callbacks and cleanly release the window WakeLock.
+  - `CallSimulationActivity.kt`: Guaranteed release of `wakeLock` in both `onPause()` and `onDestroy()`; stopped `mediaPlayer`, `fallbackRingtone`, and `vibrator` across all finish branches.
+  - `ReminderAlarmActivity.kt`: Tracked and removed `autoDismissRunnable` upon activity termination; stopped and cleanly shut down `tts` engine with null reference assignment in `onDestroy()`.
+- **Axis 2: Subsystem Logic & Timeout Bounds**:
+  - `KeyguardUnlockEngine.kt`: Verified two-finger swipe up gesture with display metric scaling and coordinate ratio fallback taps for all digits (0-9) and enter/OK bouncer buttons.
+  - `WhatsAppCallEngine.kt`: Inspected connected call detection logic with duration regex `^(\d{1,2}:)?\d{1,2}:\d{2}$` and multi-language call button matching; verified non-blocking 250ms sliced polling and timeout termination.
+- **Axis 3: Broadcast Receiver & Carrier Intent Security**:
+  - `SmsReceiver.kt`: Enclosed intent message extraction in defensive try-catch with safe null fallback for display originating address to guard against corrupted OEM SMS carrier intents.
+  - `PhoneCallReceiver.kt`: Enclosed `onReceive` telephony transition logic in a top-level try-catch; verified CallLog duration checking before executing missed-call or call-ended auto-replies.
+  - `TaskAlarmReceiver.kt`: Wrapped `onReceive` in a top-level try-catch and verified multi-format parsing for task IDs (`Long`, `Int`, `String`) with graceful degradation for missing or unrecognized task IDs.
+- **Axis 4: Verification & Live Device Execution**:
+  - Ran `./gradlew test --rerun-tasks`: **104 of 104 unit tests passed (100%)** with zero errors or failures.
+  - Assembled release APK: `./gradlew assembleRelease` -> `app-release.apk` (15,175,018 bytes, APK Signature Scheme v2 verified).
+  - Streamed and installed to physical device `SM-A045F` (`R9ZW105MFDR`).
+  - Monitored live logcat: verified boot receiver rescheduling, accessibility service heartbeat, sequential task engine pipeline execution, and zero crashes/ANRs.

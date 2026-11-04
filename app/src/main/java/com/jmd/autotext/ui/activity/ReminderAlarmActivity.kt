@@ -35,6 +35,11 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
     private var tts: TextToSpeech? = null
     private var reminderText: String = ""
+    private val autoDismissRunnable = Runnable {
+        if (!isFinishing && !isDestroyed) {
+            finish()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,14 +60,7 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
 
         // Safety auto-dismiss after 45 seconds so activity does not indefinitely block accessibility operations
-        window.decorView.postDelayed(
-            {
-                if (!isFinishing && !isDestroyed) {
-                    finish()
-                }
-            },
-            45_000L,
-        )
+        window.decorView.postDelayed(autoDismissRunnable, 45_000L)
 
         setContent {
             reminderScreen(
@@ -125,8 +123,10 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     }
 
     override fun onDestroy() {
+        window.decorView.removeCallbacks(autoDismissRunnable)
         tts?.stop()
         tts?.shutdown()
+        tts = null
         super.onDestroy()
     }
 }

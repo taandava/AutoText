@@ -194,6 +194,12 @@ open class CallSimulationActivity : ComponentActivity() {
 
     override fun onDestroy() {
         stopRinging()
+        runCatching {
+            if (wakeLock?.isHeld == true) {
+                wakeLock?.release()
+            }
+            wakeLock = null
+        }
         super.onDestroy()
     }
 }

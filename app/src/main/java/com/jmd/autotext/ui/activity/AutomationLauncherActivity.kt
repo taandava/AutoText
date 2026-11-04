@@ -286,6 +286,17 @@ class AutomationLauncherActivity : Activity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
+        runCatching {
+            if (wakeLock?.isHeld == true) {
+                wakeLock?.release()
+            }
+            wakeLock = null
+        }
+    }
+
 }
 
 // ============================================================================

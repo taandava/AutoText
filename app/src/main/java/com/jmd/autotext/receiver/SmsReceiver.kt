@@ -45,27 +45,36 @@ class SmsReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Telephony.Sms.Intents.SMS_RECEIVED_ACTION) return
+        try {
+            if (intent.action != Telephony.Sms.Intents.SMS_RECEIVED_ACTION) return
 
-        val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
-        if (messages.isNullOrEmpty()) return
+            val messages = try {
+                Telephony.Sms.Intents.getMessagesFromIntent(intent)
+            } catch (t: Throwable) {
+                Log.e(TAG, "Failed to parse SMS messages from broadcast intent", t)
+                return
+            }
+            if (messages.isNullOrEmpty()) return
 
-        val senderPhone = messages[0].displayOriginatingAddress ?: return
-        val messageBody = messages.joinToString("") { it.displayMessageBody ?: "" }
+            val senderPhone = messages[0]?.displayOriginatingAddress ?: return
+            val messageBody = messages.joinToString("") { it?.displayMessageBody ?: "" }
 
-        val maskedPhone = if (senderPhone.length > 4) "${senderPhone.take(3)}****${senderPhone.takeLast(2)}" else "****"
-        Log.d(TAG, "Incoming SMS from $maskedPhone (length=${messageBody.length})")
-        AppFileLogger.action(context, TAG, "Incoming SMS from $maskedPhone (${messageBody.length} chars)")
+            val maskedPhone = if (senderPhone.length > 4) "${senderPhone.take(3)}****${senderPhone.takeLast(2)}" else "****"
+            Log.d(TAG, "Incoming SMS from $maskedPhone (length=${messageBody.length})")
+            AppFileLogger.action(context, TAG, "Incoming SMS from $maskedPhone (${messageBody.length} chars)")
 
-        val pendingResult = goAsync()
-        android.os.Handler(android.os.Looper.getMainLooper()).post {
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    processSmsAsync(context, senderPhone, messageBody)
-                } finally {
-                    pendingResult.finish()
+            val pendingResult = goAsync()
+            android.os.Handler(android.os.Looper.getMainLooper()).post {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        processSmsAsync(context, senderPhone, messageBody)
+                    } finally {
+                        pendingResult.finish()
+                    }
                 }
             }
+        } catch (t: Throwable) {
+            Log.e(TAG, "Unexpected error in SmsReceiver onReceive", t)
         }
     }
 

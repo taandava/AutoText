@@ -405,7 +405,7 @@ Production rules in `app/proguard-rules.pro` preserve line number tables, all da
 
 ### 12.2 Build Output & Release Signature
 - **Target APK Path:** `D:\GPU-D\apps\Automation\app-release.apk`
-- **APK Size:** 15,174,025 bytes (14.47 MB)
+- **APK Size:** 15,175,018 bytes (14.47 MB)
 - **Signature Scheme:** **APK Signature Scheme v2 (True)**
 - **Compilation Command:** `./gradlew bundleProjectSource assembleRelease copyReleaseApkToRoot`
 
@@ -413,3 +413,16 @@ Production rules in `app/proguard-rules.pro` preserve line number tables, all da
 1. **Banking Package Registry Tracking:** Monitor new Indian & global financial/UPI applications and maintain `ProtectedApplicationManager.KNOWN_PROTECTED_PACKAGES`.
 2. **Platform Evolution:** Track upcoming Android 16/17 changes to `AccessibilityService`, `TelecomManager`, and `NotificationListenerService`.
 3. **Keyguard Calibration:** Periodically verify touch digitizer timing for gesture PIN bouncers across diverse OEM screen refresh rates (60Hz, 90Hz, 120Hz).
+
+---
+
+# 13. Comprehensive Multi-Axis Codebase & Runtime Audit
+
+| Audit Axis | Target Scope | Verified Invariants | Status |
+|:---|:---|:---|:---:|
+| **Axis 1: Activity Lifecycle & Leaks** | `MainActivity`, `AutomationLauncherActivity`, `CallSimulationActivity`, `ReminderAlarmActivity` | `WakeLock` released in `onPause` & `onDestroy`; `TextToSpeech` cleanly shutdown; handler & decorView runnables removed on destroy | **PASS** |
+| **Axis 2: Subsystem Logic & Timeouts** | `KeyguardUnlockEngine`, `WhatsAppCallEngine`, `SequentialTaskEngine` | Two-finger bouncer swipe gesture; coordinate ratio fallbacks; call duration regex `^(\d{1,2}:)?\d{1,2}:\d{2}$`; 250ms sliced polling timeout bounds | **PASS** |
+| **Axis 3: Receiver Intent Security** | `SmsReceiver`, `PhoneCallReceiver`, `TaskAlarmReceiver`, `BootReceiver` | Safe intent extraction inside try-catch; corrupted carrier extras tolerated; missing task IDs degraded cleanly without crash loops | **PASS** |
+| **Axis 4: Database Consistency** | `DatabaseHelper`, `TaskRepository`, `DailyCampaignRepository` | 15 relational tables; Write-Ahead Logging (WAL); foreign keys enabled; automated migration v1->v8; zero stranded `RUNNING` tasks | **PASS** |
+| **Axis 5: Verification & Hardware Telemetry** | Samsung Galaxy A04 (Android 14 API 34, `R9ZW105MFDR`) | 104/104 unit tests passed (100%); release APK signed & stream-installed; zero ANRs; zero uncaught exceptions in device logcat | **PASS** |
+

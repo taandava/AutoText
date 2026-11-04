@@ -75,67 +75,71 @@ class PhoneCallReceiver : BroadcastReceiver() {
      * @param intent Incoming telephony broadcast intent.
      */
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != TelephonyManager.ACTION_PHONE_STATE_CHANGED) return
+        try {
+            if (intent.action != TelephonyManager.ACTION_PHONE_STATE_CHANGED) return
 
-        val state = intent.getStringExtra(TelephonyManager.EXTRA_STATE) ?: return
-        val numberFromIntent = intent.getStringExtra("incoming_number")
+            val state = intent.getStringExtra(TelephonyManager.EXTRA_STATE) ?: return
+            val numberFromIntent = intent.getStringExtra("incoming_number")
 
-        if (!numberFromIntent.isNullOrEmpty()) {
-            savedIncomingNumber = numberFromIntent
-        }
-
-        Log.d(TAG, "Phone State Change: $lastState -> $state, IncomingNumber: $savedIncomingNumber")
-
-        when (state) {
-            TelephonyManager.EXTRA_STATE_RINGING -> {
-                wasRinging = true
-                wasAnswered = false
-                Log.d(TAG, "Incoming phone ringing from: $savedIncomingNumber")
+            if (!numberFromIntent.isNullOrEmpty()) {
+                savedIncomingNumber = numberFromIntent
             }
-            TelephonyManager.EXTRA_STATE_OFFHOOK -> {
-                if (wasRinging) {
-                    wasAnswered = true
+
+            Log.d(TAG, "Phone State Change: $lastState -> $state, IncomingNumber: $savedIncomingNumber")
+
+            when (state) {
+                TelephonyManager.EXTRA_STATE_RINGING -> {
+                    wasRinging = true
+                    wasAnswered = false
+                    Log.d(TAG, "Incoming phone ringing from: $savedIncomingNumber")
                 }
-                Log.d(TAG, "Phone offhook. wasRinging: $wasRinging, wasAnswered: $wasAnswered")
-            }
-            TelephonyManager.EXTRA_STATE_IDLE -> {
-                val cachedNumber = savedIncomingNumber
-                val capturedLastState = lastState
-                val capturedWasRinging = wasRinging
-                val capturedWasAnswered = wasAnswered
-
-                wasRinging = false
-                wasAnswered = false
-                savedIncomingNumber = null
-
-                // Either phone was ringing before going idle (missed/declined call),
-                // or phone was offhook before going idle (call ended or outgoing call aborted).
-                val isPotentialEvent = (capturedLastState == TelephonyManager.EXTRA_STATE_RINGING) ||
-                    (capturedLastState == TelephonyManager.EXTRA_STATE_OFFHOOK)
-
-                if (isPotentialEvent) {
-                    val pendingResult = goAsync()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            handleCallTransition(
-                                context = context,
-                                cachedNumber = cachedNumber,
-                                capturedLastState = capturedLastState,
-                                capturedWasRinging = capturedWasRinging,
-                                capturedWasAnswered = capturedWasAnswered
-                            )
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Error handling call auto-reply in background", e)
-                        } finally {
-                            pendingResult.finish()
-                        }
+                TelephonyManager.EXTRA_STATE_OFFHOOK -> {
+                    if (wasRinging) {
+                        wasAnswered = true
                     }
-                    lastState = state
-                    return
+                    Log.d(TAG, "Phone offhook. wasRinging: $wasRinging, wasAnswered: $wasAnswered")
+                }
+                TelephonyManager.EXTRA_STATE_IDLE -> {
+                    val cachedNumber = savedIncomingNumber
+                    val capturedLastState = lastState
+                    val capturedWasRinging = wasRinging
+                    val capturedWasAnswered = wasAnswered
+
+                    wasRinging = false
+                    wasAnswered = false
+                    savedIncomingNumber = null
+
+                    // Either phone was ringing before going idle (missed/declined call),
+                    // or phone was offhook before going idle (call ended or outgoing call aborted).
+                    val isPotentialEvent = (capturedLastState == TelephonyManager.EXTRA_STATE_RINGING) ||
+                        (capturedLastState == TelephonyManager.EXTRA_STATE_OFFHOOK)
+
+                    if (isPotentialEvent) {
+                        val pendingResult = goAsync()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                handleCallTransition(
+                                    context = context,
+                                    cachedNumber = cachedNumber,
+                                    capturedLastState = capturedLastState,
+                                    capturedWasRinging = capturedWasRinging,
+                                    capturedWasAnswered = capturedWasAnswered
+                                )
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error handling call auto-reply in background", e)
+                            } finally {
+                                pendingResult.finish()
+                            }
+                        }
+                        lastState = state
+                        return
+                    }
                 }
             }
+            lastState = state
+        } catch (t: Throwable) {
+            Log.e(TAG, "Unexpected error in PhoneCallReceiver onReceive", t)
         }
-        lastState = state
     }
 
     private suspend fun handleCallTransition(
