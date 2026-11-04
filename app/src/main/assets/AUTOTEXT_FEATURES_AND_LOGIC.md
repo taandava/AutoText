@@ -325,6 +325,14 @@ When an emergency stop or master pause occurs:
 ### 4. Direct Boot & Post-Reboot Immunity
 When the device is restarted (cold boot, OTA update, or quick reboot), `BootReceiver` and `TaskAlarmReceiver` inspect both `isTasksMasterEnabled` and `isEmergencyStopActive`. If either indicates a paused state, all alarm rescheduling and campaign workers are canceled immediately, guaranteeing that rebooting the phone will **never** cause tasks to randomly start executing.
 
+### 5. Stranded RUNNING Task Recovery & Invariant Reconciliation
+When unexpected process termination, crash, or emergency stop occurs during active dispatch, any task left marked in `TaskStatus.RUNNING` is automatically reconciled:
+1. **Startup & Alarm Reschedule Recovery**: `TaskRepository.recoverInterruptedRunningTasks()` is invoked during `AutoTextApplication.onCreate()` and `AlarmScheduler.rescheduleAllPending()`.
+2. **Deterministic Status Transitions**:
+   - Recurring tasks (`recurrence != RecurrenceType.ONCE`) are automatically transitioned back to `TaskStatus.PENDING` so future scheduled alarms continue normally.
+   - Single-run tasks (`recurrence == RecurrenceType.ONCE`) are transitioned to `TaskStatus.FAILED` or `TaskStatus.CANCELLED` with descriptive audit logging.
+3. **Engine Lifecycle Invariant Guarantee**: `SequentialTaskEngine` enforces a mandatory `finally` block on every sequential channel iteration, guaranteeing that no task ever leaves the execution pipeline stranded in `RUNNING`.
+
 ---
 
 ## 6. Smart Auto-Reply Rules Engine & Advanced Call Event Discrimination

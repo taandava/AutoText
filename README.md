@@ -1,26 +1,29 @@
 # AutoText — Enterprise Android Automation Platform
 
-> **Modern, offline-first Android automation platform for unattended multi-channel message dispatch and voice call execution.**  
-> *Targeting Android 8.0 (API 26) through Android 16+ (API 36/37) • Zero-Warning Standard • 100% On-Device Sovereignty*
+> **Modern, offline-first Android automation platform for unattended multi-channel message dispatch, cellular calling, and voice automation.**  
+> *Targeting Android 8.1 (API 27) through Android 16+ (API 37) • Zero-Warning Standard • 100% On-Device Sovereignty*
 
 ---
 
 ## 🚀 Key Highlights & Capabilities
 
 - **Multi-Channel Automation**:
-  - Direct SMS (Single & Dual-SIM multi-subscription support with PDU calculation)
-  - Consumer WhatsApp (Direct message, chat navigation, and contact dispatch)
-  - WhatsApp Business (Direct customer messaging and catalog dispatch)
-  - WhatsApp Status Stories (Media and text publishing for personal & business)
-  - Cellular Telephony Calls (Configurable call duration, dial timing & auto-hangup)
-  - WhatsApp VoIP Voice Calls (Automated call placement & active duration hangup)
-  - Simulated Fake Incoming Calls (Realistic OEM themes with multi-tier ringtone & haptic pulse)
-  - Scheduled Audio Alarms & Reminders (Android Alarm Clock sync & voice alerts)
+  - **Direct Cellular SMS**: Multi-subscription SIM routing (SIM 1 / SIM 2), GSM-7/UCS-2 PDU calculation, and TRAI safety quota rate limiting.
+  - **Consumer WhatsApp**: Direct chat navigation, text & media dispatch, and auto-send confirmation.
+  - **WhatsApp Business**: Dedicated customer messaging and catalog dispatch for `com.whatsapp.w4b`.
+  - **WhatsApp Status Stories**: Background posting of text and media stories for personal and business accounts.
+  - **Cellular Telephony Calls**: Configurable call duration, early hangup detection, dial timing, and automatic call termination.
+  - **WhatsApp VoIP Voice Calls**: Outbound voice calling with conversation timer inspection and duration auto-hangup.
+  - **Simulated Incoming Calls**: Realistic OEM call simulation with multi-tier ringtones and haptic motor pulsing.
+  - **System Reminders & Alarms**: Native Alarm Clock sync, full-screen heads-up display, and TTS voice alerts.
+  - **Contact Sequences & Drip Campaigns**: Multi-step follow-up sequences across SMS and WhatsApp.
+  - **Daily Contact Campaigns**: Dynamic pool scanning from phonebook, call logs, and SMS with batch pacing.
+  - **Smart Auto-Reply Engine**: Notification listener and SMS/Call broadcast receiver with keyword matching and cooldown guards.
 - **Dynamic Zero-Detection Stealth Mode (Banking App Shield)**:
   - Keeps accessibility completely detached (`ENABLED_ACCESSIBILITY_SERVICES` omitted and `ACCESSIBILITY_ENABLED = "0"`) during idle periods.
   - Automatically activates for 2–3s only when a scheduled WhatsApp task triggers, then immediately detaches.
-  - Third-party banking and UPI apps (Saraswat Bank GOMONxT, SBI YONO, HDFC, PhonePe, Paytm, etc.) detect **zero** accessibility presence.
-  - Instant retraction if an excluded application is detected in the foreground.
+  - Third-party banking and UPI apps (Google Pay, PhonePe, Paytm, BHIM, YONO SBI, HDFC, ICICI, etc.) detect **zero** accessibility presence.
+  - Instant retraction if an excluded or financial application is detected in the foreground.
 - **Strict Display Orientation Invariant**:
   - Hard-locked to portrait orientation across all screens.
   - Actively audits and disables system auto-rotation (`accelerometer_rotation == 0`).
@@ -29,8 +32,10 @@
   - High-priority ADB broadcast triggers (`ACTION_EMERGENCY_STOP` & `ACTION_RESET_EMERGENCY_STOP`).
 - **Unattended Execution & Auto-Unlock**:
   - Wakes screen, dismisses keyguard, inputs security PIN via touch simulation, executes task, and locks hardware screen via Device Admin.
+- **Stranded RUNNING Task Recovery**:
+  - Automatically reconciles orphaned tasks left in `RUNNING` status on app startup, alarm rescheduling, or engine pipeline exit.
 - **100% Offline Sovereignty**:
-  - Zero external tracking, zero cloud dependencies, zero analytics. All data resides in local encrypted storage and SQLite (`autotext.db`).
+  - Zero external tracking, zero cloud dependencies, zero analytics. No `android.permission.INTERNET` requested. All data resides in local encrypted storage and SQLite (`autotext.db`).
 
 ---
 
@@ -54,28 +59,24 @@ The header bar provides 7 live status indicator icons:
 
 ### Requirements
 - **JDK**: Java 17
-- **Android SDK**: Compile SDK 36, Min SDK 27, Target SDK 37
-- **Build System**: Gradle 9.8.2 with Android Gradle Plugin 8.7.2
+- **Android SDK**: Compile SDK 37, Min SDK 27, Target SDK 37
+- **Build System**: Gradle 9.8.2 with Android Gradle Plugin 8.7.2 / 9.4.1
 
 ### Build Commands
 ```bash
-# Compile and run all 68 unit tests
+# Compile and run all 104 unit tests (100% pass rate)
 .\gradlew.bat testDebugUnitTest
 
-# Run Android Lint static analysis (0 errors, 0 warnings required)
+# Run Android Lint static analysis (0 errors, 0 project code warnings)
 .\gradlew.bat lintDebug
 
 # Assemble signed production release APK and copy to root
 .\gradlew.bat bundleProjectSource assembleRelease copyReleaseApkToRoot
-
-# Install on connected Android device via ADB
-adb -s <DEVICE_ID> install -r app-release.apk
 ```
 
 ---
 
-## 📋 Documentation & Specifications
-
-- [`app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md`](file:///d:/New%20folder/apps/Automation/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md): Master Technical Blueprint & Architecture Specification *(also rendered offline inside the app under **Settings -> Technical Manual & Logic Guide**)*.
-- [`design.md`](file:///d:/New%20folder/apps/Automation/design.md): Material 3 Expressive Design System, UI Specifications & Component Inventory.
-- [`agent.md`](file:///d:/New%20folder/apps/Automation/agent.md): Master Engineering Directive, Defect Remediation Log, Hardware Verification Matrix & Operational Runbook.
+## 📖 Comprehensive Documentation
+For the complete, authoritative, all-in-one technical manual covering all 14 engineering phases, database schemas, and hardware verification, refer to:
+- **Root Master Codebase Manual**: [`CODEBASE_MASTER.md`](./CODEBASE_MASTER.md)
+- **In-App Interactive Manual**: [`app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md`](./app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md) (viewable via the in-app Documentation screen).
