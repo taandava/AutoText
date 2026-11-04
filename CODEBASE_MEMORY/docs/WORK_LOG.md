@@ -211,20 +211,36 @@
   - `.\gradlew.bat testDebugUnitTest --offline`: **102 of 102 tests passed** (0 failures, 0 errors, 0 skipped).
   - `.\gradlew.bat lintDebug --offline`: **0 errors, 0 project code warnings**.
 
-### Phase 13: Live Task Engine Execution, Emergency Stop Resiliency & Final Release Build
-- **Active Task Dispatcher Verification on Hardware**:
-  - Executed `ACTION_SETUP_ALL_TASKS`: generated and armed all 12 task types in SQLite database.
-  - Monitored `SequentialTaskEngine` live via Logcat: verified automatic exact alarm execution, channel pipeline enqueuing, and automatic recurrence rescheduling for Task #123 (SMS), Task #124 (WhatsApp), Task #125 (WA Business), Task #126 (WA Group), and Task #127 (WA Status).
-  - Dispatched `ACTION_EMERGENCY_STOP`: verified immediate cooperative coroutine cancellation and queue draining across all active channels (Tasks #123 through #134 cancelled within milliseconds).
-  - Verified active UI emergency stop banner on physical device display (`🛑 EMERGENCY STOP ACTIVE — Automation halted`).
-- **Emergency Stop Banner UX & State Resiliency Hardening**:
-  - Refactored `RESUME` button in `MainAppHost.kt`:
-    - Expanded interactive touch target to `heightIn(min = 36.dp)` with `PaddingValues(horizontal = 12.dp, vertical = 4.dp)` to ensure compliance with touch targets and prevent mis-clicks.
-    - Updated onClick handler to atomically clear `isEmergencyStopActive` and re-enable `PreferenceManager.isTasksMasterEnabled = true`.
-- **Quality Verification**:
-  - `.\gradlew.bat testDebugUnitTest --rerun-tasks --offline`: **102 of 102 tests passed** (0 failures, 0 errors, 0 skipped).
-  - `.\gradlew.bat lintDebug --offline`: **0 errors, 0 project code warnings** ("No issues found").
-  - `.\gradlew.bat assembleRelease --offline`: Assembled and updated signed release APK `D:\GPU-D\apps\Automation\app-release.apk` (15,156,069 bytes).
+### Phase 14: Comprehensive Device Testing, Stranded Running Task Recovery & Full Verification
+- **Target Device Testing & Hardware Status**:
+  - Target Hardware: Samsung Galaxy A04 (`SM-A045F`, Android 14 / API Level 34, Hardware ID: `R9ZW105MFDR`).
+  - Tested interactive buttons, navigation, and subfeatures on live device:
+    - Emergency Stop Banner: Tapped `RESUME` button -> atomically cleared emergency stop, restored master task scheduler, and dismissed banner.
+    - Top App Bar: Tapped `New Task` (+) -> displayed `TaskTypeSelectionDialog` with all 10 task options.
+    - Compose Screen: Selected `SMS Message` -> verified dynamic variable chips, recipient pool counters, template picker bottom sheet.
+    - Navigation Hub: Tested all 4 tabs (`Tasks`, `Campaigns`, `Auto-Reply`, `Tools`) and sub-screens (`Execution History`, `System Traces & Error Logs`, `Permission Center`, `Privacy & App Visibility`, `Settings & Security`, `Documentation Guide`, `Incoming Call Simulation`, `Bulk Contacts & Groups`, `Task Sequences`, `Message Templates`).
+- **Defect Discovery & Resolution (Interrupted Running Task Stranding)**:
+  - **Symptom**: Tasks aborted mid-execution or interrupted by app termination/emergency stop remained permanently marked in `TaskStatus.RUNNING` with an active spinner in the UI and were excluded from future alarm scheduling queries.
+  - **Root Cause**: `SequentialTaskEngine.kt` transitioned tasks to `TaskStatus.RUNNING` before execution, but if cooperative cancellation occurred, `cancelAll()`, `cancelTask()`, or `CancellationException` did not reconcile the database record. Furthermore, `completeOrRescheduleTask` returned early without updating task status when `AutomationSafetyManager.isEmergencyStopActive` was true. On reboot or rescheduling, `AlarmScheduler.rescheduleAllPending()` only looked for `PENDING`, `SCHEDULED`, and `READY` tasks.
+  - **Fixes Applied**:
+    1. `TaskRepository.kt`: Implemented `recoverInterruptedRunningTasks()` which reconciles orphaned tasks from `TaskStatus.RUNNING` back to `TaskStatus.PENDING` (for recurring tasks) and `TaskStatus.FAILED` (for single-run tasks).
+    2. `AppRepository.kt`: Exposed `recoverInterruptedRunningTasks()` API.
+    3. `AutoTextApplication.kt`: Added startup recovery inside `applicationScope.launch`.
+    4. `AlarmScheduler.kt`: Added `repository.recoverInterruptedRunningTasks()` inside `rescheduleAllPending()`.
+    5. `SequentialTaskEngine.kt`:
+       - Added status reconciliation inside `startSequentialProcessor` exception/cancellation handlers and `finally` block ensuring any task leaving the processor while still in `RUNNING` status is safely reconciled.
+       - Updated `cancelTask(taskId)` and `cancelAll()` to check for `RUNNING` tasks and update their DB status.
+       - Updated `completeOrRescheduleTask` during emergency stop to update the DB status to `PENDING` (recurring) or `FAILED` (single).
+    6. `AutomationSafetyManager.kt`: Updated `triggerEmergencyStop(context: Context? = null)` to support null context safely.
+- **Verification & Testing**:
+  - **Automated Unit Tests**: Added `testOrphanedRunningTaskRecoveryInvariants()` and `testEmergencyStopSuppressionAndStatusInvariant()` to `AutoTextComprehensiveTest.kt`.
+  - Executed `./gradlew test --rerun-tasks`: **104 of 104 tests passed** (100% pass rate, 0 failures, 0 errors, 0 skipped).
+  - Executed `./gradlew assembleRelease`: Compiled and signed `app-release.apk` with v2 scheme.
+  - Deployed to Samsung Galaxy A04 (`adb install -r app-release.apk` -> `Success`).
+  - Verified live device execution:
+    - Task #125 (`Task 3 • WA Business`) automatically recovered from `RUNNING` to `PENDING`, executed, sent message, and rescheduled cleanly.
+    - Task #129 (`Task 7 • Phone Call`) placed sequential calls to `9769602020` and `9930604542`, enforced 10s duration limit and 5s inter-call delay, hung up properly, rescheduled, and executed device auto-lock.
+    - Verified logcat and system logs: 0 fatal crashes, 0 ANRs.
 
 
 

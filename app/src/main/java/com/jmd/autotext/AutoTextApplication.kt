@@ -109,6 +109,9 @@ class AutoTextApplication : Application() {
 
         applicationScope.launch(initExceptionHandler) {
             try {
+                // Reconcile and recover any tasks left stranded in RUNNING status from a previous process termination
+                AppRepository(this@AutoTextApplication).recoverInterruptedRunningTasks()
+
                 // Re-arm all active and pending task alarms across SMS, WhatsApp, Calls, and Reminders
                 val prefs = PreferenceManager(this@AutoTextApplication)
                 if (!prefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(this@AutoTextApplication)) {

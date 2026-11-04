@@ -88,6 +88,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     private val uiAutomationMutex = Mutex()
     private val smsMutex = Mutex()
+    private val repository = AppRepository(appContext)
 
     private var currentTaskJob: kotlinx.coroutines.Job? = null
     @Volatile
@@ -99,7 +100,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     private fun startSequentialProcessor() {
         engineScope.launch {
-            val repository = AppRepository(appContext)
             val prefs = PreferenceManager(appContext)
             for (taskId in taskChannel) {
                 try {
@@ -147,10 +147,25 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     job.join()
                 } catch (e: kotlinx.coroutines.CancellationException) {
                     AppFileLogger.w(appContext, TAG, "Task #$taskId execution cancelled.")
+                    val fresh = repository.getTaskById(taskId)
+                    if (fresh != null && fresh.status == TaskStatus.RUNNING) {
+                        val targetStatus = if (fresh.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.CANCELLED
+                        repository.updateTaskStatus(taskId, targetStatus)
+                    }
                 } catch (e: Exception) {
                     Log.e(TAG, "Unexpected error processing taskId=$taskId in sequential queue", e)
                     AppFileLogger.e(appContext, TAG, "Failed sequential execution of Task #$taskId: ${e.message}", e)
+                    val fresh = repository.getTaskById(taskId)
+                    if (fresh != null && fresh.status == TaskStatus.RUNNING) {
+                        completeOrRescheduleTask(appContext, repository, fresh, success = false)
+                    }
                 } finally {
+                    val fresh = repository.getTaskById(taskId)
+                    if (fresh != null && fresh.status == TaskStatus.RUNNING) {
+                        AppFileLogger.w(appContext, TAG, "Task #$taskId was still marked RUNNING upon exiting processor. Reconciling status.")
+                        val targetStatus = if (fresh.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
+                        repository.updateTaskStatus(taskId, targetStatus)
+                    }
                     currentTaskId = -1L
                     currentTaskJob = null
                     activeTaskIds.remove(taskId)
@@ -171,6 +186,11 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             currentTaskJob?.cancel(kotlinx.coroutines.CancellationException("Task #$taskId cancelled by user"))
             AutoTextAccessibilityService.clearPending()
         }
+        val fresh = repository.getTaskById(taskId)
+        if (fresh != null && fresh.status == TaskStatus.RUNNING) {
+            val targetStatus = if (fresh.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.CANCELLED
+            repository.updateTaskStatus(taskId, targetStatus)
+        }
     }
 
     /**
@@ -179,12 +199,20 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     fun cancelAll() {
         Log.i(TAG, "cancelAll requested for SequentialTaskEngine")
         AppFileLogger.action(appContext, TAG, "cancelAll requested: Aborting active task and draining channel queue")
+        val activeId = currentTaskId
         currentTaskJob?.cancel(kotlinx.coroutines.CancellationException("All tasks cancelled by user"))
         AutoTextAccessibilityService.clearPending()
         while (taskChannel.tryReceive().isSuccess) {
             // Drain channel
         }
         activeTaskIds.clear()
+        if (activeId > 0) {
+            val fresh = repository.getTaskById(activeId)
+            if (fresh != null && fresh.status == TaskStatus.RUNNING) {
+                val targetStatus = if (fresh.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.CANCELLED
+                repository.updateTaskStatus(activeId, targetStatus)
+            }
+        }
         currentTaskId = -1L
     }
 
@@ -233,6 +261,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             if (AutomationSafetyManager.isEmergencyStopActive(context)) {
                 Log.i(TAG, "Emergency Stop is active. Suppressing recurrence for Task #${task.id}.")
                 AlarmScheduler(context).cancelTask(task.id)
+                val targetStatus = if (freshTask.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
+                repository.updateTaskStatus(task.id, targetStatus, now)
                 return
             }
 

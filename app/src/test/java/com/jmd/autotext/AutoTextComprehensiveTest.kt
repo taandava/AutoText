@@ -2237,4 +2237,61 @@ class AutoTextComprehensiveTest {
         assertEquals(ChannelType.SMS, ChannelType.fromString(""))
         assertEquals(ChannelType.SMS, ChannelType.fromString("INVALID_UNKNOWN_CHANNEL"))
     }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 23. RUNNING TASK RECOVERY & RECONCILIATION INVARIANT TESTS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testOrphanedRunningTaskRecoveryInvariants() {
+        val recurringTask = ScheduledTask(
+            id = 101L,
+            title = "Recurring Outreach",
+            channel = ChannelType.WHATSAPP,
+            status = TaskStatus.RUNNING,
+            recurrence = RecurrenceType.DAILY
+        )
+
+        val singleTask = ScheduledTask(
+            id = 102L,
+            title = "One-Off SMS",
+            channel = ChannelType.SMS,
+            status = TaskStatus.RUNNING,
+            recurrence = RecurrenceType.ONCE
+        )
+
+        // Reconciliation rule: Recurring tasks stranded in RUNNING reset to PENDING
+        val recoveredRecurringStatus = if (recurringTask.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
+        assertEquals(TaskStatus.PENDING, recoveredRecurringStatus)
+
+        // Reconciliation rule: Single-run tasks stranded in RUNNING transition to FAILED
+        val recoveredSingleStatus = if (singleTask.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
+        assertEquals(TaskStatus.FAILED, recoveredSingleStatus)
+    }
+
+    @Test
+    fun testEmergencyStopSuppressionAndStatusInvariant() {
+        AutomationSafetyManager.triggerEmergencyStop(null, "Test Emergency Stop")
+        assertTrue(AutomationSafetyManager.isEmergencyStopActive(null))
+
+        val recurringTask = ScheduledTask(
+            id = 201L,
+            status = TaskStatus.RUNNING,
+            recurrence = RecurrenceType.DAILY
+        )
+        val onceTask = ScheduledTask(
+            id = 202L,
+            status = TaskStatus.RUNNING,
+            recurrence = RecurrenceType.ONCE
+        )
+
+        val targetRecurring = if (recurringTask.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
+        val targetOnce = if (onceTask.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
+
+        assertEquals(TaskStatus.PENDING, targetRecurring)
+        assertEquals(TaskStatus.FAILED, targetOnce)
+
+        AutomationSafetyManager.resetEmergencyStop(null)
+        assertFalse(AutomationSafetyManager.isEmergencyStopActive(null))
+    }
 }

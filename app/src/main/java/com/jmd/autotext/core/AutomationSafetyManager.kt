@@ -258,56 +258,60 @@ object AutomationSafetyManager {
      * @param context Active Android [Context].
      * @param reason Human-readable rationale for emergency stop event.
      */
-    fun triggerEmergencyStop(context: Context, reason: String = "User requested emergency stop") {
+    fun triggerEmergencyStop(context: Context? = null, reason: String = "User requested emergency stop") {
         isEmergencyStopActive.set(true)
-        try {
-            PreferenceManager(context).isEmergencyStopActive = true
-        } catch (e: Exception) { Log.w(TAG, "Failed writing emergency stop state: ${e.message}") }
-        Log.e(TAG, "EMERGENCY STOP TRIGGERED: $reason")
-        AppFileLogger.e(context, TAG, "EMERGENCY STOP TRIGGERED: $reason")
-
-        try {
-            // 1. Immediately abort active engine tasks and drain queue
+        if (context != null) {
             try {
-                com.jmd.autotext.engine.SequentialTaskEngine.getInstance(context).cancelAll()
-            } catch (e: Throwable) {
-                Log.e(TAG, "Error cancelling SequentialTaskEngine", e)
-            }
+                PreferenceManager(context).isEmergencyStopActive = true
+            } catch (e: Exception) { Log.w(TAG, "Failed writing emergency stop state: ${e.message}") }
+            Log.e(TAG, "EMERGENCY STOP TRIGGERED: $reason")
+            AppFileLogger.e(context, TAG, "EMERGENCY STOP TRIGGERED: $reason")
 
-            // 2. Cancel all daily campaign WorkManager jobs and exact alarms
             try {
-                com.jmd.autotext.scheduler.DailyCampaignScheduler.cancelAllCampaigns(context)
-            } catch (e: Throwable) {
-                Log.e(TAG, "Error cancelling DailyCampaignScheduler", e)
+                // 1. Immediately abort active engine tasks and drain queue
+                try {
+                    com.jmd.autotext.engine.SequentialTaskEngine.getInstance(context).cancelAll()
+                } catch (e: Throwable) {
+                    Log.e(TAG, "Error cancelling SequentialTaskEngine", e)
+                }
+
+                // 2. Cancel all daily campaign WorkManager jobs and exact alarms
+                try {
+                    com.jmd.autotext.scheduler.DailyCampaignScheduler.cancelAllCampaigns(context)
+                } catch (e: Throwable) {
+                    Log.e(TAG, "Error cancelling DailyCampaignScheduler", e)
+                }
+
+                // 3. Cancel all pending AlarmManager alarms for individual tasks
+                try {
+                    com.jmd.autotext.scheduler.AlarmScheduler(context).cancelAll()
+                } catch (e: Throwable) {
+                    Log.e(TAG, "Error cancelling AlarmScheduler", e)
+                }
+
+                // 4. Immediately disarm all pending accessibility automation
+                AutoTextAccessibilityService.clearPending()
+
+                // 5. Clear any pending chat picker callbacks
+                AutoTextAccessibilityService.onManualChatPicked = null
+                AutoTextAccessibilityService.onManualChatInfoPicked = null
+
+                // 6. Trip all circuit breakers defensively
+                val now = System.currentTimeMillis()
+                ChannelType.entries.forEach { channel ->
+                    circuitBreakerTripped[channel.name] = true
+                    tripTimestamps[channel.name] = now
+                }
+
+                // 7. Return to home launcher cleanly
+                AutoTextAccessibilityService.minimizeToHome(context)
+
+                context.showAppToast("🚨 EMERGENCY STOP: All automation halted immediately!", isLong = true)
+            } catch (t: Throwable) {
+                Log.e(TAG, "Error executing emergency stop cleanup", t)
             }
-
-            // 3. Cancel all pending AlarmManager alarms for individual tasks
-            try {
-                com.jmd.autotext.scheduler.AlarmScheduler(context).cancelAll()
-            } catch (e: Throwable) {
-                Log.e(TAG, "Error cancelling AlarmScheduler", e)
-            }
-
-            // 4. Immediately disarm all pending accessibility automation
-            AutoTextAccessibilityService.clearPending()
-
-            // 5. Clear any pending chat picker callbacks
-            AutoTextAccessibilityService.onManualChatPicked = null
-            AutoTextAccessibilityService.onManualChatInfoPicked = null
-
-            // 6. Trip all circuit breakers defensively
-            val now = System.currentTimeMillis()
-            ChannelType.entries.forEach { channel ->
-                circuitBreakerTripped[channel.name] = true
-                tripTimestamps[channel.name] = now
-            }
-
-            // 7. Return to home launcher cleanly
-            AutoTextAccessibilityService.minimizeToHome(context)
-
-            context.showAppToast("🚨 EMERGENCY STOP: All automation halted immediately!", isLong = true)
-        } catch (t: Throwable) {
-            Log.e(TAG, "Error executing emergency stop cleanup", t)
+        } else {
+            Log.e(TAG, "EMERGENCY STOP TRIGGERED (in-memory): $reason")
         }
     }
 

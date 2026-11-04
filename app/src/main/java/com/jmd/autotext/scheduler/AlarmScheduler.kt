@@ -225,6 +225,7 @@ class AlarmScheduler(private val context: Context) {
             return
         }
         val repository = AppRepository(context)
+        repository.recoverInterruptedRunningTasks()
         val pendingTasks = repository.getPendingTasks()
         Log.d(TAG, "Rescheduling ${pendingTasks.size} pending tasks")
         for (task in pendingTasks) {

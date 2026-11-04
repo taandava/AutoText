@@ -141,6 +141,29 @@ class TaskRepository(context: Context) {
     }
 
     /**
+     * Recovers and reconciles any tasks left stranded in [TaskStatus.RUNNING] state due to
+     * unexpected application process termination, crash, or device reboot.
+     * Transitions recurring tasks back to [TaskStatus.PENDING] and single-run tasks to [TaskStatus.FAILED].
+     *
+     * @return Number of orphaned running tasks successfully recovered.
+     */
+    fun recoverInterruptedRunningTasks(): Int {
+        val db = dbHelper.writableDatabase
+        val tasks = mutableListOf<ScheduledTask>()
+        val cursor = db.query(DatabaseHelper.TABLE_TASKS, null, "status = ?", arrayOf(TaskStatus.RUNNING.name), null, null, null)
+        cursor.use {
+            while (it.moveToNext()) {
+                tasks.add(cursorToTask(it))
+            }
+        }
+        for (task in tasks) {
+            val targetStatus = if (task.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
+            updateTaskStatus(task.id, targetStatus)
+        }
+        return tasks.size
+    }
+
+    /**
      * Postpones a scheduled task by a given duration in milliseconds.
      * Updates trigger_time to now + postponeMillis and ensures status is PENDING.
      *

@@ -70,6 +70,7 @@ class AppRepository(private val context: Context) {
     fun getTaskById(id: Long): ScheduledTask? = taskRepo.getTaskById(id)
     fun getAllTasks(): List<ScheduledTask> = taskRepo.getAllTasks()
     fun getPendingTasks(): List<ScheduledTask> = taskRepo.getPendingTasks()
+    fun recoverInterruptedRunningTasks(): Int = taskRepo.recoverInterruptedRunningTasks()
     fun postponeTask(id: Long, postponeMillis: Long): Boolean = taskRepo.postponeTask(id, postponeMillis)
     fun postponeUpcomingTasks(postponeMillis: Long): List<ScheduledTask> = taskRepo.postponeUpcomingTasks(postponeMillis)
 
