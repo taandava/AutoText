@@ -7,6 +7,7 @@
 | | READY State | `Models.kt`, `TaskRepository.kt` | **PASS** | Armed and ready for trigger |
 | | SCHEDULED State | `AlarmScheduler.kt`, `TaskAlarmReceiver.kt` | **PASS** | Exact alarm registration |
 | | RUNNING State | `SequentialTaskEngine.kt` | **PASS** | Mutex locked, active tracking |
+| | RUNNING Recovery | `TaskRepository.recoverInterruptedRunningTasks()`, `SequentialTaskEngine.kt` | **PASS** | Auto-reconciles orphaned RUNNING tasks on boot, reschedule, and engine pipeline exit |
 | | SUCCESS State | `SequentialTaskEngine.kt`, `LogRepository.kt` | **PASS** | Recorded in DB with execution log |
 | | FAILED State | `SequentialTaskEngine.kt`, `AutomationSafetyManager.kt` | **PASS** | Recorded with failure reason |
 | | CANCELLED State | `SequentialTaskEngine.cancelTask()`, `AlarmScheduler.cancelTask()` | **PASS** | Active job cancelled, alarms disarmed |
@@ -65,6 +66,3 @@
 | | Tools & Diagnostics Suite | `MoreScreen.kt`, `TemplatesScreen.kt`, `LogsScreen.kt` | **PASS** | Message Templates (5), Execution History (200 records + SMS filters), System Traces (1500 records), Privacy & App Visibility (Banking Shield list) |
 | | Contacts & Groups Hub | `ContactsScreen.kt` | **PASS** | 3 tabs verified: Custom & CSV, Dynamic Pool (2518 phonebook leads with origin tags & sequence creators), and WA Groups |
 | | Settings & Security Suite | `SettingsScreen.kt`, `SettingsBackupRestoreCard.kt` | **PASS** | 7/7 Healthy cards, PIN screen assistance, Backup to SD card (`AutoText_Backup_*.json` - 2.21MB), In-app Markdown guide reader |
-
-
-
