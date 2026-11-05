@@ -1,6 +1,6 @@
-# AutoText Master Engineering & Codebase Architecture Manual
+# helper Master Engineering & Codebase Architecture Manual
 
-> **The Definitive, Authoritative, Unified Architecture, Implementation, and Hardware Verification Record for AutoText (`com.jmd.helper`).**  
+> **The Definitive, Authoritative, Unified Architecture, Implementation, and Hardware Verification Record for helper (`com.jmd.helper`).**  
 > *Targeting Android 8.1 (API 27) through Android 16+ (API 37) • Zero-Warning & Zero-Lint Certified • 100% On-Device Sovereignty*
 
 ---
@@ -25,9 +25,9 @@
 # 1. Project Mission & Executive Overview
 
 ## 1.1 Core Mission
-**AutoText** (`com.jmd.helper`) is a high-reliability, 100% on-device Android communication and task scheduling application designed for unattended multi-channel message dispatch, scheduled cellular calling, and intelligent auto-reply rules. 
+**helper** (`com.jmd.helper`) is a high-reliability, 100% on-device Android communication and task scheduling application designed for unattended multi-channel message dispatch, scheduled cellular calling, and intelligent auto-reply rules. 
 
-Built with zero third-party cloud dependencies, zero external analytics, and zero network tracking (`android.permission.INTERNET` is completely omitted), AutoText guarantees enterprise data sovereignty and absolute user privacy while delivering commercial-grade dispatch reliability.
+Built with zero third-party cloud dependencies, zero external analytics, and zero network tracking (`android.permission.INTERNET` is completely omitted), helper guarantees enterprise data sovereignty and absolute user privacy while delivering commercial-grade dispatch reliability.
 
 ## 1.2 Technical Profile
 - **Package Identifier:** `com.jmd.helper`
@@ -103,7 +103,7 @@ app/src/main/
 ├── AndroidManifest.xml
 ├── assets/
 │   └── HELPER_FEATURES_AND_LOGIC.md     # Single unified in-app technical blueprint
-├── java/com/jmd/autotext/
+├── java/com/jmd/helper/
 │   ├── HelperApplication.kt             # Application root, crash handler & startup recovery
 │   ├── api/
 │   │   └── TaskFeatureApi.kt        # Programmatic endpoints for all app operations
@@ -201,7 +201,7 @@ app/src/main/
 
 # 4. Multi-Channel Dispatch Engines & Workflows
 
-AutoText supports 16 distinct scheduled communication workflows and execution endpoints:
+helper supports 16 distinct scheduled communication workflows and execution endpoints:
 1. **SMS Cellular Modem Dispatch:** Direct transmission via Android Telephony with explicit SIM slot binding (SIM 1 / SIM 2) across Qualcomm, MediaTek, Exynos, and Unisoc chipsets.
 2. **WhatsApp Direct Chat:** Accessibility-driven direct chat messaging for `com.whatsapp`, including message insertion and designated Send button resolution.
 3. **Voice Note Protection Guard:** Prevents misdirected taps on the voice note (microphone) button when the Send button has not yet appeared.
@@ -223,7 +223,7 @@ AutoText supports 16 distinct scheduled communication workflows and execution en
 
 # 5. Database Schema & Persistence Architecture
 
-AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across 15 relational tables:
+helper uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across 15 relational tables:
 1. `tasks`: Primary scheduled tasks table (`id`, `title`, `channel`, `recipients_json`, `message_text`, `trigger_time`, `recurrence`, `status`, `sim_slot`, `call_duration`, `last_executed`, `execution_count`).
 2. `templates`: Message templates with dynamic placeholders.
 3. `recipients`: Pre-configured recipient lists.
@@ -443,7 +443,7 @@ adb shell am broadcast -a com.jmd.helper.ACTION_RESET_EMERGENCY_STOP -n com.jmd.
 
 # 4. Dump system execution logs to file
 adb shell am broadcast -a com.jmd.helper.ACTION_DUMP_LOGS -n com.jmd.helper/.receiver.TaskAlarmReceiver
-adb pull /sdcard/Android/data/com.jmd.helper/files/autotext_execution_dump.txt autotext_dump.txt
+adb pull /sdcard/Android/data/com.jmd.helper/files/helper_execution_dump.txt helper_dump.txt
 
 # 5. Populate and arm all 12 task types for verification
 adb shell am broadcast -a com.jmd.helper.ACTION_SETUP_ALL_TASKS -n com.jmd.helper/.receiver.TaskAlarmReceiver

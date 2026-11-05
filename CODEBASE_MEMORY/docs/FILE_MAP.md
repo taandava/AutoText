@@ -1,4 +1,4 @@
-# AutoText — File Map & Component Directory
+# helper — File Map & Component Directory
 
 ## 1. Directory Structure
 
@@ -7,7 +7,7 @@ app/src/main/
 ├── AndroidManifest.xml
 ├── assets/
 │   └── HELPER_FEATURES_AND_LOGIC.md
-├── java/com/jmd/autotext/
+├── java/com/jmd/helper/
 │   ├── HelperApplication.kt
 │   ├── api/
 │   │   └── TaskFeatureApi.kt
@@ -172,6 +172,6 @@ app/src/main/
         └── file_paths.xml
 
 app/src/test/
-└── java/com/jmd/autotext/
+└── java/com/jmd/helper/
     └── HelperComprehensiveTest.kt
 ```
