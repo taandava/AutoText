@@ -25,13 +25,13 @@ object AccessibilityCompat {
      * @param node The [AccessibilityNodeInfo] to inspect, or null.
      * @return True if checked, false otherwise.
      */
+    @Suppress("DEPRECATION")
     @JvmStatic
     fun isNodeChecked(node: AccessibilityNodeInfo?): Boolean {
         if (node == null) return false
         if (Build.VERSION.SDK_INT >= 36) {
             return node.checked == AccessibilityNodeInfo.CHECKED_STATE_TRUE
         }
-        @Suppress("DEPRECATION")
         return node.isChecked
     }
 }

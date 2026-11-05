@@ -186,7 +186,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             for (prefix in KNOWN_FINANCIAL_PACKAGE_PREFIXES) {
                 if (lower.startsWith(prefix) || lower == prefix) return true
             }
-            if (lower.contains("saraswat") || lower.contains("gomonxt") || lower.contains("banking") ||
+            val hasFinancialKeyword = lower.contains("saraswat") || lower.contains("gomonxt") || lower.contains("banking") ||
                 lower.contains("bank") || lower.contains(".yono.") || lower.contains("npci.bhim") ||
                 lower.contains(".upi.") || lower.contains("mobikwik") || lower.contains("paytm") ||
                 lower.contains("phonepe") || lower.contains("paisa") || lower.contains("cred.app") ||
@@ -199,10 +199,8 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 lower.contains("slicepay") || lower.contains("jupiter") ||
                 lower.contains("fi.money") || lower.contains("digilocker") ||
                 lower.contains("aadhaar") || lower.contains("umang") ||
-                lower.contains("incometax")) {
-                return true
-            }
-            return com.jmd.autotext.core.ProtectedApplicationManager.KNOWN_PROTECTED_PACKAGES.contains(pkg.trim())
+                lower.contains("incometax")
+            return hasFinancialKeyword || com.jmd.autotext.core.ProtectedApplicationManager.KNOWN_PROTECTED_PACKAGES.contains(pkg.trim())
         }
         /**
          * Checks whether the active window belongs to the system keyguard or Android SystemUI lockscreen.

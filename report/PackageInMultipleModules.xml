@@ -1,0 +1,11 @@
+<problems>
+<problem>
+  <package>com.jmd.autotext</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext" />
+  <problem_class id="PackageInMultipleModules" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with classes in multiple modules</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext' has classes in modules 'AutoText.app.main' and 'AutoText.app.unitTest'</description>
+  <highlighted_element />
+  <language />
+</problem>
+</problems>

@@ -73,7 +73,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
         )
 
         /**
-         * Masks sensitive message text (e.g. "Meeting at 5 PM" -> "M***M" or "[PROTECTED]").
+         * Masks sensitive message text (e.g. "Meeting at 5 PM" -> "M***M" or `[PROTECTED]`).
          */
         fun maskSensitiveText(text: String): String {
             if (text.isBlank()) return ""
@@ -341,7 +341,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
     }
 
     /**
-     * Masks sensitive message text (e.g. "Meeting at 5 PM" -> "M***M" or "[PROTECTED]").
+     * Masks sensitive message text (e.g. "Meeting at 5 PM" -> "M***M" or `[PROTECTED]`).
      */
     fun maskSensitiveText(text: String): String = Companion.maskSensitiveText(text)
 

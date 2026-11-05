@@ -185,8 +185,8 @@ object DailyCampaignScheduler {
     fun cancelAllCampaigns(context: Context) {
         val repo = AppRepository(context)
         val all = repo.getAllDailyCampaignConfigs()
-        for (cfg in all) {
-            cancel(context, cfg.id)
+        for ((cfgId) in all) {
+            cancel(context, cfgId)
         }
         WorkManager.getInstance(context).cancelAllWorkByTag("all_daily_campaigns")
         AppFileLogger.action(context, "DailyCampaignScheduler", "Cancelled all daily campaign workers and alarms")

@@ -321,8 +321,7 @@ enum class TaskStatus(val displayName: String) {
         }
 
         fun canTransition(from: TaskStatus, to: TaskStatus): Boolean {
-            if (from == to) return true
-            return when (from) {
+            return from == to || when (from) {
                 DRAFT -> to == VALIDATING || to == CANCELLED
                 VALIDATING -> to == READY || to == FAILED || to == CANCELLED
                 READY -> to == SCHEDULED || to == RUNNING || to == CANCELLED || to == PAUSED

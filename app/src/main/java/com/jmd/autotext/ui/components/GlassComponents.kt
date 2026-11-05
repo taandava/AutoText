@@ -538,7 +538,7 @@ fun AppCardElevated(
         label = "appCardElevatedScale"
     )
 
-    val outlineColor = if (accentGlow != null) accentGlow else MaterialTheme.colorScheme.outlineVariant
+    val outlineColor = accentGlow ?: MaterialTheme.colorScheme.outlineVariant
 
     if (onClick != null) {
         ElevatedCard(
@@ -733,6 +733,7 @@ fun AppDialogCard(
  * bold title, optional subtitle, back navigation, and customizable actions.
  */
 @Composable
+@Suppress("ComposableLambdaParameterNaming")
 fun AppSubScreenHeader(
     title: String,
     onBack: () -> Unit,

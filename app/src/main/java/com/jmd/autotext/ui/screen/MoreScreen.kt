@@ -52,7 +52,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onThemeChanged Callback invoked when user alters theme palette preference.
  */
 @Composable
-fun moreScreen(
+fun MoreScreenView(
     initialSubSection: String = "MENU",
     onSubSectionStateChanged: (Boolean) -> Unit = {},
     onThemeChanged: (String) -> Unit = {},
@@ -110,7 +110,7 @@ fun moreScreen(
                 navigateToSubSection("MENU")
             }
         }
-        "PERMISSIONS" -> permissionCenterView(context) { navigateToSubSection("MENU") }
+        "PERMISSIONS" -> PermissionCenterView(context) { navigateToSubSection("MENU") }
         "CALL_SIMULATION" -> {
             LaunchedEffect(Unit) {
                 com.jmd.autotext.ui.activity.CallSimulationActivity.start(
@@ -177,7 +177,7 @@ fun moreScreen(
                     )
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Daily SMS",
                         "📩",
                         MaterialTheme.colorScheme.primary,
@@ -186,7 +186,7 @@ fun moreScreen(
                     }
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Daily WhatsApp",
                         "💬",
                         Color(0xFF2E7D32),
@@ -195,7 +195,7 @@ fun moreScreen(
                     }
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "WhatsApp & Screen Setup",
                         "📱",
                         Color(0xFF0D9488),
@@ -204,7 +204,7 @@ fun moreScreen(
                     }
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Task Sequences",
                         "🔗",
                         Color(0xFFF57C00),
@@ -213,7 +213,7 @@ fun moreScreen(
                     }
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Message Templates",
                         "📝",
                         Color(0xFF8B5CF6),
@@ -222,7 +222,7 @@ fun moreScreen(
                     }
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Bulk Contacts & Groups",
                         "👥",
                         Color(0xFF2E7D32),
@@ -243,7 +243,7 @@ fun moreScreen(
                     )
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Execution History",
                         "📜",
                         Color(0xFFF57C00),
@@ -252,7 +252,7 @@ fun moreScreen(
                     }
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "System Traces & Error Logs",
                         "💻",
                         Color(0xFFF57C00)
@@ -273,7 +273,7 @@ fun moreScreen(
                     )
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Permission Center",
                         "🛡️",
                         MaterialTheme.colorScheme.primary
@@ -282,7 +282,7 @@ fun moreScreen(
                     }
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Incoming Call Simulation",
                         "🎭",
                         Color(0xFFE91E63)
@@ -296,7 +296,7 @@ fun moreScreen(
                     }
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Privacy & App Visibility",
                         "🛡️",
                         Color(0xFFE65100)
@@ -305,7 +305,7 @@ fun moreScreen(
                     }
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Settings & Security",
                         "⚙️",
                         Color(0xFF64748B)
@@ -314,7 +314,7 @@ fun moreScreen(
                     }
                 }
                 item {
-                    menuItemCard(
+                    MenuItemCard(
                         "Documentation Guide",
                         "📖",
                         Color(0xFF0D9488)
@@ -329,7 +329,7 @@ fun moreScreen(
 
 
 @Composable
-fun menuItemCard(
+fun MenuItemCard(
     title: String,
     emoji: String,
     iconColor: Color,

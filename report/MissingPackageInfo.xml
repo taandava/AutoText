@@ -1,0 +1,254 @@
+<problems>
+<problem>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.core" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.core' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.templates</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.templates" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen.templates' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.data.repo</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.data.repo" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.data.repo' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.logs</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.logs" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen.logs' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.receiver" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.receiver' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.privacy</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.privacy" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen.privacy' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.data.db" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.data.db' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.engine</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.engine" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.engine' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.tasks</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.tasks" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen.tasks' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.api</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.api" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.api' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.theme</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.theme" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.theme' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.whatsapp" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.whatsapp' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.service" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.service' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.data.model" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.data.model' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.compat</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.compat" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.compat' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.contacts</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.contacts" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen.contacts' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.model</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.model" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.model' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.components</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.components" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.components' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.autoreply" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen.autoreply' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.settings</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.settings" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen.settings' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.activity</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.activity" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.activity' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.data.prefs" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.data.prefs' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.scheduler</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.scheduler" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.scheduler' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.compose</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.compose" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen.compose' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.taskBatch" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen.taskBatch' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.sequence</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.sequence" />
+  <problem_class id="MissingPackageInfo" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing 'package-info.java'</problem_class>
+  <hints />
+  <description>Package 'com.jmd.autotext.ui.screen.sequence' is missing a &lt;code&gt;package-info.java&lt;/code&gt; file</description>
+  <highlighted_element />
+  <language />
+</problem>
+</problems>

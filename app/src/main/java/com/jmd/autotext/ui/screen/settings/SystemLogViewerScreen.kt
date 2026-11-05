@@ -106,7 +106,7 @@ fun SystemLogViewerView(
 
     // Parse the active log content into structured entries
     val parsedItems = remember(activeContent, selectedTab) {
-        if (activeContent.isBlank()) return@remember emptyList<ParsedSystemLogItem>()
+        if (activeContent.isBlank()) return@remember emptyList()
         val lines = activeContent.lines().filter { it.isNotBlank() }
 
         when (selectedTab) {

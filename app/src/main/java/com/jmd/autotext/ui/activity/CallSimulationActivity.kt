@@ -209,6 +209,6 @@ open class CallSimulationActivity : ComponentActivity() {
 /**
  * Backward-compatible activity class aliased to [CallSimulationActivity].
  */
-open class SimulatedCallActivity : CallSimulationActivity()
+typealias SimulatedCallActivity = CallSimulationActivity
 
 

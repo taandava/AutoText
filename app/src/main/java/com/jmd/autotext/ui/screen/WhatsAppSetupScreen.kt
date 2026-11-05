@@ -104,12 +104,12 @@ fun WhatsAppSetupAndScreenAssistView(
 
             // 2B. Self-Healing & Never-Stop Watchdog Card
             item {
-                superAutoHealAndPermissionFixerCard(context)
+                SuperAutoHealAndPermissionFixerCard(context)
             }
 
             // 2C. Keep Open in Recent Apps Card
             item {
-                keepOpenRecentAppsCard()
+                KeepOpenRecentAppsCard()
             }
 
             // 3. Screen Auto-Unlock & Auto-Lock Settings Enterprise Card

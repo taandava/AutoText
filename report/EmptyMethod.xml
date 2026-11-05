@@ -1,0 +1,18 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>637</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.db.DatabaseHelper void insertSeedTemplates(android.database.sqlite.SQLiteDatabase db)" />
+  <problem_class id="EmptyMethod" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty method</problem_class>
+  <hints>
+    <hint value="false" />
+  </hints>
+  <description>The method is empty</description>
+  <highlighted_element>insertSeedTemplates</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>19</length>
+</problem>
+</problems>

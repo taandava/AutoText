@@ -12,7 +12,7 @@
  * Linked With:
  * - Directives: design.md
  * - Activity: [com.jmd.autotext.ui.activity.MainActivity]
- * - Components: [com.jmd.autotext.ui.components.GlassComponents]
+ * - Components: `GlassComponents.kt` ([com.jmd.autotext.ui.components.GlassSurface])
  */
 package com.jmd.autotext.ui.theme
 

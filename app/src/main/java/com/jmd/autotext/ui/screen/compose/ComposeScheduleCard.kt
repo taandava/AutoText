@@ -232,6 +232,45 @@ fun ComposeScheduleOptionsCard(
                     )
                 }
 
+                if (selectedUnit == RepeatUnit.WEEKS) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        "Active Days of Week:",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        val days = listOf("S" to 1, "M" to 2, "T" to 3, "W" to 4, "T" to 5, "F" to 6, "S" to 7)
+                        days.forEach { (dayLabel, dayVal) ->
+                            val isSel = selectedDaysOfWeek.contains(dayVal)
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(if (isSel) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surfaceContainerHigh)
+                                    .clickable {
+                                        val updated = if (isSel) selectedDaysOfWeek - dayVal else selectedDaysOfWeek + dayVal
+                                        onSelectedDaysOfWeekChanged(updated)
+                                    }
+                                    .padding(vertical = 4.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    dayLabel,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isSel) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(8.dp))
                 val countNum = intervalCountText.toIntOrNull() ?: 1
                 val unitLabel = if (countNum == 1) selectedUnit.singularName else selectedUnit.displayName

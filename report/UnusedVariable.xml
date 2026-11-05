@@ -1,0 +1,67 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
+  <line>173</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.api</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.api.TaskFeatureApi java.lang.Object sendWhatsAppMessage(android.content.Context context, com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.api.WhatsAppMessageRequest request, kotlin.coroutines.Continuation&lt;? super com.jmd.autotext.api.FeatureExecutionResult&gt; $completion)" />
+  <problem_class id="UnusedVariable" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused variable</problem_class>
+  <description>Unused variable</description>
+  <highlighted_element>targetPkg</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/TaskRepository.kt</file>
+  <line>175</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.TaskRepository boolean postponeTask(long id, long postponeMillis)" />
+  <problem_class id="UnusedVariable" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused variable</problem_class>
+  <description>Unused variable</description>
+  <highlighted_element>task</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/AppStatusIndicators.kt</file>
+  <line>73</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.components.SystemIndicatorResolver java.util.List&lt;com.jmd.autotext.ui.components.SystemIndicator&gt; resolveAll(android.content.Context context, com.jmd.autotext.data.prefs.PreferenceManager prefs)" />
+  <problem_class id="UnusedVariable" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused variable</problem_class>
+  <description>Unused variable</description>
+  <highlighted_element>a11yState</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt</file>
+  <line>75</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.privacy</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.privacy.PrivacySettingsScreenKt void PrivacySettingsScreen(android.content.Context context, com.jmd.autotext.data.prefs.PreferenceManager prefs, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <problem_class id="UnusedVariable" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused variable</problem_class>
+  <description>Unused variable</description>
+  <highlighted_element>autoClearClipboardSec</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppStatusEngine.kt</file>
+  <line>280</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.WhatsAppStatusEngine void tryHandleStatusPost(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String targetPkg, java.lang.String pendingMessage, boolean isMediaStatus, int sendAttemptCount, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSuccess, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onTimeout, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry)" />
+  <problem_class id="UnusedVariable" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused variable</problem_class>
+  <description>Unused variable</description>
+  <highlighted_element>clicked</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>7</length>
+</problem>
+</problems>

@@ -1,0 +1,170 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
+  <line>23</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.AccessibilityHealthManager" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'AccessibilityHealthManager' has too many dependents (15 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppFileLogger.kt</file>
+  <line>19</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.AppFileLogger" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'AppFileLogger' has too many dependents (29 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PhoneNumberNormalizer.kt</file>
+  <line>15</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.PhoneNumberNormalizer" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'PhoneNumberNormalizer' has too many dependents (16 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
+  <line>31</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.TaskSafetyManager" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'TaskSafetyManager' has too many dependents (15 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>26</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.db.DatabaseHelper" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'DatabaseHelper' has too many dependents (14 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>76</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.ChannelType" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'ChannelType' has too many dependents (33 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>115</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.ExecutionLog" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'ExecutionLog' has too many dependents (13 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>232</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.RecurrenceType" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'RecurrenceType' has too many dependents (11 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>275</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.TaskStatus" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'TaskStatus' has too many dependents (11 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>23</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.prefs.PreferenceManager" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'PreferenceManager' has too many dependents (29 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
+  <line>47</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.repo</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.repo.AppRepository" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'AppRepository' has too many dependents (19 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
+  <line>37</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.scheduler</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'AlarmScheduler' has too many dependents (11 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>75</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'AutoTextAccessibilityService' has too many dependents (13 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt</file>
+  <line>30</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.AccessibilityNodeUtils" />
+  <problem_class id="ClassWithTooManyDependents" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependents</problem_class>
+  <hints />
+  <description>Class 'AccessibilityNodeUtils' has too many dependents (11 &gt; 10)</description>
+  <highlighted_element />
+  <language />
+</problem>
+</problems>

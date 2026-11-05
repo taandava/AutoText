@@ -378,10 +378,7 @@ class WhatsAppRepository(private val context: Context) {
 
     fun isSavedGroup(name: String): Boolean {
         val trimmed = name.trim()
-        if (trimmed.isBlank()) {
-            return false
-        }
-        return try {
+        return trimmed.isNotBlank() && try {
             val db = dbHelper.readableDatabase
             db.rawQuery(
                 "SELECT 1 FROM ${DatabaseHelper.TABLE_WHATSAPP_GROUPS} WHERE LOWER(TRIM(name)) = LOWER(TRIM(?)) LIMIT 1",

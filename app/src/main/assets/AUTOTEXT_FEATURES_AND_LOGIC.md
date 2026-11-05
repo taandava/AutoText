@@ -66,7 +66,7 @@ com.jmd.autotext
 │   └── repo/                         # Dedicated repository implementations
 │       ├── AppRepository.kt          # Unified master repository delegating to specialized DAOs
 │       ├── TaskRepository.kt         # Atomic task CRUD & alarm synchronization
-│       ├── DailyCampaignRepository.kt# Recurring campaign dispatches, pools & recipient ledgers
+│       ├── DailyCampaignRepository.kt# Recurring taskBatch dispatches, pools & recipient ledgers
 │       ├── AutoReplyRepository.kt    # Trigger conditions, call event filters & scheduled replies
 │       └── LogRepository.kt          # Audit trail queries & log exports
 ├── engine/                      # Task Execution Pipelines
@@ -98,7 +98,7 @@ com.jmd.autotext
 │   ├── components/              # AppStatusIndicators, GlassComponents, Avatars, Pickers, AppCard
 │   ├── screen/                  # Modular Compose screens (Tasks, Compose, Settings, AutoReply, Campaigns)
 │   │   ├── autoreply/           # AutoReplyScreen, AutoReplyCards, AutoReplyDialogs
-│   │   ├── campaign/            # DailyAutoSenderScreen, CampaignCards, CampaignRecipients
+│   │   ├── taskBatch/            # DailyAutoSenderScreen, CampaignCards, CampaignRecipients
 │   │   ├── compose/             # ComposeTaskScreen, ComposeMessageSection, ComposeCallSection, Pickers
 │   │   ├── contacts/            # ContactPickerScreen, ContactPoolManagementScreen
 │   │   ├── logs/                # ExecutionLogsScreen, LogExportDialog
@@ -176,7 +176,7 @@ CREATE TABLE daily_campaigns (
     scheduled_hour INTEGER DEFAULT 9,
     scheduled_minute INTEGER DEFAULT 0,
     interval_seconds INTEGER DEFAULT 10,    -- Pacing delay between sequential recipients
-    is_active INTEGER DEFAULT 1,            -- Active/Paused master campaign state
+    is_active INTEGER DEFAULT 1,            -- Active/Paused master taskBatch state
     skip_weekends INTEGER DEFAULT 0,
     skip_holidays INTEGER DEFAULT 0,
     created_at INTEGER NOT NULL
@@ -232,8 +232,8 @@ override fun onConfigure(db: SQLiteDatabase) {
 }
 ```
 **Benefits & Performance Rationale:**
-- **Concurrent Readers & Writers**: Normal rollback journaling locks the entire database file during writes, freezing the UI thread whenever long-running background campaign batches or log inserts occur. WAL mode permits background write transactions to commit to a separate `-wal` log without blocking concurrent reads from the UI thread (`TasksScreen`, `ExecutionLogsScreen`, `DailyAutoSenderScreen`).
-- **Zero UI Hitching**: Real-time log list queries and scheduled task refresh operations execute simultaneously during multi-recipient campaign dispatches.
+- **Concurrent Readers & Writers**: Normal rollback journaling locks the entire database file during writes, freezing the UI thread whenever long-running background taskBatch batches or log inserts occur. WAL mode permits background write transactions to commit to a separate `-wal` log without blocking concurrent reads from the UI thread (`TasksScreen`, `ExecutionLogsScreen`, `DailyAutoSenderScreen`).
+- **Zero UI Hitching**: Real-time log list queries and scheduled task refresh operations execute simultaneously during multi-recipient taskBatch dispatches.
 - **Foreign Key Integrity**: Enforces `ON DELETE CASCADE` across `daily_campaigns` -> `campaign_recipients` and `auto_reply_rules` -> `auto_reply_logs`.
 
 #### 6. Rolling Log Auto-Pruning Policy
@@ -258,8 +258,8 @@ Furthermore, generic accessibility node crawlers that dismiss popups by scanning
 AutoText establishes an unconditional, self-enforcing system invariant:
 1. **Activity Orientation Locking**:
    All application activities declared in `AndroidManifest.xml` are hard-coded to portrait mode:
-   ```xml
-   android:screenOrientation="portrait"
+   ```text
+   <activity android:name="..." android:screenOrientation="portrait" />
    ```
    Applied to `MainActivity`, `CallSimulationActivity`, `ReminderAlarmActivity`, and `TaskLauncherActivity`.
 2. **System UI Shielding in `PopupShield.kt`**:
@@ -302,7 +302,7 @@ AutoText provides instantaneous, fail-safe interruption controls designed to pre
 - **Safety Emergency Stop (`prefs.isEmergencyStopActive`)**: Prominent red `🛑 STOP` button in the header bar. Instantly sets an atomic safety latch (`TaskSafetyManager.isEmergencyStopActive`), kills active coroutine jobs, and purges all queues.
 
 ### 2. 250ms Sliced Delay Polling
-Monolithic delays (such as holding an active call for 60 seconds or pausing 10 seconds between campaign recipients) represent a major vulnerability in conventional task apps because the engine remains unresponsive until the timer elapses.
+Monolithic delays (such as holding an active call for 60 seconds or pausing 10 seconds between taskBatch recipients) represent a major vulnerability in conventional task apps because the engine remains unresponsive until the timer elapses.
 
 AutoText slices **all** execution delays, call holds, and pacing pauses into 250ms polling chunks:
 ```kotlin
@@ -333,7 +333,7 @@ When an emergency stop or master pause occurs:
    - Clears keyguard watchdog timers and removes all pending handler callbacks.
 
 ### 4. Direct Boot & Post-Reboot Immunity
-When the device is restarted (cold boot, OTA update, or quick reboot), `BootReceiver` and `TaskAlarmReceiver` inspect both `isTasksMasterEnabled` and `isEmergencyStopActive`. If either indicates a paused state, all alarm rescheduling and campaign workers are canceled immediately, guaranteeing that rebooting the phone will **never** cause tasks to randomly start executing.
+When the device is restarted (cold boot, OTA update, or quick reboot), `BootReceiver` and `TaskAlarmReceiver` inspect both `isTasksMasterEnabled` and `isEmergencyStopActive`. If either indicates a paused state, all alarm rescheduling and taskBatch workers are canceled immediately, guaranteeing that rebooting the phone will **never** cause tasks to randomly start executing.
 
 ### 5. Stranded RUNNING Task Recovery & Invariant Reconciliation
 When unexpected process termination, crash, or emergency stop occurs during active dispatch, any task left marked in `TaskStatus.RUNNING` is directly reconciled:
@@ -455,7 +455,7 @@ graph TD
     K --> L{isAutoLockAfterSendEnabled?}
     L -- Yes --> M[AutoTextAccessibilityService.minimizeToHome]
     M --> N[enforceAutoRotateInvariant]
-    N --> O[Accessibility GLOBAL_ACTION_LOCK_SCREEN (Mimics Physical Power Button)]
+    N --> O["Accessibility GLOBAL_ACTION_LOCK_SCREEN - Mimics Physical Power Button"]
     O --> P[Screen Locked Safely - Biometrics & Fingerprint Preserved]
     L -- No --> S[Release WakeLock & Complete]
     P --> S
@@ -583,7 +583,7 @@ Modern banking, UPI, and financial applications in India and worldwide (includin
 2. `Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)`
 
 If any third-party accessibility service is detected with global window inspection capabilities (`info.packageNames = null`) or registered as active in system settings, the banking app displays a blocking security alert:
-> *"Security Alert! Accessibility Permission detected! [Bank Name] app identified accessibility permission is enabled in your device. For security reasons, we recommend to disable it. [AutoText >] [CLOSE APP]"*
+> *"Security Alert! Accessibility Permission detected! \[Bank Name\] app identified accessibility permission is enabled in your device. For security reasons, we recommend to disable it. \[AutoText &gt;\] \[CLOSE APP\]"*
 
 ### 11.2 Architectural Solution: Dual-Tier Banking Protection & Isolation
 
@@ -647,7 +647,7 @@ Accessible via **Settings -> Privacy & App Visibility**:
   - `BANKING`: Auto-identified banking, UPI, wallet, and financial applications.
   - `SYSTEM`: System framework packages.
   - `USER`: User-installed third-party applications.
-- **Batch Actions**: Multi-select toggle, Select All, Deselect All, and Bulk Exclusion/Inclusion.
+- **Batch Actions**: Multi-select toggle, Select All, Deselect All, and Batch Exclusion/Inclusion.
 - **Granular Modal Sheet (`AppPrivacyDetailDialog.kt`)**: Individual app configuration modal for fine-grained customization of all 7 isolation dimensions.
 - **Configuration Reset**: One-tap reset restoring default privacy settings and re-seeding the curated financial package catalog.
 
@@ -693,7 +693,7 @@ adb shell "am broadcast -a com.jmd.autotext.ACTION_SETUP_ALL_TASKS --es recipien
 ```
 
 ### 7. Complete Task Database Purge (`ACTION_DELETE_ALL_TASKS`)
-Instantly deletes all scheduled tasks, unregisters alarms, and purges campaign queue:
+Instantly deletes all scheduled tasks, unregisters alarms, and purges taskBatch queue:
 ```bash
 adb shell am broadcast -a com.jmd.autotext.ACTION_DELETE_ALL_TASKS -n com.jmd.autotext/.receiver.TaskAlarmReceiver
 ```
@@ -813,6 +813,6 @@ Each endpoint validates parameters, enforces safety checks, and returns a standa
 
 ### Policy-Safe Terminology Standards
 To safeguard the application from being flagged by Google Play Protect or OEM anti-abuse scanning:
-- Eradicated all aggressive terminology ("task service", "auto bot", "accessibility hack").
+- Eradicated all aggressive terminology ("task service", "auto smart task", "accessibility hack").
 - Standardized strictly on clean, policy-compliant 2-word naming conventions: **"Task"**, **"Smart Dispatch"**, **"Scheduled Tasks"**, **"Daily Dispatch"**.
 

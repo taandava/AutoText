@@ -429,7 +429,7 @@ fun MainAppHost(
                     2 -> AutoReplyScreen(
                         onEditingStateChanged = { isAutoReplyEditing = it }
                     )
-                    3 -> moreScreen(
+                    3 -> MoreScreenView(
                         initialSubSection = toolsInitialSubSection,
                         onSubSectionStateChanged = { isOpen ->
                             isToolsSubSectionOpen = isOpen

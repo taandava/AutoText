@@ -1,0 +1,100 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/AccessibilityCompat.kt</file>
+  <line>20</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.compat</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.compat.AccessibilityCompat" />
+  <problem_class id="ClassOnlyUsedInOnePackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class only used from one other package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AccessibilityCompat&lt;/code&gt; has only dependencies on and/or dependents in package 'com.jmd.autotext.whatsapp'</description>
+  <highlighted_element>AccessibilityCompat</highlighted_element>
+  <language>kotlin</language>
+  <offset>7</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/TelephonyManagerCompat.kt</file>
+  <line>25</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.compat</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.compat.TelephonyManagerCompat" />
+  <problem_class id="ClassOnlyUsedInOnePackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class only used from one other package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;TelephonyManagerCompat&lt;/code&gt; has only dependencies on and/or dependents in package 'com.jmd.autotext.engine'</description>
+  <highlighted_element>TelephonyManagerCompat</highlighted_element>
+  <language>kotlin</language>
+  <offset>7</offset>
+  <length>22</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>129</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.RecipientItem" />
+  <problem_class id="ClassOnlyUsedInOnePackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class only used from one other package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;RecipientItem&lt;/code&gt; has only dependencies on and/or dependents in package 'com.jmd.autotext.data.repo'</description>
+  <highlighted_element>RecipientItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>137</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.WhatsAppContactItem" />
+  <problem_class id="ClassOnlyUsedInOnePackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class only used from one other package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;WhatsAppContactItem&lt;/code&gt; has only dependencies on and/or dependents in package 'com.jmd.autotext.data.repo'</description>
+  <highlighted_element>WhatsAppContactItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>381</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.MessageTemplate" />
+  <problem_class id="ClassOnlyUsedInOnePackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class only used from one other package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;MessageTemplate&lt;/code&gt; has only dependencies on and/or dependents in package 'com.jmd.autotext.data.repo'</description>
+  <highlighted_element>MessageTemplate</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/model/UiModels.kt</file>
+  <line>32</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.model.AutoReplyTypeItem" />
+  <problem_class id="ClassOnlyUsedInOnePackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class only used from one other package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AutoReplyTypeItem&lt;/code&gt; has only dependencies on and/or dependents in package 'com.jmd.autotext.data.model'</description>
+  <highlighted_element>AutoReplyTypeItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/model/UiModels.kt</file>
+  <line>68</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.model.TaskTypeItem" />
+  <problem_class id="ClassOnlyUsedInOnePackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class only used from one other package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;TaskTypeItem&lt;/code&gt; has only dependencies on and/or dependents in package 'com.jmd.autotext.data.model'</description>
+  <highlighted_element>TaskTypeItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>12</length>
+</problem>
+</problems>

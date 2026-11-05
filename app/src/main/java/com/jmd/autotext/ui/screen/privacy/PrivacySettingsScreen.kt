@@ -72,7 +72,6 @@ fun PrivacySettingsScreen(
     var dynamicA11yOnDemand by remember { mutableStateOf(prefs.isDynamicA11yOnDemandEnabled) }
     var maskLockScreenNotifs by remember { mutableStateOf(prefs.isMaskNotificationsOnLockScreenEnabled) }
     var maskExecutionLogs by remember { mutableStateOf(prefs.isMaskExecutionLogsEnabled) }
-    var autoClearClipboardSec by remember { mutableIntStateOf(prefs.autoClearClipboardSeconds) }
     var suppressNotifsOverExcluded by remember { mutableStateOf(prefs.isSuppressNotifsOverExcludedEnabled) }
     var blockOverlaysOverExcluded by remember { mutableStateOf(prefs.isBlockOverlaysOverExcludedEnabled) }
 
@@ -655,9 +654,10 @@ private fun AppRowItem(
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
-                if (iconBitmap != null) {
+                val bmp = iconBitmap
+                if (bmp != null) {
                     Image(
-                        bitmap = iconBitmap!!.asImageBitmap(),
+                        bitmap = bmp.asImageBitmap(),
                         contentDescription = appItem.appName,
                         modifier = Modifier.size(32.dp)
                     )

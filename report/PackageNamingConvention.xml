@@ -1,0 +1,29 @@
+<problems>
+<problem>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.data.db" />
+  <problem_class id="PackageNamingConvention" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package naming convention</problem_class>
+  <hints />
+  <description>Package name &lt;code&gt;db&lt;/code&gt; is too short</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui" />
+  <problem_class id="PackageNamingConvention" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package naming convention</problem_class>
+  <hints />
+  <description>Package name &lt;code&gt;ui&lt;/code&gt; is too short</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.screen.taskBatch" />
+  <problem_class id="PackageNamingConvention" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package naming convention</problem_class>
+  <hints />
+  <description>Package name &lt;code&gt;taskBatch&lt;/code&gt; doesn't match regex '[a-z]*'</description>
+  <highlighted_element />
+  <language />
+</problem>
+</problems>

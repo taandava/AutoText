@@ -318,7 +318,6 @@ class KeyguardUnlockEngine(
                         return@postDelayed
                     }
 
-                    var okTapped = false
                     val currentRoots = AccessibilityNodeUtils.getTargetRoots(service)
                     for (r in currentRoots) {
                         val enterNode = findKeypadEnterNode(r)
@@ -328,8 +327,7 @@ class KeyguardUnlockEngine(
                             if (rect.width() > 0 && rect.height() > 0) {
                                 val tapX = rect.centerX().toFloat()
                                 val tapY = rect.centerY().toFloat()
-                                okTapped = dispatchPhysicalTap(tapX, tapY)
-                                if (okTapped) {
+                                if (dispatchPhysicalTap(tapX, tapY)) {
                                     Log.i(loggerTag, "Dispatched physical tap on designated Enter/OK element at ($tapX, $tapY)")
                                     break
                                 }

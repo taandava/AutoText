@@ -1,0 +1,604 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <line>44</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.AutoTextApplication" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AutoTextApplication&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AutoTextApplication</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/AccessibilityCompat.kt</file>
+  <line>20</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.compat</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.compat.AccessibilityCompat" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AccessibilityCompat&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AccessibilityCompat</highlighted_element>
+  <language>kotlin</language>
+  <offset>7</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/ClipboardCompat.kt</file>
+  <line>23</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.compat</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.compat.ClipboardCompat" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;ClipboardCompat&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>ClipboardCompat</highlighted_element>
+  <language>kotlin</language>
+  <offset>7</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/PackageManagerCompat.kt</file>
+  <line>17</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.compat</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.compat.PackageManagerCompat" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;PackageManagerCompat&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>PackageManagerCompat</highlighted_element>
+  <language>kotlin</language>
+  <offset>7</offset>
+  <length>20</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/SmsManagerCompat.kt</file>
+  <line>20</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.compat</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.compat.SmsManagerCompat" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;SmsManagerCompat&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>SmsManagerCompat</highlighted_element>
+  <language>kotlin</language>
+  <offset>7</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/TelephonyManagerCompat.kt</file>
+  <line>25</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.compat</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.compat.TelephonyManagerCompat" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;TelephonyManagerCompat&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>TelephonyManagerCompat</highlighted_element>
+  <language>kotlin</language>
+  <offset>7</offset>
+  <length>22</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/WhatsAppPackageHelper.kt</file>
+  <line>18</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.WhatsAppPackageHelper" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;WhatsAppPackageHelper&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>WhatsAppPackageHelper</highlighted_element>
+  <language>kotlin</language>
+  <offset>7</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>45</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.db.DatabaseHelper" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;DatabaseHelper&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>DatabaseHelper</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>26</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.DynamicContactItem" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;DynamicContactItem&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>DynamicContactItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>43</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.DailyCampaignConfig" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;DailyCampaignConfig&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>DailyCampaignConfig</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>58</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.IngestionSummary" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;IngestionSummary&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>IngestionSummary</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>68</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.DynamicPoolStats" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;DynamicPoolStats&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>DynamicPoolStats</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>115</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.ExecutionLog" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;ExecutionLog&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>ExecutionLog</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>129</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.RecipientItem" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;RecipientItem&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>RecipientItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>137</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.WhatsAppContactItem" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;WhatsAppContactItem&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>WhatsAppContactItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>145</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.WhatsAppGroupItem" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;WhatsAppGroupItem&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>WhatsAppGroupItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>381</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.MessageTemplate" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;MessageTemplate&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>MessageTemplate</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>15</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/PrivacyModels.kt</file>
+  <line>71</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.GlobalPrivacySettings" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;GlobalPrivacySettings&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>GlobalPrivacySettings</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>26</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.prefs.PreferenceManager" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;PreferenceManager&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>PreferenceManager</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/ContactIngestionEngine.kt</file>
+  <line>41</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.engine</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.engine.ContactIngestionEngine" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;ContactIngestionEngine&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>ContactIngestionEngine</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>22</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AccessibilityWatchdogReceiver.kt</file>
+  <line>27</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.AccessibilityWatchdogReceiver" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AccessibilityWatchdogReceiver&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AccessibilityWatchdogReceiver</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>29</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AutoTextDeviceAdminReceiver.kt</file>
+  <line>29</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AutoTextDeviceAdminReceiver&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AutoTextDeviceAdminReceiver</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>27</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/BootReceiver.kt</file>
+  <line>38</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.BootReceiver" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;BootReceiver&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>BootReceiver</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt</file>
+  <line>50</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.PhoneCallReceiver" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;PhoneCallReceiver&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>PhoneCallReceiver</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/SmsReceiver.kt</file>
+  <line>41</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.SmsReceiver" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;SmsReceiver&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>SmsReceiver</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
+  <line>37</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;TaskAlarmReceiver&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>TaskAlarmReceiver</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TimeChangeReceiver.kt</file>
+  <line>24</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.TimeChangeReceiver" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;TimeChangeReceiver&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>TimeChangeReceiver</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
+  <line>40</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.scheduler</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AlarmScheduler&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AlarmScheduler</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextA11yTileService.kt</file>
+  <line>18</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextA11yTileService" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AutoTextA11yTileService&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AutoTextA11yTileService</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>23</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>83</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AutoTextAccessibilityService&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AutoTextAccessibilityService</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>28</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextNotificationListenerService.kt</file>
+  <line>39</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextNotificationListenerService" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AutoTextNotificationListenerService&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AutoTextNotificationListenerService</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>35</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt</file>
+  <line>23</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.TaskForegroundService" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;TaskForegroundService&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>TaskForegroundService</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/MainActivity.kt</file>
+  <line>47</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.activity</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.activity.MainActivity" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;MainActivity&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>MainActivity</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/ReminderAlarmActivity.kt</file>
+  <line>34</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.activity</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.activity.ReminderAlarmActivity" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;ReminderAlarmActivity&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>ReminderAlarmActivity</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
+  <line>39</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.activity</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;TaskLauncherActivity&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>TaskLauncherActivity</highlighted_element>
+  <language>kotlin</language>
+  <offset>6</offset>
+  <length>20</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/Avatars.kt</file>
+  <line>53</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.components</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.components.AvatarBitmapCache" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AvatarBitmapCache&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AvatarBitmapCache</highlighted_element>
+  <language>kotlin</language>
+  <offset>7</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/GlassComponents.kt</file>
+  <line>52</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.components</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.components.GlassButtonVariant" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;GlassButtonVariant&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>GlassButtonVariant</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/model/UiModels.kt</file>
+  <line>32</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.model.AutoReplyTypeItem" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AutoReplyTypeItem&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AutoReplyTypeItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/model/UiModels.kt</file>
+  <line>48</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.model.SelectedRecipient" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;SelectedRecipient&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>SelectedRecipient</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/model/UiModels.kt</file>
+  <line>68</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.model.TaskTypeItem" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;TaskTypeItem&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>TaskTypeItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>11</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt</file>
+  <line>54</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.privacy</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.screen.privacy.AppListFilter" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;AppListFilter&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>AppListFilter</highlighted_element>
+  <language>kotlin</language>
+  <offset>19</offset>
+  <length>13</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SystemLogViewerScreen.kt</file>
+  <line>40</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.settings</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.screen.settings.ParsedSystemLogItem" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;ParsedSystemLogItem&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>ParsedSystemLogItem</highlighted_element>
+  <language>kotlin</language>
+  <offset>13</offset>
+  <length>19</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt</file>
+  <line>32</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.WhatsAppIntentDispatcher" />
+  <problem_class id="ClassUnconnectedToPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class independent of its package</problem_class>
+  <hints />
+  <description>Class &lt;code&gt;WhatsAppIntentDispatcher&lt;/code&gt; has no dependencies or dependents in its package</description>
+  <highlighted_element>WhatsAppIntentDispatcher</highlighted_element>
+  <language>kotlin</language>
+  <offset>7</offset>
+  <length>24</length>
+</problem>
+</problems>

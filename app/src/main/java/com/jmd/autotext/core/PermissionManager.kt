@@ -313,11 +313,8 @@ object PermissionManager {
      * Checks if the app can post notifications on Android 13+ (API 33+).
      */
     fun hasPostNotificationsPermission(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             isPermissionGranted(context, Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            true
-        }
     }
 
     /**
@@ -390,8 +387,7 @@ object PermissionManager {
                 ID_DEVICE_ADMIN -> isDeviceAdminActive(context)
                 ID_BATTERY_OPTIMIZATION -> isBatteryOptimizationIgnored(context)
                 ID_NOTIFICATION_POLICY -> hasNotificationPolicyAccess(context)
-                ID_OVERLAY,
-                Manifest.permission.SYSTEM_ALERT_WINDOW -> hasOverlayPermission(context)
+                ID_OVERLAY -> hasOverlayPermission(context)
                 else -> isPermissionGranted(context, spec.permissionId)
             }
             spec.copy(isCurrentlyGranted = granted)
@@ -426,7 +422,6 @@ object PermissionManager {
                 Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
             }
             ID_OVERLAY,
-            Manifest.permission.SYSTEM_ALERT_WINDOW,
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION -> {
                 OverlayPermissionHelper.getManageOverlayIntent(context)
             }

@@ -147,7 +147,6 @@ class AlarmScheduler(private val context: Context) {
      * Uses a unique, task-specific label pattern to prevent colliding with or dismissing
      * unrelated personal alarms.
      *
-     * @param context Active Android [Context].
      * @param task Reminder task configuration.
      */
     fun setDeviceSystemAlarm(task: ScheduledTask) {
@@ -326,15 +325,12 @@ class AlarmScheduler(private val context: Context) {
 
         /**
          * Computes the epoch millisecond timestamp for the next trigger of a [ScheduledTask]
-         * based on its recurrence type, interval, and selected days of week.
+         * strictly in the future relative to [now], preserving the user's scheduled time of day
+         * for recurring tasks based on its recurrence type, interval, and selected days of week.
          *
          * @param task Target [ScheduledTask].
-         * @param fromTime Reference millisecond timestamp (defaults to current time).
+         * @param now Reference millisecond timestamp (defaults to current time).
          * @return Next trigger timestamp in epoch milliseconds.
-         */
-        /**
-         * Calculates the next trigger timestamp strictly in the future relative to [now],
-         * preserving the user's scheduled time of day for recurring tasks.
          */
         fun calculateNextFutureTrigger(task: ScheduledTask, now: Long = System.currentTimeMillis()): Long {
             if (task.recurrence == RecurrenceType.ONCE) {

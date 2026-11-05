@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt</file>
+  <line>660</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.privacy</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.privacy.PrivacySettingsScreenKt void AppRowItem(android.content.Context context, com.jmd.autotext.data.model.AppInfoItem appItem, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onToggleExclusion, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenDetails)" />
+  <problem_class id="ReplaceNotNullAssertionWithElvisReturn" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Not-null assertion can be replaced with 'return'</problem_class>
+  <description>Replace '!!' with '?: return'</description>
+  <highlighted_element>!!</highlighted_element>
+  <language>kotlin</language>
+  <offset>43</offset>
+  <length>2</length>
+</problem>
+</problems>

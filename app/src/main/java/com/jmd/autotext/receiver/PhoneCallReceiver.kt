@@ -28,6 +28,7 @@ import android.provider.CallLog
 import android.provider.ContactsContract
 import android.telephony.TelephonyManager
 import android.util.Log
+import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.core.MessageTemplateResolver
 import com.jmd.autotext.core.PhoneNumberNormalizer
@@ -150,6 +151,7 @@ class PhoneCallReceiver : BroadcastReceiver() {
         capturedWasAnswered: Boolean
     ) {
         val idleTimestamp = System.currentTimeMillis()
+        AppFileLogger.action(context, TAG, "Evaluating phone call transition from state $capturedLastState to IDLE (ringing=$capturedWasRinging, answered=$capturedWasAnswered)")
         var callRecord: CallRecord? = null
 
         // Poll CallLog with up to 3 retries (total ~750ms) to allow Android telephony provider

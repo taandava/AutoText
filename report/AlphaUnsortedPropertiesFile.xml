@@ -1,0 +1,26 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/gradle.properties</file>
+  <line>1</line>
+  <module>AutoText</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/gradle.properties" />
+  <problem_class id="AlphaUnsortedPropertiesFile" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Properties file or resource bundle is alphabetically unsorted</problem_class>
+  <description>Properties file is alphabetically unsorted</description>
+  <highlighted_element>org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8 android.useAndroidX=true android.nonTransitiveRCl...</highlighted_element>
+  <language>Properties</language>
+  <offset>0</offset>
+  <length>284</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/keystore.properties</file>
+  <line>1</line>
+  <module>AutoText</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/keystore.properties" />
+  <problem_class id="AlphaUnsortedPropertiesFile" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Properties file or resource bundle is alphabetically unsorted</problem_class>
+  <description>Properties file is alphabetically unsorted</description>
+  <highlighted_element>storeFile=release-key.jks storePassword=autotextrelease keyAlias=autotext keyPassword=autotextreleas...</highlighted_element>
+  <language>Properties</language>
+  <offset>0</offset>
+  <length>102</length>
+</problem>
+</problems>

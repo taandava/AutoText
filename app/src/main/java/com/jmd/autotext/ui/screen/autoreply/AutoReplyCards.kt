@@ -411,7 +411,7 @@ fun AutoReplyTemplateCard(
         GlassInputField(
             value = replyText,
             onValueChange = onReplyTextChanged,
-            label = "Auto-Reply Message Text",
+            label = if (callEventType.isNotBlank()) "Reply Message (${channel.displayName} • $callEventType)" else "Reply Message (${channel.displayName})",
             placeholder = "Thanks for reaching out! Will reply shortly.",
             leadingIcon = Icons.Default.EditNote,
             singleLine = false,

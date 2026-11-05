@@ -74,7 +74,7 @@ import kotlinx.coroutines.withContext
  * @param onBack Callback invoked when user taps the top bar back navigation arrow.
  */
 @Composable
-fun permissionCenterView(context: Context, onBack: () -> Unit) {
+fun PermissionCenterView(context: Context, onBack: () -> Unit) {
     var showA11yDisclosureDialog by remember { mutableStateOf(false) }
     var permissionsRefreshKey by remember { mutableIntStateOf(0) }
 
@@ -87,9 +87,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
             add(Manifest.permission.READ_PHONE_STATE)
             add(Manifest.permission.READ_CALL_LOG)
             addAll(PermissionManager.getRequiredMediaPermissions())
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                add(Manifest.permission.ANSWER_PHONE_CALLS)
-            }
+            add(Manifest.permission.ANSWER_PHONE_CALLS)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 add(Manifest.permission.POST_NOTIFICATIONS)
             }
@@ -202,7 +200,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
         ) {
             // 1. Super Auto-Heal & Universal Fixer
             item {
-                superAutoHealAndPermissionFixerCard(context)
+                SuperAutoHealAndPermissionFixerCard(context)
             }
 
             item {
@@ -213,7 +211,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
 
             // 2. Power Button Auto-Lock (Biometrics & Fingerprint Safe)
             item {
-                permissionItem(
+                PermissionItem(
                     title = "Power Button Auto-Lock (Biometrics & Fingerprint Safe)",
                     desc = "AutoText uses the Android Assistive Power Lock gesture (GLOBAL_ACTION_LOCK_SCREEN) mimicking a physical Power button press. Your fingerprint, face unlock, and biometrics remain 100% active and are never locked out.",
                     btnText = "Power Lock Ready",
@@ -226,7 +224,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
             // 3. Display Over Other Apps (Overlay Permission)
             item {
                 val hasOverlay = remember(permissionsRefreshKey) { OverlayPermissionHelper.canDrawOverlays(context) }
-                permissionItem(
+                PermissionItem(
                     title = if (hasOverlay) "Display Over Other Apps: Granted" else "Display Over Other Apps (Overlay)",
                     desc = if (hasOverlay) "Allows AutoText to display privacy shields, countdown overlays, and incoming call simulation alerts."
                            else "Allows AutoText to display privacy shields and incoming call simulation alerts. If AutoText is missing or greyed out in the system list, tap 'Open App Info' below to enable restricted settings.",
@@ -257,7 +255,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                     (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) ||
                             (alarmManager?.canScheduleExactAlarms() == true)
                 }
-                permissionItem(
+                PermissionItem(
                     title = if (canExactAlarm) "Exact Alarms & Reminders: Granted" else "Schedule Exact Alarms & Reminders",
                     desc = "Required by Android 12+ to fire scheduled messages and reminders at the precise exact second without power-saver jitter.",
                     btnText = if (canExactAlarm) "Exact Alarms Granted" else "Grant Exact Alarm Permission",
@@ -298,7 +296,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                     AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Toggle in Settings"
                     AccessibilityHealthManager.ServiceState.DISABLED -> "Open Task Settings"
                 }
-                permissionItem(
+                PermissionItem(
                     title = a11yTitle,
                     desc = a11yDesc,
                     btnText = a11yBtnText,
@@ -314,7 +312,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
 
             // 6. Android 13/14/15/16 Sideloaded App Fix (Restricted Settings)
             item {
-                permissionItem(
+                PermissionItem(
                     title = "Android 13+ Sideloaded App Fix (Missing Permissions)",
                     desc = "If Overlay or Assistant is missing or greyed out in system settings: Tap below to open App Info -> Tap 3 dots (⋮) top right -> 'Allow restricted settings'.",
                     btnText = "Open App Info (Tap 3 Dots)",
@@ -330,7 +328,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
             // 7. Notification Listener Access
             item {
                 val hasNotif = remember(permissionsRefreshKey) { androidx.core.app.NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.packageName) }
-                permissionItem(
+                PermissionItem(
                     title = if (hasNotif) "Notification Listener: Active" else "Notification Listener Access",
                     desc = "Required for WhatsApp auto-replies directly from background without waking screen.",
                     btnText = if (hasNotif) "Notification Access Active" else "Notification Access Settings",
@@ -346,7 +344,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                 val isIgnoringBattery = remember(permissionsRefreshKey) {
                     powerManager?.isIgnoringBatteryOptimizations(context.packageName) == true
                 }
-                permissionItem(
+                PermissionItem(
                     title = if (isIgnoringBattery) "Battery Optimization: Exempted" else "Battery Optimization Exemption",
                     desc = "Prevents Android from freezing timers, ensuring scheduled messages trigger on the exact minute.",
                     btnText = if (isIgnoringBattery) "Battery Exemption Active" else "Exempt from Battery Saver",
@@ -376,7 +374,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                         PermissionManager.hasPostNotificationsPermission(context)
                 }
 
-                permissionItem(
+                PermissionItem(
                     title = if (hasRuntimePerms) "Contacts, SMS, Phone & Media Access: Active" else "Contacts, SMS, Phone & Media Access",
                     desc = "Required to auto-discover mobile contacts into the internal dynamic pool for daily SMS campaigns, direct SMS dispatch, call dispatch, missed-call auto-replies, and photo/video attachments.",
                     btnText = if (hasRuntimePerms) "Runtime Permissions Active" else "Grant Runtime Permissions",
@@ -397,7 +395,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
             // 10. Do Not Disturb / Notification Policy Access (Sound Mode Switcher)
             item {
                 val hasDnd = remember(permissionsRefreshKey) { PermissionManager.hasNotificationPolicyAccess(context) }
-                permissionItem(
+                PermissionItem(
                     title = if (hasDnd) "Do Not Disturb & Sound Policy: Active" else "Do Not Disturb / Notification Policy Access",
                     desc = "Required by Android for the Sound Mode Switcher to toggle between Silent, Vibrate, and Normal sound profiles without interruption.",
                     btnText = if (hasDnd) "Sound Policy Granted" else "Grant Sound Policy Access",
@@ -419,7 +417,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
             }
 
             item {
-                keepOpenRecentAppsCard(context)
+                KeepOpenRecentAppsCard(context)
             }
         }
     }
@@ -433,7 +431,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
  * @param context Local Android context for system service invocation and clipboard operations.
  */
 @Composable
-fun superAutoHealAndPermissionFixerCard(context: Context) {
+fun SuperAutoHealAndPermissionFixerCard(context: Context) {
     val scope = rememberCoroutineScope()
     var healRefreshKey by remember { mutableIntStateOf(0) }
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
@@ -501,10 +499,10 @@ fun superAutoHealAndPermissionFixerCard(context: Context) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            statusPill("A11y", isA11yActive, Modifier.weight(1f))
-            statusPill("Admin", isAdminActive, Modifier.weight(1f))
-            statusPill("Alarms", canExactAlarm, Modifier.weight(1f))
-            statusPill("Secure", hasSecurePerm, Modifier.weight(1f))
+            StatusPill("A11y", isA11yActive, Modifier.weight(1f))
+            StatusPill("Admin", isAdminActive, Modifier.weight(1f))
+            StatusPill("Alarms", canExactAlarm, Modifier.weight(1f))
+            StatusPill("Secure", hasSecurePerm, Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -513,9 +511,9 @@ fun superAutoHealAndPermissionFixerCard(context: Context) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            statusPill("Overlay", hasOverlay, Modifier.weight(1f))
-            statusPill("Listener", hasNotif, Modifier.weight(1f))
-            statusPill("Sound/DND", hasDnd, Modifier.weight(1f))
+            StatusPill("Overlay", hasOverlay, Modifier.weight(1f))
+            StatusPill("Listener", hasNotif, Modifier.weight(1f))
+            StatusPill("Sound/DND", hasDnd, Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -577,7 +575,7 @@ fun superAutoHealAndPermissionFixerCard(context: Context) {
  * @param modifier Optional layout modifier.
  */
 @Composable
-internal fun statusPill(label: String, isOk: Boolean, modifier: Modifier = Modifier) {
+internal fun StatusPill(label: String, isOk: Boolean, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
         shape = AppDesignTokens.ShapePill,
@@ -614,7 +612,7 @@ internal fun statusPill(label: String, isOk: Boolean, modifier: Modifier = Modif
  * @param context Local Android context for resolving OEM device care settings intent.
  */
 @Composable
-fun keepOpenRecentAppsCard(context: Context = LocalContext.current) {
+fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
     val brandSummary = remember { OemBrandHelper.getDeviceSummary() }
     val brandGuidance = remember { OemBrandHelper.getOemGuidance() }
 
@@ -688,7 +686,7 @@ fun keepOpenRecentAppsCard(context: Context = LocalContext.current) {
  * @param onClick Invoked when action button is tapped to open respective system settings screen.
  */
 @Composable
-fun permissionItem(
+fun PermissionItem(
     title: String,
     desc: String,
     btnText: String,

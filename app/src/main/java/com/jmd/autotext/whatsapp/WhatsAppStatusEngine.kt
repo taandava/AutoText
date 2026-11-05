@@ -277,7 +277,7 @@ class WhatsAppStatusEngine(
                     return
                 }
                 Log.d(loggerTag, "Tapping text status pencil FAB element...")
-                val clicked = AccessibilityNodeUtils.clickElement(textFab, service)
+                AccessibilityNodeUtils.clickElement(textFab, service)
                 hasTappedTextStatusFab = true
                 if (rect.width() > 0 && rect.height() > 0) {
                     val tapX = rect.centerX().toFloat()

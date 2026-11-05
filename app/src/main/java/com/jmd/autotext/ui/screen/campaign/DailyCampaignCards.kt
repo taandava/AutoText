@@ -609,14 +609,6 @@ fun WhatsAppBusinessReadinessCard(
     }
 }
 
-
-/**
- * Modal bottom sheet for configuring and persisting a new recurrent daily campaign.
- *
- * @param initialChannel Default channel preset (SMS, WHATSAPP, or WHATSAPP_BUSINESS).
- * @param onDismiss Callback to dismiss modal sheet.
- * @param onSave Callback receiving the newly composed campaign configuration.
- */
 // =========================================================================================
 // --- DAILY CAMPAIGN COMPONENTS ---
 // =========================================================================================

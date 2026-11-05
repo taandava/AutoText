@@ -9,12 +9,9 @@ package com.jmd.autotext.core
 
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.provider.Settings
 import android.util.Log
-import androidx.core.net.toUri
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
 import com.jmd.autotext.service.AutoTextAccessibilityService
@@ -379,10 +376,7 @@ object AccessibilityHealthManager {
      */
     fun ensureAllServicesActive(context: Context): Boolean {
         ensureServiceComponentEnabled(context)
-        if (!hasWriteSecureSettings(context)) {
-            return false
-        }
-        return try {
+        return hasWriteSecureSettings(context) && try {
             val cr = context.contentResolver
 
             val a11yExpected = "${context.packageName}/${AutoTextAccessibilityService::class.java.name}"

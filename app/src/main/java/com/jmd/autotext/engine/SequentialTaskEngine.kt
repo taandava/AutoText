@@ -600,7 +600,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             appContext.startActivity(launchIntent)
             delay(1200.milliseconds)
         }
-        return true
+        val isStillLocked = (km?.isKeyguardLocked == true) || (km?.isDeviceLocked == true)
+        return !isStillLocked
     }
 
     private suspend fun executeWhatsAppTaskWithRetries(
@@ -1582,7 +1583,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             }
                             delay(1000L.milliseconds)
                         } else {
-                            AppFileLogger.action(appContext, TAG, "WhatsApp call to $cleanPhone ended naturally or did not trigger auto-hangup (criteriaSatisfied=$durationCriteriaSatisfied).")
+                            AppFileLogger.action(appContext, TAG, "WhatsApp call to $cleanPhone ended naturally before configured ${durationSec}s limit.")
                         }
                     } else {
                         // Indefinite call: await VoIP call conclusion or maximum 120s timeout

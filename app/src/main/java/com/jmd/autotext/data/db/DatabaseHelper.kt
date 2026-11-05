@@ -18,7 +18,6 @@
 package com.jmd.autotext.data.db
 
 import android.content.*
-import android.database.Cursor
 import android.util.Log
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -31,7 +30,7 @@ import android.database.sqlite.SQLiteOpenHelper
  * - recipients: Contact book recipients and metadata.
  * - templates: Quick message templates and dynamic token strings.
  * - auto_reply_rules: Pattern matching rules for scheduled incoming replies.
- * - campaigns / drip_steps: Marketing campaigns and multi-phase drip sequences.
+ * - campaigns / drip_steps: Announcement campaigns and multi-phase drip sequences.
  * - execution_logs: Comprehensive on-device audit logs for every task attempt.
  * - dynamic_contact_pool: Ingested contact pool for daily outreach campaigns.
  * - daily_campaign_config: Scheduled daily batch dispatch settings and throttle pacing.
@@ -39,8 +38,8 @@ import android.database.sqlite.SQLiteOpenHelper
  * - contact_sequences: Multi-step follow-up sequences for individual contacts.
  * - sequence_steps: Individual drip steps belonging to contact follow-up sequences.
  * - whatsapp_groups: WhatsApp and WhatsApp Business group metadata and participant caches.
- * - daily_campaign_sent_ledger: Rolling sent log for daily campaign contact deduplication.
- * - task_recipient_deliveries: Per-recipient status tracking for bulk dispatches.
+ * - daily_campaign_sent_ledger: Rolling sent log for daily taskBatch contact deduplication.
+ * - task_recipient_deliveries: Per-recipient status tracking for batch dispatches.
  */
 class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(context.applicationContext, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -94,7 +93,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             db.enableWriteAheadLogging()
             db.setForeignKeyConstraintsEnabled(true)
         } catch (e: Exception) {
-            android.util.Log.w("DatabaseHelper", "onConfigure WAL/ForeignKeys failed: ${e.message}")
+            Log.w("DatabaseHelper", "onConfigure WAL/ForeignKeys failed: ${e.message}")
         }
     }
 
@@ -189,9 +188,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         """.trimIndent())
 
         ensureDynamicPoolTables(db)
-
-        // Insert Default Templates
-        insertSeedTemplates(db)
     }
 
     /**
@@ -502,7 +498,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         val defaultWhatsAppBusinessCampaign = ContentValues().apply {
             put("id", 3)
             put("channel", "WHATSAPP_BUSINESS")
-            put("title", "Daily WhatsApp Business Campaign")
+            put("title", "Daily WhatsApp Business Task Batch")
             put("message_template", "")
             put("daily_limit", 20)
             put("interval_seconds", 12)
@@ -627,15 +623,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         """.trimIndent())
         try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
-    }
-
-    /**
-     * Seeds the templates table with standard default categories and contextual placeholders upon initial creation.
-     *
-     * @param db Target SQLiteDatabase instance.
-     */
-    private fun insertSeedTemplates(db: SQLiteDatabase) {
-        // No prebuilt seed templates; all text fields start empty by design
     }
 
     // 1-word / 2-word aliases

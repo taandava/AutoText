@@ -1,0 +1,418 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
+  <line>287</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.TaskSafetyManager void triggerEmergencyStop(android.content.Context context, java.lang.String reason)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>com.jmd.autotext.scheduler</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>26</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>97</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.db.DatabaseHelper void onConfigure(android.database.sqlite.SQLiteDatabase db)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>193</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.prefs.PreferenceManager java.lang.String encryptSecret(java.lang.String secret)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>231</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.prefs.PreferenceManager java.lang.String decryptSecret(java.lang.String stored)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>252</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.prefs.PreferenceManager java.lang.String decryptSecret(java.lang.String stored)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>147</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>254</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.prefs.PreferenceManager java.lang.String decryptSecret(java.lang.String stored)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>393</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.prefs.PreferenceManager java.lang.String getDeviceUnlockPin()" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>429</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.prefs.PreferenceManager java.lang.String getAppThemeMode()" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>92</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
+  <line>562</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository boolean toggleContactSequence(long id, boolean enabled)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>36</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/WhatsAppRepository.kt</file>
+  <line>550</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.WhatsAppRepository java.util.List&lt;com.jmd.autotext.data.model.WhatsAppContactItem&gt; getWhatsAppContacts(java.lang.String query, com.jmd.autotext.data.model.ChannelType channel, int limit)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>36</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
+  <line>412</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.engine</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.engine.SequentialTaskEngine java.lang.Object executeTaskSafely(com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.data.model.ScheduledTask task, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>com.jmd.autotext.core</highlighted_element>
+  <language>kotlin</language>
+  <offset>25</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
+  <line>70</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver.Companion int deleteAllTasks(android.content.Context context)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>com.jmd.autotext.core</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
+  <line>108</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver.Companion java.util.List&lt;java.lang.Long&gt; setupAllTasks(android.content.Context context, java.util.List&lt;java.lang.String&gt; recipients, java.lang.String message, int staggerSeconds, int repeatIntervalSeconds, boolean executeFirstImmediately, int callDurationSeconds, boolean includeDialTimeInCallDuration, int delayBetweenCallsSeconds, boolean clearExisting)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>com.jmd.autotext.core</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>649</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService.Companion boolean endPhoneCall(android.content.Context context)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>Context</highlighted_element>
+  <language>kotlin</language>
+  <offset>54</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>943</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService.Companion void testLockAndAutoUnlock(android.content.Context context, java.lang.String pin)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>Context</highlighted_element>
+  <language>kotlin</language>
+  <offset>63</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>1627</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService void onAccessibilityEvent(android.view.accessibility.AccessibilityEvent event)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>com.jmd.autotext.core</highlighted_element>
+  <language>kotlin</language>
+  <offset>24</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>1628</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService void onAccessibilityEvent(android.view.accessibility.AccessibilityEvent event)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>com.jmd.autotext.core</highlighted_element>
+  <language>kotlin</language>
+  <offset>24</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>1702</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService void onAccessibilityEvent(android.view.accessibility.AccessibilityEvent event)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>com.jmd.autotext.data.prefs</highlighted_element>
+  <language>kotlin</language>
+  <offset>24</offset>
+  <length>27</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>2274</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService boolean requestEndPhoneCall()" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>Context</highlighted_element>
+  <language>kotlin</language>
+  <offset>34</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>2275</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService boolean requestEndPhoneCall()" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>androidx.core.content</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>2275</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService boolean requestEndPhoneCall()" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.content.pm</highlighted_element>
+  <language>kotlin</language>
+  <offset>123</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>2293</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService boolean requestEndPhoneCall()" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>Context</highlighted_element>
+  <language>kotlin</language>
+  <offset>38</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextNotificationListenerService.kt</file>
+  <line>59</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextNotificationListenerService serviceScope" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>kotlinx.coroutines</highlighted_element>
+  <language>kotlin</language>
+  <offset>31</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextNotificationListenerService.kt</file>
+  <line>60</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextNotificationListenerService serviceScope" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>kotlinx.coroutines</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextNotificationListenerService.kt</file>
+  <line>60</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextNotificationListenerService serviceScope" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>kotlinx.coroutines</highlighted_element>
+  <language>kotlin</language>
+  <offset>44</offset>
+  <length>18</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MainAppHost.kt</file>
+  <line>387</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.MainAppHostKt void MainAppHost(java.lang.String sharedText, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSharedTextConsumed, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>com.jmd.autotext.data.prefs</highlighted_element>
+  <language>kotlin</language>
+  <offset>48</offset>
+  <length>27</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/WhatsAppSetupScreen.kt</file>
+  <line>525</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.WhatsAppSetupScreenKt void WhatsAppBatteryOptimizationCard(android.content.Context context)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>com.jmd.autotext.core</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>21</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt</file>
+  <line>289</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.taskBatch.DailyTaskBatchDialogsKt void DailyCampaignChannelSelectionDialog(kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onSelectChannel)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>androidx.compose.ui.window</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>26</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
+  <line>200</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.compose</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.compose.ComposeTaskScreenKt void ComposeTaskScreen(com.jmd.autotext.data.model.ChannelType initialChannel, java.lang.String initialMessage, com.jmd.autotext.data.model.ScheduledTask taskToEdit, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onTaskSaved, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ScheduledTask,kotlin.Unit&gt; onDeleteTask, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onCancel)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
+  <line>242</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.compose</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.compose.ComposeTaskScreenKt void ComposeTaskScreen(com.jmd.autotext.data.model.ChannelType initialChannel, java.lang.String initialMessage, com.jmd.autotext.data.model.ScheduledTask taskToEdit, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onTaskSaved, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ScheduledTask,kotlin.Unit&gt; onDeleteTask, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onCancel)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.util</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
+  <line>78</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.autotext.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>androidx.activity.compose</highlighted_element>
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>25</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt</file>
+  <line>454</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.AccessibilityNodeUtils java.util.List&lt;android.view.accessibility.AccessibilityNodeInfo&gt; getTargetRoots(android.accessibilityservice.AccessibilityService service, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows, boolean includeIme)" />
+  <problem_class id="RemoveRedundantQualifierName" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Redundant qualifier name</problem_class>
+  <description>Remove redundant qualifier name</description>
+  <highlighted_element>android.content</highlighted_element>
+  <language>kotlin</language>
+  <offset>42</offset>
+  <length>15</length>
+</problem>
+</problems>

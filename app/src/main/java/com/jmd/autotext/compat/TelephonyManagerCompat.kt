@@ -103,8 +103,7 @@ object TelephonyManagerCompat {
      */
     @JvmStatic
     fun isCallConnected(context: Context?, tm: TelephonyManager?): Boolean {
-        if (context == null || tm == null) return false
-        return getCallState(context, tm) == TelephonyManager.CALL_STATE_OFFHOOK
+        return context != null && tm != null && getCallState(context, tm) == TelephonyManager.CALL_STATE_OFFHOOK
     }
 
     /**

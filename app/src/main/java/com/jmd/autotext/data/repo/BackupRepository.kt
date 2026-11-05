@@ -19,6 +19,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.core.database.sqlite.transaction
 import com.jmd.autotext.data.db.DatabaseHelper
+import java.io.File
 import org.json.JSONArray
 import org.json.JSONObject
 

@@ -70,7 +70,6 @@ object SystemIndicatorResolver {
             else -> isA11yRunning || isA11ySettingOn
         }
 
-        val a11yState = AccessibilityHealthManager.getServiceState(context)
         val a11yName = when {
             !isComponentEnabled -> "AutoText Assistant (Disabled in System)"
             prefs.isA11yUserPaused -> "AutoText Assistant (Paused for Payments)"

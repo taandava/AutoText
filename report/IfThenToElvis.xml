@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/GlassComponents.kt</file>
+  <line>541</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.components.GlassComponentsKt void AppCardElevated(androidx.compose.ui.Modifier modifier, androidx.compose.foundation.shape.RoundedCornerShape shape, androidx.compose.ui.graphics.Color accentGlow, float elevation, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onClick, androidx.compose.runtime.internal.ComposableFunction1&lt;? super androidx.compose.foundation.layout.ColumnScope,kotlin.Unit&gt; content)" />
+  <problem_class id="IfThenToElvis" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+  <description>If-Then foldable to '?:'</description>
+  <highlighted_element>if (accentGlow != null)</highlighted_element>
+  <language>kotlin</language>
+  <offset>23</offset>
+  <length>23</length>
+</problem>
+</problems>

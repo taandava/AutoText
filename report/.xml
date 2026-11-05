@@ -1,0 +1,869 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <line>38</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.AutoTextApplication" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
+  <line>153</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.api</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.api.TaskFeatureApi" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
+  <line>160</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.api</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.api.TaskFeatureApi java.lang.Object sendWhatsAppMessage(android.content.Context context, com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.api.WhatsAppMessageRequest request, kotlin.coroutines.Continuation&lt;? super com.jmd.autotext.api.FeatureExecutionResult&gt; $completion)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
+  <line>214</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.api</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.api.TaskFeatureApi java.lang.Object postWhatsAppStatus(android.content.Context context, com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.api.WhatsAppStatusRequest request, kotlin.coroutines.Continuation&lt;? super com.jmd.autotext.api.FeatureExecutionResult&gt; $completion)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
+  <line>315</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.api</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.api.TaskFeatureApi com.jmd.autotext.api.FeatureExecutionResult sendSms(android.content.Context context, com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.api.SmsRequest request)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
+  <line>349</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.api</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.api.TaskFeatureApi java.lang.Object placePhoneCall(android.content.Context context, com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.api.PhoneCallRequest request, kotlin.coroutines.Continuation&lt;? super com.jmd.autotext.api.FeatureExecutionResult&gt; $completion)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
+  <line>433</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.api</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.api.TaskFeatureApi com.jmd.autotext.api.FeatureExecutionResult triggerReminder(android.content.Context context, com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.api.ReminderRequest request)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
+  <line>549</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.api</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.api.TaskFeatureApi com.jmd.autotext.api.FeatureExecutionResult applySoundMode(android.content.Context context, com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.api.SoundModeRequest request)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/AccessibilityCompat.kt</file>
+  <line>12</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.compat</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.compat.AccessibilityCompat" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
+  <line>333</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.AccessibilityHealthManager boolean autoApproveAllPermissions(android.content.Context context)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/MessageTemplateResolver.kt</file>
+  <line>12</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="field" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/MessageTemplateResolver.kt DEFAULT_MESSAGE_TEXT" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>82</length>
+  <highlighted_element>/** Default fallback message text across the application (clean empty default). */</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Field is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/OemBrandHelper.kt</file>
+  <line>63</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.OemBrandHelper currentBrand$delegate" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Field is never assigned.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
+  <line>48</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PermissionFeatureInfo boolean isCritical()" />
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>130</length>
+  <highlighted_element>get() = !canWorkWithout || permissionId == PermissionManager.ID_ACCESSIBILITY || permissionId == Per...</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
+  <line>81</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager CRITICAL_PERMISSIONS" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>80</length>
+  <highlighted_element>val CRITICAL_PERMISSIONS: Set&lt;String&gt; = setOf(ID_ACCESSIBILITY, ID_EXACT_ALARMS)</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Field is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
+  <line>240</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PermissionManager java.util.List&lt;com.jmd.autotext.core.PermissionFeatureInfo&gt; getAllPermissions()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>73</length>
+  <highlighted_element>fun getAllPermissions(): List&lt;PermissionFeatureInfo&gt; = ALL_SPECIFICATIONS</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
+  <line>242</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PermissionManager com.jmd.autotext.core.PermissionFeatureInfo getPermission(java.lang.String permissionId)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>65</length>
+  <highlighted_element>fun getPermission(permissionId: String): PermissionFeatureInfo? =</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PhoneNumberNormalizer.kt</file>
+  <line>250</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PhoneNumberNormalizer boolean isIndianMobileNumber(java.lang.String raw)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PhoneNumberNormalizer.kt</file>
+  <line>264</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PhoneNumberNormalizer java.lang.String formatForDisplay(java.lang.String raw)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PhoneNumberNormalizer.kt</file>
+  <line>280</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PhoneNumberNormalizer java.util.Map&lt;java.lang.String,java.util.List&lt;java.lang.Integer&gt;&gt; detectDuplicates(java.util.List&lt;java.lang.String&gt; numbers)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/ProtectedApplicationManager.kt</file>
+  <line>406</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.ProtectedApplicationManager boolean shouldBlockOverlays(java.lang.String packageName)" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>97</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.model.ChannelType FAKE_CALL" />
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Field is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>207</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.model.RepeatUnit com.jmd.autotext.data.model.RecurrenceType toRecurrenceType()" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>54</length>
+  <highlighted_element>fun toRecurrenceType(): RecurrenceType = when (this) {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>216</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.model.RepeatUnit.Companion" />
+  <language>kotlin</language>
+  <offset>4</offset>
+  <length>18</length>
+  <highlighted_element>companion object {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>217</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.model.RepeatUnit.Companion com.jmd.autotext.data.model.RepeatUnit fromString(java.lang.String str)" />
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>42</length>
+  <highlighted_element>fun fromString(str: String?): RepeatUnit {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>296</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.model.TaskStatus boolean isTerminal()" />
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>78</length>
+  <highlighted_element>get() = this == SUCCESS || this == DONE || this == FAILED || this == CANCELLED</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>302</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.model.TaskStatus boolean isPaused()" />
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>22</length>
+  <highlighted_element>get() = this == PAUSED</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>323</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.model.TaskStatus.Companion boolean canTransition(com.jmd.autotext.data.model.TaskStatus from, com.jmd.autotext.data.model.TaskStatus to)" />
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>62</length>
+  <highlighted_element>fun canTransition(from: TaskStatus, to: TaskStatus): Boolean {</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>370</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.model.ScheduledTask java.lang.String getFakeCallerName()" />
+  <language>kotlin</language>
+  <offset>31</offset>
+  <length>27</length>
+  <highlighted_element>get() = simulatedCallerName</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>373</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.model.ScheduledTask java.lang.String getFakeCallerNumber()" />
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>29</length>
+  <highlighted_element>get() = simulatedCallerNumber</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
+  <line>376</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.model.ScheduledTask java.lang.String getFakeCallStyle()" />
+  <language>kotlin</language>
+  <offset>30</offset>
+  <length>26</length>
+  <highlighted_element>get() = simulatedCallStyle</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/PrivacyModels.kt</file>
+  <line>71</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.model.GlobalPrivacySettings GlobalPrivacySettings(boolean isPrivacyModeEnabled, boolean autoExcludeBankingApps, boolean maskNotificationsOnLockScreen, boolean maskExecutionLogs, int autoClearClipboardSeconds, boolean smartAccessibilityScoping, boolean dynamicA11yOnDemand, boolean suppressNotifsOverExcluded, boolean blockOverlaysOverExcluded)" />
+  <language>kotlin</language>
+  <offset>32</offset>
+  <length>1</length>
+  <highlighted_element>(</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AccessibilityWatchdogReceiver.kt</file>
+  <line>24</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.AccessibilityWatchdogReceiver" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AutoTextDeviceAdminReceiver.kt</file>
+  <line>26</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/BootReceiver.kt</file>
+  <line>35</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.BootReceiver" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt</file>
+  <line>47</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.PhoneCallReceiver" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/SmsReceiver.kt</file>
+  <line>38</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.SmsReceiver" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
+  <line>34</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TimeChangeReceiver.kt</file>
+  <line>21</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.TimeChangeReceiver" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AccessibilityWatchdogWorker.kt</file>
+  <line>26</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.AccessibilityWatchdogWorker AccessibilityWatchdogWorker(android.content.Context appContext, androidx.work.WorkerParameters params)" />
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>1</length>
+  <highlighted_element>(</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
+  <line>405</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler.Companion long calculateNextTrigger(com.jmd.autotext.data.model.ScheduledTask task, long fromTime)" />
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>10</length>
+  <highlighted_element>@JvmStatic</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextA11yTileService.kt</file>
+  <line>12</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextA11yTileService" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>75</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextNotificationListenerService.kt</file>
+  <line>36</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextNotificationListenerService" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt</file>
+  <line>20</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.TaskForegroundService" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/CallSimulationActivity.kt</file>
+  <line>33</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.activity</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.activity.CallSimulationActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class has one instantiation, but the instantiation is not reachable from the entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/CallSimulationActivity.kt</file>
+  <line>209</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.activity</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.activity.SimulatedCallActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/MainActivity.kt</file>
+  <line>44</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.activity</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.activity.MainActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/ReminderAlarmActivity.kt</file>
+  <line>31</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.activity</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.activity.ReminderAlarmActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
+  <line>36</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.activity</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/WhatsAppSetupScreen.kt</file>
+  <line>629</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.WhatsAppSetupScreenKt void WhatsAppSetupAndAutoUnlockView(android.content.Context context, com.jmd.autotext.data.prefs.PreferenceManager prefs, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/VoiceNoteProtectionGuard.kt</file>
+  <line>22</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.VoiceNoteProtectionGuard" />
+  <language>kotlin</language>
+  <offset>0</offset>
+  <length>3</length>
+  <highlighted_element>/**</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is never used.</description>
+</problem>
+</problems>

@@ -408,7 +408,6 @@ object ProtectedApplicationManager {
      * over the given package.
      */
     fun shouldBlockOverlays(packageName: String?): Boolean {
-        if (packageName.isNullOrBlank()) return false
-        return isProtectedPackage(packageName) || !isAuthorizedTarget(packageName)
+        return !packageName.isNullOrBlank() && (isProtectedPackage(packageName) || !isAuthorizedTarget(packageName))
     }
 }

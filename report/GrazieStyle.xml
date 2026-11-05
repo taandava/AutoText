@@ -1,0 +1,126 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <line>253</line>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <problem_class id="GrazieStyle" severity="STYLE_SUGGESTION" attribute_key="TEXT_STYLE_SUGGESTION">Style</problem_class>
+  <description>Long sentences (55 words here) are harder to read, according to the research; consider splitting</description>
+  <highlighted_element>bar.</highlighted_element>
+  <language>Markdown</language>
+  <offset>423</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <line>373</line>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <problem_class id="GrazieStyle" severity="STYLE_SUGGESTION" attribute_key="TEXT_STYLE_SUGGESTION">Style</problem_class>
+  <description>Would you like to insert '→'?</description>
+  <highlighted_element>-&gt;</highlighted_element>
+  <language>Markdown</language>
+  <offset>54</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <line>535</line>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <problem_class id="GrazieStyle" severity="STYLE_SUGGESTION" attribute_key="TEXT_STYLE_SUGGESTION">Style</problem_class>
+  <description>Long sentences (42 words here) are harder to read, according to the research; consider splitting</description>
+  <highlighted_element>layouts.</highlighted_element>
+  <language>Markdown</language>
+  <offset>365</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <line>642</line>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <problem_class id="GrazieStyle" severity="STYLE_SUGGESTION" attribute_key="TEXT_STYLE_SUGGESTION">Style</problem_class>
+  <description>Would you like to insert '→'?</description>
+  <highlighted_element>-&gt;</highlighted_element>
+  <language>Markdown</language>
+  <offset>26</offset>
+  <length>2</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <line>145</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.AutoTextApplication void onCreate()" />
+  <problem_class id="GrazieStyle" severity="STYLE_SUGGESTION" attribute_key="TEXT_STYLE_SUGGESTION">Style</problem_class>
+  <description>American English does not double '-l-' in suffixes</description>
+  <highlighted_element>cancelled</highlighted_element>
+  <language>kotlin</language>
+  <offset>72</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/WhatsAppPackageHelper.kt</file>
+  <line>27</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.WhatsAppPackageHelper java.lang.String getPackageForChannel(android.content.Context context, com.jmd.autotext.data.model.ChannelType channel)" />
+  <problem_class id="GrazieStyle" severity="STYLE_SUGGESTION" attribute_key="TEXT_STYLE_SUGGESTION">Style</problem_class>
+  <description>The double modal &quot;required installed&quot; is nonstandard (only accepted in certain dialects). Consider 'to be installed'.</description>
+  <highlighted_element>installed</highlighted_element>
+  <language>kotlin</language>
+  <offset>29</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt</file>
+  <line>12</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt" />
+  <problem_class id="GrazieStyle" severity="STYLE_SUGGESTION" attribute_key="TEXT_STYLE_SUGGESTION">Style</problem_class>
+  <description>American English does not double '-l-' in suffixes</description>
+  <highlighted_element>cancelled</highlighted_element>
+  <language>kotlin</language>
+  <offset>80</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/VoiceNoteProtectionGuard.kt</file>
+  <line>123</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.VoiceNoteProtectionGuard boolean handleAndCancelActiveVoiceRecording(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, android.accessibilityservice.AccessibilityService service)" />
+  <problem_class id="GrazieStyle" severity="STYLE_SUGGESTION" attribute_key="TEXT_STYLE_SUGGESTION">Style</problem_class>
+  <description>Long sentences (45 words here) are harder to read, according to the research; consider splitting</description>
+  <highlighted_element>recording.</highlighted_element>
+  <language>kotlin</language>
+  <offset>97</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/instruction.md</file>
+  <line>6</line>
+  <module>AutoText</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/instruction.md" />
+  <problem_class id="GrazieStyle" severity="STYLE_SUGGESTION" attribute_key="TEXT_STYLE_SUGGESTION">Style</problem_class>
+  <description>Long sentences (49 words here) are harder to read, according to the research; consider splitting</description>
+  <highlighted_element>Specialist.</highlighted_element>
+  <language>Markdown</language>
+  <offset>401</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/instruction.md</file>
+  <line>14</line>
+  <module>AutoText</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/instruction.md" />
+  <problem_class id="GrazieStyle" severity="STYLE_SUGGESTION" attribute_key="TEXT_STYLE_SUGGESTION">Style</problem_class>
+  <description>Long sentences (43 words here) are harder to read, according to the research; consider splitting</description>
+  <highlighted_element>result.</highlighted_element>
+  <language>Markdown</language>
+  <offset>324</offset>
+  <length>7</length>
+</problem>
+</problems>

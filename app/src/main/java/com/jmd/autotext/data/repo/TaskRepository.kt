@@ -156,7 +156,7 @@ class TaskRepository(context: Context) {
                 tasks.add(cursorToTask(it))
             }
         }
-        for (task in tasks) {
+        tasks.forEach { task ->
             val targetStatus = if (task.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
             updateTaskStatus(task.id, targetStatus)
         }
@@ -172,7 +172,7 @@ class TaskRepository(context: Context) {
      * @return True if update succeeded.
      */
     fun postponeTask(id: Long, postponeMillis: Long): Boolean {
-        val task = getTaskById(id) ?: return false
+        if (getTaskById(id) == null) return false
         val newTrigger = System.currentTimeMillis() + postponeMillis
         val cv = ContentValues().apply {
             put("trigger_time", newTrigger)

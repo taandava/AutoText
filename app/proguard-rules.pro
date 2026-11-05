@@ -1,4 +1,4 @@
-# Proguard and R8 optimization rules for AutoText (Production Ready)
+# Proguard and R8 optimization rules for helper / O-O (Production Ready)
 
 # Preserve annotations and line numbers for stack traces
 -keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
@@ -10,7 +10,6 @@
 -keepclassmembers class com.jmd.autotext.data.model.** { *; }
 
 # WorkManager Workers and Factory classes
--keep class androidx.work.** { *; }
 -keep class * extends androidx.work.Worker {
     <init>(android.content.Context, androidx.work.WorkerParameters);
 }
@@ -29,14 +28,6 @@
 -keep class * extends android.accessibilityservice.AccessibilityService { *; }
 -keep class * extends android.service.notification.NotificationListenerService { *; }
 -keep class * extends android.app.admin.DeviceAdminReceiver { *; }
-
-# Coroutines and Concurrency support
--keep class kotlinx.coroutines.** { *; }
--keepclassmembers class kotlinx.coroutines.** { *; }
-
-# Jetpack Compose runtime preservation
--keep class androidx.compose.** { *; }
--keepclassmembers class androidx.compose.** { *; }
 
 # Database and SQLite Helper
 -keep class com.jmd.autotext.data.db.** { *; }

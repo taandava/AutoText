@@ -1,0 +1,1080 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <line>150</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Cancel legacy notification: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>54</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <line>165</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Delete legacy service channel: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>57</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/ClipboardCompat.kt</file>
+  <line>133</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.compat</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/ClipboardCompat.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Clipboard operation note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>52</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
+  <line>64</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;enforceAutoRotateInvariant skipped: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>62</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
+  <line>274</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;enableAccessibilityService: Enabled accessibility service via Secure Settings ($updated)...</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>102</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppExtensions.kt</file>
+  <line>35</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppExtensions.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>android.util.Log.d(&quot;AppExtensions&quot;, &quot;showAppToast background suppressed: ${t.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>87</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PhoneNumberNormalizer.kt</file>
+  <line>215</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PhoneNumberNormalizer.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>android.util.Log.d(&quot;PhoneNumberNormalizer&quot;, &quot;Contacts contract lookup note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>90</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
+  <line>111</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;PrivacyManager initialized with ${configCache.size} package configs&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>81</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
+  <line>371</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Foreground detection probe note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>59</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
+  <line>424</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;prepareAccessibilityForTask: service ready=$ready (waited ${waitMs}ms)&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>84</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/SmsQuotaManager.kt</file>
+  <line>166</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.core</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/SmsQuotaManager.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;SMS Quota calculation today: external=$externalSegments, app=$appSegments, total=$total&quot;...</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>101</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>108</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>143</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>124</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>140</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>125</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>144</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>276</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>154</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>277</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>146</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>412</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>142</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>413</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>136</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>416</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>142</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>426</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>145</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>427</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>143</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>428</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>140</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>429</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>157</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>430</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>156</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>447</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>140</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>448</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>160</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>449</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>164</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>542</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>567</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>132</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>578</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>131</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>610</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>33</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>611</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>171</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>612</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>143</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>628</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>140</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
+  <line>629</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.db</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Database schema/migration note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>144</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>193</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>android.util.Log.d(TAG, &quot;Hardware Keystore encryption unavailable; using derived fallback: ${t.messa...</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>105</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>393</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>android.util.Log.d(TAG, &quot;Direct boot PIN save failed: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>68</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
+  <line>429</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.data.prefs</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>android.util.Log.d(TAG, &quot;Direct boot theme save failed: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>92</offset>
+  <length>70</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
+  <line>181</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.engine</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;cancelTask requested for Task #$taskId&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>52</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/WhatsAppSender.kt</file>
+  <line>217</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.engine</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/WhatsAppSender.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(tag, &quot;grantUriPermission skipped: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>54</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/WhatsAppSender.kt</file>
+  <line>220</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.engine</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/WhatsAppSender.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(tag, &quot;Directly launched ACTION_SEND with media: $mediaUri&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>65</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AccessibilityWatchdogReceiver.kt</file>
+  <line>69</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AccessibilityWatchdogReceiver.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;WakeLock release: ${t.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>44</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AutoTextDeviceAdminReceiver.kt</file>
+  <line>136</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AutoTextDeviceAdminReceiver.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Fallback device admin intent failed: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>63</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt</file>
+  <line>88</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Phone State Change: $lastState -&gt; $state, IncomingNumber: $savedIncomingNumber&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>92</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt</file>
+  <line>444</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Contact lookup note: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>47</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/SmsReceiver.kt</file>
+  <line>63</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/SmsReceiver.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Incoming SMS from $maskedPhone (length=${messageBody.length})&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>75</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
+  <line>172</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;========== [START EXECUTION LOG DUMP (count=${logs.size})] ==========&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>83</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
+  <line>174</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;EXEC_LOG: id=${log.id} taskId=${log.taskId} channel=${log.channel} recipient=${log.recip...</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>151</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
+  <line>201</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;Dumped logs to ${outFile.absolutePath}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>52</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
+  <line>503</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Alarm triggered for Task ID: $taskId. Routing to SequentialTaskEngine.&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>84</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
+  <line>230</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.scheduler</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Rescheduling ${pendingTasks.size} pending tasks&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>61</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
+  <line>294</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.scheduler</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;Registered system clock app alarm for task #${task.id} ($message at $hour:$minute)&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>96</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
+  <line>294</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.scheduler</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;Registered system clock app alarm for task #${task.id} ($message at $hour:$minute)&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>96</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
+  <line>320</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.scheduler</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;Dismissed system clock alarm for task #${task.id} (label: $label)&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>79</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>619</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Prepared scheduled WhatsApp voice call for $packageName, recipient: $recipient, duration...</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>150</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>700</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Prepared WhatsApp send for $packageName, mode: $currentMode, recipient: $recipient, relo...</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>144</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>733</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Armed auto-unlock. PIN length: ${pin.length}, relock: $shouldRelockAfterSend&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>90</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>733</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Armed auto-unlock. PIN length: ${pin.length}, relock: $shouldRelockAfterSend&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>90</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>782</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;Queued pending task for post-unlock: to=$recipient, task=$taskId, media=$mediaUri&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>95</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>2301</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;dispatchMediaKeyEvent fallback: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>58</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <line>2390</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;launchPhoneCallFromService: Dispatched phone call intent for $cleanPhone&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>86</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt</file>
+  <line>64</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Notification cancel error on create: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>63</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt</file>
+  <line>74</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Notification cancel error on start command: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>70</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
+  <line>158</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.activity</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Task launcher created. Screen locked: $isLocked, Task: $taskId, To: $recipient, Media: $...</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>110</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt</file>
+  <line>631</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.privacy</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>android.util.Log.d(&quot;PrivacySettingsScreen&quot;, &quot;Failed to load icon for ${appItem.packageName}: ${t.mes...</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>107</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBankingShieldCard.kt</file>
+  <line>151</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.settings</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBankingShieldCard.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>android.util.Log.d(&quot;SettingsBankingShieldCard&quot;, &quot;Package $pkg not installed: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>44</offset>
+  <length>91</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBankingShieldCard.kt</file>
+  <line>252</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.ui.screen.settings</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBankingShieldCard.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>android.util.Log.d(&quot;SettingsBankingShieldCard&quot;, &quot;Package $pkg not installed: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>40</offset>
+  <length>91</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt</file>
+  <line>143</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Window node traversal exception: ${t.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>59</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt</file>
+  <line>373</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Physical tap completed at ($x, $y)&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>20</offset>
+  <length>48</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
+  <line>95</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(loggerTag, &quot;handleKeyguardUnlock: attempt=$unlockAttemptCount, rootsCount=${roots.size}, targe...</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>133</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
+  <line>242</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(loggerTag, &quot;Starting element-based PIN keypad entry for ${pin.length} digits...&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>87</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/PopupShield.kt</file>
+  <line>96</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/PopupShield.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.i(TAG, &quot;PopupShield: clear complete after pass $pass (pkg=$curPkg)&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>72</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppChatScanner.kt</file>
+  <line>82</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppChatScanner.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(loggerTag, &quot;Reset WhatsAppChatScanner state for full scan (target=$scanTarget, maxCycles=$maxS...</highlighted_element>
+  <language>kotlin</language>
+  <offset>8</offset>
+  <length>114</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppDialogHandler.kt</file>
+  <line>69</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppDialogHandler.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;Dismiss popup scan encountered exception: ${e.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>68</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt</file>
+  <line>252</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;launchWhatsAppCall: Dispatched direct WhatsApp URI for $cleanPhone&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>80</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt</file>
+  <line>262</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(TAG, &quot;launchWhatsAppCall: Dispatched https fallback for $cleanPhone&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>16</offset>
+  <length>75</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppStatusEngine.kt</file>
+  <line>517</line>
+  <module>AutoText.app.main</module>
+  <package>com.jmd.autotext.whatsapp</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppStatusEngine.kt" />
+  <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
+  <hints />
+  <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>Log.d(&quot;WhatsAppStatusEngine&quot;, &quot;findFocus exception: ${t.message}&quot;)</highlighted_element>
+  <language>kotlin</language>
+  <offset>12</offset>
+  <length>66</length>
+</problem>
+</problems>

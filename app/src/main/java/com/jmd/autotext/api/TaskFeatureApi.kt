@@ -23,18 +23,14 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.telecom.TelecomManager
 import android.telephony.SubscriptionManager
-import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.jmd.autotext.AutoTextApplication
-import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.AppFileLogger
-import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.core.OemBrandHelper
 import com.jmd.autotext.core.PhoneNumberNormalizer
 import com.jmd.autotext.core.WhatsAppPackageHelper
@@ -169,9 +165,6 @@ object TaskFeatureApi {
             request.recipient,
             PreferenceManager(context).defaultCountryCode
         )
-
-        val targetPkg = WhatsAppPackageHelper.getPackageForChannel(context, request.channel)
-            ?: (if (request.channel == ChannelType.WHATSAPP_BUSINESS) "com.whatsapp.w4b" else "com.whatsapp")
 
         val sender = WhatsAppSender(context)
         val launched = sender.send(

@@ -1,0 +1,98 @@
+<problems>
+<problem>
+  <file>AutoText.app.main</file>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="module" FQNAME="AutoText.app.main" />
+  <problem_class id="UnusedLibrary" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused library</problem_class>
+  <hints>
+    <hint value="Gradle: androidx.compose.ui:ui-tooling-android:1.12.1@aar" />
+  </hints>
+  <description>Unused library 'Gradle: androidx.compose.ui:ui-tooling-android:1.12.1@aar'</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>AutoText.app.main</file>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="module" FQNAME="AutoText.app.main" />
+  <problem_class id="UnusedLibrary" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused library</problem_class>
+  <hints>
+    <hint value="Gradle: androidx.lifecycle:lifecycle-runtime-ktx-android:2.11.0@aar" />
+  </hints>
+  <description>Unused library 'Gradle: androidx.lifecycle:lifecycle-runtime-ktx-android:2.11.0@aar'</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>AutoText.app.main</file>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="module" FQNAME="AutoText.app.main" />
+  <problem_class id="UnusedLibrary" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused library</problem_class>
+  <hints>
+    <hint value="Gradle: androidx.compose.ui:ui-tooling-data-android:1.12.1@aar" />
+  </hints>
+  <description>Unused library 'Gradle: androidx.compose.ui:ui-tooling-data-android:1.12.1@aar'</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>AutoText.app.main</file>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="module" FQNAME="AutoText.app.main" />
+  <problem_class id="UnusedLibrary" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused library</problem_class>
+  <hints>
+    <hint value="Gradle: androidx.compose.ui:ui-tooling-preview-android:1.12.1@aar" />
+  </hints>
+  <description>Unused library 'Gradle: androidx.compose.ui:ui-tooling-preview-android:1.12.1@aar'</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>AutoText.app.main</file>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="module" FQNAME="AutoText.app.main" />
+  <problem_class id="UnusedLibrary" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused library</problem_class>
+  <hints>
+    <hint value="Gradle: androidx.core:core-ktx:1.19.1@aar" />
+  </hints>
+  <description>Unused library 'Gradle: androidx.core:core-ktx:1.19.1@aar'</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>AutoText.app.main</file>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="module" FQNAME="AutoText.app.main" />
+  <problem_class id="UnusedLibrary" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused library</problem_class>
+  <hints>
+    <hint value="Gradle: androidx.lifecycle:lifecycle-viewmodel-compose-android:2.11.0@aar" />
+  </hints>
+  <description>Unused library 'Gradle: androidx.lifecycle:lifecycle-viewmodel-compose-android:2.11.0@aar'</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>AutoText.app.main</file>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="module" FQNAME="AutoText.app.main" />
+  <problem_class id="UnusedLibrary" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused library</problem_class>
+  <hints>
+    <hint value="Gradle: androidx.work:work-runtime-ktx:2.12.0@aar" />
+  </hints>
+  <description>Unused library 'Gradle: androidx.work:work-runtime-ktx:2.12.0@aar'</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>AutoText.app.main</file>
+  <module>AutoText.app.main</module>
+  <entry_point TYPE="module" FQNAME="AutoText.app.main" />
+  <problem_class id="UnusedLibrary" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused library</problem_class>
+  <hints>
+    <hint value="Gradle: androidx.lifecycle:lifecycle-livedata-core-ktx:2.11.0@aar" />
+  </hints>
+  <description>Unused library 'Gradle: androidx.lifecycle:lifecycle-livedata-core-ktx:2.11.0@aar'</description>
+  <highlighted_element />
+  <language />
+</problem>
+</problems>

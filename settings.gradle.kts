@@ -18,5 +18,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AutoText"
+rootProject.name = "helper"
 include(":app")
