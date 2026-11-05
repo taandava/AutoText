@@ -23,7 +23,7 @@ import com.jmd.autotext.ui.theme.*
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun composeTopHeader(
+fun ComposeTopHeader(
     selectedChannel: ChannelType,
     taskToEdit: ScheduledTask?,
     onCancel: () -> Unit,
@@ -74,7 +74,7 @@ fun composeTopHeader(
                 ChannelType.SOUND_MODE -> MaterialTheme.colorScheme.primary
                 else -> MaterialTheme.colorScheme.primary
             }
-            appBadge(
+            AppBadge(
                 text = selectedChannel.displayName,
                 emoji = selectedChannel.emoji,
                 color = channelColor
@@ -93,7 +93,7 @@ fun composeTopHeader(
  * @param onDelete Optional callback to delete task when in edit mode.
  */
 @Composable
-fun composeBottomBar(
+fun ComposeBottomBar(
     isEditing: Boolean,
     onCancel: () -> Unit,
     onSave: () -> Unit,
@@ -114,7 +114,7 @@ fun composeBottomBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            glassButton(
+            GlassButton(
                 text = "Cancel",
                 onClick = onCancel,
                 variant = GlassButtonVariant.SECONDARY,
@@ -123,7 +123,7 @@ fun composeBottomBar(
             )
 
             if (isEditing && onDelete != null) {
-                glassButton(
+                GlassButton(
                     text = "Delete",
                     onClick = onDelete,
                     variant = GlassButtonVariant.DANGER,
@@ -132,7 +132,7 @@ fun composeBottomBar(
                 )
             }
 
-            glassButton(
+            GlassButton(
                 text = if (isEditing) "Save Changes" else "Schedule Task",
                 onClick = onSave,
                 variant = GlassButtonVariant.PRIMARY,

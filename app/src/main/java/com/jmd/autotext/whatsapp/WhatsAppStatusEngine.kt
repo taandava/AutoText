@@ -89,7 +89,7 @@ class WhatsAppStatusEngine(
                 return
             }
 
-            if (PopupShield.hasActiveBlockingOverlay(service, targetPkg)) {
+            if (sendAttemptCount < 2 && PopupShield.hasActiveBlockingOverlay(service, targetPkg)) {
                 Log.d(loggerTag, "Blocking overlay detected during status post; clearing...")
                 PopupShield.clearOverlaysAndNotificationShade(service, targetPkg)
                 onRetry(300L)

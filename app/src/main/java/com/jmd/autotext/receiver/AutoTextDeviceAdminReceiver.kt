@@ -150,35 +150,27 @@ class AutoTextDeviceAdminReceiver : DeviceAdminReceiver() {
         }
 
         /**
-         * Instantly locks the device screen via [DevicePolicyManager.lockNow].
+         * Safely locks the device screen mimicking the physical Power button press via accessibility.
          *
-         * Used to enforce security relocking post-automation when WhatsApp automation finishes.
+         * Crucially: Never calls DevicePolicyManager.lockNow() to prevent fingerprint and biometric lockout.
          *
          * @param context Active context.
-         * @return `true` if lockNow executed successfully; `false` on failure.
+         * @return `true` if screen lock was dispatched successfully.
          */
         fun lockNow(context: Context): Boolean {
             return try {
-                val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as? DevicePolicyManager
-                val comp = getComponentName(context)
-                if (dpm != null && dpm.isAdminActive(comp)) {
-                    Log.i(TAG, "Locking device via DevicePolicyManager.lockNow()")
-                    AppFileLogger.i(context, TAG, "Device locked via DevicePolicyManager")
-                    dpm.lockNow()
+                Log.i(TAG, "Locking screen via power button simulation (biometric safe)")
+                AppFileLogger.i(context, TAG, "Dispatched power-button screen lock (fingerprint safe)")
+                val powerLockDispatched = com.jmd.autotext.service.AutoTextAccessibilityService.lockScreenNow()
+                if (powerLockDispatched) {
                     true
                 } else {
-                    Log.w(TAG, "Device Admin is not active, attempting ensureActive before lockNow()")
-                    if (ensureActive(context) && dpm?.isAdminActive(comp) == true) {
-                        dpm.lockNow()
-                        true
-                    } else {
-                        Log.w(TAG, "Device Admin could not be activated, cannot call lockNow()")
-                        false
-                    }
+                    com.jmd.autotext.service.AutoTextAccessibilityService.minimizeToHome()
+                    true
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error executing lockNow()", e)
-                AppFileLogger.e(context, TAG, "Error in lockNow(): ${e.message}")
+                Log.e(TAG, "Error executing lockNow", e)
+                AppFileLogger.e(context, TAG, "Error in lockNow: ${e.message}")
                 false
             }
         }

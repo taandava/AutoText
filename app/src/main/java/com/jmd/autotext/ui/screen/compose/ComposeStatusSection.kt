@@ -31,7 +31,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onOpenTemplates Callback to open template message drawer.
  */
 @Composable
-fun whatsAppStatusComposerCard(
+fun WhatsAppStatusComposerCard(
     mediaUri: String,
     onMediaUriChange: (String) -> Unit,
     messageText: String,
@@ -41,7 +41,7 @@ fun whatsAppStatusComposerCard(
 ) {
     val accentColor = MaterialTheme.colorScheme.tertiary
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge,
         borderColor = accentColor.copy(alpha = 0.5f)
@@ -66,7 +66,7 @@ fun whatsAppStatusComposerCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            appBadge(
+            AppBadge(
                 text = "WhatsApp Story",
                 color = accentColor,
                 showDot = true
@@ -116,7 +116,7 @@ fun whatsAppStatusComposerCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            glassChip(
+            GlassChip(
                 selected = mediaUri.isBlank(),
                 onClick = { onMediaUriChange("") },
                 label = "Text Status (Pencil)",
@@ -124,7 +124,7 @@ fun whatsAppStatusComposerCard(
                 activeColor = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.weight(1f)
             )
-            glassChip(
+            GlassChip(
                 selected = mediaUri.isNotBlank(),
                 onClick = {
                     if (mediaUri.isBlank()) {
@@ -211,7 +211,7 @@ fun whatsAppStatusComposerCard(
             }
             Spacer(modifier = Modifier.height(10.dp))
         } else {
-            glassButton(
+            GlassButton(
                 text = "Attach Photo or Video",
                 onClick = onLaunchMediaPicker,
                 variant = GlassButtonVariant.SECONDARY,
@@ -233,7 +233,7 @@ fun whatsAppStatusComposerCard(
                 fontSize = 12.5.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            glassButton(
+            GlassButton(
                 text = "Templates",
                 onClick = onOpenTemplates,
                 variant = GlassButtonVariant.SECONDARY,
@@ -244,7 +244,7 @@ fun whatsAppStatusComposerCard(
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        glassInputField(
+        GlassInputField(
             value = messageText,
             onValueChange = onMessageTextChange,
             label = if (mediaUri.isNotBlank()) "Story Caption (Optional)" else "Status Text",
@@ -341,7 +341,7 @@ fun whatsAppStatusComposerCard(
  * @param onOpenTemplates Callback to open template message drawer.
  */
 @Composable
-fun whatsAppBusinessStatusComposerCard(
+fun WhatsAppBusinessStatusComposerCard(
     mediaUri: String,
     onMediaUriChange: (String) -> Unit,
     messageText: String,
@@ -351,7 +351,7 @@ fun whatsAppBusinessStatusComposerCard(
 ) {
     val accentColor = MaterialTheme.colorScheme.primary
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge,
         borderColor = accentColor.copy(alpha = 0.5f)
@@ -376,7 +376,7 @@ fun whatsAppBusinessStatusComposerCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            appBadge(
+            AppBadge(
                 text = "WA Business Story",
                 color = accentColor,
                 showDot = true
@@ -426,7 +426,7 @@ fun whatsAppBusinessStatusComposerCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            glassChip(
+            GlassChip(
                 selected = mediaUri.isBlank(),
                 onClick = { onMediaUriChange("") },
                 label = "Text Status (Pencil)",
@@ -434,7 +434,7 @@ fun whatsAppBusinessStatusComposerCard(
                 activeColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.weight(1f)
             )
-            glassChip(
+            GlassChip(
                 selected = mediaUri.isNotBlank(),
                 onClick = {
                     if (mediaUri.isBlank()) {
@@ -521,7 +521,7 @@ fun whatsAppBusinessStatusComposerCard(
             }
             Spacer(modifier = Modifier.height(10.dp))
         } else {
-            glassButton(
+            GlassButton(
                 text = "Attach Photo or Video",
                 onClick = onLaunchMediaPicker,
                 variant = GlassButtonVariant.SECONDARY,
@@ -543,7 +543,7 @@ fun whatsAppBusinessStatusComposerCard(
                 fontSize = 12.5.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            glassButton(
+            GlassButton(
                 text = "Templates",
                 onClick = onOpenTemplates,
                 variant = GlassButtonVariant.SECONDARY,
@@ -554,7 +554,7 @@ fun whatsAppBusinessStatusComposerCard(
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        glassInputField(
+        GlassInputField(
             value = messageText,
             onValueChange = onMessageTextChange,
             label = if (mediaUri.isNotBlank()) "Story Caption (Optional)" else "Status Text",
@@ -639,13 +639,3 @@ fun whatsAppBusinessStatusComposerCard(
         }
     }
 }
-
-
-/**
- * Bottom sheet modal enabling users to select target WhatsApp groups ingested from automated chat scanner.
- *
- * @param repository Data repository reading discovered group inventory.
- * @param selectedGroupName Currently selected group name string.
- * @param onSelectGroup Callback receiving selected group name.
- * @param onDismiss Callback to dismiss group picker sheet.
- */

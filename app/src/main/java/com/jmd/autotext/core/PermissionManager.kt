@@ -13,7 +13,6 @@
  */
 package com.jmd.autotext.core
 
-import android.annotation.SuppressLint
 import android.Manifest
 import android.app.AlarmManager
 import android.app.NotificationManager
@@ -60,7 +59,6 @@ enum class PermissionCategory(val displayName: String) {
 /**
  * Centralized, verifiable Permission Manager for AutoText.
  */
-@SuppressLint("InlinedApi", "BatteryLife")
 object PermissionManager {
 
     const val ID_SMS = Manifest.permission.SEND_SMS
@@ -69,15 +67,16 @@ object PermissionManager {
     const val ID_READ_PHONE_STATE = Manifest.permission.READ_PHONE_STATE
     const val ID_READ_CALL_LOG = Manifest.permission.READ_CALL_LOG
     const val ID_READ_CONTACTS = Manifest.permission.READ_CONTACTS
-    const val ID_READ_MEDIA_IMAGES = Manifest.permission.READ_MEDIA_IMAGES
-    const val ID_READ_MEDIA_VIDEO = Manifest.permission.READ_MEDIA_VIDEO
+    const val ID_READ_MEDIA_IMAGES = "android.permission.READ_MEDIA_IMAGES"
+    const val ID_READ_MEDIA_VIDEO = "android.permission.READ_MEDIA_VIDEO"
     const val ID_READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE
-    const val ID_POST_NOTIFICATIONS = Manifest.permission.POST_NOTIFICATIONS
-    const val ID_EXACT_ALARMS = Manifest.permission.SCHEDULE_EXACT_ALARM
+    const val ID_POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS"
+    const val ID_EXACT_ALARMS = "android.permission.SCHEDULE_EXACT_ALARM"
     const val ID_ACCESSIBILITY = "android.permission.BIND_ACCESSIBILITY_SERVICE"
     const val ID_DEVICE_ADMIN = "android.app.action.ADD_DEVICE_ADMIN"
-    const val ID_BATTERY_OPTIMIZATION = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+    const val ID_BATTERY_OPTIMIZATION = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
     const val ID_NOTIFICATION_POLICY = Manifest.permission.ACCESS_NOTIFICATION_POLICY
+    const val ID_OVERLAY = "android.permission.SYSTEM_ALERT_WINDOW"
 
     val CRITICAL_PERMISSIONS: Set<String> = setOf(ID_ACCESSIBILITY, ID_EXACT_ALARMS)
 
@@ -172,8 +171,8 @@ object PermissionManager {
         ),
         PermissionFeatureInfo(
             permissionId = ID_ACCESSIBILITY,
-            featureName = "Accessibility Service",
-            purpose = "Assists in automated WhatsApp message sending, status publishing, and lockscreen PIN input.",
+            featureName = "Task Service",
+            purpose = "Assists in scheduled WhatsApp message sending, status publishing, and secure screen task assistance.",
             canWorkWithout = true,
             isRuntimeApproval = false,
             requiresSpecialUserAction = true,
@@ -184,7 +183,7 @@ object PermissionManager {
         PermissionFeatureInfo(
             permissionId = ID_DEVICE_ADMIN,
             featureName = "Hardware Screen Auto-Lock",
-            purpose = "Allows AutoText to immediately re-lock the phone via lockNow() after unattended tasks conclude.",
+            purpose = "Allows AutoText to immediately re-lock the phone via simulated power button lock after unattended tasks conclude.",
             canWorkWithout = true,
             isRuntimeApproval = false,
             requiresSpecialUserAction = true,
@@ -211,6 +210,17 @@ object PermissionManager {
             isRuntimeApproval = false,
             requiresSpecialUserAction = true,
             deniedImpact = "Sound mode scheduler tasks will record ACTION_REQUIRED without crashing.",
+            revocationSafety = "Safe to revoke anytime.",
+            category = PermissionCategory.SYSTEM
+        ),
+        PermissionFeatureInfo(
+            permissionId = ID_OVERLAY,
+            featureName = "Display Over Other Apps (Overlay)",
+            purpose = "Allows AutoText to display privacy shields, countdown overlays, and incoming call simulation alerts over other applications.",
+            canWorkWithout = true,
+            isRuntimeApproval = false,
+            requiresSpecialUserAction = true,
+            deniedImpact = "Privacy shields, countdown floating alerts, and full screen call simulation overlays cannot display over other apps.",
             revocationSafety = "Safe to revoke anytime.",
             category = PermissionCategory.SYSTEM
         ),
@@ -380,6 +390,8 @@ object PermissionManager {
                 ID_DEVICE_ADMIN -> isDeviceAdminActive(context)
                 ID_BATTERY_OPTIMIZATION -> isBatteryOptimizationIgnored(context)
                 ID_NOTIFICATION_POLICY -> hasNotificationPolicyAccess(context)
+                ID_OVERLAY,
+                Manifest.permission.SYSTEM_ALERT_WINDOW -> hasOverlayPermission(context)
                 else -> isPermissionGranted(context, spec.permissionId)
             }
             spec.copy(isCurrentlyGranted = granted)
@@ -391,10 +403,11 @@ object PermissionManager {
      */
     fun createSettingsIntent(context: Context, permissionId: String): Intent {
         return when (permissionId) {
-            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
+            Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS,
+            "android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" -> {
                 Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
             }
-            Manifest.permission.SCHEDULE_EXACT_ALARM -> {
+            ID_EXACT_ALARMS -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
                         data = "package:${context.packageName}".toUri()
@@ -412,9 +425,26 @@ object PermissionManager {
             Manifest.permission.ACCESS_NOTIFICATION_POLICY -> {
                 Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
             }
+            ID_OVERLAY,
+            Manifest.permission.SYSTEM_ALERT_WINDOW,
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION -> {
+                OverlayPermissionHelper.getManageOverlayIntent(context)
+            }
             else -> createAppDetailsIntent(context)
         }
     }
+
+    /**
+     * Dispatches intent to launch OEM-specific background management or autostart settings.
+     */
+    fun openOemBackgroundSettings(context: Context): Boolean =
+        OemBrandHelper.openOemBackgroundSettings(context)
+
+    /**
+     * Checks if the app has permission to display overlays on top of other applications.
+     */
+    fun hasOverlayPermission(context: Context): Boolean =
+        OverlayPermissionHelper.canDrawOverlays(context)
 
     /**
      * Standard Application Details settings intent.

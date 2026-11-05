@@ -27,7 +27,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun settingsScreenAssistCard(
+fun SettingsScreenAssistCard(
     context: Context,
     prefs: PreferenceManager,
     modifier: Modifier = Modifier
@@ -37,7 +37,7 @@ fun settingsScreenAssistCard(
     var unlockPin by remember { mutableStateOf(prefs.screenAssistPin) }
     var isAutoLockAfterSend by remember { mutableStateOf(prefs.isAutoLockAfterSendEnabled) }
 
-    appCard(modifier = modifier.fillMaxWidth()) {
+    AppCard(modifier = modifier.fillMaxWidth()) {
         Text("Screen Task Assistance & Auto-Lock", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
         Spacer(modifier = Modifier.height(4.dp))
         Text("AutoText can wake the device, assist with lockscreen entry during dispatches, and securely re-lock the device automatically.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -81,7 +81,7 @@ fun settingsScreenAssistCard(
                     "PASSWORD" to "Password",
                     "SWIPE" to "Swipe"
                 ).forEach { (type, label) ->
-                    glassChip(
+                    GlassChip(
                         selected = unlockType == type,
                         onClick = {
                             unlockType = type
@@ -97,7 +97,7 @@ fun settingsScreenAssistCard(
             if (unlockType == "PIN" || unlockType == "PASSWORD") {
                 Spacer(modifier = Modifier.height(10.dp))
                 val isPinMode = unlockType == "PIN"
-                glassInputField(
+                GlassInputField(
                     value = unlockPin,
                     onValueChange = {
                         unlockPin = if (isPinMode) it.filter { ch -> ch.isDigit() } else it
@@ -151,7 +151,7 @@ fun settingsScreenAssistCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                glassButton(
+                GlassButton(
                     text = "Test Screen Lock",
                     onClick = {
                         context.showAppToast("Locking phone...")
@@ -161,7 +161,7 @@ fun settingsScreenAssistCard(
                     variant = GlassButtonVariant.SECONDARY,
                     modifier = Modifier.weight(1f)
                 )
-                glassButton(
+                GlassButton(
                     text = "Test Screen Wake & Unlock",
                     onClick = {
                         val currentPin = unlockPin.ifBlank { prefs.deviceUnlockPin }
@@ -179,11 +179,11 @@ fun settingsScreenAssistCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            glassButton(
+            GlassButton(
                 text = "Emergency Stop All Scheduled Tasks",
                 onClick = {
                     AutoTextAccessibilityService.clearPending()
-                    context.showAppToast("Automation stopped")
+                    context.showAppToast("Tasks stopped")
                 },
                 emoji = "🛑",
                 variant = GlassButtonVariant.DANGER,
@@ -194,14 +194,14 @@ fun settingsScreenAssistCard(
 }
 
 /**
- * Backward-compatible alias for [settingsScreenAssistCard].
+ * Backward-compatible alias for [SettingsScreenAssistCard].
  */
 @Composable
-fun settingsAutoUnlockCard(
+fun SettingsAutoUnlockCard(
     context: Context,
     prefs: PreferenceManager,
     modifier: Modifier = Modifier
 ) {
-    settingsScreenAssistCard(context, prefs, modifier)
+    SettingsScreenAssistCard(context, prefs, modifier)
 }
 

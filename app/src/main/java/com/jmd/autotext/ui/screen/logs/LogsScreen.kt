@@ -7,7 +7,7 @@
  * - Filtering by channel (All, SMS, WhatsApp, Calls, Campaigns, Failed).
  * - CSV export via Storage Access Framework (SAF).
  * - Purge control.
- * - Detail inspection via [logDetailView].
+ * - Detail inspection via [LogDetailView].
  */
 package com.jmd.autotext.ui.screen.logs
 
@@ -53,7 +53,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param onBack Callback invoked to return to the parent menu.
  */
 @Composable
-fun logsView(
+fun LogsView(
     repository: AppRepository,
     onNavigateToSystemLogs: () -> Unit = {},
     onBack: () -> Unit
@@ -94,7 +94,7 @@ fun logsView(
             selectedLogDetail = null
             logs = repository.getAllLogs()
         }
-        logDetailView(
+        LogDetailView(
             log = currentDetail,
             repository = repository,
             onBack = {
@@ -123,7 +123,7 @@ fun logsView(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = "Execution History",
                 subtitle = "${filteredLogs.size} records",
                 onBack = onBack,
@@ -169,7 +169,7 @@ fun logsView(
                     Triple("CAMPAIGNS", "Campaigns (${logs.count { it.details.contains("campaign", ignoreCase = true) || it.details.contains("pool", ignoreCase = true) || it.messageSnippet.contains("Daily", ignoreCase = true) }})", "🚀"),
                     Triple("FAILED", "Failed (${logs.count { it.status.equals("FAILED", ignoreCase = true) || it.status.equals("QUEUED", ignoreCase = true) }})", "❌")
                 ).forEach { (key, label, chipEmoji) ->
-                    glassChip(
+                    GlassChip(
                         selected = selectedFilter == key,
                         onClick = { selectedFilter = key },
                         label = label,
@@ -179,7 +179,7 @@ fun logsView(
             }
 
             if (filteredLogs.isEmpty()) {
-                appEmptyState(
+                AppEmptyState(
                     title = "No Execution Records",
                     description = "Sent, auto-replied, and scheduled messages will appear here.",
                     emoji = "📜",
@@ -212,7 +212,7 @@ fun logsView(
                             else -> "❌"
                         }
 
-                        appCard(
+                        AppCard(
                             onClick = { selectedLogDetail = log },
                             modifier = Modifier.fillMaxWidth()
                         ) {

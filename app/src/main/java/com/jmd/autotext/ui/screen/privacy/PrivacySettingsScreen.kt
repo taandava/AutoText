@@ -58,7 +58,7 @@ private enum class AppListFilter {
 }
 
 @Composable
-fun privacySettingsScreen(
+fun PrivacySettingsScreen(
     context: Context,
     prefs: PreferenceManager,
     onBack: () -> Unit
@@ -126,7 +126,7 @@ fun privacySettingsScreen(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = "Privacy & App Visibility",
                 subtitle = "App exclusions, content masking & payment protection",
                 onBack = onBack
@@ -164,7 +164,7 @@ fun privacySettingsScreen(
         ) {
             // ==================== SECTION 1: MASTER PRIVACY CONTROLS ====================
             item {
-                appCard(
+                AppCard(
                     modifier = Modifier.fillMaxWidth(),
                     backgroundColor = MaterialTheme.colorScheme.surface,
                     borderColor = if (privacyModeEnabled) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant
@@ -190,7 +190,7 @@ fun privacySettingsScreen(
                                 )
                             }
                         }
-                        appBadge(
+                        AppBadge(
                             text = if (privacyModeEnabled) "SHIELD ACTIVE" else "DISABLED",
                             color = if (privacyModeEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                             showDot = true
@@ -279,9 +279,9 @@ fun privacySettingsScreen(
                                 Text(text = "Dynamic On-Demand Accessibility", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
                                 Spacer(modifier = Modifier.width(6.dp))
                                 if (hasWriteSecure) {
-                                    appBadge(text = "PRIVILEGED", color = MaterialTheme.colorScheme.primary)
+                                    AppBadge(text = "PRIVILEGED", color = MaterialTheme.colorScheme.primary)
                                 } else {
-                                    appBadge(text = "NEEDS SECURE_SETTINGS", color = MaterialTheme.colorScheme.outline)
+                                    AppBadge(text = "NEEDS SECURE_SETTINGS", color = MaterialTheme.colorScheme.outline)
                                 }
                             }
                             Text(text = "Keeps accessibility completely OFF when idle. Automatically enables service only during active dispatches for 3s-5s, then disables it. Banking apps will NEVER detect accessibility.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -307,7 +307,7 @@ fun privacySettingsScreen(
 
             // ==================== SECTION 2: NOTIFICATIONS & CONTENT PRIVACY ====================
             item {
-                appCard(
+                AppCard(
                     modifier = Modifier.fillMaxWidth(),
                     backgroundColor = MaterialTheme.colorScheme.surface
                 ) {
@@ -322,7 +322,7 @@ fun privacySettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                             Text(text = "Mask Content on Lockscreen", fontSize = 13.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)
-                            Text(text = "Replaces message text with '[AutoText] Automation Active' on lockscreen.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(text = "Replaces message text with '[AutoText] Active' on lockscreen.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Switch(
                             checked = maskLockScreenNotifs,
@@ -400,7 +400,7 @@ fun privacySettingsScreen(
 
             // ==================== SECTION 3: APPLICATION SELECTOR ====================
             item {
-                appCard(
+                AppCard(
                     modifier = Modifier.fillMaxWidth(),
                     backgroundColor = MaterialTheme.colorScheme.surface
                 ) {
@@ -445,17 +445,17 @@ fun privacySettingsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            glassChip(
+                            GlassChip(
                                 selected = currentFilter == AppListFilter.ALL,
                                 onClick = { currentFilter = AppListFilter.ALL },
                                 label = "All (${installedApps.size})"
                             )
-                            glassChip(
+                            GlassChip(
                                 selected = currentFilter == AppListFilter.SHIELDED,
                                 onClick = { currentFilter = AppListFilter.SHIELDED },
                                 label = "Shielded ($totalExcludedCount)"
                             )
-                            glassChip(
+                            GlassChip(
                                 selected = currentFilter == AppListFilter.FINANCIAL,
                                 onClick = { currentFilter = AppListFilter.FINANCIAL },
                                 label = "Financial"
@@ -517,7 +517,7 @@ fun privacySettingsScreen(
                 }
             } else {
                 items(filteredApps, key = { it.packageName }) { appItem ->
-                    appRowItem(
+                    AppRowItem(
                         context = context,
                         appItem = appItem,
                         onToggleExclusion = { excluded ->
@@ -547,7 +547,7 @@ fun privacySettingsScreen(
             // ==================== SECTION 4: RESET DEFAULTS ====================
             item {
                 Spacer(modifier = Modifier.height(6.dp))
-                glassButton(
+                GlassButton(
                     text = "Reset All Privacy Settings to Factory Defaults",
                     variant = GlassButtonVariant.SECONDARY,
                     modifier = Modifier.fillMaxWidth(),
@@ -564,7 +564,7 @@ fun privacySettingsScreen(
             appName = appInfo.appName,
             isExcluded = appInfo.isExcluded
         )
-        appPrivacyDetailDialog(
+        AppPrivacyDetailDialog(
             appInfo = appInfo,
             initialConfig = existingConfig,
             onSave = { updated ->
@@ -614,7 +614,7 @@ fun privacySettingsScreen(
 }
 
 @Composable
-private fun appRowItem(
+private fun AppRowItem(
     context: Context,
     appItem: AppInfoItem,
     onToggleExclusion: (Boolean) -> Unit,
@@ -686,7 +686,7 @@ private fun appRowItem(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     if (appItem.isBankingOrFinancial) {
-                        appBadge(text = "BANKING", color = MaterialTheme.colorScheme.error)
+                        AppBadge(text = "BANKING", color = MaterialTheme.colorScheme.error)
                     }
                 }
                 Text(

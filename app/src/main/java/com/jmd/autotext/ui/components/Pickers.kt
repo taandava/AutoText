@@ -4,7 +4,7 @@
  * Package: com.jmd.autotext.ui.components
  * Module: UI Inline Pickers Layer
  *
- * Inline non-intrusive Date & Time pickers (appDateTimePicker, appSegmentedTimePicker),
+ * Inline non-intrusive Date & Time pickers (AppDateTimePicker, appSegmentedTimePicker),
  * search inputs, and filter chips preventing disruptive modal popups.
  *
  * Linked With:
@@ -62,7 +62,7 @@ import java.util.*
  * @param showTime True to render the time stepper and quick increment buttons.
  */
 @Composable
-fun appDateTimePicker(
+fun AppDateTimePicker(
     timestampMillis: Long,
     onTimestampChanged: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -274,7 +274,7 @@ fun appDateTimePicker(
  * @param accentColor Accent color for focused border and label tinting.
  */
 @Composable
-fun glassInputField(
+fun GlassInputField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -449,22 +449,22 @@ fun glassInputField(
 
 /**
  * Standardized glassmorphic dropdown selection field matching the visual metrics, heights,
- * borders, and shape tokens of [glassInputField].
+ * borders, and shape tokens of [GlassInputField].
  *
- * Guarantees pixel-perfect horizontal and baseline alignment when paired side-by-side with [glassInputField].
+ * Guarantees pixel-perfect horizontal and baseline alignment when paired side-by-side with [GlassInputField].
  *
  * @param selectedValue Currently selected item of type [T].
  * @param onValueChange Callback invoked when the user selects an option.
  * @param options List of selectable options.
  * @param modifier Layout [Modifier].
- * @param label Optional text label placed above the dropdown field, identical to [glassInputField]'s label.
+ * @param label Optional text label placed above the dropdown field, identical to [GlassInputField]'s label.
  * @param displayValue Transformer function returning human-readable text for each option.
  * @param leadingIcon Optional icon placed at start of dropdown container.
  * @param enabled Whether dropdown interaction is enabled.
  * @param accentColor Theme accent color for focus borders and selected option highlight.
  */
 @Composable
-fun <T> glassDropdownField(
+fun <T> GlassDropdownField(
     selectedValue: T,
     onValueChange: (T) -> Unit,
     options: List<T>,
@@ -591,7 +591,7 @@ fun <T> glassDropdownField(
  * @param onClear Callback invoked when user clicks the clear action button.
  */
 @Composable
-fun glassSearchField(
+fun GlassSearchField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,

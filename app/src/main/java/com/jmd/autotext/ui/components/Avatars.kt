@@ -93,7 +93,7 @@ object AvatarBitmapCache {
  * @param badgeColor Background color tint for the badge circle.
  */
 @Composable
-fun m3Avatar(
+fun M3Avatar(
     name: String,
     modifier: Modifier = Modifier,
     photoUri: String = "",
@@ -150,8 +150,8 @@ fun m3Avatar(
                     }
                 } catch (e: CancellationException) {
                     throw e
-                } catch (_: Exception) {
-                    // Avatar unavailable - fall back to initials
+                } catch (e: Exception) {
+                    android.util.Log.w("Avatars", "Avatar bitmap decode failed, falling back to initials: ${e.message}")
                 }
             }
         }
@@ -213,7 +213,7 @@ fun m3Avatar(
 }
 
 /**
- * Convenience wrapper Composable for [m3Avatar] standardizing contact representation across list views and headers.
+ * Convenience wrapper Composable for [M3Avatar] standardizing contact representation across list views and headers.
  *
  * @param name Contact display name.
  * @param modifier Layout [Modifier].
@@ -223,14 +223,14 @@ fun m3Avatar(
  * @param badgeColor Background color for channel badge.
  */
 @Composable
-fun contactAvatar(
+fun ContactAvatar(
     name: String,
     modifier: Modifier = Modifier,
     photoUri: String = "",
     size: Dp = 38.dp,
     badgeIcon: ImageVector? = null,
     badgeColor: Color = AppDesignTokens.VividEmerald,
-) = m3Avatar(
+) = M3Avatar(
     name = name,
     modifier = modifier,
     photoUri = photoUri,

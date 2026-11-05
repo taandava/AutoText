@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.jmd.autotext.core.showAppToast
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.data.repo.AppRepository
-import com.jmd.autotext.ui.components.appSubScreenHeader
+import com.jmd.autotext.ui.components.AppSubScreenHeader
 import com.jmd.autotext.ui.theme.AppDesignTokens
 
 /**
@@ -29,7 +29,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param onBack Callback triggered when user navigates back.
  */
 @Composable
-fun settingsView(
+fun SettingsView(
     context: Context,
     repository: AppRepository,
     prefs: PreferenceManager,
@@ -84,7 +84,7 @@ fun settingsView(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = "Settings & Security",
                 subtitle = "Security, screen assistance, banking shield & backups",
                 onBack = onBack
@@ -105,7 +105,7 @@ fun settingsView(
         ) {
             // 0. Status Indicators & System Health Guide Card
             item {
-                settingsStatusIndicatorsGuideCard(
+                SettingsStatusIndicatorsGuideCard(
                     context = context,
                     prefs = prefs
                 )
@@ -113,7 +113,7 @@ fun settingsView(
 
             // 1. Lock Screen Assistance Card
             item {
-                settingsScreenAssistCard(
+                SettingsScreenAssistCard(
                     context = context,
                     prefs = prefs
                 )
@@ -121,7 +121,7 @@ fun settingsView(
 
             // 3. Bank App Shield & Accessibility Standby Guard
             item {
-                settingsBankingShieldCard(
+                SettingsBankingShieldCard(
                     context = context,
                     prefs = prefs,
                     onOpenPrivacySettings = onOpenPrivacySettings
@@ -130,7 +130,7 @@ fun settingsView(
 
             // 4. User & Carrier Preferences Cards
             item {
-                settingsPreferencesCards(
+                SettingsPreferencesCards(
                     prefs = prefs,
                     onThemeChanged = onThemeChanged
                 )
@@ -138,7 +138,7 @@ fun settingsView(
 
             // 5. Data Backup & Restore Center
             item {
-                settingsBackupRestoreCard(
+                SettingsBackupRestoreCard(
                     context = context,
                     repository = repository,
                     exportFileLauncher = exportFileLauncher,
@@ -151,7 +151,7 @@ fun settingsView(
 
             // 6. Technical Manual & Logic Guide
             item {
-                settingsDocumentationCard(
+                SettingsDocumentationCard(
                     context = context,
                     onOpenDocumentation = onOpenDocumentation
                 )

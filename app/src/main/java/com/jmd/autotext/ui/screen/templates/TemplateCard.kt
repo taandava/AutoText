@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import com.jmd.autotext.data.model.MessageTemplate
-import com.jmd.autotext.ui.components.appCard
+import com.jmd.autotext.ui.components.AppCard
 import com.jmd.autotext.ui.theme.AppDesignTokens
 
 /**
@@ -30,13 +30,13 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param modifier Layout [Modifier].
  */
 @Composable
-fun templateItemCard(
+fun TemplateItemCard(
     template: MessageTemplate,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         onClick = onEdit
     ) {

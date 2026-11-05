@@ -23,12 +23,12 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun settingsDocumentationCard(
+fun SettingsDocumentationCard(
     context: Context,
     onOpenDocumentation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    appCard(modifier = modifier.fillMaxWidth()) {
+    AppCard(modifier = modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("📖", fontSize = 22.sp)
             Spacer(modifier = Modifier.width(8.dp))
@@ -43,14 +43,14 @@ fun settingsDocumentationCard(
         )
         Spacer(modifier = Modifier.height(12.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-            glassButton(
+            GlassButton(
                 text = "Read Guide",
                 onClick = onOpenDocumentation,
                 emoji = "📖",
                 variant = GlassButtonVariant.PRIMARY,
                 modifier = Modifier.weight(1f)
             )
-            glassButton(
+            GlassButton(
                 text = "Share Guide",
                 onClick = {
                     val doc = readDocumentationAsset(context)

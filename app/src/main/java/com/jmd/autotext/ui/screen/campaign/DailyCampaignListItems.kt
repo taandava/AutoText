@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun dailyContactPoolHeaderCard(
+fun DailyContactPoolHeaderCard(
     stats: DynamicPoolStats,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
@@ -35,7 +35,7 @@ fun dailyContactPoolHeaderCard(
 ) {
     var isConfirmClearVisible by remember { mutableStateOf(false) }
 
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge
     ) {
@@ -58,7 +58,7 @@ fun dailyContactPoolHeaderCard(
                 )
             }
 
-            glassButton(
+            GlassButton(
                 text = if (isConfirmClearVisible) "Cancel" else "Clear Pool",
                 onClick = { isConfirmClearVisible = !isConfirmClearVisible },
                 variant = GlassButtonVariant.DANGER,
@@ -83,13 +83,13 @@ fun dailyContactPoolHeaderCard(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        glassButton(
+                        GlassButton(
                             text = "Cancel",
                             onClick = { isConfirmClearVisible = false },
                             variant = GlassButtonVariant.SECONDARY,
                             modifier = Modifier.weight(1f)
                         )
-                        glassButton(
+                        GlassButton(
                             text = "Confirm Clear",
                             onClick = {
                                 onClearPool()
@@ -106,7 +106,7 @@ fun dailyContactPoolHeaderCard(
         Spacer(modifier = Modifier.height(8.dp))
 
         // Search Field
-        glassSearchField(
+        GlassSearchField(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
             placeholder = "Search by name or number...",
@@ -121,14 +121,14 @@ fun dailyContactPoolHeaderCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            glassChip(
+            GlassChip(
                 selected = !filterUnsentOnly,
                 onClick = { onFilterUnsentOnlyChange(false) },
                 label = "All (${stats.totalCount})",
                 activeColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.weight(1f)
             )
-            glassChip(
+            GlassChip(
                 selected = filterUnsentOnly,
                 onClick = { onFilterUnsentOnlyChange(true) },
                 label = "Unsent (${stats.unsentCount})",
@@ -152,7 +152,7 @@ fun dailyContactPoolHeaderCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun dailySentLedgerHeaderCard(
+fun DailySentLedgerHeaderCard(
     isWhatsApp: Boolean,
     sentCount: Int,
     searchQuery: String,
@@ -163,7 +163,7 @@ fun dailySentLedgerHeaderCard(
 ) {
     var isConfirmResetCycleVisible by remember { mutableStateOf(false) }
 
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge,
         borderColor = campaignThemeColor.copy(alpha = 0.35f)
@@ -182,7 +182,7 @@ fun dailySentLedgerHeaderCard(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    appBadge(
+                    AppBadge(
                         text = "$sentCount Contacted",
                         color = campaignThemeColor,
                         showDot = false
@@ -198,7 +198,7 @@ fun dailySentLedgerHeaderCard(
 
             if (sentCount > 0) {
                 Spacer(modifier = Modifier.width(6.dp))
-                glassButton(
+                GlassButton(
                     text = if (isConfirmResetCycleVisible) "Cancel" else "Reset Cycle",
                     onClick = { isConfirmResetCycleVisible = !isConfirmResetCycleVisible },
                     variant = GlassButtonVariant.SECONDARY,
@@ -224,13 +224,13 @@ fun dailySentLedgerHeaderCard(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        glassButton(
+                        GlassButton(
                             text = "Cancel",
                             onClick = { isConfirmResetCycleVisible = false },
                             variant = GlassButtonVariant.SECONDARY,
                             modifier = Modifier.weight(1f)
                         )
-                        glassButton(
+                        GlassButton(
                             text = "Confirm Reset",
                             onClick = {
                                 onResetCycle()
@@ -246,7 +246,7 @@ fun dailySentLedgerHeaderCard(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        glassSearchField(
+        GlassSearchField(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
             placeholder = "Search sent ledger by name or number...",
@@ -266,13 +266,13 @@ fun dailySentLedgerHeaderCard(
  * @param onDelete Callback triggered when item is deleted from dynamic pool.
  */
 @Composable
-fun contactItemCard(
+fun ContactItemCard(
     contact: DynamicContactItem,
     isWhatsApp: Boolean = false,
     onToggle: (Boolean) -> Unit,
     onDelete: () -> Unit
 ) {
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeMedium,
         backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -297,7 +297,7 @@ fun contactItemCard(
                 else -> MaterialTheme.colorScheme.primary
             }
 
-            contactAvatar(
+            ContactAvatar(
                 name = contact.name.ifBlank { contact.phone },
                 photoUri = contact.photoUri,
                 size = 36.dp,
@@ -319,7 +319,7 @@ fun contactItemCard(
                         modifier = Modifier.weight(1f, fill = false)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    appBadge(
+                    AppBadge(
                         text = when (contact.source) {
                             "WA_BUSINESS" -> "WA Biz"
                             "WA_CHAT" -> "WA Chat"
@@ -383,7 +383,7 @@ fun contactItemCard(
  * @param onRequeue Callback triggered to return this contact back to the pending queue.
  */
 @Composable
-fun ledgerItemCard(
+fun LedgerItemCard(
     contact: DynamicContactItem,
     isWhatsApp: Boolean,
     onRequeue: () -> Unit
@@ -402,7 +402,7 @@ fun ledgerItemCard(
         else -> MaterialTheme.colorScheme.tertiary
     }
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeMedium,
         backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -411,7 +411,7 @@ fun ledgerItemCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            contactAvatar(
+            ContactAvatar(
                 name = contact.name.ifBlank { contact.phone },
                 photoUri = contact.photoUri,
                 size = 36.dp,
@@ -433,7 +433,7 @@ fun ledgerItemCard(
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1
                     )
-                    appBadge(
+                    AppBadge(
                         text = status.ifEmpty { "SENT" },
                         color = statusColor,
                         showDot = true
@@ -467,7 +467,7 @@ fun ledgerItemCard(
 
             Spacer(modifier = Modifier.width(6.dp))
 
-            glassButton(
+            GlassButton(
                 text = "Re-queue",
                 onClick = onRequeue,
                 variant = GlassButtonVariant.SECONDARY,

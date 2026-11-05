@@ -41,7 +41,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param onImportSuccess Callback invoked following successful batch insertion.
  */
 @Composable
-fun bulkContactImportView(
+fun BulkContactImportView(
     repository: AppRepository,
     onPickCsv: () -> Unit,
     onBack: () -> Unit,
@@ -53,7 +53,7 @@ fun bulkContactImportView(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = "Import Contacts List",
                 subtitle = "Batch paste and normalization",
                 onBack = onBack
@@ -71,7 +71,7 @@ fun bulkContactImportView(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            appCard(modifier = Modifier.fillMaxWidth()) {
+            AppCard(modifier = Modifier.fillMaxWidth()) {
                 Text("Import Contacts from CSV or Text", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -86,14 +86,14 @@ fun bulkContactImportView(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                glassButton(
+                GlassButton(
                     text = "Pick CSV File",
                     icon = Icons.Default.FolderOpen,
                     onClick = onPickCsv,
                     variant = GlassButtonVariant.PRIMARY,
                     modifier = Modifier.weight(1f)
                 )
-                glassButton(
+                GlassButton(
                     text = "Paste Clipboard",
                     icon = Icons.Default.ContentPaste,
                     onClick = {
@@ -106,7 +106,7 @@ fun bulkContactImportView(
                 )
             }
 
-            glassInputField(
+            GlassInputField(
                 value = pasteText,
                 onValueChange = { pasteText = it },
                 label = "Paste Contacts / CSV Content",
@@ -118,7 +118,7 @@ fun bulkContactImportView(
                 accentColor = MaterialTheme.colorScheme.tertiary
             )
 
-            glassButton(
+            GlassButton(
                 text = "Import Pasted Text Now",
                 onClick = {
                     val count = repository.importContactsFromCsv(pasteText)

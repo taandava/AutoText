@@ -18,6 +18,8 @@
 package com.jmd.autotext.service
 
 import android.accessibilityservice.AccessibilityService
+import android.media.AudioManager
+import android.view.KeyEvent
 import android.app.AlarmManager
 import android.app.KeyguardManager
 import android.app.PendingIntent
@@ -735,9 +737,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 s.keyguardUnlockEngine.unlockPin = pin
                 s.keyguardUnlockEngine.shouldRelockAfterSend = shouldRelockAfterSend
                 s.keyguardUnlockEngine.isTestUnlockMode = isTestUnlockMode
-                s.keyguardUnlockEngine.unlockAttemptCount = 0
-                s.keyguardUnlockEngine.unlockLoopAttempts = 0
-                s.keyguardUnlockEngine.isEnteringPinDigits = false
+                s.keyguardUnlockEngine.resetInitialDelay()
                 s.startProactiveUnlockLoop()
                 s.handler.removeCallbacks(s.masterDisarmRunnable)
                 s.handler.postDelayed(s.masterDisarmRunnable, 15000L)
@@ -790,32 +790,41 @@ class AutoTextAccessibilityService : AccessibilityService() {
         }
 
         /**
-         * Immediately locks the physical screen using Android Pie+ accessibility global action or DeviceAdmin lockNow fallback.
+         * Immediately locks the physical screen mimicking the hardware Power button press
+         * via Android Pie+ [GLOBAL_ACTION_LOCK_SCREEN].
+         *
+         * Crucially: Never calls DevicePolicyManager.lockNow() because third-party device admin locks
+         * block biometrics (fingerprint/face unlock) and force manual PIN entry.
          */
         @JvmStatic
         fun lockScreenNow(): Boolean {
             return try {
                 notifyHeartbeat()
-                val inst = instance
+                var inst = instance
                 val ctx: Context = inst ?: runCatching { AutoTextApplication.instance }.getOrNull() ?: return false
+                if (inst == null && AccessibilityHealthManager.hasWriteSecureSettings(ctx)) {
+                    AccessibilityHealthManager.enableAccessibilityService(ctx)
+                    Thread.sleep(250)
+                    inst = instance
+                }
                 if (inst != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     val lockedCleanly = inst.performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
                     if (lockedCleanly) {
-                        Log.i(TAG, "Screen locked cleanly via Accessibility GLOBAL_ACTION_LOCK_SCREEN")
-                        AppFileLogger.i(ctx, TAG, "Screen locked cleanly via Accessibility GLOBAL_ACTION_LOCK_SCREEN")
+                        Log.i(TAG, "Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)")
+                        AppFileLogger.i(ctx, TAG, "Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)")
                         return true
+                    } else {
+                        Log.w(TAG, "GLOBAL_ACTION_LOCK_SCREEN returned false; falling back to minimizeToHome")
                     }
+                } else if (inst == null) {
+                    Log.w(TAG, "lockScreenNow: AccessibilityService instance is null; cannot dispatch GLOBAL_ACTION_LOCK_SCREEN")
                 }
-                val locked = AutoTextDeviceAdminReceiver.lockNow(ctx)
-                if (locked) {
-                    Log.i(TAG, "Screen locked via Device Admin lockNow() fallback")
-                    AppFileLogger.i(ctx, TAG, "Screen locked via Device Admin lockNow() fallback")
-                    return true
-                }
+                // Avoid third-party Device Admin lockNow() to preserve fingerprint and biometric unlock.
+                // Instead, return to Home Launcher so private chat screens are safely minimized.
                 inst?.performGlobalAction(GLOBAL_ACTION_HOME)
-                Log.w(TAG, "Screen lock fell back to HOME; ensure Device Admin is active")
-                AppFileLogger.w(ctx, TAG, "Screen lock fell back to HOME; ensure Device Admin is active")
-                false
+                Log.i(TAG, "Screen auto-lock minimized to Home launcher; avoided third-party lockNow to preserve fingerprint biometric unlock.")
+                AppFileLogger.i(ctx, TAG, "Screen auto-lock minimized to Home launcher (Biometrics safe)")
+                true
             } catch (t: Throwable) {
                 Log.e(TAG, "Error executing lockScreenNow", t)
                 false
@@ -851,7 +860,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val targetRoots = AccessibilityNodeUtils.getTargetRoots(inst, inst.windows)
             for (root in targetRoots) {
                 val pkg = root.packageName?.toString().orEmpty().lowercase()
-                if (pkg.contains("incall") || pkg.contains("dialer") || pkg.contains("phone") || pkg.contains("telecom")) {
+                if (pkg.contains("incall") || pkg.contains("dialer") || pkg.contains("phone") ||
+                    pkg.contains("telecom") || pkg.contains("contacts") || pkg.contains("telephonyui") ||
+                    pkg.contains("sec.phone") || pkg.contains("autodialer")) {
                     return true
                 }
             }
@@ -1214,7 +1225,13 @@ class AutoTextAccessibilityService : AccessibilityService() {
             onUnlockAbort = { reason ->
                 Log.w(TAG, "Auto-unlock aborted: $reason")
                 isUnlockPending = false
+                keyguardUnlockEngine.isUnlockPending = false
+                keyguardUnlockEngine.unlockAttemptCount = 0
+                keyguardUnlockEngine.isEnteringPinDigits = false
                 releaseUnlockWakeLock()
+                handler.removeCallbacks(unlockLoopRunnable)
+                handler.removeCallbacks(debouncedUnlockRunnable)
+                handler.removeCallbacks(masterDisarmRunnable)
                 if (isTestUnlockMode) {
                     isTestUnlockMode = false
                     showAppToast("Auto-unlock aborted: $reason", isLong = true)
@@ -1467,6 +1484,19 @@ class AutoTextAccessibilityService : AccessibilityService() {
             cancelIdleDetach()
             handler.removeCallbacks(sendRunnable)
             handler.postDelayed(sendRunnable, 500L)
+        } else if (isUnlockPending) {
+            cancelIdleDetach()
+            acquireUnlockWakeLock()
+            keyguardUnlockEngine.isUnlockPending = true
+            keyguardUnlockEngine.unlockPin = unlockPin
+            keyguardUnlockEngine.shouldRelockAfterSend = shouldRelockAfterSend
+            keyguardUnlockEngine.isTestUnlockMode = isTestUnlockMode
+            keyguardUnlockEngine.unlockAttemptCount = 0
+            keyguardUnlockEngine.unlockLoopAttempts = 0
+            keyguardUnlockEngine.isEnteringPinDigits = false
+            startProactiveUnlockLoop()
+            handler.removeCallbacks(masterDisarmRunnable)
+            handler.postDelayed(masterDisarmRunnable, 15000L)
         } else {
             val prefs = PreferenceManager(applicationContext ?: this)
             if (prefs.isDynamicA11yOnDemandEnabled && !isUnlockPending && !isTestUnlockMode) {
@@ -1506,6 +1536,19 @@ class AutoTextAccessibilityService : AccessibilityService() {
         if (isAutomating) {
             handler.removeCallbacks(sendRunnable)
             handler.postDelayed(sendRunnable, 300L)
+        } else if (isUnlockPending) {
+            cancelIdleDetach()
+            acquireUnlockWakeLock()
+            keyguardUnlockEngine.isUnlockPending = true
+            keyguardUnlockEngine.unlockPin = unlockPin
+            keyguardUnlockEngine.shouldRelockAfterSend = shouldRelockAfterSend
+            keyguardUnlockEngine.isTestUnlockMode = isTestUnlockMode
+            keyguardUnlockEngine.unlockAttemptCount = 0
+            keyguardUnlockEngine.unlockLoopAttempts = 0
+            keyguardUnlockEngine.isEnteringPinDigits = false
+            startProactiveUnlockLoop()
+            handler.removeCallbacks(masterDisarmRunnable)
+            handler.postDelayed(masterDisarmRunnable, 15000L)
         }
     }
 
@@ -1599,8 +1642,10 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
             }
 
-            // 0a. Detect Genuine Human Touch Interactions without false scroll/layout flags
-            val isGenuineUserTouch = when (eventType) {
+            // 0a. Detect Genuine Human Touch Interactions without false scroll/layout flags.
+            // Exclude touches generated by our own automated gesture taps within the last 1.8 seconds.
+            val isRecentAutomatedGesture = (System.currentTimeMillis() - AccessibilityNodeUtils.lastAutomatedGestureTimestamp) < 1800L
+            val isGenuineUserTouch = !isRecentAutomatedGesture && when (eventType) {
                 AccessibilityEvent.TYPE_GESTURE_DETECTION_START,
                 AccessibilityEvent.TYPE_TOUCH_INTERACTION_START -> true
                 else -> false
@@ -2211,8 +2256,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
     }
 
     fun requestEndWhatsAppCall(pkg: String): Boolean {
-        val root = rootInActiveWindow ?: return false
-        val ended = whatsAppCallEngine.endCurrentCall(root, windows)
+        val ended = whatsAppCallEngine.endCurrentCall(rootInActiveWindow, windows)
         if (ended) {
             Log.i(TAG, "requestEndWhatsAppCall: Successfully triggered End Call for $pkg")
             AppFileLogger.action(applicationContext, TAG, "Terminated active WhatsApp VoIP call for $pkg")
@@ -2227,25 +2271,49 @@ class AutoTextAccessibilityService : AccessibilityService() {
      * Programmatically terminates an active cellular phone call via accessibility click or TelecomManager.
      */
     fun requestEndPhoneCall(): Boolean {
+        val tm = getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
+        try {
+            tm?.showInCallScreen(false)
+        } catch (e: Exception) {
+            Log.d(TAG, "showInCallScreen: ${e.message}")
+        }
+
+        if (attemptClickEndButton()) return true
+
+        handler.postDelayed({
+            attemptClickEndButton()
+        }, 350L)
+
+        // Tertiary fallback: AudioManager media key event
+        try {
+            val am = getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+            if (am != null && am.mode == AudioManager.MODE_IN_CALL) {
+                am.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_HEADSETHOOK))
+                am.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_HEADSETHOOK))
+                AppFileLogger.action(applicationContext, TAG, "Dispatched KEYCODE_HEADSETHOOK fallback for ongoing phone call")
+                return true
+            }
+        } catch (e: Exception) {
+            Log.d(TAG, "dispatchMediaKeyEvent fallback: ${e.message}")
+        }
+
+        return false
+    }
+
+    private fun attemptClickEndButton(): Boolean {
         val targetRoots = AccessibilityNodeUtils.getTargetRoots(this, windows)
         for (root in targetRoots) {
-            val pkg = root.packageName?.toString().orEmpty()
-            val isInCallUi = pkg.contains("incall", ignoreCase = true) ||
-                    pkg.contains("dialer", ignoreCase = true) ||
-                    pkg.contains("phone", ignoreCase = true) ||
-                    pkg.contains("telecom", ignoreCase = true)
-            if (isInCallUi) {
-                val endBtn = findInCallEndButton(root)
-                if (endBtn != null) {
-                    val clicked = endBtn.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                    if (clicked) {
-                        Log.i(TAG, "requestEndPhoneCall: Successfully clicked End Call button in dialer ($pkg)")
-                        AppFileLogger.action(applicationContext, TAG, "Clicked End Call button in dialer ($pkg)")
-                        handler.postDelayed({
-                            minimizeToHome()
-                        }, 800L)
-                        return true
-                    }
+            val endBtn = findInCallEndButton(root)
+            if (endBtn != null) {
+                val clicked = AccessibilityNodeUtils.clickElement(endBtn, this)
+                if (clicked) {
+                    val pkg = root.packageName?.toString().orEmpty()
+                    Log.i(TAG, "requestEndPhoneCall: Successfully clicked End Call button in dialer ($pkg)")
+                    AppFileLogger.action(applicationContext, TAG, "Clicked End Call button in dialer ($pkg)")
+                    handler.postDelayed({
+                        minimizeToHome()
+                    }, 800L)
+                    return true
                 }
             }
         }
@@ -2265,12 +2333,24 @@ class AutoTextAccessibilityService : AccessibilityService() {
                     resId.endsWith("disconnect_button") ||
                     resId.endsWith("incall_end_call") ||
                     resId.endsWith("endbutton") ||
-                    resId.endsWith("end_call")
-            val isEndDesc = desc == "end call" || desc == "hang up" || desc == "end" || desc == "disconnect"
-            val isEndText = text == "end call" || text == "hang up" || text == "end"
+                    resId.endsWith("end_call") ||
+                    resId.endsWith("endcall") ||
+                    resId.contains("hangup") ||
+                    resId.contains("call_end") ||
+                    resId.contains("end_button") ||
+                    resId.contains("disconnect") ||
+                    resId.contains("btn_end") ||
+                    resId.contains("btn_call_end") ||
+                    resId.contains("reject")
+            val isEndDesc = desc == "end call" || desc == "hang up" || desc == "end" || desc == "disconnect" ||
+                    desc == "call end" || desc.contains("end call") || desc.contains("hang up") ||
+                    desc.contains("disconnect") || desc.contains("drop call") ||
+                    desc.contains("कॉल समाप्त") || desc.contains("अंतिम कॉल") || desc.contains("काटें")
+            val isEndText = text == "end call" || text == "hang up" || text == "end" || text == "disconnect" ||
+                    text.contains("end call") || text.contains("hang up") || text.contains("disconnect")
 
-            if ((isEndId || isEndDesc || isEndText) && (node.isClickable || node.parent?.isClickable == true)) {
-                return if (node.isClickable) node else node.parent
+            if (isEndId || isEndDesc || isEndText) {
+                return node
             }
 
             for (i in 0 until node.childCount) {

@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.sp
 
 import com.jmd.autotext.data.model.MessageTemplate
 import com.jmd.autotext.data.repo.AppRepository
-import com.jmd.autotext.ui.components.appEmptyState
-import com.jmd.autotext.ui.components.appSubScreenHeader
+import com.jmd.autotext.ui.components.AppEmptyState
+import com.jmd.autotext.ui.components.AppSubScreenHeader
 import com.jmd.autotext.ui.theme.AppDesignTokens
 
 /**
@@ -35,7 +35,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param onBack Callback invoked when user exits the templates view.
  */
 @Composable
-fun templatesView(repository: AppRepository, onBack: () -> Unit) {
+fun TemplatesView(repository: AppRepository, onBack: () -> Unit) {
     var templates by remember { mutableStateOf(repository.getAllTemplates()) }
     var isFormOpen by remember { mutableStateOf(value = false) }
     var editingTemplate by remember { mutableStateOf<MessageTemplate?>(null) }
@@ -46,7 +46,7 @@ fun templatesView(repository: AppRepository, onBack: () -> Unit) {
     }
 
     if (isFormOpen) {
-        templateFormView(
+        TemplateFormView(
             editingTemplate = editingTemplate,
             repository = repository,
             onBack = {
@@ -63,7 +63,7 @@ fun templatesView(repository: AppRepository, onBack: () -> Unit) {
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             topBar = {
-                appSubScreenHeader(
+                AppSubScreenHeader(
                     title = "Message Templates",
                     subtitle = "${templates.size} reusable drafts",
                     onBack = onBack
@@ -94,14 +94,14 @@ fun templatesView(repository: AppRepository, onBack: () -> Unit) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    appEmptyState(
+                    AppEmptyState(
                         title = "No Templates Saved",
                         description = "Create reusable templates with dynamic tags like {name}, {greeting}, and {date}.",
                         icon = Icons.Default.FormatQuote,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    com.jmd.autotext.ui.components.glassButton(
+                    com.jmd.autotext.ui.components.GlassButton(
                         text = "Load Starter India Templates 🇮🇳",
                         emoji = "✨",
                         variant = com.jmd.autotext.ui.components.GlassButtonVariant.PRIMARY,
@@ -150,7 +150,7 @@ fun templatesView(repository: AppRepository, onBack: () -> Unit) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(templates, key = { it.id }) { t ->
-                        templateItemCard(
+                        TemplateItemCard(
                             template = t,
                             onEdit = {
                                 editingTemplate = t

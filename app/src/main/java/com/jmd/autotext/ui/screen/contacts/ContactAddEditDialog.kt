@@ -37,7 +37,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param onSaved Callback invoked when contact is successfully persisted.
  */
 @Composable
-fun addEditContactView(
+fun AddEditContactView(
     editingRecipient: RecipientItem?,
     repository: AppRepository,
     onBack: () -> Unit,
@@ -50,7 +50,7 @@ fun addEditContactView(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = if (editingRecipient != null) "Edit Contact" else "Add Contact",
                 subtitle = "Custom contact entry",
                 onBack = onBack
@@ -68,9 +68,9 @@ fun addEditContactView(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            appCard(modifier = Modifier.fillMaxWidth()) {
+            AppCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    glassInputField(
+                    GlassInputField(
                         value = contactName,
                         onValueChange = { contactName = it },
                         label = "Contact Name",
@@ -78,7 +78,7 @@ fun addEditContactView(
                         leadingIcon = Icons.Default.Person,
                         accentColor = MaterialTheme.colorScheme.tertiary
                     )
-                    glassInputField(
+                    GlassInputField(
                         value = contactPhone,
                         onValueChange = { contactPhone = it },
                         label = "Phone Number",
@@ -90,7 +90,7 @@ fun addEditContactView(
                 }
             }
 
-            glassButton(
+            GlassButton(
                 text = if (editingRecipient != null) "Update Contact" else "Save Contact",
                 icon = Icons.Default.Check,
                 onClick = {

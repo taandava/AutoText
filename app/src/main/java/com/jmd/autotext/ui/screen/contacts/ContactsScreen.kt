@@ -41,7 +41,7 @@ import com.jmd.autotext.data.repo.AppRepository
 import com.jmd.autotext.engine.ContactIngestionEngine
 import com.jmd.autotext.service.AutoTextAccessibilityService
 import com.jmd.autotext.ui.components.*
-import com.jmd.autotext.ui.screen.sequence.contactSequenceStudio
+import com.jmd.autotext.ui.screen.sequence.ContactSequenceStudio
 import com.jmd.autotext.ui.theme.AppDesignTokens
 import com.jmd.autotext.whatsapp.WhatsAppChatScanner
 
@@ -55,7 +55,7 @@ import com.jmd.autotext.whatsapp.WhatsAppChatScanner
  * @param onBack Callback invoked to exit contacts management.
  */
 @Composable
-fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
+fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var selectedTab by remember { mutableIntStateOf(0) } // 0 = Custom/CSV, 1 = Dynamic Pool, 2 = WhatsApp Groups
@@ -84,7 +84,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
     }
 
     if (sequenceTargetContactPhone.isNotBlank()) {
-        contactSequenceStudio(
+        ContactSequenceStudio(
             initialContactName = sequenceTargetContactName,
             initialContactPhone = sequenceTargetContactPhone,
             onDismiss = {
@@ -146,7 +146,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
     }
 
     if (isAddingContact) {
-        addEditContactView(
+        AddEditContactView(
             editingRecipient = editingRecipient,
             repository = repository,
             onBack = {
@@ -160,7 +160,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
             },
         )
     } else if (isImporting) {
-        bulkContactImportView(
+        BulkContactImportView(
             repository = repository,
             onPickCsv = {
                 isImporting = false
@@ -176,7 +176,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             topBar = {
-                appSubScreenHeader(
+                AppSubScreenHeader(
                     title = "Contacts & Groups Hub",
                     subtitle = when (selectedTab) {
                         1 -> "${poolStats.totalCount} dynamic pool leads"
@@ -318,7 +318,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
             ) {
                 // Unified 3-Tab Segmented Selector
                 item {
-                    glassSegmentedControl(
+                    GlassSegmentedControl(
                         items = listOf(
                             "📄 Custom & CSV",
                             "👥 Dynamic Pool (${poolStats.totalCount})",
@@ -337,7 +337,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                 // TAB 0: Custom & CSV Contacts
                 if (selectedTab == 0) {
                     item {
-                        appCard(modifier = Modifier.fillMaxWidth()) {
+                        AppCard(modifier = Modifier.fillMaxWidth()) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -349,13 +349,13 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                     Text("Saved: ${recipients.size}", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.5.sp)
                                 }
                                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                                    glassButton(
+                                    GlassButton(
                                         text = "Export CSV",
                                         icon = Icons.Default.FileDownload,
                                         onClick = { csvExportLauncher.launch("autotext_contacts.csv") },
                                         variant = GlassButtonVariant.SECONDARY
                                     )
-                                    glassButton(
+                                    GlassButton(
                                         text = "Import CSV",
                                         icon = Icons.Default.FileUpload,
                                         onClick = { csvPickerLauncher.launch("*/*") },
@@ -368,7 +368,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
 
                     if (recipients.isEmpty()) {
                         item {
-                            appEmptyState(
+                            AppEmptyState(
                                 title = "No Contacts Imported Yet",
                                 description = "Tap below to add contacts individually or paste CSV phone numbers.",
                                 icon = Icons.Default.Group,
@@ -377,7 +377,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                         }
                     } else {
                         items(recipients, key = { it.id }) { r ->
-                            bulkContactItemCard(
+                            BulkContactItemCard(
                                 recipient = r,
                                 onEdit = {
                                     editingRecipient = r
@@ -399,7 +399,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                 // TAB 1: Dynamic Lead Pool
                 else if (selectedTab == 1) {
                     item {
-                        glassSearchField(
+                        GlassSearchField(
                             value = poolSearch,
                             onValueChange = { poolSearch = it },
                             placeholder = "Search ${poolStats.totalCount} lead pool contacts...",
@@ -410,7 +410,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
 
                     if (poolContacts.isEmpty()) {
                         item {
-                            appEmptyState(
+                            AppEmptyState(
                                 title = "No Leads in Pool",
                                 description = "Tap 'Sync Lead Pool' below to harvest contacts from device calls, SMS, and WhatsApp chats.",
                                 icon = Icons.Default.PeopleOutline,
@@ -419,14 +419,14 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                         }
                     } else {
                         items(poolContacts, key = { it.id }) { c ->
-                            appCard(modifier = Modifier.fillMaxWidth()) {
+                            AppCard(modifier = Modifier.fillMaxWidth()) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                        contactAvatar(
+                                        ContactAvatar(
                                             name = c.name.ifBlank { c.phone },
                                             photoUri = c.photoUri,
                                             size = 36.dp,
@@ -449,7 +449,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                                     modifier = Modifier.weight(1f, fill = false)
                                                 )
                                                 Spacer(modifier = Modifier.width(6.dp))
-                                                appBadge(
+                                                AppBadge(
                                                     text = c.source,
                                                     color = when (c.source) {
                                                         "WA_CHAT", "WA_BUSINESS" -> MaterialTheme.colorScheme.tertiary
@@ -511,7 +511,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                 // TAB 2: WhatsApp Groups
                 else {
                     item {
-                        glassSearchField(
+                        GlassSearchField(
                             value = groupSearch,
                             onValueChange = { groupSearch = it },
                             placeholder = "Search ${groupsList.size} discovered groups...",
@@ -522,7 +522,7 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
 
                     if (groupsList.isEmpty()) {
                         item {
-                            appEmptyState(
+                            AppEmptyState(
                                 title = "No WhatsApp Groups Found",
                                 description = "Tap 'Harvest Groups' below or use 'Pick in WA' when composing group messages to discover groups.",
                                 icon = Icons.Default.GroupOff,
@@ -531,14 +531,14 @@ fun bulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                         }
                     } else {
                         items(groupsList, key = { it.id }) { g ->
-                            appCard(modifier = Modifier.fillMaxWidth()) {
+                            AppCard(modifier = Modifier.fillMaxWidth()) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                        contactAvatar(
+                                        ContactAvatar(
                                             name = g.name,
                                             size = 36.dp,
                                             badgeIcon = Icons.Default.Group,

@@ -39,7 +39,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onSnooze Callback receiving snooze duration in minutes (e.g., 5, 10, or 15 mins).
  */
 @Composable
-fun reminderScreen(
+fun ReminderScreen(
     title: String,
     text: String,
     onDismiss: () -> Unit,
@@ -85,7 +85,7 @@ fun reminderScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            appCardElevated(
+            AppCardElevated(
                 modifier = Modifier.fillMaxWidth(),
                 accentGlow = MaterialTheme.colorScheme.primary
             ) {
@@ -104,7 +104,7 @@ fun reminderScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                glassButton(
+                GlassButton(
                     text = "Snooze 5m",
                     onClick = { onSnooze(5) },
                     variant = GlassButtonVariant.SECONDARY,
@@ -112,7 +112,7 @@ fun reminderScreen(
                     modifier = Modifier.weight(1f)
                 )
 
-                glassButton(
+                GlassButton(
                     text = "Dismiss",
                     onClick = onDismiss,
                     variant = GlassButtonVariant.SUCCESS,
@@ -130,14 +130,14 @@ fun reminderScreen(
 
 
 @Composable
-fun reminderComposerCard(
+fun ReminderComposerCard(
     reminderTitle: String,
     onReminderTitleChange: (String) -> Unit,
     messageText: String,
     onMessageTextChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.45f)
     ) {
@@ -182,7 +182,7 @@ fun reminderComposerCard(
             }
 
             // Reminder Title / Subject
-            glassInputField(
+            GlassInputField(
                 value = reminderTitle,
                 onValueChange = onReminderTitleChange,
                 label = "Reminder Title",
@@ -192,7 +192,7 @@ fun reminderComposerCard(
             )
 
             // Voice Speech & Display Note
-            glassInputField(
+            GlassInputField(
                 value = messageText,
                 onValueChange = onMessageTextChange,
                 label = "Voice Speech Note (TTS)",

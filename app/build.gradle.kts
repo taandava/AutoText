@@ -101,17 +101,8 @@ android {
 
     lint {
         checkReleaseBuilds = false
-        abortOnError = false
+        abortOnError = true
         warningsAsErrors = false
-        // ComposableNaming is intentionally retained: this codebase has adopted lowerCamelCase
-        // composable names as its established convention across ~85 declarations and hundreds of
-        // call sites. Renaming them is tracked separately as a deliberate refactor.
-        disable += setOf(
-            "ComposableNaming",
-            "ScopedStorage",
-            "QueryAllPackagesPermission",
-            "ProtectedPermissions"
-        )
     }
 }
 

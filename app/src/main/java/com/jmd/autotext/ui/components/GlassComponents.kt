@@ -47,7 +47,7 @@ import com.jmd.autotext.ui.theme.Material3DesignTokens
 // ============================================================================
 
 /**
- * Style variants for the [glassButton] component.
+ * Style variants for the [GlassButton] component.
  */
 enum class GlassButtonVariant {
     /** Primary theme button with high contrast brand orange fill. */
@@ -66,7 +66,7 @@ enum class GlassButtonVariant {
  * Reusable Material 3 Expressive Button with responsive ripple and compact vertical footprint.
  */
 @Composable
-fun glassButton(
+fun GlassButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -169,7 +169,7 @@ fun glassButton(
  * Compact status indicator badge using Material 3 tonal color container.
  */
 @Composable
-fun appBadge(
+fun AppBadge(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
@@ -216,7 +216,7 @@ fun appBadge(
  * Segmented control switch with Material 3 Expressive pill indicator.
  */
 @Composable
-fun glassSegmentedControl(
+fun GlassSegmentedControl(
     items: List<String>,
     selectedIndex: Int,
     onItemSelected: (Int) -> Unit,
@@ -278,7 +278,7 @@ fun glassSegmentedControl(
  * Material 3 Filter Chip with compact dimensions and animated selection feedback.
  */
 @Composable
-fun glassChip(
+fun GlassChip(
     selected: Boolean,
     onClick: () -> Unit,
     label: String,
@@ -348,7 +348,7 @@ fun glassChip(
  * Standard settings and preference toggle row with icon, title, subtitle, and compact M3 switch.
  */
 @Composable
-fun glassToggleRow(
+fun GlassToggleRow(
     title: String,
     subtitle: String,
     checked: Boolean,
@@ -422,7 +422,7 @@ fun glassToggleRow(
  * Compact custom animated switch toggle.
  */
 @Composable
-fun compactSwitch(
+fun CompactSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -449,7 +449,7 @@ fun compactSwitch(
  * Standard full-width Material 3 card container using tonal surface tokens.
  */
 @Composable
-fun appCard(
+fun AppCard(
     modifier: Modifier = Modifier,
     shape: RoundedCornerShape = Material3DesignTokens.ShapeMedium,
     backgroundColor: Color = Color.Unspecified,
@@ -522,7 +522,7 @@ fun appCard(
  * Elevated card container featuring a prominent accent top border.
  */
 @Composable
-fun appCardElevated(
+fun AppCardElevated(
     modifier: Modifier = Modifier,
     shape: RoundedCornerShape = Material3DesignTokens.ShapeMedium,
     accentGlow: Color? = null,
@@ -594,7 +594,7 @@ fun appCardElevated(
  * Metric summary card displaying numerical counters, category titles, and status hints.
  */
 @Composable
-fun appStatCard(
+fun AppStatCard(
     modifier: Modifier = Modifier,
     title: String,
     value: String,
@@ -604,7 +604,7 @@ fun appStatCard(
     subText: String? = null,
     onClick: (() -> Unit)? = null
 ) {
-    appCard(
+    AppCard(
         modifier = modifier,
         shape = AppDesignTokens.ShapeSmall,
         backgroundColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -654,7 +654,7 @@ fun appStatCard(
  * Centered empty state placeholder with icon/emoji, title, and clear action button.
  */
 @Composable
-fun appEmptyState(
+fun AppEmptyState(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
@@ -663,7 +663,7 @@ fun appEmptyState(
     actionText: String? = null,
     onActionClick: (() -> Unit)? = null
 ) {
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeMedium,
         backgroundColor = MaterialTheme.colorScheme.surfaceContainerLow
@@ -701,7 +701,7 @@ fun appEmptyState(
             )
             if (actionText != null && onActionClick != null) {
                 Spacer(modifier = Modifier.height(8.dp))
-                glassButton(
+                GlassButton(
                     text = actionText,
                     onClick = onActionClick,
                     variant = GlassButtonVariant.PRIMARY
@@ -715,11 +715,11 @@ fun appEmptyState(
  * Modal dialog container card wrapping elevated surfaces.
  */
 @Composable
-fun appDialogCard(
+fun AppDialogCard(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    appCardElevated(
+    AppCardElevated(
         modifier = modifier.fillMaxWidth(),
         shape = Material3DesignTokens.ShapeMedium,
         accentGlow = MaterialTheme.colorScheme.primary,
@@ -733,7 +733,7 @@ fun appDialogCard(
  * bold title, optional subtitle, back navigation, and customizable actions.
  */
 @Composable
-fun appSubScreenHeader(
+fun AppSubScreenHeader(
     title: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,

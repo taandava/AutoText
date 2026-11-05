@@ -22,12 +22,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.jmd.autotext.data.model.AppInfoItem
 import com.jmd.autotext.data.model.AppPrivacyConfig
-import com.jmd.autotext.ui.components.appBadge
-import com.jmd.autotext.ui.components.glassButton
+import com.jmd.autotext.ui.components.AppBadge
+import com.jmd.autotext.ui.components.GlassButton
 import com.jmd.autotext.ui.components.GlassButtonVariant
 
 @Composable
-fun appPrivacyDetailDialog(
+fun AppPrivacyDetailDialog(
     appInfo: AppInfoItem,
     initialConfig: AppPrivacyConfig,
     onSave: (AppPrivacyConfig) -> Unit,
@@ -83,9 +83,9 @@ fun appPrivacyDetailDialog(
                         )
                     }
                     if (appInfo.isBankingOrFinancial) {
-                        appBadge(text = "FINANCIAL", color = MaterialTheme.colorScheme.error, showDot = true)
+                        AppBadge(text = "FINANCIAL", color = MaterialTheme.colorScheme.error, showDot = true)
                     } else if (appInfo.isSystemApp) {
-                        appBadge(text = "SYSTEM", color = MaterialTheme.colorScheme.secondary)
+                        AppBadge(text = "SYSTEM", color = MaterialTheme.colorScheme.secondary)
                     }
                 }
 
@@ -99,7 +99,7 @@ fun appPrivacyDetailDialog(
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     // 1. Master Isolation Switch
-                    privacyControlToggle(
+                    PrivacyControlToggle(
                         title = "Shield & Exclude Application",
                         subtitle = "Isolates AutoText completely from this app and omits it from accessibility targets.",
                         checked = isExcluded,
@@ -107,8 +107,8 @@ fun appPrivacyDetailDialog(
                     )
 
                     // 2. Block Automation Actions
-                    privacyControlToggle(
-                        title = "Block AutoText Automation Actions",
+                    PrivacyControlToggle(
+                        title = "Block Task Actions",
                         subtitle = "Prevents any simulated taps, message dispatches, or navigation targeted at this app.",
                         checked = disableAutomation,
                         enabled = isExcluded,
@@ -116,7 +116,7 @@ fun appPrivacyDetailDialog(
                     )
 
                     // 3. Block Overlays & Wake Windows
-                    privacyControlToggle(
+                    PrivacyControlToggle(
                         title = "Block Overlays & Wake Windows",
                         subtitle = "Suppresses floating banners, popups, and call simulation alerts while using this app.",
                         checked = blockOverlays,
@@ -125,7 +125,7 @@ fun appPrivacyDetailDialog(
                     )
 
                     // 4. Suppress Notifications
-                    privacyControlToggle(
+                    PrivacyControlToggle(
                         title = "Suppress Heads-Up Notifications",
                         subtitle = "Mutes non-critical notification alerts while this application is in the foreground.",
                         checked = suppressNotifications,
@@ -134,7 +134,7 @@ fun appPrivacyDetailDialog(
                     )
 
                     // 5. Disable Clipboard Read/Write
-                    privacyControlToggle(
+                    PrivacyControlToggle(
                         title = "Disable Clipboard Operations",
                         subtitle = "Never copies, pastes, or reads clipboard content when interacting with this app.",
                         checked = disableClipboard,
@@ -143,7 +143,7 @@ fun appPrivacyDetailDialog(
                     )
 
                     // 6. Mask Sensitive Content
-                    privacyControlToggle(
+                    PrivacyControlToggle(
                         title = "Mask Sensitive Content in Audit Logs",
                         subtitle = "Obfuscates message bodies and phone numbers with asterisks in execution history.",
                         checked = maskSensitiveContent,
@@ -152,7 +152,7 @@ fun appPrivacyDetailDialog(
                     )
 
                     // 7. Disable Trigger Rules
-                    privacyControlToggle(
+                    PrivacyControlToggle(
                         title = "Disable Incoming Trigger Rules",
                         subtitle = "Ignores notification auto-replies or automated triggers originating from this app.",
                         checked = disableRules,
@@ -179,7 +179,7 @@ fun appPrivacyDetailDialog(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    glassButton(
+                    GlassButton(
                         text = "Reset",
                         variant = GlassButtonVariant.SECONDARY,
                         modifier = Modifier.weight(1f),
@@ -194,13 +194,13 @@ fun appPrivacyDetailDialog(
                             customNotes = ""
                         }
                     )
-                    glassButton(
+                    GlassButton(
                         text = "Cancel",
                         variant = GlassButtonVariant.SECONDARY,
                         modifier = Modifier.weight(1f),
                         onClick = onDismiss
                     )
-                    glassButton(
+                    GlassButton(
                         text = "Save",
                         variant = GlassButtonVariant.PRIMARY,
                         modifier = Modifier.weight(1.2f),
@@ -226,7 +226,7 @@ fun appPrivacyDetailDialog(
 }
 
 @Composable
-private fun privacyControlToggle(
+private fun PrivacyControlToggle(
     title: String,
     subtitle: String,
     checked: Boolean,

@@ -44,7 +44,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onDecline Invoked when call is rejected or hung up to finish the activity.
  */
 @Composable
-fun callSimulationScreen(
+fun CallSimulationScreen(
     name: String,
     number: String,
     style: String,
@@ -253,16 +253,16 @@ fun callSimulationScreen(
 }
 
 /**
- * Backward-compatible alias for [callSimulationScreen].
+ * Backward-compatible alias for [CallSimulationScreen].
  */
 @Composable
-fun simulatedCallScreen(
+fun SimulatedCallScreen(
     name: String,
     number: String,
     style: String,
     onAnswer: () -> Unit,
     onDecline: () -> Unit,
 ) {
-    callSimulationScreen(name, number, style, onAnswer, onDecline)
+    CallSimulationScreen(name, number, style, onAnswer, onDecline)
 }
 

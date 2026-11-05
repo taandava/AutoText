@@ -39,13 +39,13 @@ import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.data.repo.AppRepository
 import com.jmd.autotext.receiver.TaskAlarmReceiver
 import com.jmd.autotext.scheduler.AlarmScheduler
-import com.jmd.autotext.ui.components.appCardElevated
-import com.jmd.autotext.ui.components.appEmptyState
-import com.jmd.autotext.ui.components.glassSearchField
-import com.jmd.autotext.ui.components.glassSegmentedControl
-import com.jmd.autotext.ui.screen.sequence.contactSequenceCard
-import com.jmd.autotext.ui.screen.sequence.contactSequenceStudio
-import com.jmd.autotext.ui.screen.taskTypeSelectionDialog
+import com.jmd.autotext.ui.components.AppCardElevated
+import com.jmd.autotext.ui.components.AppEmptyState
+import com.jmd.autotext.ui.components.GlassSearchField
+import com.jmd.autotext.ui.components.GlassSegmentedControl
+import com.jmd.autotext.ui.screen.sequence.ContactSequenceCard
+import com.jmd.autotext.ui.screen.sequence.ContactSequenceStudio
+import com.jmd.autotext.ui.screen.TaskTypeSelectionDialog
 import com.jmd.autotext.ui.theme.AppDesignTokens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -61,7 +61,7 @@ import kotlinx.coroutines.withContext
  * @param onStudioStateChanged Callback notifying when sequence studio is opened or closed.
  */
 @Composable
-fun tasksListScreen(
+fun TasksListScreen(
     initialCategoryTab: Int = 0,
     onNavigateToCompose: (ChannelType) -> Unit,
     onNavigateToSequenceStudio: (Long) -> Unit = {},
@@ -101,7 +101,7 @@ fun tasksListScreen(
     }
 
     if (isStudioOpen) {
-        contactSequenceStudio(
+        ContactSequenceStudio(
             sequenceId = studioSequenceId ?: 0L,
             initialChannel = studioSequenceChannel,
             onDismiss = {
@@ -159,7 +159,7 @@ fun tasksListScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // Main Mode Tab: Single Tasks vs Contact Sequences
-            glassSegmentedControl(
+            GlassSegmentedControl(
                 items = listOf("Single Tasks (${tasks.size})", "Contact Sequences (${sequences.size})"),
                 selectedIndex = mainCategoryTab,
                 onItemSelected = { mainCategoryTab = it },
@@ -167,7 +167,7 @@ fun tasksListScreen(
             )
 
             // Enterprise Modern Glass Search Bar
-            glassSearchField(
+            GlassSearchField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 placeholder = if (mainCategoryTab == 0) "Search tasks, contacts or message..." else "Search sequence contact, phone or title...",
@@ -177,7 +177,7 @@ fun tasksListScreen(
 
             if (mainCategoryTab == 0) {
                 // Top Master Task Scheduler Engine Banner
-                appCardElevated(
+                AppCardElevated(
                     modifier = Modifier.fillMaxWidth(),
                     shape = AppDesignTokens.ShapeMedium
                 ) {
@@ -244,7 +244,7 @@ fun tasksListScreen(
                 val failedTasksCount = remember(tasks) { tasks.count { it.status == TaskStatus.FAILED } }
 
                 // Enterprise Modern Segmented Status Filter with Live Counts
-                glassSegmentedControl(
+                GlassSegmentedControl(
                     items = listOf("All (${tasks.size})", "Active ($pendingTasksCount)", "Sent ($doneTasksCount)", "Failed ($failedTasksCount)"),
                     selectedIndex = selectedTab,
                     onItemSelected = { selectedTab = it },
@@ -259,7 +259,7 @@ fun tasksListScreen(
                             .padding(top = 20.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        appEmptyState(
+                        AppEmptyState(
                             icon = Icons.Default.Inbox,
                             title = "No Tasks Found",
                             description = if (searchQuery.isNotEmpty()) "No tasks match your search filter." else "No scheduled tasks in this section. Create your first automated schedule!",
@@ -274,7 +274,7 @@ fun tasksListScreen(
                         contentPadding = PaddingValues(bottom = 80.dp)
                     ) {
                         items(filteredTasks, key = { it.id }) { task ->
-                            taskCard(
+                            TaskCard(
                                 task = task,
                                 onRunNow = {
                                     repository.updateTaskStatus(task.id, TaskStatus.PENDING)
@@ -320,7 +320,7 @@ fun tasksListScreen(
                             .padding(top = 20.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        appEmptyState(
+                        AppEmptyState(
                             icon = Icons.AutoMirrored.Filled.AltRoute,
                             title = "No Contact Sequences",
                             description = if (searchQuery.isNotEmpty()) "No sequences match your search." else "Create multiple scheduled tasks inside a single contact with custom intervals across SMS and WhatsApp!",
@@ -338,7 +338,7 @@ fun tasksListScreen(
                         contentPadding = PaddingValues(bottom = 80.dp)
                     ) {
                         items(filteredSequences, key = { it.id }) { seq ->
-                            contactSequenceCard(
+                            ContactSequenceCard(
                                 sequence = seq,
                                 onEdit = {
                                     onNavigateToSequenceStudio(seq.id)
@@ -387,7 +387,7 @@ fun tasksListScreen(
         }
 
         if (showTaskTypeDialog) {
-            taskTypeSelectionDialog(
+            TaskTypeSelectionDialog(
                 onDismiss = { showTaskTypeDialog = false },
                 onSelectChannel = { channel ->
                     showTaskTypeDialog = false

@@ -34,11 +34,11 @@ import com.jmd.autotext.data.model.ChannelType
 import com.jmd.autotext.data.model.ScheduledTask
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.ui.components.SystemIndicatorResolver
-import com.jmd.autotext.ui.components.appHeaderStatusIndicators
-import com.jmd.autotext.ui.screen.autoreply.autoReplyScreen
-import com.jmd.autotext.ui.screen.campaign.dailyAutoSenderScreen
-import com.jmd.autotext.ui.screen.compose.composeTaskScreen
-import com.jmd.autotext.ui.screen.tasks.tasksListScreen
+import com.jmd.autotext.ui.components.AppHeaderStatusIndicators
+import com.jmd.autotext.ui.screen.autoreply.AutoReplyScreen
+import com.jmd.autotext.ui.screen.campaign.DailyAutoSenderScreen
+import com.jmd.autotext.ui.screen.compose.ComposeTaskScreen
+import com.jmd.autotext.ui.screen.tasks.TasksListScreen
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -50,7 +50,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * @param onThemeChanged Callback invoked when user modifies color theme settings.
  */
 @Composable
-fun mainAppHost(
+fun MainAppHost(
     sharedText: String? = null,
     onSharedTextConsumed: () -> Unit = {},
     onThemeChanged: (String) -> Unit = {},
@@ -83,7 +83,7 @@ fun mainAppHost(
     }
 
     if (showTaskTypeDialog) {
-        taskTypeSelectionDialog(
+        TaskTypeSelectionDialog(
             onDismiss = { showTaskTypeDialog = false },
             onSelectChannel = { channel ->
                 showTaskTypeDialog = false
@@ -105,7 +105,7 @@ fun mainAppHost(
     }
 
     if (isComposing) {
-        composeTaskScreen(
+        ComposeTaskScreen(
             initialChannel = editingTask?.channel ?: composeChannel,
             initialMessage = initialComposeMessage,
             taskToEdit = editingTask,
@@ -232,7 +232,7 @@ fun mainAppHost(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                appHeaderStatusIndicators(
+                                AppHeaderStatusIndicators(
                                     indicators = systemIndicators,
                                     onClick = {
                                         toolsInitialSubSection = "PERMISSIONS"
@@ -376,7 +376,7 @@ fun mainAppHost(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "🛑 EMERGENCY STOP ACTIVE — Automation halted",
+                                "🛑 EMERGENCY STOP ACTIVE — Tasks paused",
                                 color = MaterialTheme.colorScheme.onErrorContainer,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
@@ -403,7 +403,7 @@ fun mainAppHost(
                         .weight(1f)
                 ) {
                 when (currentTab) {
-                    0 -> tasksListScreen(
+                    0 -> TasksListScreen(
                         initialCategoryTab = tasksInitialCategory,
                         onNavigateToCompose = { channel ->
                             editingTask = null
@@ -422,11 +422,11 @@ fun mainAppHost(
                         },
                         onStudioStateChanged = { isTasksStudioOpen = it }
                     )
-                    1 -> dailyAutoSenderScreen(
+                    1 -> DailyAutoSenderScreen(
                         initialCampaignId = selectedDailyCampaignId,
                         onCampaignIdChange = { selectedDailyCampaignId = it }
                     )
-                    2 -> autoReplyScreen(
+                    2 -> AutoReplyScreen(
                         onEditingStateChanged = { isAutoReplyEditing = it }
                     )
                     3 -> moreScreen(

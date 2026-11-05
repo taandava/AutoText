@@ -181,8 +181,11 @@ object AccessibilityHealthManager {
     /**
      * Polls for accessibility service readiness up to [timeoutMs] before dependent tasks run.
      */
-    fun waitForServiceReadiness(context: Context, timeoutMs: Long = 3000L): Boolean {
+    fun waitForServiceReadiness(context: Context, timeoutMs: Long = 5000L): Boolean {
         if (isServiceOperational()) return true
+        if (hasWriteSecureSettings(context) && !isAccessibilityEnabledInSystem(context)) {
+            enableAccessibilityService(context)
+        }
         val start = System.currentTimeMillis()
         while (!isServiceOperational() && (System.currentTimeMillis() - start) < timeoutMs) {
             runCatching { Thread.sleep(120) }
@@ -451,61 +454,12 @@ object AccessibilityHealthManager {
 
     /**
      * Dispatches intent to launch OEM-specific background management, autostart, or battery settings.
+     * Delegates to [OemBrandHelper] covering Vivo, Oppo, Samsung, Xiaomi, Motorola, Nokia, OnePlus, Realme,
+     * Huawei, Honor, Transsion, and Asus.
      *
      * @param context Active Android [Context].
      */
     fun openOemBackgroundSettings(context: Context) {
-        val manufacturer = Build.MANUFACTURER.lowercase()
-        val intentsToTry = mutableListOf<Intent>()
-
-        when {
-            manufacturer.contains("samsung") -> {
-                intentsToTry.add(Intent().apply {
-                    component = ComponentName("com.samsung.android.lool", "com.samsung.android.sm.ui.battery.BatteryActivity")
-                })
-                intentsToTry.add(Intent().apply {
-                    component = ComponentName("com.samsung.android.sm", "com.samsung.android.sm.ui.battery.BatteryActivity")
-                })
-            }
-            manufacturer.contains("xiaomi") || manufacturer.contains("redmi") || manufacturer.contains("poco") -> {
-                intentsToTry.add(Intent().apply {
-                    component = ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity")
-                })
-            }
-            manufacturer.contains("huawei") || manufacturer.contains("honor") -> {
-                intentsToTry.add(Intent().apply {
-                    component = ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity")
-                })
-            }
-            manufacturer.contains("oppo") || manufacturer.contains("realme") -> {
-                intentsToTry.add(Intent().apply {
-                    component = ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity")
-                })
-            }
-            manufacturer.contains("vivo") || manufacturer.contains("iqoo") -> {
-                intentsToTry.add(Intent().apply {
-                    component = ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.PurviewTabActivity")
-                })
-                intentsToTry.add(Intent().apply {
-                    component = ComponentName("com.vivo.abe", "com.vivo.abe.ui.ExcessivePowerManagerActivity")
-                })
-                intentsToTry.add(Intent().apply {
-                    component = ComponentName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.AddWhiteListActivity")
-                })
-            }
-        }
-
-        intentsToTry.add(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
-        intentsToTry.add(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            data = "package:${context.packageName}".toUri()
-        })
-
-        for (intent in intentsToTry) {
-            runCatching {
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                context.startActivity(intent)
-                return
-            }
-        }
+        OemBrandHelper.openOemBackgroundSettings(context)
     }
 }

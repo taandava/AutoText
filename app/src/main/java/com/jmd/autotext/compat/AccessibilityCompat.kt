@@ -14,8 +14,8 @@ import android.view.accessibility.AccessibilityNodeInfo
  *
  * Safely accesses toggle and checkbox checked states across legacy and modern Android releases.
  * In Android 16+ (API 36/37), [AccessibilityNodeInfo.isChecked] was deprecated in favor of
- * [AccessibilityNodeInfo.getChecked]. On API < 36, [AccessibilityNodeInfo.isChecked] is the
- * only available framework method.
+ * tri-state [AccessibilityNodeInfo.getChecked]. On API < 36, [AccessibilityNodeInfo.isChecked]
+ * is the sole framework method available on the device runtime.
  */
 object AccessibilityCompat {
 
@@ -26,12 +26,12 @@ object AccessibilityCompat {
      * @return True if checked, false otherwise.
      */
     @JvmStatic
-    @Suppress("DEPRECATION")
     fun isNodeChecked(node: AccessibilityNodeInfo?): Boolean {
         if (node == null) return false
         if (Build.VERSION.SDK_INT >= 36) {
             return node.checked == AccessibilityNodeInfo.CHECKED_STATE_TRUE
         }
+        @Suppress("DEPRECATION")
         return node.isChecked
     }
 }

@@ -55,7 +55,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onBack Callback invoked to exit setup view.
  */
 @Composable
-fun whatsAppSetupAndScreenAssistView(
+fun WhatsAppSetupAndScreenAssistView(
     context: Context,
     prefs: PreferenceManager,
     onBack: () -> Unit,
@@ -74,7 +74,7 @@ fun whatsAppSetupAndScreenAssistView(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = "WhatsApp & Screen Task Assistance",
                 subtitle = "Accessibility & task assistance setup",
                 onBack = onBack
@@ -94,12 +94,12 @@ fun whatsAppSetupAndScreenAssistView(
         ) {
             // 1. Accessibility Service Live Status Enterprise Card
             item {
-                whatsAppA11yStatusCard(context = context, prefs = prefs)
+                WhatsAppA11yStatusCard(context = context, prefs = prefs)
             }
 
             // 2. Android 13/14 "Restricted Settings" Guide Enterprise Card
             item {
-                whatsAppRestrictedSettingsCard(context = context)
+                WhatsAppRestrictedSettingsCard(context = context)
             }
 
             // 2B. Self-Healing & Never-Stop Watchdog Card
@@ -114,7 +114,7 @@ fun whatsAppSetupAndScreenAssistView(
 
             // 3. Screen Auto-Unlock & Auto-Lock Settings Enterprise Card
             item {
-                appCard(modifier = Modifier.fillMaxWidth()) {
+                AppCard(modifier = Modifier.fillMaxWidth()) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.LockClock, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                         Spacer(modifier = Modifier.width(8.dp))
@@ -173,7 +173,7 @@ fun whatsAppSetupAndScreenAssistView(
                                 "PASSWORD" to "Password",
                                 "SWIPE" to "Swipe"
                             ).forEach { (type, label) ->
-                                glassChip(
+                                GlassChip(
                                     selected = unlockType == type,
                                     onClick = {
                                         unlockType = type
@@ -189,7 +189,7 @@ fun whatsAppSetupAndScreenAssistView(
                             Spacer(modifier = Modifier.height(12.dp))
 
                             val isPinMode = unlockType == "PIN"
-                            glassInputField(
+                            GlassInputField(
                                 value = pinCode,
                                 onValueChange = {
                                     pinCode = if (isPinMode) it.filter { ch -> ch.isDigit() } else it
@@ -246,7 +246,7 @@ fun whatsAppSetupAndScreenAssistView(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        glassButton(
+                        GlassButton(
                             text = "Test Screen Lock",
                             onClick = {
                                 scope.launch {
@@ -261,7 +261,7 @@ fun whatsAppSetupAndScreenAssistView(
                             variant = GlassButtonVariant.SECONDARY,
                             modifier = Modifier.weight(1f)
                         )
-                        glassButton(
+                        GlassButton(
                             text = "Test Screen Assist",
                             onClick = {
                                 val currentPin = pinCode.ifBlank { prefs.screenAssistPin }
@@ -279,11 +279,11 @@ fun whatsAppSetupAndScreenAssistView(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    glassButton(
+                    GlassButton(
                         text = "Emergency Stop All Scheduled Tasks",
                         onClick = {
                             AutoTextAccessibilityService.clearPending()
-                            context.showAppToast("Automation stopped")
+                            context.showAppToast("Tasks stopped")
                         },
                         icon = Icons.Default.StopCircle,
                         variant = GlassButtonVariant.DANGER,
@@ -294,7 +294,7 @@ fun whatsAppSetupAndScreenAssistView(
 
             // 4. Default Country Code Enterprise Card
             item {
-                appCard(modifier = Modifier.fillMaxWidth()) {
+                AppCard(modifier = Modifier.fillMaxWidth()) {
                     Text("Default Country Code", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -305,7 +305,7 @@ fun whatsAppSetupAndScreenAssistView(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    glassInputField(
+                    GlassInputField(
                         value = countryCode,
                         onValueChange = {
                             countryCode = it.filter { ch -> ch.isDigit() }
@@ -322,12 +322,12 @@ fun whatsAppSetupAndScreenAssistView(
 
             // 5. Battery Optimization & Background Guide Enterprise Card
             item {
-                whatsAppBatteryOptimizationCard(context = context)
+                WhatsAppBatteryOptimizationCard(context = context)
             }
 
             // 6. Live Test WhatsApp Automation Enterprise Card
             item {
-                whatsAppLiveTestCard(
+                WhatsAppLiveTestCard(
                     context = context,
                     testPhone = testPhone,
                     onTestPhoneChange = { testPhone = it },
@@ -353,13 +353,13 @@ fun whatsAppSetupAndScreenAssistView(
  * @param prefs Application [PreferenceManager].
  */
 @Composable
-fun whatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
+fun WhatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
     val hasWriteSecure = AccessibilityHealthManager.hasWriteSecureSettings(context)
     val isDynamicStandby = prefs.isDynamicA11yOnDemandEnabled && hasWriteSecure
     val isOperational = AccessibilityHealthManager.isServiceOperational()
     val isA11yReady = isOperational || isDynamicStandby
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         backgroundColor = if (isA11yReady) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
         borderColor = if (isA11yReady) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f) else MaterialTheme.colorScheme.error.copy(alpha = 0.35f)
@@ -400,7 +400,7 @@ fun whatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        glassButton(
+        GlassButton(
             text = when {
                 isOperational -> "Open Accessibility Settings"
                 isDynamicStandby -> "Test Assistant Connection"
@@ -444,8 +444,8 @@ fun whatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
  * @param context Active Android [Context].
  */
 @Composable
-fun whatsAppRestrictedSettingsCard(context: Context) {
-    appCard(modifier = Modifier.fillMaxWidth()) {
+fun WhatsAppRestrictedSettingsCard(context: Context) {
+    AppCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(8.dp))
@@ -474,7 +474,7 @@ fun whatsAppRestrictedSettingsCard(context: Context) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        glassButton(
+        GlassButton(
             text = "Open App Info (Tap 3 Dots)",
             onClick = {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -497,8 +497,8 @@ fun whatsAppRestrictedSettingsCard(context: Context) {
  * @param context Active Android [Context].
  */
 @Composable
-fun whatsAppBatteryOptimizationCard(context: Context) {
-    appCard(modifier = Modifier.fillMaxWidth()) {
+fun WhatsAppBatteryOptimizationCard(context: Context) {
+    AppCard(modifier = Modifier.fillMaxWidth()) {
         Text("Battery & Background Restrictions", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
         Spacer(modifier = Modifier.height(4.dp))
         Text(
@@ -513,7 +513,7 @@ fun whatsAppBatteryOptimizationCard(context: Context) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        glassButton(
+        GlassButton(
             text = "Exempt From Battery Optimization",
             onClick = {
                 try {
@@ -544,7 +544,7 @@ fun whatsAppBatteryOptimizationCard(context: Context) {
  * @param onTestMessageChange Callback invoked as test message content changes.
  */
 @Composable
-fun whatsAppLiveTestCard(
+fun WhatsAppLiveTestCard(
     context: Context,
     testPhone: String,
     onTestPhoneChange: (String) -> Unit,
@@ -552,7 +552,7 @@ fun whatsAppLiveTestCard(
     onTestMessageChange: (String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    appCard(modifier = Modifier.fillMaxWidth()) {
+    AppCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(8.dp))
@@ -564,7 +564,7 @@ fun whatsAppLiveTestCard(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        glassInputField(
+        GlassInputField(
             value = testPhone,
             onValueChange = onTestPhoneChange,
             label = "Phone Number",
@@ -576,7 +576,7 @@ fun whatsAppLiveTestCard(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        glassInputField(
+        GlassInputField(
             value = testMessage,
             onValueChange = onTestMessageChange,
             label = "Message Text",
@@ -587,18 +587,18 @@ fun whatsAppLiveTestCard(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        glassButton(
+        GlassButton(
             text = "Dispatch Test WhatsApp Now",
             onClick = {
                 if (!WhatsAppPackageHelper.isWhatsAppInstalled(context)) {
                     context.showAppToast("WhatsApp is not installed on this device")
-                    return@glassButton
+                    return@GlassButton
                 }
                 if (testPhone.trim().isEmpty()) {
                     context.showAppToast("Please enter a phone number")
-                    return@glassButton
+                    return@GlassButton
                 }
-                val messageToSend = testMessage.trim().ifEmpty { "AutoText Test Ping: Automation is active!" }
+                val messageToSend = testMessage.trim().ifEmpty { "AutoText Test Ping: Task Service is active!" }
                 scope.launch {
                     val mutex = SequentialTaskEngine.getUiAutomationMutex(context)
                     val success = mutex.withLock {
@@ -627,17 +627,17 @@ fun whatsAppLiveTestCard(
 }
 
 /**
- * Backward-compatible deprecated alias for [whatsAppSetupAndScreenAssistView].
+ * Backward-compatible deprecated alias for [WhatsAppSetupAndScreenAssistView].
  */
 @Deprecated(
-    message = "Use whatsAppSetupAndScreenAssistView for policy-compliant naming",
-    replaceWith = ReplaceWith("whatsAppSetupAndScreenAssistView(context, prefs, onBack)")
+    message = "Use WhatsAppSetupAndScreenAssistView for policy-compliant naming",
+    replaceWith = ReplaceWith("WhatsAppSetupAndScreenAssistView(context, prefs, onBack)")
 )
 @Composable
-fun whatsAppSetupAndAutoUnlockView(
+fun WhatsAppSetupAndAutoUnlockView(
     context: Context,
     prefs: PreferenceManager,
     onBack: () -> Unit
-) = whatsAppSetupAndScreenAssistView(context, prefs, onBack)
+) = WhatsAppSetupAndScreenAssistView(context, prefs, onBack)
 
 

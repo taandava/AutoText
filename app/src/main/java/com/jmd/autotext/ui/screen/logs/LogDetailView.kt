@@ -53,7 +53,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param onBack Callback invoked to exit detail view.
  */
 @Composable
-fun logDetailView(
+fun LogDetailView(
     log: ExecutionLog,
     repository: AppRepository,
     onBack: () -> Unit
@@ -75,7 +75,7 @@ fun logDetailView(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = "Execution Details",
                 subtitle = "Log #${log.id} • ${log.channel}",
                 onBack = onBack
@@ -93,7 +93,7 @@ fun logDetailView(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             // Status Header Banner Enterprise Card
-            appCard(
+            AppCard(
                 modifier = Modifier.fillMaxWidth(),
                 backgroundColor = statusColor.copy(alpha = 0.12f),
                 borderColor = statusColor.copy(alpha = 0.35f)
@@ -120,7 +120,7 @@ fun logDetailView(
             }
 
             // Target Details Enterprise Card
-            appCard(modifier = Modifier.fillMaxWidth()) {
+            AppCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text("Target Information", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -146,7 +146,7 @@ fun logDetailView(
             }
 
             // Message Content Enterprise Card
-            appCard(modifier = Modifier.fillMaxWidth()) {
+            AppCard(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -177,7 +177,7 @@ fun logDetailView(
 
             // Technical Details & Error Stack Traces
             if (log.details.isNotEmpty()) {
-                appCard(modifier = Modifier.fillMaxWidth()) {
+                AppCard(modifier = Modifier.fillMaxWidth()) {
                     Text("Technical Trace & Execution Log", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
@@ -196,7 +196,7 @@ fun logDetailView(
 
             // Dynamic Manual Retry Trigger
             if (!isSuccess) {
-                appCardElevated(
+                AppCardElevated(
                     modifier = Modifier.fillMaxWidth(),
                     accentGlow = MaterialTheme.colorScheme.primary
                 ) {
@@ -220,7 +220,7 @@ fun logDetailView(
                         )
                     }
 
-                    glassButton(
+                    GlassButton(
                         text = if (isRetrying) "Dispatching..." else "Retry Dispatch Now",
                         onClick = {
                             isRetrying = true

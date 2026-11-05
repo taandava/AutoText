@@ -23,7 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import android.app.AlarmManager
+import android.os.Build
 import com.jmd.autotext.core.AccessibilityHealthManager
+import com.jmd.autotext.core.OverlayPermissionHelper
 import com.jmd.autotext.core.AutomationSafetyManager
 import com.jmd.autotext.core.showAppToast
 import com.jmd.autotext.data.prefs.PreferenceManager
@@ -51,7 +54,6 @@ data class SystemIndicator(
 
 object SystemIndicatorResolver {
 
-    @android.annotation.SuppressLint("BatteryLife")
     fun resolveAll(context: Context, prefs: PreferenceManager): List<SystemIndicator> {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
         val isBatteryUnrestricted = powerManager?.isIgnoringBatteryOptimizations(context.packageName) == true
@@ -94,9 +96,15 @@ object SystemIndicatorResolver {
 
         val isBankingShieldActive = prefs.isBankingShieldEnabled
 
+        val isOverlayActive = OverlayPermissionHelper.canDrawOverlays(context)
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+        val isExactAlarmActive = (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) ||
+            (alarmManager?.canScheduleExactAlarms() == true)
+
         val isAutoRotateOff = try {
             Settings.System.getInt(context.contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0) == 0
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            android.util.Log.w("AppStatusIndicators", "Failed reading ACCELEROMETER_ROTATION setting: ${e.message}")
             true
         }
         val isRotationGuardActive = prefs.isPreventSystemAutoRotateEnabled && isAutoRotateOff
@@ -212,8 +220,7 @@ object SystemIndicatorResolver {
                 actionLabel = if (!isBatteryUnrestricted) "Disable Battery Optimization" else null,
                 onAction = { ctx ->
                     runCatching {
-                        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                            data = "package:${ctx.packageName}".toUri()
+                        val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
                         ctx.startActivity(intent)
@@ -231,6 +238,36 @@ object SystemIndicatorResolver {
                     AutomationSafetyManager.resetEmergencyStop(ctx)
                     prefs.isTasksMasterEnabled = true
                 }
+            ),
+            SystemIndicator(
+                id = "display_overlay",
+                name = "Display Over Other Apps (Overlay)",
+                description = "Allows AutoText to display privacy shields, countdown overlays, and incoming call simulation alerts over other applications.",
+                icon = Icons.Default.Layers,
+                isActive = isOverlayActive,
+                actionLabel = if (!isOverlayActive) "Grant Overlay Permission" else null,
+                onAction = { ctx ->
+                    OverlayPermissionHelper.launchOverlaySettings(ctx)
+                }
+            ),
+            SystemIndicator(
+                id = "exact_alarms",
+                name = "Exact Precision Alarms",
+                description = "Guarantees tasks execute at the exact requested second without Doze-mode drift or power jitter.",
+                icon = Icons.Default.Alarm,
+                isActive = isExactAlarmActive,
+                actionLabel = if (!isExactAlarmActive) "Grant Exact Alarm" else null,
+                onAction = { ctx ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        runCatching {
+                            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                data = "package:${ctx.packageName}".toUri()
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            ctx.startActivity(intent)
+                        }
+                    }
+                }
             )
         )
     }
@@ -241,7 +278,7 @@ object SystemIndicatorResolver {
  * Active = Green (#00E676), Inactive/Disabled = Red (#FF5252).
  */
 @Composable
-fun appHeaderStatusIndicators(
+fun AppHeaderStatusIndicators(
     indicators: List<SystemIndicator>,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}

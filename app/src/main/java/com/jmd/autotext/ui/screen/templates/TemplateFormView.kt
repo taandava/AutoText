@@ -40,7 +40,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param onSaved Callback invoked when template is saved.
  */
 @Composable
-fun templateFormView(
+fun TemplateFormView(
     editingTemplate: MessageTemplate?,
     repository: AppRepository,
     onBack: () -> Unit,
@@ -53,7 +53,7 @@ fun templateFormView(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = if (editingTemplate != null) "Edit Template" else "Create Template",
                 subtitle = "Reusable message template",
                 onBack = onBack
@@ -71,9 +71,9 @@ fun templateFormView(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            appCard(modifier = Modifier.fillMaxWidth()) {
+            AppCard(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    glassInputField(
+                    GlassInputField(
                         value = formTitle,
                         onValueChange = { formTitle = it },
                         label = "Template Title",
@@ -81,7 +81,7 @@ fun templateFormView(
                         leadingIcon = Icons.AutoMirrored.Filled.Label,
                         accentColor = MaterialTheme.colorScheme.primary,
                     )
-                    glassInputField(
+                    GlassInputField(
                         value = formCategory,
                         onValueChange = { formCategory = it },
                         label = "Category",
@@ -89,7 +89,7 @@ fun templateFormView(
                         leadingIcon = Icons.Default.Category,
                         accentColor = MaterialTheme.colorScheme.primary,
                     )
-                    glassInputField(
+                    GlassInputField(
                         value = formContent,
                         onValueChange = { formContent = it },
                         label = "Template Content",
@@ -142,7 +142,7 @@ fun templateFormView(
                 }
             }
 
-            glassButton(
+            GlassButton(
                 text = if (editingTemplate != null) "Update Template" else "Save Template",
                 onClick = {
                     if (formTitle.isNotBlank() && formContent.isNotBlank()) {

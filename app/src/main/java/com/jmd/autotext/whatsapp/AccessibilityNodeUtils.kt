@@ -34,6 +34,10 @@ object AccessibilityNodeUtils {
 
     private const val TAG = "A11yNodeUtils"
 
+    /** Timestamp of the most recent physical tap or swipe gesture injected by the automation service. */
+    @Volatile
+    var lastAutomatedGestureTimestamp: Long = 0L
+
     /** Returns whether an accessibility node is checked or toggled on. */
     fun isNodeChecked(node: AccessibilityNodeInfo?): Boolean =
         com.jmd.autotext.compat.AccessibilityCompat.isNodeChecked(node)
@@ -96,9 +100,15 @@ object AccessibilityNodeUtils {
         if (root == null) return emptyList()
         val possibleIds = listOf(
             "$targetPkg:id/$idName",
+            "com.android.systemui:id/$idName",
+            "com.android.keyguard:id/$idName",
             "com.vivo.systemuiplugin:id/$idName",
             "com.vivo.fingerprintui:id/$idName",
-            "com.android.systemui:id/$idName",
+            "com.samsung.android.biometrics.app.setting:id/$idName",
+            "com.sec.android.app.launcher:id/$idName",
+            "com.miui.securitycenter:id/$idName",
+            "com.coloros.safecenter:id/$idName",
+            "com.oplus.safecenter:id/$idName",
             "com.whatsapp:id/$idName",
             "com.whatsapp.w4b:id/$idName",
             "android:id/$idName"
@@ -121,14 +131,12 @@ object AccessibilityNodeUtils {
 
         try {
             windows.reversed().forEach { win ->
-                if (win.type != AccessibilityWindowInfo.TYPE_INPUT_METHOD) {
-                    win.root?.let { r ->
-                        for (id in possibleIds) {
-                            val found = r.findAccessibilityNodeInfosByViewId(id)
-                            if (!found.isNullOrEmpty()) results.addAll(found)
-                        }
-                        if (results.isEmpty()) results.addAll(r.findAllDescendants(matchesPredicate))
+                win.root?.let { r ->
+                    for (id in possibleIds) {
+                        val found = r.findAccessibilityNodeInfosByViewId(id)
+                        if (!found.isNullOrEmpty()) results.addAll(found)
                     }
+                    if (results.isEmpty()) results.addAll(r.findAllDescendants(matchesPredicate))
                 }
             }
         } catch (t: Throwable) {
@@ -170,9 +178,7 @@ object AccessibilityNodeUtils {
         if (windows != null) {
             try {
                 windows.reversed().forEach { win ->
-                    if (win.type != AccessibilityWindowInfo.TYPE_INPUT_METHOD) {
-                        win.root?.findFirstDescendant(matchesKeyword)?.let { return it }
-                    }
+                    win.root?.findFirstDescendant(matchesKeyword)?.let { return it }
                 }
             } catch (t: Throwable) {
                 Log.d(TAG, "Window node text scan exception: ${t.message}")
@@ -354,6 +360,7 @@ object AccessibilityNodeUtils {
             com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(service, curPkg ?: "unknown", "dispatchPhysicalTap")
             return false
         }
+        lastAutomatedGestureTimestamp = System.currentTimeMillis()
         return try {
             val path = Path().apply {
                 moveTo(x, y)
@@ -436,14 +443,22 @@ object AccessibilityNodeUtils {
      * @param windows Optional list of accessibility windows to inspect.
      * @return Distinct list of root [AccessibilityNodeInfo] instances.
      */
-    fun getTargetRoots(service: AccessibilityService, windows: List<AccessibilityWindowInfo>? = null): List<AccessibilityNodeInfo> {
+    fun getTargetRoots(
+        service: AccessibilityService,
+        windows: List<AccessibilityWindowInfo>? = null,
+        includeIme: Boolean = false
+    ): List<AccessibilityNodeInfo> {
         val roots = mutableListOf<AccessibilityNodeInfo>()
         service.rootInActiveWindow?.let { roots.add(it) }
 
-        if (windows != null) {
+        val km = service.getSystemService(android.content.Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager
+        val shouldIncludeIme = includeIme || km?.isKeyguardLocked == true
+
+        val activeWindows = windows ?: runCatching { service.windows }.getOrNull()
+        if (activeWindows != null) {
             try {
-                windows.reversed().forEach { win ->
-                    if (win.type != AccessibilityWindowInfo.TYPE_INPUT_METHOD) {
+                activeWindows.reversed().forEach { win ->
+                    if (shouldIncludeIme || win.type != AccessibilityWindowInfo.TYPE_INPUT_METHOD) {
                         win.root?.let { r ->
                             if (!roots.contains(r)) roots.add(r)
                         }

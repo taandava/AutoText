@@ -34,8 +34,8 @@ import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.data.repo.AppRepository
 import com.jmd.autotext.engine.ContactIngestionEngine
-import com.jmd.autotext.ui.screen.mainAppHost
-import com.jmd.autotext.ui.theme.autoTextTheme
+import com.jmd.autotext.ui.screen.MainAppHost
+import com.jmd.autotext.ui.theme.AutoTextTheme
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -75,8 +75,8 @@ class MainActivity : ComponentActivity() {
             var dynamicColor by remember { mutableStateOf(prefs.isDynamicColorEnabled) }
             val sharedText by remember { sharedTextState }
 
-            autoTextTheme(themeMode = currentTheme, isDynamicColor = dynamicColor) {
-                mainAppHost(
+            AutoTextTheme(themeMode = currentTheme, isDynamicColor = dynamicColor) {
+                MainAppHost(
                     sharedText = sharedText,
                     onSharedTextConsumed = { sharedTextState.value = null },
                 ) { newTheme ->
@@ -173,6 +173,7 @@ class MainActivity : ComponentActivity() {
             Manifest.permission.CALL_PHONE,
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.ANSWER_PHONE_CALLS,
         )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

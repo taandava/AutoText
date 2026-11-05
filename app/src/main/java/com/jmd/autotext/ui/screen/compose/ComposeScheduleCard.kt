@@ -27,7 +27,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onSelectedDaysOfWeekChanged Callback when selected days of week are toggled.
  */
 @Composable
-fun composeScheduleOptionsCard(
+fun ComposeScheduleOptionsCard(
     selectedChannel: ChannelType,
     triggerTimeMillis: Long,
     onTriggerTimeChanged: (Long) -> Unit,
@@ -42,7 +42,7 @@ fun composeScheduleOptionsCard(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         // 1. Date & Time Picker (ZERO POPUPS / Inline Enterprise Modern Glass)
-        appCard(
+        AppCard(
             modifier = Modifier.fillMaxWidth(),
             shape = AppDesignTokens.ShapeLarge
         ) {
@@ -53,7 +53,7 @@ fun composeScheduleOptionsCard(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(6.dp))
-            appDateTimePicker(
+            AppDateTimePicker(
                 timestampMillis = triggerTimeMillis,
                 onTimestampChanged = onTriggerTimeChanged,
                 accentColor = MaterialTheme.colorScheme.primary
@@ -80,7 +80,7 @@ fun composeScheduleOptionsCard(
             )
         }
 
-        appCard(
+        AppCard(
             modifier = Modifier.fillMaxWidth(),
             shape = AppDesignTokens.ShapeLarge
         ) {
@@ -95,7 +95,7 @@ fun composeScheduleOptionsCard(
                     fontSize = 12.5.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                appBadge(
+                AppBadge(
                     text = if (isRepeat) "Repeating" else "Single Run",
                     color = if (isRepeat) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary
                 )
@@ -183,7 +183,7 @@ fun composeScheduleOptionsCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.Top
                 ) {
-                    glassInputField(
+                    GlassInputField(
                         value = intervalCountText,
                         onValueChange = { newStr ->
                             val digits = newStr.filter { it.isDigit() }.take(4)
@@ -208,7 +208,7 @@ fun composeScheduleOptionsCard(
                         modifier = Modifier.weight(1f)
                     )
 
-                    glassDropdownField(
+                    GlassDropdownField(
                         selectedValue = selectedUnit,
                         onValueChange = { unit ->
                             selectedUnit = unit
@@ -254,7 +254,7 @@ fun composeScheduleOptionsCard(
 
         // 3. SIM Card Selection for SMS
         if (selectedChannel == ChannelType.SMS) {
-            appCard(
+            AppCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = AppDesignTokens.ShapeLarge
             ) {

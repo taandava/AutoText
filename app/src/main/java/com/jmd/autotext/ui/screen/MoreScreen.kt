@@ -35,12 +35,12 @@ import androidx.compose.ui.unit.sp
 
 import com.jmd.autotext.data.prefs.*
 import com.jmd.autotext.data.repo.*
-import com.jmd.autotext.ui.screen.campaign.dailyAutoSenderScreen
-import com.jmd.autotext.ui.screen.contacts.bulkContactsView
-import com.jmd.autotext.ui.screen.logs.logsView
-import com.jmd.autotext.ui.screen.sequence.contactSequenceStudio
+import com.jmd.autotext.ui.screen.campaign.DailyAutoSenderScreen
+import com.jmd.autotext.ui.screen.contacts.BulkContactsView
+import com.jmd.autotext.ui.screen.logs.LogsView
+import com.jmd.autotext.ui.screen.sequence.ContactSequenceStudio
 import com.jmd.autotext.ui.screen.settings.*
-import com.jmd.autotext.ui.screen.templates.templatesView
+import com.jmd.autotext.ui.screen.templates.TemplatesView
 import com.jmd.autotext.ui.theme.*
 
 /**
@@ -89,20 +89,20 @@ fun moreScreen(
     }
 
     when (selectedSubSection) {
-        "DAILY_SMS" -> dailyAutoSenderScreen(initialCampaignId = 1L, onBack = { navigateToSubSection("MENU") })
-        "DAILY_WHATSAPP" -> dailyAutoSenderScreen(initialCampaignId = 2L, onBack = { navigateToSubSection("MENU") })
-        "WHATSAPP_SETUP" -> whatsAppSetupAndScreenAssistView(context, prefs) { navigateToSubSection("MENU") }
-        "SEQUENCES" -> contactSequenceStudio(onDismiss = { navigateToSubSection("MENU") }) { navigateToSubSection("MENU") }
-        "TEMPLATES" -> templatesView(repository) { navigateToSubSection("MENU") }
-        "BULK_CONTACTS" -> bulkContactsView(repository) { navigateToSubSection("MENU") }
-        "LOGS" -> logsView(
+        "DAILY_SMS" -> DailyAutoSenderScreen(initialCampaignId = 1L, onBack = { navigateToSubSection("MENU") })
+        "DAILY_WHATSAPP" -> DailyAutoSenderScreen(initialCampaignId = 2L, onBack = { navigateToSubSection("MENU") })
+        "WHATSAPP_SETUP" -> WhatsAppSetupAndScreenAssistView(context, prefs) { navigateToSubSection("MENU") }
+        "SEQUENCES" -> ContactSequenceStudio(onDismiss = { navigateToSubSection("MENU") }) { navigateToSubSection("MENU") }
+        "TEMPLATES" -> TemplatesView(repository) { navigateToSubSection("MENU") }
+        "BULK_CONTACTS" -> BulkContactsView(repository) { navigateToSubSection("MENU") }
+        "LOGS" -> LogsView(
             repository,
             onNavigateToSystemLogs = {
                 previousSubSection = "LOGS"
                 navigateToSubSection("SYSTEM_LOGS")
             },
         ) { navigateToSubSection("MENU") }
-        "SYSTEM_LOGS" -> systemLogViewerView(context) {
+        "SYSTEM_LOGS" -> SystemLogViewerView(context) {
             if (previousSubSection == "LOGS") {
                 previousSubSection = "MENU"
                 navigateToSubSection("LOGS")
@@ -122,7 +122,7 @@ fun moreScreen(
                 navigateToSubSection("MENU")
             }
         }
-        "PRIVACY" -> com.jmd.autotext.ui.screen.privacy.privacySettingsScreen(
+        "PRIVACY" -> com.jmd.autotext.ui.screen.privacy.PrivacySettingsScreen(
             context = context,
             prefs = prefs,
             onBack = {
@@ -134,7 +134,7 @@ fun moreScreen(
                 }
             }
         )
-        "SETTINGS" -> settingsView(
+        "SETTINGS" -> SettingsView(
             context = context,
             repository = repository,
             prefs = prefs,
@@ -148,7 +148,7 @@ fun moreScreen(
                 navigateToSubSection("DOCS")
             },
         ) { navigateToSubSection("MENU") }
-        "DOCS" -> documentationView(context) {
+        "DOCS" -> DocumentationView(context) {
             if (previousSubSection == "SETTINGS") {
                 previousSubSection = "MENU"
                 navigateToSubSection("SETTINGS")
@@ -178,7 +178,7 @@ fun moreScreen(
                 }
                 item {
                     menuItemCard(
-                        "Daily SMS Automation",
+                        "Daily SMS",
                         "📩",
                         MaterialTheme.colorScheme.primary,
                     ) {
@@ -187,7 +187,7 @@ fun moreScreen(
                 }
                 item {
                     menuItemCard(
-                        "Daily WhatsApp Automation",
+                        "Daily WhatsApp",
                         "💬",
                         Color(0xFF2E7D32),
                     ) {
@@ -196,7 +196,7 @@ fun moreScreen(
                 }
                 item {
                     menuItemCard(
-                        "WhatsApp & Screen Assistance",
+                        "WhatsApp & Screen Setup",
                         "📱",
                         Color(0xFF0D9488),
                     ) {

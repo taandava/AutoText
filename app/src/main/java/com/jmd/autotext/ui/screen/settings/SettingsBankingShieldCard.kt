@@ -27,9 +27,9 @@ import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.receiver.TaskAlarmReceiver
 import com.jmd.autotext.service.AutoTextAccessibilityService
 import com.jmd.autotext.ui.components.GlassButtonVariant
-import com.jmd.autotext.ui.components.appBadge
-import com.jmd.autotext.ui.components.appCard
-import com.jmd.autotext.ui.components.glassButton
+import com.jmd.autotext.ui.components.AppBadge
+import com.jmd.autotext.ui.components.AppCard
+import com.jmd.autotext.ui.components.GlassButton
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -39,7 +39,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * while strictly isolating from and never inspecting banking, payment, or UPI applications.
  */
 @Composable
-fun settingsBankingShieldCard(
+fun SettingsBankingShieldCard(
     context: Context,
     prefs: PreferenceManager,
     modifier: Modifier = Modifier,
@@ -63,7 +63,7 @@ fun settingsBankingShieldCard(
         }
     }
 
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         backgroundColor = MaterialTheme.colorScheme.surface,
         borderColor = if (isBankingShieldActive) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant
@@ -93,7 +93,7 @@ fun settingsBankingShieldCard(
                     )
                 }
             }
-            appBadge(
+            AppBadge(
                 text = if (hasWriteSecure && dynamicA11y) "BANK-SAFE STANDBY"
                        else if (userPaused || !a11yRunning) "BANK-SAFE (PAUSED)"
                        else "A11Y RUNNING",
@@ -122,7 +122,7 @@ fun settingsBankingShieldCard(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Accessibility is kept 100% detached during idle periods. UPI, payment, and banking apps will run without accessibility warnings. When a scheduled automation task runs, AutoText attaches for ~2 seconds and immediately detaches.",
+                        text = "Task Service is kept 100% detached during idle periods. UPI, payment, and banking apps will run without service warnings. When a scheduled task runs, AutoText attaches for ~2 seconds and immediately detaches.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         lineHeight = 15.sp
@@ -132,7 +132,7 @@ fun settingsBankingShieldCard(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        glassButton(
+                        GlassButton(
                             text = "🧹 Clear App Cache",
                             onClick = {
                                 try {
@@ -147,7 +147,10 @@ fun settingsBankingShieldCard(
                                         "com.dreamplug.androidapp"
                                     )
                                     val target = candidatePackages.firstOrNull { pkg ->
-                                        try { pm.getPackageInfo(pkg, 0); true } catch (_: Throwable) { false }
+                                        try { pm.getPackageInfo(pkg, 0); true } catch (e: Throwable) {
+                                            android.util.Log.d("SettingsBankingShieldCard", "Package $pkg not installed: ${e.message}")
+                                            false
+                                        }
                                     } ?: "com.google.android.apps.nbu.paisa.user"
                                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                                         data = "package:$target".toUri()
@@ -155,7 +158,8 @@ fun settingsBankingShieldCard(
                                     }
                                     context.startActivity(intent)
                                     context.showAppToast("Tap 'Force stop' and 'Storage > Clear cache' to remove cached warnings.")
-                                } catch (_: Throwable) {
+                                } catch (e: Throwable) {
+                                    android.util.Log.w("SettingsBankingShieldCard", "Could not open payment app info: ${e.message}")
                                     context.showAppToast("Could not open payment app info.")
                                 }
                             },
@@ -163,7 +167,7 @@ fun settingsBankingShieldCard(
                             variant = GlassButtonVariant.SECONDARY,
                             modifier = Modifier.weight(1f)
                         )
-                        glassButton(
+                        GlassButton(
                             text = "💳 Open Payment App",
                             onClick = {
                                 val pm = context.packageManager
@@ -220,7 +224,7 @@ fun settingsBankingShieldCard(
                         lineHeight = 15.sp
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    glassButton(
+                    GlassButton(
                         text = "🛑 Pause Assistant for Banking",
                         onClick = {
                             prefs.isA11yUserPaused = true
@@ -237,14 +241,17 @@ fun settingsBankingShieldCard(
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(6.dp))
-                    glassButton(
+                    GlassButton(
                         text = "🧹 Clear Payment App Cache",
                         onClick = {
                             try {
                                 val pm = context.packageManager
                                 val candidatePackages = listOf("com.google.android.apps.nbu.paisa.user", "com.phonepe.app", "net.one97.paytm")
                                 val target = candidatePackages.firstOrNull { pkg ->
-                                    try { pm.getPackageInfo(pkg, 0); true } catch (_: Throwable) { false }
+                                    try { pm.getPackageInfo(pkg, 0); true } catch (e: Throwable) {
+                                        android.util.Log.d("SettingsBankingShieldCard", "Package $pkg not installed: ${e.message}")
+                                        false
+                                    }
                                 } ?: "com.google.android.apps.nbu.paisa.user"
                                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                                     data = "package:$target".toUri()
@@ -252,7 +259,8 @@ fun settingsBankingShieldCard(
                                 }
                                 context.startActivity(intent)
                                 context.showAppToast("Tap 'Force stop' and 'Storage > Clear cache' to clear cached blocks.")
-                            } catch (_: Throwable) {
+                            } catch (e: Throwable) {
+                                android.util.Log.w("SettingsBankingShieldCard", "Could not open payment app info: ${e.message}")
                                 context.showAppToast("Could not open payment app info.")
                             }
                         },
@@ -261,7 +269,7 @@ fun settingsBankingShieldCard(
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(6.dp))
-                    glassButton(
+                    GlassButton(
                         text = "💳 Open Payment App",
                         onClick = {
                             val pm = context.packageManager
@@ -316,7 +324,7 @@ fun settingsBankingShieldCard(
                         lineHeight = 15.sp
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    glassButton(
+                    GlassButton(
                         text = "Turn On for WhatsApp Schedules",
                         onClick = {
                             prefs.isA11yUserPaused = false
@@ -339,7 +347,7 @@ fun settingsBankingShieldCard(
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(6.dp))
-                    glassButton(
+                    GlassButton(
                         text = "💳 Open Payment App",
                         onClick = {
                             val pm = context.packageManager
@@ -393,9 +401,9 @@ fun settingsBankingShieldCard(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     if (hasWriteSecure) {
-                        appBadge(text = "BANK-SAFE READY", color = MaterialTheme.colorScheme.primary)
+                        AppBadge(text = "BANK-SAFE READY", color = MaterialTheme.colorScheme.primary)
                     } else {
-                        appBadge(text = "NEEDS ADB GRANT", color = MaterialTheme.colorScheme.outline)
+                        AppBadge(text = "NEEDS ADB GRANT", color = MaterialTheme.colorScheme.outline)
                     }
                 }
                 Text(
@@ -508,7 +516,7 @@ fun settingsBankingShieldCard(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        glassButton(
+        GlassButton(
             text = "Configure Privacy & App Visibility",
             onClick = onOpenPrivacySettings,
             emoji = "🛡️",
@@ -522,7 +530,7 @@ fun settingsBankingShieldCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            glassButton(
+            GlassButton(
                 text = "Verify Services",
                 onClick = {
                     AccessibilityHealthManager.ensureAllServicesActive(context)
@@ -532,7 +540,7 @@ fun settingsBankingShieldCard(
                 variant = GlassButtonVariant.PRIMARY,
                 modifier = Modifier.weight(1f)
             )
-            glassButton(
+            GlassButton(
                 text = "Export Diagnostics",
                 onClick = {
                     val file = TaskAlarmReceiver.dumpExecutionLogsToFile(context)

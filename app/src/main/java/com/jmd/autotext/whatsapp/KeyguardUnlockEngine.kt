@@ -53,6 +53,13 @@ class KeyguardUnlockEngine(
     private var lastSwipeTime = 0L
     private var lastUnlockActionTime = 0L
 
+    fun resetInitialDelay() {
+        unlockAttemptCount = 0
+        unlockLoopAttempts = 0
+        isEnteringPinDigits = false
+        lastSwipeTime = System.currentTimeMillis() + 600L
+    }
+
     /**
      * Orchestrates the keyguard unlock evaluation loop.
      *
@@ -153,9 +160,9 @@ class KeyguardUnlockEngine(
                 if (now - lastSwipeTime > 600L) {
                     for (root in roots) {
                         if (tryClickSwitchToNumberLock(root)) {
-                            lastSwipeTime = now
-                            Log.i(loggerTag, "Clicked explicit switch button to open PIN keypad")
-                            handler.postDelayed({ handleKeyguardUnlock(onUnlockSuccess, onUnlockAbort) }, 400L)
+                            lastSwipeTime = now + 800L
+                            Log.i(loggerTag, "Clicked explicit switch button to open PIN keypad. Waiting for bouncer...")
+                            handler.postDelayed({ handleKeyguardUnlock(onUnlockSuccess, onUnlockAbort) }, 750L)
                             return
                         }
                     }
@@ -164,25 +171,27 @@ class KeyguardUnlockEngine(
                 if (isBiometricPromptVisible(roots) && now - lastSwipeTime > 600L) {
                     for (root in roots) {
                         if (tryClickSwitchToNumberLock(root)) {
-                            lastSwipeTime = now
-                            handler.postDelayed({ handleKeyguardUnlock(onUnlockSuccess, onUnlockAbort) }, 400L)
+                            lastSwipeTime = now + 800L
+                            Log.i(loggerTag, "Dismissed biometric prompt to open PIN keypad. Waiting for bouncer...")
+                            handler.postDelayed({ handleKeyguardUnlock(onUnlockSuccess, onUnlockAbort) }, 750L)
                             return
                         }
                     }
                 }
 
-                if (now - lastSwipeTime > 800L && unlockAttemptCount < 3) {
+                if (now - lastSwipeTime > 900L && unlockAttemptCount < 5) {
                     lastSwipeTime = now
                     unlockAttemptCount++
-                    Log.i(loggerTag, "Auto-swiping UP on lockscreen to reveal keypad (attempt $unlockAttemptCount of 3)...")
+                    Log.i(loggerTag, "Auto-swiping UP on lockscreen to reveal keypad (attempt $unlockAttemptCount of 5)...")
                     swipeUpToRevealBouncer {
-                        handler.postDelayed({ handleKeyguardUnlock(onUnlockSuccess, onUnlockAbort) }, 400L)
+                        handler.postDelayed({ handleKeyguardUnlock(onUnlockSuccess, onUnlockAbort) }, 500L)
                     }
                     return
-                } else if (unlockAttemptCount >= 3) {
-                    Log.w(loggerTag, "Reached max swipe attempts (3). Stopping auto-unlock.")
+                } else if (unlockAttemptCount >= 5) {
+                    Log.w(loggerTag, "Reached max swipe attempts (5). Stopping auto-unlock.")
                     isUnlockPending = false
                     isEnteringPinDigits = false
+                    unlockAttemptCount = 0
                     onUnlockAbort("Max swipe attempts reached")
                     return
                 }
@@ -243,6 +252,7 @@ class KeyguardUnlockEngine(
                 Log.d(loggerTag, "Device confirmed unlocked early (index $index)")
                 isEnteringPinDigits = false
                 isUnlockPending = false
+                unlockAttemptCount = 0
                 onUnlockSuccess()
                 return
             }
@@ -273,18 +283,19 @@ class KeyguardUnlockEngine(
                     val dm = service.resources.displayMetrics
                     val width = dm.widthPixels.toFloat()
                     val height = dm.heightPixels.toFloat()
+                    val isTallScreen = height > 2400f
                     val (colRatio, rowRatio) = when (digitChar) {
-                        '1' -> Pair(0.222f, 0.524f)
-                        '2' -> Pair(0.500f, 0.524f)
-                        '3' -> Pair(0.778f, 0.524f)
-                        '4' -> Pair(0.222f, 0.619f)
-                        '5' -> Pair(0.500f, 0.619f)
-                        '6' -> Pair(0.778f, 0.619f)
-                        '7' -> Pair(0.222f, 0.714f)
-                        '8' -> Pair(0.500f, 0.714f)
-                        '9' -> Pair(0.778f, 0.714f)
-                        '0' -> Pair(0.500f, 0.809f)
-                        else -> Pair(0.500f, 0.809f)
+                        '1' -> Pair(0.241f, if (isTallScreen) 0.530f else 0.524f)
+                        '2' -> Pair(0.500f, if (isTallScreen) 0.530f else 0.524f)
+                        '3' -> Pair(0.759f, if (isTallScreen) 0.530f else 0.524f)
+                        '4' -> Pair(0.241f, if (isTallScreen) 0.635f else 0.619f)
+                        '5' -> Pair(0.500f, if (isTallScreen) 0.635f else 0.619f)
+                        '6' -> Pair(0.759f, if (isTallScreen) 0.635f else 0.619f)
+                        '7' -> Pair(0.241f, if (isTallScreen) 0.740f else 0.714f)
+                        '8' -> Pair(0.500f, if (isTallScreen) 0.740f else 0.714f)
+                        '9' -> Pair(0.759f, if (isTallScreen) 0.740f else 0.714f)
+                        '0' -> Pair(0.500f, if (isTallScreen) 0.845f else 0.809f)
+                        else -> Pair(0.500f, if (isTallScreen) 0.845f else 0.809f)
                     }
                     val tapX = width * colRatio
                     val tapY = height * rowRatio
@@ -299,9 +310,10 @@ class KeyguardUnlockEngine(
                 handler.postDelayed({
                     val checkKm = service.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
                     if (checkKm?.isKeyguardLocked == false) {
-                        Log.d(loggerTag, "Device confirmed unlocked immediately after digits (no Enter needed)")
+                        Log.i(loggerTag, "Device confirmed unlocked immediately after digits (no Enter needed)")
                         isEnteringPinDigits = false
                         isUnlockPending = false
+                        unlockAttemptCount = 0
                         onUnlockSuccess()
                         return@postDelayed
                     }
@@ -310,7 +322,7 @@ class KeyguardUnlockEngine(
                     val currentRoots = AccessibilityNodeUtils.getTargetRoots(service)
                     for (r in currentRoots) {
                         val enterNode = findKeypadEnterNode(r)
-                        if (enterNode != null) {
+                        if (enterNode != null && !isDeleteOrBackspaceNode(enterNode)) {
                             val rect = android.graphics.Rect()
                             enterNode.getBoundsInScreen(rect)
                             if (rect.width() > 0 && rect.height() > 0) {
@@ -318,40 +330,36 @@ class KeyguardUnlockEngine(
                                 val tapY = rect.centerY().toFloat()
                                 okTapped = dispatchPhysicalTap(tapX, tapY)
                                 if (okTapped) {
-                                    Log.i(loggerTag, "Dispatched physical tap on Enter/OK element at ($tapX, $tapY)")
+                                    Log.i(loggerTag, "Dispatched physical tap on designated Enter/OK element at ($tapX, $tapY)")
                                     break
                                 }
                             }
                         }
                     }
 
-                    if (!okTapped) {
-                        val dm = service.resources.displayMetrics
-                        val tapX = dm.widthPixels * 0.746f
-                        val tapY = dm.heightPixels * 0.809f
-                        dispatchPhysicalTap(tapX, tapY)
-                        Log.i(loggerTag, "Coordinate fallback physical tap on Enter/OK at ($tapX, $tapY)")
-                    }
-
+                    // Never blindly tap bottom-right coordinate fallback when no Enter node is found,
+                    // as row 4 column 3 on modern Android devices (Vivo, Samsung, Pixel) is the Delete/Backspace button!
                     fun pollUnlockVerification(attempt: Int) {
                         val finalKm = service.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
                         if (finalKm?.isKeyguardLocked == false) {
-                            Log.i(loggerTag, "Device confirmed unlocked following Enter submission (attempt $attempt)")
+                            Log.i(loggerTag, "Device confirmed unlocked following PIN entry (attempt $attempt)")
                             isEnteringPinDigits = false
                             isUnlockPending = false
+                            unlockAttemptCount = 0
                             onUnlockSuccess()
-                        } else if (attempt < 5) {
+                        } else if (attempt < 6) {
                             handler.postDelayed({ pollUnlockVerification(attempt + 1) }, 350L)
                         } else {
-                            Log.w(loggerTag, "Device still locked after submission and 1.8s timeout. Stopping.")
+                            Log.w(loggerTag, "Device still locked after submission and 2.1s timeout. Stopping.")
                             isUnlockPending = false
                             isEnteringPinDigits = false
+                            unlockAttemptCount = 0
                             onUnlockAbort("Device remained locked after PIN submission")
                         }
                     }
 
                     handler.postDelayed({ pollUnlockVerification(1) }, 400L)
-                }, 300L)
+                }, 500L)
             }
         }
 
@@ -359,44 +367,114 @@ class KeyguardUnlockEngine(
     }
 
     private fun findKeypadDigitNode(root: AccessibilityNodeInfo, digit: Char): AccessibilityNodeInfo? {
+        val dm = service.resources.displayMetrics
+        val minKeypadY = dm.heightPixels * 0.40f
+
         val digitIds = listOf(
-            "VivoPinkey$digit", "vivopinkey$digit", "vivo_keypad_num_$digit",
+            // Vivo / iQOO
+            "VivoPinkey$digit", "vivopinkey$digit", "vivo_keypad_num_$digit", "vivo_pin_key_$digit",
+            // Samsung One UI
+            "sec_key$digit", "sec_pin_key$digit", "sec_keyboard_key$digit", "sec_keypad_key_$digit", "sec_keypad_num_$digit",
+            // Xiaomi / Redmi / POCO
+            "numeric_key_$digit", "pin_number_$digit", "pin_num_$digit", "keyboard_num_$digit", "key_$digit",
+            // Oppo / Realme / OnePlus
+            "color_pin_$digit", "coui_keyboard_key$digit", "coui_pin_num_$digit",
+            // Motorola / Lenovo
+            "moto_pin_$digit", "moto_keypad_num_$digit",
+            // Transsion / Huawei / Honor / Asus
+            "keypad_key_$digit", "transsion_pin_$digit", "hw_pin_$digit", "huawei_keypad_num_$digit", "asus_pin_$digit",
+            // Standard AOSP / Pixel / Nokia / Common
             "key$digit", "button$digit", "num$digit", "btn$digit", "btn_$digit",
-            "digit$digit", "digit_$digit", "sec_key$digit", "sec_pin_key$digit",
-            "sec_keyboard_key$digit", "sec_keypad_key_$digit", "kl_button$digit",
-            "pin_number_$digit", "pin_num_$digit", "keyboard_num_$digit",
-            "color_pin_$digit", "numeric_key_$digit"
+            "digit$digit", "digit_$digit", "kl_button$digit"
         )
         for (id in digitIds) {
             val nodes = AccessibilityNodeUtils.findNodesByViewId(root, "com.android.systemui", id)
-            if (nodes.isNotEmpty()) return nodes.first()
+            val inKeypad = nodes.firstOrNull { node ->
+                val rect = android.graphics.Rect()
+                node.getBoundsInScreen(rect)
+                rect.centerY() >= minKeypadY && rect.width() > 0 && rect.height() > 0
+            }
+            if (inKeypad != null) return inKeypad
         }
 
-        return AccessibilityNodeUtils.findNodeByTextOrDesc(
-            root,
-            listOf(digit.toString()),
-            exact = true
-        )
+        // Subtext-aware digit node resolution strictly bounded to the keypad area (preventing clock/notification matches)
+        val d = digit.toString()
+        val directNode = with(AccessibilityNodeUtils) {
+            root.findFirstDescendant { node ->
+                val rect = android.graphics.Rect()
+                node.getBoundsInScreen(rect)
+                if (rect.centerY() < minKeypadY || rect.width() <= 0 || rect.height() <= 0) {
+                    return@findFirstDescendant false
+                }
+                if (isDeleteOrBackspaceNode(node)) return@findFirstDescendant false
+
+                val text = node.text?.toString()?.trim() ?: ""
+                val desc = node.contentDescription?.toString()?.trim() ?: ""
+                text == d || desc == d ||
+                    (text.startsWith(d) && (text.length == 1 || text[1] == '\n' || text[1] == '\r')) ||
+                    (desc.startsWith(d) && (desc.length == 1 || desc[1] == ',' || desc[1] == '\n'))
+            }
+        }
+        if (directNode != null) return directNode
+
+        return null
+    }
+
+    private fun isDeleteOrBackspaceNode(node: AccessibilityNodeInfo): Boolean {
+        val id = node.viewIdResourceName?.lowercase().orEmpty()
+        val text = node.text?.toString()?.lowercase()?.trim().orEmpty()
+        val desc = node.contentDescription?.toString()?.lowercase()?.trim().orEmpty()
+        return id.contains("delete") || id.contains("backspace") || id.contains("clear") || id.contains("0right") ||
+               desc.contains("delete") || desc.contains("backspace") || desc.contains("clear") ||
+               text.contains("delete") || text.contains("clear") || text == "⌫" || text == "del"
     }
 
     private fun findKeypadEnterNode(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        val dm = service.resources.displayMetrics
+        val minKeypadY = dm.heightPixels * 0.40f
+
         val enterIds = listOf(
-            "key_enter_text", "key_enter", "sec_key_enter", "sec_btn_ok",
-            "sec_key_ok", "sec_pin_ok", "sec_pin_enter", "btn_ok", "ok",
-            "VivoPinkey0right", "vivopinkey0right", "button_next", "check", "enter",
-            "coui_keyboard_confirm", "btn_confirm", "done", "key_submit"
+            // Samsung
+            "sec_key_enter", "sec_btn_ok", "sec_key_ok", "sec_pin_ok", "sec_pin_enter", "sec_key_done",
+            // Vivo
+            "vivo_keypad_enter", "vivo_pin_confirm", "key_enter",
+            // Xiaomi
+            "btn_confirm", "confirm_btn", "key_enter", "key_submit",
+            // Oppo / OnePlus / Realme
+            "coui_keyboard_confirm", "btn_confirm", "coui_btn_confirm", "color_pin_enter",
+            // Transsion / Huawei / Honor / Motorola
+            "keypad_key_enter", "btn_enter", "pin_enter_btn", "hw_pin_ok", "moto_pin_enter",
+            // AOSP / Pixel / Nokia / Standard
+            "key_enter_text", "button_next", "check", "enter", "btn_ok", "ok", "done"
         )
         for (id in enterIds) {
             val nodes = AccessibilityNodeUtils.findNodesByViewId(root, "com.android.systemui", id)
-            if (nodes.isNotEmpty()) return nodes.first()
+            val valid = nodes.firstOrNull { node ->
+                if (isDeleteOrBackspaceNode(node)) return@firstOrNull false
+                val rect = android.graphics.Rect()
+                node.getBoundsInScreen(rect)
+                rect.centerY() >= minKeypadY && rect.width() > 0 && rect.height() > 0
+            }
+            if (valid != null) return valid
         }
 
-        val textNode = AccessibilityNodeUtils.findNodeByTextOrDesc(
-            root,
-            listOf("ok", "enter", "done", "confirm", "submit", "✓", "check"),
-            exact = true
-        )
-        return textNode
+        return with(AccessibilityNodeUtils) {
+            root.findFirstDescendant { node ->
+                if (isDeleteOrBackspaceNode(node)) return@findFirstDescendant false
+                val rect = android.graphics.Rect()
+                node.getBoundsInScreen(rect)
+                if (rect.centerY() < minKeypadY || rect.width() <= 0 || rect.height() <= 0) {
+                    return@findFirstDescendant false
+                }
+                val text = node.text?.toString()?.lowercase()?.trim() ?: ""
+                val desc = node.contentDescription?.toString()?.lowercase()?.trim() ?: ""
+                val resId = node.viewIdResourceName?.lowercase().orEmpty()
+                resId.contains("enter") || resId.contains("confirm") || resId.contains("submit") ||
+                    resId.contains("done") || desc.contains("enter") || desc.contains("done") ||
+                    desc.contains("confirm") || text == "ok" || text == "enter" || text == "✓" ||
+                    text == "done" || text == "confirm"
+            }
+        }
     }
 
     /**
@@ -433,7 +511,9 @@ class KeyguardUnlockEngine(
     private fun findPinInputField(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val inputIds = listOf(
             "pinEntry", "passwordEntry", "pin_entry", "password_entry",
-            "lockPassword", "password", "pin", "entry", "vivo_pin_input"
+            "lockPassword", "password", "pin", "entry", "vivo_pin_input",
+            "sec_pin_entry", "sec_password_entry", "coui_pin_input",
+            "color_password_entry", "miui_pin_entry", "numeric_input"
         )
         for (id in inputIds) {
             val nodes = AccessibilityNodeUtils.findNodesByViewId(root, "com.android.systemui", id)
@@ -454,8 +534,8 @@ class KeyguardUnlockEngine(
     }
 
     private fun tryClickSwitchToNumberLock(root: AccessibilityNodeInfo): Boolean {
-        val switchKeywords = listOf("use pin", "pin", "use password", "password", "switch to pin", "cancel", "negative_button")
-        val switchIds = listOf("use_pin", "btn_use_pin", "switch_to_pin", "button_secondary")
+        val switchKeywords = listOf("use pin", "enter pin", "switch to pin", "use password", "enter password", "switch to password")
+        val switchIds = listOf("use_pin", "btn_use_pin", "switch_to_pin", "button_secondary", "switch_to_password", "pin_switch")
         for (id in switchIds) {
             val nodes = AccessibilityNodeUtils.findNodesByViewId(root, "com.android.systemui", id)
             if (nodes.isNotEmpty()) {
@@ -467,9 +547,22 @@ class KeyguardUnlockEngine(
     }
 
     private fun isBiometricPromptVisible(roots: List<AccessibilityNodeInfo>): Boolean {
-        val keywords = listOf("touch the fingerprint sensor", "fingerprint", "face not recognized", "biometric")
+        val keywords = listOf(
+            "touch the fingerprint sensor", "fingerprint", "face not recognized", "biometric",
+            "position your face", "face to unlock", "face unlock"
+        )
+        val viewIds = listOf(
+            "vivo_face_unlock_icon", "finger_indicator_layout", "face_unlock_icon",
+            "biometric_prompt", "fingerprint_icon", "sec_biometric_face_icon",
+            "sem_biometric_icon", "coui_fingerprint_icon", "moto_fingerprint_icon",
+            "miui_keyguard_face_unlock_view"
+        )
         for (r in roots) {
             if (AccessibilityNodeUtils.findNodeByTextOrDesc(r, keywords) != null) return true
+            for (id in viewIds) {
+                if (AccessibilityNodeUtils.findNodesByViewId(r, "com.vivo.systemuiplugin", id).isNotEmpty()) return true
+                if (AccessibilityNodeUtils.findNodesByViewId(r, "com.android.systemui", id).isNotEmpty()) return true
+            }
         }
         return false
     }
@@ -493,42 +586,49 @@ class KeyguardUnlockEngine(
             val dm = service.resources.displayMetrics
             val width = dm.widthPixels.toFloat()
             val height = dm.heightPixels.toFloat()
-            val startY = height * 0.85f
-            val endY = height * 0.20f
+            val startY = height * 0.70f
+            val endY = height * 0.18f
 
-            // Dispatch two parallel strokes (two-finger swipe)
-            // Satisfies OEM requirements like Vivo's "Swipe up with two fingers to unlock"
-            // while functioning as a standard upward swipe on all Android devices
-            val path1 = Path().apply {
-                moveTo(width * 0.40f, startY)
-                lineTo(width * 0.40f, endY)
+            val builder = GestureDescription.Builder()
+            // Alternate between single-finger and two-finger strokes based on attempt count
+            if (unlockAttemptCount % 2 != 0) {
+                // Single-finger center swipe up
+                val singlePath = Path().apply {
+                    moveTo(width * 0.50f, startY)
+                    lineTo(width * 0.50f, endY)
+                }
+                builder.addStroke(GestureDescription.StrokeDescription(singlePath, 0, 280L))
+                Log.d(loggerTag, "Dispatching single-finger swipe up bouncer gesture (attempt $unlockAttemptCount)")
+            } else {
+                // Two-finger parallel swipe up
+                val path1 = Path().apply {
+                    moveTo(width * 0.35f, startY)
+                    lineTo(width * 0.35f, endY)
+                }
+                val path2 = Path().apply {
+                    moveTo(width * 0.65f, startY)
+                    lineTo(width * 0.65f, endY)
+                }
+                builder.addStroke(GestureDescription.StrokeDescription(path1, 0, 320L))
+                builder.addStroke(GestureDescription.StrokeDescription(path2, 0, 320L))
+                Log.d(loggerTag, "Dispatching two-finger swipe up bouncer gesture (attempt $unlockAttemptCount)")
             }
-            val path2 = Path().apply {
-                moveTo(width * 0.60f, startY)
-                lineTo(width * 0.60f, endY)
-            }
-            val stroke1 = GestureDescription.StrokeDescription(path1, 0, 220L)
-            val stroke2 = GestureDescription.StrokeDescription(path2, 0, 220L)
-            val gesture = GestureDescription.Builder()
-                .addStroke(stroke1)
-                .addStroke(stroke2)
-                .build()
 
+            val gesture = builder.build()
             service.dispatchGesture(gesture, object : AccessibilityService.GestureResultCallback() {
                 override fun onCompleted(gestureDescription: GestureDescription?) {
-                    Log.d(loggerTag, "Two-finger swipe completed")
-                    handler.postDelayed({ onComplete() }, 250L)
+                    Log.d(loggerTag, "Swipe gesture completed")
+                    handler.postDelayed({ onComplete() }, 300L)
                 }
 
                 override fun onCancelled(gestureDescription: GestureDescription?) {
-                    Log.w(loggerTag, "Two-finger swipe cancelled")
-                    handler.postDelayed({ onComplete() }, 250L)
+                    Log.w(loggerTag, "Swipe gesture cancelled")
+                    handler.postDelayed({ onComplete() }, 300L)
                 }
             }, null)
-            Log.d(loggerTag, "Dispatched two-finger swipe up bouncer gesture")
         } catch (t: Throwable) {
             Log.e(loggerTag, "Failed swipeUpToRevealBouncer", t)
-            handler.postDelayed({ onComplete() }, 250L)
+            handler.postDelayed({ onComplete() }, 300L)
         }
     }
 }

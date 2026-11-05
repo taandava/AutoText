@@ -28,7 +28,6 @@ object PackageManagerCompat {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             pm.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0L))
         } else {
-            @Suppress("DEPRECATION")
             pm.queryIntentActivities(intent, 0)
         }
     }

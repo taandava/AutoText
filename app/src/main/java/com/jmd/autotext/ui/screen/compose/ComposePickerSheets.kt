@@ -49,7 +49,7 @@ fun isSamePhoneNumber(p1: String, p2: String): Boolean = PhoneNumberNormalizer.i
  * @param onDismiss Callback to dismiss contact pool modal.
  */
 @Composable
-fun contactPoolPickerSheet(
+fun ContactPoolPickerSheet(
     repository: AppRepository,
     selectedRecipients: List<SelectedRecipient>,
     onAddRecipient: (name: String, phone: String) -> Boolean,
@@ -143,7 +143,7 @@ fun contactPoolPickerSheet(
                             )
                         }
                     }
-                    glassButton(
+                    GlassButton(
                         text = if (isSyncing) "Syncing..." else "Sync Pool",
                         onClick = {
                             if (!isSyncing) {
@@ -181,13 +181,13 @@ fun contactPoolPickerSheet(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    glassButton(
+                    GlassButton(
                         text = "Cancel",
                         onClick = onDismiss,
                         variant = GlassButtonVariant.SECONDARY,
                         modifier = Modifier.weight(1f)
                     )
-                    glassButton(
+                    GlassButton(
                         text = if (selectedRecipientsMap.isNotEmpty()) "Add (${selectedRecipientsMap.size}) Contacts" else "Done",
                         onClick = commitAction,
                         variant = GlassButtonVariant.PRIMARY,
@@ -206,7 +206,7 @@ fun contactPoolPickerSheet(
                 .padding(horizontal = 14.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            glassSearchField(
+            GlassSearchField(
                 value = poolSearch,
                 onValueChange = { poolSearch = it },
                 placeholder = "Search ${repository.getDynamicPoolStats().totalCount} pool contacts...",
@@ -263,7 +263,7 @@ fun contactPoolPickerSheet(
             }
 
             if (poolContacts.isEmpty()) {
-                appCard(
+                AppCard(
                     modifier = Modifier.fillMaxWidth(),
                     borderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                 ) {
@@ -292,7 +292,7 @@ fun contactPoolPickerSheet(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
                         )
-                        glassButton(
+                        GlassButton(
                             text = if (isSyncing) "Populating Pool..." else "⚡ Sync & Populate Contact Pool",
                             onClick = {
                                 if (!isSyncing) {
@@ -323,7 +323,7 @@ fun contactPoolPickerSheet(
                     items(poolContacts, key = { it.id }) { c ->
                         val isChecked = isContactSelected(c.phone)
 
-                        appCard(
+                        AppCard(
                             onClick = {
                                 toggleContact(c.name, c.phone, isChecked)
                             },
@@ -336,7 +336,7 @@ fun contactPoolPickerSheet(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                    contactAvatar(
+                                    ContactAvatar(
                                         name = c.name.ifBlank { c.phone },
                                         photoUri = c.photoUri,
                                         size = 38.dp,
@@ -395,7 +395,7 @@ fun contactPoolPickerSheet(
  * @param onDismiss Callback to dismiss bottom sheet.
  */
 @Composable
-fun whatsAppContactsPickerSheet(
+fun WhatsAppContactsPickerSheet(
     repository: AppRepository,
     selectedRecipients: List<SelectedRecipient>,
     selectedChannel: ChannelType = ChannelType.WHATSAPP,
@@ -537,7 +537,7 @@ fun whatsAppContactsPickerSheet(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        glassButton(
+                        GlassButton(
                             text = if (isScanning) "Scanning..." else scanLabel,
                             onClick = {
                                 if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
@@ -574,7 +574,7 @@ fun whatsAppContactsPickerSheet(
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 5.dp),
                             shape = AppDesignTokens.ShapePill
                         )
-                        glassButton(
+                        GlassButton(
                             text = harvestLabel,
                             onClick = {
                                 AutoTextAccessibilityService.startWhatsAppChatScan(
@@ -608,13 +608,13 @@ fun whatsAppContactsPickerSheet(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    glassButton(
+                    GlassButton(
                         text = "Cancel",
                         onClick = onDismiss,
                         variant = GlassButtonVariant.SECONDARY,
                         modifier = Modifier.weight(1f)
                     )
-                    glassButton(
+                    GlassButton(
                         text = if (selectedRecipientsMap.isNotEmpty()) "Add (${selectedRecipientsMap.size}) Contacts" else "Done",
                         onClick = commitAction,
                         variant = GlassButtonVariant.PRIMARY,
@@ -632,7 +632,7 @@ fun whatsAppContactsPickerSheet(
                 .padding(padding)
                 .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
-            glassInputField(
+            GlassInputField(
                 value = waSearch,
                 onValueChange = { waSearch = it },
                 label = "Search $appLabel Contacts",
@@ -697,7 +697,7 @@ fun whatsAppContactsPickerSheet(
             ) {
                 if (waContacts.isEmpty()) {
                     item {
-                        appEmptyState(
+                        AppEmptyState(
                             icon = Icons.AutoMirrored.Filled.Send,
                             title = "No $appLabel Contacts Found",
                             description = if (waSearch.isNotBlank()) "No contacts matching '$waSearch'" else "No contacts with $appLabel account detected on device. Tap '$scanLabel' to scan contacts or '$harvestLabel' to scan open chats."
@@ -714,7 +714,7 @@ fun whatsAppContactsPickerSheet(
                         val isChecked = isContactSelected(contact.phone)
                         val isGroup = contact.phone.startsWith("group:") || contact.normalizedPhone.startsWith("group:")
 
-                        appCard(
+                        AppCard(
                             onClick = {
                                 toggleContact(contact.name, contact.phone, isChecked)
                             },
@@ -727,7 +727,7 @@ fun whatsAppContactsPickerSheet(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                    contactAvatar(
+                                    ContactAvatar(
                                         name = contact.name.ifBlank { contact.phone },
                                         photoUri = contact.photoUri,
                                         size = 38.dp,
@@ -751,14 +751,14 @@ fun whatsAppContactsPickerSheet(
                                             )
                                             if (isGroup) {
                                                 Spacer(modifier = Modifier.width(6.dp))
-                                                appBadge(
+                                                AppBadge(
                                                     text = if (isBusiness) "W4B Group" else "Group",
                                                     color = MaterialTheme.colorScheme.primary,
                                                     showDot = false
                                                 )
                                             } else if (contact.accountType.contains("w4b", ignoreCase = true)) {
                                                 Spacer(modifier = Modifier.width(6.dp))
-                                                appBadge(
+                                                AppBadge(
                                                     text = "W4B",
                                                     color = MaterialTheme.colorScheme.primary,
                                                     showDot = false
@@ -807,7 +807,7 @@ fun whatsAppContactsPickerSheet(
  * @param onDismiss Callback to dismiss template picker sheet.
  */
 @Composable
-fun templatePickerSheet(
+fun TemplatePickerSheet(
     repository: AppRepository? = null,
     initialTemplates: List<MessageTemplate> = emptyList(),
     onSelectTemplate: (MessageTemplate) -> Unit,
@@ -920,9 +920,9 @@ fun templatePickerSheet(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                appCard(modifier = Modifier.fillMaxWidth()) {
+                AppCard(modifier = Modifier.fillMaxWidth()) {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        glassInputField(
+                        GlassInputField(
                             value = formTitle,
                             onValueChange = { formTitle = it },
                             label = "Template Title",
@@ -930,7 +930,7 @@ fun templatePickerSheet(
                             leadingIcon = Icons.AutoMirrored.Filled.Label,
                             accentColor = MaterialTheme.colorScheme.primary
                         )
-                        glassInputField(
+                        GlassInputField(
                             value = formCategory,
                             onValueChange = { formCategory = it },
                             label = "Category",
@@ -938,7 +938,7 @@ fun templatePickerSheet(
                             leadingIcon = Icons.Default.Category,
                             accentColor = MaterialTheme.colorScheme.primary
                         )
-                        glassInputField(
+                        GlassInputField(
                             value = formContent,
                             onValueChange = { formContent = it },
                             label = "Template Content",
@@ -995,7 +995,7 @@ fun templatePickerSheet(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    glassButton(
+                    GlassButton(
                         text = "Cancel",
                         onClick = {
                             isEditing = false
@@ -1005,7 +1005,7 @@ fun templatePickerSheet(
                         modifier = Modifier.weight(1f)
                     )
 
-                    glassButton(
+                    GlassButton(
                         text = if (editingTemplate != null) "Update" else "Save Template",
                         onClick = {
                             if (formTitle.isNotBlank() && formContent.isNotBlank()) {
@@ -1107,7 +1107,7 @@ fun templatePickerSheet(
             ) {
                 if (templateList.isEmpty()) {
                     item {
-                        appEmptyState(
+                        AppEmptyState(
                             icon = Icons.Default.FormatQuote,
                             title = "No Templates",
                             description = "You have not saved any templates yet. Tap '+' at the top right to create one."
@@ -1115,7 +1115,7 @@ fun templatePickerSheet(
                     }
                 } else {
                     items(templateList, key = { it.id }) { t ->
-                        appCard(
+                        AppCard(
                             onClick = { onSelectTemplate(t) },
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -1138,7 +1138,7 @@ fun templatePickerSheet(
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
-                                    appBadge(
+                                    AppBadge(
                                         text = t.category,
                                         color = MaterialTheme.colorScheme.primary,
                                         showDot = false
@@ -1188,7 +1188,3 @@ fun templatePickerSheet(
         }
     }
 }
-
-// ============================================================================
-// CONTACT SEQUENCE STUDIO SCREEN
-// ============================================================================

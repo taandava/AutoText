@@ -32,7 +32,7 @@ import com.jmd.autotext.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun createDailyCampaignSheet(
+fun CreateDailyCampaignSheet(
     initialChannel: String = "SMS",
     onDismiss: () -> Unit,
     onSave: (DailyCampaignConfig) -> Unit
@@ -94,7 +94,7 @@ fun createDailyCampaignSheet(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                appBadge(text = "NEW", color = accentColor)
+                AppBadge(text = "NEW", color = accentColor)
             }
 
             Surface(
@@ -141,7 +141,7 @@ fun createDailyCampaignSheet(
             }
 
             // Campaign Title
-            glassInputField(
+            GlassInputField(
                 value = title,
                 onValueChange = { title = it },
                 label = "Campaign Title / Name",
@@ -156,7 +156,7 @@ fun createDailyCampaignSheet(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.Top
             ) {
-                glassInputField(
+                GlassInputField(
                     value = dailyLimitText,
                     onValueChange = { dailyLimitText = it.filter { c -> c.isDigit() }.take(4) },
                     label = "Batch Limit (Daily)",
@@ -167,7 +167,7 @@ fun createDailyCampaignSheet(
                     modifier = Modifier.weight(1f)
                 )
 
-                glassInputField(
+                GlassInputField(
                     value = intervalSecondsText,
                     onValueChange = { intervalSecondsText = it.filter { c -> c.isDigit() }.take(3) },
                     label = "Interval (Seconds)",
@@ -180,7 +180,7 @@ fun createDailyCampaignSheet(
             }
 
             // Time Picker Button
-            glassButton(
+            GlassButton(
                 text = "Dispatch Time: %02d:%02d".format(scheduledHour, scheduledMinute),
                 onClick = {
                     showAppTimePicker(context, scheduledHour, scheduledMinute) { h, m ->
@@ -195,7 +195,7 @@ fun createDailyCampaignSheet(
 
             // SIM Slot if SMS
             if (selectedChannel == "SMS") {
-                glassSegmentedControl(
+                GlassSegmentedControl(
                     items = listOf("Default SIM", "SIM 1", "SIM 2"),
                     selectedIndex = simSlot.coerceIn(0, 2),
                     onItemSelected = { simSlot = it },
@@ -204,7 +204,7 @@ fun createDailyCampaignSheet(
             }
 
             // Message Template
-            glassInputField(
+            GlassInputField(
                 value = messageTemplate,
                 onValueChange = { messageTemplate = it },
                 label = "Message Template",
@@ -240,7 +240,7 @@ fun createDailyCampaignSheet(
             Spacer(modifier = Modifier.height(6.dp))
 
             // Save Action
-            glassButton(
+            GlassButton(
                 text = "Create & Activate Campaign",
                 onClick = {
                     val finalTitle = title.trim().ifBlank {
@@ -282,7 +282,7 @@ fun createDailyCampaignSheet(
  * @param onSelectChannel Callback receiving channel key identifier (SMS, WHATSAPP, WHATSAPP_BUSINESS).
  */
 @Composable
-fun dailyCampaignChannelSelectionDialog(
+fun DailyCampaignChannelSelectionDialog(
     onDismiss: () -> Unit,
     onSelectChannel: (String) -> Unit
 ) {
@@ -331,7 +331,7 @@ fun dailyCampaignChannelSelectionDialog(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 // 1. SMS
-                dailyChannelOptionCard(
+                DailyChannelOptionCard(
                     title = "SMS Daily Campaign",
                     badge = "Carrier Direct",
                     description = "Cellular SMS outreach via SIM card with dual SIM and India daily quota protection (100 SMS/day)",
@@ -341,7 +341,7 @@ fun dailyCampaignChannelSelectionDialog(
                 )
 
                 // 2. WhatsApp
-                dailyChannelOptionCard(
+                DailyChannelOptionCard(
                     title = "WhatsApp Daily Campaign",
                     badge = "Personal 1-on-1",
                     description = "Automate 1-on-1 personal messages to unique contacts with anti-ban delay pacing",
@@ -351,7 +351,7 @@ fun dailyCampaignChannelSelectionDialog(
                 )
 
                 // 3. WhatsApp Business
-                dailyChannelOptionCard(
+                DailyChannelOptionCard(
                     title = "WhatsApp Business (W4B) Campaign",
                     badge = "Client Outreach",
                     description = "Client follow-ups via WhatsApp Business app (com.whatsapp.w4b) with paced delivery safeguards",
@@ -365,7 +365,7 @@ fun dailyCampaignChannelSelectionDialog(
 }
 
 @Composable
-private fun dailyChannelOptionCard(
+private fun DailyChannelOptionCard(
     title: String,
     badge: String,
     description: String,

@@ -51,7 +51,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onSelectDailyCampaign Callback invoked when launching the daily campaign builder.
  */
 @Composable
-fun taskTypeSelectionDialog(
+fun TaskTypeSelectionDialog(
     onDismiss: () -> Unit,
     onSelectChannel: (ChannelType) -> Unit,
     onSelectSequence: (ChannelType) -> Unit = {},
@@ -232,7 +232,7 @@ fun taskTypeSelectionDialog(
                             verticalArrangement = Arrangement.spacedBy(10.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            dialogOptionTile(
+                            DialogOptionTile(
                                 title = "WhatsApp Status",
                                 description = "Auto-post text or photo/video stories to personal WhatsApp",
                                 badge = "Personal",
@@ -243,7 +243,7 @@ fun taskTypeSelectionDialog(
                                 }
                             )
 
-                            dialogOptionTile(
+                            DialogOptionTile(
                                 title = "WhatsApp Business Status",
                                 description = "Auto-post text or media updates to WhatsApp Business (W4B)",
                                 badge = "Business",
@@ -261,7 +261,7 @@ fun taskTypeSelectionDialog(
                             verticalArrangement = Arrangement.spacedBy(10.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            dialogOptionTile(
+                            DialogOptionTile(
                                 title = "SMS Message Sequence",
                                 description = "Step-by-step drip messages via device SIM card (Carrier Direct)",
                                 badge = "SIM Direct",
@@ -272,7 +272,7 @@ fun taskTypeSelectionDialog(
                                 }
                             )
 
-                            dialogOptionTile(
+                            DialogOptionTile(
                                 title = "WhatsApp Sequence",
                                 description = "Multi-step scheduled messages via personal WhatsApp",
                                 badge = "Personal WA",
@@ -283,7 +283,7 @@ fun taskTypeSelectionDialog(
                                 }
                             )
 
-                            dialogOptionTile(
+                            DialogOptionTile(
                                 title = "WhatsApp Business (W4B) Sequence",
                                 description = "Client outreach and paced follow-up sequence via WhatsApp Business",
                                 badge = "Business W4B",
@@ -301,7 +301,7 @@ fun taskTypeSelectionDialog(
                             verticalArrangement = Arrangement.spacedBy(10.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            dialogOptionTile(
+                            DialogOptionTile(
                                 title = "WhatsApp Voice Call",
                                 description = "Automated VoIP voice call via personal WhatsApp Messenger",
                                 badge = "Personal",
@@ -312,7 +312,7 @@ fun taskTypeSelectionDialog(
                                 }
                             )
 
-                            dialogOptionTile(
+                            DialogOptionTile(
                                 title = "WhatsApp Business Voice Call",
                                 description = "Automated VoIP voice call via WhatsApp Business (W4B)",
                                 badge = "Business",
@@ -413,7 +413,7 @@ fun taskTypeSelectionDialog(
 }
 
 @Composable
-private fun dialogOptionTile(
+private fun DialogOptionTile(
     title: String,
     description: String,
     badge: String,

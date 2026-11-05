@@ -58,7 +58,7 @@ fun readDocumentationAsset(context: Context): String {
  * @param onBack Callback invoked when user exits documentation.
  */
 @Composable
-fun documentationView(
+fun DocumentationView(
     context: Context,
     onBack: () -> Unit,
 ) {
@@ -104,7 +104,7 @@ fun documentationView(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = "Feature & Logic Manual",
                 subtitle = "Bundled specifications guide",
                 onBack = onBack,
@@ -141,7 +141,7 @@ fun documentationView(
                 .navigationBarsPadding()
                 .padding(horizontal = 12.dp, vertical = 6.dp)
         ) {
-            glassSearchField(
+            GlassSearchField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 placeholder = "Search specifications, 100 SMS, PIN, A11y...",
@@ -160,7 +160,7 @@ fun documentationView(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 categories.forEach { (prefix, label) ->
-                    glassChip(
+                    GlassChip(
                         selected = selectedCategory == prefix,
                         onClick = { selectedCategory = prefix },
                         label = label,
@@ -176,7 +176,7 @@ fun documentationView(
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    appEmptyState(
+                    AppEmptyState(
                         icon = Icons.Default.Info,
                         title = "No Matching Sections",
                         description = "No specifications match '$searchQuery'"
@@ -193,7 +193,7 @@ fun documentationView(
                         val title = lines.firstOrNull { it.startsWith("#") }?.replace("#", "")?.trim() ?: "Overview"
                         val body = lines.asSequence().filterNot { it.startsWith("#") }.joinToString("\n").trim()
 
-                        appCard(
+                        AppCard(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Row(

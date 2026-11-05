@@ -438,7 +438,7 @@ val LightColorScheme = lightColorScheme(
  * Supports SYSTEM (default), LIGHT, DARK, and Android 12+ Wallpaper Dynamic Color.
  */
 @Composable
-fun autoTextTheme(
+fun AutoTextTheme(
     themeMode: String = "SYSTEM",
     isDynamicColor: Boolean = false,
     content: @Composable () -> Unit

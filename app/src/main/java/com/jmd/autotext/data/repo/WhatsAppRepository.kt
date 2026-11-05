@@ -387,7 +387,8 @@ class WhatsAppRepository(private val context: Context) {
                 "SELECT 1 FROM ${DatabaseHelper.TABLE_WHATSAPP_GROUPS} WHERE LOWER(TRIM(name)) = LOWER(TRIM(?)) LIMIT 1",
                 arrayOf(trimmed)
             ).use { c -> c.moveToFirst() }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.w("WhatsAppRepo", "Failed to check if WhatsApp group exists: ${e.message}")
             false
         }
     }
@@ -660,7 +661,10 @@ class WhatsAppRepository(private val context: Context) {
                         selectionArgs,
                         "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME} ASC"
                     )
-                } catch (_: Exception) { null }
+                } catch (e: Exception) {
+                    Log.w("WhatsAppRepo", "Failed querying phone contacts: ${e.message}")
+                    null
+                }
 
                 cursor?.use { c ->
                     val nameIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)

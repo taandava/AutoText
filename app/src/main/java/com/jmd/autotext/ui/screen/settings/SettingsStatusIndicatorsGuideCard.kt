@@ -25,7 +25,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * their detailed operational descriptions, and real-time health statuses.
  */
 @Composable
-fun settingsStatusIndicatorsGuideCard(
+fun SettingsStatusIndicatorsGuideCard(
     context: Context,
     prefs: PreferenceManager,
     modifier: Modifier = Modifier
@@ -44,7 +44,7 @@ fun settingsStatusIndicatorsGuideCard(
     val activeCount = remember(indicators) { indicators.count { it.isActive } }
     val totalCount = indicators.size
 
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge
     ) {

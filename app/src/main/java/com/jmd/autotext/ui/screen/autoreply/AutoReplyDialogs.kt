@@ -30,7 +30,7 @@ import com.jmd.autotext.data.model.*
 import com.jmd.autotext.data.repo.*
 import com.jmd.autotext.ui.components.*
 import com.jmd.autotext.ui.model.AutoReplyTypeItem
-import com.jmd.autotext.ui.screen.compose.templatePickerSheet
+import com.jmd.autotext.ui.screen.compose.TemplatePickerSheet
 import com.jmd.autotext.ui.theme.*
 
 /**
@@ -41,7 +41,7 @@ import com.jmd.autotext.ui.theme.*
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun autoReplyTypeSelectionSheet(
+fun AutoReplyTypeSelectionSheet(
     onDismiss: () -> Unit,
     onSelectType: (ChannelType, String) -> Unit
 ) {
@@ -78,7 +78,7 @@ fun autoReplyTypeSelectionSheet(
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                appBadge(text = "4 TYPES", color = MaterialTheme.colorScheme.primary, showDot = false)
+                AppBadge(text = "4 TYPES", color = MaterialTheme.colorScheme.primary, showDot = false)
             }
             Text(
                 "Choose the communication channel to automate. Each option opens its dedicated, tailored configuration form:",
@@ -126,7 +126,7 @@ fun autoReplyTypeSelectionSheet(
             )
 
             responderTypes.forEach { item ->
-                appCard(
+                AppCard(
                     modifier = Modifier.fillMaxWidth(),
                     shape = AppDesignTokens.ShapeMedium,
                     onClick = { onSelectType(item.channel, item.defaultEvent) }
@@ -169,7 +169,7 @@ fun autoReplyTypeSelectionSheet(
  * @param onSave Callback receiving populated rule data class on confirmation.
  */
 @Composable
-fun autoReplyRuleDialog(
+fun AutoReplyRuleDialog(
     initialRule: AutoReplyRule?,
     onDismiss: () -> Unit,
     onSave: (AutoReplyRule) -> Unit
@@ -216,7 +216,7 @@ fun autoReplyRuleDialog(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = if (initialRule != null && initialRule.id > 0L) "Edit Auto-Reply Rule" else "New Auto-Reply Rule",
                 subtitle = "Automated reply configuration",
                 onBack = onDismiss
@@ -235,11 +235,11 @@ fun autoReplyRuleDialog(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // 1. Rule Name Input
-            appCard(
+            AppCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = AppDesignTokens.ShapeLarge
             ) {
-                glassInputField(
+                GlassInputField(
                     value = ruleName,
                     onValueChange = { ruleName = it },
                     label = "Rule Identifier",
@@ -250,7 +250,7 @@ fun autoReplyRuleDialog(
             }
 
             // 2. Target Platform Selector
-            appCard(
+            AppCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = AppDesignTokens.ShapeLarge
             ) {
@@ -290,7 +290,7 @@ fun autoReplyRuleDialog(
                                     ChannelType.WHATSAPP_BUSINESS -> MaterialTheme.colorScheme.primary
                                     else -> MaterialTheme.colorScheme.tertiary
                                 }
-                                glassChip(
+                                GlassChip(
                                     selected = isSelected,
                                     onClick = {
                                         selectedChannel = ch
@@ -316,7 +316,7 @@ fun autoReplyRuleDialog(
             // 3. Dynamic Specialized Form Based on Selected Channel
             when (selectedChannel) {
                 ChannelType.CALL -> {
-                    appCard(
+                    AppCard(
                         modifier = Modifier.fillMaxWidth(),
                         shape = AppDesignTokens.ShapeLarge
                     ) {
@@ -342,7 +342,7 @@ fun autoReplyRuleDialog(
                                 Triple("MISSED_CALL", "Missed Call", "📞"),
                                 Triple("CALL_ENDED", "Call Ended", "📴")
                             ).forEach { (eventKey, eventLabel, eventEmoji) ->
-                                glassChip(
+                                GlassChip(
                                     selected = callEventType == eventKey,
                                     onClick = { callEventType = eventKey },
                                     label = eventLabel,
@@ -381,7 +381,7 @@ fun autoReplyRuleDialog(
                 }
 
                 ChannelType.SMS -> {
-                    appCard(
+                    AppCard(
                         modifier = Modifier.fillMaxWidth(),
                         shape = AppDesignTokens.ShapeLarge
                     ) {
@@ -399,7 +399,7 @@ fun autoReplyRuleDialog(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        glassInputField(
+                        GlassInputField(
                             value = triggerPattern,
                             onValueChange = { triggerPattern = it },
                             label = "Trigger Keyword (* for all incoming SMS)",
@@ -459,7 +459,7 @@ fun autoReplyRuleDialog(
                 }
 
                 ChannelType.WHATSAPP -> {
-                    appCard(
+                    AppCard(
                         modifier = Modifier.fillMaxWidth(),
                         shape = AppDesignTokens.ShapeLarge
                     ) {
@@ -486,7 +486,7 @@ fun autoReplyRuleDialog(
                                 Triple("MISSED_CALL", "Missed Call", "📞"),
                                 Triple("CALL_ENDED", "Call Ended", "📴")
                             ).forEach { (eventKey, eventLabel, eventEmoji) ->
-                                glassChip(
+                                GlassChip(
                                     selected = callEventType == eventKey,
                                     onClick = { callEventType = eventKey },
                                     label = eventLabel,
@@ -500,7 +500,7 @@ fun autoReplyRuleDialog(
                         Spacer(modifier = Modifier.height(10.dp))
 
                         if (callEventType == "MESSAGE") {
-                            glassInputField(
+                            GlassInputField(
                                 value = triggerPattern,
                                 onValueChange = { triggerPattern = it },
                                 label = "Trigger Keyword (* for all incoming messages)",
@@ -569,7 +569,7 @@ fun autoReplyRuleDialog(
                                 Column {
                                     Text("Reply Method: WhatsApp Chat Only", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.tertiary)
                                     Text(
-                                        "Sends an automated reply directly inside the same WhatsApp chat via Android notification quick-reply automation.",
+                                        "Sends an automated reply directly inside the same WhatsApp chat via Android notification quick reply.",
                                         fontSize = 11.5.sp,
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 16.sp
@@ -581,7 +581,7 @@ fun autoReplyRuleDialog(
                 }
 
                 ChannelType.WHATSAPP_BUSINESS -> {
-                    appCard(
+                    AppCard(
                         modifier = Modifier.fillMaxWidth(),
                         shape = AppDesignTokens.ShapeLarge
                     ) {
@@ -608,7 +608,7 @@ fun autoReplyRuleDialog(
                                 Triple("MISSED_CALL", "Missed Call", "📞"),
                                 Triple("CALL_ENDED", "Call Ended", "📴")
                             ).forEach { (eventKey, eventLabel, eventEmoji) ->
-                                glassChip(
+                                GlassChip(
                                     selected = callEventType == eventKey,
                                     onClick = { callEventType = eventKey },
                                     label = eventLabel,
@@ -622,7 +622,7 @@ fun autoReplyRuleDialog(
                         Spacer(modifier = Modifier.height(10.dp))
 
                         if (callEventType == "MESSAGE") {
-                            glassInputField(
+                            GlassInputField(
                                 value = triggerPattern,
                                 onValueChange = { triggerPattern = it },
                                 label = "Trigger Keyword (* for all incoming messages)",
@@ -691,7 +691,7 @@ fun autoReplyRuleDialog(
                                 Column {
                                     Text("Reply Method: WA Business Only", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.primary)
                                     Text(
-                                        "Sends an automated reply directly inside WhatsApp Business only via Android notification quick-reply automation.",
+                                        "Sends an automated reply directly inside WhatsApp Business only via Android notification quick reply.",
                                         fontSize = 11.5.sp,
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 16.sp
@@ -706,7 +706,7 @@ fun autoReplyRuleDialog(
             }
 
             // 4. Daily Frequency & Cooldown Enterprise Card
-            autoReplyLimitsCard(
+            AutoReplyLimitsCard(
                 dailyLimitMode = dailyLimitMode,
                 onDailyLimitModeChanged = { dailyLimitMode = it },
                 customDailyLimitText = customDailyLimitText,
@@ -716,7 +716,7 @@ fun autoReplyRuleDialog(
             )
 
             // 5. Custom Reply Message Enterprise Card (Tailored for active channel & event)
-            autoReplyTemplateCard(
+            AutoReplyTemplateCard(
                 channel = selectedChannel,
                 callEventType = callEventType,
                 replyText = replyText,
@@ -728,7 +728,7 @@ fun autoReplyRuleDialog(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                glassButton(
+                GlassButton(
                     text = "Cancel",
                     onClick = onDismiss,
                     variant = GlassButtonVariant.SECONDARY,
@@ -736,7 +736,7 @@ fun autoReplyRuleDialog(
                     modifier = Modifier.weight(1f)
                 )
 
-                glassButton(
+                GlassButton(
                     text = if (initialRule != null && initialRule.id > 0L) "Update Rule" else "Save Rule",
                     variant = GlassButtonVariant.PRIMARY,
                     emoji = "✅",

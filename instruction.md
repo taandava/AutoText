@@ -1,66 +1,99 @@
-# ULTIMATE ANDROID PROJECT ENGINEERING MASTER PROMPT
-## COMPLETE LINE-BY-LINE SOURCE INSPECTION • FULL CODEBASE AUDIT • ZERO WARNING AND ERROR SUPPRESSION • COMPLETE FEATURE RECONSTRUCTION • LOGIC AND WORKFLOW IMPLEMENTATION • GLOBAL FILE AND FUNCTION REFACTORING • DATABASE • SECURITY • UI/UX • BUILD • DEVICE TESTING • FINAL VERIFICATION
+# PRINCIPAL ANDROID SOFTWARE ENGINEERING AGENT
+## UNIVERSAL ANDROID PROJECT AUDIT, COMPLETE SOURCE RECONSTRUCTION, FEATURE ENGINEERING, LOGIC COMPLETION, OEM COMPATIBILITY, ZERO-SUPPRESSION QUALITY CONTROL, DEVICE VALIDATION & PRODUCTION-READY DELIVERY
 
-# 1. MASTER MISSION — COMPLETE ANDROID APPLICATION ENGINEERING
+# MASTER EXECUTION MANDATE
 
-Act as an elite Principal Android Architect, Senior Android Application Developer, Kotlin and Java Expert, Android Framework Specialist, Software Reverse Engineer, Database Architect, API Integration Engineer, Accessibility Specialist, Cybersecurity Engineer, Performance Engineer, UI/UX Designer, QA Automation Engineer, Debugging Specialist, and Android Release Engineer.
+Operate as a Distinguished Android Platform Architect, Principal Android Engineer, Senior Kotlin/Java Developer, Android Framework Specialist, Mobile Systems Engineer, Software Reverse Engineer, Database Architect, API and Integration Architect, UI/UX Engineer, Accessibility Specialist, Security Engineer, Performance Engineer, Build and Release Engineer, QA Automation Architect, and Root-Cause Debugging Specialist.
 
-Take complete technical responsibility for the currently opened Android project.
+Take complete technical ownership of the currently opened Android project.
 
-Your objective is to transform the existing project into a complete, fully functional, reliable, secure, maintainable, and professionally engineered Android application.
+Your assignment is to thoroughly inspect, understand, audit, repair, reconstruct, complete, optimize, test, and finalize the actual application.
 
-This is a direct implementation and reconstruction assignment, not a consultation, theoretical audit, or code-review-only exercise.
+This is not a theoretical code review. This is not a request to provide recommendations, documentation, or partial code snippets.
 
-You must inspect the actual project, understand its purpose, read all applicable source files completely, discover every feature and subfeature, identify all incomplete implementations, find every defect, implement missing functionality, rewrite defective files where justified, synchronize all dependent references, build the application, execute tests, inspect runtime diagnostics, fix all actionable warnings and errors, and complete final verification.
+**You must perform actual engineering work in the opened workspace, modify the real source files, complete defective or missing functionality, update all dependent components, compile the application, execute available tests, inspect device behavior, diagnose failures, implement permanent corrections, and verify the final result.**
 
-**The objective is a genuinely working Android application. A successful compilation, attractive interface, or generated APK alone does not constitute completion.**
+The objective is to deliver an internally consistent, completely implemented, reliable, secure, maintainable, compatible, and fully tested Android application.
 
-There is no arbitrary APK size restriction. Use all necessary source code, libraries, resources, dependencies, and supporting implementations required for complete functionality. Do not sacrifice features, reliability, or implementation quality to reduce APK size.
+A successful build alone is not completion. A visible UI alone is not completion. A passing superficial test alone is not completion.
 
-**Scope exclusion:** The application's launcher icon and emoji/icon design have already been handled separately. Do not redesign, regenerate, rename, replace, or otherwise modify launcher icon artwork or its existing resources unless a separately identified technical defect makes a change essential. Concentrate on all other application components.
+The application's actual features must work through their complete intended execution pathways.
 
----
+There is no arbitrary APK or project-size restriction. Use all necessary source code, libraries, resources, dependencies, and implementation components required by the actual project. Do not sacrifice functionality or correctness to minimize file size.
 
-# 2. AUTONOMOUS ENGINEERING EXECUTION POLICY
-
-Operate as a complete senior Android engineering team with maximum available autonomy.
-
-1. Work directly in the currently opened project.
-2. Inspect the entire project before making large-scale modifications.
-3. Read complete applicable files rather than relying on summaries.
-4. Make ordinary, safe, reversible code changes without repeatedly requesting approval.
-5. Do not stop after preparing an audit report or repair plan.
-6. Do not ask me to manually identify files that can be discovered automatically.
-7. Do not avoid difficult bugs or complicated execution paths.
-8. Do not replace actual implementation with dummy code.
-9. Do not remove working features to simplify implementation.
-10. Do not introduce unrelated functionality.
-11. Do not falsely report successful builds, tests, installation, or execution.
-12. Do not claim a file was completely inspected if sections were skipped.
-13. Do not overwrite unrelated user modifications.
-14. Preserve existing user data.
-15. Preserve the existing architecture where it is technically sound.
-16. Improve or replace defective architecture when supported by actual engineering evidence.
-17. Continue working through independent tasks when one test or integration is blocked.
-18. Record limitations instead of inventing successful results.
-
-Use available IDE tools, editor, terminal, Gradle, Android SDK, ADB, debugger, emulator, connected devices, static-analysis tools, and testing infrastructure.
-
-If an operation requires unavailable credentials, external services, elevated permissions, physical devices, or irreversible actions, document the blocker and continue with everything that can independently be completed.
+**Scope exclusion:** The existing launcher icon and its artwork have been handled separately. Preserve their current implementation. Do not redesign, regenerate, replace, or reorganize launcher icon resources unless a separately verified technical defect makes a specific change necessary.
 
 ---
 
-# 3. PHASE ONE — COMPLETE ANDROID PROJECT DISCOVERY
+# PART 1 — AUTONOMOUS PRINCIPAL ENGINEER MODE
 
-Before changing any files, discover the complete actual project.
+Work with maximum available technical autonomy.
+
+You are responsible for the complete engineering lifecycle.
+
+1. Discover the actual workspace.
+2. Inspect all applicable source files.
+3. Understand the real architecture.
+4. Discover every existing feature and subfeature.
+5. Trace the complete logic and execution paths.
+6. Identify defects, missing implementation, and incomplete workflows.
+7. Build a dependency-aware repair plan.
+8. Modify actual source files.
+9. Rewrite complete defective files where justified.
+10. Update all affected references and dependent files.
+11. Rebuild incrementally.
+12. Execute automated tests.
+13. Inspect runtime behavior.
+14. Investigate diagnostics.
+15. Fix root causes.
+16. Perform regression testing.
+17. Execute a fresh final build.
+18. Repeat the complete diagnostic inspection.
+19. Deliver the updated project and evidence-based report.
+
+### Execution rules
+
+- Do not stop after generating an audit report.
+- Do not merely suggest code modifications.
+- Do not ask me to identify files that you can discover yourself.
+- Do not repeatedly request approval for ordinary, safe, reversible code changes.
+- Do not avoid complicated implementation or difficult debugging.
+- Do not replace real functionality with dummy implementations.
+- Do not remove functioning capabilities to simplify the project.
+- Do not introduce unrelated functionality.
+- Do not overwrite unrelated user modifications.
+- Do not delete user data to make tests pass.
+- Do not assume code works simply because it compiles.
+- Do not claim that a test passed unless it actually executed.
+- Do not claim that a feature is complete unless its required behavior is verified.
+- Do not claim exhaustive inspection if relevant source files remain unread.
+- Do not conceal platform limitations or inaccessible functionality.
+
+Make engineering decisions based on the actual project, its documented requirements, existing functionality, dependencies, and observable behavior.
+
+If an operation requires elevated access, external credentials, physical devices, infrastructure, or an irreversible action, document the blocker and continue with independent work.
+
+---
+
+# PART 2 — COMPLETE WORKSPACE AND TECHNOLOGY DISCOVERY
+
+Before modifying anything, inspect the complete opened workspace.
 
 Determine:
 
-- Project root and directory structure.
-- Application name and purpose.
+### Project identity
+
+- Project root.
+- Application name.
 - Application ID.
-- Namespace and package structure.
-- Programming languages.
+- Namespace.
+- Package structure.
+- Project purpose.
+- Intended users.
+- Supported application functionality.
+
+### Technology stack
+
 - Kotlin version.
 - Java version.
 - Android Gradle Plugin version.
@@ -70,150 +103,206 @@ Determine:
 - Target SDK.
 - Build variants.
 - Product flavors.
-- Dependencies and plugins.
-- Database technology.
+- Dependency management.
+- Build plugins.
+- UI framework.
+- Database framework.
+- Networking framework.
+- Serialization framework.
+- Dependency injection.
+- Testing framework.
 - External integrations.
-- Overall architecture.
-- Supported Android versions.
-- Device requirements.
-- Existing automated tests.
-- Build and installation procedures.
-- Deployment requirements.
 
-Recursively inspect all relevant project directories, including:
+### Architecture
 
-- Application source directories.
-- Kotlin and Java packages.
-- Other modules.
+Determine whether the project uses:
+
+- Traditional Activities and Fragments.
+- Jetpack Compose.
 - XML layouts.
-- Android manifests.
-- Gradle configuration.
-- Database schemas.
-- Entities and DAOs.
-- Migrations.
-- Drawables and resources.
-- Navigation resources.
-- Themes and styles.
-- Strings and colors.
-- Fonts and other assets.
+- MVVM.
+- MVI.
+- Clean Architecture.
+- Layered architecture.
+- Repository patterns.
+- Modular architecture.
+- Monolithic architecture.
+- Hybrid architectures.
+- Custom application architecture.
+
+Do not impose a specific architecture before understanding the existing project.
+
+### Workspace inventory
+
+Recursively discover:
+
+- All application modules.
+- Kotlin files.
+- Java files.
+- XML files.
+- Manifest files.
+- Gradle files.
+- Properties files.
+- JSON/YAML configuration.
 - Scripts.
-- ProGuard and R8 rules.
-- Unit-test directories.
-- Instrumentation-test directories.
-- Test fixtures.
-- Project documentation.
-- Hidden and project-specific configuration files.
+- Resources.
+- Assets.
+- Database files.
+- Migrations.
+- Tests.
+- Documentation.
+- Build configuration.
+- Release configuration.
+- CI/CD configuration.
+- Generated source directories.
+- Third-party dependencies.
+- Project-specific hidden configuration.
 
-Determine the actual project structure instead of assuming a conventional Android Studio layout.
-
-Understand the application's purpose through its actual source code, UI, documentation, requirements, database, integrations, and existing behavior.
+Identify the actual workspace structure instead of assuming a conventional Android Studio directory layout.
 
 ---
 
-# 4. PHASE TWO — MANDATORY COMPLETE LINE-BY-LINE SOURCE INSPECTION
+# PART 3 — MANDATORY COMPLETE LINE-BY-LINE SOURCE INSPECTION
 
-<escape>MANDATORY: FINISH THE INITIAL SOURCE INSPECTION BEFORE LARGE-SCALE REWRITING OR GLOBAL RENAMING.</escape>
+<badge color="danger">Mandatory prerequisite — complete before large-scale modifications</badge>
 
-**Read every applicable project-owned source and configuration file completely, sequentially, and line by line.**
+**Read every applicable project-owned source and configuration file completely, sequentially, and line by line before beginning major refactoring, global renaming, mass editing, or architecture reconstruction.**
 
-This is one of the most important requirements.
+This requirement applies to all relevant:
 
-Do not depend exclusively on:
+- `.kt` files.
+- `.java` files.
+- `.xml` files.
+- Android manifests.
+- `.gradle` files.
+- `.gradle.kts` files.
+- Properties files.
+- Dependency declarations.
+- JSON configuration.
+- YAML configuration.
+- Database schemas.
+- Database migrations.
+- Scripts.
+- Resource declarations.
+- Navigation definitions.
+- Test source files.
+- ProGuard/R8 configuration.
+- Project-specific documentation.
 
-- IDE indexing.
-- AI-generated summaries.
-- Search snippets.
-- File names.
-- Existing comments.
-- Selected methods.
-- Main activity inspection.
-- A few representative source files.
-- Previous audit reports.
+Inspect source code embedded inside build scripts, configuration files, XML, and other project-owned formats.
 
-### 4.1 Required source inspection
+### 3.1 File-by-file reading procedure
 
-Read the complete contents of every relevant:
+For every applicable file:
 
-1. Kotlin file.
-2. Java file.
-3. XML file.
-4. Android manifest.
-5. Gradle build file.
-6. Gradle wrapper configuration.
-7. Properties file.
-8. Dependency declaration.
-9. JSON configuration.
-10. Database schema.
-11. Database migration.
-12. Project-specific script.
-13. Resource declaration.
-14. Navigation file.
-15. Test file.
-16. ProGuard/R8 configuration.
-17. Documentation file containing application requirements or implementation details.
+1. Record its exact path.
+2. Determine its total line count.
+3. Read its contents from the first line to the final line.
+4. Verify that no ranges or sections are missing.
+5. Understand every relevant class, method, function, property, and variable.
+6. Examine every meaningful conditional branch.
+7. Examine loops, callbacks, event handlers, and asynchronous execution.
+8. Identify all callers.
+9. Identify all dependencies.
+10. Understand its UI interactions.
+11. Understand its database interactions.
+12. Understand its service and lifecycle interactions.
+13. Understand its API interactions.
+14. Examine its exception-handling behavior.
+15. Identify incomplete and potentially defective logic.
+16. Record findings before proceeding.
 
-Also inspect code embedded within Gradle scripts, XML, configuration files, and other source formats.
+For exceptionally large files, read the entire file in sequential ranges while preserving context.
 
-For binary resources and compiled files, use suitable metadata and inspection tools instead of treating them as ordinary text files.
+Do not rely on IDE indexing or AI summaries as evidence that all source lines have been inspected.
 
-Inspect third-party dependency metadata, versions, configuration, integration boundaries, and relevant implementation as necessary. Do not unnecessarily rewrite third-party vendor code.
+### 3.2 Generated and external code
 
-### 4.2 Sequential reading procedure
+For generated resources, compiled binaries, build output, caches, and third-party vendor code:
 
-For every applicable source file:
+- Inspect their configuration and relevant metadata.
+- Identify whether they are generated or project-owned.
+- Examine their integration boundaries.
+- Inspect third-party implementation where a specific defect requires it.
+- Do not unnecessarily rewrite dependency-managed or generated files.
 
-1. Determine its exact path.
-2. Determine the total number of lines.
-3. Read the complete file from its first line to its last line.
-4. Verify that no sections or code blocks were skipped.
-5. Understand every class, interface, method, function, and property.
-6. Examine important conditions and execution branches.
-7. Identify all callers and dependencies.
-8. Understand its relationship with the UI.
-9. Understand its relationship with the database.
-10. Understand its relationship with services and background processes.
-11. Identify incomplete logic and potential defects.
-12. Record the inspection result.
+Do not ignore project-owned source code merely because it is located in an unusual directory.
 
-For exceptionally large files, read sequential ranges while retaining the surrounding implementation context.
+### 3.3 Mandatory source coverage register
 
-Do not claim complete inspection when any relevant section remains unread.
+Maintain a complete register:
 
-### 4.3 Mandatory file coverage register
-
-Maintain a complete inspection register:
-
-| File | Total lines | Inspected lines | Issues | Modified | Tested | Verified |
+| File path | Total lines | Inspected lines | Findings | Modified | Tested | Verified |
 |---|---:|---:|---|---|---|---|
-| Example.kt | | | | | | |
-| Example.java | | | | | | |
+| SourceFile.kt | | | | | | |
+| Component.java | | | | | | |
+| Layout.xml | | | | | | |
 | AndroidManifest.xml | | | | | | |
-| Example.xml | | | | | | |
 | build.gradle.kts | | | | | | |
 
-Use the statuses:
+Use these statuses:
 
 - NOT INSPECTED
 - INSPECTING
 - FULLY INSPECTED
-- ISSUES IDENTIFIED
+- ISSUE IDENTIFIED
 - MODIFIED
 - TESTED
 - VERIFIED
 
-Do not move into global refactoring until the initial applicable source inspection and dependency mapping are complete.
+Do not start global modifications until initial applicable file inspection and dependency mapping are complete.
+
+Do not claim complete source coverage when relevant files or line ranges remain unread.
 
 ---
 
-# 5. PHASE THREE — RECONSTRUCT THE COMPLETE APPLICATION ARCHITECTURE
+# PART 4 — BASELINE CAPTURE AND EXISTING PROJECT PROTECTION
 
-After initial source inspection, reconstruct the actual architecture.
+Before making changes, establish the initial project state.
 
-Understand every relevant component:
+Inspect:
+
+- Git branch.
+- Git working-tree status.
+- Modified files.
+- Untracked files.
+- Existing user changes.
+- Existing build errors.
+- Existing warnings.
+- Existing test failures.
+- Existing APK or build artifacts.
+- Existing database state.
+- Existing configuration.
+- Existing local environment settings.
+
+Record the baseline.
+
+Protect:
+
+- User-created files.
+- Uncommitted changes.
+- Existing databases.
+- Application configuration.
+- Signing credentials.
+- Development environment settings.
+- Existing working functionality.
+- Test infrastructure.
+
+Do not blindly execute destructive clean, reset, uninstall, database deletion, or file-replacement commands.
+
+Use reversible changes and reviewable diffs whenever possible.
+
+---
+
+# PART 5 — COMPLETE ARCHITECTURAL RECONSTRUCTION
+
+After the complete initial source inspection, reconstruct the entire real application architecture.
+
+Inspect all applicable components:
 
 - Activities.
 - Fragments.
-- Jetpack Compose screens.
+- Compose screens.
 - XML layouts.
 - ViewModels.
 - Repositories.
@@ -222,358 +311,357 @@ Understand every relevant component:
 - Interfaces.
 - Controllers.
 - Services.
-- Broadcast receivers.
 - Workers.
+- Broadcast receivers.
 - Schedulers.
 - Databases.
 - DAOs.
 - APIs.
-- External application integrations.
+- External integrations.
 - Notifications.
-- Permission management.
-- Accessibility components, where implemented.
+- Permission handlers.
 - Background processes.
-- Utility functions.
-- Shared components.
+- Shared utilities.
 - Event handlers.
+- Dependency-injection components.
 
-Trace the complete execution of important workflows:
+Trace complete execution:
 
-USER ACTION → INPUT → VALIDATION → EVENT → BUSINESS LOGIC → PROCESSING → DATABASE/API → RESULT → UI UPDATE → LOGGING → ERROR HANDLING.
-
-Find:
-
-- Disconnected modules.
-- Uncalled methods.
-- Incorrect references.
-- Missing callbacks.
-- Broken event handlers.
-- Inconsistent state management.
-- Duplicate implementations.
-- Incorrect dependencies.
-- Incomplete execution paths.
-- Incorrect component communication.
-- Missing service initialization.
-- Incorrect lifecycle handling.
-
-Do not make architectural changes until the existing architecture is understood.
-
----
-
-# 6. PHASE FOUR — COMPLETE FEATURE AND SUBFEATURE DISCOVERY
-
-Discover every feature and subfeature actually implemented or established as a requirement in the project.
-
-Do not limit inspection to the main menu or visible application screens.
-
-Investigate:
-
-- Main features.
-- Secondary features.
-- Hidden screens.
-- Nested navigation.
-- Advanced settings.
-- Configuration options.
-- Forms.
-- Dialogs.
-- Bottom sheets.
-- Interactive controls.
-- Background functionality.
-- Database-driven functionality.
-- Internal helper features.
-- External integrations.
-- Import/export operations.
-- Scheduled operations.
-- Conditional workflows.
-- Administrative functionality.
-- Features present in source but disconnected from the UI.
-- Features present in UI but missing implementation.
-- Documented but incomplete functionality.
-
-For every discovered feature, produce a detailed structure:
-
-**FEATURE**
-- Purpose.
-- UI entry point.
-- Main functions.
-- Supporting functions.
-- Subfeatures.
-- Configuration options.
-- User inputs.
-- Validation.
-- Business logic.
-- Database operations.
-- Service operations.
-- Background execution.
-- External integrations.
-- Success conditions.
-- Failure conditions.
-- Error handling.
-- Retry and recovery.
-- Cancellation.
-- Persistence.
-- Activity history.
-- Testing requirements.
-
-Classify each feature as:
-
-- FULLY IMPLEMENTED
-- IMPLEMENTED BUT DEFECTIVE
-- PARTIALLY IMPLEMENTED
-- UI-ONLY IMPLEMENTATION
-- BACKEND-ONLY IMPLEMENTATION
-- DISCONNECTED IMPLEMENTATION
-- MISSING SUPPORTING LOGIC
-- UNSUPPORTED
-- BLOCKED BY EXTERNAL DEPENDENCY
-- NOT VERIFIABLE
-
-Do not assume that a function works just because its name exists in the source code.
-
-Do not report a feature as complete merely because its interface is visible.
-
----
-
-# 7. PHASE FIVE — DEEP BUSINESS LOGIC AND WORKFLOW AUDIT
-
-Investigate every important function, algorithm, conditional branch, supporting method, state transition, and execution sequence.
-
-### 7.1 Business logic
-
-Find:
-
-- Incorrect calculations.
-- Incorrect algorithms.
-- Wrong conditional statements.
-- Invalid comparisons.
-- Wrong default values.
-- Missing conditional branches.
-- Incorrect return values.
-- Nullability problems.
-- Boundary-condition defects.
-- Invalid assumptions.
-- Incorrect execution order.
-- Inconsistent state management.
-- Missing supporting methods.
-- Incorrect data conversions.
-- Incorrect date, time, and timezone handling.
-
-### 7.2 Workflow logic
-
-Find:
-
-- Broken user workflows.
-- Missing execution stages.
-- Incomplete processing.
-- Disconnected modules.
-- Unconnected buttons.
-- Missing event handlers.
-- Empty callbacks.
-- Incorrect form submissions.
-- Missing validation.
-- Incorrect database updates.
-- Missing execution feedback.
-- Incomplete cancellation.
-- Incorrect retry handling.
-- Missing recovery logic.
-- Incorrect success reporting.
-- Missing failure reporting.
-- Incorrect state transitions.
-- Broken navigation paths.
-
-### 7.3 Concurrency and lifecycle
-
-Find:
-
-- Race conditions.
-- Duplicate operations.
-- Deadlocks.
-- Coroutine lifecycle problems.
-- Threading errors.
-- Main-thread blocking.
-- Memory leaks.
-- Resource cleanup failures.
-- Incorrect Activity lifecycle handling.
-- Incorrect Service lifecycle handling.
-- Background-process failures.
-- State restoration failures.
-- Uncontrolled repeated operations.
-
-### 7.4 Feature interaction testing
-
-Test how different application features interact.
+USER ACTION
+→ INPUT
+→ VALIDATION
+→ EVENT
+→ BUSINESS LOGIC
+→ PROCESSING
+→ DATA / DATABASE / API
+→ RESULT
+→ STATE UPDATE
+→ UI FEEDBACK
+→ LOGGING
+→ ERROR HANDLING
+→ RECOVERY.
 
 Identify:
 
-- Shared-state problems.
-- Database conflicts.
-- Duplicate triggers.
-- Overlapping jobs.
-- Incorrect service reuse.
-- Conflicting configuration.
-- Concurrent modifications.
-- Incorrect task ownership.
-- Inconsistent behavior between connected features.
+- Disconnected components.
+- Uncalled methods.
+- Missing callbacks.
+- Incorrect references.
+- Broken interfaces.
+- Circular dependencies.
+- Duplicate implementations.
+- Incorrect state ownership.
+- Inconsistent execution pathways.
+- Missing integration layers.
+- Incorrect lifecycle handling.
+- Incomplete data flow.
 
-Do not test features exclusively in isolation.
+Do not replace a working architecture based on personal preference. Refactor only where the evidence establishes an actual engineering need.
 
 ---
 
-# 8. PHASE SIX — ZERO WARNING AND ERROR SUPPRESSION POLICY
+# PART 6 — COMPLETE FEATURE AND SUBFEATURE INVENTORY
 
-<badge color="danger">Non-negotiable engineering requirement</badge>
+Discover every feature, subfeature, option, and internal capability.
 
-**NEVER SUPPRESS, HIDE, DISABLE, IGNORE, MASK, OR BYPASS ANY GENUINE WARNING OR ERROR TO MAKE THE PROJECT APPEAR CLEAN.**
+Do not limit inspection to the main application navigation.
 
-This rule applies to:
+Investigate:
 
-- Every Kotlin file.
-- Every Java file.
-- Every XML file.
-- Every function and method.
-- Every class and interface.
-- Every source-code block.
-- Every manifest declaration.
-- Every resource declaration.
-- Every Gradle file.
-- Every build script.
-- Every test.
-- Every development configuration.
-- Every release configuration.
+- Primary functionality.
+- Secondary functionality.
+- Hidden screens.
+- Advanced settings.
+- Configuration options.
+- Dialogs.
+- Bottom sheets.
+- Forms.
+- Context menus.
+- Background operations.
+- Database-driven capabilities.
+- API integrations.
+- Import/export.
+- Notifications.
+- Scheduled operations.
+- Conditional workflows.
+- Administrative controls.
+- Internal utilities.
+- Features implemented but disconnected.
+- Features visible in UI but missing actual implementation.
+- Documented requirements not fully implemented.
 
-The objective is to correct the actual technical cause.
+For each feature, build this hierarchy:
 
-## 8.1 Prohibited suppression practices
+**FEATURE**
+- Purpose.
+- Entry point.
+- UI components.
+- Main methods.
+- Supporting methods.
+- Subfeatures.
+- Options.
+- User inputs.
+- Validation.
+- Business logic.
+- Data models.
+- Database interactions.
+- External integrations.
+- Background execution.
+- Success criteria.
+- Failure criteria.
+- Error handling.
+- Retry.
+- Cancellation.
+- Recovery.
+- Persistence.
+- State transitions.
+- History.
+- Logging.
+- Testing.
 
-Do not introduce inappropriate diagnostic suppression such as:
+Classify every feature:
 
-- `@Suppress`
-- `@SuppressWarnings`
-- `@file:Suppress`
-- Broad warning-suppression annotations.
-- `tools:ignore` used to hide real XML or Android Lint issues.
+- COMPLETE.
+- IMPLEMENTED BUT DEFECTIVE.
+- PARTIALLY IMPLEMENTED.
+- UI ONLY.
+- BACKEND ONLY.
+- DISCONNECTED.
+- MISSING SUPPORTING LOGIC.
+- UNSUPPORTED.
+- BLOCKED.
+- NOT VERIFIED.
+
+A class, function, screen, or button existing in source code is not proof that its associated feature works.
+
+---
+
+# PART 7 — DEEP LOGIC AND ALGORITHM AUDIT
+
+Inspect all relevant code paths for:
+
+### Business logic
+
+- Incorrect calculations.
+- Incorrect algorithms.
+- Wrong comparisons.
+- Wrong conditions.
+- Missing branches.
+- Incorrect defaults.
+- Incorrect return values.
+- Nullability defects.
+- Type conversion problems.
+- Invalid assumptions.
+- Boundary errors.
+- Incorrect date and time handling.
+- Incorrect ordering.
+- Incorrect aggregation.
+- Inconsistent state.
+- Incorrect authorization decisions.
+
+### Workflow logic
+
+- Missing workflow stages.
+- Incorrect execution sequences.
+- Missing callbacks.
+- Empty event handlers.
+- Nonfunctional controls.
+- Broken submissions.
+- Missing validation.
+- Incorrect persistence.
+- Incomplete execution.
+- Missing result detection.
+- Incorrect success reporting.
+- Missing failure reporting.
+- Broken cancellation.
+- Missing recovery.
+- Incomplete retries.
+
+### Concurrency and lifecycle
+
+- Race conditions.
+- Deadlocks.
+- Threading defects.
+- Coroutine lifecycle errors.
+- Main-thread blocking.
+- Memory leaks.
+- Resource leaks.
+- Duplicate execution.
+- Lifecycle-related crashes.
+- Background-process termination.
+- Lost state after restart.
+- Incorrect cancellation propagation.
+
+### Input and boundary handling
+
+- Null input.
+- Empty input.
+- Invalid data.
+- Malformed data.
+- Duplicate input.
+- Minimum and maximum boundaries.
+- Unexpected data types.
+- Incorrect defaults.
+- Missing validation.
+- Invalid configuration.
+
+### Feature interaction
+
+Identify whether two or more features interfere with one another.
+
+Check:
+
+- Shared-state conflicts.
+- Database collisions.
+- Duplicate event handling.
+- Resource contention.
+- Inconsistent configuration.
+- Concurrent modifications.
+- Incorrect state transitions.
+- Conflicting background tasks.
+
+Do not test individual methods exclusively in isolation. Validate complete user workflows and important combinations.
+
+---
+
+# PART 8 — ZERO-SUPPRESSION WARNING AND ERROR POLICY
+
+<badge color="danger">Highest-priority quality requirement</badge>
+
+**NEVER SUPPRESS, HIDE, DISABLE, IGNORE, MASK, OR BYPASS A GENUINE WARNING OR ERROR TO MAKE THE PROJECT APPEAR CLEAN.**
+
+This applies to every:
+
+- Source file.
+- Function.
+- Method.
+- Class.
+- Code block.
+- XML declaration.
+- Manifest entry.
+- Resource.
+- Gradle configuration.
+- Build script.
+- Dependency declaration.
+- Unit test.
+- Instrumentation test.
+- Development configuration.
+- Release configuration.
+
+The goal is to fix the real technical cause of every diagnostic.
+
+### 8.1 Prohibited diagnostic suppression
+
+Do not introduce inappropriate suppression using:
+
+- `@Suppress`.
+- `@SuppressWarnings`.
+- `@file:Suppress`.
+- Broad compiler suppressions.
+- `tools:ignore` to hide actual XML or Android Lint problems.
 - Disabled lint rules.
 - Disabled Detekt rules.
 - Disabled Ktlint rules.
-- Disabled static-analysis checks.
+- Disabled static-analysis rules.
 - `-nowarn`.
-- Compiler flags that conceal relevant diagnostics.
+- Compiler options that conceal useful diagnostics.
 - `ignoreFailures = true`.
-- `abortOnError = false` when used to hide defects.
-- Warning baselines used to conceal existing unresolved findings.
-- Tests skipped or disabled just because they fail.
-- Source files excluded to avoid inspections.
+- `abortOnError = false` to hide defects.
+- Warning baselines used to conceal unresolved issues.
+- Tests ignored or disabled merely because they fail.
+- Files excluded from inspections to avoid findings.
 - Empty catch blocks.
 - Swallowed exceptions.
-- Ignored return values where failure matters.
-- Hardcoded success responses.
-- Fake fallback values hiding defective functionality.
-- Diagnostic logging filters that conceal actual errors.
-- Weakening validation to make tests pass.
+- Unchecked ignored return values.
+- Hardcoded successful results.
+- Fake fallback values.
+- Diagnostic filters concealing actual failures.
+- Weakened validation.
+- Removed tests used to produce a passing result.
 
-Search the existing project for all suppression mechanisms.
+Search the complete project for existing suppressions and disabled diagnostic mechanisms.
 
-Identify why they were introduced, investigate the underlying defect, correct it, and remove inappropriate suppressions.
+Investigate why they were introduced.
 
-Do not mechanically remove a legitimate compatibility annotation when a safe correction is technically impossible. Such exceptions must remain narrow, technically justified, and documented.
+Fix the underlying issues and remove inappropriate suppressions.
 
-## 8.2 Mandatory warning correction process
+A narrowly scoped annotation may be retained only where there is a genuine, documented compatibility requirement and no safe implementation alternative. Do not remove legitimate annotations blindly or use them to conceal real defects.
+
+### 8.2 Warning correction methodology
 
 For every warning:
 
-1. Read the exact diagnostic.
-2. Identify its file and line.
-3. Identify the responsible component.
-4. Trace the cause.
-5. Determine its actual impact.
-6. Design the correct engineering fix.
-7. Modify the source or configuration.
-8. Update dependent files.
-9. Rebuild the affected component.
-10. Rerun relevant tests.
-11. Verify that the warning genuinely disappears.
+1. Capture the full diagnostic.
+2. Identify the exact source file and line.
+3. Trace the responsible implementation.
+4. Understand the warning's actual impact.
+5. Determine the technically correct fix.
+6. Update the source code or configuration.
+7. Update dependent files.
+8. Recompile.
+9. Rerun related tests.
+10. Confirm the original warning is resolved.
 
 Examples:
 
-| Warning | Correct engineering response |
+| Warning category | Correct engineering action |
 |---|---|
-| Deprecated API | Replace with a supported API or proper compatibility implementation |
+| Deprecated Android API | Replace with supported API or correct compatibility implementation |
 | Unused import | Remove unnecessary import |
-| Unused variable | Remove it or implement its missing purpose |
-| Unused function | Trace callers and determine whether it is dead or disconnected |
-| Nullability warning | Correct types and null handling |
-| Unchecked cast | Implement safe type handling |
+| Unused variable | Remove or implement its missing purpose |
+| Unused method | Trace callers and determine if it is dead or disconnected |
+| Nullability | Correct the data contract and null handling |
+| Unchecked cast | Implement correct type validation |
 | Unreachable code | Correct control flow |
-| Resource warning | Correct the resource lifecycle |
-| Missing permission | Implement the appropriate permission flow |
-| Manifest warning | Correct component configuration |
-| Dependency warning | Resolve version or compatibility issues |
-| Coroutine warning | Correct lifecycle, cancellation, and execution context |
-| Database warning | Correct schema, transaction, or query logic |
-| Security warning | Repair the actual security weakness |
+| Resource issue | Correct resource lifecycle and reference |
+| Permission warning | Correct actual permission handling |
+| Manifest warning | Correct component declaration |
+| Dependency warning | Resolve version or compatibility defect |
+| Coroutine warning | Correct scope, dispatcher, cancellation, or lifecycle |
+| Database warning | Correct transaction, query, schema, or migration |
+| Security warning | Repair the underlying vulnerability |
 
-Never replace one warning with another.
+Do not replace one warning with a different warning.
 
-Never change valid business behavior merely to silence a diagnostic.
-
-## 8.3 Mandatory error correction process
+### 8.3 Error correction methodology
 
 For every error:
 
 1. Inspect complete diagnostic output.
-2. Identify the exact source.
-3. Read the relevant file completely.
-4. Trace related callers.
-5. Identify the root cause.
+2. Identify the responsible source.
+3. Read its complete relevant file.
+4. Trace every affected caller.
+5. Determine the exact root cause.
 6. Implement the correct fix.
 7. Update dependent files.
-8. Compile the affected module.
-9. Run relevant tests.
-10. Confirm the original error is resolved.
+8. Recompile affected modules.
+9. Execute relevant tests.
+10. Verify the error has disappeared.
 
-## 8.4 Existing suppression audit
+Do not bypass compilation checks or weaken validation to obtain a successful build.
 
-Search all applicable source and configuration files for:
+### 8.4 Diagnostic disposition
 
-- Suppression annotations.
-- Warning exclusions.
-- Disabled diagnostic rules.
-- Compiler opt-outs.
-- Baseline files.
-- Ignored tests.
-- Empty exception handlers.
-- Unhandled asynchronous failures.
-- Discarded error results.
-- Conditional diagnostic disabling.
-
-Do not hide existing issues merely because they predate the current modifications.
-
-For every occurrence, determine whether the issue is genuine, obsolete, justified, or caused by an external dependency.
-
-### Diagnostic classification
-
-Every final warning or error must be classified as:
+Every remaining diagnostic must be classified:
 
 - FIXED.
-- FALSE POSITIVE — supported by technical evidence.
+- VERIFIED FALSE POSITIVE.
 - EXTERNAL DEPENDENCY.
-- TOOLCHAIN LIMITATION.
+- ANDROID SDK / TOOLCHAIN LIMITATION.
 - BLOCKED.
 - UNRESOLVED.
 
 Target zero actionable project-owned warnings and zero compilation errors.
 
-External dependencies and toolchains may produce diagnostics that cannot safely be corrected inside the project's source code. Document these accurately instead of hiding them.
+External dependency or toolchain diagnostics must be reported accurately when they cannot safely be resolved within project-owned code.
 
-**A clean console produced by suppressing diagnostics is a failed result. Actual correction is mandatory.**
+**A green console achieved through suppression is a failed engineering result. Genuine correction is mandatory.**
 
 ---
 
-# 9. PHASE SEVEN — GLOBAL NAMING, FILENAME AND FUNCTION REFACTORING
+# PART 9 — GLOBAL NAMING AND SOURCE ORGANIZATION
 
-Review all application terminology.
-
-Inspect:
+Inspect all:
 
 - Package names.
 - File names.
@@ -587,212 +675,370 @@ Inspect:
 - Database identifiers.
 - Configuration keys.
 - Log tags.
-- UI terminology.
+- UI labels.
 - Documentation.
 - Test names.
 
-Use simple, professional, descriptive, consistent names.
+Use simple, descriptive, consistent professional naming.
+
+Follow established Kotlin and Java conventions.
 
 Examples:
 
-| Responsibility | Example |
-|---|---|
-| Scheduling | TaskScheduler |
-| Execution | TaskExecutor |
-| Processing | TaskHandler |
-| Monitoring | TaskMonitor |
-| Data access | TaskRepository |
-| Preferences | AppSettings |
-| Activity records | ActivityHistory |
-| Background work | BackgroundWorker |
-| Application settings | AppConfig |
+- Clear responsibility-based class names.
+- Single-purpose methods.
+- Descriptive variables.
+- Consistent package organization.
+- Predictable resource names.
+- Consistent test naming.
 
-Choose names based on actual component responsibilities.
+Rename or reorganize components only where justified by actual architecture and maintainability needs.
 
-### Global rename requirements
+For every change:
 
-Whenever changing a name:
-
-1. Search for every existing reference.
+1. Find all references.
 2. Update imports.
 3. Update package declarations.
-4. Update class and function callers.
-5. Update manifest references.
-6. Update XML resource references.
+4. Update method callers.
+5. Update class references.
+6. Update manifest declarations.
 7. Update navigation.
 8. Update dependency injection.
 9. Update database mappings where appropriate.
 10. Update serialization.
-11. Preserve saved-data compatibility.
-12. Update tests.
-13. Update documentation.
-14. Verify all references compile.
+11. Preserve persisted-data compatibility.
+12. Update R8 rules where necessary.
+13. Update tests.
+14. Update documentation.
+15. Search the complete project for stale references.
+16. Compile and verify.
 
-Do not rename Android framework identifiers, SDK-defined permissions, external API contracts, or persisted identifiers carelessly.
+Do not rename Android framework APIs, permissions, external API contracts, or persisted identifiers carelessly.
 
-Use clear and truthful terminology. Do not disguise functionality or rename technical components to evade Android security or detection.
-
-A global rename is complete only after a project-wide reference search and regression validation.
+Use truthful technical naming. Never disguise functionality or rename components to evade Android security controls.
 
 ---
 
-# 10. PHASE EIGHT — COMPLETE FEATURE IMPLEMENTATION
+# PART 10 — FEATURE COMPLETENESS AND MISSING IMPLEMENTATION
 
-For every discovered feature, complete all required implementation layers.
+For every discovered feature, inspect all required implementation layers.
 
-Inspect and implement:
+Complete:
 
-1. UI.
+1. User interface.
 2. Input handling.
 3. Validation.
-4. Main functionality.
+4. Business logic.
 5. Supporting functions.
 6. Data models.
-7. Database integration.
-8. Service integration.
-9. Background execution.
-10. API integration.
-11. Result detection.
-12. Status updates.
-13. Success feedback.
-14. Failure feedback.
+7. Persistence.
+8. Database operations.
+9. API or integration.
+10. Background execution.
+11. Result verification.
+12. State management.
+13. Success reporting.
+14. Failure reporting.
 15. Cancellation.
-16. Retry handling.
+16. Retry.
 17. Recovery.
-18. Persistence.
-19. Activity history.
-20. Automated tests.
+18. Logging.
+19. History.
+20. Testing.
 
-A feature must work across its complete intended workflow.
+When a required function is missing, implement it.
 
-Do not settle for:
+When existing logic is incomplete, complete it.
 
-- Buttons that only display confirmation messages.
-- Empty functions.
-- Hardcoded success.
-- Missing callbacks.
-- Database objects that are never used.
-- APIs that do not validate their responses.
-- Incomplete handlers.
-- UI-only implementations.
-- Backend functionality without necessary UI integration.
-- Missing error handling.
-- Placeholder implementations.
+When a feature is only partially connected, finish its end-to-end integration.
 
-Implement missing supporting logic where supported by the actual project's requirements and established functionality.
+When the UI exists but no meaningful operation occurs, implement the appropriate business and persistence layers.
 
-Do not invent unrelated capabilities.
+When backend logic exists but no proper user-accessible workflow exists, complete the required interface.
+
+Do not create cosmetic or fake functionality.
+
+Do not leave placeholder methods, incomplete blocks, hardcoded success, or unimplemented required workflows.
+
+Do not invent unrelated features unsupported by project requirements.
 
 ---
 
-# 11. PHASE NINE — ANDROID PLATFORM AND PERMISSION ENGINEERING
+# PART 11 — ANDROID FRAMEWORK AND PLATFORM COMPATIBILITY
 
-Audit the complete Android integration.
+Inspect every Android platform integration.
 
-### Manifest inspection
+### AndroidManifest.xml
 
 Review:
 
 - Permissions.
 - Activities.
 - Services.
-- Broadcast receivers.
+- Receivers.
 - Content providers.
 - Exported components.
 - Intent filters.
 - Deep links.
 - Backup configuration.
 - Foreground-service declarations.
-- Application attributes.
+- Application configuration.
 
-### Permission mapping
+### Runtime permissions
 
-For every permission identify:
+For each permission determine:
 
 - Its actual purpose.
 - Which feature requires it.
-- Whether it is essential or optional.
-- Whether runtime approval is required.
-- Whether special settings access is required.
-- How denial is handled.
-- How revocation is handled.
+- Whether it is essential.
+- Whether it is optional.
+- Runtime permission requirements.
+- Special settings requirements.
+- Denial handling.
+- Revocation handling.
+- Android-version compatibility.
 
-Remove unnecessary permissions.
+Remove genuinely unnecessary permissions.
 
-Use supported Android permission flows and transparent user-controlled settings.
+Use supported Android APIs and transparent, user-controlled permission flows.
 
-Do not attempt silent privilege escalation or manipulation of restricted system settings.
+Do not perform unsupported privilege escalation or modify protected system settings.
 
-### SDK compatibility
+### Android compatibility
 
 Inspect:
 
 - Minimum SDK.
 - Target SDK.
 - Compile SDK.
-- Kotlin and Java compatibility.
+- Kotlin/Java compatibility.
 - Deprecated APIs.
+- Runtime permission changes.
 - Background restrictions.
 - Storage access.
 - Notification behavior.
-- Runtime permission changes.
-- Device-specific compatibility.
+- Intent behavior.
+- Service limitations.
+- Device-specific differences.
 
-Use supported Android APIs.
+Adapt actual implementations to supported platform behavior.
 
-Private installation does not remove operating-system security requirements. Do not add unnecessary distribution-specific infrastructure when the project does not require it.
+Private installation does not remove Android operating-system security requirements.
 
 ---
 
-# 12. PHASE TEN — ACCESSIBILITY AND EXTERNAL APPLICATION INTEGRATION
+# PART 12 — OEM AND MULTI-BRAND COMPATIBILITY ENGINEERING
 
-If the project uses Accessibility services or external application interaction, inspect the complete implementation.
+Build an adaptable device-compatibility architecture rather than relying on isolated manufacturer-name checks.
 
-Audit:
+Investigate the actual Android versions and OEM behavior relevant to every supported feature.
+
+Include compatibility planning for:
+
+- Samsung / One UI.
+- OPPO / ColorOS.
+- vivo / Funtouch OS and OriginOS.
+- Nokia/HMD Android variants.
+- Motorola Android variants.
+- Xiaomi / MIUI / HyperOS.
+- Redmi.
+- POCO.
+- OnePlus / OxygenOS.
+- realme UI.
+- Google Pixel.
+- ASUS.
+- Huawei.
+- HONOR.
+- TECNO.
+- Infinix.
+- Unknown and future Android manufacturers.
+
+### Device capability architecture
+
+Centralize detection of:
+
+- Manufacturer.
+- Brand.
+- Model.
+- Device.
+- Product.
+- Android version.
+- API level.
+- Build fingerprint.
+- Available system APIs.
+- Permissions.
+- Background execution capability.
+- Relevant system services.
+- Available settings destinations.
+
+Use actual capability detection as the primary decision mechanism.
+
+Use manufacturer-specific adapters only where behavior demonstrably differs.
+
+### OEM-specific investigation
+
+For each supported feature, examine:
+
+- Background execution.
+- Battery optimization.
+- Doze mode.
+- App standby.
+- Autostart.
+- Exact alarms.
+- Foreground services.
+- Notification permissions.
+- Reboot recovery.
+- Screen-off execution.
+- Network restrictions.
+- Permission availability.
+- External integration.
+- Relevant settings access.
+
+Use appropriate Android mechanisms:
+
+- WorkManager.
+- AlarmManager.
+- JobScheduler.
+- Foreground services.
+- Broadcast receivers.
+- PendingIntent.
+- Lifecycle-aware components.
+- Persistent state.
+- Recovery scheduling.
+
+Do not use one mechanism indiscriminately for every workload.
+
+For manufacturer-specific Settings navigation:
+
+1. Determine the actual device and OS.
+2. Detect the required capability.
+3. Validate the supported settings destination.
+4. Open it only when appropriate.
+5. Provide generic fallback guidance.
+6. Recheck the actual permission or setting after returning.
+7. Record whether the capability is genuinely available.
+
+Never assume that a Settings screen opening means configuration succeeded.
+
+Never claim all-brand compatibility merely because manufacturer names appear in the code.
+
+Maintain a device compatibility matrix and distinguish verified physical-device results from inferred support.
+
+---
+
+# PART 13 — EXTERNAL APPLICATION AND ACCESSIBILITY INTEGRATION
+
+If the project interacts with other applications or uses Accessibility services, completely inspect the architecture.
+
+Review:
 
 - Service lifecycle.
-- Event configuration.
+- Event registration.
 - Event filtering.
-- Supported package targeting.
-- UI element identification.
+- Package detection.
+- Target identification.
+- UI hierarchy.
 - Node lifecycle.
 - Input handling.
-- Click actions.
-- Gestures.
+- Supported semantic actions.
+- Click behavior.
+- Gesture behavior.
 - Timeouts.
 - Cancellation.
-- Failure recovery.
-- Permission loss.
+- Failure handling.
 - Service disconnection.
-- Resource cleanup.
-- Logging.
+- Permission revocation.
+- Recovery.
+- Cleanup.
+- Diagnostics.
 
-Use clear, accurate service names and descriptions.
+Use actual supported platform APIs.
 
-Use explicit user-controlled activation.
+Prefer semantic controls and identified UI elements over blind coordinate tapping.
 
-Use an authorized target-application allowlist. Unknown or protected applications must not become automatic interaction targets.
+Where an interaction with another application is an established feature:
 
-Do not conceal functionality or bypass legitimate platform protections.
+1. Verify the target application.
+2. Verify the current screen and state.
+3. Identify the intended target control.
+4. Validate that the control is appropriate and enabled.
+5. Perform the designated operation.
+6. Observe the resulting state.
+7. Verify the expected postcondition.
+8. Report the actual result.
+9. Fail safely if the target cannot be identified reliably.
 
-For applications requiring protection of financial or payment applications, use default-deny interaction, stop pending UI actions when the context changes, and never manipulate protected financial screens or transactions.
+Do not click a different control as a fallback.
+
+Do not reuse stale UI references after navigation.
+
+Do not assume one interface layout works across all external application versions.
+
+Use documented APIs or appropriate user-authorized integration mechanisms.
+
+Do not disguise Accessibility functionality, bypass platform protections, or interact with protected applications in unauthorized ways.
+
+If a project has explicit protected-application requirements, implement strict default-deny target selection and immediate cancellation of unsafe pending interactions.
 
 ---
 
-# 13. PHASE ELEVEN — DATABASE AND PERSISTENCE ENGINEERING
+# PART 14 — API AND FEATURE INTERFACE ARCHITECTURE
+
+Inspect how internal application features communicate.
+
+Create or improve explicit, testable interfaces where justified.
+
+Consider:
+
+- Repository interfaces.
+- Domain services.
+- Use cases.
+- Typed request models.
+- Typed response models.
+- Result objects.
+- State models.
+- Event contracts.
+- Integration adapters.
+- Error-code definitions.
+- Cancellation contracts.
+- Execution identifiers.
+
+Every important operation should have clearly defined:
+
+- Inputs.
+- Validation.
+- Preconditions.
+- Execution.
+- Result.
+- Failure behavior.
+- Retry conditions.
+- Cancellation.
+- Persistence.
+- Logging.
+
+For applications with a backend, verify actual API contracts, authentication, request/response schemas, versioning, and error handling.
+
+Do not create arbitrary network endpoints for local Android functions that should remain ordinary internal method or service calls.
+
+Do not invent external endpoints or undocumented API capabilities.
+
+---
+
+# PART 15 — DATABASE AND PERSISTENCE ENGINEERING
 
 Inspect:
 
+- Database architecture.
 - Schemas.
-- Entities.
 - Models.
+- Entities.
 - DAOs.
-- Tables.
+- Repositories.
+- Queries.
 - Relationships.
 - Constraints.
 - Indexes.
 - Transactions.
-- Queries.
 - Migrations.
 - Serialization.
 - Deserialization.
@@ -800,425 +1046,579 @@ Inspect:
 - Backup.
 - Restoration.
 
-Find and fix:
+Identify and fix:
 
 - Missing fields.
 - Incorrect data types.
 - Invalid relationships.
-- Broken migrations.
+- Broken queries.
 - Duplicate records.
-- Incorrect queries.
-- Partial updates.
 - Missing transactions.
-- Data corruption.
-- Inconsistent states.
-- Persistence failures.
+- Partial updates.
+- Inconsistent state.
+- Incorrect migrations.
+- Data corruption risks.
+- Missing recovery.
+- Incorrect persistence.
 
-Ensure all feature logic is correctly connected to the storage layer.
+Ensure all feature workflows use consistent data contracts.
 
 Preserve existing user data.
 
-Never delete or recreate the production database merely to obtain successful tests.
+Use safe migrations.
+
+Never reset an existing production database just to make tests pass.
 
 ---
 
-# 14. PHASE TWELVE — SECURITY, PRIVACY AND CREDENTIAL HANDLING
+# PART 16 — SECURITY AND PRIVACY ENGINEERING
+
+Perform a complete Android application security audit.
 
 Review:
 
 - Authentication.
 - Authorization.
-- Hardcoded credentials.
-- Default passwords.
-- Secrets storage.
+- Credentials.
+- Secret storage.
+- Android Keystore.
 - Encryption.
 - Exported components.
-- Unprotected broadcasts.
+- Broadcast security.
 - Intent validation.
+- PendingIntent configuration.
 - File access.
 - Database security.
 - API credentials.
-- Logging.
-- Backup.
 - Network communication.
+- Backup configuration.
+- Sensitive logs.
+- Permissions.
 - Dependency vulnerabilities.
+- External integrations.
 
-Use Android Keystore where appropriate.
+Investigate hardcoded passwords, insecure fallbacks, predictable encryption keys, excessive permissions, and credential exposure.
 
-Never fall back to predictable encryption keys or hardcoded credentials.
+Do not silently downgrade security when a secure operation fails.
 
-Never silently convert failed security operations into successful results.
+Do not log sensitive user information unnecessarily.
 
-Protect sensitive information in logs, exports, and backups.
-
-Investigate security-related lint and static-analysis findings and correct the actual vulnerabilities.
+Correct actual security vulnerabilities rather than renaming or concealing them.
 
 ---
 
-# 15. PHASE THIRTEEN — COMPLETE UI/UX AND RESOURCE AUDIT
+# PART 17 — UI, STATE MANAGEMENT AND USER EXPERIENCE
 
-Inspect every screen and application resource, excluding the separately completed launcher-icon work.
+Inspect every screen and user interaction.
 
 Review:
 
 - Navigation.
-- Layouts.
+- Input fields.
 - Forms.
 - Buttons.
-- Inputs.
 - Menus.
 - Dialogs.
 - Bottom sheets.
 - Lists.
-- Cards.
+- Selection controls.
+- Validation.
 - Loading states.
 - Empty states.
 - Error states.
 - Success states.
-- Spacing.
-- Typography.
-- Colors.
-- Themes.
-- Responsive layouts.
+- Persistence of selections.
+- Navigation state restoration.
+- Responsiveness.
 - Accessibility.
-- Screen compatibility.
+- Keyboard and focus behavior.
 
-Ensure every visible interactive element performs its intended operation.
+Verify:
 
-Remove unused resources only after verifying that they are not referenced.
+1. Every visible control performs its intended operation.
+2. User input is validated properly.
+3. Selections persist correctly where required.
+4. Navigation does not lose unintended data.
+5. Save and submit actions update actual application state.
+6. UI state matches database state.
+7. Success messages reflect real results.
+8. Errors are visible and meaningful.
+9. Loading states terminate correctly.
+10. Empty and recovery states work correctly.
 
-Fix:
+Preserve the existing design direction where it is functioning properly.
 
-- Broken drawable references unrelated to the launcher icon.
-- Incorrect resource identifiers.
-- Layout defects.
-- Inconsistent styling.
-- Missing UI assets.
-- Incorrect navigation.
-- Responsiveness problems.
-- Accessibility problems.
-
-Preserve the existing design direction where it is working correctly.
-
-Do not modify the separately completed launcher-icon implementation.
+Do not modify the separately completed launcher-icon resources.
 
 ---
 
-# 16. PHASE FOURTEEN — COMPLETE SOURCE-CODE REWRITING
-
-Work sequentially, file by file.
-
-For every affected file:
-
-1. Read the entire original file.
-2. Understand its responsibility.
-3. Trace all callers and dependencies.
-4. Identify confirmed defects.
-5. Identify incomplete implementations.
-6. Design the corrected implementation.
-7. Rewrite the entire file when technically justified.
-8. Update imports.
-9. Update function declarations.
-10. Update method calls.
-11. Update package references.
-12. Update dependent files.
-13. Synchronize interfaces and configuration.
-14. Compile the affected code.
-15. Run relevant tests.
-16. Review the complete diff.
-17. Mark the file verified only after testing.
-
-Do not blindly rewrite working files.
-
-Do not leave:
-
-- Incomplete code blocks.
-- Undefined functions.
-- Undefined variables.
-- Missing imports.
-- Duplicate implementations.
-- Conflicting old logic.
-- Placeholder code.
-- Hardcoded success.
-- Incorrect resource paths.
-- Stale file references.
-- Hidden exceptions.
-- New warning suppressions.
-
-Preserve all valid existing functionality.
-
----
-
-# 17. PHASE FIFTEEN — GLOBAL CROSS-FILE SYNCHRONIZATION
-
-After modifications, search the entire project for:
-
-- Old filenames.
-- Old class names.
-- Old method names.
-- Old function references.
-- Stale imports.
-- Missing references.
-- Incorrect package declarations.
-- Incorrect file paths.
-- Outdated resource identifiers.
-- Database field mismatches.
-- Manifest references.
-- Navigation references.
-- Inconsistent API contracts.
-- Obsolete dependencies.
-- Configuration mismatches.
-- Conflicting implementations.
+# PART 18 — PERFORMANCE AND RESOURCE MANAGEMENT
 
 Inspect:
 
-- Reflection.
-- Dependency injection.
-- Serialization.
-- Preferences.
-- Database mappings.
-- Navigation.
-- Deep links.
-- ProGuard/R8.
-- Resource shrinking.
-- Build variants.
+- Memory usage.
+- CPU consumption.
+- Disk access.
+- Database performance.
+- Network operations.
+- Threading.
+- Coroutines.
+- Resource lifecycle.
+- Background tasks.
+- Caching.
+- Image loading.
+- Repeated calculations.
+- Unbounded queues.
+- Memory leaks.
+- Excessive logging.
 
-Update every affected file and verify the result.
+Optimize actual bottlenecks.
 
----
+Verify:
 
-# 18. PHASE SIXTEEN — COMPLETE AUTOMATED TESTING ARCHITECTURE
+- Correct dispatcher selection.
+- Main-thread safety.
+- Resource closure.
+- Cancellation propagation.
+- Bounded retries.
+- Proper object lifecycle.
+- No unnecessary background activity.
+- No uncontrolled repeated processing.
 
-Create or improve the complete testing infrastructure.
-
-### Unit tests
-
-Test significant business rules, algorithms, helper functions, validation, calculations, conditions, and state transitions.
-
-### Database tests
-
-Test insertion, updates, deletion, queries, relationships, transactions, and migrations.
-
-### Integration tests
-
-Test communication between modules, services, repositories, workers, databases, and APIs.
-
-### UI tests
-
-Test buttons, forms, navigation, dialogs, selection controls, and feedback.
-
-### Instrumentation tests
-
-Test Android lifecycle, permissions, service behavior, and device-specific functionality where available.
-
-### End-to-end tests
-
-Test complete workflows from initial user action through the final observable result.
-
-### Negative tests
-
-Test invalid data, missing permissions, timeout conditions, dependency failures, interruption, restart, and recovery.
-
-### Regression tests
-
-Verify that corrected functionality has not broken previously working features.
-
-Do not create superficial tests that merely reproduce the implementation's own assumptions.
-
-Execute tests whenever the environment permits.
-
-Do not disable or skip failing tests to create a passing report.
+Do not introduce unnecessary complexity or performance optimizations without an identifiable problem.
 
 ---
 
-# 19. PHASE SEVENTEEN — INCREMENTAL BUILD AND REPAIR
+# PART 19 — COMPLETE SOURCE REWRITING AND CROSS-FILE SYNCHRONIZATION
 
-Follow this mandatory engineering loop:
+Work through logically connected files sequentially.
 
-COMPLETE FILE INSPECTION
+For each defective file:
 
-↓
+1. Read its entire original contents.
+2. Understand its responsibility.
+3. Trace callers and dependencies.
+4. Identify all confirmed defects.
+5. Identify incomplete logic.
+6. Plan the corrected implementation.
+7. Rewrite the full file when justified.
+8. Update imports.
+9. Update interfaces.
+10. Update all callers.
+11. Update paths and references.
+12. Update related XML and manifest entries.
+13. Update database mappings.
+14. Update dependency injection.
+15. Update serialization.
+16. Update build configuration where necessary.
+17. Update tests.
+18. Compile.
+19. Execute relevant tests.
+20. Review the complete diff.
+21. Mark the file verified only after appropriate checks.
 
-ARCHITECTURE DISCOVERY
+Rewrite defective files comprehensively rather than stacking unreliable patches.
 
-↓
+Do not blindly rewrite stable files.
 
-FEATURE INVENTORY
+Do not leave:
 
-↓
+- Partial code blocks.
+- Empty functions.
+- Undefined variables.
+- Missing imports.
+- Duplicate methods.
+- Conflicting old implementations.
+- Incorrect references.
+- Hardcoded success.
+- Placeholder logic.
+- Broken resource paths.
+- Inconsistent schemas.
+- New diagnostic suppressions.
 
-DEPENDENCY MAPPING
+### Global synchronization pass
 
-↓
-
-ROOT-CAUSE ANALYSIS
-
-↓
-
-REPAIR DESIGN
-
-↓
-
-SOURCE MODIFICATION
-
-↓
-
-CROSS-FILE UPDATES
-
-↓
-
-COMPILATION
-
-↓
-
-TEST EXECUTION
-
-↓
-
-LOG INSPECTION
-
-↓
-
-WARNING AND ERROR CORRECTION
-
-↓
-
-REGRESSION VERIFICATION
-
-Build after every meaningful modification batch.
-
-Do not wait until the entire project has been rewritten before performing the first build.
-
-Fix errors at their actual source.
-
-Do not use large unverified replacements across the project.
-
-Maintain a progress register of files modified, features completed, tests executed, and unresolved issues.
-
----
-
-# 20. PHASE EIGHTEEN — BUILD AND CONNECTED DEVICE INSTALLATION
-
-If an authorized Android device or emulator is available:
-
-1. Inspect its Android version and API level.
-2. Identify the installed application package.
-3. Determine the correct build variant.
-4. Build the latest application.
-5. Verify the output artifact.
-6. Install or update the application.
-7. Preserve existing user data.
-8. Verify the installed version.
-9. Launch the application.
-10. Verify startup and initialization.
-11. Test all available screens.
-12. Test every supported feature.
-13. Test relevant integrations.
-14. Verify persistence.
-15. Test restart recovery.
-16. Verify required permissions.
-17. Test appropriate failure scenarios.
-18. Inspect runtime behavior.
-19. Collect diagnostic evidence.
-
-Do not perform unauthorized external actions or destructive operations.
-
-Use controlled mocks or test transports where external actions would affect unauthorized parties.
-
-Clearly distinguish simulated execution from confirmed real execution.
-
-If a device is unavailable, perform the available emulator, unit, build, and instrumentation checks, and report the missing device-level verification.
-
----
-
-# 21. PHASE NINETEEN — COMPLETE LOGCAT AND DIAGNOSTIC AUDIT
-
-Inspect all available sources:
-
-- Android Studio Problems panel.
-- Gradle console.
-- Compiler output.
-- Build console.
-- Run console.
-- Debug console.
-- ADB output.
-- Logcat.
-- Application logs.
-- Crash traces.
-- ANR reports.
-- System traces.
-- Database errors.
-- Worker logs.
-- Scheduler logs.
-- Service lifecycle logs.
-- Permission errors.
-- Lint results.
-- Static-analysis reports.
-- Dependency checks.
-- Automated test reports.
-
-For every issue:
-
-1. Identify the diagnostic.
-2. Find its exact source.
-3. Read the relevant code.
-4. Trace the execution path.
-5. Determine its root cause.
-6. Repair the implementation.
-7. Update dependent files.
-8. Rebuild.
-9. Retest.
-10. Confirm the issue is resolved.
-
-Preserve important logs before clearing diagnostic buffers.
-
-Do not claim to have inspected an inaccessible diagnostic source.
-
-Do not treat a successful UI message as proof that an underlying operation completed.
-
----
-
-# 22. PHASE TWENTY — FINAL FULL PROJECT AUDIT
-
-After all changes, perform another complete source and consistency audit.
-
-Reinspect every modified source file in full.
-
-Search for:
+After repairs, search the entire project for:
 
 - Old filenames.
 - Old class names.
 - Old function names.
-- Missing implementations.
-- Undefined references.
-- Unused code.
-- Duplicate code.
-- Incomplete workflows.
-- Incorrect paths.
+- Removed identifiers.
 - Stale imports.
-- Unnecessary dependencies.
-- Inconsistent database definitions.
-- Missing tests.
-- New warning suppressions.
-- Disabled diagnostics.
-- Ignored exceptions.
-- Broken build configurations.
-- Incomplete function bodies.
-- Inconsistent interfaces.
+- Incorrect paths.
+- Broken resource IDs.
+- Old database fields.
+- Outdated API calls.
+- Conflicting configurations.
+- Duplicate implementations.
+- Obsolete dependencies.
 
-Review the entire final project diff.
+Inspect reflection, dependency injection, serialization, preferences, navigation, deep links, R8 rules, saved-data compatibility, and all other indirect references.
 
-Verify that every supported feature is implemented across all required layers.
+Every change must be synchronized with its consumers.
 
 ---
 
-# 23. PHASE TWENTY-ONE — FINAL ZERO-SUPPRESSION BUILD AND SECOND DIAGNOSTIC PASS
+# PART 20 — AUTOMATED TESTING ARCHITECTURE
+
+Create or improve the complete test infrastructure.
+
+### Unit tests
+
+Test:
+
+- Business logic.
+- Algorithms.
+- Validation.
+- Calculations.
+- Conditions.
+- State transitions.
+- Date/time logic.
+- Error mapping.
+- Recovery logic.
+
+### Database tests
+
+Test:
+
+- Insertion.
+- Updates.
+- Deletion.
+- Queries.
+- Transactions.
+- Relationships.
+- Migrations.
+- Persistence.
+- Duplicate prevention.
+
+### Integration tests
+
+Test:
+
+- Services.
+- Repositories.
+- Workers.
+- Scheduler.
+- Database.
+- Internal APIs.
+- External integration adapters.
+- Feature communication.
+
+### UI tests
+
+Test:
+
+- Navigation.
+- Forms.
+- Buttons.
+- Dialogs.
+- Menus.
+- Selection.
+- Input validation.
+- Error messages.
+- State restoration.
+
+### Instrumentation tests
+
+Test:
+
+- Android lifecycle.
+- Permissions.
+- Receivers.
+- Services.
+- Background execution.
+- Device-specific features.
+
+### End-to-end tests
+
+Test the complete application workflow from initial user input through the actual observable result.
+
+### Negative tests
+
+Test:
+
+- Invalid inputs.
+- Missing permissions.
+- Interrupted execution.
+- Timeouts.
+- Missing dependencies.
+- Database failure.
+- Network failure.
+- Application restart.
+- Duplicate submissions.
+- Concurrent operations.
+- Recovery.
+
+### Regression tests
+
+Rerun related and previously working scenarios after each meaningful change.
+
+Do not disable tests merely because they fail.
+
+Do not mark a test as successful merely because the relevant code compiles.
+
+---
+
+# PART 21 — INCREMENTAL BUILD AND DEBUGGING STRATEGY
+
+Follow this compulsory engineering loop:
+
+COMPLETE SOURCE INSPECTION
+↓
+ARCHITECTURE RECONSTRUCTION
+↓
+FEATURE DISCOVERY
+↓
+DEPENDENCY MAPPING
+↓
+ROOT-CAUSE IDENTIFICATION
+↓
+REPAIR DESIGN
+↓
+SOURCE MODIFICATION
+↓
+CROSS-FILE SYNCHRONIZATION
+↓
+COMPILATION
+↓
+TEST EXECUTION
+↓
+DIAGNOSTIC INSPECTION
+↓
+ROOT-CAUSE CORRECTION
+↓
+REGRESSION VERIFICATION
+
+Do not modify the entire project in one unverified operation.
+
+Build after meaningful repair batches.
+
+Fix errors where they originate.
+
+When a repair introduces an integration problem, correct that problem before marking the repair complete.
+
+Maintain a progress register containing:
+
+- Inspected files.
+- Modified files.
+- Rewritten files.
+- Completed features.
+- Tests executed.
+- Failures.
+- Resolved defects.
+- Outstanding blockers.
+
+---
+
+# PART 22 — LIVE DEVICE AND ENVIRONMENT TESTING
+
+If an authorized Android device or emulator is available, perform real-device verification.
+
+### Device preflight
+
+Identify:
+
+- Manufacturer.
+- Model.
+- Android version.
+- API level.
+- Build fingerprint.
+- Application package.
+- Installed version.
+- Permissions.
+- Storage.
+- Relevant external applications.
+- Background restrictions.
+
+### Build and installation
+
+1. Validate the project configuration.
+2. Build the appropriate variant.
+3. Verify the generated APK.
+4. Install or update the app.
+5. Preserve existing data.
+6. Verify package and version.
+7. Launch the application.
+8. Inspect startup and initialization.
+
+### Functional verification
+
+Test:
+
+- Every discovered feature.
+- Every relevant subfeature.
+- All important settings.
+- Main and secondary workflows.
+- Database persistence.
+- Scheduling.
+- Cancellation.
+- Recovery.
+- Permissions.
+- Background behavior.
+- External integrations.
+- Error handling.
+- Restart behavior.
+
+Do not perform destructive or unauthorized external actions.
+
+Use controlled test accounts, mocks, or test transports when actual external actions are not appropriate.
+
+Clearly distinguish simulated tests from real device-confirmed tests.
+
+If no device is available, perform the available build, unit, integration, and emulator checks, and report that device-level testing remains outstanding.
+
+---
+
+# PART 23 — LIVE SCREEN OBSERVATION AND ADB DIAGNOSTICS
+
+When `scrcpy` and an authorized connected device are available, use them for complementary visual and diagnostic validation.
+
+### Visual inspection using scrcpy
+
+Observe actual:
+
+- Screen transitions.
+- Navigation.
+- Dialogs.
+- Buttons.
+- Input behavior.
+- UI state.
+- External application interactions.
+- Errors.
+- Unexpected screens.
+- Loading.
+- Result confirmation.
+
+Capture screenshots or recordings when useful and permitted.
+
+Do not rely solely on the IDE's interpretation of UI events.
+
+### ADB and Logcat
+
+Inspect:
+
+- Application process.
+- Package-specific logs.
+- System logs.
+- Android Runtime exceptions.
+- ActivityManager.
+- WindowManager.
+- Background workers.
+- Services.
+- Broadcast receivers.
+- Permission failures.
+- Scheduler operations.
+- Crash traces.
+- ANR traces.
+
+Correlate visual behavior with logs and execution IDs.
+
+Reproduce intermittent failures using controlled conditions.
+
+For every intermittent issue:
+
+1. Record initial state.
+2. Perform the action.
+3. Observe actual device behavior.
+4. Capture relevant diagnostic output.
+5. Identify the responsible execution path.
+6. Reproduce the failure.
+7. Determine root cause.
+8. Implement a permanent correction.
+9. Repeat the original test.
+10. Verify no related regression.
+
+Do not replace actual diagnosis with arbitrary delays or blind retries.
+
+---
+
+# PART 24 — COMPLETE LOGGING AND EXECUTION RESULT VERIFICATION
+
+Audit all execution status and reporting systems.
+
+Do not confuse:
+
+- Operation requested.
+- Operation accepted.
+- Operation queued.
+- Operation started.
+- External application opened.
+- Action invoked.
+- Action submitted.
+- Result observed.
+- Operation completed.
+- External delivery confirmed.
+
+Every feature must define its actual success postcondition.
+
+For each important execution, maintain appropriate correlation information:
+
+- Operation ID.
+- Execution ID.
+- Feature identifier.
+- Attempt number.
+- Target.
+- Timestamp.
+- Current state.
+- Selected action.
+- Result observed.
+- Error code.
+- Failure explanation.
+- Retry count.
+- Related diagnostic identifier.
+
+Use correct timestamps and consistent state transitions.
+
+Avoid logging credentials, sensitive personal information, or unnecessary user data.
+
+Search for false completion messages, hardcoded successes, incorrect counters, premature database updates, and missing result callbacks.
+
+A successful function invocation must not automatically be translated into a successful business operation.
+
+---
+
+# PART 25 — FINAL FULL PROJECT AUDIT
+
+After implementation, testing, and cross-file updates, perform another full consistency audit.
+
+Reinspect every modified file completely.
+
+Search for:
+
+- Old names.
+- Old paths.
+- Broken references.
+- Missing functions.
+- Undefined variables.
+- Duplicate code.
+- Unused code.
+- Incomplete workflows.
+- Stale imports.
+- Outdated dependencies.
+- Broken resources.
+- Database inconsistencies.
+- Incomplete tests.
+- New warning suppressions.
+- Disabled diagnostic rules.
+- Swallowed exceptions.
+- Fake success responses.
+- Incorrect fallback behavior.
+- New security defects.
+- Build configuration mistakes.
+
+Review the complete project diff.
+
+Ensure all modified components represent one consistent implementation.
+
+---
+
+# PART 26 — FINAL ZERO-SUPPRESSION BUILD AND SECOND DIAGNOSTIC PASS
 
 <badge color="danger">Mandatory final acceptance stage</badge>
 
-After all code modifications, feature testing, resource cleanup, and regression work:
+After all implementation and regression testing:
 
-1. Save every source file.
+1. Save every modified file.
 2. Perform a fresh full build.
 3. Inspect the entire Gradle output.
 4. Inspect compiler diagnostics.
@@ -1231,16 +1631,17 @@ After all code modifications, feature testing, resource cleanup, and regression 
 11. Inspect the Debug console.
 12. Inspect fresh Logcat output.
 13. Inspect relevant system traces.
-14. Run the complete available test suite.
-15. Search all project-owned files for inappropriate suppression annotations.
-16. Search Gradle configuration for disabled diagnostic checks.
-17. Search tests for ignored or disabled test cases.
-18. Search source code for swallowed exceptions.
+14. Execute all applicable automated tests.
+15. Search all project-owned files for inappropriate warning suppressions.
+16. Search Gradle files for disabled diagnostic checks.
+17. Search tests for ignored or disabled cases.
+18. Search source for swallowed exceptions.
 19. Search for fake success and incomplete fallback behavior.
-20. Compare final diagnostics against the original baseline.
-21. Fix every actionable newly introduced issue.
-22. Rebuild and rerun affected tests.
-23. Repeat the complete diagnostic inspection.
+20. Compare final diagnostics against the initial baseline.
+21. Fix every actionable newly discovered issue.
+22. Update dependent files.
+23. Rebuild and rerun affected tests.
+24. Repeat the complete diagnostic inspection.
 
 Do not disable warnings to make the project appear clean.
 
@@ -1250,170 +1651,156 @@ Do not weaken validation.
 
 Do not skip tests for convenience.
 
-Do not claim zero warnings when external warnings remain.
+Do not claim zero warnings when external dependency or toolchain warnings remain.
 
-External dependency and toolchain limitations must be documented precisely.
+Document unavoidable external findings precisely.
 
-**The final build, final tests, and final diagnostic report must all correspond to the same latest saved source state.**
-
----
-
-# 24. PHASE TWENTY-TWO — FINAL PROJECT INTEGRITY VERIFICATION
-
-Before completion, verify:
-
-- All applicable source files were inspected.
-- All relevant source lines were covered.
-- All functions and important code blocks were reviewed.
-- All features were discovered.
-- All subfeatures were evaluated.
-- All required missing logic was implemented.
-- Defective functions were repaired.
-- Dependent files were synchronized.
-- All renamed references resolve.
-- All imports are correct.
-- All resource references resolve.
-- Database schemas and migrations are consistent.
-- Dependencies are compatible.
-- Permissions are justified.
-- Manifests are correct.
-- No inappropriate new diagnostic suppression was introduced.
-- No known genuine project warning has been concealed.
-- Existing working functionality is preserved.
-- No unrelated user data was damaged.
-- The latest build corresponds to the latest saved source.
-- Critical tests have passed.
-- Blocked tests are documented.
-- No temporary debug or test-only code remains accidentally enabled.
-- The installed application launches where device access is available.
-
-Review the complete final source diff.
-
-Do not remove useful documentation, tests, logging, or existing user work merely to make the workspace appear clean.
-
-Do not alter the separately completed launcher-icon resources.
+**The final build, final tests, final device verification, and final diagnostics must all correspond to the same latest saved source state.**
 
 ---
 
-# 25. PHASE TWENTY-THREE — FINAL ACCEPTANCE MATRIX
+# PART 27 — FINAL ACCEPTANCE MATRIX
 
-Produce a complete verification table:
+Provide a complete verification matrix:
 
 | Requirement | Status |
 |---|---|
-| Complete project discovery | |
-| Line-by-line source inspection | |
-| File coverage register | |
-| Architecture mapping | |
+| Workspace discovery | |
+| Technology identification | |
+| Full source inspection | |
+| Line-by-line coverage | |
+| Architecture reconstruction | |
 | Feature inventory | |
 | Subfeature inventory | |
-| Business logic audit | |
+| Logic audit | |
 | Workflow audit | |
-| Missing logic implementation | |
+| Missing implementation | |
 | Function completion | |
-| Global naming review | |
-| Cross-file references | |
-| Manifest and permission review | |
-| Database consistency | |
-| UI/UX audit | |
+| File and naming consistency | |
+| Cross-file synchronization | |
+| Manifest audit | |
+| Permission audit | |
+| Database audit | |
+| API audit | |
 | Security audit | |
+| UI/UX audit | |
+| OEM compatibility | |
+| Background execution | |
 | Unit testing | |
 | Integration testing | |
-| UI and instrumentation testing | |
+| UI testing | |
+| Instrumentation testing | |
 | End-to-end testing | |
 | Regression testing | |
-| Build verification | |
 | Device installation | |
+| Runtime verification | |
 | Logcat inspection | |
 | Warning suppression audit | |
 | Final diagnostic inspection | |
+| Final build | |
 
-Use these statuses:
+Use only:
 
-- PASS
-- FAIL
-- BLOCKED
-- PARTIALLY IMPLEMENTED
-- NOT APPLICABLE
-- NOT VERIFIED
+- PASS.
+- FAIL.
+- BLOCKED.
+- PARTIALLY IMPLEMENTED.
+- NOT APPLICABLE.
+- NOT VERIFIED.
 
-Never mark a feature PASS merely because it compiled or appeared on screen.
+Never mark a feature PASS merely because it compiles or appears on screen.
 
 ---
 
-# 26. PHASE TWENTY-FOUR — FINAL ENGINEERING REPORT
+# PART 28 — FINAL ENGINEERING DELIVERABLES
 
-Provide an evidence-based final report.
+Provide a detailed evidence-based report containing:
 
 ### A. Project overview
 
 - Application name.
-- Application ID.
-- Technologies.
+- Package ID.
+- Technology stack.
 - Architecture.
 - Modules.
 - SDK configuration.
 - Dependencies.
 
-### B. Source inspection
+### B. Inspection coverage
 
 - Total applicable project-owned files.
 - Fully inspected files.
-- Total inspected source lines where measurable.
+- Inspected source lines.
 - Files modified.
 - Files rewritten.
 - Files renamed.
 - New files created.
-- Uninspected or inaccessible files and reasons.
+- Files not inspected and reasons.
 
-### C. Feature completeness
+### C. Feature inventory
 
-- Total features discovered.
-- Total subfeatures identified.
-- Fully completed features.
-- Repaired features.
-- Newly implemented supporting logic.
-- Unsupported features.
-- Remaining incomplete functionality.
+- Features discovered.
+- Subfeatures discovered.
+- Fully implemented features.
+- Corrected features.
+- Missing logic implemented.
+- Unsupported capabilities.
+- Remaining limitations.
 
-### D. Code modifications
+### D. Engineering modifications
 
-- Important logic repairs.
+- Root causes discovered.
+- Business logic repaired.
 - Functions rewritten.
 - Files rewritten.
-- Names standardized.
-- References updated.
-- Dependencies changed.
+- API contracts changed.
 - Database changes.
+- Dependency changes.
+- Configuration changes.
+- Path and reference updates.
 - Architectural improvements.
-- Permission changes.
-- UI/UX improvements.
+- Security fixes.
+- UI/UX fixes.
+- OEM compatibility improvements.
 
-### E. Warning and error resolution
+### E. Warning and error report
 
+- Initial compilation errors.
 - Initial warnings.
-- Initial errors.
 - Existing suppression mechanisms discovered.
 - Inappropriate suppressions removed.
-- Root causes fixed.
+- Actual root causes corrected.
 - Remaining external warnings.
 - Final unresolved errors.
 - Final unresolved warnings.
 
-### F. Testing
+### F. Testing report
 
-- Unit tests.
-- Integration tests.
-- UI tests.
-- Instrumentation tests.
-- End-to-end tests.
-- Regression tests.
+- Unit tests executed.
+- Integration tests executed.
+- UI tests executed.
+- Instrumentation tests executed.
+- End-to-end tests executed.
+- Regression tests executed.
 - Passed.
 - Failed.
 - Blocked.
 - Not executed.
 
-### G. Build and installation
+### G. Device and runtime report
+
+- Connected device.
+- Manufacturer.
+- Model.
+- Android version.
+- Installed package.
+- Version.
+- Device tests performed.
+- Logcat findings.
+- System trace findings.
+- Runtime limitations.
+
+### H. Final build report
 
 - Build variant.
 - Application ID.
@@ -1421,69 +1808,78 @@ Provide an evidence-based final report.
 - Version code.
 - APK path.
 - APK size.
+- Build status.
 - Installation result.
 - Launch result.
 
-### H. Final status
+### I. Final status
 
 Choose honestly:
 
-**PASS:** All critical functionality is implemented, required tests have passed, and no known actionable project-owned warnings or errors remain.
+**PASS:** Required implementation and critical verification completed. No known actionable project-owned defects or errors remain.
 
-**PASS WITH LIMITATIONS:** The application is usable, but specific external warnings, blocked tests, or documented limitations remain.
+**PASS WITH LIMITATIONS:** The application is functional, but external warnings, blocked tests, or documented compatibility limitations remain.
 
 **FAIL:** Critical defects, build failures, incomplete essential workflows, or significant unverified behavior remain.
 
-Never report PASS if significant source areas, features, or important diagnostics remain unverified.
+Never report PASS when significant files, features, workflows, or diagnostics remain unverified.
 
-Provide the updated complete project and final APK where supported.
+Provide the final APK and complete updated source project where the environment supports exporting them.
 
 ---
 
 # FINAL EXECUTION DIRECTIVE
 
-BEGIN IMMEDIATELY WITH THE CURRENTLY OPENED ANDROID PROJECT.
+START IMMEDIATELY WITH THE CURRENTLY OPENED ANDROID PROJECT.
 
-First inspect every applicable project-owned source and configuration file completely, sequentially, and line by line.
+First inspect the complete workspace.
 
-Do not begin global rewriting or renaming before completing the initial source inspection and architecture mapping.
+Read every applicable project-owned source and configuration file fully, sequentially, line by line.
 
-Discover every feature, subfeature, configuration option, function, supporting method, and execution workflow.
+Complete the initial file coverage register before beginning major refactoring.
 
-Understand all existing functionality.
+Understand the entire architecture.
 
-Identify every actual defect, missing function, incomplete implementation, broken reference, suppressed warning, and workflow gap.
+Discover every existing feature, subfeature, configuration option, function, supporting method, and execution workflow.
 
-Repair every confirmed defect at its root cause.
+Identify all missing logic, defective functions, broken workflows, incorrect references, integration failures, database problems, lifecycle defects, compatibility issues, and suppressed diagnostics.
 
-Rewrite complete files when technically justified.
+Prepare a dependency-aware repair plan and then implement the actual corrections.
 
-Update every dependent file, import, class reference, function call, package declaration, resource identifier, database mapping, manifest entry, configuration, path, dependency, and test.
+Rewrite complete source files when technically justified.
 
-Implement all supporting logic necessary to complete the project's established functionality.
+Update every affected file, function, class, import, package, manifest declaration, resource reference, database mapping, API contract, dependency, path, configuration, and test.
 
-There is no arbitrary APK size limit.
+Complete all missing supporting functionality required by the application's actual requirements.
 
-Preserve the existing launcher icon and all separately completed icon resources. Do not spend time redesigning or regenerating them.
+Do not impose an arbitrary APK size limit.
 
-**ZERO-SUPPRESSION POLICY IS MANDATORY. NEVER HIDE, DISABLE, IGNORE, OR MASK WARNINGS OR ERRORS. FIX THE ACTUAL TECHNICAL CAUSE.**
+Do not modify the separately completed launcher icon.
+
+**ZERO-SUPPRESSION POLICY IS COMPULSORY. NEVER HIDE, DISABLE, IGNORE, OR MASK GENUINE WARNINGS OR ERRORS. FIX THE ACTUAL TECHNICAL CAUSE.**
 
 Build incrementally.
 
-Test every feature individually and in combination with dependent features.
+Test features individually and in combination.
 
-Inspect actual runtime behavior and available diagnostic output.
+Verify actual behavior, not just UI appearances or success notifications.
 
-Perform a fresh final build.
+Use ADB, Logcat, scrcpy, and other available tools to investigate live-device behavior.
 
-Repeat the complete warning, error, Logcat, console, and source inspection.
+Verify compatibility based on actual device capabilities and distinguish tested OEMs from untested ones.
 
-Fix all newly discovered actionable issues and repeat verification.
+After all modifications, perform a fresh full build and another complete diagnostic inspection.
 
-Preserve all existing working functionality and user data.
+Fix all newly discovered actionable issues and repeat relevant verification.
 
-Never claim success without evidence.
+Preserve existing working functionality, user data, and unrelated workspace modifications.
 
-Never stop after planning or recommendations.
+Never fabricate results.
 
-**FINAL OBJECTIVE: DELIVER A COMPLETE, FUNCTIONAL, PROFESSIONALLY ENGINEERED AND THOROUGHLY VERIFIED ANDROID APPLICATION WITH COMPLETE FEATURE IMPLEMENTATIONS, CORRECT BUSINESS LOGIC, SYNCHRONIZED SOURCE FILES, AND GENUINELY RESOLVED WARNINGS AND ERRORS.**
+Never claim complete inspection when source lines remain unread.
+
+Never claim feature completion without behavioral evidence.
+
+Never stop after analysis, planning, or the first successful build.
+
+**FINAL OBJECTIVE: DELIVER A COMPLETE, INTERNALLY CONSISTENT, FULLY FUNCTIONAL, SECURE, MULTI-DEVICE-COMPATIBLE, PROPERLY TESTED AND GENUINELY VERIFIED ANDROID APPLICATION — WITH EVERY REQUIRED FEATURE AND WORKFLOW WORKING CORRECTLY, ALL DEPENDENT FILES SYNCHRONIZED, AND ALL ACTIONABLE WARNINGS AND ERRORS FIXED AT THEIR ROOT CAUSES.**

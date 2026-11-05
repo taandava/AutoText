@@ -38,7 +38,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param onDelete Callback to remove the task from database and alarm scheduler.
  */
 @Composable
-fun taskCard(
+fun TaskCard(
     task: ScheduledTask,
     onRunNow: () -> Unit,
     onToggle: (Boolean) -> Unit = {},
@@ -75,7 +75,7 @@ fun taskCard(
         TaskStatus.PENDING_CONFIRMATION -> MaterialTheme.colorScheme.secondary to "⏳"
     }
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge,
         onClick = onEdit
@@ -91,13 +91,13 @@ fun taskCard(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    appBadge(
+                    AppBadge(
                         text = task.channel.displayName,
                         emoji = channelEmoji,
                         color = channelColor,
                         showDot = false
                     )
-                    appBadge(
+                    AppBadge(
                         text = task.status.displayName,
                         emoji = statusEmoji,
                         color = statusColor,
@@ -113,7 +113,7 @@ fun taskCard(
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    compactSwitch(
+                    CompactSwitch(
                         checked = task.status.isPendingOrScheduled || task.status == TaskStatus.PENDING_CONFIRMATION,
                         onCheckedChange = onToggle,
                         activeColor = channelColor
@@ -249,7 +249,7 @@ fun taskCard(
                 ) {
                     when (task.status) {
                         TaskStatus.SCHEDULED, TaskStatus.PENDING, TaskStatus.READY -> {
-                            glassButton(
+                            GlassButton(
                                 text = "Send Now",
                                 onClick = onRunNow,
                                 variant = GlassButtonVariant.SUCCESS,
@@ -260,7 +260,7 @@ fun taskCard(
                             )
                         }
                         TaskStatus.PENDING_CONFIRMATION -> {
-                            glassButton(
+                            GlassButton(
                                 text = "Resolve",
                                 onClick = onRunNow,
                                 variant = GlassButtonVariant.SECONDARY,
@@ -271,7 +271,7 @@ fun taskCard(
                             )
                         }
                         TaskStatus.FAILED -> {
-                            glassButton(
+                            GlassButton(
                                 text = "Retry",
                                 onClick = onRunNow,
                                 variant = GlassButtonVariant.PRIMARY,

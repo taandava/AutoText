@@ -77,10 +77,14 @@ class ContactIngestionEngine(
 
                 val phoneCursor = try {
                     resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, fullProjection, null, null, null)
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    Log.w("ContactIngestion", "Full projection query failed, falling back to basic projection: ${e.message}")
                     try {
                         resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, basicProjection, null, null, null)
-                    } catch (_: Exception) { null }
+                    } catch (e2: Exception) {
+                        Log.w("ContactIngestion", "Basic projection query failed: ${e2.message}")
+                        null
+                    }
                 }
 
                 phoneCursor?.use { cursor ->

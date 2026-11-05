@@ -27,8 +27,8 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 
-import com.jmd.autotext.ui.theme.autoTextTheme
-import com.jmd.autotext.ui.screen.callSimulationScreen
+import com.jmd.autotext.ui.theme.AutoTextTheme
+import com.jmd.autotext.ui.screen.CallSimulationScreen
 
 /**
  * Activity rendering incoming call simulation screen with audio and haptic feedback.
@@ -76,6 +76,13 @@ open class CallSimulationActivity : ComponentActivity() {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        val notifId = intent.getIntExtra("notif_id", 0)
+        if (notifId != 0) {
+            runCatching {
+                val nm = getSystemService(android.app.NotificationManager::class.java)
+                nm?.cancel(notifId)
+            }
+        }
 
         val keyguardManager = getSystemService(KeyguardManager::class.java)
         keyguardManager?.requestDismissKeyguard(this, null)
@@ -96,8 +103,8 @@ open class CallSimulationActivity : ComponentActivity() {
         startRinging()
 
         setContent {
-            autoTextTheme {
-                callSimulationScreen(
+            AutoTextTheme {
+                CallSimulationScreen(
                     name = callerName,
                     number = callerNumber,
                     style = callerStyle,
@@ -184,22 +191,17 @@ open class CallSimulationActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        runCatching {
+        try {
             if (wakeLock?.isHeld == true) {
                 wakeLock?.release()
             }
-            wakeLock = null
+        } catch (_: Exception) {
         }
+        wakeLock = null
     }
 
     override fun onDestroy() {
         stopRinging()
-        runCatching {
-            if (wakeLock?.isHeld == true) {
-                wakeLock?.release()
-            }
-            wakeLock = null
-        }
         super.onDestroy()
     }
 }

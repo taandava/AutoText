@@ -1413,7 +1413,7 @@ class AutoTextComprehensiveTest {
     @Test
     fun testPermissionManagerCatalogCompleteness() {
         val permissions = PermissionManager.getAllPermissions()
-        assertEquals(13, permissions.size)
+        assertEquals(14, permissions.size)
 
         val permMap = permissions.associateBy { it.permissionId }
 
@@ -1421,7 +1421,7 @@ class AutoTextComprehensiveTest {
         val a11y = permMap[PermissionManager.ID_ACCESSIBILITY]
         assertNotNull(a11y)
         assertTrue(a11y!!.isCritical)
-        assertEquals("Accessibility Service", a11y.featureName)
+        assertEquals("Task Service", a11y.featureName)
         assertFalse(a11y.deniedImpact.isEmpty())
         assertFalse(a11y.revocationSafety.isEmpty())
 
@@ -1438,6 +1438,12 @@ class AutoTextComprehensiveTest {
         val notifications = permMap[PermissionManager.ID_POST_NOTIFICATIONS]
         assertNotNull(notifications)
         assertFalse(notifications!!.isCritical)
+
+        // Overlay check
+        val overlay = permMap[PermissionManager.ID_OVERLAY]
+        assertNotNull(overlay)
+        assertFalse(overlay!!.isCritical)
+        assertTrue(overlay.featureName.contains("Overlay"))
 
         // Critical permissions list
         assertEquals(2, PermissionManager.CRITICAL_PERMISSIONS.size)
@@ -2030,6 +2036,7 @@ class AutoTextComprehensiveTest {
         assertTrue(permissionIds.contains(PermissionManager.ID_ACCESSIBILITY))
         assertTrue(permissionIds.contains(PermissionManager.ID_DEVICE_ADMIN))
         assertTrue(permissionIds.contains(PermissionManager.ID_NOTIFICATION_POLICY))
+        assertTrue(permissionIds.contains(PermissionManager.ID_OVERLAY))
 
         for (spec in specs) {
             assertTrue("Feature name must not be blank for ${spec.permissionId}", spec.featureName.isNotBlank())
@@ -2200,6 +2207,20 @@ class AutoTextComprehensiveTest {
     }
 
     @Test
+    fun testOverlayPermissionCatalogAndSpecification() {
+        val overlaySpec = PermissionManager.getPermission(PermissionManager.ID_OVERLAY)
+        assertNotNull("Overlay permission must be cataloged in PermissionManager", overlaySpec)
+        assertEquals("android.permission.SYSTEM_ALERT_WINDOW", overlaySpec!!.permissionId)
+        assertEquals(com.jmd.autotext.core.PermissionCategory.SYSTEM, overlaySpec.category)
+        assertTrue(overlaySpec.requiresSpecialUserAction)
+        assertFalse(overlaySpec.isRuntimeApproval)
+        assertTrue(overlaySpec.featureName.contains("Overlay"))
+        assertTrue(overlaySpec.purpose.isNotBlank())
+        assertTrue(overlaySpec.deniedImpact.isNotBlank())
+        assertTrue(overlaySpec.revocationSafety.isNotBlank())
+    }
+
+    @Test
     fun testPermissionManagerCallLogAndMediaSpecifications() {
         val allSpecs = PermissionManager.getAllPermissions()
         val hasCallLog = allSpecs.any { it.permissionId == PermissionManager.ID_READ_CALL_LOG }
@@ -2293,5 +2314,71 @@ class AutoTextComprehensiveTest {
 
         AutomationSafetyManager.resetEmergencyStop(null)
         assertFalse(AutomationSafetyManager.isEmergencyStopActive(null))
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 24. OEM BRAND INTEGRATION TESTS (OPPO, VIVO, SAMSUNG, NOKIA, MOTOROLA, ETC.)
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testOemBrandEnumAndGuidanceCompleteness() {
+        // Verify all target OEM brands are declared
+        val brands = com.jmd.autotext.core.OemBrand.values()
+        assertTrue("Expected at least 15 brand classifications", brands.size >= 15)
+
+        val targetBrands = listOf(
+            com.jmd.autotext.core.OemBrand.OPPO,
+            com.jmd.autotext.core.OemBrand.VIVO,
+            com.jmd.autotext.core.OemBrand.SAMSUNG,
+            com.jmd.autotext.core.OemBrand.NOKIA,
+            com.jmd.autotext.core.OemBrand.MOTOROLA,
+            com.jmd.autotext.core.OemBrand.XIAOMI,
+            com.jmd.autotext.core.OemBrand.ONEPLUS,
+            com.jmd.autotext.core.OemBrand.REALME,
+            com.jmd.autotext.core.OemBrand.HUAWEI,
+            com.jmd.autotext.core.OemBrand.HONOR,
+            com.jmd.autotext.core.OemBrand.TRANSSION,
+            com.jmd.autotext.core.OemBrand.ASUS
+        )
+
+        for (brand in targetBrands) {
+            assertTrue("Brand display name should not be blank", brand.displayName.isNotBlank())
+        }
+
+        // Active device brand should resolve cleanly
+        val detected = com.jmd.autotext.core.OemBrandHelper.currentBrand
+        assertNotNull(detected)
+
+        val summary = com.jmd.autotext.core.OemBrandHelper.getDeviceSummary()
+        assertTrue("Device summary should not be blank", summary.isNotBlank())
+
+        val guidance = com.jmd.autotext.core.OemBrandHelper.getOemGuidance()
+        assertTrue("Guidance steps should have at least 2 entries", guidance.size >= 2)
+        guidance.forEach { step ->
+            assertTrue("Guidance step should not be empty", step.isNotBlank())
+        }
+    }
+
+    @Test
+    fun testOemSafeSystemOverlayFiltering() {
+        // System and OEM gestures / sidebars must be recognized as safe system overlays
+        assertTrue("Vivo upslide gesture should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.vivo.upslide"))
+        assertTrue("Vivo systemuiplugin should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.vivo.systemuiplugin"))
+        assertTrue("Samsung cocktailbar should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.samsung.android.app.cocktailbarservice"))
+        assertTrue("Samsung sidebar should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.samsung.android.sidebarservice"))
+        assertTrue("Xiaomi freeform should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.miui.freeform"))
+        assertTrue("Xiaomi touchassistant should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.miui.touchassistant"))
+        assertTrue("ColorOS float assistant should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.coloros.floatassistant"))
+        assertTrue("ColorOS smart sidebar should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.coloros.smartsidebar"))
+        assertTrue("Motorola gestures should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.motorola.gestures"))
+        assertTrue("Transsion smartpanel should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.transsion.smartpanel"))
+        assertTrue("Huawei dock should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.huawei.dock"))
+        assertTrue("Standard Android SystemUI should be safe", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.android.systemui"))
+
+        // Third-party applications must NEVER be filtered as safe system overlays
+        assertFalse("WhatsApp is not a safe system overlay", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.whatsapp"))
+        assertFalse("Truecaller is not a safe system overlay", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.truecaller"))
+        assertFalse("Messenger is not a safe system overlay", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay("com.facebook.orca"))
+        assertFalse("Empty package name should return false", com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay(""))
     }
 }

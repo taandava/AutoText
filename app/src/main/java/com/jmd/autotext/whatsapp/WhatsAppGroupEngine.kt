@@ -59,7 +59,7 @@ class WhatsAppGroupEngine(
                 return
             }
 
-            if (PopupShield.hasActiveBlockingOverlay(service, pkg)) {
+            if (sendAttemptCount < 2 && PopupShield.hasActiveBlockingOverlay(service, pkg)) {
                 Log.d(loggerTag, "Blocking overlay detected during group send; clearing...")
                 PopupShield.clearOverlaysAndNotificationShade(service, pkg)
                 onRetry(300L)

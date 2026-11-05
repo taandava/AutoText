@@ -42,7 +42,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onCampaignIdChange Callback invoked when active campaign selection changes.
  */
 @Composable
-fun dailyAutoSenderScreen(
+fun DailyAutoSenderScreen(
     initialCampaignId: Long = 0L,
     onCampaignIdChange: ((Long) -> Unit)? = null,
     onBack: (() -> Unit)? = null
@@ -225,7 +225,7 @@ fun dailyAutoSenderScreen(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        glassButton(
+                        GlassButton(
                             text = if (isScanning) "Syncing..." else "Sync Pool",
                             emoji = "🔄",
                             variant = GlassButtonVariant.SECONDARY,
@@ -250,7 +250,7 @@ fun dailyAutoSenderScreen(
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
                             shape = AppDesignTokens.ShapePill
                         )
-                        glassButton(
+                        GlassButton(
                             text = "New Campaign",
                             emoji = "➕",
                             variant = GlassButtonVariant.PRIMARY,
@@ -267,26 +267,26 @@ fun dailyAutoSenderScreen(
             if (activeCampaigns.isNotEmpty()) {
                 // Pool Stats & Device Health Banner (only shown when campaigns are active)
                 item {
-                    appCard(modifier = Modifier.fillMaxWidth(), shape = AppDesignTokens.ShapeMedium) {
+                    AppCard(modifier = Modifier.fillMaxWidth(), shape = AppDesignTokens.ShapeMedium) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            appStatCard(
+                            AppStatCard(
                                 modifier = Modifier.weight(1f),
                                 title = "Unique Pool",
                                 value = "${poolStats.totalCount}",
                                 icon = Icons.Default.People,
                                 iconTint = MaterialTheme.colorScheme.primary
                             )
-                            appStatCard(
+                            AppStatCard(
                                 modifier = Modifier.weight(1f),
                                 title = "Active Campaigns",
                                 value = "${activeCampaigns.size}",
                                 icon = Icons.AutoMirrored.Filled.ScheduleSend,
                                 iconTint = MaterialTheme.colorScheme.tertiary
                             )
-                            appStatCard(
+                            AppStatCard(
                                 modifier = Modifier.weight(1f),
                                 title = "SMS Quota",
                                 value = "${smsQuota.remaining}",
@@ -315,7 +315,7 @@ fun dailyAutoSenderScreen(
                 }
 
                 items(activeCampaigns, key = { "active_${it.id}" }) { cmp ->
-                    activeCampaignOverviewCard(
+                    ActiveCampaignOverviewCard(
                         campaign = cmp,
                         sentToday = repository.getSentCountForCampaignToday(cmp.id),
                         stats = repository.getCampaignStats(cmp.id),
@@ -335,7 +335,7 @@ fun dailyAutoSenderScreen(
                             val isWa = cmp.channel.contains("WHATSAPP", ignoreCase = true)
                             if (!isWa && smsQuota.isLimitReached) {
                                 context.showAppToast("Daily SMS limit reached", isLong = true)
-                                return@activeCampaignOverviewCard
+                                return@ActiveCampaignOverviewCard
                             }
                             DailyCampaignScheduler.triggerNow(context, cmp.id)
                             context.showAppToast("Batch dispatched for ${cmp.title}")
@@ -367,7 +367,7 @@ fun dailyAutoSenderScreen(
                     }
 
                     items(pausedCampaigns, key = { "paused_${it.id}" }) { cmp ->
-                        pausedCampaignOverviewCard(
+                        PausedCampaignOverviewCard(
                             campaign = cmp,
                             onResume = {
                                 val updated = cmp.copy(isActive = true)
@@ -396,7 +396,7 @@ fun dailyAutoSenderScreen(
                 // BLANK STATE: NO ACTIVE CAMPAIGNS
                 // ==========================================
                 item {
-                    dailyCampaignEmptyStateCard(
+                    DailyCampaignEmptyStateCard(
                         totalPoolCount = poolStats.totalCount,
                         onSelectChannel = { ch ->
                             val newCfg = DailyCampaignConfig(
@@ -454,14 +454,14 @@ fun dailyAutoSenderScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = config.title.ifBlank { "Daily Campaign #${config.id}" },
                 subtitle = "${config.channel} • ${if (config.isActive) "Active" else "Paused"}",
                 onBack = {
                     if (onBack != null) onBack() else setCampaign(0L)
                 },
                 actions = {
-                    appBadge(
+                    AppBadge(
                         text = if (config.isActive) "ACTIVE" else "PAUSED",
                         color = if (config.isActive) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                         showDot = true
@@ -505,13 +505,13 @@ fun dailyAutoSenderScreen(
             // Channel-Specific Safety / Quota / Readiness Cards
             if (!isWhatsApp) {
                 item {
-                    dailySmsQuotaCard(smsQuota = smsQuota)
+                    DailySmsQuotaCard(smsQuota = smsQuota)
                 }
             } else if (isWhatsAppBusiness) {
                 val isW4bInstalled = WhatsAppPackageHelper.isWhatsAppBusinessInstalled(context)
                 if (!isW4bInstalled || !isA11yActive) {
                     item {
-                        whatsAppBusinessReadinessCard(
+                        WhatsAppBusinessReadinessCard(
                             isInstalled = isW4bInstalled,
                             isA11yActive = isA11yActive,
                             onAutoHeal = {
@@ -530,7 +530,7 @@ fun dailyAutoSenderScreen(
                 val isWaInstalled = WhatsAppPackageHelper.isWhatsAppInstalled(context)
                 if (!isWaInstalled || !isA11yActive) {
                     item {
-                        whatsAppA11yHealthBar(
+                        WhatsAppA11yHealthBar(
                             isA11yActive = isA11yActive,
                             onAutoHeal = {
                                 scope.launch {
@@ -548,7 +548,7 @@ fun dailyAutoSenderScreen(
 
             // Top Status Enterprise Banner for this campaign
             item {
-                dailyCampaignBannerCard(
+                DailyCampaignBannerCard(
                     isWhatsApp = isWhatsApp,
                     config = config,
                     stats = stats,
@@ -595,7 +595,7 @@ fun dailyAutoSenderScreen(
                     onSendBatch = {
                         if (!isWhatsApp && smsQuota.isLimitReached) {
                             context.showAppToast("Daily SMS limit reached", isLong = true)
-                            return@dailyCampaignBannerCard
+                            return@DailyCampaignBannerCard
                         }
                         DailyCampaignScheduler.triggerNow(context, selectedCampaignId)
                         context.showAppToast("Batch dispatched (${config.dailyLimit})")
@@ -610,7 +610,7 @@ fun dailyAutoSenderScreen(
 
             // Type-Specific Campaign Configuration Enterprise Card
             item {
-                dailyCampaignConfigCard(
+                DailyCampaignConfigCard(
                     config = config,
                     isWhatsApp = isWhatsApp,
                     campaignThemeColor = campaignThemeColor,
@@ -626,7 +626,7 @@ fun dailyAutoSenderScreen(
 
             // Contact Pool & Sent Ledger Tab Selector
             item {
-                glassSegmentedControl(
+                GlassSegmentedControl(
                     items = listOf("Pending Unique Pool (${stats.unsentCount})", "Sent Ledger (${stats.sentCount})"),
                     selectedIndex = poolTab,
                     onItemSelected = { poolTab = it },
@@ -636,7 +636,7 @@ fun dailyAutoSenderScreen(
 
             if (poolTab == 0) {
                 item {
-                    dailyContactPoolHeaderCard(
+                    DailyContactPoolHeaderCard(
                         stats = stats,
                         searchQuery = searchQuery,
                         onSearchQueryChange = { searchQuery = it },
@@ -652,7 +652,7 @@ fun dailyAutoSenderScreen(
 
                 if (contactsList.isEmpty()) {
                     item {
-                        appEmptyState(
+                        AppEmptyState(
                             icon = Icons.Default.Contacts,
                             title = "No Pending Contacts",
                             description = "All contacts in the unique pool have already received this campaign cycle, or the pool is empty. Tap 'Scan' above to discover new contacts or reset the cycle in Sent Ledger."
@@ -660,7 +660,7 @@ fun dailyAutoSenderScreen(
                     }
                 } else {
                     items(contactsList, key = { it.id }) { contact ->
-                        contactItemCard(
+                        ContactItemCard(
                             contact = contact,
                             isWhatsApp = isWhatsApp,
                             onToggle = { enabled ->
@@ -676,7 +676,7 @@ fun dailyAutoSenderScreen(
                 }
             } else {
                 item {
-                    dailySentLedgerHeaderCard(
+                    DailySentLedgerHeaderCard(
                         isWhatsApp = isWhatsApp,
                         sentCount = sentLedgerList.size,
                         searchQuery = searchQuery,
@@ -692,7 +692,7 @@ fun dailyAutoSenderScreen(
 
                 if (sentLedgerList.isEmpty()) {
                     item {
-                        appEmptyState(
+                        AppEmptyState(
                             icon = Icons.AutoMirrored.Filled.FactCheck,
                             title = "Sent Ledger is Empty",
                             description = "No messages have been sent yet for this campaign in this cycle. Send your first batch above to build your ledger."
@@ -700,7 +700,7 @@ fun dailyAutoSenderScreen(
                     }
                 } else {
                     items(sentLedgerList, key = { "ledger_${it.id}" }) { contact ->
-                        ledgerItemCard(
+                        LedgerItemCard(
                             contact = contact,
                             isWhatsApp = isWhatsApp,
                             onRequeue = {
@@ -717,7 +717,7 @@ fun dailyAutoSenderScreen(
 }
 
     if (showSelectChannelDialog) {
-        dailyCampaignChannelSelectionDialog(
+        DailyCampaignChannelSelectionDialog(
             onDismiss = { showSelectChannelDialog = false },
             onSelectChannel = { channelType ->
                 showSelectChannelDialog = false
@@ -728,7 +728,7 @@ fun dailyAutoSenderScreen(
     }
 
     if (showCreateCampaignDialog) {
-        createDailyCampaignSheet(
+        CreateDailyCampaignSheet(
             initialChannel = createChannelType,
             onDismiss = { showCreateCampaignDialog = false },
             onSave = { newCampaign ->
@@ -746,18 +746,3 @@ fun dailyAutoSenderScreen(
         )
     }
 }
-
-
-/**
- * Primary overview card for an active recurring campaign displaying current execution state,
- * today's dispatch progress, dynamic contact pool statistics, and instant trigger actions.
- *
- * @param campaign Target campaign configuration data class.
- * @param sentToday Number of messages successfully dispatched during the current calendar day.
- * @param stats Real-time contact pool inventory metrics (unmessaged, messaged, exhausted).
- * @param onToggleActive Callback triggered when the campaign enable/disable switch is flipped.
- * @param onRunNow Callback triggered when user requests immediate manual campaign execution.
- * @param onConfigure Callback to navigate to campaign parameter configuration.
- * @param onViewContacts Callback to navigate to contact pool management view.
- * @param modifier Optional layout modifier.
- */

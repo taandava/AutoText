@@ -74,8 +74,6 @@ class AutomationLauncherActivity : Activity() {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
 
         // Keep window completely transparent so lockscreen bouncer receives direct touches
         window.setBackgroundDrawable(android.graphics.Color.TRANSPARENT.toDrawable())
@@ -100,29 +98,31 @@ class AutomationLauncherActivity : Activity() {
         }
         val keyguardManager = getSystemService(KEYGUARD_SERVICE) as KeyguardManager
 
-        // Dismiss keyguard
-        keyguardManager.requestDismissKeyguard(this, null)
+        val dismissCallback = object : KeyguardManager.KeyguardDismissCallback() {
+            override fun onDismissSucceeded() {
+                Log.i(TAG, "Keyguard dismiss succeeded callback received.")
+                cleanFinish()
+            }
+            override fun onDismissCancelled() {
+                Log.w(TAG, "Keyguard dismiss cancelled callback received; allowing accessibility unlock engine to continue.")
+            }
+            override fun onDismissError() {
+                Log.e(TAG, "Keyguard dismiss error callback received; waiting for polling timeout or accessibility unlock.")
+            }
+        }
 
         // Handle Test Screen Unlock mode
         val isTestUnlock = intent.getBooleanExtra(EXTRA_IS_TEST_UNLOCK, false)
         if (isTestUnlock) {
             val passedPin = intent.getStringExtra(EXTRA_PIN) ?: prefs.deviceUnlockPin
             AutoTextAccessibilityService.isTestUnlockMode = true
-            keyguardManager.requestDismissKeyguard(this, null)
+            keyguardManager.requestDismissKeyguard(this, dismissCallback)
 
-            runCatching {
-                wakeLock?.release()
-                wakeLock = null
-            }
-            finish()
-
-            // Post armScreenAssist with delay to ensure activity window is fully torn down
-            handler.postDelayed({
-                AutoTextAccessibilityService.armScreenAssist(
-                    pin = passedPin,
-                    shouldRelockAfterSend = false,
-                )
-            }, 350L)
+            AutoTextAccessibilityService.armScreenAssist(
+                pin = passedPin,
+                shouldRelockAfterSend = false,
+            )
+            pollKeyguardStatusUntilUnlocked(keyguardManager, 12000L)
             return
         }
 
@@ -143,17 +143,11 @@ class AutomationLauncherActivity : Activity() {
                 val pinToUse = if (prefs.screenAssistType != "SWIPE") prefs.screenAssistPin else ""
                 AutoTextAccessibilityService.armScreenAssist(
                     pin = pinToUse,
-                    shouldRelockAfterSend = false,
+                    shouldRelockAfterSend = prefs.isAutoLockAfterSendEnabled,
                 )
             }
-            keyguardManager.requestDismissKeyguard(this, null)
-            handler.postDelayed({
-                runCatching {
-                    wakeLock?.release()
-                    wakeLock = null
-                }
-                finish()
-            }, 500L)
+            keyguardManager.requestDismissKeyguard(this, dismissCallback)
+            pollKeyguardStatusUntilUnlocked(keyguardManager, 12000L)
             return
         }
 
@@ -181,28 +175,15 @@ class AutomationLauncherActivity : Activity() {
                 shouldRelockAfterSend = shouldRelock,
             )
 
-            keyguardManager.requestDismissKeyguard(this, null)
-            runCatching {
-                wakeLock?.release()
-                wakeLock = null
-            }
-            finish()
+            keyguardManager.requestDismissKeyguard(this, dismissCallback)
+            pollKeyguardStatusUntilUnlocked(keyguardManager, 12000L)
         } else {
             // Already unlocked or auto-unlock disabled
             when (channel) {
                 ChannelType.CALL -> {
                     AppFileLogger.action(this, TAG, "Screen awake/unlocked. Dismissing trampoline for Phone Call to $recipient")
-                    keyguardManager.requestDismissKeyguard(this, null)
-                    handler.postDelayed(
-                        {
-                            runCatching {
-                                wakeLock?.release()
-                                wakeLock = null
-                            }
-                            finish()
-                        },
-                        300L,
-                    )
+                    keyguardManager.requestDismissKeyguard(this, dismissCallback)
+                    handler.postDelayed({ cleanFinish() }, 300L)
                 }
                 ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> {
                     AppFileLogger.action(this, TAG, "Screen awake/unlocked, launching WhatsApp call directly")
@@ -213,16 +194,7 @@ class AutomationLauncherActivity : Activity() {
                         recipient = recipient,
                         shouldRelock = shouldRelock,
                     )
-                    handler.postDelayed(
-                        {
-                            runCatching {
-                                wakeLock?.release()
-                                wakeLock = null
-                            }
-                            finish()
-                        },
-                        900L,
-                    )
+                    handler.postDelayed({ cleanFinish() }, 900L)
                 }
                 else -> {
                     AppFileLogger.action(this, TAG, "Screen already unlocked or auto-unlock disabled, launching WhatsApp directly")
@@ -230,6 +202,36 @@ class AutomationLauncherActivity : Activity() {
                 }
             }
         }
+    }
+
+    private var isFinishingCleanly = false
+
+    private fun cleanFinish() {
+        if (isFinishingCleanly || isFinishing || isDestroyed) return
+        isFinishingCleanly = true
+        handler.removeCallbacksAndMessages(null)
+        runCatching {
+            wakeLock?.release()
+            wakeLock = null
+        }
+        finish()
+    }
+
+    private fun pollKeyguardStatusUntilUnlocked(km: KeyguardManager, timeoutRemainingMs: Long) {
+        if (!km.isKeyguardLocked && !km.isDeviceLocked) {
+            Log.i(TAG, "Device confirmed unlocked during trampoline wait. Finishing trampoline cleanly.")
+            cleanFinish()
+            return
+        }
+        if (timeoutRemainingMs <= 0L) {
+            Log.w(TAG, "Keyguard unlock timeout reached in trampoline. Finishing safely.")
+            cleanFinish()
+            return
+        }
+        val step = 350L
+        handler.postDelayed({
+            pollKeyguardStatusUntilUnlocked(km, timeoutRemainingMs - step)
+        }, step)
     }
 
     /**
@@ -278,23 +280,18 @@ class AutomationLauncherActivity : Activity() {
 
     override fun onPause() {
         super.onPause()
-        runCatching {
+        try {
             if (wakeLock?.isHeld == true) {
                 wakeLock?.release()
             }
-            wakeLock = null
+        } catch (_: Exception) {
         }
+        wakeLock = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
-        runCatching {
-            if (wakeLock?.isHeld == true) {
-                wakeLock?.release()
-            }
-            wakeLock = null
-        }
     }
 
 }

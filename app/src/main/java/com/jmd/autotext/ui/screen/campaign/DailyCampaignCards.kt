@@ -34,7 +34,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun activeCampaignOverviewCard(
+fun ActiveCampaignOverviewCard(
     campaign: DailyCampaignConfig,
     sentToday: Int,
     stats: DynamicPoolStats,
@@ -57,7 +57,7 @@ fun activeCampaignOverviewCard(
         else -> "📩"
     }
 
-    appCardElevated(
+    AppCardElevated(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeMedium,
         accentGlow = themeColor
@@ -94,7 +94,7 @@ fun activeCampaignOverviewCard(
                             modifier = Modifier.weight(1f, fill = false)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        appBadge(
+                        AppBadge(
                             text = when {
                                 isBiz -> "WA Business"
                                 isWa -> "WhatsApp"
@@ -107,7 +107,7 @@ fun activeCampaignOverviewCard(
                         if (!isWa) {
                             Spacer(modifier = Modifier.width(4.dp))
                             val simLabel = if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"
-                            appBadge(
+                            AppBadge(
                                 text = simLabel,
                                 emoji = "📱",
                                 color = MaterialTheme.colorScheme.primary,
@@ -152,21 +152,21 @@ fun activeCampaignOverviewCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            appStatCard(
+            AppStatCard(
                 modifier = Modifier.weight(1f),
                 title = "Sent Today",
                 value = "$sentToday / ${campaign.dailyLimit}",
                 emoji = "📤",
                 iconTint = themeColor
             )
-            appStatCard(
+            AppStatCard(
                 modifier = Modifier.weight(1f),
                 title = "Unique Pending",
                 value = "${stats.unsentCount}",
                 emoji = "⏳",
                 iconTint = MaterialTheme.colorScheme.primary
             )
-            appStatCard(
+            AppStatCard(
                 modifier = Modifier.weight(1f),
                 title = "Cycle Sent",
                 value = "${stats.sentCount}",
@@ -182,21 +182,21 @@ fun activeCampaignOverviewCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            glassButton(
+            GlassButton(
                 text = "Run Batch Now",
                 onClick = onRunNow,
                 variant = GlassButtonVariant.PRIMARY,
                 emoji = "🚀",
                 modifier = Modifier.weight(1.3f)
             )
-            glassButton(
+            GlassButton(
                 text = "Configure",
                 onClick = onConfigure,
                 variant = GlassButtonVariant.SECONDARY,
                 emoji = "⚙️",
                 modifier = Modifier.weight(1f)
             )
-            glassButton(
+            GlassButton(
                 text = "Contacts",
                 onClick = onViewContacts,
                 variant = GlassButtonVariant.SECONDARY,
@@ -218,7 +218,7 @@ fun activeCampaignOverviewCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun pausedCampaignOverviewCard(
+fun PausedCampaignOverviewCard(
     campaign: DailyCampaignConfig,
     onResume: () -> Unit,
     onConfigure: () -> Unit,
@@ -233,7 +233,7 @@ fun pausedCampaignOverviewCard(
         else -> Icons.Default.Sms
     }
 
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeMedium
     ) {
@@ -274,13 +274,13 @@ fun pausedCampaignOverviewCard(
                 ) {
                     if (!isWa) {
                         val pausedSimLabel = if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"
-                        appBadge(
+                        AppBadge(
                             text = pausedSimLabel,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             showDot = false
                         )
                     }
-                    appBadge(
+                    AppBadge(
                         text = "PAUSED",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         showDot = false
@@ -308,7 +308,7 @@ fun pausedCampaignOverviewCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                glassButton(
+                GlassButton(
                     text = "Resume",
                     onClick = onResume,
                     variant = GlassButtonVariant.PRIMARY,
@@ -317,7 +317,7 @@ fun pausedCampaignOverviewCard(
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                     shape = AppDesignTokens.ShapePill
                 )
-                glassButton(
+                GlassButton(
                     text = "Edit",
                     onClick = onConfigure,
                     variant = GlassButtonVariant.SECONDARY,
@@ -350,7 +350,7 @@ fun pausedCampaignOverviewCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun dailyCampaignEmptyStateCard(
+fun DailyCampaignEmptyStateCard(
     totalPoolCount: Int,
     onSelectChannel: (String) -> Unit,
     onSyncPool: () -> Unit,
@@ -361,7 +361,7 @@ fun dailyCampaignEmptyStateCard(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        appCardElevated(
+        AppCardElevated(
             modifier = Modifier.fillMaxWidth(),
             shape = AppDesignTokens.ShapeLarge,
             accentGlow = MaterialTheme.colorScheme.primary
@@ -414,7 +414,7 @@ fun dailyCampaignEmptyStateCard(
         )
 
         // 1. SMS Channel Card
-        channelSelectionCard(
+        ChannelSelectionCard(
             title = "SMS Daily Campaign",
             badge = "Carrier Direct",
             description = "Direct cellular SMS outreach. Dual SIM selection (SIM 1/2) with India carrier daily quota safety safeguard.",
@@ -425,7 +425,7 @@ fun dailyCampaignEmptyStateCard(
         )
 
         // 2. WhatsApp Channel Card
-        channelSelectionCard(
+        ChannelSelectionCard(
             title = "WhatsApp Daily Campaign",
             badge = "Personal 1-on-1",
             description = "Personal automated WhatsApp messages via accessibility service with auto-recovery and customizable delay.",
@@ -436,7 +436,7 @@ fun dailyCampaignEmptyStateCard(
         )
 
         // 3. WhatsApp Business Channel Card
-        channelSelectionCard(
+        ChannelSelectionCard(
             title = "WhatsApp Business Campaign",
             badge = "Client Outreach",
             description = "Automate client follow-ups via WhatsApp Business app with paced delivery to protect business account standing.",
@@ -447,7 +447,7 @@ fun dailyCampaignEmptyStateCard(
         )
 
         // Ingestion Pool Action Card
-        appCard(
+        AppCard(
             modifier = Modifier.fillMaxWidth(),
             shape = AppDesignTokens.ShapeMedium
         ) {
@@ -469,7 +469,7 @@ fun dailyCampaignEmptyStateCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                glassButton(
+                GlassButton(
                     text = if (isScanning) "Syncing..." else "Sync Pool",
                     onClick = onSyncPool,
                     variant = GlassButtonVariant.PRIMARY,
@@ -497,7 +497,7 @@ fun dailyCampaignEmptyStateCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun channelSelectionCard(
+fun ChannelSelectionCard(
     title: String,
     badge: String,
     description: String,
@@ -507,7 +507,7 @@ fun channelSelectionCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeMedium
     ) {
@@ -530,7 +530,7 @@ fun channelSelectionCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(title, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             }
-            appBadge(text = badge, color = accentColor, showDot = true)
+            AppBadge(text = badge, color = accentColor, showDot = true)
         }
         Spacer(modifier = Modifier.height(6.dp))
         Text(
@@ -540,7 +540,7 @@ fun channelSelectionCard(
             lineHeight = 15.sp
         )
         Spacer(modifier = Modifier.height(10.dp))
-        glassButton(
+        GlassButton(
             text = buttonText,
             onClick = onClick,
             variant = GlassButtonVariant.PRIMARY,
@@ -559,13 +559,13 @@ fun channelSelectionCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun whatsAppBusinessReadinessCard(
+fun WhatsAppBusinessReadinessCard(
     isInstalled: Boolean,
     isA11yActive: Boolean,
     onAutoHeal: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeMedium
     ) {
@@ -589,7 +589,7 @@ fun whatsAppBusinessReadinessCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            appBadge(
+            AppBadge(
                 text = if (isInstalled) "INSTALLED" else "NOT INSTALLED",
                 color = if (isInstalled) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
                 showDot = true
@@ -605,7 +605,7 @@ fun whatsAppBusinessReadinessCard(
             )
         }
         Spacer(modifier = Modifier.height(6.dp))
-        whatsAppA11yHealthBar(isA11yActive = isA11yActive, onAutoHeal = onAutoHeal)
+        WhatsAppA11yHealthBar(isA11yActive = isA11yActive, onAutoHeal = onAutoHeal)
     }
 }
 
@@ -639,7 +639,7 @@ fun whatsAppBusinessReadinessCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun dailyCampaignBannerCard(
+fun DailyCampaignBannerCard(
     isWhatsApp: Boolean,
     config: DailyCampaignConfig,
     stats: DynamicPoolStats,
@@ -653,7 +653,7 @@ fun dailyCampaignBannerCard(
     onSendBatch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    appCardElevated(
+    AppCardElevated(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeMedium,
         accentGlow = campaignThemeColor
@@ -680,7 +680,7 @@ fun dailyCampaignBannerCard(
                     )
                     Text(
                         if (config.isActive) "Active • Sends ${config.dailyLimit}/day at %02d:%02d".format(config.scheduledHour, config.scheduledMinute)
-                        else "${if (isWhatsApp) "WhatsApp" else "SMS"} Automation Paused",
+                        else "${if (isWhatsApp) "WhatsApp" else "SMS"} Dispatch Paused",
                         fontSize = 12.sp,
                         color = if (config.isActive) campaignThemeColor else MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -708,21 +708,21 @@ fun dailyCampaignBannerCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            appStatCard(
+            AppStatCard(
                 modifier = Modifier.weight(1f),
                 title = "Total Pool",
                 value = "${stats.totalCount}",
                 icon = Icons.Default.People,
                 iconTint = MaterialTheme.colorScheme.primary
             )
-            appStatCard(
+            AppStatCard(
                 modifier = Modifier.weight(1f),
                 title = "Pending",
                 value = "${stats.unsentCount}",
                 icon = Icons.Default.HourglassTop,
                 iconTint = MaterialTheme.colorScheme.primary
             )
-            appStatCard(
+            AppStatCard(
                 modifier = Modifier.weight(1f),
                 title = "Contacted",
                 value = "${stats.sentCount}",
@@ -734,7 +734,7 @@ fun dailyCampaignBannerCard(
         // WhatsApp Accessibility Health & Readiness
         if (isWhatsApp) {
             Spacer(modifier = Modifier.height(6.dp))
-            whatsAppA11yHealthBar(
+            WhatsAppA11yHealthBar(
                 isA11yActive = isA11yActive,
                 onAutoHeal = onAutoHeal
             )
@@ -747,7 +747,7 @@ fun dailyCampaignBannerCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            glassButton(
+            GlassButton(
                 text = if (isScanning) "Scanning..." else "Scan",
                 onClick = onScan,
                 variant = GlassButtonVariant.SECONDARY,
@@ -756,7 +756,7 @@ fun dailyCampaignBannerCard(
                 modifier = Modifier.weight(1f)
             )
 
-            glassButton(
+            GlassButton(
                 text = "Send Batch",
                 onClick = onSendBatch,
                 variant = GlassButtonVariant.PRIMARY,
@@ -790,7 +790,7 @@ fun dailyCampaignBannerCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun dailyCampaignConfigCard(
+fun DailyCampaignConfigCard(
     config: DailyCampaignConfig,
     isWhatsApp: Boolean,
     campaignThemeColor: Color,
@@ -803,7 +803,7 @@ fun dailyCampaignConfigCard(
     var dailyLimitText by remember(config.dailyLimit) { mutableStateOf(config.dailyLimit.toString()) }
     var intervalSecondsText by remember(config.intervalSeconds) { mutableStateOf(config.intervalSeconds.toString()) }
 
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge
     ) {
@@ -827,7 +827,7 @@ fun dailyCampaignConfigCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            appBadge(text = "Settings", color = campaignThemeColor, showDot = false)
+            AppBadge(text = "Settings", color = campaignThemeColor, showDot = false)
         }
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -837,7 +837,7 @@ fun dailyCampaignConfigCard(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            glassInputField(
+            GlassInputField(
                 value = dailyLimitText,
                 onValueChange = { newStr ->
                     val digits = newStr.filter { it.isDigit() }.take(4)
@@ -909,7 +909,7 @@ fun dailyCampaignConfigCard(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            glassButton(
+            GlassButton(
                 text = "Time: %02d:%02d".format(config.scheduledHour, config.scheduledMinute),
                 onClick = { isTimePickerExpanded = !isTimePickerExpanded },
                 variant = GlassButtonVariant.SECONDARY,
@@ -1017,7 +1017,7 @@ fun dailyCampaignConfigCard(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("Scheduled Execution Time", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
                         }
-                        appBadge(
+                        AppBadge(
                             text = "%02d:%02d".format(config.scheduledHour, config.scheduledMinute),
                             color = campaignThemeColor,
                             showDot = false
@@ -1031,7 +1031,7 @@ fun dailyCampaignConfigCard(
                         lineHeight = 15.sp
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    glassButton(
+                    GlassButton(
                         text = "Set Exact Time (Clock)",
                         onClick = {
                             showAppTimePicker(context, config.scheduledHour, config.scheduledMinute) { h, m ->
@@ -1059,7 +1059,7 @@ fun dailyCampaignConfigCard(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            glassInputField(
+            GlassInputField(
                 value = intervalSecondsText,
                 onValueChange = { newStr ->
                     val digits = newStr.filter { it.isDigit() }.take(3)
@@ -1124,7 +1124,7 @@ fun dailyCampaignConfigCard(
         Spacer(modifier = Modifier.height(10.dp))
 
         // Auto-scan Toggle
-        glassToggleRow(
+        GlassToggleRow(
             title = "Auto-scan before batch",
             subtitle = "Discovers newly received contacts, SMS and calls automatically",
             checked = config.autoScanEnabled,
@@ -1137,7 +1137,7 @@ fun dailyCampaignConfigCard(
         Spacer(modifier = Modifier.height(14.dp))
 
         // Unified Glass Input Field for Message Template
-        glassInputField(
+        GlassInputField(
             value = config.messageTemplate,
             onValueChange = { onConfigChange(config.copy(messageTemplate = it)) },
             label = "Campaign Message Template",
@@ -1190,7 +1190,7 @@ fun dailyCampaignConfigCard(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        glassButton(
+        GlassButton(
             text = "Save Campaign Changes",
             onClick = { onSave(config) },
             variant = GlassButtonVariant.PRIMARY,
@@ -1208,11 +1208,11 @@ fun dailyCampaignConfigCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun dailySmsQuotaCard(
+fun DailySmsQuotaCard(
     smsQuota: SmsQuotaManager.QuotaStatus,
     modifier: Modifier = Modifier
 ) {
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeMedium
     ) {
@@ -1237,7 +1237,7 @@ fun dailySmsQuotaCard(
                 )
             }
 
-            appBadge(
+            AppBadge(
                 text = if (smsQuota.isLimitReached) "100/100 LIMIT REACHED" else "${smsQuota.totalSentToday} / 100 Sent",
                 color = if (smsQuota.isLimitReached) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
@@ -1271,7 +1271,7 @@ fun dailySmsQuotaCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun whatsAppA11yHealthBar(
+fun WhatsAppA11yHealthBar(
     isA11yActive: Boolean,
     onAutoHeal: () -> Unit,
     modifier: Modifier = Modifier
@@ -1299,14 +1299,14 @@ fun whatsAppA11yHealthBar(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    if (isA11yActive) "Automation Service Ready" else "Service dropped / inactive",
+                    if (isA11yActive) "Task Service Ready" else "Service dropped / inactive",
                     fontSize = 10.5.sp,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Medium
                 )
             }
             if (!isA11yActive) {
-                glassButton(
+                GlassButton(
                     text = "Auto-Heal",
                     onClick = onAutoHeal,
                     variant = GlassButtonVariant.SECONDARY,
@@ -1317,16 +1317,3 @@ fun whatsAppA11yHealthBar(
         }
     }
 }
-
-
-/**
- * Header card for dynamic contact pool management with real-time search filtering, unsent toggles, and pool clearing.
- *
- * @param stats Real-time contact pool counts.
- * @param searchQuery Current search string filter.
- * @param onSearchQueryChange Callback when search string is updated.
- * @param filterUnsentOnly Filter toggle to isolate uncontacted records.
- * @param onFilterUnsentOnlyChange Callback when unsent-only switch is flipped.
- * @param onClearPool Callback to purge all contacts in pool.
- * @param modifier Optional layout modifier.
- */

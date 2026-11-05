@@ -37,7 +37,7 @@ import java.util.*
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun settingsBackupRestoreCard(
+fun SettingsBackupRestoreCard(
     context: Context,
     repository: AppRepository,
     exportFileLauncher: ManagedActivityResultLauncher<String, Uri?>,
@@ -51,7 +51,7 @@ fun settingsBackupRestoreCard(
     var pasteJsonText by remember { mutableStateOf("") }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        appCard(modifier = Modifier.fillMaxWidth()) {
+        AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Backup, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(8.dp))
@@ -77,7 +77,7 @@ fun settingsBackupRestoreCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    glassButton(
+                    GlassButton(
                         text = "Save to File",
                         emoji = "💾",
                         variant = GlassButtonVariant.PRIMARY,
@@ -88,7 +88,7 @@ fun settingsBackupRestoreCard(
                         }
                     )
 
-                    glassButton(
+                    GlassButton(
                         text = "Direct SD Card",
                         emoji = "📁",
                         variant = GlassButtonVariant.SECONDARY,
@@ -109,7 +109,7 @@ fun settingsBackupRestoreCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    glassButton(
+                    GlassButton(
                         text = "Share File",
                         emoji = "📤",
                         variant = GlassButtonVariant.SUCCESS,
@@ -149,7 +149,7 @@ fun settingsBackupRestoreCard(
                         }
                     )
 
-                    glassButton(
+                    GlassButton(
                         text = "Copy JSON",
                         emoji = "📋",
                         variant = GlassButtonVariant.SECONDARY,
@@ -173,7 +173,7 @@ fun settingsBackupRestoreCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                glassButton(
+                GlassButton(
                     text = "Select Backup File",
                     emoji = "📂",
                     variant = GlassButtonVariant.PRIMARY,
@@ -183,7 +183,7 @@ fun settingsBackupRestoreCard(
                     }
                 )
 
-                glassButton(
+                GlassButton(
                     text = if (showRestoreDialog) "Hide Restore" else "Paste JSON",
                     emoji = "📋",
                     variant = GlassButtonVariant.SECONDARY,
@@ -200,7 +200,7 @@ fun settingsBackupRestoreCard(
 
         // Success Banner when backup is restored (NO POPUPS)
         restoreSummaryMsg?.let { summary ->
-            appCard(
+            AppCard(
                 modifier = Modifier.fillMaxWidth(),
                 borderColor = MaterialTheme.colorScheme.tertiary
             ) {
@@ -218,7 +218,7 @@ fun settingsBackupRestoreCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                glassButton(
+                GlassButton(
                     text = "Dismiss",
                     emoji = "✓",
                     onClick = onDismissSummary,
@@ -230,7 +230,7 @@ fun settingsBackupRestoreCard(
 
         // Inline JSON Restore Panel (NO POPUPS)
         if (showRestoreDialog) {
-            appCard(
+            AppCard(
                 modifier = Modifier.fillMaxWidth(),
                 borderColor = MaterialTheme.colorScheme.primary
             ) {
@@ -251,7 +251,7 @@ fun settingsBackupRestoreCard(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
-                    glassButton(
+                    GlassButton(
                         text = "Select File",
                         emoji = "📂",
                         onClick = {
@@ -261,7 +261,7 @@ fun settingsBackupRestoreCard(
                         variant = GlassButtonVariant.PRIMARY,
                         modifier = Modifier.weight(1f)
                     )
-                    glassButton(
+                    GlassButton(
                         text = "Paste Clipboard",
                         emoji = "📋",
                         onClick = {
@@ -290,7 +290,7 @@ fun settingsBackupRestoreCard(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                    glassButton(
+                    GlassButton(
                         text = "Restore All Now",
                         emoji = "🔄",
                         onClick = {
@@ -311,7 +311,7 @@ fun settingsBackupRestoreCard(
                         variant = GlassButtonVariant.PRIMARY,
                         modifier = Modifier.weight(1f)
                     )
-                    glassButton(
+                    GlassButton(
                         text = "Cancel",
                         onClick = { showRestoreDialog = false },
                         variant = GlassButtonVariant.SECONDARY,

@@ -28,13 +28,13 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param onDelete Callback when sequence is deleted.
  */
 @Composable
-fun contactSequenceCard(
+fun ContactSequenceCard(
     sequence: ContactSequence,
     onEdit: () -> Unit,
     onToggle: (Boolean) -> Unit,
     onDelete: () -> Unit
 ) {
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         onClick = onEdit,
         borderColor = if (sequence.isEnabled) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant

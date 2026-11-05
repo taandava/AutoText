@@ -39,7 +39,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onEditingStateChanged Callback invoked when modal sheet or dialog opens/closes to hide bottom navigation.
  */
 @Composable
-fun autoReplyScreen(
+fun AutoReplyScreen(
     onEditingStateChanged: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -75,7 +75,7 @@ fun autoReplyScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // Master Auto-Reply Responder Banner
-            appCardElevated(
+            AppCardElevated(
                 modifier = Modifier.fillMaxWidth(),
                 shape = AppDesignTokens.ShapeMedium,
                 accentGlow = MaterialTheme.colorScheme.tertiary
@@ -145,7 +145,7 @@ fun autoReplyScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                glassButton(
+                GlassButton(
                     text = "Add Rule",
                     onClick = {
                         editingRule = null
@@ -166,7 +166,7 @@ fun autoReplyScreen(
                         .padding(top = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    appEmptyState(
+                    AppEmptyState(
                         emoji = "💬",
                         title = "No Auto-Reply Rules",
                         description = "Create automatic responder rules for missed phone calls, incoming SMS or WhatsApp chats.",
@@ -184,7 +184,7 @@ fun autoReplyScreen(
                     contentPadding = PaddingValues(bottom = 60.dp)
                 ) {
                     items(rules, key = { it.id }) { rule ->
-                        autoReplyRuleCard(
+                        AutoReplyRuleCard(
                             rule = rule,
                             onToggle = { enable: Boolean ->
                                 val updated = rule.copy(isEnabled = enable)
@@ -208,7 +208,7 @@ fun autoReplyScreen(
 
     // Bottom Sheet: Select Auto-Reply Responder Type
     if (showTypeSelectionSheet) {
-        autoReplyTypeSelectionSheet(
+        AutoReplyTypeSelectionSheet(
             onDismiss = { showTypeSelectionSheet = false },
             onSelectType = { channel, defaultEvent ->
                 showTypeSelectionSheet = false
@@ -226,7 +226,7 @@ fun autoReplyScreen(
 
     // Full-Screen Create / Edit Rule View
     if (showDialog) {
-        autoReplyRuleDialog(
+        AutoReplyRuleDialog(
             initialRule = editingRule,
             onDismiss = { showDialog = false },
             onSave = { finalRule ->

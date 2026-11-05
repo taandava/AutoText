@@ -41,7 +41,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onLaunchMediaPicker Callback to launch system photo/media selector.
  */
 @Composable
-fun composeRecipientsAndMessageCard(
+fun ComposeRecipientsAndMessageCard(
     selectedChannel: ChannelType,
     selectedRecipients: List<SelectedRecipient>,
     duplicateWarning: String?,
@@ -64,7 +64,7 @@ fun composeRecipientsAndMessageCard(
     onMediaUriChange: (String) -> Unit = {},
     onLaunchMediaPicker: () -> Unit = {}
 ) {
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge
     ) {
@@ -87,7 +87,7 @@ fun composeRecipientsAndMessageCard(
                     val targetPkg = if (isBusiness) WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS else WhatsAppPackageHelper.PACKAGE_WHATSAPP
                     val labelPick = if (isBusiness) "Pick in W4B" else "Pick in WA"
                     val labelContacts = if (isBusiness) "W4B Contacts" else "WA Contacts"
-                    glassButton(
+                    GlassButton(
                         text = labelPick,
                         onClick = {
                             AutoTextAccessibilityService.startManualChatPicker(localCtx, targetPackage = targetPkg, channel = selectedChannel) { chatInfo ->
@@ -125,7 +125,7 @@ fun composeRecipientsAndMessageCard(
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 5.dp),
                         shape = AppDesignTokens.ShapePill
                     )
-                    glassButton(
+                    GlassButton(
                         text = labelContacts,
                         onClick = onOpenWhatsAppContacts,
                         variant = GlassButtonVariant.SECONDARY,
@@ -134,7 +134,7 @@ fun composeRecipientsAndMessageCard(
                         shape = AppDesignTokens.ShapePill
                     )
                 }
-                glassButton(
+                GlassButton(
                     text = "From Pool",
                     onClick = onOpenPoolPicker,
                     variant = GlassButtonVariant.SECONDARY,
@@ -142,7 +142,7 @@ fun composeRecipientsAndMessageCard(
                     contentPadding = PaddingValues(horizontal = 9.dp, vertical = 5.dp),
                     shape = AppDesignTokens.ShapePill
                 )
-                glassButton(
+                GlassButton(
                     text = "Contacts",
                     onClick = onOpenContactsPicker,
                     variant = GlassButtonVariant.SECONDARY,
@@ -284,7 +284,7 @@ fun composeRecipientsAndMessageCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom
         ) {
-            glassInputField(
+            GlassInputField(
                 value = recipientsInput,
                 onValueChange = onRecipientsInputChange,
                 label = "Add Recipient Manually",
@@ -295,7 +295,7 @@ fun composeRecipientsAndMessageCard(
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            glassButton(
+            GlassButton(
                 text = "Add",
                 onClick = onAddManualRecipient,
                 variant = GlassButtonVariant.PRIMARY,
@@ -319,7 +319,7 @@ fun composeRecipientsAndMessageCard(
                 fontSize = 12.5.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            glassButton(
+            GlassButton(
                 text = "Templates",
                 onClick = onOpenTemplates,
                 variant = GlassButtonVariant.SECONDARY,
@@ -401,7 +401,7 @@ fun composeRecipientsAndMessageCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    glassButton(
+                    GlassButton(
                         text = "Attach Image",
                         onClick = onLaunchMediaPicker,
                         variant = GlassButtonVariant.SECONDARY,
@@ -409,7 +409,7 @@ fun composeRecipientsAndMessageCard(
                         modifier = Modifier.weight(1f),
                         shape = AppDesignTokens.ShapeSmall
                     )
-                    glassButton(
+                    GlassButton(
                         text = "Attach Video",
                         onClick = onLaunchMediaPicker,
                         variant = GlassButtonVariant.SECONDARY,
@@ -422,7 +422,7 @@ fun composeRecipientsAndMessageCard(
             Spacer(modifier = Modifier.height(6.dp))
         }
 
-        glassInputField(
+        GlassInputField(
             value = messageText,
             onValueChange = onMessageTextChange,
             label = "Message Text",
@@ -448,7 +448,7 @@ fun composeRecipientsAndMessageCard(
                     color = if (smsPartCount > 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
                 )
-                appBadge(
+                AppBadge(
                     text = "App cap: 100/day",
                     color = MaterialTheme.colorScheme.primary,
                     showDot = false
@@ -497,15 +497,3 @@ fun composeRecipientsAndMessageCard(
         }
     }
 }
-
-
-/**
- * Specialized composer card for scheduling automated WhatsApp Status stories (text or photo/video media).
- *
- * @param mediaUri Local URI of image or video for status update.
- * @param onMediaUriChange Callback when attached media is changed or removed.
- * @param messageText Text caption or body of text status.
- * @param onMessageTextChange Callback when caption is edited.
- * @param onLaunchMediaPicker Callback to launch system photo picker.
- * @param onOpenTemplates Callback to open template message drawer.
- */

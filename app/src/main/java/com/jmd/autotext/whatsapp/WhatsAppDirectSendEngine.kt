@@ -66,7 +66,7 @@ class WhatsAppDirectSendEngine(
                 return
             }
 
-            if (PopupShield.hasActiveBlockingOverlay(service, pkg)) {
+            if (sendAttemptCount < 2 && PopupShield.hasActiveBlockingOverlay(service, pkg)) {
                 Log.d(loggerTag, "Blocking overlay detected during direct send; clearing...")
                 PopupShield.clearOverlaysAndNotificationShade(service, pkg)
                 onRetry(300L)
@@ -119,16 +119,15 @@ class WhatsAppDirectSendEngine(
                     onSuccess()
                 } else if (sendAttemptCount <= 25) {
                     val sendBtn = findSendButton(root, pkg, windows, inputNode)
-                    if (sendBtn != null) {
+                    if (sendBtn != null && !VoiceNoteProtectionGuard.isVoiceNode(sendBtn) && VoiceNoteProtectionGuard.isSendNode(sendBtn)) {
                         val sRect = Rect()
                         sendBtn.getBoundsInScreen(sRect)
                         if (sRect.width() > 0 && sRect.height() > 0) {
-                            AccessibilityNodeUtils.dispatchPhysicalTap(service, sRect.centerX().toFloat(), sRect.centerY().toFloat())
-                        } else {
-                            dispatchSendCoordinateFallback(inputNode, service, loggerTag)
+                            val clicked = AccessibilityNodeUtils.clickElement(sendBtn, service)
+                            if (!clicked) {
+                                AccessibilityNodeUtils.dispatchPhysicalTap(service, sRect.centerX().toFloat(), sRect.centerY().toFloat())
+                            }
                         }
-                    } else if (sendAttemptCount % 2 == 0) {
-                        dispatchSendCoordinateFallback(inputNode, service, loggerTag)
                     }
                     onRetry(500L)
                 } else {
@@ -166,9 +165,13 @@ class WhatsAppDirectSendEngine(
             if (sendNode != null) {
                 if (VoiceNoteProtectionGuard.isVoiceNode(sendNode)) {
                     Log.w(loggerTag, "sendNode is flagged as voice node! Waiting for send button...")
+                    // Cancel any active voice note recording that may have been triggered
+                    VoiceNoteProtectionGuard.handleAndCancelActiveVoiceRecording(root, pkg, service)
                     if (!inputMatchesPending) {
                         AccessibilityNodeUtils.setTextOnInput(currentInput, pendingMessage, service)
                     }
+                    currentInput.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
+                    currentInput.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     onRetry(400L)
                     return
                 }
@@ -177,85 +180,43 @@ class WhatsAppDirectSendEngine(
                 sendNode.getBoundsInScreen(rect)
                 val hasBounds = rect.width() > 0 && rect.height() > 0
 
-                val a11yClicked = sendNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                val a11yClicked = AccessibilityNodeUtils.clickElement(sendNode, service)
                 Log.d(loggerTag, "Tier 1 Send button A11y ACTION_CLICK result: $a11yClicked (bounds=$rect)")
 
-                if (hasBounds) {
+                if (!a11yClicked && hasBounds) {
                     val tapX = rect.centerX().toFloat()
                     val tapY = rect.centerY().toFloat()
                     AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
-                    Log.d(loggerTag, "Dispatched physical gesture tap on send bounds at ($tapX, $tapY)")
-                }
-
-                if (!a11yClicked) {
-                    Log.d(loggerTag, "Tier 1 A11y ACTION_CLICK returned false; escalating to Tier 2 & 3...")
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        currentInput.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER.id)
-                    }
-                    if (hasBounds) {
-                        val tapX = rect.centerX().toFloat()
-                        val tapY = rect.centerY().toFloat()
-                        AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
-                        Log.d(loggerTag, "Dispatched physical gesture tap fallback on send bounds at ($tapX, $tapY)")
-                    } else {
-                        dispatchSendCoordinateFallback(currentInput, service, loggerTag)
-                    }
+                    Log.d(loggerTag, "Dispatched physical gesture tap on designated send element bounds at ($tapX, $tapY)")
                 }
 
                 onAttemptClicked()
-                AppFileLogger.action(service, loggerTag, "Executed send action (Tier 1 a11yClick=$a11yClicked, bounds=$rect); waiting for composer verification.")
+                AppFileLogger.action(service, loggerTag, "Executed send action on designated Send button (a11yClick=$a11yClicked, bounds=$rect); waiting for composer verification.")
                 onRetry(600L)
             } else {
-                Log.w(loggerTag, "Send node not resolved via standard accessibility tree (attempt $sendAttemptCount).")
-                if (sendAttemptCount >= 2) {
-                    val imeActionResult = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) &&
-                        currentInput.performAction(AccessibilityNodeInfo.AccessibilityAction.ACTION_IME_ENTER.id)
-                    Log.d(loggerTag, "Tier 2 IME_ACTION dispatch result: $imeActionResult")
+                Log.w(loggerTag, "Designated Send node not resolved (attempt $sendAttemptCount). Ensuring input focus and waiting...")
+                // Cancel any voice note recording if mistakenly active
+                VoiceNoteProtectionGuard.handleAndCancelActiveVoiceRecording(root, pkg, service)
 
-                    dispatchSendCoordinateFallback(currentInput, service, loggerTag)
+                // Request focus and click on the input field so WhatsApp's TextWatcher triggers the Send button icon
+                currentInput.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
+                currentInput.performAction(AccessibilityNodeInfo.ACTION_CLICK)
 
-                    onAttemptClicked()
-                    AppFileLogger.action(service, loggerTag, "Tier 3: Dispatched coordinate tap fallback against Meta A/B layout; waiting for composer verification.")
-                    onRetry(650L)
+                if (pendingMessage.isNotBlank() && (!inputMatchesPending || isInputBlankOrHint)) {
+                    AccessibilityNodeUtils.setTextOnInput(currentInput, pendingMessage, service)
+                }
+
+                if (sendAttemptCount >= 30) {
+                    Log.w(loggerTag, "Could not find designated Send button within attempt limit. Aborting without blind coordinate clicks.")
+                    onTimeout()
                 } else {
-                    onRetry(350L)
+                    onRetry(400L)
                 }
             }
         } catch (t: Throwable) {
             Log.e(loggerTag, "Error in tryClickSendButton", t)
             onTimeout()
         }
-    }
-
-    private fun dispatchSendCoordinateFallback(
-        inputNode: AccessibilityNodeInfo?,
-        service: AccessibilityService,
-        loggerTag: String
-    ) {
-        val metrics = service.resources.displayMetrics
-        val screenWidth = metrics.widthPixels.toFloat()
-        val screenHeight = metrics.heightPixels.toFloat()
-
-        var tapX = screenWidth * 0.925f
-        var tapY = screenHeight * 0.942f
-
-        if (inputNode != null) {
-            val inputRect = Rect()
-            inputNode.getBoundsInScreen(inputRect)
-            if (inputRect.width() > 0 && inputRect.height() > 0 && inputRect.bottom > screenHeight * 0.35f) {
-                val rightSpace = screenWidth - inputRect.right
-                tapX = if (rightSpace > 30) {
-                    inputRect.right + (rightSpace * 0.5f)
-                } else {
-                    screenWidth * 0.925f
-                }
-                tapY = inputRect.centerY().toFloat()
-                Log.d(loggerTag, "Calculated input-relative send coordinates: ($tapX, $tapY) from inputRect=$inputRect")
-            }
-        }
-
-        AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
-        Log.i(loggerTag, "Tier 3 physical coordinate tap dispatched at ($tapX, $tapY) [screen: ${metrics.widthPixels}x${metrics.heightPixels}]")
     }
 
     /**
@@ -340,17 +301,23 @@ class WhatsAppDirectSendEngine(
     ): AccessibilityNodeInfo? {
         val ids = listOf(
             "send", "send_old", "send_btn", "fab", "entry_send", "action_send",
-            "send_button", "send_container", "action_submit", "conversation_send_button", "submit"
+            "send_button", "action_submit", "conversation_send_button", "submit"
         )
         for (id in ids) {
             val nodes = AccessibilityNodeUtils.findNodesByViewId(root, pkg, id, windows)
             for (n in nodes) {
                 if (n.isVisibleToUser && !VoiceNoteProtectionGuard.isVoiceNode(n)) {
+                    val desc = n.contentDescription?.toString().orEmpty()
+                    if (VoiceNoteProtectionGuard.isVoiceButtonDesc(desc)) continue
+
                     if (n.childCount > 0 && n.className?.toString()?.contains("ImageButton") != true) {
                         for (c in 0 until n.childCount) {
                             val child = n.getChild(c)
                             if (child != null && child.isVisibleToUser && !VoiceNoteProtectionGuard.isVoiceNode(child)) {
-                                return child
+                                val cDesc = child.contentDescription?.toString().orEmpty()
+                                if (!VoiceNoteProtectionGuard.isVoiceButtonDesc(cDesc)) {
+                                    return child
+                                }
                             }
                         }
                     }
@@ -366,7 +333,10 @@ class WhatsAppDirectSendEngine(
             exact = false
         )
         if (textNode != null && textNode.isVisibleToUser && !VoiceNoteProtectionGuard.isVoiceNode(textNode)) {
-            return textNode
+            val desc = textNode.contentDescription?.toString().orEmpty()
+            if (!VoiceNoteProtectionGuard.isVoiceButtonDesc(desc)) {
+                return textNode
+            }
         }
 
         val q = ArrayDeque<AccessibilityNodeInfo>()
@@ -377,9 +347,12 @@ class WhatsAppDirectSendEngine(
             count++
             val id = n.viewIdResourceName?.lowercase().orEmpty()
             val cls = n.className?.toString().orEmpty()
-            if (n.isVisibleToUser && !VoiceNoteProtectionGuard.isVoiceNode(n)) {
+            val desc = n.contentDescription?.toString().orEmpty()
+            if (n.isVisibleToUser && !VoiceNoteProtectionGuard.isVoiceNode(n) && !VoiceNoteProtectionGuard.isVoiceButtonDesc(desc)) {
                 val matchesDesc = VoiceNoteProtectionGuard.isSendNode(n)
-                val matchesId = id.endsWith(":id/send") || id.endsWith(":id/send_btn") || id.contains("send")
+                val matchesId = (id.endsWith(":id/send") || id.endsWith(":id/send_btn") || id.endsWith(":id/entry_send") ||
+                        id.endsWith(":id/action_send") || id.endsWith(":id/conversation_send_button")) &&
+                        !VoiceNoteProtectionGuard.isVoiceButtonDesc(desc)
                 if ((matchesDesc || matchesId) &&
                     (n.isClickable || cls.contains("Image", ignoreCase = true) || cls.contains("Button", ignoreCase = true))) {
                     return n
@@ -401,9 +374,12 @@ class WhatsAppDirectSendEngine(
                         if (!sibling.isVisibleToUser || VoiceNoteProtectionGuard.isVoiceNode(sibling)) continue
                         val siblingBounds = Rect()
                         sibling.getBoundsInScreen(siblingBounds)
-                        if (siblingBounds.left >= inputBounds.right - 10 && siblingBounds.width() > 0 &&
+                        val isAffirmativeSend = VoiceNoteProtectionGuard.isSendNode(sibling) ||
+                            (sibling.viewIdResourceName?.contains("send", ignoreCase = true) == true &&
+                             !VoiceNoteProtectionGuard.isVoiceButtonDesc(sibling.contentDescription?.toString().orEmpty()))
+                        if (isAffirmativeSend && siblingBounds.left >= inputBounds.right - 10 && siblingBounds.width() > 0 &&
                             (sibling.isClickable || sibling.className?.toString()?.contains("Image") == true || sibling.className?.toString()?.contains("Button") == true)) {
-                            Log.d(loggerTag, "Found send button via adjacent rightward sibling to input field: bounds=$siblingBounds")
+                            Log.d(loggerTag, "Found designated send button via adjacent rightward sibling to input field: bounds=$siblingBounds")
                             return sibling
                         }
                     }

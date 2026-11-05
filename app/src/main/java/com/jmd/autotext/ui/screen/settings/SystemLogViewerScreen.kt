@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.core.showAppToast
-import com.jmd.autotext.ui.components.appCard
-import com.jmd.autotext.ui.components.appSubScreenHeader
-import com.jmd.autotext.ui.components.glassChip
+import com.jmd.autotext.ui.components.AppCard
+import com.jmd.autotext.ui.components.AppSubScreenHeader
+import com.jmd.autotext.ui.components.GlassChip
 import com.jmd.autotext.ui.theme.AppDesignTokens
 
 /**
@@ -82,7 +82,7 @@ sealed class ParsedSystemLogItem {
  * formatted cleanly with Material 3 Expressive cards, chips, and level badges like Execution History.
  */
 @Composable
-fun systemLogViewerView(
+fun SystemLogViewerView(
     context: Context,
     onBack: () -> Unit
 ) {
@@ -152,7 +152,8 @@ fun systemLogViewerView(
                         } else {
                             ParsedSystemLogItem.RawLine(rawText = line)
                         }
-                    } catch (_: Exception) {
+                    } catch (e: Exception) {
+                        android.util.Log.w("SystemLogViewer", "Failed to parse CSV log line: ${e.message}")
                         ParsedSystemLogItem.RawLine(rawText = line)
                     }
                 }.reversed() // Show newest on top
@@ -240,7 +241,7 @@ fun systemLogViewerView(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = activeTitle,
                 subtitle = "${filteredItems.size} records • ${String.format(currentLocale, "%.1f KB", fileSizeKb)}",
                 onBack = onBack,
@@ -345,7 +346,7 @@ fun systemLogViewerView(
                         Pair("WARN", "⚠️ Warn"),
                         Pair("ERROR", "🚨 Error")
                     ).forEach { (key, label) ->
-                        glassChip(
+                        GlassChip(
                             selected = levelFilter == key,
                             onClick = { levelFilter = key },
                             label = label
@@ -366,7 +367,7 @@ fun systemLogViewerView(
                         Pair("QUEUED", "⏳ Queued"),
                         Pair("FAILED", "❌ Failed")
                     ).forEach { (key, label) ->
-                        glassChip(
+                        GlassChip(
                             selected = levelFilter == key,
                             onClick = { levelFilter = key },
                             label = label
@@ -474,7 +475,7 @@ fun systemLogViewerView(
                 ) {
                     itemsIndexed(filteredItems, key = { index, item -> "$selectedTab-$index-${item.timestamp}" }) { _, item ->
                         when (item) {
-                            is ParsedSystemLogItem.ActionLog -> actionLogCard(
+                            is ParsedSystemLogItem.ActionLog -> ActionLogCard(
                                 log = item,
                                 onCopy = {
                                     val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
@@ -482,7 +483,7 @@ fun systemLogViewerView(
                                     context.showAppToast("Log copied to clipboard")
                                 }
                             )
-                            is ParsedSystemLogItem.LedgerLog -> ledgerLogCard(
+                            is ParsedSystemLogItem.LedgerLog -> LedgerLogCard(
                                 log = item,
                                 onCopy = {
                                     val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
@@ -490,7 +491,7 @@ fun systemLogViewerView(
                                     context.showAppToast("Ledger entry copied")
                                 }
                             )
-                            is ParsedSystemLogItem.ErrorLog -> errorLogCard(
+                            is ParsedSystemLogItem.ErrorLog -> ErrorLogCard(
                                 log = item,
                                 onCopy = {
                                     val full = "${item.rawText}\n${item.stackTrace}"
@@ -499,7 +500,7 @@ fun systemLogViewerView(
                                     context.showAppToast("Error details copied")
                                 }
                             )
-                            is ParsedSystemLogItem.RawLine -> rawLogCard(
+                            is ParsedSystemLogItem.RawLine -> RawLogCard(
                                 line = item.rawText,
                                 onCopy = {
                                     val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
@@ -519,7 +520,7 @@ fun systemLogViewerView(
  * Card rendering an Action / System log entry with badge, tag, timestamp, and message.
  */
 @Composable
-private fun actionLogCard(
+private fun ActionLogCard(
     log: ParsedSystemLogItem.ActionLog,
     onCopy: () -> Unit
 ) {
@@ -532,7 +533,7 @@ private fun actionLogCard(
         else -> Pair(MaterialTheme.colorScheme.onSurfaceVariant, "📄")
     }
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         onClick = onCopy
     ) {
@@ -608,7 +609,7 @@ private fun actionLogCard(
  * Card rendering a Campaign Ledger entry with recipient, channel, status pill, and details.
  */
 @Composable
-private fun ledgerLogCard(
+private fun LedgerLogCard(
     log: ParsedSystemLogItem.LedgerLog,
     onCopy: () -> Unit
 ) {
@@ -626,7 +627,7 @@ private fun ledgerLogCard(
         else -> Pair("💬", MaterialTheme.colorScheme.tertiary)
     }
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         onClick = onCopy
     ) {
@@ -734,13 +735,13 @@ private fun ledgerLogCard(
  * Card rendering an Error entry with collapsible stack trace and copy capability.
  */
 @Composable
-private fun errorLogCard(
+private fun ErrorLogCard(
     log: ParsedSystemLogItem.ErrorLog,
     onCopy: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         borderColor = MaterialTheme.colorScheme.error.copy(alpha = 0.4f),
         onClick = { expanded = !expanded }
@@ -855,11 +856,11 @@ private fun errorLogCard(
  * Fallback card for raw unstructured log text.
  */
 @Composable
-private fun rawLogCard(
+private fun RawLogCard(
     line: String,
     onCopy: () -> Unit
 ) {
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         onClick = onCopy
     ) {

@@ -113,6 +113,7 @@ object PopupShield {
         try {
             val windows = service.windows.orEmpty()
             val metrics = service.resources.displayMetrics
+            val screenWidth = metrics.widthPixels
             val screenHeight = metrics.heightPixels
 
             for (window in windows) {
@@ -126,7 +127,7 @@ object PopupShield {
                 val isSystemBar = (rect.top == 0 && rect.height() < screenHeight * 0.15f) ||
                     (rect.bottom >= screenHeight && rect.height() < screenHeight * 0.15f)
 
-                if (windowPkg.contains("systemui")) {
+                if (windowPkg.contains("systemui") || com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay(windowPkg)) {
                     if (rect.height() > screenHeight * 0.35f && !isSystemBar) {
                         return true
                     }
@@ -140,7 +141,11 @@ object PopupShield {
                 val isOverlayType = windowType == AccessibilityWindowInfo.TYPE_SYSTEM ||
                     windowType == AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY
 
-                if (isOverlayType && !isSystemBar &&
+                val isLargeOverlay = rect.width() > screenWidth * 0.45f && rect.height() > screenHeight * 0.20f
+                val coversInteractionArea = rect.bottom > screenHeight * 0.40f
+
+                if (isOverlayType && !isSystemBar && isLargeOverlay && coversInteractionArea &&
+                    !com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay(windowPkg) &&
                     !windowPkg.contains(targetPkg, ignoreCase = true) &&
                     !windowPkg.contains("w4b", ignoreCase = true) &&
                     windowPkg != service.packageName.lowercase()
@@ -173,6 +178,7 @@ object PopupShield {
             val root = service.rootInActiveWindow
             val curPkg = root?.packageName?.toString().orEmpty().lowercase()
             val metrics = service.resources.displayMetrics
+            val screenWidth = metrics.widthPixels
             val screenHeight = metrics.heightPixels
             val rect = android.graphics.Rect()
             root?.getBoundsInScreen(rect)
@@ -206,16 +212,21 @@ object PopupShield {
                     windowPkg.contains("systemui") || windowPkg.contains("settings") ||
                     windowPkg.contains("inputmethod") || windowPkg.contains("gboard") ||
                     windowPkg.contains("permission") || windowPkg.contains("installer") ||
-                    windowPkg == "android"
+                    windowPkg == "android" || com.jmd.autotext.core.OemBrandHelper.isSafeSystemOverlay(windowPkg)
 
-                if (isOverlayType && windowRoot != null &&
+                val wRect = android.graphics.Rect()
+                window.getBoundsInScreen(wRect)
+                val isLargeOverlay = wRect.width() > screenWidth * 0.45f && wRect.height() > screenHeight * 0.20f
+                val coversInteractionArea = wRect.bottom > screenHeight * 0.40f
+
+                if (isOverlayType && isLargeOverlay && coversInteractionArea && windowRoot != null &&
                     windowPkg.isNotBlank() &&
                     !isSafeSystemPkg &&
                     !windowPkg.contains(targetPkg, ignoreCase = true) &&
                     !windowPkg.contains("w4b", ignoreCase = true) &&
                     windowPkg != service.packageName.lowercase()
                 ) {
-                    Log.i(TAG, "Floating overlay detected from package: $windowPkg (type=$windowType)")
+                    Log.i(TAG, "Large floating overlay detected from package: $windowPkg (type=$windowType, bounds=$wRect)")
 
                     if (clickDismissButton(windowRoot, service)) {
                         Log.i(TAG, "Dismissed overlay button in $windowPkg")

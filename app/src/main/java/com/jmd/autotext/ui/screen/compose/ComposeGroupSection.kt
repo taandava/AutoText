@@ -39,7 +39,7 @@ import com.jmd.autotext.ui.theme.*
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun whatsAppGroupPickerSheet(
+fun WhatsAppGroupPickerSheet(
     repository: AppRepository,
     selectedGroupName: String,
     onSelectGroup: (String) -> Unit,
@@ -95,14 +95,14 @@ fun whatsAppGroupPickerSheet(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                appBadge(
+                AppBadge(
                     text = "${allGroups.size} Saved",
                     color = MaterialTheme.colorScheme.tertiary,
                     showDot = false
                 )
             }
 
-            glassSearchField(
+            GlassSearchField(
                 value = groupSearch,
                 onValueChange = { groupSearch = it },
                 placeholder = "Search ${allGroups.size} saved groups...",
@@ -111,7 +111,7 @@ fun whatsAppGroupPickerSheet(
             )
 
             if (filteredGroups.isEmpty()) {
-                appCard(
+                AppCard(
                     modifier = Modifier.fillMaxWidth(),
                     borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)
                 ) {
@@ -144,7 +144,7 @@ fun whatsAppGroupPickerSheet(
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(10.dp))
-                        glassButton(
+                        GlassButton(
                             text = "Pick Live from WhatsApp",
                             onClick = {
                                 val installedPkg = WhatsAppPackageHelper.getInstalledWhatsAppPackage(context)
@@ -171,7 +171,7 @@ fun whatsAppGroupPickerSheet(
                 ) {
                     items(filteredGroups, key = { it.id }) { g ->
                         val isSelected = g.name.equals(selectedGroupName, ignoreCase = true)
-                        appCard(
+                        AppCard(
                             onClick = {
                                 onSelectGroup(g.name)
                                 onDismiss()
@@ -185,7 +185,7 @@ fun whatsAppGroupPickerSheet(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                    contactAvatar(
+                                    ContactAvatar(
                                         name = g.name,
                                         size = 36.dp,
                                         badgeIcon = Icons.Default.Group,
@@ -211,7 +211,7 @@ fun whatsAppGroupPickerSheet(
                                     }
                                 }
                                 if (isSelected) {
-                                    appBadge(text = "Selected", color = MaterialTheme.colorScheme.tertiary)
+                                    AppBadge(text = "Selected", color = MaterialTheme.colorScheme.tertiary)
                                 } else {
                                     Icon(
                                         Icons.Default.CheckCircleOutline,
@@ -247,7 +247,7 @@ fun whatsAppGroupPickerSheet(
  * @param selectedChannel Channel configuration (WHATSAPP_GROUP or WHATSAPP_BUSINESS).
  */
 @Composable
-fun whatsAppGroupComposerCard(
+fun WhatsAppGroupComposerCard(
     context: Context,
     repository: AppRepository,
     selectedGroupName: String,
@@ -267,7 +267,7 @@ fun whatsAppGroupComposerCard(
     val appLabel = if (isBusiness) "WhatsApp Business" else "WhatsApp"
     var showSavedGroupsSheet by remember { mutableStateOf(false) }
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge,
         borderColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f)
@@ -284,7 +284,7 @@ fun whatsAppGroupComposerCard(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                glassButton(
+                GlassButton(
                     text = "Saved Groups",
                     onClick = { showSavedGroupsSheet = true },
                     variant = GlassButtonVariant.SECONDARY,
@@ -292,7 +292,7 @@ fun whatsAppGroupComposerCard(
                     contentPadding = PaddingValues(horizontal = 9.dp, vertical = 5.dp),
                     shape = AppDesignTokens.ShapePill
                 )
-                glassButton(
+                GlassButton(
                     text = pickLabel,
                     onClick = {
                         AutoTextAccessibilityService.startManualChatPicker(context, targetPackage = targetPkg, channel = selectedChannel) { chatInfo ->
@@ -340,7 +340,7 @@ fun whatsAppGroupComposerCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                        contactAvatar(
+                        ContactAvatar(
                             name = selectedGroupName,
                             size = 32.dp,
                             badgeIcon = Icons.Default.Group,
@@ -419,7 +419,7 @@ fun whatsAppGroupComposerCard(
                 fontSize = 12.5.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            glassButton(
+            GlassButton(
                 text = "Templates",
                 onClick = onOpenTemplates,
                 variant = GlassButtonVariant.SECONDARY,
@@ -500,7 +500,7 @@ fun whatsAppGroupComposerCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                glassButton(
+                GlassButton(
                     text = "Attach Image",
                     onClick = onLaunchMediaPicker,
                     variant = GlassButtonVariant.SECONDARY,
@@ -508,7 +508,7 @@ fun whatsAppGroupComposerCard(
                     modifier = Modifier.weight(1f),
                     shape = AppDesignTokens.ShapeSmall
                 )
-                glassButton(
+                GlassButton(
                     text = "Attach Video",
                     onClick = onLaunchMediaPicker,
                     variant = GlassButtonVariant.SECONDARY,
@@ -520,7 +520,7 @@ fun whatsAppGroupComposerCard(
         }
         Spacer(modifier = Modifier.height(6.dp))
 
-        glassInputField(
+        GlassInputField(
             value = messageText,
             onValueChange = onMessageTextChange,
             label = "Message Text",
@@ -569,7 +569,7 @@ fun whatsAppGroupComposerCard(
         }
 
         if (showSavedGroupsSheet) {
-            whatsAppGroupPickerSheet(
+            WhatsAppGroupPickerSheet(
                 repository = repository,
                 selectedGroupName = selectedGroupName,
                 onSelectGroup = onSelectGroupName,
@@ -579,20 +579,3 @@ fun whatsAppGroupComposerCard(
     }
 }
 
-
-
-/**
- * Scheduling card providing inline calendar/time selectors, recurrence frequency presets, custom minute intervals, and SIM slot selector.
- *
- * @param selectedChannel Channel configuration for this scheduled task.
- * @param triggerTimeMillis Exact epoch millisecond timestamp when the task should fire.
- * @param onTriggerTimeChanged Callback invoked when execution timestamp is adjusted.
- * @param selectedRecurrence Recurrence pattern (ONCE, DAILY, WEEKLY, MONTHLY, HOURLY, CUSTOM_MINUTES).
- * @param onRecurrenceChanged Callback when recurrence rule is modified.
- * @param customIntervalMinutes Number of minutes between triggers if using custom interval.
- * @param onCustomIntervalMinutesChanged Callback when custom minute interval changes.
- * @param simSlot Target SIM card index (0 for SIM 1, 1 for SIM 2).
- * @param onSimSlotChanged Callback when selected SIM slot is updated.
- * @param selectedDaysOfWeek Days of week selected for weekly repetition schedule.
- * @param onSelectedDaysOfWeekChanged Callback when selected days of week are toggled.
- */

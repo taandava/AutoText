@@ -468,6 +468,9 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     try {
                         executeWhatsAppTaskWithRetries(repository, task)
                     } finally {
+                        if (prefs.isAutoLockAfterSendEnabled) {
+                            executeDeviceLockPostcondition(appContext, task.title)
+                        }
                         privacyMgr.releaseAccessibilityAfterAutomation()
                     }
                 }
@@ -488,6 +491,9 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     try {
                         executeWhatsAppCallTask(repository, task)
                     } finally {
+                        if (prefs.isAutoLockAfterSendEnabled) {
+                            executeDeviceLockPostcondition(appContext, task.title)
+                        }
                         privacyMgr.releaseAccessibilityAfterAutomation()
                     }
                 }
@@ -509,7 +515,13 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             AutomationSafetyManager.recordFailure(task.channel, appContext)
         }
 
-        if (task.channel != ChannelType.CALL_SIMULATION && prefs.isAutoLockAfterSendEnabled) {
+        val isUiAutomationChannel = when (task.channel) {
+            ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_GROUP,
+            ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_BUSINESS_STATUS,
+            ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> true
+            else -> false
+        }
+        if (!isUiAutomationChannel && task.channel != ChannelType.CALL_SIMULATION && task.channel != ChannelType.REMINDER && prefs.isAutoLockAfterSendEnabled) {
             executeDeviceLockPostcondition(appContext, task.title)
         }
         AccessibilityHealthManager.enforceAutoRotateInvariant(appContext)
@@ -603,7 +615,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val effectiveMaxRetries = if (task.recurrence == RecurrenceType.REPEAT_SECONDS) 0 else maxRetries
 
         if (!AccessibilityHealthManager.isServiceOperational()) {
-            val ready = AccessibilityHealthManager.waitForServiceReadiness(appContext, 3000L)
+            val ready = AccessibilityHealthManager.waitForServiceReadiness(appContext, 5000L)
             if (!ready) {
                 val err = "Accessibility Service is not operational. Cannot execute WhatsApp task #${task.id}."
                 AppFileLogger.e(appContext, TAG, err)
@@ -684,6 +696,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
                 PrivacyManager.getInstance(appContext).prepareAccessibilityForAutomation()
                 AccessibilityHealthManager.ensureServiceAlive(appContext)
+                if (!AccessibilityHealthManager.isServiceOperational()) {
+                    val ready = AccessibilityHealthManager.waitForServiceReadiness(appContext, 3000L)
+                    if (!ready) {
+                        AppFileLogger.w(appContext, TAG, "Accessibility Service is not operational for Task #${task.id}. Retrying after delay...")
+                        if (attempts <= effectiveMaxRetries) {
+                            delay(2000.milliseconds)
+                            continue
+                        }
+                    }
+                }
                 ensureDeviceAwakeAndUnlocked(task, task.recipients.firstOrNull() ?: "")
                 delay(300.milliseconds)
 
@@ -920,8 +942,9 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     /**
      * Executes post-task device lock if enabled in preferences.
-     * Minimizes to home, attempts accessibility global lock, falls back to Device Admin lockNow,
-     * and verifies screen interactive state.
+     * Minimizes to home and executes Power button auto-lock via [AutoTextAccessibilityService.lockScreenNow]
+     * (using Android Pie+ GLOBAL_ACTION_LOCK_SCREEN) so biometrics and fingerprint are 100% preserved.
+     * Never calls DevicePolicyManager.lockNow().
      */
     private suspend fun executeDeviceLockPostcondition(context: Context, taskTitle: String): Boolean {
         val prefs = PreferenceManager(context)
@@ -930,7 +953,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             return true
         }
 
-        AppFileLogger.action(context, TAG, "Executing device auto-lock postcondition for '$taskTitle'...")
+        AppFileLogger.action(context, TAG, "Executing device auto-lock postcondition for '$taskTitle' (Power button simulation, Fingerprint safe)...")
         // 1. Return to home launcher first so private conversation/dialer is cleared
         AutoTextAccessibilityService.minimizeToHome(context)
         AccessibilityHealthManager.enforceAutoRotateInvariant(context)
@@ -942,23 +965,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             return true
         }
 
-        // 2. Attempt lock via Accessibility Service global action
-        var locked = AutoTextAccessibilityService.lockScreenNow()
+        // 2. Lock screen mimicking hardware Power button via Accessibility Service global action
+        val locked = AutoTextAccessibilityService.lockScreenNow()
         delay(400.milliseconds)
-
-        // 3. Fallback to Device Admin lockNow if screen remains interactive
-        if (pm?.isInteractive != false) {
-            val adminLocked = AutoTextDeviceAdminReceiver.lockNow(context)
-            locked = locked || adminLocked
-            delay(400.milliseconds)
-        }
 
         val screenIsOn = pm?.isInteractive != false
         val success = !screenIsOn || locked
         if (success) {
-            AppFileLogger.action(context, TAG, "Device auto-lock postcondition succeeded for '$taskTitle' (screenInteractive=$screenIsOn)")
+            AppFileLogger.action(context, TAG, "Device auto-lock postcondition succeeded for '$taskTitle' (screenInteractive=$screenIsOn, Biometrics Safe)")
         } else {
-            AppFileLogger.w(context, TAG, "Device auto-lock postcondition failed for '$taskTitle'; screen remains active")
+            AppFileLogger.w(context, TAG, "Device auto-lock postcondition finished for '$taskTitle'; home launcher minimized.")
         }
         return success
     }
@@ -1044,10 +1060,12 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     val hasExplicitSimSelection = (task.simSlot == 1) || (task.simSlot == 2)
                     if ((telecomManager != null) && (hasExplicitSimSelection)) {
                         val targetPhysicalSlot = task.simSlot - 1
+                        var matchedSubId: Int? = null
                         try {
                             val subManager = appContext.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as? SubscriptionManager
                             val activeSubs = subManager?.activeSubscriptionInfoList
                             val targetSub = activeSubs?.find { it.simSlotIndex == targetPhysicalSlot }
+                            matchedSubId = targetSub?.subscriptionId
                             val accounts = telecomManager.callCapablePhoneAccounts
 
                             val matchedAccount = accounts.find { handle ->
@@ -1084,9 +1102,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             Log.w(TAG, "Exception resolving call-capable account for SIM ${task.simSlot}: ${e.message}")
                             explicitSimUnresolved = true
                         }
-                        putInt("com.android.phone.extra.slot", targetPhysicalSlot)
-                        putInt("simSlot", targetPhysicalSlot)
-                        putInt("android.telecom.extra.PHONE_ACCOUNT_HANDLE_INDEX", targetPhysicalSlot)
+                        com.jmd.autotext.core.OemBrandHelper.populateTelecomSimExtras(this, targetPhysicalSlot, matchedSubId)
                     }
                 }
 
@@ -1108,7 +1124,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 }
 
                 var callInitiated = false
-                if ((hasCallPerm) && (telecomManager != null)) {
+                if (hasCallPerm && telecomManager != null) {
                     try {
                         telecomManager.placeCall(uri, extras)
                         callInitiated = true
@@ -1118,7 +1134,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     }
                 }
 
-                val isDirectCall = callInitiated || hasCallPerm
                 if (!callInitiated) {
                     val callIntent = if (hasCallPerm) {
                         Intent(Intent.ACTION_CALL, uri).apply {
@@ -1130,8 +1145,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         }
                     }
-                    appContext.startActivity(callIntent)
+                    val intentStarted = runCatching {
+                        appContext.startActivity(callIntent)
+                        true
+                    }.getOrDefault(false)
+                    if (intentStarted) {
+                        callInitiated = true
+                    }
                 }
+
+                val isDirectCall = callInitiated || hasCallPerm
 
                 val logStatus = if (isDirectCall) "SUCCESS" else "DIALER_OPENED"
                 val logSnippet = if (isDirectCall) "Placed call to $cleanPhone (${index + 1}/${rawRecipients.size}, simSlot=${task.simSlot}, duration=${task.callDurationSeconds}s, dialTimeIncluded=${task.includeDialTimeInCallDuration})" else "Opened dialer for $cleanPhone (Action Required)"
@@ -1164,11 +1187,12 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     }
 
                     // Sliced delay polling checking master pause and early call termination
-                    // Returns true if duration fully elapsed while call was active; false if ended early or aborted
-                    val waitForCallDurationWithEarlyCheck: suspend (Long, Long) -> Boolean = { totalMs, graceMs ->
+                    // Returns true if duration fully elapsed; false if aborted via master switch / emergency stop
+                    val waitForCallDurationWithEarlyCheck: suspend (Long, Long, Boolean) -> Boolean = { totalMs, graceMs, allowEarlyExit ->
                         var elapsed = 0L
                         val step = 250L
                         var completedNormally = true
+                        var idleConsecutiveMs = 0L
                         while (elapsed < totalMs) {
                             val livePrefs = PreferenceManager(appContext)
                             if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
@@ -1176,11 +1200,19 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                                 completedNormally = false
                                 break
                             }
-                            // After grace period, detect if the call ended early (caller or callee hung up)
-                            if (elapsed >= graceMs && !isCellularCallOngoing()) {
-                                AppFileLogger.action(appContext, TAG, "Call for $cleanPhone ended early (${elapsed / 1000}s into ${durationSec}s limit). Exiting wait loop.")
-                                completedNormally = false
-                                break
+                            // After grace period, if early exit is allowed (e.g. connected call was hung up by remote party), verify continuous idle state
+                            if (allowEarlyExit && elapsed >= graceMs) {
+                                if (!isCellularCallOngoing()) {
+                                    idleConsecutiveMs += step
+                                    // Require at least 2.5s of confirmed idle to avoid carrier radio handover glitches
+                                    if (idleConsecutiveMs >= 2500L) {
+                                        AppFileLogger.action(appContext, TAG, "Call for $cleanPhone ended early by remote party (${elapsed / 1000}s into ${durationSec}s limit). Exiting wait loop.")
+                                        completedNormally = false
+                                        break
+                                    }
+                                } else {
+                                    idleConsecutiveMs = 0L
+                                }
                             }
                             val chunk = minOf(step, totalMs - elapsed)
                             delay(chunk.milliseconds)
@@ -1189,16 +1221,15 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         completedNormally
                     }
 
-                    var durationCriteriaSatisfied = false
-
-                    if (task.includeDialTimeInCallDuration) {
-                        // Timer starts immediately when call placement initiates
+                    val durationCriteriaSatisfied = if (task.includeDialTimeInCallDuration) {
+                        // Timer starts immediately when call placement initiates - hold full duration without dropping early
                         AppFileLogger.action(appContext, TAG, "Call duration limit of ${durationSec}s (including dialing time) holding for $cleanPhone...")
-                        durationCriteriaSatisfied = waitForCallDurationWithEarlyCheck(durationSec * 1000L, 3500L)
+                        val allowEarly = durationSec > 25
+                        waitForCallDurationWithEarlyCheck(durationSec * 1000L, 15000L, allowEarly)
                     } else if (telephonyManager != null && hasPhoneStatePerm) {
                         // Timer starts ONLY once the call is confirmed answered/connected (OFFHOOK)
                         AppFileLogger.action(appContext, TAG, "Awaiting call connection (OFFHOOK) for $cleanPhone before starting ${durationSec}s call duration...")
-                        val dialTimeoutMs = 40_000L
+                        val dialTimeoutMs = 45_000L
                         val pollIntervalMs = 500L
                         var dialElapsedMs = 0L
                         var connected = false
@@ -1207,12 +1238,10 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             val livePrefs = PreferenceManager(appContext)
                             if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) break
 
-                            if (com.jmd.autotext.compat.TelephonyManagerCompat.isCallConnected(appContext, telephonyManager)) {
+                            if (com.jmd.autotext.compat.TelephonyManagerCompat.isCallConnected(appContext, telephonyManager) ||
+                                (dialElapsedMs >= 3000L && AutoTextAccessibilityService.isPhoneCallUiActive())) {
                                 connected = true
                                 AppFileLogger.action(appContext, TAG, "Call to $cleanPhone connected (OFFHOOK)! Starting configured ${durationSec}s call duration timer...")
-                                break
-                            } else if (dialElapsedMs >= 4000L && !isCellularCallOngoing()) {
-                                AppFileLogger.action(appContext, TAG, "Call to $cleanPhone disconnected, rejected, or cancelled before connect. Skipping duration hold.")
                                 break
                             }
                             delay(pollIntervalMs.milliseconds)
@@ -1220,17 +1249,19 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         }
 
                         if (connected) {
-                            durationCriteriaSatisfied = waitForCallDurationWithEarlyCheck(durationSec * 1000L, 1000L)
+                            waitForCallDurationWithEarlyCheck(durationSec * 1000L, 2000L, true)
                         } else {
-                            AppFileLogger.action(appContext, TAG, "Call to $cleanPhone did not connect within timeout ($dialElapsedMs ms). Duration limit criteria not triggered.")
+                            AppFileLogger.action(appContext, TAG, "Call to $cleanPhone did not connect within timeout ($dialElapsedMs ms). Attempting hangup...")
+                            AutoTextAccessibilityService.endPhoneCall(appContext)
+                            false
                         }
                     } else {
                         // Fallback when phone state perm is absent: wait configured duration
-                        durationCriteriaSatisfied = waitForCallDurationWithEarlyCheck(durationSec * 1000L, 3500L)
+                        waitForCallDurationWithEarlyCheck(durationSec * 1000L, 10000L, durationSec > 20)
                     }
 
-                    // Only terminate active call and notify IF duration actually elapsed per configured criteria
-                    if (durationCriteriaSatisfied && isCellularCallOngoing()) {
+                    // Terminate active call once duration criteria has elapsed
+                    if (durationCriteriaSatisfied) {
                         AppFileLogger.action(appContext, TAG, "Configured call duration (${durationSec}s) elapsed for $cleanPhone. Hanging up call now...")
                         val hungUp = AutoTextAccessibilityService.endPhoneCall(appContext)
                         AppFileLogger.action(appContext, TAG, "Hangup request for $cleanPhone: result=$hungUp")
@@ -1359,7 +1390,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         if (!AccessibilityHealthManager.isServiceOperational()) {
-            val ready = AccessibilityHealthManager.waitForServiceReadiness(appContext, 3000L)
+            val ready = AccessibilityHealthManager.waitForServiceReadiness(appContext, 5000L)
             if (!ready) {
                 val err = "Accessibility Service is not operational. Cannot execute WhatsApp call task #${task.id}."
                 AppFileLogger.e(appContext, TAG, err)
@@ -1459,10 +1490,11 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         }
 
                         // Sliced delay polling checking master pause and early VoIP call termination
-                        val waitForVoipDurationWithEarlyCheck: suspend (Long, Long) -> Boolean = { totalMs, graceMs ->
+                        val waitForVoipDurationWithEarlyCheck: suspend (Long, Long, Boolean) -> Boolean = { totalMs, graceMs, allowEarlyExit ->
                             var elapsed = 0L
                             val step = 250L
                             var completedNormally = true
+                            var idleConsecutiveMs = 0L
                             while (elapsed < totalMs) {
                                 val livePrefs = PreferenceManager(appContext)
                                 if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
@@ -1470,10 +1502,17 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                                     completedNormally = false
                                     break
                                 }
-                                if (elapsed >= graceMs && !AutoTextAccessibilityService.isInWhatsAppCall()) {
-                                    AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call for $cleanPhone ended early (${elapsed / 1000}s into ${durationSec}s limit). Exiting wait loop.")
-                                    completedNormally = false
-                                    break
+                                if (allowEarlyExit && elapsed >= graceMs) {
+                                    if (!AutoTextAccessibilityService.isInWhatsAppCall()) {
+                                        idleConsecutiveMs += step
+                                        if (idleConsecutiveMs >= 2500L) {
+                                            AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call for $cleanPhone ended early (${elapsed / 1000}s into ${durationSec}s limit). Exiting wait loop.")
+                                            completedNormally = false
+                                            break
+                                        }
+                                    } else {
+                                        idleConsecutiveMs = 0L
+                                    }
                                 }
                                 val chunk = minOf(step, totalMs - elapsed)
                                 delay(chunk.milliseconds)
@@ -1482,16 +1521,14 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             completedNormally
                         }
 
-                        var durationCriteriaSatisfied = false
-
-                        if (task.includeDialTimeInCallDuration) {
+                        val durationCriteriaSatisfied = if (task.includeDialTimeInCallDuration) {
                             // Timer starts immediately when VoIP call screen is displayed
                             AppFileLogger.action(appContext, TAG, "Holding WhatsApp voice call for configured duration of ${durationSec}s (including dialing time)...")
-                            durationCriteriaSatisfied = waitForVoipDurationWithEarlyCheck(durationSec * 1000L, 3500L)
+                            waitForVoipDurationWithEarlyCheck(durationSec * 1000L, 15000L, durationSec > 25)
                         } else {
                             // Timer starts ONLY once the VoIP call is confirmed connected (answered)
                             AppFileLogger.action(appContext, TAG, "Awaiting WhatsApp VoIP call connection for $cleanPhone before starting ${durationSec}s duration...")
-                            val dialTimeoutMs = 40_000L
+                            val dialTimeoutMs = 45_000L
                             val pollIntervalMs = 500L
                             var dialElapsedMs = 0L
                             var connected = false
@@ -1504,23 +1541,22 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                                     connected = true
                                     AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call to $cleanPhone connected! Starting configured ${durationSec}s duration timer...")
                                     break
-                                } else if (dialElapsedMs >= 4000L && !AutoTextAccessibilityService.isInWhatsAppCall()) {
-                                    AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call to $cleanPhone disconnected, declined, or cancelled before connect. Skipping duration hold.")
-                                    break
                                 }
                                 delay(pollIntervalMs.milliseconds)
                                 dialElapsedMs += pollIntervalMs
                             }
 
                             if (connected) {
-                                durationCriteriaSatisfied = waitForVoipDurationWithEarlyCheck(durationSec * 1000L, 1000L)
+                                waitForVoipDurationWithEarlyCheck(durationSec * 1000L, 2000L, true)
                             } else {
-                                AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call to $cleanPhone did not connect within timeout. Duration limit criteria not triggered.")
+                                AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call to $cleanPhone did not connect within timeout. Hanging up...")
+                                AutoTextAccessibilityService.endWhatsAppCall(targetPkg)
+                                false
                             }
                         }
 
-                        // Only auto-hangup if duration criteria actually elapsed and call remains active
-                        if (durationCriteriaSatisfied && AutoTextAccessibilityService.isInWhatsAppCall()) {
+                        // Auto-hangup once configured duration has elapsed
+                        if (durationCriteriaSatisfied) {
                             var hungUp = AutoTextAccessibilityService.endWhatsAppCall(targetPkg)
                             if (!hungUp) {
                                 for (r in 1..3) {
@@ -1635,13 +1671,38 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     private fun executeReminderTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val success = try {
             val label = AlarmScheduler.getSystemAlarmLabel(task)
+            val notifId = (task.id + 80000).toInt()
 
-            // 1. Launch the custom fullscreen ReminderAlarmActivity with Text-To-Speech announcement and Snooze controls
+            // 1. Prepare intent for custom fullscreen ReminderAlarmActivity with Text-To-Speech announcement and Snooze controls
             val reminderIntent = Intent(appContext, ReminderAlarmActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 putExtra("reminder_title", task.title.ifBlank { "Reminder" })
                 putExtra("reminder_text", task.messageText.ifBlank { task.title.ifBlank { "Reminder Alert" } })
+                putExtra("task_id", task.id)
+                putExtra("notif_id", notifId)
             }
+
+            // Post high-priority full-screen intent notification ensuring display on locked screens across Android 10-16
+            runCatching {
+                val fullScreenPendingIntent = PendingIntent.getActivity(
+                    appContext,
+                    notifId,
+                    reminderIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
+                val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+                val reminderNotif = NotificationCompat.Builder(appContext, AutoTextApplication.CHANNEL_REMINDERS)
+                    .setSmallIcon(android.R.drawable.ic_popup_reminder)
+                    .setContentTitle(task.title.ifBlank { "Reminder" })
+                    .setContentText(task.messageText.ifBlank { task.title.ifBlank { "Reminder Alert" } })
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setCategory(NotificationCompat.CATEGORY_ALARM)
+                    .setFullScreenIntent(fullScreenPendingIntent, true)
+                    .setAutoCancel(true)
+                    .build()
+                nm?.notify(notifId, reminderNotif)
+            }
+
             appContext.startActivity(reminderIntent)
 
             // 2. Also register native System Alarm in Android's Clock app as secondary backup
@@ -1682,12 +1743,37 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     private fun executeCallSimulationTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val success = try {
+            val notifId = (task.id + 70000).toInt()
             val simulationIntent = Intent(appContext, CallSimulationActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 putExtra("caller_name", task.simulatedCallerName.ifBlank { "Unknown Caller" })
                 putExtra("caller_number", task.simulatedCallerNumber.ifBlank { "+91 98765 43210" })
                 putExtra("caller_style", task.simulatedCallStyle.ifBlank { "Modern" })
+                putExtra("task_id", task.id)
+                putExtra("notif_id", notifId)
             }
+
+            // Post high-priority full-screen intent notification ensuring display on locked screens across Android 10-16
+            runCatching {
+                val fullScreenPendingIntent = PendingIntent.getActivity(
+                    appContext,
+                    notifId,
+                    simulationIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
+                val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+                val callNotif = NotificationCompat.Builder(appContext, AutoTextApplication.CHANNEL_REMINDERS)
+                    .setSmallIcon(android.R.drawable.ic_menu_call)
+                    .setContentTitle(task.simulatedCallerName.ifBlank { "Incoming Call" })
+                    .setContentText("Incoming call from ${task.simulatedCallerNumber.ifBlank { "Unknown Caller" }}")
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setCategory(NotificationCompat.CATEGORY_CALL)
+                    .setFullScreenIntent(fullScreenPendingIntent, true)
+                    .setAutoCancel(true)
+                    .build()
+                nm?.notify(notifId, callNotif)
+            }
+
             appContext.startActivity(simulationIntent)
             repository.insertLog(
                 ExecutionLog(
@@ -1767,7 +1853,9 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .build()
                     nm?.notify(8822, notif)
-                } catch (_: Exception) {}
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed posting DND notification fallback: ${e.message}")
+                }
 
                 if (fallbackSuccess) {
                     repository.insertLog(

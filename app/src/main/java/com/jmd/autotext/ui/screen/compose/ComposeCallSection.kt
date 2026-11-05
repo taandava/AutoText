@@ -38,7 +38,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onSoundModeSettingChange Callback when target sound mode is changed.
  */
 @Composable
-fun composeCallSimulationAndSoundCard(
+fun ComposeCallSimulationAndSoundCard(
     selectedChannel: ChannelType,
     simulatedCallerName: String,
     onSimulatedCallerNameChange: (String) -> Unit,
@@ -51,7 +51,7 @@ fun composeCallSimulationAndSoundCard(
 ) {
     when (selectedChannel) {
         ChannelType.CALL_SIMULATION -> {
-            appCard(
+            AppCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = AppDesignTokens.ShapeLarge
             ) {
@@ -63,7 +63,7 @@ fun composeCallSimulationAndSoundCard(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                glassInputField(
+                GlassInputField(
                     value = simulatedCallerName,
                     onValueChange = onSimulatedCallerNameChange,
                     label = "Caller Name",
@@ -73,7 +73,7 @@ fun composeCallSimulationAndSoundCard(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                glassInputField(
+                GlassInputField(
                     value = simulatedCallerNumber,
                     onValueChange = onSimulatedCallerNumberChange,
                     label = "Caller Phone Number",
@@ -108,7 +108,7 @@ fun composeCallSimulationAndSoundCard(
             }
         }
         ChannelType.SOUND_MODE -> {
-            appCard(
+            AppCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = AppDesignTokens.ShapeLarge
             ) {
@@ -145,10 +145,10 @@ fun composeCallSimulationAndSoundCard(
 }
 
 /**
- * Backward-compatible alias for [composeCallSimulationAndSoundCard].
+ * Backward-compatible alias for [ComposeCallSimulationAndSoundCard].
  */
 @Composable
-fun composeSimulatedCallAndSoundCard(
+fun ComposeSimulatedCallAndSoundCard(
     selectedChannel: ChannelType,
     simulatedCallerName: String,
     onSimulatedCallerNameChange: (String) -> Unit,
@@ -159,7 +159,7 @@ fun composeSimulatedCallAndSoundCard(
     soundModeSetting: String,
     onSoundModeSettingChange: (String) -> Unit
 ) {
-    composeCallSimulationAndSoundCard(
+    ComposeCallSimulationAndSoundCard(
         selectedChannel = selectedChannel,
         simulatedCallerName = simulatedCallerName,
         onSimulatedCallerNameChange = onSimulatedCallerNameChange,
@@ -204,7 +204,7 @@ fun composeSimulatedCallAndSoundCard(
  * @param onCallFailurePolicyChange Callback to update failure policy.
  */
 @Composable
-fun composePhoneCallCard(
+fun ComposePhoneCallCard(
     selectedRecipients: List<SelectedRecipient>,
     duplicateWarning: String?,
     onDismissDuplicateWarning: () -> Unit,
@@ -237,7 +237,7 @@ fun composePhoneCallCard(
         MaterialTheme.colorScheme.primary
     }
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge,
         borderColor = cardColor.copy(alpha = 0.5f)
@@ -289,7 +289,7 @@ fun composePhoneCallCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
                 )
-                glassChip(
+                GlassChip(
                     selected = selectedChannel == ChannelType.WHATSAPP_CALL,
                     onClick = { onSelectChannel(ChannelType.WHATSAPP_CALL) },
                     label = "WhatsApp (Personal)",
@@ -297,7 +297,7 @@ fun composePhoneCallCard(
                     activeColor = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.weight(1f)
                 )
-                glassChip(
+                GlassChip(
                     selected = selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL,
                     onClick = { onSelectChannel(ChannelType.WHATSAPP_BUSINESS_CALL) },
                     label = "WA Business",
@@ -317,7 +317,7 @@ fun composePhoneCallCard(
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 if (isWaCalling && onOpenWhatsAppContacts != null) {
-                    glassButton(
+                    GlassButton(
                         text = if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) "W4B Contacts" else "WA Contacts",
                         onClick = onOpenWhatsAppContacts,
                         variant = GlassButtonVariant.PRIMARY,
@@ -327,7 +327,7 @@ fun composePhoneCallCard(
                     )
                 }
                 if (isWaCalling && onOpenWhatsAppPicker != null) {
-                    glassButton(
+                    GlassButton(
                         text = if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) "Pick in W4B" else "Pick in WA",
                         onClick = onOpenWhatsAppPicker,
                         variant = GlassButtonVariant.PRIMARY,
@@ -336,7 +336,7 @@ fun composePhoneCallCard(
                         shape = AppDesignTokens.ShapePill
                     )
                 }
-                glassButton(
+                GlassButton(
                     text = "From Pool",
                     onClick = onOpenPoolPicker,
                     variant = GlassButtonVariant.SECONDARY,
@@ -344,7 +344,7 @@ fun composePhoneCallCard(
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
                     shape = AppDesignTokens.ShapePill
                 )
-                glassButton(
+                GlassButton(
                     text = "Contacts",
                     onClick = onOpenContactsPicker,
                     variant = GlassButtonVariant.PRIMARY,
@@ -440,7 +440,7 @@ fun composePhoneCallCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom
         ) {
-            glassInputField(
+            GlassInputField(
                 value = recipientsInput,
                 onValueChange = onRecipientsInputChange,
                 label = "Add Target Phone Number(s)",
@@ -451,7 +451,7 @@ fun composePhoneCallCard(
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            glassButton(
+            GlassButton(
                 text = "Add Number",
                 onClick = onAddManualRecipient,
                 variant = GlassButtonVariant.PRIMARY,
@@ -512,7 +512,7 @@ fun composePhoneCallCard(
             var durationInputText by remember(callDurationSeconds) {
                 mutableStateOf(if (callDurationSeconds > 0) callDurationSeconds.toString() else "0")
             }
-            glassInputField(
+            GlassInputField(
                 value = durationInputText,
                 onValueChange = { newStr ->
                     val digits = newStr.filter { it.isDigit() }.take(5)
@@ -554,7 +554,7 @@ fun composePhoneCallCard(
             var delayInputText by remember(delayBetweenCallsSeconds) {
                 mutableStateOf(delayBetweenCallsSeconds.toString())
             }
-            glassInputField(
+            GlassInputField(
                 value = delayInputText,
                 onValueChange = { newStr ->
                     val digits = newStr.filter { it.isDigit() }.take(4)
@@ -652,30 +652,3 @@ fun composePhoneCallCard(
     }
 }
 
-
-
-/**
- * Unified recipient input and message composition card with dynamic token counter, media attachments, and template drawer.
- *
- * @param selectedChannel Target channel type.
- * @param selectedRecipients Active list of selected recipient phone numbers.
- * @param duplicateWarning Warning text if a recipient is already selected.
- * @param onDismissDuplicateWarning Callback to clear warning banner.
- * @param onClearAllRecipients Callback to clear recipient selection.
- * @param onRemoveRecipient Callback to delete recipient at index.
- * @param recipientsInput Manual phone number input buffer.
- * @param onRecipientsInputChange Callback when manual input is edited.
- * @param onAddManualRecipient Callback to parse and add manual number.
- * @param onOpenWhatsAppContacts Callback to open WhatsApp contacts sheet.
- * @param onAddDirectRecipient Optional callback to add direct recipient.
- * @param onOpenPoolPicker Callback to open dynamic pool picker sheet.
- * @param onOpenContactsPicker Callback to open system contact picker.
- * @param messageText Text draft content.
- * @param onMessageTextChange Callback when text is edited.
- * @param onOpenTemplates Callback to open template picker drawer.
- * @param smsPartCount Segment count calculated for SMS text length.
- * @param isUnicode True if message contains multi-byte or unicode characters.
- * @param mediaUri File URI of attached photo, video, or audio media.
- * @param onMediaUriChange Callback when attached media URI is modified.
- * @param onLaunchMediaPicker Callback to launch system photo/media selector.
- */

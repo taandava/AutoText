@@ -35,7 +35,7 @@ import androidx.compose.ui.text.input.KeyboardType
  * @param onDelete Callback triggered when trash action is confirmed.
  */
 @Composable
-fun autoReplyRuleCard(
+fun AutoReplyRuleCard(
     rule: AutoReplyRule,
     onToggle: (Boolean) -> Unit,
     onEdit: () -> Unit,
@@ -81,7 +81,7 @@ fun autoReplyRuleCard(
         else -> "Replies via ${rule.channel.displayName}"
     }
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge,
         backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -98,14 +98,14 @@ fun autoReplyRuleCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f)
                 ) {
-                    appBadge(
+                    AppBadge(
                         text = channelText,
                         emoji = channelEmoji,
                         color = themeColor,
                         showDot = false
                     )
                     Spacer(modifier = Modifier.width(5.dp))
-                    appBadge(
+                    AppBadge(
                         text = eventBadgeText,
                         emoji = eventEmoji,
                         color = if (eventBadgeText.contains("Missed", ignoreCase = true)) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -142,11 +142,11 @@ fun autoReplyRuleCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (rule.channel in listOf(ChannelType.CALL, ChannelType.SMS)) {
-                    appBadge(text = "Mobile Only", emoji = "📱", color = MaterialTheme.colorScheme.primary, showDot = false)
+                    AppBadge(text = "Mobile Only", emoji = "📱", color = MaterialTheme.colorScheme.primary, showDot = false)
                 } else {
-                    appBadge(text = "App Chat", emoji = "💬", color = themeColor, showDot = false)
+                    AppBadge(text = "App Chat", emoji = "💬", color = themeColor, showDot = false)
                 }
-                appBadge(
+                AppBadge(
                     text = if (rule.maxDailyReplies <= 0) "Unlimited" else "Max ${rule.maxDailyReplies}x/day",
                     emoji = "📊",
                     color = MaterialTheme.colorScheme.primary,
@@ -213,7 +213,7 @@ fun autoReplyRuleCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun autoReplyLimitsCard(
+fun AutoReplyLimitsCard(
     dailyLimitMode: String,
     onDailyLimitModeChanged: (String) -> Unit,
     customDailyLimitText: String,
@@ -224,7 +224,7 @@ fun autoReplyLimitsCard(
 ) {
     var cooldownText by remember(cooldownSeconds) { mutableStateOf(cooldownSeconds.toString()) }
 
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge
     ) {
@@ -243,7 +243,7 @@ fun autoReplyLimitsCard(
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             listOf("1" to "1x / day", "3" to "3x / day", "5" to "5x / day").forEach { (mode, label) ->
-                glassChip(
+                GlassChip(
                     selected = dailyLimitMode == mode,
                     onClick = { onDailyLimitModeChanged(mode) },
                     label = label,
@@ -258,7 +258,7 @@ fun autoReplyLimitsCard(
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             listOf("CUSTOM" to "Custom", "UNLIMITED" to "Unlimited").forEach { (mode, label) ->
-                glassChip(
+                GlassChip(
                     selected = dailyLimitMode == mode,
                     onClick = { onDailyLimitModeChanged(mode) },
                     label = label,
@@ -270,7 +270,7 @@ fun autoReplyLimitsCard(
 
         if (dailyLimitMode == "CUSTOM") {
             Spacer(modifier = Modifier.height(10.dp))
-            glassInputField(
+            GlassInputField(
                 value = customDailyLimitText,
                 onValueChange = onCustomDailyLimitTextChanged,
                 label = "Custom Times Per Day",
@@ -289,7 +289,7 @@ fun autoReplyLimitsCard(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            glassInputField(
+            GlassInputField(
                 value = cooldownText,
                 onValueChange = { newStr ->
                     val digits = newStr.filter { it.isDigit() }.take(4)
@@ -397,18 +397,18 @@ fun autoReplyLimitsCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun autoReplyTemplateCard(
+fun AutoReplyTemplateCard(
     channel: ChannelType,
     callEventType: String,
     replyText: String,
     onReplyTextChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    appCard(
+    AppCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge
     ) {
-        glassInputField(
+        GlassInputField(
             value = replyText,
             onValueChange = onReplyTextChanged,
             label = "Auto-Reply Message Text",

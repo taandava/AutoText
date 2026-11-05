@@ -26,7 +26,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import java.util.Locale
 
-import com.jmd.autotext.ui.screen.reminderScreen
+import com.jmd.autotext.ui.screen.ReminderScreen
 
 /**
  * Activity presenting audible on-device reminder alarm with Text-to-Speech playback.
@@ -48,6 +48,13 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        val notifId = intent.getIntExtra("notif_id", 0)
+        if (notifId != 0) {
+            runCatching {
+                val nm = getSystemService(android.app.NotificationManager::class.java)
+                nm?.cancel(notifId)
+            }
+        }
 
         val title = intent.getStringExtra("reminder_title")?.takeIf { it.isNotBlank() }
             ?: intent.getStringExtra("task_title")?.takeIf { it.isNotBlank() }
@@ -63,7 +70,7 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         window.decorView.postDelayed(autoDismissRunnable, 45_000L)
 
         setContent {
-            reminderScreen(
+            ReminderScreen(
                 title = title,
                 text = reminderText,
                 onDismiss = {

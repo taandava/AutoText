@@ -55,7 +55,7 @@ import com.jmd.autotext.ui.theme.*
  * @param onSaved Callback invoked when sequence is successfully persisted.
  */
 @Composable
-fun contactSequenceStudio(
+fun ContactSequenceStudio(
     sequenceId: Long = 0L,
     initialContactName: String = "",
     initialContactPhone: String = "",
@@ -168,7 +168,9 @@ fun contactSequenceStudio(
                             if (nameIdx >= 0) foundName = c.getString(nameIdx).orEmpty()
                         }
                     }
-                } catch (_: Exception) { }
+                } catch (e: Exception) {
+                    Log.w("ContactSequenceStudio", "Direct contact data query failed: ${e.message}")
+                }
 
                 // 2. Fallback query
                 if (foundNumber.isBlank()) {
@@ -201,7 +203,9 @@ fun contactSequenceStudio(
                                             }
                                         }
                                     }
-                                } catch (_: Exception) { }
+                                } catch (e: Exception) {
+                    Log.w("ContactSequenceStudio", "Direct contact data query failed: ${e.message}")
+                }
                             }
                         }
                     }
@@ -230,7 +234,7 @@ fun contactSequenceStudio(
 
     if (showPoolPicker) {
         val currentList = if (contactPhone.isNotBlank()) listOf(SelectedRecipient(contactName.ifBlank { contactPhone }, contactPhone)) else emptyList()
-        contactPoolPickerSheet(
+        ContactPoolPickerSheet(
             repository = repository,
             selectedRecipients = currentList,
             onAddRecipient = { name, phone ->
@@ -252,7 +256,7 @@ fun contactSequenceStudio(
 
     if (showWhatsAppContactsPicker) {
         val currentList = if (contactPhone.isNotBlank()) listOf(SelectedRecipient(contactName.ifBlank { contactPhone }, contactPhone)) else emptyList()
-        whatsAppContactsPickerSheet(
+        WhatsAppContactsPickerSheet(
             repository = repository,
             selectedRecipients = currentList,
             selectedChannel = sequenceChannel,
@@ -318,7 +322,7 @@ fun contactSequenceStudio(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    sequenceChannelCard(
+                    SequenceChannelCard(
                         title = "SMS Message Sequence",
                         description = "Step-by-step drip messages via device SIM card (Carrier Direct)",
                         badge = "SIM Direct",
@@ -331,7 +335,7 @@ fun contactSequenceStudio(
                         }
                     )
 
-                    sequenceChannelCard(
+                    SequenceChannelCard(
                         title = "WhatsApp Sequence",
                         description = "Multi-step scheduled messages via personal WhatsApp",
                         badge = "Personal WA",
@@ -344,7 +348,7 @@ fun contactSequenceStudio(
                         }
                     )
 
-                    sequenceChannelCard(
+                    SequenceChannelCard(
                         title = "WhatsApp Business (W4B) Sequence",
                         description = "Client outreach and paced follow-up sequence via WhatsApp Business",
                         badge = "Business W4B",
@@ -379,7 +383,7 @@ fun contactSequenceStudio(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            appSubScreenHeader(
+            AppSubScreenHeader(
                 title = if (sequenceId > 0) "Edit Contact Sequence" else "New Contact Task Sequence",
                 subtitle = "Multi-step scheduled messaging per number",
                 onBack = onDismiss,
@@ -421,7 +425,7 @@ fun contactSequenceStudio(
         ) {
             // 1. Target Contact Information Card
             item {
-                appCard(
+                AppCard(
                     modifier = Modifier.fillMaxWidth(),
                     borderColor = MaterialTheme.colorScheme.primary
                 ) {
@@ -436,7 +440,7 @@ fun contactSequenceStudio(
                             Text("Target Contact", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.5.sp)
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            glassButton(
+                            GlassButton(
                                 text = "From Pool",
                                 emoji = "👥",
                                 onClick = { showPoolPicker = true },
@@ -444,7 +448,7 @@ fun contactSequenceStudio(
                                 contentPadding = PaddingValues(horizontal = 7.dp, vertical = 3.dp),
                                 shape = AppDesignTokens.ShapePill
                             )
-                            glassButton(
+                            GlassButton(
                                 text = "WA Contacts",
                                 emoji = "💬",
                                 onClick = { showWhatsAppContactsPicker = true },
@@ -452,7 +456,7 @@ fun contactSequenceStudio(
                                 contentPadding = PaddingValues(horizontal = 7.dp, vertical = 3.dp),
                                 shape = AppDesignTokens.ShapePill
                             )
-                            glassButton(
+                            GlassButton(
                                 text = "Contacts",
                                 emoji = "👤",
                                 onClick = { contactPickerLauncher.launch(null) },
@@ -468,7 +472,7 @@ fun contactSequenceStudio(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.Top
                     ) {
-                        glassInputField(
+                        GlassInputField(
                             value = contactName,
                             onValueChange = { contactName = it },
                             label = "Contact Name",
@@ -477,7 +481,7 @@ fun contactSequenceStudio(
                             modifier = Modifier.weight(1f),
                             accentColor = MaterialTheme.colorScheme.primary
                         )
-                        glassInputField(
+                        GlassInputField(
                             value = contactPhone,
                             onValueChange = { contactPhone = it.filter { ch -> ch.isDigit() || ch == '+' } },
                             label = "Phone Number",
@@ -489,7 +493,7 @@ fun contactSequenceStudio(
                         )
                     }
                     Spacer(modifier = Modifier.height(6.dp))
-                    glassInputField(
+                    GlassInputField(
                         value = sequenceTitle,
                         onValueChange = { sequenceTitle = it },
                         label = "Sequence Identifier (Optional)",
@@ -512,7 +516,7 @@ fun contactSequenceStudio(
                                 ChannelType.WHATSAPP -> Triple("WhatsApp (Personal)", MaterialTheme.colorScheme.tertiary, "💬")
                                 else -> Triple("SMS (Carrier Direct)", MaterialTheme.colorScheme.primary, "📩")
                             }
-                            appBadge(text = badgeText, emoji = badgeEmoji, color = badgeColor)
+                            AppBadge(text = badgeText, emoji = badgeEmoji, color = badgeColor)
                         }
                         Text(
                             text = "Change Channel",
@@ -530,14 +534,14 @@ fun contactSequenceStudio(
 
             // 2. Initial Start Timing Enterprise Card
             item {
-                appCard(modifier = Modifier.fillMaxWidth()) {
+                AppCard(modifier = Modifier.fillMaxWidth()) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Schedule, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text("Sequence Start Timing", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.5.sp)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    glassSegmentedControl(
+                    GlassSegmentedControl(
                         items = listOf("Start Now (Immediate)", "Schedule Date & Time"),
                         selectedIndex = if (isStartNow) 0 else 1,
                         onItemSelected = { isStartNow = (it == 0) },
@@ -546,7 +550,7 @@ fun contactSequenceStudio(
 
                     if (!isStartNow) {
                         Spacer(modifier = Modifier.height(8.dp))
-                        appDateTimePicker(
+                        AppDateTimePicker(
                             timestampMillis = scheduledStartTimestamp,
                             onTimestampChanged = { newTs: Long -> scheduledStartTimestamp = newTs },
                             accentColor = MaterialTheme.colorScheme.primary
@@ -557,7 +561,7 @@ fun contactSequenceStudio(
 
             // 3. Visual Pipeline / Sequence Timeline
             item {
-                appCard(
+                AppCard(
                     modifier = Modifier.fillMaxWidth(),
                     borderColor = MaterialTheme.colorScheme.primary
                 ) {
@@ -608,7 +612,7 @@ fun contactSequenceStudio(
 
             // 4. Sequence Steps Editor
             itemsIndexed(steps) { index, step ->
-                stepEditorCard(
+                StepEditorCard(
                     stepNumber = index + 1,
                     isFirst = index == 0,
                     step = step,
@@ -640,7 +644,7 @@ fun contactSequenceStudio(
 
             // 5. Add Step Button
             item {
-                glassButton(
+                GlassButton(
                     text = "Add Next Message / Task Step",
                     emoji = "➕",
                     variant = GlassButtonVariant.SECONDARY,
@@ -663,22 +667,22 @@ fun contactSequenceStudio(
             // 6. Save Sequence Action
             item {
                 Spacer(modifier = Modifier.height(4.dp))
-                glassButton(
+                GlassButton(
                     text = if (isSaving) "Saving Sequence..." else if (sequenceId > 0) "Update Sequence & Reschedule" else "Arm & Save Contact Sequence",
                     emoji = if (isSaving) "⏳" else "💾",
                     variant = GlassButtonVariant.PRIMARY,
                     enabled = !isSaving,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        if (isSaving) return@glassButton
+                        if (isSaving) return@GlassButton
                         val cleanPhone = contactPhone.replace("[^0-9+]".toRegex(), "")
                         if (cleanPhone.length < 5) {
                             context.showAppToast("Enter valid phone number")
-                            return@glassButton
+                            return@GlassButton
                         }
                         if (steps.any { it.messageText.isBlank() }) {
                             context.showAppToast("Fill message text for all steps")
-                            return@glassButton
+                            return@GlassButton
                         }
 
                         val startTs = if (isStartNow) {
@@ -716,7 +720,7 @@ fun contactSequenceStudio(
 }
 
 @Composable
-private fun sequenceChannelCard(
+private fun SequenceChannelCard(
     title: String,
     description: String,
     badge: String,
@@ -815,7 +819,7 @@ private fun sequenceChannelCard(
  * @param onMoveDown Callback to swap step with succeeding item.
  */
 @Composable
-fun stepEditorCard(
+fun StepEditorCard(
     stepNumber: Int,
     isFirst: Boolean,
     step: ContactSequenceStep,
@@ -831,7 +835,7 @@ fun stepEditorCard(
         else -> MaterialTheme.colorScheme.primary
     }
 
-    appCard(
+    AppCard(
         modifier = Modifier.fillMaxWidth(),
         borderColor = channelColor.copy(alpha = 0.5f)
     ) {
@@ -875,7 +879,7 @@ fun stepEditorCard(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Dispatch Channel:", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(modifier = Modifier.width(6.dp))
-            appBadge(
+            AppBadge(
                 text = step.channel.displayName,
                 color = if (step.channel == ChannelType.SMS) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary
             )
@@ -962,7 +966,7 @@ fun stepEditorCard(
         }
         Spacer(modifier = Modifier.height(4.dp))
 
-        glassSegmentedControl(
+        GlassSegmentedControl(
             items = listOf("Interval Delay", "Target Date & Time"),
             selectedIndex = if (isExactTargetTime) 1 else 0,
             onItemSelected = { selectedIdx ->
@@ -1032,7 +1036,7 @@ fun stepEditorCard(
             }
         } else {
             Spacer(modifier = Modifier.height(6.dp))
-            appDateTimePicker(
+            AppDateTimePicker(
                 timestampMillis = step.specificTriggerTime,
                 onTimestampChanged = { newTs: Long ->
                     onStepChanged(step.copy(specificTriggerTime = newTs))
@@ -1044,7 +1048,7 @@ fun stepEditorCard(
         Spacer(modifier = Modifier.height(8.dp))
 
         // Message text input
-        glassInputField(
+        GlassInputField(
             value = step.messageText,
             onValueChange = { onStepChanged(step.copy(messageText = it)) },
             label = "Step $stepNumber Message Text",

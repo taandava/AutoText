@@ -385,7 +385,8 @@ class TaskRepository(context: Context) {
                     arrayOf(taskId.toString(), norm, recipient.trim())
                 ).use { it.moveToFirst() }
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.w("TaskRepo", "Failed to check recipient delivery: ${e.message}")
             false
         }
     }
@@ -416,6 +417,9 @@ class TaskRepository(context: Context) {
         return try {
             val db = dbHelper.writableDatabase
             db.delete(DatabaseHelper.TABLE_TASK_DELIVERIES, "task_id = ?", arrayOf(taskId.toString()))
-        } catch (_: Exception) { 0 }
+        } catch (e: Exception) {
+            Log.w("TaskRepo", "Failed to clear deliveries for task #$taskId: ${e.message}")
+            0
+        }
     }
 }

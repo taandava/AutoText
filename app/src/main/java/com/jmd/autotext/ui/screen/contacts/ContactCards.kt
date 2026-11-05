@@ -21,8 +21,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jmd.autotext.data.model.RecipientItem
-import com.jmd.autotext.ui.components.appCard
-import com.jmd.autotext.ui.components.contactAvatar
+import com.jmd.autotext.ui.components.AppCard
+import com.jmd.autotext.ui.components.ContactAvatar
 import com.jmd.autotext.ui.theme.AppDesignTokens
 
 /**
@@ -35,14 +35,14 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param modifier Layout [Modifier].
  */
 @Composable
-fun bulkContactItemCard(
+fun BulkContactItemCard(
     recipient: RecipientItem,
     onEdit: () -> Unit,
     onCreateSequence: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    appCard(
+    AppCard(
         onClick = onEdit,
         modifier = modifier.fillMaxWidth()
     ) {
@@ -52,7 +52,7 @@ fun bulkContactItemCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                contactAvatar(
+                ContactAvatar(
                     name = recipient.name.ifBlank { recipient.phoneOrEmail },
                     size = 36.dp
                 )

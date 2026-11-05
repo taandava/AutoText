@@ -28,7 +28,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
  * @param onThemeChanged Callback invoked when active theme selection is changed.
  */
 @Composable
-fun settingsPreferencesCards(
+fun SettingsPreferencesCards(
     prefs: PreferenceManager,
     modifier: Modifier = Modifier,
     onThemeChanged: (String) -> Unit = {}
@@ -50,14 +50,14 @@ fun settingsPreferencesCards(
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
         // App Theme Selector
         var dynamicColor by remember { mutableStateOf(prefs.isDynamicColorEnabled) }
-        appCard(modifier = Modifier.fillMaxWidth()) {
+        AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("App Theme & Aesthetics", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                appBadge(text = if (dynamicColor) "Dynamic System" else appTheme, color = MaterialTheme.colorScheme.primary)
+                AppBadge(text = if (dynamicColor) "Dynamic System" else appTheme, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text("Material 3 Expressive Orange identity with light/dark adaptation.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -71,7 +71,7 @@ fun settingsPreferencesCards(
             )
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
                 themes.forEach { (mode, label) ->
-                    glassChip(
+                    GlassChip(
                         selected = appTheme == mode,
                         onClick = {
                             appTheme = mode
@@ -87,7 +87,7 @@ fun settingsPreferencesCards(
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
                 Spacer(modifier = Modifier.height(8.dp))
-                glassToggleRow(
+                GlassToggleRow(
                     title = "System Dynamic Wallpaper Color",
                     subtitle = "Derive accent tones dynamically from Android wallpaper palette",
                     checked = dynamicColor,
@@ -102,14 +102,14 @@ fun settingsPreferencesCards(
         }
 
         // WhatsApp Automation Speed & Timing
-        appCard(modifier = Modifier.fillMaxWidth()) {
+        AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("WhatsApp Dispatch Speed", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                appBadge(text = "${waDelay}s Pace", color = MaterialTheme.colorScheme.tertiary)
+                AppBadge(text = "${waDelay}s Pace", color = MaterialTheme.colorScheme.tertiary)
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text("Delay between automated WhatsApp message dispatches to keep sending organic and reliable.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -123,7 +123,7 @@ fun settingsPreferencesCards(
                     15 to "Safe (15s)",
                     25 to "Slow (25s)"
                 ).forEach { (delaySec, label) ->
-                    glassChip(
+                    GlassChip(
                         selected = waDelay == delaySec,
                         onClick = {
                             waDelay = delaySec
@@ -139,14 +139,14 @@ fun settingsPreferencesCards(
 
 
         // Contact Auto-Sync Frequency
-        appCard(modifier = Modifier.fillMaxWidth()) {
+        AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Contact Sync Frequency", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                appBadge(text = if (contactSyncHours == 0) "Manual" else "Every ${contactSyncHours}h", color = MaterialTheme.colorScheme.primary)
+                AppBadge(text = if (contactSyncHours == 0) "Manual" else "Every ${contactSyncHours}h", color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text("Background synchronization interval to ingest phonebook contacts into AutoText.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -160,7 +160,7 @@ fun settingsPreferencesCards(
                     24 to "24 Hours",
                     0 to "Manual"
                 ).forEach { (hours, label) ->
-                    glassChip(
+                    GlassChip(
                         selected = contactSyncHours == hours,
                         onClick = {
                             contactSyncHours = hours
@@ -175,7 +175,7 @@ fun settingsPreferencesCards(
         }
 
         // Dispatch Audio Alert Notification
-        appCard(modifier = Modifier.fillMaxWidth()) {
+        AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -200,14 +200,14 @@ fun settingsPreferencesCards(
         }
 
         // Automation Fallback & Failure Recovery Customisation
-        appCard(modifier = Modifier.fillMaxWidth()) {
+        AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Automation Fallback Mechanism", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                appBadge(text = "Reliability", color = MaterialTheme.colorScheme.tertiary)
+                Text("Task Fallback Strategy", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                AppBadge(text = "Reliability", color = MaterialTheme.colorScheme.tertiary)
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text("Customize how AutoText recovers when WhatsApp UI buttons or views fail to click.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -224,7 +224,7 @@ fun settingsPreferencesCards(
             )
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 strategies.forEach { (stratKey, stratLabel) ->
-                    glassChip(
+                    GlassChip(
                         selected = fallbackStrategy == stratKey,
                         onClick = {
                             fallbackStrategy = stratKey
@@ -264,7 +264,7 @@ fun settingsPreferencesCards(
             Spacer(modifier = Modifier.height(10.dp))
 
             var retriesText by remember(maxRetries) { mutableStateOf(maxRetries.toString()) }
-            glassInputField(
+            GlassInputField(
                 value = retriesText,
                 onValueChange = { newStr ->
                     val digits = newStr.filter { it.isDigit() }.take(3)
@@ -285,7 +285,7 @@ fun settingsPreferencesCards(
             Spacer(modifier = Modifier.height(10.dp))
 
             var offsetText by remember(clickOffsetY) { mutableStateOf(clickOffsetY.toString()) }
-            glassInputField(
+            GlassInputField(
                 value = offsetText,
                 onValueChange = { newStr ->
                     val clean = if (newStr.startsWith("-")) "-" + newStr.drop(1).filter { it.isDigit() }.take(3) else newStr.filter { it.isDigit() }.take(3)
@@ -307,7 +307,7 @@ fun settingsPreferencesCards(
         }
 
         // App Security PIN
-        appCard(modifier = Modifier.fillMaxWidth()) {
+        AppCard(modifier = Modifier.fillMaxWidth()) {
             Text("App Security Lock", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.height(4.dp))
             Text("Require PIN to open the AutoText app itself.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -333,7 +333,7 @@ fun settingsPreferencesCards(
         }
 
         // Default SIM Slot
-        appCard(modifier = Modifier.fillMaxWidth()) {
+        AppCard(modifier = Modifier.fillMaxWidth()) {
             Text("Default SIM Slot", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.height(4.dp))
             Text("Preferred carrier SIM card for outbound SMS messages.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -367,14 +367,14 @@ fun settingsPreferencesCards(
         }
 
         // Default Country Dialing Code (India +91)
-        appCard(modifier = Modifier.fillMaxWidth()) {
+        AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Default Country Code", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                appBadge(text = if (countryCode == "+91") "India 🇮🇳" else countryCode, color = MaterialTheme.colorScheme.primary)
+                AppBadge(text = if (countryCode == "+91") "India 🇮🇳" else countryCode, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text("Automatic dialing prefix applied when standardizing 10-digit mobile numbers for tasks and auto-replies.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -382,7 +382,7 @@ fun settingsPreferencesCards(
 
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
                 listOf("+91" to "+91 India 🇮🇳", "+1" to "+1 US/CA", "+44" to "+44 UK", "+971" to "+971 UAE").forEach { (code, label) ->
-                    glassChip(
+                    GlassChip(
                         selected = countryCode == code,
                         onClick = {
                             countryCode = code
@@ -397,7 +397,7 @@ fun settingsPreferencesCards(
 
             Spacer(modifier = Modifier.height(8.dp))
             var customCodeText by remember(countryCode) { mutableStateOf(countryCode) }
-            glassInputField(
+            GlassInputField(
                 value = customCodeText,
                 onValueChange = { newStr ->
                     val clean = if (newStr.startsWith("+")) "+" + newStr.drop(1).filter(Char::isDigit) else "+" + newStr.filter(Char::isDigit)
@@ -416,7 +416,7 @@ fun settingsPreferencesCards(
         }
 
         // Cellular SMS Quota & Safety Controls
-        appCard(modifier = Modifier.fillMaxWidth()) {
+        AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -455,7 +455,7 @@ fun settingsPreferencesCards(
                         1000 to "1,000",
                         5000 to "5,000"
                     ).forEach { (limitVal, label) ->
-                        glassChip(
+                        GlassChip(
                             selected = dailySmsLimit == limitVal,
                             onClick = {
                                 dailySmsLimit = limitVal

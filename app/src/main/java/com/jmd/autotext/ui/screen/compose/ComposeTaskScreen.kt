@@ -44,7 +44,7 @@ import com.jmd.autotext.scheduler.*
 import com.jmd.autotext.service.*
 import com.jmd.autotext.ui.components.*
 import com.jmd.autotext.ui.model.*
-import com.jmd.autotext.ui.screen.reminderComposerCard
+import com.jmd.autotext.ui.screen.ReminderComposerCard
 import com.jmd.autotext.ui.screen.sequence.*
 import com.jmd.autotext.ui.theme.*
 import com.jmd.autotext.whatsapp.*
@@ -61,7 +61,7 @@ import com.jmd.autotext.whatsapp.*
  * @param onCancel Callback invoked to abort draft and return to previous view.
  */
 @Composable
-fun composeTaskScreen(
+fun ComposeTaskScreen(
     initialChannel: ChannelType = ChannelType.SMS,
     initialMessage: String = "",
     taskToEdit: ScheduledTask? = null,
@@ -196,7 +196,9 @@ fun composeTaskScreen(
                             if (nameIdx >= 0) contactDisplayName = c.getString(nameIdx).orEmpty()
                         }
                     }
-                } catch (_: Exception) { }
+                } catch (e: Exception) {
+                    android.util.Log.w("ComposeTaskScreen", "Direct contact data URI query failed: ${e.message}")
+                }
 
                 // 2. Fallback to querying ContactsContract tables if phone number not yet found
                 if (resolvedNumber.isBlank()) {
@@ -236,7 +238,9 @@ fun composeTaskScreen(
                                 }
                             }
                         }
-                    } catch (_: Exception) { }
+                    } catch (e: Exception) {
+                    android.util.Log.w("ComposeTaskScreen", "Direct contact data URI query failed: ${e.message}")
+                }
                 }
 
                 if (resolvedNumber.isNotBlank()) {
@@ -526,14 +530,14 @@ fun composeTaskScreen(
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             topBar = {
-            composeTopHeader(
+            ComposeTopHeader(
                 selectedChannel = selectedChannel,
                 taskToEdit = taskToEdit,
                 onCancel = onCancel
             )
         },
         bottomBar = {
-            composeBottomBar(
+            ComposeBottomBar(
                 isEditing = taskToEdit != null,
                 onCancel = onCancel,
                 onSave = { saveTaskAction() },
@@ -556,11 +560,11 @@ fun composeTaskScreen(
 
             // 2. Task Label & Identifier (For channels other than REMINDER)
             if (selectedChannel != ChannelType.REMINDER) {
-                appCard(
+                AppCard(
                     modifier = Modifier.fillMaxWidth(),
                     shape = AppDesignTokens.ShapeLarge
                 ) {
-                    glassInputField(
+                    GlassInputField(
                         value = title,
                         onValueChange = { title = it },
                         label = "Task Label (Optional)",
@@ -574,7 +578,7 @@ fun composeTaskScreen(
             // 3. Channel Specific Configuration Enterprise Card
             when (selectedChannel) {
                 ChannelType.REMINDER -> {
-                    reminderComposerCard(
+                    ReminderComposerCard(
                         reminderTitle = title,
                         onReminderTitleChange = { title = it },
                         messageText = messageText,
@@ -582,7 +586,7 @@ fun composeTaskScreen(
                     )
                 }
                 ChannelType.CALL_SIMULATION, ChannelType.SOUND_MODE -> {
-                    composeCallSimulationAndSoundCard(
+                    ComposeCallSimulationAndSoundCard(
                         selectedChannel = selectedChannel,
                         simulatedCallerName = simulatedCallerName,
                         onSimulatedCallerNameChange = { simulatedCallerName = it },
@@ -595,7 +599,7 @@ fun composeTaskScreen(
                     )
                 }
                 ChannelType.CALL, ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> {
-                    composePhoneCallCard(
+                    ComposePhoneCallCard(
                         selectedChannel = selectedChannel,
                         onSelectChannel = { selectedChannel = it },
                         selectedRecipients = selectedRecipients,
@@ -651,7 +655,7 @@ fun composeTaskScreen(
                     )
                 }
                 ChannelType.WHATSAPP_STATUS -> {
-                    whatsAppStatusComposerCard(
+                    WhatsAppStatusComposerCard(
                         mediaUri = mediaUri,
                         onMediaUriChange = { mediaUri = it },
                         messageText = messageText,
@@ -661,7 +665,7 @@ fun composeTaskScreen(
                     )
                 }
                 ChannelType.WHATSAPP_BUSINESS_STATUS -> {
-                    whatsAppBusinessStatusComposerCard(
+                    WhatsAppBusinessStatusComposerCard(
                         mediaUri = mediaUri,
                         onMediaUriChange = { mediaUri = it },
                         messageText = messageText,
@@ -671,7 +675,7 @@ fun composeTaskScreen(
                     )
                 }
                 ChannelType.WHATSAPP_GROUP -> {
-                    whatsAppGroupComposerCard(
+                    WhatsAppGroupComposerCard(
                         context = context,
                         repository = repository,
                         selectedGroupName = selectedGroupName,
@@ -685,7 +689,7 @@ fun composeTaskScreen(
                     )
                 }
                 else -> {
-                    composeRecipientsAndMessageCard(
+                    ComposeRecipientsAndMessageCard(
                         selectedChannel = selectedChannel,
                         selectedRecipients = selectedRecipients,
                         duplicateWarning = duplicateWarning,
@@ -728,7 +732,7 @@ fun composeTaskScreen(
             }
 
             // 4. Execution Schedule, Repetition, SIM & Safety Enterprise Cards
-            composeScheduleOptionsCard(
+            ComposeScheduleOptionsCard(
                 selectedChannel = selectedChannel,
                 triggerTimeMillis = triggerTimeMillis,
                 onTriggerTimeChanged = { triggerTimeMillis = it },
@@ -747,7 +751,7 @@ fun composeTaskScreen(
     }
 
     if (showTemplateDialog) {
-        templatePickerSheet(
+        TemplatePickerSheet(
             repository = repository,
             initialTemplates = templates,
             onSelectTemplate = { t ->
@@ -759,7 +763,7 @@ fun composeTaskScreen(
     }
 
     if (showPoolPickerDialog) {
-        contactPoolPickerSheet(
+        ContactPoolPickerSheet(
             repository = repository,
             selectedRecipients = selectedRecipients,
             onAddRecipient = ::tryAddRecipient,
@@ -769,7 +773,7 @@ fun composeTaskScreen(
     }
 
     if (showWhatsAppContactsDialog) {
-        whatsAppContactsPickerSheet(
+        WhatsAppContactsPickerSheet(
             repository = repository,
             selectedRecipients = selectedRecipients,
             selectedChannel = selectedChannel,
