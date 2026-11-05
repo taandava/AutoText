@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 /**
  * Package: com.jmd.autotext.ui.screen.privacy
  * Module: UI Privacy Layer
@@ -10,14 +12,10 @@ package com.jmd.autotext.ui.screen.privacy
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
-import com.jmd.autotext.compat.PackageManagerCompat
 import android.graphics.Bitmap
-import androidx.core.graphics.createBitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.os.Build
-import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,11 +32,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.createBitmap
+import com.jmd.autotext.compat.PackageManagerCompat
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.PrivacyManager
 import com.jmd.autotext.core.showAppToast
@@ -47,7 +46,6 @@ import com.jmd.autotext.data.model.AppPrivacyConfig
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.service.AutoTextAccessibilityService
 import com.jmd.autotext.ui.components.*
-import com.jmd.autotext.ui.theme.AppDesignTokens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

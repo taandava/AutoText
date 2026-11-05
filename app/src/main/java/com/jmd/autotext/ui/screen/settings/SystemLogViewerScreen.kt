@@ -1,32 +1,31 @@
+@file:Suppress("FunctionName")
+
 package com.jmd.autotext.ui.screen.settings
 
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.*
+import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
-import com.jmd.autotext.compat.ClipboardCompat
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.jmd.autotext.compat.ClipboardCompat
 import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.core.showAppToast
 import com.jmd.autotext.ui.components.AppCard
@@ -78,7 +77,7 @@ sealed class ParsedSystemLogItem {
 }
 
 /**
- * Modernized Diagnostic Log Reader rendering Actions, Campaign Ledger, and Errors
+ * Modernized Diagnostic Log Reader rendering Actions, Task Batch Ledger, and Errors
  * formatted cleanly with Material 3 Expressive cards, chips, and level badges like Execution History.
  */
 @Composable
@@ -86,7 +85,7 @@ fun SystemLogViewerView(
     context: Context,
     onBack: () -> Unit
 ) {
-    var selectedTab by remember { mutableIntStateOf(1) } // 1: Actions & Exec, 0: Campaign Ledger, 2: Errors & Traces
+    var selectedTab by remember { mutableIntStateOf(1) } // 1: Actions & Exec, 0: Task Batch Ledger, 2: Errors & Traces
     var searchQuery by remember { mutableStateOf("") }
     var levelFilter by remember { mutableStateOf("ALL") }
     var reloadTrigger by remember { mutableIntStateOf(0) }
@@ -97,7 +96,7 @@ fun SystemLogViewerView(
     val errorText = remember(reloadTrigger) { AppFileLogger.readErrorLog(context, 500) }
 
     val (activeTitle, activeFile, activeContent) = when (selectedTab) {
-        0 -> Triple("Campaign Audit Ledger", AppFileLogger.getLedgerFile(context), ledgerText)
+        0 -> Triple("Task Batch Audit Ledger", AppFileLogger.getLedgerFile(context), ledgerText)
         1 -> Triple("Device Actions & System Log", AppFileLogger.getLogFile(context), execText)
         else -> Triple("Errors & Crashes Log", AppFileLogger.getErrorFile(context), errorText)
     }
@@ -130,7 +129,7 @@ fun SystemLogViewerView(
                 }.reversed() // Show newest on top
             }
             0 -> {
-                // Campaign Ledger: CSV format
+                // Task Batch Ledger: CSV format
                 // "Timestamp,CampaignId,Channel,RecipientName,RecipientPhone,Status,MessageSnippet,Attempt,Details"
                 lines.mapNotNull { line ->
                     if (line.startsWith("Timestamp,", ignoreCase = true)) return@mapNotNull null
@@ -298,7 +297,7 @@ fun SystemLogViewerView(
             ) {
                 val tabs = listOf(
                     Triple(1, "⚡ Actions & Exec", MaterialTheme.colorScheme.primary),
-                    Triple(0, "📊 Campaign Ledger", MaterialTheme.colorScheme.tertiary),
+                    Triple(0, "📊 Task Batch Ledger", MaterialTheme.colorScheme.tertiary),
                     Triple(2, "🚨 Errors & Traces", MaterialTheme.colorScheme.error)
                 )
                 tabs.forEach { (index, title, accent) ->
@@ -389,7 +388,7 @@ fun SystemLogViewerView(
                     onValueChange = { searchQuery = it },
                     placeholder = {
                         Text(
-                            text = if (selectedTab == 0) "Filter phone, campaign, status..." else "Filter tag, text, error...",
+                            text = if (selectedTab == 0) "Filter phone, taskBatch, status..." else "Filter tag, text, error...",
                             fontSize = 11.5.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -452,7 +451,7 @@ fun SystemLogViewerView(
                             } else if (selectedTab == 2) {
                                 "No errors or crashes logged. System is operating normally!"
                             } else if (selectedTab == 0) {
-                                "No campaign ledger entries recorded yet."
+                                "No taskBatch ledger entries recorded yet."
                             } else {
                                 "No execution records logged yet."
                             },
@@ -606,7 +605,7 @@ private fun ActionLogCard(
 }
 
 /**
- * Card rendering a Campaign Ledger entry with recipient, channel, status pill, and details.
+ * Card rendering a Task Batch Ledger entry with recipient, channel, status pill, and details.
  */
 @Composable
 private fun LedgerLogCard(

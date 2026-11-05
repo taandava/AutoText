@@ -30,8 +30,8 @@ import com.jmd.autotext.data.model.ChannelType
 import com.jmd.autotext.data.model.ExecutionLog
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.data.repo.AppRepository
-import java.util.Calendar
 import kotlinx.coroutines.*
+import java.util.*
 
 /**
  * System NotificationListenerService processing incoming messages to perform scheduled replies via RemoteInput.
@@ -56,8 +56,8 @@ class AutoTextNotificationListenerService : NotificationListenerService() {
         Log.d(TAG, "Notification Listener disconnected")
     }
 
-    private val serviceScope = kotlinx.coroutines.CoroutineScope(
-        kotlinx.coroutines.Dispatchers.IO + kotlinx.coroutines.SupervisorJob()
+    private val serviceScope = CoroutineScope(
+        Dispatchers.IO + SupervisorJob()
     )
 
     override fun onDestroy() {

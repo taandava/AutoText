@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 /**
  * Package: com.jmd.autotext.ui.theme
  * Module: UI Theme & Design Tokens Layer

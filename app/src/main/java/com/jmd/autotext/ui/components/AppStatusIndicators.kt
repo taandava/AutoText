@@ -1,7 +1,11 @@
+@file:Suppress("FunctionName")
+
 package com.jmd.autotext.ui.components
 
+import android.app.AlarmManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.foundation.BorderStroke
@@ -23,8 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import android.app.AlarmManager
-import android.os.Build
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.OverlayPermissionHelper
 import com.jmd.autotext.core.TaskSafetyManager

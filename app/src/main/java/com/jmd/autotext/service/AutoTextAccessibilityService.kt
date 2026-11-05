@@ -18,59 +18,44 @@
 package com.jmd.autotext.service
 
 import android.accessibilityservice.AccessibilityService
-import android.media.AudioManager
-import android.view.KeyEvent
 import android.app.AlarmManager
 import android.app.KeyguardManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+import com.jmd.autotext.core.TaskSafetyManager
+import com.jmd.autotext.data.prefs.PreferenceManager
+import android.media.AudioManager
 import android.net.Uri
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import android.os.PowerManager
-import android.os.SystemClock
+import android.os.*
 import android.provider.Settings
 import android.telecom.TelecomManager
 import android.util.Log
+import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import android.widget.Toast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.time.Duration.Companion.milliseconds
-import androidx.core.content.ContextCompat
 import com.jmd.autotext.AutoTextApplication
-import com.jmd.autotext.ui.activity.TaskLauncherActivity
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.core.PhoneNumberNormalizer
 import com.jmd.autotext.core.WhatsAppPackageHelper
 import com.jmd.autotext.core.showAppToast
-import com.jmd.autotext.data.model.ChannelType
-import com.jmd.autotext.data.model.DynamicContactItem
-import com.jmd.autotext.data.model.ExecutionLog
-import com.jmd.autotext.data.model.PickedChatInfo
-import com.jmd.autotext.data.model.PickedChatType
-import com.jmd.autotext.data.model.TaskStatus
-import com.jmd.autotext.data.prefs.PreferenceManager
+import com.jmd.autotext.data.model.*
 import com.jmd.autotext.data.repo.AppRepository
-import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
-import com.jmd.autotext.whatsapp.AccessibilityNodeUtils
-import com.jmd.autotext.whatsapp.KeyguardUnlockEngine
-import com.jmd.autotext.whatsapp.PopupShield
-import com.jmd.autotext.whatsapp.WhatsAppChatScanner
-import com.jmd.autotext.whatsapp.WhatsAppDirectSendEngine
-import com.jmd.autotext.whatsapp.WhatsAppGroupEngine
-import com.jmd.autotext.whatsapp.WhatsAppIntentDispatcher
-import com.jmd.autotext.whatsapp.WhatsAppStatusEngine
-import com.jmd.autotext.whatsapp.WhatsAppCallEngine
-import com.jmd.autotext.core.TaskSafetyManager
+import com.jmd.autotext.ui.activity.TaskLauncherActivity
+import com.jmd.autotext.whatsapp.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.lang.Runnable
+import java.lang.SecurityException
+import java.lang.System
+import java.lang.Thread
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Android Accessibility Service executing WhatsApp task workflows.
@@ -549,7 +534,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
          * @param groupName Group chat title.
          * @param messageText Message body to dispatch.
          * @param shouldRelock True to auto-lock device upon completing dispatch.
-         * @param isBatchCampaign True if part of recurring daily campaign.
+         * @param isBatchCampaign True if part of recurring daily taskBatch.
          */
         fun prepareForGroup(
             taskId: Long,
@@ -670,7 +655,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
          * @param recipient Target phone number or contact name.
          * @param messageText Message body.
          * @param shouldRelock True if phone should be locked after dispatch.
-         * @param isBatchCampaign True if running inside batch campaign loop.
+         * @param isBatchCampaign True if running inside batch taskBatch loop.
          */
         fun prepareForSend(
             taskId: Long,
@@ -758,7 +743,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
          * @param recipient Target recipient phone or group.
          * @param message Message body.
          * @param shouldRelock True if hardware lock should be restored after dispatch.
-         * @param isBatch True if running inside batch campaign.
+         * @param isBatch True if running inside batch taskBatch.
          * @param mediaUri Local URI of image or video.
          */
         fun setPendingTask(
@@ -1567,7 +1552,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
      * @param recipient Target recipient phone or group.
      * @param message Message body.
      * @param shouldRelock True if phone should be locked after completion.
-     * @param isBatch True if running as part of batch campaign.
+     * @param isBatch True if running as part of batch taskBatch.
      * @param mediaUri Local URI of image or video attachment.
      */
     fun launchWhatsAppFromService(
@@ -1697,7 +1682,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             }
 
             // 0. Global Task Emergency Stop
-            val prefs = com.jmd.autotext.data.prefs.PreferenceManager(this)
+            val prefs = PreferenceManager(this)
             val isEmergencyStop = TaskSafetyManager.isEmergencyStopActive(this)
             if (isEmergencyStop || !prefs.isTasksMasterEnabled) {
                 if (isDispatching) {
@@ -2270,7 +2255,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
      */
     fun requestEndPhoneCall(): Boolean {
         val tm = getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
-        if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             try {
                 tm?.showInCallScreen(false)
             } catch (e: SecurityException) {

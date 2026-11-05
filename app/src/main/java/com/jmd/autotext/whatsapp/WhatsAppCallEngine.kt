@@ -263,8 +263,8 @@ class WhatsAppCallEngine(
         }
 
         if (isError) {
-            Log.w(loggerTag, "Detected WhatsApp call failure dialog for $pendingRecipient")
-            AppFileLogger.w(service, loggerTag, "WhatsApp call failure dialog detected for $pendingRecipient")
+            Log.w(loggerTag, "Detected WhatsApp call failure dialog in $pkg for $pendingRecipient")
+            AppFileLogger.w(service, loggerTag, "WhatsApp call failure dialog detected in $pkg for $pendingRecipient")
             if (dismissButton != null) {
                 AccessibilityNodeUtils.clickElement(dismissButton, service)
             }
@@ -421,9 +421,13 @@ class WhatsAppCallEngine(
 
         val screenHeight = service.resources.displayMetrics.heightPixels.coerceAtLeast(800)
         val maxTopBarBottom = (screenHeight * 0.22f).toInt().coerceAtLeast(500)
+        val targetRoots = candidateRoots.filter { 
+            val p = it.packageName?.toString()
+            p == null || p == pkg || p.contains("whatsapp") || p.contains("android")
+        }
 
         // Pass 1: Prioritize explicit "Voice call" dropdown / popup / bottom-sheet items
-        for (candRoot in candidateRoots) {
+        for (candRoot in targetRoots) {
             val q = java.util.ArrayDeque<AccessibilityNodeInfo>()
             q.add(candRoot)
             while (q.isNotEmpty()) {
@@ -462,7 +466,7 @@ class WhatsAppCallEngine(
         }
 
         // Pass 2: Check standard dialog positive buttons and generic confirm actions
-        for (candRoot in candidateRoots) {
+        for (candRoot in targetRoots) {
             val q = java.util.ArrayDeque<AccessibilityNodeInfo>()
             q.add(candRoot)
             while (q.isNotEmpty()) {

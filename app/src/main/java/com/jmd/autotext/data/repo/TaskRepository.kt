@@ -17,7 +17,8 @@
  */
 package com.jmd.autotext.data.repo
 
-import android.content.*
+import android.content.ContentValues
+import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
@@ -156,7 +157,7 @@ class TaskRepository(context: Context) {
                 tasks.add(cursorToTask(it))
             }
         }
-        tasks.forEach { task ->
+        for (task in tasks) {
             val targetStatus = if (task.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
             updateTaskStatus(task.id, targetStatus)
         }

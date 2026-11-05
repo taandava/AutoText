@@ -18,7 +18,7 @@ package com.jmd.autotext.whatsapp
 
 import android.accessibilityservice.AccessibilityService
 import android.graphics.Rect
-import android.os.*
+import android.os.Bundle
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
@@ -420,6 +420,9 @@ class WhatsAppDirectSendEngine(
         pendingRecipient: String
     ): Boolean {
         try {
+            val rootPkg = root.packageName?.toString().orEmpty()
+            if (rootPkg.isNotBlank() && rootPkg != pkg && !rootPkg.contains("whatsapp")) return false
+
             val cleanRecipient = pendingRecipient.replace(Regex("[^0-9a-zA-Z]"), "").lowercase()
             if (cleanRecipient.isBlank()) return false
 

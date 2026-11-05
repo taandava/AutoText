@@ -20,11 +20,11 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.sqlite.SQLiteDatabase
-import androidx.core.database.sqlite.transaction
 import android.net.Uri
 import android.provider.ContactsContract
 import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.core.database.sqlite.transaction
 import com.jmd.autotext.core.PhoneNumberNormalizer
 import com.jmd.autotext.data.db.DatabaseHelper
 import com.jmd.autotext.data.model.ChannelType
@@ -544,7 +544,7 @@ class WhatsAppRepository(private val context: Context) {
                                 try {
                                     db.delete(DatabaseHelper.TABLE_WHATSAPP_GROUPS, "LOWER(TRIM(name)) = LOWER(TRIM(?))", arrayOf(gName))
                                 } catch (e: Exception) {
-                                    android.util.Log.d("WhatsAppRepository", "delete group row failed: ${e.message}")
+                                    Log.d("WhatsAppRepository", "delete group row failed: ${e.message}")
                                 }
                             } else {
                                 map[dedupeKey] = WhatsAppContactItem(

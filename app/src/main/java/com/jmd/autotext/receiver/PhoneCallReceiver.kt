@@ -29,21 +29,21 @@ import android.provider.ContactsContract
 import android.telephony.TelephonyManager
 import android.util.Log
 import com.jmd.autotext.core.AppFileLogger
-import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.core.MessageTemplateResolver
 import com.jmd.autotext.core.PhoneNumberNormalizer
 import com.jmd.autotext.core.SmsQuotaManager
+import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.data.model.ChannelType
 import com.jmd.autotext.data.model.ExecutionLog
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.data.repo.AppRepository
 import com.jmd.autotext.engine.SmsSender
-import java.util.Calendar
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Broadcast receiver monitoring telephony calls to execute configured auto-replies.
@@ -151,7 +151,7 @@ class PhoneCallReceiver : BroadcastReceiver() {
         capturedWasAnswered: Boolean
     ) {
         val idleTimestamp = System.currentTimeMillis()
-        AppFileLogger.action(context, TAG, "Evaluating phone call transition from state $capturedLastState to IDLE (ringing=$capturedWasRinging, answered=$capturedWasAnswered)")
+        AppFileLogger.action(context, TAG, "Evaluating call transition from state $capturedLastState to IDLE (ringing=$capturedWasRinging, answered=$capturedWasAnswered)")
         var callRecord: CallRecord? = null
 
         // Poll CallLog with up to 3 retries (total ~750ms) to allow Android telephony provider

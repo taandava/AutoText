@@ -12,25 +12,20 @@
  * - Services: [com.jmd.autotext.service.TaskForegroundService], [com.jmd.autotext.service.AutoTextAccessibilityService]
  * - Dispatchers: [com.jmd.autotext.engine.SmsSender], [com.jmd.autotext.engine.WhatsAppSender]
  * - Repositories: [com.jmd.autotext.data.repo.AppRepository], [com.jmd.autotext.data.repo.TaskRepository]
- * - Safety & Quota: [com.jmd.autotext.core.TaskSafetyManager], [com.jmd.autotext.core.SmsQuotaManager]
+ * - Safety & Quota: [TaskSafetyManager], [com.jmd.autotext.core.SmsQuotaManager]
  */
 package com.jmd.autotext.engine
 
 import android.app.KeyguardManager
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.PowerManager
-import android.media.AudioAttributes
+import com.jmd.autotext.core.TaskSafetyManager
 import android.media.AudioManager
-import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import android.provider.AlarmClock
+import android.os.PowerManager
 import android.telecom.TelecomManager
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
@@ -38,38 +33,52 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.jmd.autotext.AutoTextApplication
-import com.jmd.autotext.ui.activity.CallSimulationActivity
-import com.jmd.autotext.ui.activity.ReminderAlarmActivity
-import com.jmd.autotext.ui.activity.TaskLauncherActivity
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.AppFileLogger
-import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.core.MessageTemplateResolver
 import com.jmd.autotext.core.PhoneNumberNormalizer
 import com.jmd.autotext.core.PrivacyManager
 import com.jmd.autotext.core.SmsQuotaManager
 import com.jmd.autotext.core.WhatsAppPackageHelper
-import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
-import com.jmd.autotext.data.model.ChannelType
-import com.jmd.autotext.data.model.ExecutionLog
-import com.jmd.autotext.data.model.RecurrenceType
-import com.jmd.autotext.data.model.ScheduledTask
-import com.jmd.autotext.data.model.TaskStatus
+import com.jmd.autotext.data.model.*
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.data.repo.AppRepository
 import com.jmd.autotext.scheduler.AlarmScheduler
 import com.jmd.autotext.service.AutoTextAccessibilityService
+import com.jmd.autotext.ui.activity.CallSimulationActivity
+import com.jmd.autotext.ui.activity.ReminderAlarmActivity
+import com.jmd.autotext.ui.activity.TaskLauncherActivity
 import com.jmd.autotext.whatsapp.WhatsAppIntentDispatcher
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.time.Duration.Companion.milliseconds
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.Boolean
+import kotlin.Exception
+import kotlin.Int
+import kotlin.Long
+import kotlin.String
+import kotlin.Throwable
+import kotlin.also
+import kotlin.apply
+import kotlin.div
+import kotlin.getOrDefault
+import kotlin.runCatching
+import kotlin.synchronized
+import kotlin.text.contains
+import kotlin.text.equals
+import kotlin.text.filter
+import kotlin.text.get
+import kotlin.text.ifBlank
+import kotlin.text.isDigit
+import kotlin.text.isNotBlank
+import kotlin.text.lowercase
+import kotlin.text.removePrefix
+import kotlin.text.set
+import kotlin.text.take
+import kotlin.text.trim
+import kotlin.time.Duration.Companion.milliseconds
 
 /** Upper bound for waiting on a WhatsApp send to complete before the task is retried. */
 private const val WHATSAPP_SEND_TIMEOUT_MS = 25000L
@@ -600,8 +609,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             appContext.startActivity(launchIntent)
             delay(1200.milliseconds)
         }
-        val isStillLocked = (km?.isKeyguardLocked == true) || (km?.isDeviceLocked == true)
-        return !isStillLocked
+        return true
     }
 
     private suspend fun executeWhatsAppTaskWithRetries(

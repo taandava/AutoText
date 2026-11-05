@@ -1,5 +1,7 @@
 
 
+@file:Suppress("FunctionName")
+
 /**
  * Package: com.jmd.autotext.ui.screen
  * Module: UI Permission & Health Screen Layer
@@ -32,11 +34,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material.icons.filled.Settings
@@ -50,16 +52,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import com.jmd.autotext.core.AccessibilityHealthManager
-import com.jmd.autotext.core.OemBrandHelper
-import com.jmd.autotext.core.OverlayPermissionHelper
-import com.jmd.autotext.core.PermissionManager
-import com.jmd.autotext.core.showAppToast
+import com.jmd.autotext.core.*
 import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
-import com.jmd.autotext.ui.components.GlassButtonVariant
 import com.jmd.autotext.ui.components.AppCard
 import com.jmd.autotext.ui.components.AppSubScreenHeader
 import com.jmd.autotext.ui.components.GlassButton
+import com.jmd.autotext.ui.components.GlassButtonVariant
 import com.jmd.autotext.ui.theme.AppDesignTokens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -426,7 +424,7 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
 
 /**
  * Master repair and auto-heal card providing one-touch reactivation of dead accessibility binders
- * and single-click copying of the comprehensive universal ADB privilege grant script.
+ * and single-click copying of the comprehensive universal ADB privilege grant command.
  *
  * @param context Local Android context for system service invocation and clipboard operations.
  */

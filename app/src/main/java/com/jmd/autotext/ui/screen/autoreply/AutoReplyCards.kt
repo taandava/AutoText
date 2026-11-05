@@ -1,30 +1,36 @@
+@file:Suppress("FunctionName")
+
 package com.jmd.autotext.ui.screen.autoreply
 
-import android.content.*
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Pin
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.jmd.autotext.data.model.*
-import com.jmd.autotext.data.prefs.*
-import com.jmd.autotext.data.repo.*
-import com.jmd.autotext.ui.components.*
-import com.jmd.autotext.ui.theme.*
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.jmd.autotext.data.model.AutoReplyRule
+import com.jmd.autotext.data.model.ChannelType
+import com.jmd.autotext.ui.components.AppBadge
+import com.jmd.autotext.ui.components.AppCard
+import com.jmd.autotext.ui.components.GlassChip
+import com.jmd.autotext.ui.components.GlassInputField
+import com.jmd.autotext.ui.theme.AppDesignTokens
 
 /**
  * Card displaying an auto reply rule with condition summary and action triggers.
@@ -202,7 +208,7 @@ fun AutoReplyRuleCard(
 
 
 /**
- * Anti-spam and frequency throttling card managing daily message caps and cooldown intervals per sender.
+ * Anti-rate limit and frequency throttling card managing daily message caps and cooldown intervals per sender.
  *
  * @param dailyLimitMode Selected daily quota preset or custom string.
  * @param onDailyLimitModeChanged Callback invoked when daily quota preset changes.
@@ -228,7 +234,7 @@ fun AutoReplyLimitsCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge
     ) {
-        Text("Anti-Spam & Contact Daily Quota", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+        Text("Message Rate Limit & Daily Quota", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             "Safeguards against messaging the same caller repeatedly within a 24-hour cycle.",

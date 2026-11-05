@@ -1,12 +1,19 @@
+@file:Suppress("FunctionName")
+
 package com.jmd.autotext.ui.screen.compose
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,9 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.jmd.autotext.data.model.*
+import com.jmd.autotext.data.model.ChannelType
+import com.jmd.autotext.data.model.RecurrenceType
+import com.jmd.autotext.data.model.RepeatUnit
 import com.jmd.autotext.ui.components.*
-import com.jmd.autotext.ui.theme.*
+import com.jmd.autotext.ui.theme.AppDesignTokens
 
 /**
  * Card managing schedule date, time, repetition, and carrier SIM selection.

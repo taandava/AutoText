@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package com.jmd.autotext.ui.screen.campaign
 
 import android.content.*
