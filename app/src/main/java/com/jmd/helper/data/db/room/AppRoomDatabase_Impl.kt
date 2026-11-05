@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.flowOf
 /**
  * Concrete implementation of [AppRoomDatabase] providing high-performance,
  * zero-overhead integration over the local `helper.db` SQLite database.
+ * The `_Impl` suffix is strictly required by AndroidX Room's reflection generator.
  */
+@Suppress("ClassName")
 class AppRoomDatabase_Impl : AppRoomDatabase() {
 
     private val _taskDao: TaskDao by lazy {
