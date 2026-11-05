@@ -1,10 +1,10 @@
 # AutoText — Executive Project Overview
 
 ## 1. Project Mission & Identity
-**AutoText** (`com.jmd.autotext`) is a high-reliability, 100% on-device Android communication and task scheduling application designed for unattended multi-channel message dispatch and voice call execution.
+**AutoText** (`com.jmd.helper`) is a high-reliability, 100% on-device Android communication and task scheduling application designed for unattended multi-channel message dispatch and voice call execution.
 
 ## 2. Technical Profile
-- **Package Identifier:** `com.jmd.autotext`
+- **Package Identifier:** `com.jmd.helper`
 - **Application Version:** `1.0.0` (Version Code `1`)
 - **Language:** 100% Idiomatic Kotlin (0% Java)
 - **UI Framework:** Jetpack Compose with Material 3 Expressive & Glassmorphism Design System

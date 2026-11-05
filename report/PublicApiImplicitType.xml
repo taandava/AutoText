@@ -26,11 +26,11 @@
   <length>20</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/HelperApplication.kt</file>
   <line>51</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.AutoTextApplication CHANNEL_TASKS" />
+  <package>com.jmd.helper</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.HelperApplication CHANNEL_TASKS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>CHANNEL_TASKS</highlighted_element>
@@ -39,11 +39,11 @@
   <length>13</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/HelperApplication.kt</file>
   <line>54</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.AutoTextApplication CHANNEL_REMINDERS" />
+  <package>com.jmd.helper</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.HelperApplication CHANNEL_REMINDERS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>CHANNEL_REMINDERS</highlighted_element>
@@ -52,11 +52,11 @@
   <length>17</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/HelperApplication.kt</file>
   <line>57</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.AutoTextApplication CHANNEL_SERVICE" />
+  <package>com.jmd.helper</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.HelperApplication CHANNEL_SERVICE" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>CHANNEL_SERVICE</highlighted_element>
@@ -65,11 +65,11 @@
   <length>15</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/HelperApplication.kt</file>
   <line>68</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.AutoTextApplication applicationScope" />
+  <package>com.jmd.helper</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.HelperApplication applicationScope" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>applicationScope</highlighted_element>
@@ -81,8 +81,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppFileLogger.kt</file>
   <line>93</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.AppFileLogger void i(android.content.Context context, java.lang.String tag, java.lang.String message)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.AppFileLogger void i(android.content.Context context, java.lang.String tag, java.lang.String message)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>i</highlighted_element>
@@ -94,8 +94,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppFileLogger.kt</file>
   <line>102</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.AppFileLogger void d(android.content.Context context, java.lang.String tag, java.lang.String message)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.AppFileLogger void d(android.content.Context context, java.lang.String tag, java.lang.String message)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>d</highlighted_element>
@@ -107,8 +107,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppFileLogger.kt</file>
   <line>111</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.AppFileLogger void action(android.content.Context context, java.lang.String tag, java.lang.String actionDescription)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.AppFileLogger void action(android.content.Context context, java.lang.String tag, java.lang.String actionDescription)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>action</highlighted_element>
@@ -120,8 +120,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppFileLogger.kt</file>
   <line>121</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.AppFileLogger void w(android.content.Context context, java.lang.String tag, java.lang.String message, java.lang.Throwable t)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.AppFileLogger void w(android.content.Context context, java.lang.String tag, java.lang.String message, java.lang.Throwable t)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>w</highlighted_element>
@@ -133,8 +133,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppFileLogger.kt</file>
   <line>139</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.AppFileLogger void e(android.content.Context context, java.lang.String tag, java.lang.String message, java.lang.Throwable t)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.AppFileLogger void e(android.content.Context context, java.lang.String tag, java.lang.String message, java.lang.Throwable t)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>e</highlighted_element>
@@ -146,7 +146,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/MessageTemplateResolver.kt</file>
   <line>13</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="field" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/MessageTemplateResolver.kt DEFAULT_MESSAGE_TEXT" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
@@ -159,8 +159,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>64</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_SMS" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_SMS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_SMS</highlighted_element>
@@ -172,8 +172,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>65</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_RECEIVE_SMS" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_RECEIVE_SMS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_RECEIVE_SMS</highlighted_element>
@@ -185,8 +185,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>66</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_CALL_PHONE" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_CALL_PHONE" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_CALL_PHONE</highlighted_element>
@@ -198,8 +198,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>67</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_READ_PHONE_STATE" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_READ_PHONE_STATE" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_READ_PHONE_STATE</highlighted_element>
@@ -211,8 +211,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>68</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_READ_CALL_LOG" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_READ_CALL_LOG" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_READ_CALL_LOG</highlighted_element>
@@ -224,8 +224,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>69</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_READ_CONTACTS" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_READ_CONTACTS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_READ_CONTACTS</highlighted_element>
@@ -237,8 +237,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>70</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_READ_MEDIA_IMAGES" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_READ_MEDIA_IMAGES" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_READ_MEDIA_IMAGES</highlighted_element>
@@ -250,8 +250,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>71</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_READ_MEDIA_VIDEO" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_READ_MEDIA_VIDEO" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_READ_MEDIA_VIDEO</highlighted_element>
@@ -263,8 +263,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>72</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_READ_EXTERNAL_STORAGE" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_READ_EXTERNAL_STORAGE" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_READ_EXTERNAL_STORAGE</highlighted_element>
@@ -276,8 +276,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>73</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_POST_NOTIFICATIONS" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_POST_NOTIFICATIONS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_POST_NOTIFICATIONS</highlighted_element>
@@ -289,8 +289,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>74</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_EXACT_ALARMS" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_EXACT_ALARMS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_EXACT_ALARMS</highlighted_element>
@@ -302,8 +302,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>75</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_ACCESSIBILITY" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_ACCESSIBILITY" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_ACCESSIBILITY</highlighted_element>
@@ -315,8 +315,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>76</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_DEVICE_ADMIN" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_DEVICE_ADMIN" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_DEVICE_ADMIN</highlighted_element>
@@ -328,8 +328,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>77</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_BATTERY_OPTIMIZATION" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_BATTERY_OPTIMIZATION" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_BATTERY_OPTIMIZATION</highlighted_element>
@@ -341,8 +341,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>78</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_NOTIFICATION_POLICY" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_NOTIFICATION_POLICY" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_NOTIFICATION_POLICY</highlighted_element>
@@ -354,8 +354,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>79</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PermissionManager ID_OVERLAY" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PermissionManager ID_OVERLAY" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ID_OVERLAY</highlighted_element>
@@ -367,8 +367,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>58</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.PrivacyManager BASE_TASK_TARGET_PACKAGES" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.PrivacyManager BASE_TASK_TARGET_PACKAGES" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>BASE_TASK_TARGET_PACKAGES</highlighted_element>
@@ -380,8 +380,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/SmsQuotaManager.kt</file>
   <line>28</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.SmsQuotaManager INDIA_DAILY_SMS_LIMIT" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.SmsQuotaManager INDIA_DAILY_SMS_LIMIT" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>INDIA_DAILY_SMS_LIMIT</highlighted_element>
@@ -393,8 +393,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
   <line>46</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.TaskSafetyManager isEmergencyStopActive" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.TaskSafetyManager isEmergencyStopActive" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>isEmergencyStopActive</highlighted_element>
@@ -406,8 +406,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
   <line>75</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.TaskSafetyManager CIRCUIT_BREAKER_COOLDOWN_MS" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.TaskSafetyManager CIRCUIT_BREAKER_COOLDOWN_MS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>CIRCUIT_BREAKER_COOLDOWN_MS</highlighted_element>
@@ -419,8 +419,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
   <line>87</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.TaskSafetyManager USER_IDLE_COOLDOWN_MS" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.TaskSafetyManager USER_IDLE_COOLDOWN_MS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>USER_IDLE_COOLDOWN_MS</highlighted_element>
@@ -432,8 +432,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
   <line>90</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.TaskSafetyManager DEFAULT_POSTPONE_INTERVAL_MS" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.TaskSafetyManager DEFAULT_POSTPONE_INTERVAL_MS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DEFAULT_POSTPONE_INTERVAL_MS</highlighted_element>
@@ -445,8 +445,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
   <line>93</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.TaskSafetyManager lastHumanInteractionTimestamp" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.TaskSafetyManager lastHumanInteractionTimestamp" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>lastHumanInteractionTimestamp</highlighted_element>
@@ -458,8 +458,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
   <line>96</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.TaskSafetyManager isInterruptedByHuman" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.TaskSafetyManager isInterruptedByHuman" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>isInterruptedByHuman</highlighted_element>
@@ -471,8 +471,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/WhatsAppPackageHelper.kt</file>
   <line>21</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.WhatsAppPackageHelper PACKAGE_WHATSAPP" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.WhatsAppPackageHelper PACKAGE_WHATSAPP" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>PACKAGE_WHATSAPP</highlighted_element>
@@ -484,8 +484,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/WhatsAppPackageHelper.kt</file>
   <line>24</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.core.WhatsAppPackageHelper PACKAGE_WHATSAPP_BUSINESS" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.core.WhatsAppPackageHelper PACKAGE_WHATSAPP_BUSINESS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>PACKAGE_WHATSAPP_BUSINESS</highlighted_element>
@@ -497,8 +497,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>49</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper DATABASE_NAME" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper DATABASE_NAME" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DATABASE_NAME</highlighted_element>
@@ -510,8 +510,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>50</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper DATABASE_VERSION" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper DATABASE_VERSION" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DATABASE_VERSION</highlighted_element>
@@ -523,8 +523,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>68</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_TASKS" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_TASKS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_TASKS</highlighted_element>
@@ -536,8 +536,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>69</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_RECIPIENTS" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_RECIPIENTS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_RECIPIENTS</highlighted_element>
@@ -549,8 +549,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>70</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_TEMPLATES" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_TEMPLATES" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_TEMPLATES</highlighted_element>
@@ -562,8 +562,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>71</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_AUTO_REPLY" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_AUTO_REPLY" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_AUTO_REPLY</highlighted_element>
@@ -575,8 +575,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>72</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_CAMPAIGNS" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_CAMPAIGNS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_CAMPAIGNS</highlighted_element>
@@ -588,8 +588,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>73</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_DRIP_STEPS" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_DRIP_STEPS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_DRIP_STEPS</highlighted_element>
@@ -601,8 +601,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>74</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_LOGS" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_LOGS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_LOGS</highlighted_element>
@@ -614,8 +614,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>75</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_DYNAMIC_POOL" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_DYNAMIC_POOL" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_DYNAMIC_POOL</highlighted_element>
@@ -627,8 +627,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>76</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_DAILY_CAMPAIGN" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_DAILY_CAMPAIGN" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_DAILY_CAMPAIGN</highlighted_element>
@@ -640,8 +640,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>77</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_AUTO_REPLY_HISTORY" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_AUTO_REPLY_HISTORY" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_AUTO_REPLY_HISTORY</highlighted_element>
@@ -653,8 +653,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>78</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_CONTACT_SEQUENCES" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_CONTACT_SEQUENCES" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_CONTACT_SEQUENCES</highlighted_element>
@@ -666,8 +666,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>79</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_SEQUENCE_STEPS" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_SEQUENCE_STEPS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_SEQUENCE_STEPS</highlighted_element>
@@ -679,8 +679,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>80</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_WHATSAPP_GROUPS" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_WHATSAPP_GROUPS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_WHATSAPP_GROUPS</highlighted_element>
@@ -692,8 +692,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>81</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_DAILY_CAMPAIGN_SENT" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_DAILY_CAMPAIGN_SENT" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_DAILY_CAMPAIGN_SENT</highlighted_element>
@@ -705,8 +705,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>82</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_TASK_DELIVERIES" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_TASK_DELIVERIES" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_TASK_DELIVERIES</highlighted_element>
@@ -718,8 +718,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>83</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.db.DatabaseHelper TABLE_APP_PRIVACY_CONFIGS" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.db.DatabaseHelper TABLE_APP_PRIVACY_CONFIGS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TABLE_APP_PRIVACY_CONFIGS</highlighted_element>
@@ -731,8 +731,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>54</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.AppRepository taskRepo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.AppRepository taskRepo" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>taskRepo</highlighted_element>
@@ -744,8 +744,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>55</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.AppRepository dailyCampaignRepo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.AppRepository dailyCampaignRepo" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>dailyCampaignRepo</highlighted_element>
@@ -757,8 +757,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>56</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.AppRepository autoReplyRepo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.AppRepository autoReplyRepo" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>autoReplyRepo</highlighted_element>
@@ -770,8 +770,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>57</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.AppRepository logRepo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.AppRepository logRepo" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>logRepo</highlighted_element>
@@ -783,8 +783,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>58</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.AppRepository sequenceRepo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.AppRepository sequenceRepo" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>sequenceRepo</highlighted_element>
@@ -796,8 +796,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>59</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.AppRepository backupRepo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.AppRepository backupRepo" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>backupRepo</highlighted_element>
@@ -809,8 +809,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>60</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.AppRepository templateRepo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.AppRepository templateRepo" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>templateRepo</highlighted_element>
@@ -822,8 +822,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>61</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.AppRepository recipientRepo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.AppRepository recipientRepo" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>recipientRepo</highlighted_element>
@@ -835,8 +835,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>62</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.AppRepository whatsAppRepo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.AppRepository whatsAppRepo" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>whatsAppRepo</highlighted_element>
@@ -848,8 +848,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>63</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.AppRepository privacyRepo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.AppRepository privacyRepo" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>privacyRepo</highlighted_element>
@@ -861,8 +861,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>68</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void updateTaskStatus(long id, com.jmd.autotext.data.model.TaskStatus status, long lastExecuted)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void updateTaskStatus(long id, com.jmd.helper.data.model.TaskStatus status, long lastExecuted)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>updateTaskStatus</highlighted_element>
@@ -874,8 +874,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>81</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void markCampaignContactSuccess(long campaignId, com.jmd.autotext.data.model.DynamicContactItem contact, java.lang.String channel, int segments)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void markCampaignContactSuccess(long campaignId, com.jmd.helper.data.model.DynamicContactItem contact, java.lang.String channel, int segments)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>markCampaignContactSuccess</highlighted_element>
@@ -887,8 +887,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>84</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void markCampaignContactDispatched(long campaignId, com.jmd.autotext.data.model.DynamicContactItem contact, java.lang.String channel, int segments)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void markCampaignContactDispatched(long campaignId, com.jmd.helper.data.model.DynamicContactItem contact, java.lang.String channel, int segments)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>markCampaignContactDispatched</highlighted_element>
@@ -900,8 +900,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>90</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void resetCampaignLedger(long campaignId)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void resetCampaignLedger(long campaignId)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>resetCampaignLedger</highlighted_element>
@@ -913,8 +913,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>93</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void requeueContactForCampaign(long campaignId, long contactId)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void requeueContactForCampaign(long campaignId, long contactId)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>requeueContactForCampaign</highlighted_element>
@@ -926,8 +926,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>99</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void markContactSent(long id, boolean whatsApp)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void markContactSent(long id, boolean whatsApp)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>markContactSent</highlighted_element>
@@ -939,8 +939,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>100</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void markContactPendingRetry(long id, boolean whatsApp, java.lang.String status)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void markContactPendingRetry(long id, boolean whatsApp, java.lang.String status)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>markContactPendingRetry</highlighted_element>
@@ -952,8 +952,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>101</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void markContactInvalid(long id, boolean whatsApp)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void markContactInvalid(long id, boolean whatsApp)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>markContactInvalid</highlighted_element>
@@ -965,8 +965,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>393</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void recordReplySent(long ruleId, java.lang.String phone)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void recordReplySent(long ruleId, java.lang.String phone)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>recordReplySent</highlighted_element>
@@ -978,8 +978,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>402</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void clearLogs()" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void clearLogs()" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>clearLogs</highlighted_element>
@@ -991,8 +991,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>591</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository void cleanupMistakenGroups()" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository void cleanupMistakenGroups()" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>cleanupMistakenGroups</highlighted_element>
@@ -1004,8 +1004,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/LogRepository.kt</file>
   <line>31</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.LogRepository MAX_LOG_RETENTION_COUNT" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.LogRepository MAX_LOG_RETENTION_COUNT" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>MAX_LOG_RETENTION_COUNT</highlighted_element>
@@ -1017,8 +1017,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/LogRepository.kt</file>
   <line>32</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.data.repo.LogRepository MAX_LOG_RETENTION_DAYS" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.data.repo.LogRepository MAX_LOG_RETENTION_DAYS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>MAX_LOG_RETENTION_DAYS</highlighted_element>
@@ -1030,8 +1030,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>41</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver EXTRA_CANCELLED" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver EXTRA_CANCELLED" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_CANCELLED</highlighted_element>
@@ -1043,8 +1043,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>42</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_COUNTDOWN_TIMEOUT" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_COUNTDOWN_TIMEOUT" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_COUNTDOWN_TIMEOUT</highlighted_element>
@@ -1056,8 +1056,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>43</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_TEST_TASK" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_TEST_TASK" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_TEST_TASK</highlighted_element>
@@ -1069,8 +1069,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>44</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_SETUP_ALL_TASKS" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_SETUP_ALL_TASKS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_SETUP_ALL_TASKS</highlighted_element>
@@ -1082,8 +1082,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>45</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_DUMP_LOGS" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_DUMP_LOGS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_DUMP_LOGS</highlighted_element>
@@ -1095,8 +1095,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>46</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_DELETE_ALL_TASKS" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_DELETE_ALL_TASKS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_DELETE_ALL_TASKS</highlighted_element>
@@ -1108,8 +1108,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>47</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_SETUP_CAMPAIGN_CONTACTS" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_SETUP_CAMPAIGN_CONTACTS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_SETUP_CAMPAIGN_CONTACTS</highlighted_element>
@@ -1121,8 +1121,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>48</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_FIRE_CAMPAIGN" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_FIRE_CAMPAIGN" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_FIRE_CAMPAIGN</highlighted_element>
@@ -1134,8 +1134,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>49</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_SET_PREF" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_SET_PREF" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_SET_PREF</highlighted_element>
@@ -1147,8 +1147,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>50</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_EMERGENCY_STOP" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_EMERGENCY_STOP" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_EMERGENCY_STOP</highlighted_element>
@@ -1160,8 +1160,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>51</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_RESET_EMERGENCY_STOP" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_RESET_EMERGENCY_STOP" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_RESET_EMERGENCY_STOP</highlighted_element>
@@ -1173,8 +1173,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>52</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_TEST_AUTO_UNLOCK" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_TEST_AUTO_UNLOCK" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_TEST_AUTO_UNLOCK</highlighted_element>
@@ -1186,8 +1186,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>53</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver ACTION_TEST_SCREEN_ASSIST" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver ACTION_TEST_SCREEN_ASSIST" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_TEST_SCREEN_ASSIST</highlighted_element>
@@ -1199,8 +1199,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AccessibilityWatchdogScheduler.kt</file>
   <line>36</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.scheduler.AccessibilityWatchdogScheduler ACTION_WATCHDOG_HEARTBEAT" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.scheduler.AccessibilityWatchdogScheduler ACTION_WATCHDOG_HEARTBEAT" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_WATCHDOG_HEARTBEAT</highlighted_element>
@@ -1212,8 +1212,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AccessibilityWatchdogWorker.kt</file>
   <line>33</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.scheduler.AccessibilityWatchdogWorker UNIQUE_WORK_NAME" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.scheduler.AccessibilityWatchdogWorker UNIQUE_WORK_NAME" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>UNIQUE_WORK_NAME</highlighted_element>
@@ -1225,8 +1225,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>46</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler void schedule(com.jmd.autotext.data.model.ScheduledTask task)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.AlarmScheduler void schedule(com.jmd.helper.data.model.ScheduledTask task)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>schedule</highlighted_element>
@@ -1238,8 +1238,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>47</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler void cancel(long taskId)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.AlarmScheduler void cancel(long taskId)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>cancel</highlighted_element>
@@ -1251,8 +1251,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>239</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler ACTION_FIRE_TASK" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.scheduler.AlarmScheduler ACTION_FIRE_TASK" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ACTION_FIRE_TASK</highlighted_element>
@@ -1264,8 +1264,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>240</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler EXTRA_TASK_ID" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.scheduler.AlarmScheduler EXTRA_TASK_ID" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_TASK_ID</highlighted_element>
@@ -1277,8 +1277,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>241</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler EXTRA_MANUAL_RUN" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.scheduler.AlarmScheduler EXTRA_MANUAL_RUN" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_MANUAL_RUN</highlighted_element>
@@ -1290,8 +1290,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchScheduler.kt</file>
   <line>52</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.DailyCampaignScheduler void schedule(android.content.Context context, long campaignId)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.DailyCampaignScheduler void schedule(android.content.Context context, long campaignId)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>schedule</highlighted_element>
@@ -1303,8 +1303,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>56</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker TAG" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker TAG" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>TAG</highlighted_element>
@@ -1316,8 +1316,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>57</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker KEY_MANUAL_TRIGGER" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker KEY_MANUAL_TRIGGER" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>KEY_MANUAL_TRIGGER</highlighted_element>
@@ -1329,8 +1329,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>58</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker KEY_CAMPAIGN_ID" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker KEY_CAMPAIGN_ID" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>KEY_CAMPAIGN_ID</highlighted_element>
@@ -1339,11 +1339,11 @@
   <length>15</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>97</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService isServiceRunning" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskAccessibilityService isServiceRunning" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>isServiceRunning</highlighted_element>
@@ -1352,11 +1352,11 @@
   <length>16</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>101</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService isTestUnlockMode" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskAccessibilityService isTestUnlockMode" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>isTestUnlockMode</highlighted_element>
@@ -1365,11 +1365,11 @@
   <length>16</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>117</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService KNOWN_FINANCIAL_PACKAGE_PREFIXES" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskAccessibilityService KNOWN_FINANCIAL_PACKAGE_PREFIXES" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>KNOWN_FINANCIAL_PACKAGE_PREFIXES</highlighted_element>
@@ -1378,11 +1378,11 @@
   <length>32</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>274</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService RESULT_NONE" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskAccessibilityService RESULT_NONE" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RESULT_NONE</highlighted_element>
@@ -1391,11 +1391,11 @@
   <length>11</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>275</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService RESULT_PENDING" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskAccessibilityService RESULT_PENDING" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RESULT_PENDING</highlighted_element>
@@ -1404,11 +1404,11 @@
   <length>14</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>276</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService RESULT_SUCCESS" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskAccessibilityService RESULT_SUCCESS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RESULT_SUCCESS</highlighted_element>
@@ -1417,11 +1417,11 @@
   <length>14</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>277</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService RESULT_INVALID" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskAccessibilityService RESULT_INVALID" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RESULT_INVALID</highlighted_element>
@@ -1430,11 +1430,11 @@
   <length>14</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>278</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService RESULT_TIMEOUT" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskAccessibilityService RESULT_TIMEOUT" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RESULT_TIMEOUT</highlighted_element>
@@ -1443,11 +1443,11 @@
   <length>14</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>1139</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService groupSearchStep" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskAccessibilityService groupSearchStep" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>groupSearchStep</highlighted_element>
@@ -1456,11 +1456,11 @@
   <length>15</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextNotificationListenerService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskNotificationListenerService.kt</file>
   <line>43</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.AutoTextNotificationListenerService isListenerConnected" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskNotificationListenerService isListenerConnected" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>isListenerConnected</highlighted_element>
@@ -1472,8 +1472,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt</file>
   <line>29</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.service.TaskForegroundService NOTIFICATION_ID" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.service.TaskForegroundService NOTIFICATION_ID" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>NOTIFICATION_ID</highlighted_element>
@@ -1485,8 +1485,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>43</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity EXTRA_TASK_ID" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity EXTRA_TASK_ID" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_TASK_ID</highlighted_element>
@@ -1498,8 +1498,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>44</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity EXTRA_CHANNEL" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity EXTRA_CHANNEL" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_CHANNEL</highlighted_element>
@@ -1511,8 +1511,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>45</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity EXTRA_RECIPIENT" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity EXTRA_RECIPIENT" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_RECIPIENT</highlighted_element>
@@ -1524,8 +1524,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>46</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity EXTRA_MESSAGE" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity EXTRA_MESSAGE" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_MESSAGE</highlighted_element>
@@ -1537,8 +1537,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>47</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity EXTRA_RELOCK" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity EXTRA_RELOCK" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_RELOCK</highlighted_element>
@@ -1550,8 +1550,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>48</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity EXTRA_IS_BATCH" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity EXTRA_IS_BATCH" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_IS_BATCH</highlighted_element>
@@ -1563,8 +1563,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>49</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity EXTRA_IS_TEST_UNLOCK" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity EXTRA_IS_TEST_UNLOCK" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_IS_TEST_UNLOCK</highlighted_element>
@@ -1576,8 +1576,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>50</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity EXTRA_PIN" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity EXTRA_PIN" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_PIN</highlighted_element>
@@ -1589,8 +1589,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>51</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity EXTRA_MEDIA_URI" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity EXTRA_MEDIA_URI" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_MEDIA_URI</highlighted_element>
@@ -1602,8 +1602,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>52</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity EXTRA_WAKE_ONLY" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity EXTRA_WAKE_ONLY" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EXTRA_WAKE_ONLY</highlighted_element>
@@ -1615,7 +1615,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/AppStatusIndicators.kt</file>
   <line>42</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.components</package>
+  <package>com.jmd.helper.ui.components</package>
   <entry_point TYPE="field" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/AppStatusIndicators.kt IndicatorActiveGreen" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
@@ -1628,7 +1628,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/AppStatusIndicators.kt</file>
   <line>43</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.components</package>
+  <package>com.jmd.helper.ui.components</package>
   <entry_point TYPE="field" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/AppStatusIndicators.kt IndicatorInactiveRed" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
@@ -1641,8 +1641,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/Avatars.kt</file>
   <line>226</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.components</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.components.AvatarsKt void ContactAvatar(java.lang.String name, androidx.compose.ui.Modifier modifier, java.lang.String photoUri, float size, androidx.compose.ui.graphics.vector.ImageVector badgeIcon, long badgeColor)" />
+  <package>com.jmd.helper.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.components.AvatarsKt void ContactAvatar(java.lang.String name, androidx.compose.ui.Modifier modifier, java.lang.String photoUri, float size, androidx.compose.ui.graphics.vector.ImageVector badgeIcon, long badgeColor)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ContactAvatar</highlighted_element>
@@ -1654,8 +1654,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/WhatsAppSetupScreen.kt</file>
   <line>637</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.WhatsAppSetupScreenKt void WhatsAppSetupAndAutoUnlockView(android.content.Context context, com.jmd.autotext.data.prefs.PreferenceManager prefs, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.WhatsAppSetupScreenKt void WhatsAppSetupAndAutoUnlockView(android.content.Context context, com.jmd.helper.data.prefs.PreferenceManager prefs, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>WhatsAppSetupAndAutoUnlockView</highlighted_element>
@@ -1667,7 +1667,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>44</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
+  <package>com.jmd.helper.ui.theme</package>
   <entry_point TYPE="field" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt AppDesignTokens" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
@@ -1680,8 +1680,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>50</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette PrimaryBrand" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette PrimaryBrand" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>PrimaryBrand</highlighted_element>
@@ -1693,8 +1693,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>51</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette PrimaryLightAccent" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette PrimaryLightAccent" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>PrimaryLightAccent</highlighted_element>
@@ -1706,8 +1706,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>52</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette WarmBackground" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette WarmBackground" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>WarmBackground</highlighted_element>
@@ -1719,8 +1719,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>53</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette WarmContainer" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette WarmContainer" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>WarmContainer</highlighted_element>
@@ -1732,8 +1732,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>54</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette SupportingBrown" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette SupportingBrown" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SupportingBrown</highlighted_element>
@@ -1745,8 +1745,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>55</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette PrimaryDarkText" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette PrimaryDarkText" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>PrimaryDarkText</highlighted_element>
@@ -1758,8 +1758,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>56</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette SuccessGreen" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette SuccessGreen" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SuccessGreen</highlighted_element>
@@ -1771,8 +1771,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>57</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette ErrorRed" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette ErrorRed" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ErrorRed</highlighted_element>
@@ -1784,8 +1784,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>60</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette Orange90" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette Orange90" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>Orange90</highlighted_element>
@@ -1797,8 +1797,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>61</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette Orange80" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette Orange80" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>Orange80</highlighted_element>
@@ -1810,8 +1810,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>62</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette Orange70" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette Orange70" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>Orange70</highlighted_element>
@@ -1823,8 +1823,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>63</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette Orange60" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette Orange60" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>Orange60</highlighted_element>
@@ -1836,8 +1836,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>64</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette Orange50" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette Orange50" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>Orange50</highlighted_element>
@@ -1849,8 +1849,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>65</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette Orange40" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette Orange40" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>Orange40</highlighted_element>
@@ -1862,8 +1862,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>66</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette Orange30" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette Orange30" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>Orange30</highlighted_element>
@@ -1875,8 +1875,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>67</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette Orange20" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette Orange20" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>Orange20</highlighted_element>
@@ -1888,8 +1888,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>68</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette Orange10" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette Orange10" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>Orange10</highlighted_element>
@@ -1901,8 +1901,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>71</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette DarkCanvas" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette DarkCanvas" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DarkCanvas</highlighted_element>
@@ -1914,8 +1914,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>72</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette DarkSurface" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette DarkSurface" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DarkSurface</highlighted_element>
@@ -1927,8 +1927,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>73</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette DarkSurfaceContainer" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette DarkSurfaceContainer" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DarkSurfaceContainer</highlighted_element>
@@ -1940,8 +1940,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>74</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette DarkSurfaceContainerHigh" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette DarkSurfaceContainerHigh" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DarkSurfaceContainerHigh</highlighted_element>
@@ -1953,8 +1953,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>75</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette DarkSurfaceContainerHighest" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette DarkSurfaceContainerHighest" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DarkSurfaceContainerHighest</highlighted_element>
@@ -1966,8 +1966,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>76</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette DarkOutline" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette DarkOutline" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DarkOutline</highlighted_element>
@@ -1979,8 +1979,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>77</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette DarkOutlineVariant" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette DarkOutlineVariant" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DarkOutlineVariant</highlighted_element>
@@ -1992,8 +1992,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>78</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette DarkOnSurface" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette DarkOnSurface" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DarkOnSurface</highlighted_element>
@@ -2005,8 +2005,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>79</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette DarkOnSurfaceVariant" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette DarkOnSurfaceVariant" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>DarkOnSurfaceVariant</highlighted_element>
@@ -2018,8 +2018,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>81</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette LightCanvas" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette LightCanvas" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>LightCanvas</highlighted_element>
@@ -2031,8 +2031,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>82</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette LightSurface" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette LightSurface" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>LightSurface</highlighted_element>
@@ -2044,8 +2044,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>83</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette LightSurfaceContainerLow" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette LightSurfaceContainerLow" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>LightSurfaceContainerLow</highlighted_element>
@@ -2057,8 +2057,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>84</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette LightSurfaceContainer" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette LightSurfaceContainer" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>LightSurfaceContainer</highlighted_element>
@@ -2070,8 +2070,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>85</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette LightSurfaceContainerHigh" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette LightSurfaceContainerHigh" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>LightSurfaceContainerHigh</highlighted_element>
@@ -2083,8 +2083,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>86</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette LightSurfaceContainerHighest" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette LightSurfaceContainerHighest" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>LightSurfaceContainerHighest</highlighted_element>
@@ -2096,8 +2096,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>87</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette LightOutline" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette LightOutline" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>LightOutline</highlighted_element>
@@ -2109,8 +2109,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>88</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette LightOutlineVariant" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette LightOutlineVariant" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>LightOutlineVariant</highlighted_element>
@@ -2122,8 +2122,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>89</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette LightOnSurface" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette LightOnSurface" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>LightOnSurface</highlighted_element>
@@ -2135,8 +2135,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>90</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.OrangeBrandPalette LightOnSurfaceVariant" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.OrangeBrandPalette LightOnSurfaceVariant" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>LightOnSurfaceVariant</highlighted_element>
@@ -2148,8 +2148,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>123</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens ElevationLevel1" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens ElevationLevel1" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ElevationLevel1</highlighted_element>
@@ -2161,8 +2161,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>124</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens ElevationLevel2" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens ElevationLevel2" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ElevationLevel2</highlighted_element>
@@ -2174,8 +2174,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>157</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens VividEmerald" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens VividEmerald" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>VividEmerald</highlighted_element>
@@ -2187,8 +2187,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>158</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens RadiantAmber" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens RadiantAmber" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RadiantAmber</highlighted_element>
@@ -2200,8 +2200,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>159</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens CyberRose" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens CyberRose" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>CyberRose</highlighted_element>
@@ -2213,8 +2213,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>161</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens EmeraldGradient" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens EmeraldGradient" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>EmeraldGradient</highlighted_element>
@@ -2226,8 +2226,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>165</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens IndigoGradient" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens IndigoGradient" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>IndigoGradient</highlighted_element>
@@ -2239,8 +2239,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>169</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens RoseGradient" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens RoseGradient" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RoseGradient</highlighted_element>
@@ -2252,8 +2252,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>173</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens VioletGradient" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens VioletGradient" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>VioletGradient</highlighted_element>
@@ -2265,8 +2265,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>195</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens RadiusXSmall" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens RadiusXSmall" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RadiusXSmall</highlighted_element>
@@ -2278,8 +2278,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>196</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens RadiusSmall" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens RadiusSmall" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RadiusSmall</highlighted_element>
@@ -2291,8 +2291,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>197</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens RadiusMedium" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens RadiusMedium" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RadiusMedium</highlighted_element>
@@ -2304,8 +2304,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>198</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens RadiusLarge" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens RadiusLarge" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RadiusLarge</highlighted_element>
@@ -2317,8 +2317,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>199</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens RadiusXLarge" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens RadiusXLarge" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RadiusXLarge</highlighted_element>
@@ -2330,8 +2330,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>200</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens RadiusPill" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens RadiusPill" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>RadiusPill</highlighted_element>
@@ -2343,8 +2343,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>202</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens ShapeXSmall" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens ShapeXSmall" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ShapeXSmall</highlighted_element>
@@ -2356,8 +2356,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>203</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens ShapeSmall" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens ShapeSmall" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ShapeSmall</highlighted_element>
@@ -2369,8 +2369,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>204</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens ShapeMedium" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens ShapeMedium" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ShapeMedium</highlighted_element>
@@ -2382,8 +2382,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>205</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens ShapeLarge" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens ShapeLarge" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ShapeLarge</highlighted_element>
@@ -2395,8 +2395,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>206</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens ShapeXLarge" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens ShapeXLarge" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ShapeXLarge</highlighted_element>
@@ -2408,8 +2408,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>207</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens ShapePill" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens ShapePill" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ShapePill</highlighted_element>
@@ -2421,8 +2421,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>210</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens SpaceMicro" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens SpaceMicro" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SpaceMicro</highlighted_element>
@@ -2434,8 +2434,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>211</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens SpaceXS" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens SpaceXS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SpaceXS</highlighted_element>
@@ -2447,8 +2447,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>212</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens SpaceSmall" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens SpaceSmall" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SpaceSmall</highlighted_element>
@@ -2460,8 +2460,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>213</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens SpaceMedium" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens SpaceMedium" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SpaceMedium</highlighted_element>
@@ -2473,8 +2473,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>214</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens SpaceStandard" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens SpaceStandard" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SpaceStandard</highlighted_element>
@@ -2486,8 +2486,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>215</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens SpaceLarge" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens SpaceLarge" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SpaceLarge</highlighted_element>
@@ -2499,8 +2499,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>216</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens SpaceXL" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens SpaceXL" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SpaceXL</highlighted_element>
@@ -2512,8 +2512,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>217</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens SpaceSection" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens SpaceSection" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SpaceSection</highlighted_element>
@@ -2525,8 +2525,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>220</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens CardPaddingH" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens CardPaddingH" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>CardPaddingH</highlighted_element>
@@ -2538,8 +2538,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>221</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens CardPaddingV" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens CardPaddingV" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>CardPaddingV</highlighted_element>
@@ -2551,8 +2551,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>222</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens ScreenGutter" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens ScreenGutter" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>ScreenGutter</highlighted_element>
@@ -2564,8 +2564,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>225</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.ui.theme.Material3DesignTokens SpringFast" />
+  <package>com.jmd.helper.ui.theme</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.ui.theme.Material3DesignTokens SpringFast" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SpringFast</highlighted_element>
@@ -2577,7 +2577,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>345</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
+  <package>com.jmd.helper.ui.theme</package>
   <entry_point TYPE="field" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt DarkColorScheme" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
@@ -2590,7 +2590,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>391</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
+  <package>com.jmd.helper.ui.theme</package>
   <entry_point TYPE="field" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt LightColorScheme" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
@@ -2603,8 +2603,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
   <line>45</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.whatsapp.KeyguardUnlockEngine isUnlockPending" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.whatsapp.KeyguardUnlockEngine isUnlockPending" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>isUnlockPending</highlighted_element>
@@ -2616,8 +2616,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
   <line>46</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.whatsapp.KeyguardUnlockEngine isEnteringPinDigits" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.whatsapp.KeyguardUnlockEngine isEnteringPinDigits" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>isEnteringPinDigits</highlighted_element>
@@ -2629,8 +2629,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
   <line>47</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.whatsapp.KeyguardUnlockEngine unlockPin" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.whatsapp.KeyguardUnlockEngine unlockPin" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>unlockPin</highlighted_element>
@@ -2642,8 +2642,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
   <line>48</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.whatsapp.KeyguardUnlockEngine shouldRelockAfterSend" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.whatsapp.KeyguardUnlockEngine shouldRelockAfterSend" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>shouldRelockAfterSend</highlighted_element>
@@ -2655,8 +2655,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
   <line>49</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.whatsapp.KeyguardUnlockEngine isTestUnlockMode" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.whatsapp.KeyguardUnlockEngine isTestUnlockMode" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>isTestUnlockMode</highlighted_element>
@@ -2668,8 +2668,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
   <line>51</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.whatsapp.KeyguardUnlockEngine unlockAttemptCount" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.whatsapp.KeyguardUnlockEngine unlockAttemptCount" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>unlockAttemptCount</highlighted_element>
@@ -2681,8 +2681,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
   <line>52</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.whatsapp.KeyguardUnlockEngine unlockLoopAttempts" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.whatsapp.KeyguardUnlockEngine unlockLoopAttempts" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>unlockLoopAttempts</highlighted_element>
@@ -2694,8 +2694,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/VoiceNoteProtectionGuard.kt</file>
   <line>41</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="field" FQNAME="com.jmd.autotext.whatsapp.VoiceNoteProtectionGuard SEND_KEYWORDS" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="field" FQNAME="com.jmd.helper.whatsapp.VoiceNoteProtectionGuard SEND_KEYWORDS" />
   <problem_class id="PublicApiImplicitType" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Public API declaration with implicit return type</problem_class>
   <description>For API stability, it's recommended to specify explicitly public &amp; protected declaration types</description>
   <highlighted_element>SEND_KEYWORDS</highlighted_element>

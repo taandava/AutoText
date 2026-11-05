@@ -3,7 +3,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>76</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt" />
   <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved link in KDoc</problem_class>
   <description>Cannot resolve link 'PROTECTED'</description>
@@ -16,7 +16,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>344</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt" />
   <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved link in KDoc</problem_class>
   <description>Cannot resolve link 'PROTECTED'</description>
@@ -29,7 +29,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/BackupRepository.kt</file>
   <line>163</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
+  <package>com.jmd.helper.data.repo</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/BackupRepository.kt" />
   <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved link in KDoc</problem_class>
   <description>Cannot resolve link 'File'</description>
@@ -42,7 +42,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>150</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
+  <package>com.jmd.helper.scheduler</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
   <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved link in KDoc</problem_class>
   <description>Cannot resolve link 'context'</description>
@@ -55,7 +55,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>331</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
+  <package>com.jmd.helper.scheduler</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
   <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved link in KDoc</problem_class>
   <description>Cannot resolve link 'task'</description>
@@ -68,7 +68,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>332</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
+  <package>com.jmd.helper.scheduler</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
   <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved link in KDoc</problem_class>
   <description>Cannot resolve link 'fromTime'</description>
@@ -81,7 +81,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>616</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt" />
   <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved link in KDoc</problem_class>
   <description>Cannot resolve link 'initialChannel'</description>
@@ -94,7 +94,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>617</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt" />
   <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved link in KDoc</problem_class>
   <description>Cannot resolve link 'onDismiss'</description>
@@ -107,7 +107,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>618</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt" />
   <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved link in KDoc</problem_class>
   <description>Cannot resolve link 'onSave'</description>
@@ -120,7 +120,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>15</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
+  <package>com.jmd.helper.ui.theme</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt" />
   <problem_class id="KDocUnresolvedReference" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unresolved link in KDoc</problem_class>
   <description>Cannot resolve link 'GlassComponents'</description>

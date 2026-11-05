@@ -3,7 +3,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>55</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt" />
   <problem_class id="AndroidLintComposableNaming" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect naming for @Composable functions</problem_class>
   <hints />
@@ -17,7 +17,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>332</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt" />
   <problem_class id="AndroidLintComposableNaming" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect naming for @Composable functions</problem_class>
   <hints />
@@ -31,7 +31,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt</file>
   <line>77</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt" />
   <problem_class id="AndroidLintComposableNaming" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect naming for @Composable functions</problem_class>
   <hints />
@@ -45,7 +45,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt</file>
   <line>436</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt" />
   <problem_class id="AndroidLintComposableNaming" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect naming for @Composable functions</problem_class>
   <hints />
@@ -59,7 +59,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt</file>
   <line>580</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt" />
   <problem_class id="AndroidLintComposableNaming" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect naming for @Composable functions</problem_class>
   <hints />
@@ -73,7 +73,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt</file>
   <line>617</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt" />
   <problem_class id="AndroidLintComposableNaming" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect naming for @Composable functions</problem_class>
   <hints />
@@ -87,7 +87,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt</file>
   <line>691</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt" />
   <problem_class id="AndroidLintComposableNaming" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Incorrect naming for @Composable functions</problem_class>
   <hints />

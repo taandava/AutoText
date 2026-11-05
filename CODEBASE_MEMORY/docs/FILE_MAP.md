@@ -6,9 +6,9 @@
 app/src/main/
 ├── AndroidManifest.xml
 ├── assets/
-│   └── AUTOTEXT_FEATURES_AND_LOGIC.md
+│   └── HELPER_FEATURES_AND_LOGIC.md
 ├── java/com/jmd/autotext/
-│   ├── AutoTextApplication.kt
+│   ├── HelperApplication.kt
 │   ├── api/
 │   │   └── TaskFeatureApi.kt
 │   ├── compat/
@@ -59,7 +59,7 @@ app/src/main/
 │   │   └── WhatsAppSender.kt
 │   ├── receiver/
 │   │   ├── AccessibilityWatchdogReceiver.kt
-│   │   ├── AutoTextDeviceAdminReceiver.kt
+│   │   ├── HelperDeviceAdminReceiver.kt
 │   │   ├── BootReceiver.kt
 │   │   ├── PhoneCallReceiver.kt
 │   │   ├── SmsReceiver.kt
@@ -72,9 +72,9 @@ app/src/main/
 │   │   ├── DailyCampaignScheduler.kt
 │   │   └── DailyCampaignWorker.kt
 │   ├── service/
-│   │   ├── AutoTextA11yTileService.kt
-│   │   ├── AutoTextAccessibilityService.kt
-│   │   ├── AutoTextNotificationListenerService.kt
+│   │   ├── TaskTileService.kt
+│   │   ├── TaskAccessibilityService.kt
+│   │   ├── TaskNotificationListenerService.kt
 │   │   └── TaskForegroundService.kt
 │   ├── ui/
 │   │   ├── activity/
@@ -173,5 +173,5 @@ app/src/main/
 
 app/src/test/
 └── java/com/jmd/autotext/
-    └── AutoTextComprehensiveTest.kt
+    └── HelperComprehensiveTest.kt
 ```

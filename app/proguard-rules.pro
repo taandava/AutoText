@@ -6,8 +6,8 @@
 -renamesourcefileattribute SourceFile
 
 # Data Models and Domain Entities (Preserve fields for SQLite mapping and JSON serialization)
--keep class com.jmd.autotext.data.model.** { *; }
--keepclassmembers class com.jmd.autotext.data.model.** { *; }
+-keep class com.jmd.helper.data.model.** { *; }
+-keepclassmembers class com.jmd.helper.data.model.** { *; }
 
 # WorkManager Workers and Factory classes
 -keep class * extends androidx.work.Worker {
@@ -21,7 +21,7 @@
 }
 
 # Android System Services and Architecture Components
--keep class com.jmd.autotext.AutoTextApplication { *; }
+-keep class com.jmd.helper.HelperApplication { *; }
 -keep class * extends android.app.Activity { *; }
 -keep class * extends android.app.Service { *; }
 -keep class * extends android.content.BroadcastReceiver { *; }
@@ -30,5 +30,5 @@
 -keep class * extends android.app.admin.DeviceAdminReceiver { *; }
 
 # Database and SQLite Helper
--keep class com.jmd.autotext.data.db.** { *; }
--keepclassmembers class com.jmd.autotext.data.db.** { *; }
+-keep class com.jmd.helper.data.db.** { *; }
+-keepclassmembers class com.jmd.helper.data.db.** { *; }

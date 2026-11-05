@@ -1,100 +1,100 @@
 <problems>
 <problem>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.core" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.core" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.core' is cyclically dependent on 10 other packages</description>
+  <description>Package 'com.jmd.helper.core' is cyclically dependent on 10 other packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.data.repo" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.data.repo" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.data.repo' is cyclically dependent on 10 other packages</description>
+  <description>Package 'com.jmd.helper.data.repo' is cyclically dependent on 10 other packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.receiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.receiver" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.receiver' is cyclically dependent on 10 other packages</description>
+  <description>Package 'com.jmd.helper.receiver' is cyclically dependent on 10 other packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.engine" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.engine" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.engine' is cyclically dependent on 10 other packages</description>
+  <description>Package 'com.jmd.helper.engine' is cyclically dependent on 10 other packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.whatsapp" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.whatsapp" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.whatsapp' is cyclically dependent on 10 other packages</description>
+  <description>Package 'com.jmd.helper.whatsapp' is cyclically dependent on 10 other packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.service" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.service" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.service' is cyclically dependent on 10 other packages</description>
+  <description>Package 'com.jmd.helper.service' is cyclically dependent on 10 other packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.compat</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.compat" />
+  <package>com.jmd.helper.compat</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.compat" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.compat' is cyclically dependent on 10 other packages</description>
+  <description>Package 'com.jmd.helper.compat' is cyclically dependent on 10 other packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.ui.components</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.components" />
+  <package>com.jmd.helper.ui.components</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.ui.components" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.ui.components' is cyclically dependent on package 'com.jmd.autotext.ui.screen'</description>
+  <description>Package 'com.jmd.helper.ui.components' is cyclically dependent on package 'com.jmd.helper.ui.screen'</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext" />
+  <package>com.jmd.helper</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext' is cyclically dependent on 10 other packages</description>
+  <description>Package 'com.jmd.helper' is cyclically dependent on 10 other packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.activity" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.ui.activity" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.ui.activity' is cyclically dependent on 10 other packages</description>
+  <description>Package 'com.jmd.helper.ui.activity' is cyclically dependent on 10 other packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.scheduler" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.scheduler" />
   <problem_class id="CyclicPackageDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Cyclic package dependency</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.scheduler' is cyclically dependent on 10 other packages</description>
+  <description>Package 'com.jmd.helper.scheduler' is cyclically dependent on 10 other packages</description>
   <highlighted_element />
   <language />
 </problem>

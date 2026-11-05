@@ -1,6 +1,6 @@
 # AutoText Master Engineering & Codebase Architecture Manual
 
-> **The Definitive, Authoritative, Unified Architecture, Implementation, and Hardware Verification Record for AutoText (`com.jmd.autotext`).**  
+> **The Definitive, Authoritative, Unified Architecture, Implementation, and Hardware Verification Record for AutoText (`com.jmd.helper`).**  
 > *Targeting Android 8.1 (API 27) through Android 16+ (API 37) • Zero-Warning & Zero-Lint Certified • 100% On-Device Sovereignty*
 
 ---
@@ -25,18 +25,18 @@
 # 1. Project Mission & Executive Overview
 
 ## 1.1 Core Mission
-**AutoText** (`com.jmd.autotext`) is a high-reliability, 100% on-device Android communication and task scheduling application designed for unattended multi-channel message dispatch, scheduled cellular calling, and intelligent auto-reply rules. 
+**AutoText** (`com.jmd.helper`) is a high-reliability, 100% on-device Android communication and task scheduling application designed for unattended multi-channel message dispatch, scheduled cellular calling, and intelligent auto-reply rules. 
 
 Built with zero third-party cloud dependencies, zero external analytics, and zero network tracking (`android.permission.INTERNET` is completely omitted), AutoText guarantees enterprise data sovereignty and absolute user privacy while delivering commercial-grade dispatch reliability.
 
 ## 1.2 Technical Profile
-- **Package Identifier:** `com.jmd.autotext`
+- **Package Identifier:** `com.jmd.helper`
 - **Application Version:** `1.0.0` (Version Code `1`)
 - **Programming Language:** 100% Idiomatic Kotlin (0% Java)
 - **UI Architecture:** Jetpack Compose with Material 3 Expressive & High-Density Glassmorphism
 - **Compiler Compliance:** Kotlin 2.0.21 / AGP 9.4.1 / Gradle 9.8.2 — **0 Compiler Warnings, 0 Errors**
 - **Static Analysis:** Android Lint (`lintDebug`) — **0 Errors, 0 Actionable Code Warnings**
-- **Unit Test Suite:** `AutoTextComprehensiveTest` — **107 of 107 Tests Passing (100%)**
+- **Unit Test Suite:** `HelperComprehensiveTest` — **107 of 107 Tests Passing (100%)**
 - **Minimum SDK:** API 27 (Android 8.1 Oreo MR1)
 - **Compile & Target SDK:** API 37 (Android 16+)
 - **Verified Hardware:** 
@@ -102,9 +102,9 @@ Built with zero third-party cloud dependencies, zero external analytics, and zer
 app/src/main/
 ├── AndroidManifest.xml
 ├── assets/
-│   └── AUTOTEXT_FEATURES_AND_LOGIC.md     # Single unified in-app technical blueprint
+│   └── HELPER_FEATURES_AND_LOGIC.md     # Single unified in-app technical blueprint
 ├── java/com/jmd/autotext/
-│   ├── AutoTextApplication.kt             # Application root, crash handler & startup recovery
+│   ├── HelperApplication.kt             # Application root, crash handler & startup recovery
 │   ├── api/
 │   │   └── TaskFeatureApi.kt        # Programmatic endpoints for all app operations
 │   ├── compat/
@@ -155,7 +155,7 @@ app/src/main/
 │   │   └── WhatsAppSender.kt    # WhatsApp intent launching & accessibility bridge
 │   ├── receiver/
 │   │   ├── AccessibilityWatchdogReceiver.kt # 15-minute exact watchdog heartbeat tick
-│   │   ├── AutoTextDeviceAdminReceiver.kt # Hardware screen locking bridge (GLOBAL_ACTION_LOCK_SCREEN)
+│   │   ├── HelperDeviceAdminReceiver.kt # Hardware screen locking bridge (GLOBAL_ACTION_LOCK_SCREEN)
 │   │   ├── BootReceiver.kt                # Post-boot alarm rescheduling & Direct Boot unlock
 │   │   ├── PhoneCallReceiver.kt           # Telephony call state listener with duration check
 │   │   ├── SmsReceiver.kt                 # Incoming SMS auto-reply & forward receiver
@@ -169,9 +169,9 @@ app/src/main/
 │   │   ├── DailyCampaignScheduler.kt      # Daily outreach cycle coordinator
 │   │   └── DailyCampaignWorker.kt         # WorkManager worker with cooperative cancellation
 │   ├── service/
-│   │   ├── AutoTextA11yTileService.kt     # Quick Settings tile for 1-tap pause/resume
-│   │   ├── AutoTextAccessibilityService.kt# Touch task dispatch, Power button lock & call hangup
-│   │   ├── AutoTextNotificationListenerService.kt # Notification auto-reply listener
+│   │   ├── TaskTileService.kt     # Quick Settings tile for 1-tap pause/resume
+│   │   ├── TaskAccessibilityService.kt# Touch task dispatch, Power button lock & call hangup
+│   │   ├── TaskNotificationListenerService.kt # Notification auto-reply listener
 │   │   └── TaskForegroundService.kt       # Foreground service lifecycle coordinator
 │   ├── ui/
 │   │   ├── activity/
@@ -312,7 +312,7 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 | `PermissionManager.kt` | Permissions specification & checks | Runtime permissions (Call Log, Media, Answer Phone Calls) verified | **PASS** |
 | `AccessibilityHealthManager.kt` | Auto-heal & OEM autostart | Vivo/iQOO PurviewTab/ExcessivePower intents wired | **PASS** |
 | `SequentialTaskEngine.kt` | Serial task executor & pipeline | Stranded task recovery, exact duration & 250ms polling verified | **PASS** |
-| `AutoTextDeviceAdminReceiver.kt` | Screen lock bridge | `lockNow()` delegates strictly to `GLOBAL_ACTION_LOCK_SCREEN` | **PASS** |
+| `HelperDeviceAdminReceiver.kt` | Screen lock bridge | `lockNow()` delegates strictly to `GLOBAL_ACTION_LOCK_SCREEN` | **PASS** |
 | `ProtectedApplicationManager.kt` | Financial isolation engine | 60+ banking packages cataloged; default-deny active | **PASS** |
 | `TaskSafetyManager.kt` | Safety circuit breaker & stop | Null-safe emergency stop & touch yields verified | **PASS** |
 | `KeyguardUnlockEngine.kt` | Lockscreen PIN gesture unlock | Coordinate-based stroke taps verified | **PASS** |
@@ -353,14 +353,14 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 | **Phone Calls** | Direct Call Execution | `SequentialTaskEngine.executeCallTask()` | **PASS** | TelecomManager.placeCall with SIM selection |
 | | Multi-Brand OEM Dual-SIM | `OemBrandHelper.kt` | **PASS** | Universal cross-vendor SIM selection extras (Samsung, Vivo, Oppo, Realme, Xiaomi, Motorola, Nokia, Transsion) |
 | | Exact Call Duration Enforcement | `SequentialTaskEngine.waitForCallDurationWithEarlyCheck()` | **PASS** | Sliced polling adhering strictly to form duration condition (including dial-time inclusion mode) |
-| | Scheduled Call Disconnection | `AutoTextAccessibilityService.requestEndPhoneCall()` | **PASS** | Multi-tier: TelecomManager.endCall, showInCallScreen foregrounding + 20+ multi-lingual OEM disconnect IDs, KEYCODE_HEADSETHOOK |
+| | Scheduled Call Disconnection | `TaskAccessibilityService.requestEndPhoneCall()` | **PASS** | Multi-tier: TelecomManager.endCall, showInCallScreen foregrounding + 20+ multi-lingual OEM disconnect IDs, KEYCODE_HEADSETHOOK |
 | | Inter-call Delay Pacing | `SequentialTaskEngine.executeCallTask()` | **PASS** | Enforces configured seconds between calls |
 | | Sequence Ordering | `SequentialTaskEngine.executeCallTask()` | **PASS** | GIVEN vs RANDOM ordering |
 | **WhatsApp** | Personal & Business WA | `WhatsAppPackageHelper.kt` | **PASS** | Identifies `com.whatsapp` and `com.whatsapp.w4b` |
 | | Direct Chat Task Dispatch | `WhatsAppDirectSendEngine.kt` | **PASS** | Semantic text entry verification and designated Send button resolution |
 | | Voice Note Button Collision Shield | `VoiceNoteProtectionGuard.kt` | **PASS** | Prohibits coordinate clicking on microphone; enforces active text content before sending |
 | | Outbound VoIP Calls | `WhatsAppCallEngine.kt` | **PASS** | Toolbar icon vs dropdown menu disambiguation ("Voice call" vs "Video call") |
-| | VoIP Duration Auto-Hangup | `WhatsAppCallEngine.kt`, `AutoTextAccessibilityService.requestEndWhatsAppCall()` | **PASS** | Multi-window hierarchy inspection for WhatsApp in-call disconnect button |
+| | VoIP Duration Auto-Hangup | `WhatsAppCallEngine.kt`, `TaskAccessibilityService.requestEndWhatsAppCall()` | **PASS** | Multi-window hierarchy inspection for WhatsApp in-call disconnect button |
 | | Status Story Posting | `WhatsAppStatusEngine.kt` | **PASS** | Posts to Updates/Status tab with quick image selection and text captions |
 | | Group Message Search | `WhatsAppGroupEngine.kt` | **PASS** | Searches group title in chats tab |
 | **Banking Protection** | Default-Deny UI Policy | `ProtectedApplicationManager.kt` | **PASS** | Only authorized targets receive UI taps |
@@ -370,10 +370,10 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 | | Google Pay Zero Block | `SettingsBankingShieldCard.kt`, `accessibility_service_config.xml` | **PASS** | Scoped packageNames, 1-tap pause tile |
 | **Screen Auto-Unlock & Lock** | Screen Wake & Keyguard Dismiss | `TaskLauncherActivity.kt` | **PASS** | PowerManager wake lock & KeyguardManager |
 | | Physical Tap PIN Unlock | `KeyguardUnlockEngine.kt` | **PASS** | Enters PIN digits via gesture coordinates |
-| | Biometric-Safe Hardware Auto-Lock | `AutoTextAccessibilityService.lockScreenNow()`, `AutoTextDeviceAdminReceiver.kt` | **PASS** | Emulates physical Power button press (`GLOBAL_ACTION_LOCK_SCREEN`); preserves biometric fingerprint and face wake |
+| | Biometric-Safe Hardware Auto-Lock | `TaskAccessibilityService.lockScreenNow()`, `HelperDeviceAdminReceiver.kt` | **PASS** | Emulates physical Power button press (`GLOBAL_ACTION_LOCK_SCREEN`); preserves biometric fingerprint and face wake |
 | **Safety & Policy** | Google Play Terminology Sanitization | UI screens, string resources, notification channels | **PASS** | Scrubbed aggressive task dispatch terminology; standardized on "Task" and two-word combinations |
 | | Global Emergency Stop | `TaskSafetyManager.kt` | **PASS** | Instant emergency stop via broadcast or UI |
-| | Human Touch Detection | `AutoTextAccessibilityService.kt` | **PASS** | Yields to human user, auto-postpones task |
+| | Human Touch Detection | `TaskAccessibilityService.kt` | **PASS** | Yields to human user, auto-postpones task |
 | | Portrait Orientation Guard | `AccessibilityHealthManager.enforceAutoRotateInvariant` | **PASS** | Restores portrait lock (ACCELEROMETER_ROTATION=0) |
 | **Programmatic API Layer** | Unified Feature Endpoints | `TaskFeatureApi.kt` | **PASS** | Typed, suspendable, validated endpoints for WhatsApp messages/status/calls, SMS, phone calls, reminders, call simulation, sound modes |
 
@@ -387,7 +387,7 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 
 ### Phase 14: Comprehensive Device Testing, Stranded Task Recovery & Production Readiness
 - Isolated defect where tasks interrupted mid-flight remained stranded in `TaskStatus.RUNNING`.
-- Implemented `recoverInterruptedRunningTasks()` across `TaskRepository`, `AppRepository`, `AutoTextApplication`, `AlarmScheduler`, and `SequentialTaskEngine`.
+- Implemented `recoverInterruptedRunningTasks()` across `TaskRepository`, `AppRepository`, `HelperApplication`, `AlarmScheduler`, and `SequentialTaskEngine`.
 - Validated on connected Samsung Galaxy A04 (`SM-A045F`, Android 14 API 34).
 
 ### Phase 15: Extensive Multi-Axis Codebase & Runtime Audit
@@ -419,37 +419,37 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 ### 11.2 High-Priority ADB Control Commands
 ```bash
 # 1. Grant all necessary runtime permissions and appops
-adb shell pm grant com.jmd.autotext android.permission.SEND_SMS
-adb shell pm grant com.jmd.autotext android.permission.READ_SMS
-adb shell pm grant com.jmd.autotext android.permission.RECEIVE_SMS
-adb shell pm grant com.jmd.autotext android.permission.CALL_PHONE
-adb shell pm grant com.jmd.autotext android.permission.ANSWER_PHONE_CALLS
-adb shell pm grant com.jmd.autotext android.permission.READ_PHONE_STATE
-adb shell pm grant com.jmd.autotext android.permission.READ_CALL_LOG
-adb shell pm grant com.jmd.autotext android.permission.READ_CONTACTS
-adb shell pm grant com.jmd.autotext android.permission.POST_NOTIFICATIONS
-adb shell pm grant com.jmd.autotext android.permission.READ_MEDIA_IMAGES
-adb shell pm grant com.jmd.autotext android.permission.READ_MEDIA_VIDEO
-adb shell pm grant com.jmd.autotext android.permission.WRITE_SECURE_SETTINGS
-adb shell appops set com.jmd.autotext SYSTEM_ALERT_WINDOW allow
-adb shell appops set com.jmd.autotext MANAGE_EXTERNAL_STORAGE allow
-adb shell dumpsys deviceidle whitelist +com.jmd.autotext
+adb shell pm grant com.jmd.helper android.permission.SEND_SMS
+adb shell pm grant com.jmd.helper android.permission.READ_SMS
+adb shell pm grant com.jmd.helper android.permission.RECEIVE_SMS
+adb shell pm grant com.jmd.helper android.permission.CALL_PHONE
+adb shell pm grant com.jmd.helper android.permission.ANSWER_PHONE_CALLS
+adb shell pm grant com.jmd.helper android.permission.READ_PHONE_STATE
+adb shell pm grant com.jmd.helper android.permission.READ_CALL_LOG
+adb shell pm grant com.jmd.helper android.permission.READ_CONTACTS
+adb shell pm grant com.jmd.helper android.permission.POST_NOTIFICATIONS
+adb shell pm grant com.jmd.helper android.permission.READ_MEDIA_IMAGES
+adb shell pm grant com.jmd.helper android.permission.READ_MEDIA_VIDEO
+adb shell pm grant com.jmd.helper android.permission.WRITE_SECURE_SETTINGS
+adb shell appops set com.jmd.helper SYSTEM_ALERT_WINDOW allow
+adb shell appops set com.jmd.helper MANAGE_EXTERNAL_STORAGE allow
+adb shell dumpsys deviceidle whitelist +com.jmd.helper
 
 # 2. Trigger instant emergency stop
-adb shell am broadcast -a com.jmd.autotext.ACTION_EMERGENCY_STOP -n com.jmd.autotext/.receiver.TaskAlarmReceiver
+adb shell am broadcast -a com.jmd.helper.ACTION_EMERGENCY_STOP -n com.jmd.helper/.receiver.TaskAlarmReceiver
 
 # 3. Reset emergency stop and restore master scheduler
-adb shell am broadcast -a com.jmd.autotext.ACTION_RESET_EMERGENCY_STOP -n com.jmd.autotext/.receiver.TaskAlarmReceiver
+adb shell am broadcast -a com.jmd.helper.ACTION_RESET_EMERGENCY_STOP -n com.jmd.helper/.receiver.TaskAlarmReceiver
 
 # 4. Dump system execution logs to file
-adb shell am broadcast -a com.jmd.autotext.ACTION_DUMP_LOGS -n com.jmd.autotext/.receiver.TaskAlarmReceiver
-adb pull /sdcard/Android/data/com.jmd.autotext/files/autotext_execution_dump.txt autotext_dump.txt
+adb shell am broadcast -a com.jmd.helper.ACTION_DUMP_LOGS -n com.jmd.helper/.receiver.TaskAlarmReceiver
+adb pull /sdcard/Android/data/com.jmd.helper/files/autotext_execution_dump.txt autotext_dump.txt
 
 # 5. Populate and arm all 12 task types for verification
-adb shell am broadcast -a com.jmd.autotext.ACTION_SETUP_ALL_TASKS -n com.jmd.autotext/.receiver.TaskAlarmReceiver
+adb shell am broadcast -a com.jmd.helper.ACTION_SETUP_ALL_TASKS -n com.jmd.helper/.receiver.TaskAlarmReceiver
 
 # 6. Test Screen Auto-Unlock gesture sequence
-adb shell am broadcast -a com.jmd.autotext.ACTION_TEST_AUTO_UNLOCK -n com.jmd.autotext/.receiver.TaskAlarmReceiver
+adb shell am broadcast -a com.jmd.helper.ACTION_TEST_AUTO_UNLOCK -n com.jmd.helper/.receiver.TaskAlarmReceiver
 ```
 
 ---
@@ -457,7 +457,7 @@ adb shell am broadcast -a com.jmd.autotext.ACTION_TEST_AUTO_UNLOCK -n com.jmd.au
 # 12. Production Build, ProGuard Hardening & Forward Maintenance
 
 ### 12.1 ProGuard & R8 Preservation Rules
-Production rules in `app/proguard-rules.pro` preserve line number tables, all data models in `com.jmd.autotext.data.model.**`, WorkManager workers, Android system architecture components, coroutines, and Compose runtime internals.
+Production rules in `app/proguard-rules.pro` preserve line number tables, all data models in `com.jmd.helper.data.model.**`, WorkManager workers, Android system architecture components, coroutines, and Compose runtime internals.
 
 ### 12.2 Build Output & Release Signature
 - **Target APK Path:** `D:\GPU-D\apps\Automation\app-release.apk`
@@ -481,6 +481,6 @@ Production rules in `app/proguard-rules.pro` preserve line number tables, all da
 | **Axis 2: Subsystem Logic & Timeouts** | `KeyguardUnlockEngine`, `WhatsAppCallEngine`, `SequentialTaskEngine` | Two-finger bouncer swipe gesture; coordinate ratio fallbacks; call duration regex `^(\d{1,2}:)?\d{1,2}:\d{2}$`; 250ms sliced polling timeout bounds | **PASS** |
 | **Axis 3: Receiver Intent Security** | `SmsReceiver`, `PhoneCallReceiver`, `TaskAlarmReceiver`, `BootReceiver` | Safe intent extraction inside try-catch; corrupted carrier extras tolerated; missing task IDs degraded cleanly without crash loops | **PASS** |
 | **Axis 4: Database Consistency** | `DatabaseHelper`, `TaskRepository`, `DailyCampaignRepository` | 15 relational tables; Write-Ahead Logging (WAL); foreign keys enabled; scheduled migration v1->v8; zero stranded `RUNNING` tasks | **PASS** |
-| **Axis 5: Biometric Screen Locking** | `AutoTextDeviceAdminReceiver`, `AutoTextAccessibilityService` | `GLOBAL_ACTION_LOCK_SCREEN` used exclusively; zero biometric lockouts; fingerprint and face unlock preserved | **PASS** |
+| **Axis 5: Biometric Screen Locking** | `HelperDeviceAdminReceiver`, `TaskAccessibilityService` | `GLOBAL_ACTION_LOCK_SCREEN` used exclusively; zero biometric lockouts; fingerprint and face unlock preserved | **PASS** |
 | **Axis 6: Multi-Brand OEM Compatibility** | `OemBrandHelper`, `SequentialTaskEngine` | Universal dual-SIM intent extras and in-call disconnect node IDs for Samsung, Vivo, Oppo, Realme, Xiaomi, Motorola, Nokia | **PASS** |
 | **Axis 7: Verification & Hardware Telemetry** | Samsung Galaxy A04 (Android 14) & Vivo / iQOO I2401 (Android 16) | 107/107 unit tests passed (100%); release APK signed & stream-installed; zero ANRs; zero uncaught exceptions in device logcat | **PASS** |

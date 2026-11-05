@@ -1,6 +1,6 @@
 # AutoText Material 3 Expressive Design System & UI Specification
 
-> **The Authoritative Design System, Component Inventory & Ergonomic Specification for AutoText (`com.jmd.autotext`).**  
+> **The Authoritative Design System, Component Inventory & Ergonomic Specification for AutoText (`com.jmd.helper`).**  
 > *Engineered for High-Density Android Productivity, Zero-Popup Fluidity, and Expressive Glassmorphism.*
 
 ---

@@ -3,7 +3,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/GlassComponents.kt</file>
   <line>741</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.components</package>
+  <package>com.jmd.helper.ui.components</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/GlassComponents.kt" />
   <problem_class id="AndroidLintComposableLambdaParameterNaming" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Primary composable lambda parameter not named content</problem_class>
   <hints />

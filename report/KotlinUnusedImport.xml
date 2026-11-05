@@ -3,7 +3,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
   <line>26</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.api</package>
+  <package>com.jmd.helper.api</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -16,7 +16,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
   <line>30</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.api</package>
+  <package>com.jmd.helper.api</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -29,11 +29,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
   <line>35</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.api</package>
+  <package>com.jmd.helper.api</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.core.AccessibilityHealthManager</highlighted_element>
+  <highlighted_element>import com.jmd.helper.core.AccessibilityHealthManager</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>55</length>
@@ -42,11 +42,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
   <line>37</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.api</package>
+  <package>com.jmd.helper.api</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.core.TaskSafetyManager</highlighted_element>
+  <highlighted_element>import com.jmd.helper.core.TaskSafetyManager</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>46</length>
@@ -55,7 +55,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
   <line>12</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -68,7 +68,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
   <line>14</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -81,7 +81,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
   <line>17</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -94,7 +94,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>13</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -107,11 +107,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>16</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.data.model.GlobalPrivacySettings</highlighted_element>
+  <highlighted_element>import com.jmd.helper.data.model.GlobalPrivacySettings</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>56</length>
@@ -120,11 +120,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
   <line>16</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.data.model.ScheduledTask</highlighted_element>
+  <highlighted_element>import com.jmd.helper.data.model.ScheduledTask</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>48</length>
@@ -133,7 +133,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>21</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -146,7 +146,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
   <line>21</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.prefs</package>
+  <package>com.jmd.helper.data.prefs</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -159,7 +159,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>20</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
+  <package>com.jmd.helper.engine</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -172,7 +172,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>27</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
+  <package>com.jmd.helper.engine</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -185,7 +185,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>29</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
+  <package>com.jmd.helper.engine</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -198,7 +198,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>31</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
+  <package>com.jmd.helper.engine</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -211,7 +211,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>32</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
+  <package>com.jmd.helper.engine</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -224,7 +224,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>33</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
+  <package>com.jmd.helper.engine</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -237,11 +237,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>52</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
+  <package>com.jmd.helper.engine</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver</highlighted_element>
+  <highlighted_element>import com.jmd.helper.receiver.HelperDeviceAdminReceiver</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>60</length>
@@ -250,7 +250,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchScheduler.kt</file>
   <line>32</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
+  <package>com.jmd.helper.scheduler</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchScheduler.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -263,7 +263,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchScheduler.kt</file>
   <line>34</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
+  <package>com.jmd.helper.scheduler</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchScheduler.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -273,11 +273,11 @@
   <length>23</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>40</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
   <highlighted_element>import android.widget.Toast</highlighted_element>
@@ -286,14 +286,14 @@
   <length>27</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>63</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver</highlighted_element>
+  <highlighted_element>import com.jmd.helper.receiver.HelperDeviceAdminReceiver</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>60</length>
@@ -302,7 +302,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/GlassComponents.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.components</package>
+  <package>com.jmd.helper.ui.components</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/GlassComponents.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -315,7 +315,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/GlassComponents.kt</file>
   <line>39</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.components</package>
+  <package>com.jmd.helper.ui.components</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/GlassComponents.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -328,7 +328,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/DocumentationScreen.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/DocumentationScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -341,7 +341,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -354,11 +354,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>44</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.theme.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.theme.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>34</length>
@@ -367,7 +367,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyCards.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -380,7 +380,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyCards.kt</file>
   <line>6</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -393,7 +393,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyCards.kt</file>
   <line>7</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -406,11 +406,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyCards.kt</file>
   <line>19</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.data.prefs.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.data.prefs.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>36</length>
@@ -419,11 +419,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyCards.kt</file>
   <line>20</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.data.repo.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.data.repo.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>35</length>
@@ -432,7 +432,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -445,7 +445,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>6</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -458,7 +458,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>7</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -471,7 +471,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>9</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -484,7 +484,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>10</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -497,7 +497,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>20</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -510,7 +510,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -523,7 +523,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>23</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -536,7 +536,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>26</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -549,7 +549,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>27</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -562,11 +562,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>28</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.core.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.core.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>30</length>
@@ -575,11 +575,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>30</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.data.repo.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.data.repo.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>35</length>
@@ -588,11 +588,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>33</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.screen.compose.TemplatePickerSheet</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.screen.compose.TemplatePickerSheet</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>61</length>
@@ -601,7 +601,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt</file>
   <line>8</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -614,7 +614,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt</file>
   <line>9</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -627,7 +627,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt</file>
   <line>11</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -640,7 +640,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt</file>
   <line>17</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -653,7 +653,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt</file>
   <line>21</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -666,7 +666,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -679,11 +679,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt</file>
   <line>27</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.core.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.core.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>30</length>
@@ -692,11 +692,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt</file>
   <line>32</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
+  <package>com.jmd.helper.ui.screen.autoreply</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.model.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.model.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>34</length>
@@ -705,7 +705,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -718,11 +718,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>28</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.data.prefs.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.data.prefs.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>36</length>
@@ -731,11 +731,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>29</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.data.repo.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.data.repo.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>35</length>
@@ -744,11 +744,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>30</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.engine.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.engine.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>32</length>
@@ -757,7 +757,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>33</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -770,7 +770,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>34</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -783,7 +783,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -796,7 +796,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt</file>
   <line>7</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -809,7 +809,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt</file>
   <line>21</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -822,7 +822,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -835,7 +835,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt</file>
   <line>25</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -848,7 +848,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt</file>
   <line>26</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -861,11 +861,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt</file>
   <line>29</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.data.repo.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.data.repo.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>35</length>
@@ -874,7 +874,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchListItems.kt</file>
   <line>5</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchListItems.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -887,7 +887,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchListItems.kt</file>
   <line>6</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchListItems.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -900,7 +900,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchListItems.kt</file>
   <line>14</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchListItems.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -913,7 +913,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -926,7 +926,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt</file>
   <line>5</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -939,7 +939,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt</file>
   <line>6</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -952,7 +952,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt</file>
   <line>11</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -965,7 +965,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt</file>
   <line>25</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -978,7 +978,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt</file>
   <line>26</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -991,7 +991,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1004,7 +1004,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt</file>
   <line>6</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1017,7 +1017,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt</file>
   <line>7</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1030,7 +1030,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt</file>
   <line>16</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1043,7 +1043,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt</file>
   <line>17</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1056,7 +1056,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt</file>
   <line>18</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1069,7 +1069,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt</file>
   <line>19</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1082,11 +1082,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt</file>
   <line>24</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeCallSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.core.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.core.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>30</length>
@@ -1095,7 +1095,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeGroupSection.kt</file>
   <line>8</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeGroupSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1108,7 +1108,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeGroupSection.kt</file>
   <line>9</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeGroupSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1121,7 +1121,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeHeaderFooter.kt</file>
   <line>4</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeHeaderFooter.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1134,7 +1134,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeHeaderFooter.kt</file>
   <line>5</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeHeaderFooter.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1147,7 +1147,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeHeaderFooter.kt</file>
   <line>6</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeHeaderFooter.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1160,11 +1160,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeHeaderFooter.kt</file>
   <line>16</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeHeaderFooter.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.theme.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.theme.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>34</length>
@@ -1173,7 +1173,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1186,7 +1186,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt</file>
   <line>6</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1199,7 +1199,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt</file>
   <line>7</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1212,7 +1212,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt</file>
   <line>17</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1225,7 +1225,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt</file>
   <line>18</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1238,7 +1238,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1251,7 +1251,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt</file>
   <line>16</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1264,7 +1264,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt</file>
   <line>17</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1277,7 +1277,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt</file>
   <line>26</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1290,7 +1290,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt</file>
   <line>32</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1303,7 +1303,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt</file>
   <line>33</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1316,7 +1316,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeStatusSection.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeStatusSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1329,7 +1329,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeStatusSection.kt</file>
   <line>6</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeStatusSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1342,7 +1342,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeStatusSection.kt</file>
   <line>17</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeStatusSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1355,7 +1355,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1368,7 +1368,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>13</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1381,7 +1381,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>14</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1394,7 +1394,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>15</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1407,7 +1407,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>18</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1420,7 +1420,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>21</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1433,7 +1433,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>23</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1446,7 +1446,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>24</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1459,7 +1459,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>26</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1472,7 +1472,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>27</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1485,7 +1485,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>28</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1498,7 +1498,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>30</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1511,7 +1511,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>32</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1524,7 +1524,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>35</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1537,11 +1537,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>42</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.engine.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.engine.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>32</length>
@@ -1550,11 +1550,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>48</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.screen.sequence.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.screen.sequence.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>44</length>
@@ -1563,11 +1563,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>50</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
+  <package>com.jmd.helper.ui.screen.compose</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.whatsapp.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.whatsapp.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>34</length>
@@ -1576,11 +1576,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/contacts/ContactCards.kt</file>
   <line>26</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.contacts</package>
+  <package>com.jmd.helper.ui.screen.contacts</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/contacts/ContactCards.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.theme.AppDesignTokens</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.theme.AppDesignTokens</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>48</length>
@@ -1589,7 +1589,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt</file>
   <line>19</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.privacy</package>
+  <package>com.jmd.helper.ui.screen.privacy</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1602,7 +1602,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt</file>
   <line>20</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.privacy</package>
+  <package>com.jmd.helper.ui.screen.privacy</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1615,7 +1615,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt</file>
   <line>37</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.privacy</package>
+  <package>com.jmd.helper.ui.screen.privacy</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1628,11 +1628,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt</file>
   <line>50</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.privacy</package>
+  <package>com.jmd.helper.ui.screen.privacy</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.theme.AppDesignTokens</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.theme.AppDesignTokens</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>48</length>
@@ -1641,7 +1641,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceCard.kt</file>
   <line>7</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
+  <package>com.jmd.helper.ui.screen.sequence</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceCard.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1654,11 +1654,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceCard.kt</file>
   <line>20</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
+  <package>com.jmd.helper.ui.screen.sequence</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceCard.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.theme.AppDesignTokens</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.theme.AppDesignTokens</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>48</length>
@@ -1667,7 +1667,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>3</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
+  <package>com.jmd.helper.ui.screen.sequence</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1680,7 +1680,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>15</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
+  <package>com.jmd.helper.ui.screen.sequence</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1693,7 +1693,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>30</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
+  <package>com.jmd.helper.ui.screen.sequence</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1706,7 +1706,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>35</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
+  <package>com.jmd.helper.ui.screen.sequence</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1719,11 +1719,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>41</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
+  <package>com.jmd.helper.ui.screen.sequence</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.scheduler.*</highlighted_element>
+  <highlighted_element>import com.jmd.helper.scheduler.*</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>35</length>
@@ -1732,11 +1732,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsAutoUnlockCard.kt</file>
   <line>20</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.settings</package>
+  <package>com.jmd.helper.ui.screen.settings</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsAutoUnlockCard.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.theme.AppDesignTokens</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.theme.AppDesignTokens</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>48</length>
@@ -1745,11 +1745,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBackupRestoreCard.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.settings</package>
+  <package>com.jmd.helper.ui.screen.settings</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBackupRestoreCard.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.theme.AppDesignTokens</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.theme.AppDesignTokens</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>48</length>
@@ -1758,11 +1758,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsDocumentationCard.kt</file>
   <line>16</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.settings</package>
+  <package>com.jmd.helper.ui.screen.settings</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsDocumentationCard.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.theme.AppDesignTokens</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.theme.AppDesignTokens</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>48</length>
@@ -1771,11 +1771,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsPreferencesSection.kt</file>
   <line>20</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.settings</package>
+  <package>com.jmd.helper.ui.screen.settings</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsPreferencesSection.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.theme.AppDesignTokens</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.theme.AppDesignTokens</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>48</length>
@@ -1784,7 +1784,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SystemLogViewerScreen.kt</file>
   <line>23</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.settings</package>
+  <package>com.jmd.helper.ui.screen.settings</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SystemLogViewerScreen.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
@@ -1797,11 +1797,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/templates/TemplateCard.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.templates</package>
+  <package>com.jmd.helper.ui.screen.templates</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/templates/TemplateCard.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>
-  <highlighted_element>import com.jmd.autotext.ui.theme.AppDesignTokens</highlighted_element>
+  <highlighted_element>import com.jmd.helper.ui.theme.AppDesignTokens</highlighted_element>
   <language>kotlin</language>
   <offset>0</offset>
   <length>48</length>
@@ -1810,7 +1810,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt</file>
   <line>33</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.theme</package>
+  <package>com.jmd.helper.ui.theme</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/theme/Theme.kt" />
   <problem_class id="KotlinUnusedImport" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import directive</problem_class>
   <description>Unused import directive</description>

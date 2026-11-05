@@ -10,8 +10,8 @@
 - **Decision:** 
   1. Accessibility configuration is strictly scoped with `android:packageNames` in `accessibility_service_config.xml` to WhatsApp, Phone/Dialer, and SystemUI.
   2. With `WRITE_SECURE_SETTINGS` granted via ADB or root, AutoText dynamically registers its service only when an scheduled task fires, and immediately unbinds/detaches upon completion (`releaseAccessibilityAfterTask`).
-  3. When an excluded or banking app is foregrounded, `AutoTextAccessibilityService` immediately calls `disableSelf()`.
-  4. Quick Settings Tile (`AutoTextA11yTileService`) provides an instant 1-tap manual pause/resume option.
+  3. When an excluded or banking app is foregrounded, `TaskAccessibilityService` immediately calls `disableSelf()`.
+  4. Quick Settings Tile (`TaskTileService`) provides an instant 1-tap manual pause/resume option.
 - **Consequence:** Banking apps never detect AutoText running in the background.
 
 ## ADR-003: Dedicated Protected Application Manager (Default-Deny Policy)

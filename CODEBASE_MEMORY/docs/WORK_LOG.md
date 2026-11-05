@@ -18,7 +18,7 @@
   - Tapped `➕` FAB at `(643, 1439)`: verified `Create Template` form with all 15 dynamic variable insertion chips (`{name}`, `{first_name}`, `{phone}`, `{time}`, `{date}`, `{day}`, `{today}`, `{ist_time}`, `{greeting}`, `{namaste}`, `{rupee}`, `{short_date}`, `{short_day}`, `{day_num}`, `{time_greeting}`).
 - **Logcat, System Execution & Memory Audit**:
   - `adb shell "logcat -d -b crash"`: **0 entries (0 crashes)**.
-  - `adb shell "logcat -d *:E | grep com.jmd.autotext"`: **0 application exceptions** (only Samsung OS SurfaceFlinger transition buffer messages).
+  - `adb shell "logcat -d *:E | grep com.jmd.helper"`: **0 application exceptions** (only Samsung OS SurfaceFlinger transition buffer messages).
   - `.\gradlew.bat testDebugUnitTest --offline`: **102 of 102 tests passed** (0 failures, 0 errors, 0 skipped).
   - `.\gradlew.bat lintDebug --offline`: **0 errors, 0 project code warnings**.
 
@@ -36,7 +36,7 @@
   - **Fixes Applied**:
     1. `TaskRepository.kt`: Implemented `recoverInterruptedRunningTasks()` which reconciles orphaned tasks from `TaskStatus.RUNNING` back to `TaskStatus.PENDING` (for recurring tasks) and `TaskStatus.FAILED` (for single-run tasks).
     2. `AppRepository.kt`: Exposed `recoverInterruptedRunningTasks()` API.
-    3. `AutoTextApplication.kt`: Added startup recovery inside `applicationScope.launch`.
+    3. `HelperApplication.kt`: Added startup recovery inside `applicationScope.launch`.
     4. `AlarmScheduler.kt`: Added `repository.recoverInterruptedRunningTasks()` inside `rescheduleAllPending()`.
     5. `SequentialTaskEngine.kt`:
        - Added status reconciliation inside `startSequentialProcessor` exception/cancellation handlers and `finally` block ensuring any task leaving the processor while still in `RUNNING` status is safely reconciled.
@@ -44,7 +44,7 @@
        - Updated `completeOrRescheduleTask` during emergency stop to update the DB status to `PENDING` (recurring) or `FAILED` (single).
     6. `TaskSafetyManager.kt`: Updated `triggerEmergencyStop(context: Context? = null)` to support null context safely.
 - **Verification & Testing**:
-  - **Scheduled Unit Tests**: Added `testOrphanedRunningTaskRecoveryInvariants()` and `testEmergencyStopSuppressionAndStatusInvariant()` to `AutoTextComprehensiveTest.kt`.
+  - **Scheduled Unit Tests**: Added `testOrphanedRunningTaskRecoveryInvariants()` and `testEmergencyStopSuppressionAndStatusInvariant()` to `HelperComprehensiveTest.kt`.
   - Executed `./gradlew test --rerun-tasks`: **104 of 104 tests passed** (100% pass rate, 0 failures, 0 errors, 0 skipped).
   - Executed `./gradlew assembleRelease`: Compiled and signed `app-release.apk` with v2 scheme.
   - Deployed to Samsung Galaxy A04 (`adb install -r app-release.apk` -> `Success`).
@@ -76,12 +76,12 @@
   - **Fixes Applied**:
     - Added `Manifest.permission.ANSWER_PHONE_CALLS` to `AndroidManifest.xml` and runtime permission flow.
     - Added `TelecomManager.showInCallScreen(false)` to force the active OEM in-call dialer to foreground prior to button inspection.
-    - Updated `AutoTextAccessibilityService.requestEndPhoneCall()` with 20+ multilingual OEM resource IDs (`endcall`, `end_call`, `disconnect`, `hangup`, `btn_end_call`, etc.).
+    - Updated `TaskAccessibilityService.requestEndPhoneCall()` with 20+ multilingual OEM resource IDs (`endcall`, `end_call`, `disconnect`, `hangup`, `btn_end_call`, etc.).
     - Added fallback hardware media key emulation via `AudioManager.dispatchMediaKeyEvent(KEYCODE_HEADSETHOOK)`.
     - Rewrote duration loop in `SequentialTaskEngine.kt` to enforce exact duration holding with early termination detection.
 - **Biometric-Safe Hardware Auto-Lock**:
   - **Symptom**: When locked via third-party device administrator `lockNow()`, Android Keyguard enforced biometric lockout, forcing manual PIN entry.
-  - **Fix**: Completely eradicated `DevicePolicyManager.lockNow()`. Delegated all locking exclusively to `AutoTextAccessibilityService.lockScreenNow()` using `GLOBAL_ACTION_LOCK_SCREEN`, emulating a physical hardware Power button press and preserving fingerprint/face biometric unlock.
+  - **Fix**: Completely eradicated `DevicePolicyManager.lockNow()`. Delegated all locking exclusively to `TaskAccessibilityService.lockScreenNow()` using `GLOBAL_ACTION_LOCK_SCREEN`, emulating a physical hardware Power button press and preserving fingerprint/face biometric unlock.
 - **WhatsApp UI Disambiguation & Voice Note Protection**:
   - Resolved toolbar icon vs dropdown menu popup ("Voice call" vs "Video call").
   - Enforced `VoiceNoteProtectionGuard.kt` preventing coordinate taps on the voice note microphone button; verified text entry before send button identification.
@@ -105,9 +105,9 @@
 - **Compiler Warning & Diagnostic Eradication**:
   - Resolved 5 naming convention warnings in `PermissionScreen.kt` (`permissionCenterView`, `superAutoHealAndPermissionFixerCard`, `statusPill`, `keepOpenRecentAppsCard`, `permissionItem`).
   - Resolved naming convention warnings in `MoreScreen.kt`.
-  - Resolved declaration clashes in `AutoTextAccessibilityService.kt`.
+  - Resolved declaration clashes in `TaskAccessibilityService.kt`.
 - **Unit Testing & Device Verification**:
-  - Synchronized assertion in `AutoTextComprehensiveTest.kt` for `"Task"`.
+  - Synchronized assertion in `HelperComprehensiveTest.kt` for `"Task"`.
   - Executed `./gradlew test --rerun-tasks`: **107 of 107 unit tests passed (100%)** with zero errors or failures.
   - Assembled release APK: `./gradlew assembleRelease` -> `app-release.apk`.
   - Deployed and verified on both hardware devices:

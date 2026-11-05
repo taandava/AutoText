@@ -60,10 +60,10 @@
   <length>1374</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>355</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="MarkdownIncorrectTableFormatting" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Incorrect table formatting</problem_class>
   <description>Table is not correctly formatted</description>
   <highlighted_element>| Call Scenario | Telephony State Transition | CallLog Type | CallLog Duration | Auto-Reply Event Tr...</highlighted_element>
@@ -72,10 +72,10 @@
   <length>880</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>617</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="MarkdownIncorrectTableFormatting" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Incorrect table formatting</problem_class>
   <description>Table is not correctly formatted</description>
   <highlighted_element>| Field | Type | Description | |---|---|---| | `package_name` | `TEXT PRIMARY KEY` | Application pac...</highlighted_element>

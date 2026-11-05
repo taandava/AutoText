@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.jmd.autotext"
+    namespace = "com.jmd.helper"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.jmd.autotext"
+        applicationId = "com.jmd.helper"
         minSdk = 27
         targetSdk = 37
         versionCode = 1

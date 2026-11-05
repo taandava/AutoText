@@ -1,6 +1,6 @@
 # AutoText — Codeblock Audit & Feature Utilization Assessment
 
-This document provides a component-by-component, codeblock-by-codeblock analysis of the AutoText codebase (`com.jmd.autotext`), cataloging existing implementations, underutilized framework options, missing pieces, and completed logical enhancements in alignment with `instruction.md` and `agent.md`.
+This document provides a component-by-component, codeblock-by-codeblock analysis of the AutoText codebase (`com.jmd.helper`), cataloging existing implementations, underutilized framework options, missing pieces, and completed logical enhancements in alignment with `instruction.md` and `agent.md`.
 
 ---
 
@@ -53,7 +53,7 @@ This document provides a component-by-component, codeblock-by-codeblock analysis
 
 ### 2.3 `AccessibilityHealthManager.kt`
 - **Current Codeblocks:**
-  - `isAccessibilityServiceHealthy(context)`: Inspects `AccessibilityManager.getEnabledAccessibilityServiceList` for `AutoTextAccessibilityService`.
+  - `isAccessibilityServiceHealthy(context)`: Inspects `AccessibilityManager.getEnabledAccessibilityServiceList` for `TaskAccessibilityService`.
   - `openAutostartSettings(context)`: Dispatches OEM-specific intents for Xiaomi (MIUI/HyperOS), Huawei (EMUI), Samsung, Oppo (ColorOS), Vivo (Funtouch/OriginOS), and Transsion.
   - Vivo / iQOO specific autostart intents (`PurviewTabActivity`, `ExcessivePowerManagerActivity`) prioritized.
 
@@ -74,10 +74,10 @@ This document provides a component-by-component, codeblock-by-codeblock analysis
   - Exact call duration holding with 250ms sliced polling and early hangup detection (`waitForCallDurationWithEarlyCheck`).
   - Stranded `RUNNING` task recovery upon pipeline completion and cancellation.
 
-### 3.3 `AutoTextAccessibilityService.kt` & `AutoTextDeviceAdminReceiver.kt`
+### 3.3 `TaskAccessibilityService.kt` & `HelperDeviceAdminReceiver.kt`
 - **Current Codeblocks:**
   - Screen auto-lock strictly uses `GLOBAL_ACTION_LOCK_SCREEN` (mimicking a physical hardware Power button press).
-  - All calls to `DevicePolicyManager.lockNow()` eliminated; `AutoTextDeviceAdminReceiver.lockNow()` delegates to `GLOBAL_ACTION_LOCK_SCREEN`, preserving user fingerprint and face biometric unlock.
+  - All calls to `DevicePolicyManager.lockNow()` eliminated; `HelperDeviceAdminReceiver.lockNow()` delegates to `GLOBAL_ACTION_LOCK_SCREEN`, preserving user fingerprint and face biometric unlock.
   - Multi-tier phone call termination: `TelecomManager.endCall()`, in-call dialer foregrounding with `TelecomManager.showInCallScreen(false)`, 20+ multilingual OEM disconnect resource IDs, and `KEYCODE_HEADSETHOOK` fallback.
   - WhatsApp VoIP call termination with multi-window hierarchy traversal.
 
@@ -100,7 +100,7 @@ This document provides a component-by-component, codeblock-by-codeblock analysis
 
 ## 5. Verification & Test Suite
 
-### 5.1 `AutoTextComprehensiveTest.kt`
+### 5.1 `HelperComprehensiveTest.kt`
 - **Current Suite:** 107 comprehensive unit and integration tests passing (100% pass rate).
 - **Coverage Areas:**
   - Phone number normalization & E.164 conversion

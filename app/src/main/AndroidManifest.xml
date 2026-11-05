@@ -105,10 +105,10 @@
         <package android:name="com.vivo.phone" />
     </queries>
 
-    <application android:name=".AutoTextApplication" android:allowBackup="true" android:dataExtractionRules="@xml/data_extraction_rules" android:fullBackupContent="@xml/backup_rules" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true" android:usesCleartextTraffic="false" android:enableOnBackInvokedCallback="true" android:requestLegacyExternalStorage="true" tools:targetApi="33" tools:ignore="ScopedStorage" android:theme="@style/Theme.AutoText">
+    <application android:name=".HelperApplication" android:allowBackup="true" android:dataExtractionRules="@xml/data_extraction_rules" android:fullBackupContent="@xml/backup_rules" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true" android:usesCleartextTraffic="false" android:enableOnBackInvokedCallback="true" android:requestLegacyExternalStorage="true" tools:targetApi="33" tools:ignore="ScopedStorage" android:theme="@style/Theme.Helper">
 
         <!-- Main Activity -->
-        <activity android:name=".ui.activity.MainActivity" android:launchMode="singleTask" android:exported="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:windowSoftInputMode="adjustResize" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:theme="@style/Theme.AutoText">
+        <activity android:name=".ui.activity.MainActivity" android:launchMode="singleTask" android:exported="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:windowSoftInputMode="adjustResize" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:theme="@style/Theme.Helper">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -123,19 +123,19 @@
 
 
         <!-- Simulated Incoming Call Activity (Internal simulation only) -->
-        <activity android:name=".ui.activity.CallSimulationActivity" android:exported="false" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:launchMode="singleTop" android:theme="@style/Theme.AutoText.FullScreen" />
+        <activity android:name=".ui.activity.CallSimulationActivity" android:exported="false" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:launchMode="singleTop" android:theme="@style/Theme.Helper.FullScreen" />
 
         <!-- Heads Up Reminder / Alarm Activity (Internal app alarm only) -->
-        <activity android:name=".ui.activity.ReminderAlarmActivity" android:exported="false" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:launchMode="singleTop" android:theme="@style/Theme.AutoText" />
+        <activity android:name=".ui.activity.ReminderAlarmActivity" android:exported="false" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:launchMode="singleTop" android:theme="@style/Theme.Helper" />
 
         <!-- Screen-On / Keyguard Dismiss Dispatch Activity (Internal dispatch only) -->
-        <activity android:name=".ui.activity.TaskLauncherActivity" android:exported="false" android:directBootAware="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:excludeFromRecents="true" android:noHistory="true" android:launchMode="singleInstance" android:theme="@style/Theme.AutoText.Transparent" />
+        <activity android:name=".ui.activity.TaskLauncherActivity" android:exported="false" android:directBootAware="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:excludeFromRecents="true" android:noHistory="true" android:launchMode="singleInstance" android:theme="@style/Theme.Helper.Transparent" />
 
         <!-- Policy & Architecture Compliant Alias -->
         <activity-alias android:name=".ui.activity.TaskLauncherActivity" android:targetActivity=".ui.activity.TaskLauncherActivity" android:exported="false" />
 
         <!-- Device Administration Receiver (Screen Lock Postcondition) -->
-        <receiver android:name=".receiver.AutoTextDeviceAdminReceiver" android:label="@string/app_name" android:description="@string/device_admin_description" android:permission="android.permission.BIND_DEVICE_ADMIN" android:exported="true">
+        <receiver android:name=".receiver.HelperDeviceAdminReceiver" android:label="@string/app_name" android:description="@string/device_admin_description" android:permission="android.permission.BIND_DEVICE_ADMIN" android:exported="true">
             <meta-data android:name="android.app.device_admin" android:resource="@xml/device_admin" />
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
@@ -143,7 +143,7 @@
         </receiver>
 
         <!-- Task Assistant Service (WhatsApp, WA Business) -->
-        <service android:name=".service.AutoTextAccessibilityService" android:label="@string/accessibility_service_label" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:enabled="true" android:stopWithTask="false" android:directBootAware="true" android:exported="true">
+        <service android:name=".service.TaskAccessibilityService" android:label="@string/accessibility_service_label" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:enabled="true" android:stopWithTask="false" android:directBootAware="true" android:exported="true">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
@@ -151,7 +151,7 @@
         </service>
 
         <!-- Notification Listener Service (Smart Auto-Reply for Chat Apps) -->
-        <service android:name=".service.AutoTextNotificationListenerService" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:stopWithTask="false" android:exported="true">
+        <service android:name=".service.TaskNotificationListenerService" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:stopWithTask="false" android:exported="true">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
@@ -161,7 +161,7 @@
         <service android:name=".service.TaskForegroundService" android:exported="false" android:stopWithTask="false" />
 
         <!-- Quick Settings Tile: 1-Tap Pause & Resume Accessibility for Payment App Compatibility -->
-        <service android:name=".service.AutoTextA11yTileService" android:icon="@mipmap/ic_launcher" android:label="@string/tile_a11y_label" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" android:exported="true">
+        <service android:name=".service.TaskTileService" android:icon="@mipmap/ic_launcher" android:label="@string/tile_a11y_label" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" android:exported="true">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
@@ -170,19 +170,19 @@
         <!-- Alarm Receiver for Exact Scheduling & Task Setup -->
         <receiver android:name=".receiver.TaskAlarmReceiver" android:directBootAware="true" android:exported="true" tools:ignore="ExportedReceiver">
             <intent-filter>
-                <action android:name="com.jmd.autotext.ACTION_FIRE_TASK" />
-                <action android:name="com.jmd.autotext.ACTION_COUNTDOWN_TIMEOUT" />
-                <action android:name="com.jmd.autotext.ACTION_TEST_TASK" />
-                <action android:name="com.jmd.autotext.ACTION_SETUP_ALL_TASKS" />
-                <action android:name="com.jmd.autotext.ACTION_DUMP_LOGS" />
-                <action android:name="com.jmd.autotext.ACTION_DELETE_ALL_TASKS" />
-                <action android:name="com.jmd.autotext.ACTION_FIRE_CAMPAIGN" />
-                <action android:name="com.jmd.autotext.ACTION_SETUP_CAMPAIGN_CONTACTS" />
-                <action android:name="com.jmd.autotext.ACTION_SET_PREF" />
-                <action android:name="com.jmd.autotext.ACTION_EMERGENCY_STOP" />
-                <action android:name="com.jmd.autotext.ACTION_RESET_EMERGENCY_STOP" />
-                <action android:name="com.jmd.autotext.ACTION_TEST_AUTO_UNLOCK" />
-                <action android:name="com.jmd.autotext.ACTION_TEST_SCREEN_ASSIST" />
+                <action android:name="com.jmd.helper.ACTION_FIRE_TASK" />
+                <action android:name="com.jmd.helper.ACTION_COUNTDOWN_TIMEOUT" />
+                <action android:name="com.jmd.helper.ACTION_TEST_TASK" />
+                <action android:name="com.jmd.helper.ACTION_SETUP_ALL_TASKS" />
+                <action android:name="com.jmd.helper.ACTION_DUMP_LOGS" />
+                <action android:name="com.jmd.helper.ACTION_DELETE_ALL_TASKS" />
+                <action android:name="com.jmd.helper.ACTION_FIRE_CAMPAIGN" />
+                <action android:name="com.jmd.helper.ACTION_SETUP_CAMPAIGN_CONTACTS" />
+                <action android:name="com.jmd.helper.ACTION_SET_PREF" />
+                <action android:name="com.jmd.helper.ACTION_EMERGENCY_STOP" />
+                <action android:name="com.jmd.helper.ACTION_RESET_EMERGENCY_STOP" />
+                <action android:name="com.jmd.helper.ACTION_TEST_AUTO_UNLOCK" />
+                <action android:name="com.jmd.helper.ACTION_TEST_SCREEN_ASSIST" />
             </intent-filter>
         </receiver>
 
@@ -207,7 +207,7 @@
         <!-- Accessibility & Task Watchdog Heartbeat Receiver -->
         <receiver android:name=".receiver.AccessibilityWatchdogReceiver" android:directBootAware="true" android:exported="false">
             <intent-filter>
-                <action android:name="com.jmd.autotext.ACTION_WATCHDOG_HEARTBEAT" />
+                <action android:name="com.jmd.helper.ACTION_WATCHDOG_HEARTBEAT" />
             </intent-filter>
         </receiver>
 
@@ -227,7 +227,7 @@
         </receiver>
 
         <!-- File Provider -->
-        <provider android:name="androidx.core.content.FileProvider" android:authorities="com.jmd.autotext.fileprovider" android:exported="false" android:grantUriPermissions="true">
+        <provider android:name="androidx.core.content.FileProvider" android:authorities="com.jmd.helper.fileprovider" android:exported="false" android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
 

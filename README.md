@@ -41,7 +41,7 @@
 - **Policy-Safe Terminology**:
   - Compliant with Google Play Store and OEM package policies; sanitized to 2-word naming conventions ("Task", "Smart Dispatch").
 - **100% Offline Sovereignty**:
-  - Zero external tracking, zero cloud dependencies, zero analytics. No `android.permission.INTERNET` requested. All data resides in local encrypted storage and SQLite (`autotext.db`).
+  - Zero external tracking, zero cloud dependencies, zero analytics. No `android.permission.INTERNET` requested. All data resides in local encrypted storage and SQLite (`helper.db`).
 
 ---
 
@@ -88,4 +88,4 @@ For the complete, authoritative, all-in-one technical manual covering all 17 eng
 - **Architectural Decision Records**: [`CODEBASE_MEMORY/docs/DECISIONS.md`](./CODEBASE_MEMORY/docs/DECISIONS.md)
 - **Feature Acceptance Matrix**: [`CODEBASE_MEMORY/docs/FEATURE_MATRIX.md`](./CODEBASE_MEMORY/docs/FEATURE_MATRIX.md)
 - **Codebase Memory Vault**: [`CODEBASE_MEMORY/docs/INDEX.md`](./CODEBASE_MEMORY/docs/INDEX.md)
-- **In-App Interactive Manual**: [`app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md`](./app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md) (viewable via the in-app Documentation screen).
+- **In-App Interactive Manual**: [`app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md`](./app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md) (viewable via the in-app Documentation screen).

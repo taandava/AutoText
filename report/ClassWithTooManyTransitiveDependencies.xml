@@ -1,13 +1,13 @@
 <problems>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/HelperApplication.kt</file>
   <line>38</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.AutoTextApplication" />
+  <package>com.jmd.helper</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.HelperApplication" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
-  <description>Class 'AutoTextApplication' has too many transitive dependencies (99 &gt; 35)</description>
+  <description>Class 'HelperApplication' has too many transitive dependencies (99 &gt; 35)</description>
   <highlighted_element />
   <language />
 </problem>
@@ -15,8 +15,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
   <line>153</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.api</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.api.TaskFeatureApi" />
+  <package>com.jmd.helper.api</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.api.TaskFeatureApi" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'TaskFeatureApi' has too many transitive dependencies (109 &gt; 35)</description>
@@ -27,8 +27,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/ClipboardCompat.kt</file>
   <line>20</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.compat</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.compat.ClipboardCompat" />
+  <package>com.jmd.helper.compat</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.compat.ClipboardCompat" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'ClipboardCompat' has too many transitive dependencies (99 &gt; 35)</description>
@@ -39,8 +39,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
   <line>23</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.AccessibilityHealthManager" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.core.AccessibilityHealthManager" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'AccessibilityHealthManager' has too many transitive dependencies (99 &gt; 35)</description>
@@ -51,8 +51,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppFileLogger.kt</file>
   <line>19</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.AppFileLogger" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.core.AppFileLogger" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'AppFileLogger' has too many transitive dependencies (99 &gt; 35)</description>
@@ -63,8 +63,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/OverlayPermissionHelper.kt</file>
   <line>14</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.OverlayPermissionHelper" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.core.OverlayPermissionHelper" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'OverlayPermissionHelper' has too many transitive dependencies (100 &gt; 35)</description>
@@ -75,8 +75,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>32</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.PermissionFeatureInfo" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.core.PermissionFeatureInfo" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'PermissionFeatureInfo' has too many transitive dependencies (103 &gt; 35)</description>
@@ -87,8 +87,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>59</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.PermissionManager" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.core.PermissionManager" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'PermissionManager' has too many transitive dependencies (103 &gt; 35)</description>
@@ -99,8 +99,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.PrivacyManager" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.core.PrivacyManager" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'PrivacyManager' has too many transitive dependencies (99 &gt; 35)</description>
@@ -111,8 +111,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/ProtectedApplicationManager.kt</file>
   <line>26</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.ProtectedApplicationManager" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.core.ProtectedApplicationManager" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'ProtectedApplicationManager' has too many transitive dependencies (99 &gt; 35)</description>
@@ -123,8 +123,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/SmsQuotaManager.kt</file>
   <line>18</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.SmsQuotaManager" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.core.SmsQuotaManager" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'SmsQuotaManager' has too many transitive dependencies (99 &gt; 35)</description>
@@ -135,8 +135,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
   <line>31</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.TaskSafetyManager" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.core.TaskSafetyManager" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'TaskSafetyManager' has too many transitive dependencies (99 &gt; 35)</description>
@@ -147,8 +147,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>47</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.repo.AppRepository" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.data.repo.AppRepository" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'AppRepository' has too many transitive dependencies (99 &gt; 35)</description>
@@ -159,8 +159,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/LogRepository.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.repo.LogRepository" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.data.repo.LogRepository" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'LogRepository' has too many transitive dependencies (99 &gt; 35)</description>
@@ -171,8 +171,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/TaskRepository.kt</file>
   <line>32</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.repo.TaskRepository" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.data.repo.TaskRepository" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'TaskRepository' has too many transitive dependencies (99 &gt; 35)</description>
@@ -183,8 +183,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/ContactIngestionEngine.kt</file>
   <line>35</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.engine.ContactIngestionEngine" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.engine.ContactIngestionEngine" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'ContactIngestionEngine' has too many transitive dependencies (99 &gt; 35)</description>
@@ -195,8 +195,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>77</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.engine.SequentialTaskEngine" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.engine.SequentialTaskEngine" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'SequentialTaskEngine' has too many transitive dependencies (99 &gt; 35)</description>
@@ -207,8 +207,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SmsSender.kt</file>
   <line>30</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.engine.SmsSender" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.engine.SmsSender" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'SmsSender' has too many transitive dependencies (99 &gt; 35)</description>
@@ -219,8 +219,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/WhatsAppSender.kt</file>
   <line>30</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.engine.WhatsAppSender" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.engine.WhatsAppSender" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'WhatsAppSender' has too many transitive dependencies (99 &gt; 35)</description>
@@ -231,8 +231,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AccessibilityWatchdogReceiver.kt</file>
   <line>24</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.AccessibilityWatchdogReceiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.receiver.AccessibilityWatchdogReceiver" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'AccessibilityWatchdogReceiver' has too many transitive dependencies (99 &gt; 35)</description>
@@ -240,14 +240,14 @@
   <language />
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AutoTextDeviceAdminReceiver.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/HelperDeviceAdminReceiver.kt</file>
   <line>26</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.receiver.HelperDeviceAdminReceiver" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
-  <description>Class 'AutoTextDeviceAdminReceiver' has too many transitive dependencies (99 &gt; 35)</description>
+  <description>Class 'HelperDeviceAdminReceiver' has too many transitive dependencies (99 &gt; 35)</description>
   <highlighted_element />
   <language />
 </problem>
@@ -255,8 +255,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/BootReceiver.kt</file>
   <line>35</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.BootReceiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.receiver.BootReceiver" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'BootReceiver' has too many transitive dependencies (101 &gt; 35)</description>
@@ -267,8 +267,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt</file>
   <line>47</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.PhoneCallReceiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.receiver.PhoneCallReceiver" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'PhoneCallReceiver' has too many transitive dependencies (101 &gt; 35)</description>
@@ -279,8 +279,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/SmsReceiver.kt</file>
   <line>38</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.SmsReceiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.receiver.SmsReceiver" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'SmsReceiver' has too many transitive dependencies (100 &gt; 35)</description>
@@ -291,8 +291,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>34</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'TaskAlarmReceiver' has too many transitive dependencies (99 &gt; 35)</description>
@@ -303,8 +303,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TimeChangeReceiver.kt</file>
   <line>21</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.TimeChangeReceiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.receiver.TimeChangeReceiver" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'TimeChangeReceiver' has too many transitive dependencies (100 &gt; 35)</description>
@@ -315,8 +315,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AccessibilityWatchdogScheduler.kt</file>
   <line>27</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.scheduler.AccessibilityWatchdogScheduler" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.scheduler.AccessibilityWatchdogScheduler" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'AccessibilityWatchdogScheduler' has too many transitive dependencies (99 &gt; 35)</description>
@@ -327,8 +327,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AccessibilityWatchdogWorker.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.scheduler.AccessibilityWatchdogWorker" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.scheduler.AccessibilityWatchdogWorker" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'AccessibilityWatchdogWorker' has too many transitive dependencies (99 &gt; 35)</description>
@@ -339,8 +339,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>37</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.scheduler.AlarmScheduler" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'AlarmScheduler' has too many transitive dependencies (99 &gt; 35)</description>
@@ -351,8 +351,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchScheduler.kt</file>
   <line>38</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.scheduler.DailyCampaignScheduler" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.scheduler.DailyCampaignScheduler" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'DailyCampaignScheduler' has too many transitive dependencies (99 &gt; 35)</description>
@@ -363,8 +363,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>47</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'DailyCampaignWorker' has too many transitive dependencies (99 &gt; 35)</description>
@@ -372,38 +372,38 @@
   <language />
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextA11yTileService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskTileService.kt</file>
   <line>12</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextA11yTileService" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.service.TaskTileService" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
-  <description>Class 'AutoTextA11yTileService' has too many transitive dependencies (100 &gt; 35)</description>
+  <description>Class 'TaskTileService' has too many transitive dependencies (100 &gt; 35)</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>75</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.service.TaskAccessibilityService" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
-  <description>Class 'AutoTextAccessibilityService' has too many transitive dependencies (99 &gt; 35)</description>
+  <description>Class 'TaskAccessibilityService' has too many transitive dependencies (99 &gt; 35)</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextNotificationListenerService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskNotificationListenerService.kt</file>
   <line>36</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextNotificationListenerService" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.service.TaskNotificationListenerService" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
-  <description>Class 'AutoTextNotificationListenerService' has too many transitive dependencies (99 &gt; 35)</description>
+  <description>Class 'TaskNotificationListenerService' has too many transitive dependencies (99 &gt; 35)</description>
   <highlighted_element />
   <language />
 </problem>
@@ -411,8 +411,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/MainActivity.kt</file>
   <line>44</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.activity.MainActivity" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.ui.activity.MainActivity" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'MainActivity' has too many transitive dependencies (100 &gt; 35)</description>
@@ -423,8 +423,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>36</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'TaskLauncherActivity' has too many transitive dependencies (99 &gt; 35)</description>
@@ -435,8 +435,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/AppStatusIndicators.kt</file>
   <line>55</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.components</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.components.SystemIndicatorResolver" />
+  <package>com.jmd.helper.ui.components</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.ui.components.SystemIndicatorResolver" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'SystemIndicatorResolver' has too many transitive dependencies (103 &gt; 35)</description>
@@ -447,8 +447,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt</file>
   <line>30</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.AccessibilityNodeUtils" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.AccessibilityNodeUtils" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'AccessibilityNodeUtils' has too many transitive dependencies (99 &gt; 35)</description>
@@ -459,8 +459,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
   <line>28</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.KeyguardUnlockEngine" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.KeyguardUnlockEngine" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'KeyguardUnlockEngine' has too many transitive dependencies (99 &gt; 35)</description>
@@ -471,8 +471,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/PopupShield.kt</file>
   <line>24</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.PopupShield" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.PopupShield" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'PopupShield' has too many transitive dependencies (99 &gt; 35)</description>
@@ -483,8 +483,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/VoiceNoteProtectionGuard.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.VoiceNoteProtectionGuard" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.VoiceNoteProtectionGuard" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'VoiceNoteProtectionGuard' has too many transitive dependencies (99 &gt; 35)</description>
@@ -495,8 +495,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppCallEngine.kt</file>
   <line>25</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.WhatsAppCallEngine" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.WhatsAppCallEngine" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'WhatsAppCallEngine' has too many transitive dependencies (99 &gt; 35)</description>
@@ -507,8 +507,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppChatScanner.kt</file>
   <line>27</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.WhatsAppChatScanner" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.WhatsAppChatScanner" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'WhatsAppChatScanner' has too many transitive dependencies (99 &gt; 35)</description>
@@ -519,8 +519,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppDialogHandler.kt</file>
   <line>23</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.WhatsAppDialogHandler" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.WhatsAppDialogHandler" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'WhatsAppDialogHandler' has too many transitive dependencies (99 &gt; 35)</description>
@@ -531,8 +531,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppDirectSendEngine.kt</file>
   <line>27</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.WhatsAppDirectSendEngine" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.WhatsAppDirectSendEngine" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'WhatsAppDirectSendEngine' has too many transitive dependencies (99 &gt; 35)</description>
@@ -543,8 +543,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppGroupEngine.kt</file>
   <line>22</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.WhatsAppGroupEngine" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.WhatsAppGroupEngine" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'WhatsAppGroupEngine' has too many transitive dependencies (99 &gt; 35)</description>
@@ -555,8 +555,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt</file>
   <line>29</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.WhatsAppIntentDispatcher" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.WhatsAppIntentDispatcher" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'WhatsAppIntentDispatcher' has too many transitive dependencies (99 &gt; 35)</description>
@@ -567,8 +567,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppStatusEngine.kt</file>
   <line>27</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.whatsapp.WhatsAppStatusEngine" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.whatsapp.WhatsAppStatusEngine" />
   <problem_class id="ClassWithTooManyTransitiveDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many transitive dependencies</problem_class>
   <hints />
   <description>Class 'WhatsAppStatusEngine' has too many transitive dependencies (99 &gt; 35)</description>

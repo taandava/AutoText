@@ -3,11 +3,11 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/CallSimulationActivity.kt</file>
   <line>212</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
+  <package>com.jmd.helper.ui.activity</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/CallSimulationActivity.kt" />
   <problem_class id="AndroidLintRegistered" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class is not registered in the manifest</problem_class>
   <hints />
-  <description>&lt;html&gt;The &lt;code&gt;&amp;lt;activity&gt; com.jmd.autotext.ui.activity.SimulatedCallActivity&lt;/code&gt; is not registered in the manifest&lt;/html&gt;</description>
+  <description>&lt;html&gt;The &lt;code&gt;&amp;lt;activity&gt; com.jmd.helper.ui.activity.SimulatedCallActivity&lt;/code&gt; is not registered in the manifest&lt;/html&gt;</description>
   <highlighted_element>SimulatedCallActivity</highlighted_element>
   <language>kotlin</language>
   <offset>11</offset>

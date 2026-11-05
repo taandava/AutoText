@@ -3,7 +3,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt</file>
   <line>90</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/PermissionScreen.kt" />
   <problem_class id="AndroidLintObsoleteSdkInt" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Obsolete SDK_INT Version Check</problem_class>
   <hints />

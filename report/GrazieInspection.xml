@@ -120,10 +120,10 @@
   <length>13</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>23</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>auto-rotation</highlighted_element>
@@ -132,10 +132,10 @@
   <length>13</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>336</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Did you mean 'outta'?</description>
   <highlighted_element>OTA</highlighted_element>
@@ -144,10 +144,10 @@
   <length>3</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>382</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-part</highlighted_element>
@@ -156,10 +156,10 @@
   <length>10</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>382</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-part</highlighted_element>
@@ -168,10 +168,10 @@
   <length>10</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>537</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-step</highlighted_element>
@@ -180,10 +180,10 @@
   <length>10</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>601</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Use 'a' instead of 'an' if the following word doesn't start with a vowel sound, e.g. 'a sentence', 'a university'.</description>
   <highlighted_element>an</highlighted_element>
@@ -192,10 +192,10 @@
   <length>2</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>601</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Possible typo: you repeated a word.</description>
   <highlighted_element>task task</highlighted_element>
@@ -204,10 +204,10 @@
   <length>9</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>610</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Use 'a' instead of 'an' if the following word doesn't start with a vowel sound, e.g. 'a sentence', 'a university'.</description>
   <highlighted_element>an</highlighted_element>
@@ -219,8 +219,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppFileLogger.kt</file>
   <line>335</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.AppFileLogger java.lang.String exportAllLogsSummary(android.content.Context context)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.AppFileLogger java.lang.String exportAllLogsSummary(android.content.Context context)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-section</highlighted_element>
@@ -232,8 +232,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>407</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager boolean prepareAccessibilityForTask()" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager boolean prepareAccessibilityForTask()" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Use 'a' instead of 'an' if the following word doesn't start with a vowel sound, e.g. 'a sentence', 'a university'.</description>
   <highlighted_element>an</highlighted_element>
@@ -245,8 +245,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>407</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager boolean prepareAccessibilityForTask()" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager boolean prepareAccessibilityForTask()" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Possible typo: you repeated a word.</description>
   <highlighted_element>task task</highlighted_element>
@@ -258,8 +258,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>433</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager void releaseAccessibilityAfterTask()" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager void releaseAccessibilityAfterTask()" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Use 'a' instead of 'an' if the following word doesn't start with a vowel sound, e.g. 'a sentence', 'a university'.</description>
   <highlighted_element>an</highlighted_element>
@@ -271,8 +271,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>433</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager void releaseAccessibilityAfterTask()" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager void releaseAccessibilityAfterTask()" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Possible typo: you repeated a word.</description>
   <highlighted_element>task task</highlighted_element>
@@ -284,7 +284,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/ProtectedApplicationManager.kt</file>
   <line>15</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/ProtectedApplicationManager.kt" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This is normally spelled as one word.</description>
@@ -297,7 +297,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/SmsQuotaManager.kt</file>
   <line>6</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/SmsQuotaManager.kt" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
@@ -310,8 +310,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>34</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.db.DatabaseHelper" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.data.db.DatabaseHelper" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-phase</highlighted_element>
@@ -323,8 +323,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>354</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.db.DatabaseHelper void addColumnIfNotExists(android.database.sqlite.SQLiteDatabase db, java.lang.String table, java.lang.String column, java.lang.String typeDef)" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.db.DatabaseHelper void addColumnIfNotExists(android.database.sqlite.SQLiteDatabase db, java.lang.String table, java.lang.String column, java.lang.String typeDef)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Unpaired symbol: '&quot;' seems to be missing</description>
   <highlighted_element>&quot;</highlighted_element>
@@ -336,8 +336,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/DailyTaskBatchRepository.kt</file>
   <line>95</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.DailyCampaignRepository void markCampaignContactSuccess(long campaignId, com.jmd.autotext.data.model.DynamicContactItem contact, java.lang.String channel, int segments)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.DailyCampaignRepository void markCampaignContactSuccess(long campaignId, com.jmd.helper.data.model.DynamicContactItem contact, java.lang.String channel, int segments)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Did you mean 'scent'?</description>
   <highlighted_element>sent</highlighted_element>
@@ -349,8 +349,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/DailyTaskBatchRepository.kt</file>
   <line>154</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.DailyCampaignRepository java.util.List&lt;com.jmd.autotext.data.model.DynamicContactItem&gt; getSentContactsForCampaign(long campaignId, int limit)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.DailyCampaignRepository java.util.List&lt;com.jmd.helper.data.model.DynamicContactItem&gt; getSentContactsForCampaign(long campaignId, int limit)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Did you mean 'scent'?</description>
   <highlighted_element>sent</highlighted_element>
@@ -362,7 +362,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/SequenceRepository.kt</file>
   <line>7</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
+  <package>com.jmd.helper.data.repo</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/SequenceRepository.kt" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
@@ -375,8 +375,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/WhatsAppSender.kt</file>
   <line>41</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.engine.WhatsAppSender boolean send(long taskId, com.jmd.autotext.data.model.ChannelType channel, java.lang.String recipientPhone, java.lang.String messageText, boolean shouldRelock, java.lang.String mediaUri, boolean isBatchCampaign)" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.engine.WhatsAppSender boolean send(long taskId, com.jmd.helper.data.model.ChannelType channel, java.lang.String recipientPhone, java.lang.String messageText, boolean shouldRelock, java.lang.String mediaUri, boolean isBatchCampaign)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Use 'a' instead of 'an' if the following word doesn't start with a vowel sound, e.g. 'a sentence', 'a university'.</description>
   <highlighted_element>an</highlighted_element>
@@ -388,8 +388,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>173</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler void cancelTask(long taskId, com.jmd.autotext.data.model.ScheduledTask task)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.AlarmScheduler void cancelTask(long taskId, com.jmd.helper.data.model.ScheduledTask task)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>pre-loaded</highlighted_element>
@@ -398,11 +398,11 @@
   <length>10</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>1693</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService void onAccessibilityEvent(android.view.accessibility.AccessibilityEvent event)" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.service.TaskAccessibilityService void onAccessibilityEvent(android.view.accessibility.AccessibilityEvent event)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Use a comma before 'and' if it connects two independent clauses (unless they are closely connected and short).</description>
   <highlighted_element>and</highlighted_element>
@@ -414,8 +414,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/MainActivity.kt</file>
   <line>143</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.activity.MainActivity void triggerBackgroundContactIngestion()" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.activity.MainActivity void triggerBackgroundContactIngestion()" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>A comma may be missing after the conjunctive/linking adverb 'Otherwise'.</description>
   <highlighted_element>Otherwise</highlighted_element>
@@ -427,8 +427,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/components/Avatars.kt</file>
   <line>85</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.components</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.components.AvatarsKt void M3Avatar(java.lang.String name, androidx.compose.ui.Modifier modifier, java.lang.String photoUri, float size, androidx.compose.ui.graphics.vector.ImageVector badgeIcon, long badgeColor)" />
+  <package>com.jmd.helper.ui.components</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.components.AvatarsKt void M3Avatar(java.lang.String name, androidx.compose.ui.Modifier modifier, java.lang.String photoUri, float size, androidx.compose.ui.graphics.vector.ImageVector badgeIcon, long badgeColor)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>sub-sampling</highlighted_element>
@@ -440,8 +440,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/model/UiModels.kt</file>
   <line>62</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.model</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.model.TaskTypeItem" />
+  <package>com.jmd.helper.ui.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.ui.model.TaskTypeItem" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-step</highlighted_element>
@@ -453,8 +453,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/model/UiModels.kt</file>
   <line>63</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.model</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.ui.model.TaskTypeItem" />
+  <package>com.jmd.helper.ui.model</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.ui.model.TaskTypeItem" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-step</highlighted_element>
@@ -466,7 +466,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/CallSimulationScreen.kt</file>
   <line>8</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
+  <package>com.jmd.helper.ui.screen</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/CallSimulationScreen.kt" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Did you mean 'except'?</description>
@@ -479,8 +479,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/DocumentationScreen.kt</file>
   <line>38</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.DocumentationScreenKt java.lang.String readDocumentationAsset(android.content.Context context)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.DocumentationScreenKt java.lang.String readDocumentationAsset(android.content.Context context)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Did you mean the formatting language?</description>
   <highlighted_element>markdown</highlighted_element>
@@ -492,8 +492,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/DocumentationScreen.kt</file>
   <line>41</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.DocumentationScreenKt java.lang.String readDocumentationAsset(android.content.Context context)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.DocumentationScreenKt java.lang.String readDocumentationAsset(android.content.Context context)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Did you mean the formatting language?</description>
   <highlighted_element>markdown</highlighted_element>
@@ -505,8 +505,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>50</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>sub-section</highlighted_element>
@@ -518,8 +518,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>51</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>sub-section</highlighted_element>
@@ -531,8 +531,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/TaskTypeSelectionDialog.kt</file>
   <line>50</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.TaskTypeSelectionDialogKt void TaskTypeSelectionDialog(kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ChannelType,kotlin.Unit&gt; onSelectChannel, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ChannelType,kotlin.Unit&gt; onSelectSequence, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSelectDailyCampaign)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.TaskTypeSelectionDialogKt void TaskTypeSelectionDialog(kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.ChannelType,kotlin.Unit&gt; onSelectChannel, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.ChannelType,kotlin.Unit&gt; onSelectSequence, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSelectDailyCampaign)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-step</highlighted_element>
@@ -544,8 +544,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/TaskTypeSelectionDialog.kt</file>
   <line>259</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.TaskTypeSelectionDialogKt void TaskTypeSelectionDialog(kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ChannelType,kotlin.Unit&gt; onSelectChannel, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ChannelType,kotlin.Unit&gt; onSelectSequence, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSelectDailyCampaign)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.TaskTypeSelectionDialogKt void TaskTypeSelectionDialog(kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.ChannelType,kotlin.Unit&gt; onSelectChannel, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.ChannelType,kotlin.Unit&gt; onSelectSequence, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSelectDailyCampaign)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This phrase is duplicated. You should probably use 'vs WhatsApp' only once.</description>
   <highlighted_element>vs WhatsApp vs WhatsApp</highlighted_element>
@@ -557,8 +557,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyDialogs.kt</file>
   <line>165</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.autoreply.AutoReplyDialogsKt void AutoReplyRuleDialog(com.jmd.autotext.data.model.AutoReplyRule initialRule, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.AutoReplyRule,kotlin.Unit&gt; onSave)" />
+  <package>com.jmd.helper.ui.screen.autoreply</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.autoreply.AutoReplyDialogsKt void AutoReplyRuleDialog(com.jmd.helper.data.model.AutoReplyRule initialRule, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.AutoReplyRule,kotlin.Unit&gt; onSave)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Use 'a' instead of 'an' if the following word doesn't start with a vowel sound, e.g. 'a sentence', 'a university'.</description>
   <highlighted_element>an</highlighted_element>
@@ -570,8 +570,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt</file>
   <line>37</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.autoreply.AutoReplyScreenKt void AutoReplyScreen(kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onEditingStateChanged)" />
+  <package>com.jmd.helper.ui.screen.autoreply</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.autoreply.AutoReplyScreenKt void AutoReplyScreen(kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onEditingStateChanged)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This phrase is duplicated. You should probably use 'rate limiting' only once.</description>
   <highlighted_element>rate limiting rate limiting</highlighted_element>
@@ -583,8 +583,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt</file>
   <line>38</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.compose.ComposeMessageSectionKt void ComposeRecipientsAndMessageCard(com.jmd.autotext.data.model.ChannelType selectedChannel, java.util.List&lt;com.jmd.autotext.ui.model.SelectedRecipient&gt; selectedRecipients, java.lang.String duplicateWarning, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismissDuplicateWarning, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onClearAllRecipients, kotlin.jvm.functions.Function1&lt;? super java.lang.Integer,kotlin.Unit&gt; onRemoveRecipient, java.lang.String recipientsInput, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onRecipientsInputChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onAddManualRecipient, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenWhatsAppContacts, kotlin.jvm.functions.Function2&lt;? super java.lang.String,? super java.lang.String,kotlin.Unit&gt; onAddDirectRecipient, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenPoolPicker, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenContactsPicker, java.lang.String messageText, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMessageTextChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenTemplates, int smsPartCount, boolean isUnicode, java.lang.String mediaUri, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMediaUriChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onLaunchMediaPicker)" />
+  <package>com.jmd.helper.ui.screen.compose</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.compose.ComposeMessageSectionKt void ComposeRecipientsAndMessageCard(com.jmd.helper.data.model.ChannelType selectedChannel, java.util.List&lt;com.jmd.helper.ui.model.SelectedRecipient&gt; selectedRecipients, java.lang.String duplicateWarning, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismissDuplicateWarning, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onClearAllRecipients, kotlin.jvm.functions.Function1&lt;? super java.lang.Integer,kotlin.Unit&gt; onRemoveRecipient, java.lang.String recipientsInput, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onRecipientsInputChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onAddManualRecipient, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenWhatsAppContacts, kotlin.jvm.functions.Function2&lt;? super java.lang.String,? super java.lang.String,kotlin.Unit&gt; onAddDirectRecipient, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenPoolPicker, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenContactsPicker, java.lang.String messageText, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMessageTextChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenTemplates, int smsPartCount, boolean isUnicode, java.lang.String mediaUri, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMediaUriChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onLaunchMediaPicker)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-byte</highlighted_element>
@@ -596,8 +596,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeMessageSection.kt</file>
   <line>38</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.compose.ComposeMessageSectionKt void ComposeRecipientsAndMessageCard(com.jmd.autotext.data.model.ChannelType selectedChannel, java.util.List&lt;com.jmd.autotext.ui.model.SelectedRecipient&gt; selectedRecipients, java.lang.String duplicateWarning, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismissDuplicateWarning, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onClearAllRecipients, kotlin.jvm.functions.Function1&lt;? super java.lang.Integer,kotlin.Unit&gt; onRemoveRecipient, java.lang.String recipientsInput, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onRecipientsInputChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onAddManualRecipient, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenWhatsAppContacts, kotlin.jvm.functions.Function2&lt;? super java.lang.String,? super java.lang.String,kotlin.Unit&gt; onAddDirectRecipient, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenPoolPicker, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenContactsPicker, java.lang.String messageText, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMessageTextChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenTemplates, int smsPartCount, boolean isUnicode, java.lang.String mediaUri, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMediaUriChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onLaunchMediaPicker)" />
+  <package>com.jmd.helper.ui.screen.compose</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.compose.ComposeMessageSectionKt void ComposeRecipientsAndMessageCard(com.jmd.helper.data.model.ChannelType selectedChannel, java.util.List&lt;com.jmd.helper.ui.model.SelectedRecipient&gt; selectedRecipients, java.lang.String duplicateWarning, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismissDuplicateWarning, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onClearAllRecipients, kotlin.jvm.functions.Function1&lt;? super java.lang.Integer,kotlin.Unit&gt; onRemoveRecipient, java.lang.String recipientsInput, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onRecipientsInputChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onAddManualRecipient, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenWhatsAppContacts, kotlin.jvm.functions.Function2&lt;? super java.lang.String,? super java.lang.String,kotlin.Unit&gt; onAddDirectRecipient, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenPoolPicker, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenContactsPicker, java.lang.String messageText, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMessageTextChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenTemplates, int smsPartCount, boolean isUnicode, java.lang.String mediaUri, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMediaUriChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onLaunchMediaPicker)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>The standard spelling is 'Unicode'</description>
   <highlighted_element>unicode</highlighted_element>
@@ -609,8 +609,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>48</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.autotext.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
+  <package>com.jmd.helper.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.helper.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-step</highlighted_element>
@@ -622,8 +622,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>810</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void StepEditorCard(int stepNumber, boolean isFirst, com.jmd.autotext.data.model.ContactSequenceStep step, long projectedTriggerTimestamp, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ContactSequenceStep,kotlin.Unit&gt; onStepChanged, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDelete, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onMoveUp, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onMoveDown)" />
+  <package>com.jmd.helper.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.sequence.ContactSequenceStudioKt void StepEditorCard(int stepNumber, boolean isFirst, com.jmd.helper.data.model.ContactSequenceStep step, long projectedTriggerTimestamp, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.ContactSequenceStep,kotlin.Unit&gt; onStepChanged, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDelete, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onMoveUp, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onMoveDown)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-step</highlighted_element>
@@ -635,8 +635,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/tasks/TasksScreen.kt</file>
   <line>54</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.tasks</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.tasks.TasksScreenKt void TasksListScreen(int initialCategoryTab, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ChannelType,kotlin.Unit&gt; onNavigateToCompose, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onNavigateToSequenceStudio, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ScheduledTask,kotlin.Unit&gt; onEditTask, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onNavigateToDailyCampaign, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onStudioStateChanged)" />
+  <package>com.jmd.helper.ui.screen.tasks</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.tasks.TasksScreenKt void TasksListScreen(int initialCategoryTab, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.ChannelType,kotlin.Unit&gt; onNavigateToCompose, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onNavigateToSequenceStudio, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.ScheduledTask,kotlin.Unit&gt; onEditTask, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onNavigateToDailyCampaign, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onStudioStateChanged)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-step</highlighted_element>
@@ -648,8 +648,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/tasks/TasksScreen.kt</file>
   <line>58</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.tasks</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.tasks.TasksScreenKt void TasksListScreen(int initialCategoryTab, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ChannelType,kotlin.Unit&gt; onNavigateToCompose, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onNavigateToSequenceStudio, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ScheduledTask,kotlin.Unit&gt; onEditTask, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onNavigateToDailyCampaign, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onStudioStateChanged)" />
+  <package>com.jmd.helper.ui.screen.tasks</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.tasks.TasksScreenKt void TasksListScreen(int initialCategoryTab, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.ChannelType,kotlin.Unit&gt; onNavigateToCompose, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onNavigateToSequenceStudio, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.ScheduledTask,kotlin.Unit&gt; onEditTask, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onNavigateToDailyCampaign, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onStudioStateChanged)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>This word is normally spelled as one.</description>
   <highlighted_element>multi-step</highlighted_element>
@@ -661,8 +661,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt</file>
   <line>388</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.AccessibilityNodeUtils boolean performVerticalSwipe(android.accessibilityservice.AccessibilityService service, float startYRatio, float endYRatio, long durationMs)" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.whatsapp.AccessibilityNodeUtils boolean performVerticalSwipe(android.accessibilityservice.AccessibilityService service, float startYRatio, float endYRatio, long durationMs)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Use 'a' instead of 'an' if the following word doesn't start with a vowel sound, e.g. 'a sentence', 'a university'.</description>
   <highlighted_element>an</highlighted_element>
@@ -674,8 +674,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppDirectSendEngine.kt</file>
   <line>45</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.WhatsAppDirectSendEngine void tryClickSendButton(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, java.lang.String pendingMessage, int sendAttemptCount, boolean hasAttemptedSendClick, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows, java.lang.String pendingRecipient, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSuccess, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onTimeout, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onAttemptClicked)" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.whatsapp.WhatsAppDirectSendEngine void tryClickSendButton(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, java.lang.String pendingMessage, int sendAttemptCount, boolean hasAttemptedSendClick, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows, java.lang.String pendingRecipient, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSuccess, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onTimeout, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onAttemptClicked)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Probably a preposition is missing after 'attempts'.</description>
   <highlighted_element>attempts exceed</highlighted_element>
@@ -687,8 +687,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt</file>
   <line>40</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.WhatsAppIntentDispatcher void launchWhatsApp(android.content.Context context, long taskId, com.jmd.autotext.data.model.ChannelType channel, java.lang.String recipient, java.lang.String message, boolean shouldRelock, boolean isBatch, java.lang.String mediaUri)" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.whatsapp.WhatsAppIntentDispatcher void launchWhatsApp(android.content.Context context, long taskId, com.jmd.helper.data.model.ChannelType channel, java.lang.String recipient, java.lang.String message, boolean shouldRelock, boolean isBatch, java.lang.String mediaUri)" />
   <problem_class id="GrazieInspection" severity="GRAMMAR_ERROR" attribute_key="GRAMMAR_ERROR">Grammar</problem_class>
   <description>Unpaired symbol: '(' seems to be missing</description>
   <highlighted_element>)</highlighted_element>

@@ -3,8 +3,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/TelephonyManagerCompat.kt</file>
   <line>106</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.compat</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.compat.TelephonyManagerCompat boolean isCallConnected(android.content.Context context, android.telephony.TelephonyManager tm)" />
+  <package>com.jmd.helper.compat</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.compat.TelephonyManagerCompat boolean isCallConnected(android.content.Context context, android.telephony.TelephonyManager tm)" />
   <problem_class id="RedundantIf" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Redundant 'if' statement</problem_class>
   <description>Redundant 'if' statement</description>
   <highlighted_element>if</highlighted_element>
@@ -16,8 +16,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
   <line>382</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.AccessibilityHealthManager boolean ensureAllServicesActive(android.content.Context context)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.AccessibilityHealthManager boolean ensureAllServicesActive(android.content.Context context)" />
   <problem_class id="RedundantIf" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Redundant 'if' statement</problem_class>
   <description>Redundant 'if' statement</description>
   <highlighted_element>if</highlighted_element>
@@ -29,8 +29,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>316</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PermissionManager boolean hasPostNotificationsPermission(android.content.Context context)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PermissionManager boolean hasPostNotificationsPermission(android.content.Context context)" />
   <problem_class id="RedundantIf" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Redundant 'if' statement</problem_class>
   <description>Redundant 'if' statement</description>
   <highlighted_element>if</highlighted_element>
@@ -42,8 +42,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/ProtectedApplicationManager.kt</file>
   <line>411</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.ProtectedApplicationManager boolean shouldBlockOverlays(java.lang.String packageName)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.ProtectedApplicationManager boolean shouldBlockOverlays(java.lang.String packageName)" />
   <problem_class id="RedundantIf" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Redundant 'if' statement</problem_class>
   <description>Redundant 'if' statement</description>
   <highlighted_element>if</highlighted_element>
@@ -55,8 +55,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/model/Models.kt</file>
   <line>324</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.model</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.model.TaskStatus.Companion boolean canTransition(com.jmd.autotext.data.model.TaskStatus from, com.jmd.autotext.data.model.TaskStatus to)" />
+  <package>com.jmd.helper.data.model</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.model.TaskStatus.Companion boolean canTransition(com.jmd.helper.data.model.TaskStatus from, com.jmd.helper.data.model.TaskStatus to)" />
   <problem_class id="RedundantIf" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Redundant 'if' statement</problem_class>
   <description>Redundant 'if' statement</description>
   <highlighted_element>if</highlighted_element>
@@ -68,8 +68,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/WhatsAppRepository.kt</file>
   <line>381</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.WhatsAppRepository boolean isSavedGroup(java.lang.String name)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.WhatsAppRepository boolean isSavedGroup(java.lang.String name)" />
   <problem_class id="RedundantIf" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Redundant 'if' statement</problem_class>
   <description>Redundant 'if' statement</description>
   <highlighted_element>if</highlighted_element>
@@ -78,11 +78,11 @@
   <length>2</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>189</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService.Companion boolean isFinancialOrBankingPackage(java.lang.String pkg)" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.service.TaskAccessibilityService.Companion boolean isFinancialOrBankingPackage(java.lang.String pkg)" />
   <problem_class id="RedundantIf" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Redundant 'if' statement</problem_class>
   <description>Redundant 'if' statement</description>
   <highlighted_element>if</highlighted_element>

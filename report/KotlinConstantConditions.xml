@@ -3,8 +3,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>394</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PermissionManager java.util.List&lt;com.jmd.autotext.core.PermissionFeatureInfo&gt; getPermissionFeatureCatalog(android.content.Context context)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PermissionManager java.util.List&lt;com.jmd.helper.core.PermissionFeatureInfo&gt; getPermissionFeatureCatalog(android.content.Context context)" />
   <problem_class id="KotlinConstantConditions" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant conditions</problem_class>
   <description>'when' branch is never reachable</description>
   <highlighted_element>Manifest.permission.SYSTEM_ALERT_WINDOW</highlighted_element>
@@ -16,8 +16,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PermissionManager.kt</file>
   <line>429</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PermissionManager android.content.Intent createSettingsIntent(android.content.Context context, java.lang.String permissionId)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PermissionManager android.content.Intent createSettingsIntent(android.content.Context context, java.lang.String permissionId)" />
   <problem_class id="KotlinConstantConditions" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant conditions</problem_class>
   <description>'when' branch is never reachable</description>
   <highlighted_element>Manifest.permission.SYSTEM_ALERT_WINDOW</highlighted_element>
@@ -29,8 +29,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>1585</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.engine.SequentialTaskEngine java.lang.Object executeWhatsAppCallTask(com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.data.model.ScheduledTask task, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.engine.SequentialTaskEngine java.lang.Object executeWhatsAppCallTask(com.jmd.helper.data.repo.AppRepository repository, com.jmd.helper.data.model.ScheduledTask task, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
   <problem_class id="KotlinConstantConditions" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Constant conditions</problem_class>
   <description>Value of 'durationCriteriaSatisfied' is always false</description>
   <highlighted_element>durationCriteriaSatisfied</highlighted_element>

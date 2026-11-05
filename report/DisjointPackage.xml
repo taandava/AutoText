@@ -1,100 +1,100 @@
 <problems>
 <problem>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.core" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.core" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.core can be decomposed into 4 independent packages</description>
+  <description>Package com.jmd.helper.core can be decomposed into 4 independent packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.receiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.receiver" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.receiver can be decomposed into 5 independent packages</description>
+  <description>Package com.jmd.helper.receiver can be decomposed into 5 independent packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.engine" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.engine" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.engine can be decomposed into 2 independent packages</description>
+  <description>Package com.jmd.helper.engine can be decomposed into 2 independent packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.whatsapp" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.whatsapp" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.whatsapp can be decomposed into 2 independent packages</description>
+  <description>Package com.jmd.helper.whatsapp can be decomposed into 2 independent packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.service" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.service" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.service can be decomposed into 3 independent packages</description>
+  <description>Package com.jmd.helper.service can be decomposed into 3 independent packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.data.model</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.data.model" />
+  <package>com.jmd.helper.data.model</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.data.model" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.data.model can be decomposed into 13 independent packages</description>
+  <description>Package com.jmd.helper.data.model can be decomposed into 13 independent packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.compat</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.compat" />
+  <package>com.jmd.helper.compat</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.compat" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.compat can be decomposed into 5 independent packages</description>
+  <description>Package com.jmd.helper.compat can be decomposed into 5 independent packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.ui.model</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.model" />
+  <package>com.jmd.helper.ui.model</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.ui.model" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.ui.model can be decomposed into 3 independent packages</description>
+  <description>Package com.jmd.helper.ui.model can be decomposed into 3 independent packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.ui.components</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.components" />
+  <package>com.jmd.helper.ui.components</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.ui.components" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.ui.components can be decomposed into 3 independent packages</description>
+  <description>Package com.jmd.helper.ui.components can be decomposed into 3 independent packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.ui.activity" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.ui.activity" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.ui.activity can be decomposed into 4 independent packages</description>
+  <description>Package com.jmd.helper.ui.activity can be decomposed into 4 independent packages</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.scheduler" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.scheduler" />
   <problem_class id="DisjointPackage" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with disjoint dependency graph</problem_class>
   <hints />
-  <description>Package com.jmd.autotext.scheduler can be decomposed into 3 independent packages</description>
+  <description>Package com.jmd.helper.scheduler can be decomposed into 3 independent packages</description>
   <highlighted_element />
   <language />
 </problem>

@@ -3,8 +3,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/TaskRepository.kt</file>
   <line>159</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.TaskRepository int recoverInterruptedRunningTasks()" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.TaskRepository int recoverInterruptedRunningTasks()" />
   <problem_class id="DestructuringDeclaration" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Use destructuring declaration</problem_class>
   <description>Use destructuring declaration</description>
   <highlighted_element>task</highlighted_element>
@@ -16,8 +16,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchScheduler.kt</file>
   <line>188</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.DailyCampaignScheduler void cancelAllCampaigns(android.content.Context context)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.DailyCampaignScheduler void cancelAllCampaigns(android.content.Context context)" />
   <problem_class id="DestructuringDeclaration" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Use destructuring declaration</problem_class>
   <description>Use destructuring declaration</description>
   <highlighted_element>cfg</highlighted_element>

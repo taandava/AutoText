@@ -4,8 +4,8 @@
     <exclude domain="sharedpref" path="app_preferences.xml" />
     <exclude domain="device_sharedpref" path="autotext_de_prefs.xml" />
     <exclude domain="device_sharedpref" path="device_protected_prefs.xml" />
-    <exclude domain="database" path="autotext.db" />
-    <exclude domain="database" path="autotext.db-journal" />
-    <exclude domain="database" path="autotext.db-wal" />
-    <exclude domain="database" path="autotext.db-shm" />
+    <exclude domain="database" path="helper.db" />
+    <exclude domain="database" path="helper.db-journal" />
+    <exclude domain="database" path="helper.db-wal" />
+    <exclude domain="database" path="helper.db-shm" />
 </full-backup-content>

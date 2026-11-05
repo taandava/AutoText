@@ -3,8 +3,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
   <line>230</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.api</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.api.TaskFeatureApi java.lang.Object postWhatsAppStatus(android.content.Context context, com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.api.WhatsAppStatusRequest request, kotlin.coroutines.Continuation&lt;? super com.jmd.autotext.api.FeatureExecutionResult&gt; $completion)" />
+  <package>com.jmd.helper.api</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.api.TaskFeatureApi java.lang.Object postWhatsAppStatus(android.content.Context context, com.jmd.helper.data.repo.AppRepository repository, com.jmd.helper.api.WhatsAppStatusRequest request, kotlin.coroutines.Continuation&lt;? super com.jmd.helper.api.FeatureExecutionResult&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'isBatchCampaign'</description>
   <highlighted_element>isBatchCampaign = false</highlighted_element>
@@ -16,8 +16,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
   <line>328</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.api</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.api.TaskFeatureApi com.jmd.autotext.api.FeatureExecutionResult sendSms(android.content.Context context, com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.api.SmsRequest request)" />
+  <package>com.jmd.helper.api</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.api.TaskFeatureApi com.jmd.helper.api.FeatureExecutionResult sendSms(android.content.Context context, com.jmd.helper.data.repo.AppRepository repository, com.jmd.helper.api.SmsRequest request)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'enforceQuota'</description>
   <highlighted_element>enforceQuota = true</highlighted_element>
@@ -29,8 +29,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
   <line>417</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.api</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.api.TaskFeatureApi java.lang.Object placePhoneCall(android.content.Context context, com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.api.PhoneCallRequest request, kotlin.coroutines.Continuation&lt;? super com.jmd.autotext.api.FeatureExecutionResult&gt; $completion)" />
+  <package>com.jmd.helper.api</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.api.TaskFeatureApi java.lang.Object placePhoneCall(android.content.Context context, com.jmd.helper.data.repo.AppRepository repository, com.jmd.helper.api.PhoneCallRequest request, kotlin.coroutines.Continuation&lt;? super com.jmd.helper.api.FeatureExecutionResult&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'isVoip'</description>
   <highlighted_element>isVoip = false</highlighted_element>
@@ -42,8 +42,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PhoneNumberNormalizer.kt</file>
   <line>258</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PhoneNumberNormalizer boolean isIndianMobileNumber(java.lang.String raw)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PhoneNumberNormalizer boolean isIndianMobileNumber(java.lang.String raw)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'defaultCountryCode'</description>
   <highlighted_element>&quot;+91&quot;</highlighted_element>
@@ -55,8 +55,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PhoneNumberNormalizer.kt</file>
   <line>272</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PhoneNumberNormalizer java.lang.String formatForDisplay(java.lang.String raw)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PhoneNumberNormalizer java.lang.String formatForDisplay(java.lang.String raw)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'defaultCountryCode'</description>
   <highlighted_element>&quot;+91&quot;</highlighted_element>
@@ -68,8 +68,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>157</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager com.jmd.autotext.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager com.jmd.helper.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'isExcluded'</description>
   <highlighted_element>isExcluded = true</highlighted_element>
@@ -81,8 +81,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>158</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager com.jmd.autotext.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager com.jmd.helper.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'disableTaskAction'</description>
   <highlighted_element>disableTaskAction = true</highlighted_element>
@@ -94,8 +94,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>159</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager com.jmd.autotext.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager com.jmd.helper.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'blockOverlays'</description>
   <highlighted_element>blockOverlays = true</highlighted_element>
@@ -107,8 +107,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>160</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager com.jmd.autotext.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager com.jmd.helper.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'suppressNotifications'</description>
   <highlighted_element>suppressNotifications = true</highlighted_element>
@@ -120,8 +120,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>161</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager com.jmd.autotext.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager com.jmd.helper.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'disableClipboard'</description>
   <highlighted_element>disableClipboard = true</highlighted_element>
@@ -133,8 +133,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>162</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager com.jmd.autotext.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager com.jmd.helper.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'maskSensitiveContent'</description>
   <highlighted_element>maskSensitiveContent = true</highlighted_element>
@@ -146,8 +146,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>163</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.PrivacyManager com.jmd.autotext.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.PrivacyManager com.jmd.helper.data.model.AppPrivacyConfig getConfigForPackage(java.lang.String packageName)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'disableRules'</description>
   <highlighted_element>disableRules = true</highlighted_element>
@@ -159,8 +159,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
   <line>135</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.core.TaskSafetyManager void recordHumanInteraction(android.content.Context context, java.lang.String reason)" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.core.TaskSafetyManager void recordHumanInteraction(android.content.Context context, java.lang.String reason)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'postponeMillis'</description>
   <highlighted_element>DEFAULT_POSTPONE_INTERVAL_MS</highlighted_element>
@@ -172,8 +172,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>267</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository java.util.List&lt;com.jmd.autotext.data.model.DailyCampaignConfig&gt; getAllDailyCampaignConfigs()" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository java.util.List&lt;com.jmd.helper.data.model.DailyCampaignConfig&gt; getAllDailyCampaignConfigs()" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'id'</description>
   <highlighted_element>id = 1L</highlighted_element>
@@ -185,8 +185,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>267</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository java.util.List&lt;com.jmd.autotext.data.model.DailyCampaignConfig&gt; getAllDailyCampaignConfigs()" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository java.util.List&lt;com.jmd.helper.data.model.DailyCampaignConfig&gt; getAllDailyCampaignConfigs()" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'channel'</description>
   <highlighted_element>channel = &quot;SMS&quot;</highlighted_element>
@@ -198,8 +198,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>307</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.AppRepository com.jmd.autotext.data.model.DailyCampaignConfig getDailyCampaignConfig(long id)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.AppRepository com.jmd.helper.data.model.DailyCampaignConfig getDailyCampaignConfig(long id)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'channel'</description>
   <highlighted_element>channel = &quot;SMS&quot;</highlighted_element>
@@ -211,8 +211,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/WhatsAppRepository.kt</file>
   <line>558</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.data.repo.WhatsAppRepository java.util.List&lt;com.jmd.autotext.data.model.WhatsAppContactItem&gt; getWhatsAppContacts(java.lang.String query, com.jmd.autotext.data.model.ChannelType channel, int limit)" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.data.repo.WhatsAppRepository java.util.List&lt;com.jmd.helper.data.model.WhatsAppContactItem&gt; getWhatsAppContacts(java.lang.String query, com.jmd.helper.data.model.ChannelType channel, int limit)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'photoUri'</description>
   <highlighted_element>photoUri = &quot;&quot;</highlighted_element>
@@ -224,8 +224,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/ContactIngestionEngine.kt</file>
   <line>118</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.engine.ContactIngestionEngine java.lang.Object scanAndIngestAll(kotlin.coroutines.Continuation&lt;? super com.jmd.autotext.data.model.IngestionSummary&gt; $completion)" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.engine.ContactIngestionEngine java.lang.Object scanAndIngestAll(kotlin.coroutines.Continuation&lt;? super com.jmd.helper.data.model.IngestionSummary&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'source'</description>
   <highlighted_element>source = &quot;CONTACT&quot;</highlighted_element>
@@ -237,8 +237,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>618</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.engine.SequentialTaskEngine java.lang.Object executeWhatsAppTaskWithRetries(com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.data.model.ScheduledTask task, int maxRetries, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.engine.SequentialTaskEngine java.lang.Object executeWhatsAppTaskWithRetries(com.jmd.helper.data.repo.AppRepository repository, com.jmd.helper.data.model.ScheduledTask task, int maxRetries, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'timeoutMs'</description>
   <highlighted_element>5000L</highlighted_element>
@@ -250,8 +250,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>734</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.engine.SequentialTaskEngine java.lang.Object executeWhatsAppTaskWithRetries(com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.data.model.ScheduledTask task, int maxRetries, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.engine.SequentialTaskEngine java.lang.Object executeWhatsAppTaskWithRetries(com.jmd.helper.data.repo.AppRepository repository, com.jmd.helper.data.model.ScheduledTask task, int maxRetries, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'status'</description>
   <highlighted_element>&quot;SUCCESS&quot;</highlighted_element>
@@ -263,8 +263,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>787</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.engine.SequentialTaskEngine java.lang.Object executeWhatsAppTaskWithRetries(com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.data.model.ScheduledTask task, int maxRetries, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.engine.SequentialTaskEngine java.lang.Object executeWhatsAppTaskWithRetries(com.jmd.helper.data.repo.AppRepository repository, com.jmd.helper.data.model.ScheduledTask task, int maxRetries, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'status'</description>
   <highlighted_element>&quot;SUCCESS&quot;</highlighted_element>
@@ -276,8 +276,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>884</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.engine.SequentialTaskEngine java.lang.Object executeSmsTask(com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.data.model.ScheduledTask task, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.engine.SequentialTaskEngine java.lang.Object executeSmsTask(com.jmd.helper.data.repo.AppRepository repository, com.jmd.helper.data.model.ScheduledTask task, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'enforceQuota'</description>
   <highlighted_element>enforceQuota = true</highlighted_element>
@@ -289,8 +289,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>908</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.engine.SequentialTaskEngine java.lang.Object executeSmsTask(com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.data.model.ScheduledTask task, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.engine.SequentialTaskEngine java.lang.Object executeSmsTask(com.jmd.helper.data.repo.AppRepository repository, com.jmd.helper.data.model.ScheduledTask task, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'status'</description>
   <highlighted_element>&quot;SUCCESS&quot;</highlighted_element>
@@ -302,8 +302,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>1393</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.engine.SequentialTaskEngine java.lang.Object executeWhatsAppCallTask(com.jmd.autotext.data.repo.AppRepository repository, com.jmd.autotext.data.model.ScheduledTask task, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.engine.SequentialTaskEngine java.lang.Object executeWhatsAppCallTask(com.jmd.helper.data.repo.AppRepository repository, com.jmd.helper.data.model.ScheduledTask task, kotlin.coroutines.Continuation&lt;? super java.lang.Boolean&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'timeoutMs'</description>
   <highlighted_element>5000L</highlighted_element>
@@ -315,8 +315,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/BootReceiver.kt</file>
   <line>67</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.receiver.BootReceiver.Companion void triggerPostRebootAutoUnlock(android.content.Context context, java.lang.String pin)" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.receiver.BootReceiver.Companion void triggerPostRebootAutoUnlock(android.content.Context context, java.lang.String pin)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'shouldRelockAfterSend'</description>
   <highlighted_element>shouldRelockAfterSend = false</highlighted_element>
@@ -328,8 +328,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt</file>
   <line>393</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.receiver.PhoneCallReceiver void handleCallAutoReply(android.content.Context context, java.lang.String callerNumber, boolean isMissedCall, boolean isCallEnded)" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.receiver.PhoneCallReceiver void handleCallAutoReply(android.content.Context context, java.lang.String callerNumber, boolean isMissedCall, boolean isCallEnded)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'enforceQuota'</description>
   <highlighted_element>enforceQuota = true</highlighted_element>
@@ -341,8 +341,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/SmsReceiver.kt</file>
   <line>105</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.receiver.SmsReceiver void processSmsAsync(android.content.Context context, java.lang.String senderPhone, java.lang.String messageBody)" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.receiver.SmsReceiver void processSmsAsync(android.content.Context context, java.lang.String senderPhone, java.lang.String messageBody)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'enforceQuota'</description>
   <highlighted_element>enforceQuota = true</highlighted_element>
@@ -354,8 +354,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/SmsReceiver.kt</file>
   <line>140</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.receiver.SmsReceiver void processSmsAsync(android.content.Context context, java.lang.String senderPhone, java.lang.String messageBody)" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.receiver.SmsReceiver void processSmsAsync(android.content.Context context, java.lang.String senderPhone, java.lang.String messageBody)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'attempt'</description>
   <highlighted_element>attempt = 1</highlighted_element>
@@ -367,8 +367,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>133</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver.Companion java.util.List&lt;java.lang.Long&gt; setupAllTasks(android.content.Context context, java.util.List&lt;java.lang.String&gt; recipients, java.lang.String message, int staggerSeconds, int repeatIntervalSeconds, boolean executeFirstImmediately, int callDurationSeconds, boolean includeDialTimeInCallDuration, int delayBetweenCallsSeconds, boolean clearExisting)" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver.Companion java.util.List&lt;java.lang.Long&gt; setupAllTasks(android.content.Context context, java.util.List&lt;java.lang.String&gt; recipients, java.lang.String message, int staggerSeconds, int repeatIntervalSeconds, boolean executeFirstImmediately, int callDurationSeconds, boolean includeDialTimeInCallDuration, int delayBetweenCallsSeconds, boolean clearExisting)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'soundModeSetting'</description>
   <highlighted_element>soundModeSetting = &quot;NORMAL&quot;</highlighted_element>
@@ -380,8 +380,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>166</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver.Companion java.io.File dumpExecutionLogsToFile(android.content.Context context)" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver.Companion java.io.File dumpExecutionLogsToFile(android.content.Context context)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'maxLines'</description>
   <highlighted_element>1000</highlighted_element>
@@ -393,8 +393,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>226</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver.Companion int setupDailyCampaignContacts(android.content.Context context, java.util.List&lt;java.lang.String&gt; phoneNumbers, boolean triggerImmediately)" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver.Companion int setupDailyCampaignContacts(android.content.Context context, java.util.List&lt;java.lang.String&gt; phoneNumbers, boolean triggerImmediately)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'source'</description>
   <highlighted_element>source = &quot;CONTACT&quot;</highlighted_element>
@@ -406,8 +406,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>227</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver.Companion int setupDailyCampaignContacts(android.content.Context context, java.util.List&lt;java.lang.String&gt; phoneNumbers, boolean triggerImmediately)" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver.Companion int setupDailyCampaignContacts(android.content.Context context, java.util.List&lt;java.lang.String&gt; phoneNumbers, boolean triggerImmediately)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'enabled'</description>
   <highlighted_element>enabled = true</highlighted_element>
@@ -419,8 +419,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>440</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'whatsApp'</description>
   <highlighted_element>whatsApp = false</highlighted_element>
@@ -432,8 +432,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>440</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'status'</description>
   <highlighted_element>status = &quot;QUEUED&quot;</highlighted_element>
@@ -445,8 +445,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>466</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'enforceQuota'</description>
   <highlighted_element>enforceQuota = true</highlighted_element>
@@ -458,8 +458,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>470</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'whatsApp'</description>
   <highlighted_element>whatsApp = false</highlighted_element>
@@ -471,8 +471,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>498</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'whatsApp'</description>
   <highlighted_element>whatsApp = false</highlighted_element>
@@ -484,8 +484,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>528</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker java.lang.Object doWork(kotlin.coroutines.Continuation&lt;? super androidx.work.ListenableWorker.Result&gt; $completion)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'whatsApp'</description>
   <highlighted_element>whatsApp = false</highlighted_element>
@@ -494,11 +494,11 @@
   <length>16</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>364</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService.Companion void startManualChatPicker(android.content.Context context, java.lang.String targetPackage, com.jmd.autotext.data.model.ChannelType channel, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.PickedChatInfo,kotlin.Unit&gt; onPicked)" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.service.TaskAccessibilityService.Companion void startManualChatPicker(android.content.Context context, java.lang.String targetPackage, com.jmd.helper.data.model.ChannelType channel, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.PickedChatInfo,kotlin.Unit&gt; onPicked)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'isLong'</description>
   <highlighted_element>isLong = false</highlighted_element>
@@ -507,11 +507,11 @@
   <length>14</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>492</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService.Companion void startWhatsAppChatScan(android.content.Context context, java.lang.String targetPackage, com.jmd.autotext.data.model.ChannelType channel, com.jmd.autotext.whatsapp.WhatsAppChatScanner.ScanTarget scanTarget, boolean returnToApp)" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.service.TaskAccessibilityService.Companion void startWhatsAppChatScan(android.content.Context context, java.lang.String targetPackage, com.jmd.helper.data.model.ChannelType channel, com.jmd.helper.whatsapp.WhatsAppChatScanner.ScanTarget scanTarget, boolean returnToApp)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'isLong'</description>
   <highlighted_element>isLong = false</highlighted_element>
@@ -520,11 +520,11 @@
   <length>14</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>587</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService.Companion void prepareForStatus(long taskId, java.lang.String packageName, java.lang.String messageText, boolean shouldRelock, java.lang.String mediaUri)" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.service.TaskAccessibilityService.Companion void prepareForStatus(long taskId, java.lang.String packageName, java.lang.String messageText, boolean shouldRelock, java.lang.String mediaUri)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'isBatchCampaign'</description>
   <highlighted_element>isBatchCampaign = false</highlighted_element>
@@ -533,11 +533,11 @@
   <length>23</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>907</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService.Companion void testLockAndAutoUnlock(android.content.Context context, java.lang.String pin)" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.service.TaskAccessibilityService.Companion void testLockAndAutoUnlock(android.content.Context context, java.lang.String pin)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'isLong'</description>
   <highlighted_element>isLong = false</highlighted_element>
@@ -546,11 +546,11 @@
   <length>14</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>2184</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService com.jmd.autotext.data.model.PickedChatInfo analyzePickedChat(android.view.accessibility.AccessibilityNodeInfo sourceNode, android.view.accessibility.AccessibilityNodeInfo root, java.lang.String chatTitle, java.lang.String pkg, com.jmd.autotext.data.repo.AppRepository repo)" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.service.TaskAccessibilityService com.jmd.helper.data.model.PickedChatInfo analyzePickedChat(android.view.accessibility.AccessibilityNodeInfo sourceNode, android.view.accessibility.AccessibilityNodeInfo root, java.lang.String chatTitle, java.lang.String pkg, com.jmd.helper.data.repo.AppRepository repo)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'phoneOrId'</description>
   <highlighted_element>phoneOrId = null</highlighted_element>
@@ -562,8 +562,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>123</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.activity.TaskLauncherActivity void onCreate(android.os.Bundle savedInstanceState)" />
+  <package>com.jmd.helper.ui.activity</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.activity.TaskLauncherActivity void onCreate(android.os.Bundle savedInstanceState)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'shouldRelockAfterSend'</description>
   <highlighted_element>shouldRelockAfterSend = false</highlighted_element>
@@ -575,8 +575,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>118</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'callerName'</description>
   <highlighted_element>callerName = &quot;Boss / Office&quot;</highlighted_element>
@@ -588,8 +588,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>119</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'callerNumber'</description>
   <highlighted_element>callerNumber = &quot;+91 98765 43210&quot;</highlighted_element>
@@ -601,8 +601,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>120</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'callerStyle'</description>
   <highlighted_element>callerStyle = &quot;PIXEL&quot;</highlighted_element>
@@ -614,8 +614,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>292</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'callerName'</description>
   <highlighted_element>callerName = &quot;Boss / Office&quot;</highlighted_element>
@@ -627,8 +627,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>293</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'callerNumber'</description>
   <highlighted_element>callerNumber = &quot;+91 98765 43210&quot;</highlighted_element>
@@ -640,8 +640,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/MoreScreen.kt</file>
   <line>294</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
+  <package>com.jmd.helper.ui.screen</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.MoreScreenKt void moreScreen(java.lang.String initialSubSection, kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onSubSectionStateChanged, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onThemeChanged)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'callerStyle'</description>
   <highlighted_element>callerStyle = &quot;PIXEL&quot;</highlighted_element>
@@ -653,8 +653,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/autoreply/AutoReplyScreen.kt</file>
   <line>220</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.autoreply</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.autoreply.AutoReplyScreenKt void AutoReplyScreen(kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onEditingStateChanged)" />
+  <package>com.jmd.helper.ui.screen.autoreply</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.autoreply.AutoReplyScreenKt void AutoReplyScreen(kotlin.jvm.functions.Function1&lt;? super java.lang.Boolean,kotlin.Unit&gt; onEditingStateChanged)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'isEnabled'</description>
   <highlighted_element>isEnabled = true</highlighted_element>
@@ -666,8 +666,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>533</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.taskBatch.DailyTaskBatchCardsKt void ChannelSelectionCard(java.lang.String title, java.lang.String badge, java.lang.String description, androidx.compose.ui.graphics.vector.ImageVector icon, long accentColor, java.lang.String buttonText, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onClick, androidx.compose.ui.Modifier modifier)" />
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.taskBatch.DailyTaskBatchCardsKt void ChannelSelectionCard(java.lang.String title, java.lang.String badge, java.lang.String description, androidx.compose.ui.graphics.vector.ImageVector icon, long accentColor, java.lang.String buttonText, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onClick, androidx.compose.ui.Modifier modifier)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'showDot'</description>
   <highlighted_element>showDot = true</highlighted_element>
@@ -679,8 +679,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchCards.kt</file>
   <line>595</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.taskBatch.DailyTaskBatchCardsKt void WhatsAppBusinessReadinessCard(boolean isInstalled, boolean isA11yActive, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onAutoHeal, androidx.compose.ui.Modifier modifier)" />
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.taskBatch.DailyTaskBatchCardsKt void WhatsAppBusinessReadinessCard(boolean isInstalled, boolean isA11yActive, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onAutoHeal, androidx.compose.ui.Modifier modifier)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'showDot'</description>
   <highlighted_element>showDot = true</highlighted_element>
@@ -692,8 +692,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchDialogs.kt</file>
   <line>264</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.taskBatch.DailyTaskBatchDialogsKt void CreateDailyCampaignSheet(java.lang.String initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.DailyCampaignConfig,kotlin.Unit&gt; onSave)" />
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.taskBatch.DailyTaskBatchDialogsKt void CreateDailyCampaignSheet(java.lang.String initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.DailyCampaignConfig,kotlin.Unit&gt; onSave)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'autoScanEnabled'</description>
   <highlighted_element>autoScanEnabled = true</highlighted_element>
@@ -705,8 +705,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchListItems.kt</file>
   <line>439</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.taskBatch.DailyTaskBatchListItemsKt void LedgerItemCard(com.jmd.autotext.data.model.DynamicContactItem contact, boolean isWhatsApp, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onRequeue)" />
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.taskBatch.DailyTaskBatchListItemsKt void LedgerItemCard(com.jmd.helper.data.model.DynamicContactItem contact, boolean isWhatsApp, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onRequeue)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'showDot'</description>
   <highlighted_element>showDot = true</highlighted_element>
@@ -718,8 +718,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt</file>
   <line>76</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.taskBatch.DailyTaskBatchScreenKt void DailyAutoSenderScreen(long initialCampaignId, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onCampaignIdChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.taskBatch.DailyTaskBatchScreenKt void DailyAutoSenderScreen(long initialCampaignId, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onCampaignIdChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'limit'</description>
   <highlighted_element>100</highlighted_element>
@@ -731,8 +731,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt</file>
   <line>128</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.taskBatch.DailyTaskBatchScreenKt void DailyAutoSenderScreen(long initialCampaignId, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onCampaignIdChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.taskBatch.DailyTaskBatchScreenKt void DailyAutoSenderScreen(long initialCampaignId, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onCampaignIdChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'limit'</description>
   <highlighted_element>limit = 100</highlighted_element>
@@ -744,8 +744,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt</file>
   <line>137</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.taskBatch.DailyTaskBatchScreenKt void DailyAutoSenderScreen(long initialCampaignId, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onCampaignIdChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.taskBatch.DailyTaskBatchScreenKt void DailyAutoSenderScreen(long initialCampaignId, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onCampaignIdChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'limit'</description>
   <highlighted_element>limit = 100</highlighted_element>
@@ -757,8 +757,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/campaign/DailyTaskBatchScreen.kt</file>
   <line>467</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.taskBatch</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.taskBatch.DailyTaskBatchScreenKt void DailyAutoSenderScreen(long initialCampaignId, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onCampaignIdChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <package>com.jmd.helper.ui.screen.taskBatch</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.taskBatch.DailyTaskBatchScreenKt void DailyAutoSenderScreen(long initialCampaignId, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onCampaignIdChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'showDot'</description>
   <highlighted_element>showDot = true</highlighted_element>
@@ -770,8 +770,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt</file>
   <line>436</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.compose.ComposePickerSheetsKt void WhatsAppContactsPickerSheet(com.jmd.autotext.data.repo.AppRepository repository, java.util.List&lt;com.jmd.autotext.ui.model.SelectedRecipient&gt; selectedRecipients, com.jmd.autotext.data.model.ChannelType selectedChannel, kotlin.jvm.functions.Function2&lt;? super java.lang.String,? super java.lang.String,java.lang.Boolean&gt; onAddRecipient, kotlin.jvm.functions.Function1&lt;? super java.util.List&lt;com.jmd.autotext.ui.model.SelectedRecipient&gt;,kotlin.Unit&gt; onCommitRecipients, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss)" />
+  <package>com.jmd.helper.ui.screen.compose</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.compose.ComposePickerSheetsKt void WhatsAppContactsPickerSheet(com.jmd.helper.data.repo.AppRepository repository, java.util.List&lt;com.jmd.helper.ui.model.SelectedRecipient&gt; selectedRecipients, com.jmd.helper.data.model.ChannelType selectedChannel, kotlin.jvm.functions.Function2&lt;? super java.lang.String,? super java.lang.String,java.lang.Boolean&gt; onAddRecipient, kotlin.jvm.functions.Function1&lt;? super java.util.List&lt;com.jmd.helper.ui.model.SelectedRecipient&gt;,kotlin.Unit&gt; onCommitRecipients, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'limit'</description>
   <highlighted_element>limit = 10000</highlighted_element>
@@ -783,8 +783,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposePickerSheets.kt</file>
   <line>556</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.compose.ComposePickerSheetsKt void WhatsAppContactsPickerSheet(com.jmd.autotext.data.repo.AppRepository repository, java.util.List&lt;com.jmd.autotext.ui.model.SelectedRecipient&gt; selectedRecipients, com.jmd.autotext.data.model.ChannelType selectedChannel, kotlin.jvm.functions.Function2&lt;? super java.lang.String,? super java.lang.String,java.lang.Boolean&gt; onAddRecipient, kotlin.jvm.functions.Function1&lt;? super java.util.List&lt;com.jmd.autotext.ui.model.SelectedRecipient&gt;,kotlin.Unit&gt; onCommitRecipients, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss)" />
+  <package>com.jmd.helper.ui.screen.compose</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.compose.ComposePickerSheetsKt void WhatsAppContactsPickerSheet(com.jmd.helper.data.repo.AppRepository repository, java.util.List&lt;com.jmd.helper.ui.model.SelectedRecipient&gt; selectedRecipients, com.jmd.helper.data.model.ChannelType selectedChannel, kotlin.jvm.functions.Function2&lt;? super java.lang.String,? super java.lang.String,java.lang.Boolean&gt; onAddRecipient, kotlin.jvm.functions.Function1&lt;? super java.util.List&lt;com.jmd.helper.ui.model.SelectedRecipient&gt;,kotlin.Unit&gt; onCommitRecipients, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'limit'</description>
   <highlighted_element>limit = 10000</highlighted_element>
@@ -796,8 +796,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeStatusSection.kt</file>
   <line>72</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.compose.ComposeStatusSectionKt void WhatsAppStatusComposerCard(java.lang.String mediaUri, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMediaUriChange, java.lang.String messageText, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMessageTextChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onLaunchMediaPicker, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenTemplates)" />
+  <package>com.jmd.helper.ui.screen.compose</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.compose.ComposeStatusSectionKt void WhatsAppStatusComposerCard(java.lang.String mediaUri, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMediaUriChange, java.lang.String messageText, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMessageTextChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onLaunchMediaPicker, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenTemplates)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'showDot'</description>
   <highlighted_element>showDot = true</highlighted_element>
@@ -809,8 +809,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeStatusSection.kt</file>
   <line>382</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.compose.ComposeStatusSectionKt void WhatsAppBusinessStatusComposerCard(java.lang.String mediaUri, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMediaUriChange, java.lang.String messageText, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMessageTextChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onLaunchMediaPicker, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenTemplates)" />
+  <package>com.jmd.helper.ui.screen.compose</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.compose.ComposeStatusSectionKt void WhatsAppBusinessStatusComposerCard(java.lang.String mediaUri, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMediaUriChange, java.lang.String messageText, kotlin.jvm.functions.Function1&lt;? super java.lang.String,kotlin.Unit&gt; onMessageTextChange, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onLaunchMediaPicker, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenTemplates)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'showDot'</description>
   <highlighted_element>showDot = true</highlighted_element>
@@ -822,8 +822,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/compose/ComposeTaskScreen.kt</file>
   <line>503</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.compose</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.compose.ComposeTaskScreenKt void ComposeTaskScreen(com.jmd.autotext.data.model.ChannelType initialChannel, java.lang.String initialMessage, com.jmd.autotext.data.model.ScheduledTask taskToEdit, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onTaskSaved, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.ScheduledTask,kotlin.Unit&gt; onDeleteTask, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onCancel)" />
+  <package>com.jmd.helper.ui.screen.compose</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.compose.ComposeTaskScreenKt void ComposeTaskScreen(com.jmd.helper.data.model.ChannelType initialChannel, java.lang.String initialMessage, com.jmd.helper.data.model.ScheduledTask taskToEdit, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onTaskSaved, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.ScheduledTask,kotlin.Unit&gt; onDeleteTask, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onCancel)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'askBeforeSend'</description>
   <highlighted_element>askBeforeSend = false</highlighted_element>
@@ -835,8 +835,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/contacts/ContactsScreen.kt</file>
   <line>78</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.contacts</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.contacts.ContactsScreenKt void GroupContactsView(com.jmd.autotext.data.repo.AppRepository repository, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <package>com.jmd.helper.ui.screen.contacts</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.contacts.ContactsScreenKt void GroupContactsView(com.jmd.helper.data.repo.AppRepository repository, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'limit'</description>
   <highlighted_element>limit = 1000</highlighted_element>
@@ -848,8 +848,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/logs/LogDetailView.kt</file>
   <line>233</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.logs</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.logs.LogDetailViewKt void LogDetailView(com.jmd.autotext.data.model.ExecutionLog log, com.jmd.autotext.data.repo.AppRepository repository, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <package>com.jmd.helper.ui.screen.logs</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.logs.LogDetailViewKt void LogDetailView(com.jmd.helper.data.model.ExecutionLog log, com.jmd.helper.data.repo.AppRepository repository, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'enforceQuota'</description>
   <highlighted_element>enforceQuota = true</highlighted_element>
@@ -861,8 +861,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/AppPrivacyDetailDialog.kt</file>
   <line>86</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.privacy</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.privacy.AppPrivacyDetailDialogKt void AppPrivacyDetailDialog(com.jmd.autotext.data.model.AppInfoItem appInfo, com.jmd.autotext.data.model.AppPrivacyConfig initialConfig, kotlin.jvm.functions.Function1&lt;? super com.jmd.autotext.data.model.AppPrivacyConfig,kotlin.Unit&gt; onSave, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss)" />
+  <package>com.jmd.helper.ui.screen.privacy</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.privacy.AppPrivacyDetailDialogKt void AppPrivacyDetailDialog(com.jmd.helper.data.model.AppInfoItem appInfo, com.jmd.helper.data.model.AppPrivacyConfig initialConfig, kotlin.jvm.functions.Function1&lt;? super com.jmd.helper.data.model.AppPrivacyConfig,kotlin.Unit&gt; onSave, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'showDot'</description>
   <highlighted_element>showDot = true</highlighted_element>
@@ -874,8 +874,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt</file>
   <line>196</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.privacy</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.privacy.PrivacySettingsScreenKt void PrivacySettingsScreen(android.content.Context context, com.jmd.autotext.data.prefs.PreferenceManager prefs, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <package>com.jmd.helper.ui.screen.privacy</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.privacy.PrivacySettingsScreenKt void PrivacySettingsScreen(android.content.Context context, com.jmd.helper.data.prefs.PreferenceManager prefs, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'showDot'</description>
   <highlighted_element>showDot = true</highlighted_element>
@@ -887,8 +887,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>108</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.autotext.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
+  <package>com.jmd.helper.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.helper.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'stepOrder'</description>
   <highlighted_element>stepOrder = 1</highlighted_element>
@@ -900,8 +900,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>110</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.autotext.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
+  <package>com.jmd.helper.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.helper.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'messageText'</description>
   <highlighted_element>messageText = &quot;&quot;</highlighted_element>
@@ -913,8 +913,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>111</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.autotext.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
+  <package>com.jmd.helper.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.helper.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'delayMinutesFromPrevious'</description>
   <highlighted_element>delayMinutesFromPrevious = 0</highlighted_element>
@@ -926,8 +926,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>112</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.autotext.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
+  <package>com.jmd.helper.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.helper.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'simSlot'</description>
   <highlighted_element>simSlot = 0</highlighted_element>
@@ -939,8 +939,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>117</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.autotext.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
+  <package>com.jmd.helper.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.helper.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'messageText'</description>
   <highlighted_element>messageText = &quot;&quot;</highlighted_element>
@@ -952,8 +952,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>119</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.autotext.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
+  <package>com.jmd.helper.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.helper.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'simSlot'</description>
   <highlighted_element>simSlot = 0</highlighted_element>
@@ -965,8 +965,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>658</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.autotext.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
+  <package>com.jmd.helper.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.helper.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'messageText'</description>
   <highlighted_element>messageText = &quot;&quot;</highlighted_element>
@@ -978,8 +978,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/sequence/ContactSequenceStudio.kt</file>
   <line>660</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.sequence</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.autotext.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
+  <package>com.jmd.helper.ui.screen.sequence</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.sequence.ContactSequenceStudioKt void ContactSequenceStudio(long sequenceId, java.lang.String initialContactName, java.lang.String initialContactPhone, com.jmd.helper.data.model.ChannelType initialChannel, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onDismiss, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onSaved)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'simSlot'</description>
   <highlighted_element>simSlot = 0</highlighted_element>
@@ -991,8 +991,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBankingShieldCard.kt</file>
   <line>103</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.settings</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.settings.SettingsBankingShieldCardKt void SettingsBankingShieldCard(android.content.Context context, com.jmd.autotext.data.prefs.PreferenceManager prefs, androidx.compose.ui.Modifier modifier, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenPrivacySettings)" />
+  <package>com.jmd.helper.ui.screen.settings</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.settings.SettingsBankingShieldCardKt void SettingsBankingShieldCard(android.content.Context context, com.jmd.helper.data.prefs.PreferenceManager prefs, androidx.compose.ui.Modifier modifier, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenPrivacySettings)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'showDot'</description>
   <highlighted_element>showDot = true</highlighted_element>
@@ -1004,8 +1004,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SystemLogViewerScreen.kt</file>
   <line>97</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.settings</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.settings.SystemLogViewerScreenKt void SystemLogViewerView(android.content.Context context, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <package>com.jmd.helper.ui.screen.settings</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.settings.SystemLogViewerScreenKt void SystemLogViewerView(android.content.Context context, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'maxLines'</description>
   <highlighted_element>500</highlighted_element>
@@ -1017,8 +1017,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SystemLogViewerScreen.kt</file>
   <line>176</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.settings</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.ui.screen.settings.SystemLogViewerScreenKt void SystemLogViewerView(android.content.Context context, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
+  <package>com.jmd.helper.ui.screen.settings</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.ui.screen.settings.SystemLogViewerScreenKt void SystemLogViewerView(android.content.Context context, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onBack)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'stackTrace'</description>
   <highlighted_element>stackTrace = &quot;&quot;</highlighted_element>
@@ -1030,8 +1030,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppChatScanner.kt</file>
   <line>206</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.WhatsAppChatScanner void tryScanWhatsAppChats(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, int sendAttemptCount, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onFinish)" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.whatsapp.WhatsAppChatScanner void tryScanWhatsAppChats(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, int sendAttemptCount, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onFinish)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'photoUri'</description>
   <highlighted_element>photoUri = &quot;&quot;</highlighted_element>
@@ -1043,8 +1043,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppChatScanner.kt</file>
   <line>338</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.WhatsAppChatScanner void tryScanWhatsAppChats(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, int sendAttemptCount, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onFinish)" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.whatsapp.WhatsAppChatScanner void tryScanWhatsAppChats(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, int sendAttemptCount, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onFinish)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'startYRatio'</description>
   <highlighted_element>startYRatio = 0.75f</highlighted_element>
@@ -1056,8 +1056,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppChatScanner.kt</file>
   <line>338</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.WhatsAppChatScanner void tryScanWhatsAppChats(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, int sendAttemptCount, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onFinish)" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.whatsapp.WhatsAppChatScanner void tryScanWhatsAppChats(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, int sendAttemptCount, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onFinish)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'endYRatio'</description>
   <highlighted_element>endYRatio = 0.25f</highlighted_element>
@@ -1069,8 +1069,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppDirectSendEngine.kt</file>
   <line>278</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.WhatsAppDirectSendEngine android.view.accessibility.AccessibilityNodeInfo findMessageInputField(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows)" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.whatsapp.WhatsAppDirectSendEngine android.view.accessibility.AccessibilityNodeInfo findMessageInputField(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'exact'</description>
   <highlighted_element>exact = false</highlighted_element>
@@ -1082,8 +1082,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppDirectSendEngine.kt</file>
   <line>333</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.WhatsAppDirectSendEngine android.view.accessibility.AccessibilityNodeInfo findSendButton(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows, android.view.accessibility.AccessibilityNodeInfo inputNode)" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.whatsapp.WhatsAppDirectSendEngine android.view.accessibility.AccessibilityNodeInfo findSendButton(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows, android.view.accessibility.AccessibilityNodeInfo inputNode)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'exact'</description>
   <highlighted_element>exact = false</highlighted_element>
@@ -1095,8 +1095,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppGroupEngine.kt</file>
   <line>101</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.WhatsAppGroupEngine void tryHandleGroupSearchAndSend(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, java.lang.String pendingGroupRecipient, int sendAttemptCount, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenChat, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onTimeout, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry)" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.whatsapp.WhatsAppGroupEngine void tryHandleGroupSearchAndSend(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, java.lang.String pendingGroupRecipient, int sendAttemptCount, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onOpenChat, kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt; onTimeout, kotlin.jvm.functions.Function1&lt;? super java.lang.Long,kotlin.Unit&gt; onRetry)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'startYRatio'</description>
   <highlighted_element>startYRatio = 0.75f</highlighted_element>
@@ -1108,8 +1108,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppGroupEngine.kt</file>
   <line>166</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
-  <entry_point TYPE="method" FQNAME="com.jmd.autotext.whatsapp.WhatsAppGroupEngine android.view.accessibility.AccessibilityNodeInfo findSearchIcon(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows)" />
+  <package>com.jmd.helper.whatsapp</package>
+  <entry_point TYPE="method" FQNAME="com.jmd.helper.whatsapp.WhatsAppGroupEngine android.view.accessibility.AccessibilityNodeInfo findSearchIcon(android.view.accessibility.AccessibilityNodeInfo root, java.lang.String pkg, java.util.List&lt;android.view.accessibility.AccessibilityWindowInfo&gt; windows)" />
   <problem_class id="RedundantValueArgument" severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant value argument</problem_class>
   <description>Value argument matches the default value of parameter 'exact'</description>
   <highlighted_element>exact = false</highlighted_element>

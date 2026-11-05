@@ -1,10 +1,10 @@
 <problems>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/HelperApplication.kt</file>
   <line>150</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt" />
+  <package>com.jmd.helper</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/HelperApplication.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
   <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
@@ -14,11 +14,11 @@
   <length>54</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/HelperApplication.kt</file>
   <line>165</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt" />
+  <package>com.jmd.helper</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/HelperApplication.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
   <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
@@ -31,7 +31,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/ClipboardCompat.kt</file>
   <line>133</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.compat</package>
+  <package>com.jmd.helper.compat</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/compat/ClipboardCompat.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -45,7 +45,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
   <line>64</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -59,7 +59,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt</file>
   <line>274</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AccessibilityHealthManager.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -73,7 +73,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppExtensions.kt</file>
   <line>35</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/AppExtensions.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -87,7 +87,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PhoneNumberNormalizer.kt</file>
   <line>215</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PhoneNumberNormalizer.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -101,7 +101,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>111</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -115,7 +115,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>371</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -129,7 +129,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt</file>
   <line>424</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/PrivacyManager.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -143,7 +143,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/SmsQuotaManager.kt</file>
   <line>166</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
+  <package>com.jmd.helper.core</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/SmsQuotaManager.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -157,7 +157,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>108</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -171,7 +171,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>124</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -185,7 +185,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>125</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -199,7 +199,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>276</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -213,7 +213,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>277</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -227,7 +227,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>412</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -241,7 +241,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>413</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -255,7 +255,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>416</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -269,7 +269,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>426</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -283,7 +283,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>427</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -297,7 +297,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>428</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -311,7 +311,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>429</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -325,7 +325,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>430</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -339,7 +339,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>447</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -353,7 +353,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>448</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -367,7 +367,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>449</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -381,7 +381,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>542</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -395,7 +395,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>567</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -409,7 +409,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>578</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -423,7 +423,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>610</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -437,7 +437,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>611</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -451,7 +451,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>612</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -465,7 +465,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>628</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -479,7 +479,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt</file>
   <line>629</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.db</package>
+  <package>com.jmd.helper.data.db</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/db/DatabaseHelper.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -493,7 +493,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
   <line>193</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.prefs</package>
+  <package>com.jmd.helper.data.prefs</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -507,7 +507,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
   <line>393</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.prefs</package>
+  <package>com.jmd.helper.data.prefs</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -521,7 +521,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt</file>
   <line>429</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.prefs</package>
+  <package>com.jmd.helper.data.prefs</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/prefs/PreferenceManager.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -535,7 +535,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>181</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
+  <package>com.jmd.helper.engine</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -549,7 +549,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/WhatsAppSender.kt</file>
   <line>217</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
+  <package>com.jmd.helper.engine</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/WhatsAppSender.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -563,7 +563,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/WhatsAppSender.kt</file>
   <line>220</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
+  <package>com.jmd.helper.engine</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/WhatsAppSender.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -577,7 +577,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AccessibilityWatchdogReceiver.kt</file>
   <line>69</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
+  <package>com.jmd.helper.receiver</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AccessibilityWatchdogReceiver.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -588,11 +588,11 @@
   <length>44</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AutoTextDeviceAdminReceiver.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/HelperDeviceAdminReceiver.kt</file>
   <line>136</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/AutoTextDeviceAdminReceiver.kt" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/HelperDeviceAdminReceiver.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
   <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
@@ -605,7 +605,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt</file>
   <line>88</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
+  <package>com.jmd.helper.receiver</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -619,7 +619,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt</file>
   <line>444</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
+  <package>com.jmd.helper.receiver</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -633,7 +633,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/SmsReceiver.kt</file>
   <line>63</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
+  <package>com.jmd.helper.receiver</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/SmsReceiver.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -647,7 +647,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>172</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
+  <package>com.jmd.helper.receiver</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -661,7 +661,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>174</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
+  <package>com.jmd.helper.receiver</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -675,7 +675,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>201</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
+  <package>com.jmd.helper.receiver</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -689,7 +689,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>503</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
+  <package>com.jmd.helper.receiver</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -703,7 +703,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>230</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
+  <package>com.jmd.helper.scheduler</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -717,7 +717,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>294</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
+  <package>com.jmd.helper.scheduler</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -731,7 +731,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>294</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
+  <package>com.jmd.helper.scheduler</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -745,7 +745,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>320</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
+  <package>com.jmd.helper.scheduler</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -756,11 +756,11 @@
   <length>79</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>619</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
   <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
@@ -770,11 +770,11 @@
   <length>150</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>700</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
   <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
@@ -784,11 +784,11 @@
   <length>144</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>733</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
   <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
@@ -798,11 +798,11 @@
   <length>90</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>733</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
   <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
@@ -812,11 +812,11 @@
   <length>90</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>782</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
   <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
@@ -826,11 +826,11 @@
   <length>95</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>2301</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
   <description>&lt;html&gt;The log call Log.d(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
@@ -840,11 +840,11 @@
   <length>58</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>2390</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
   <description>&lt;html&gt;The log call Log.i(...) should be conditional: surround with &lt;code&gt;if (Log.isLoggable(...))&lt;/code&gt; or &lt;code&gt;if (BuildConfig.DEBUG) { ... }&lt;/code&gt;&lt;/html&gt;</description>
@@ -857,7 +857,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt</file>
   <line>64</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
+  <package>com.jmd.helper.service</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -871,7 +871,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt</file>
   <line>74</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
+  <package>com.jmd.helper.service</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskForegroundService.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -885,7 +885,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt</file>
   <line>158</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.activity</package>
+  <package>com.jmd.helper.ui.activity</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/activity/TaskLauncherActivity.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -899,7 +899,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt</file>
   <line>631</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.privacy</package>
+  <package>com.jmd.helper.ui.screen.privacy</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/privacy/PrivacySettingsScreen.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -913,7 +913,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBankingShieldCard.kt</file>
   <line>151</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.settings</package>
+  <package>com.jmd.helper.ui.screen.settings</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBankingShieldCard.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -927,7 +927,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBankingShieldCard.kt</file>
   <line>252</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.ui.screen.settings</package>
+  <package>com.jmd.helper.ui.screen.settings</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/ui/screen/settings/SettingsBankingShieldCard.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -941,7 +941,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt</file>
   <line>143</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
+  <package>com.jmd.helper.whatsapp</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -955,7 +955,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt</file>
   <line>373</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
+  <package>com.jmd.helper.whatsapp</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/AccessibilityNodeUtils.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -969,7 +969,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
   <line>95</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
+  <package>com.jmd.helper.whatsapp</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -983,7 +983,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt</file>
   <line>242</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
+  <package>com.jmd.helper.whatsapp</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/KeyguardUnlockEngine.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -997,7 +997,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/PopupShield.kt</file>
   <line>96</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
+  <package>com.jmd.helper.whatsapp</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/PopupShield.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -1011,7 +1011,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppChatScanner.kt</file>
   <line>82</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
+  <package>com.jmd.helper.whatsapp</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppChatScanner.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -1025,7 +1025,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppDialogHandler.kt</file>
   <line>69</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
+  <package>com.jmd.helper.whatsapp</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppDialogHandler.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -1039,7 +1039,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt</file>
   <line>252</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
+  <package>com.jmd.helper.whatsapp</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -1053,7 +1053,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt</file>
   <line>262</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
+  <package>com.jmd.helper.whatsapp</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppIntentDispatcher.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />
@@ -1067,7 +1067,7 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppStatusEngine.kt</file>
   <line>517</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.whatsapp</package>
+  <package>com.jmd.helper.whatsapp</package>
   <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/whatsapp/WhatsAppStatusEngine.kt" />
   <problem_class id="AndroidLintLogConditional" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unconditional Logging Calls</problem_class>
   <hints />

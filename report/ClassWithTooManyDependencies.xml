@@ -1,13 +1,13 @@
 <problems>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/AutoTextApplication.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/HelperApplication.kt</file>
   <line>38</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.AutoTextApplication" />
+  <package>com.jmd.helper</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.HelperApplication" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
-  <description>Class 'AutoTextApplication' has too many dependencies (11 &gt; 10)</description>
+  <description>Class 'HelperApplication' has too many dependencies (11 &gt; 10)</description>
   <highlighted_element />
   <language />
 </problem>
@@ -15,8 +15,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/api/TaskFeatureApi.kt</file>
   <line>153</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.api</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.api.TaskFeatureApi" />
+  <package>com.jmd.helper.api</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.api.TaskFeatureApi" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
   <description>Class 'TaskFeatureApi' has too many dependencies (27 &gt; 10)</description>
@@ -27,8 +27,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/core/TaskSafetyManager.kt</file>
   <line>31</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.core</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.core.TaskSafetyManager" />
+  <package>com.jmd.helper.core</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.core.TaskSafetyManager" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
   <description>Class 'TaskSafetyManager' has too many dependencies (13 &gt; 10)</description>
@@ -39,8 +39,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/data/repo/AppRepository.kt</file>
   <line>47</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.data.repo</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.data.repo.AppRepository" />
+  <package>com.jmd.helper.data.repo</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.data.repo.AppRepository" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
   <description>Class 'AppRepository' has too many dependencies (31 &gt; 10)</description>
@@ -51,8 +51,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/engine/SequentialTaskEngine.kt</file>
   <line>77</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.engine</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.engine.SequentialTaskEngine" />
+  <package>com.jmd.helper.engine</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.engine.SequentialTaskEngine" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
   <description>Class 'SequentialTaskEngine' has too many dependencies (34 &gt; 10)</description>
@@ -63,8 +63,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/PhoneCallReceiver.kt</file>
   <line>47</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.PhoneCallReceiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.receiver.PhoneCallReceiver" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
   <description>Class 'PhoneCallReceiver' has too many dependencies (13 &gt; 10)</description>
@@ -75,8 +75,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/SmsReceiver.kt</file>
   <line>38</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.SmsReceiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.receiver.SmsReceiver" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
   <description>Class 'SmsReceiver' has too many dependencies (12 &gt; 10)</description>
@@ -87,8 +87,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/receiver/TaskAlarmReceiver.kt</file>
   <line>34</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.receiver</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.receiver.TaskAlarmReceiver" />
+  <package>com.jmd.helper.receiver</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.receiver.TaskAlarmReceiver" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
   <description>Class 'TaskAlarmReceiver' has too many dependencies (17 &gt; 10)</description>
@@ -99,8 +99,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/AlarmScheduler.kt</file>
   <line>37</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.scheduler.AlarmScheduler" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.scheduler.AlarmScheduler" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
   <description>Class 'AlarmScheduler' has too many dependencies (12 &gt; 10)</description>
@@ -111,8 +111,8 @@
   <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/scheduler/DailyTaskBatchWorker.kt</file>
   <line>47</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.scheduler</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.scheduler.DailyCampaignWorker" />
+  <package>com.jmd.helper.scheduler</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.scheduler.DailyCampaignWorker" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
   <description>Class 'DailyCampaignWorker' has too many dependencies (24 &gt; 10)</description>
@@ -120,14 +120,14 @@
   <language />
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/AutoTextAccessibilityService.kt</file>
+  <file>file://$PROJECT_DIR$/app/src/main/java/com/jmd/autotext/service/TaskAccessibilityService.kt</file>
   <line>75</line>
   <module>AutoText.app.main</module>
-  <package>com.jmd.autotext.service</package>
-  <entry_point TYPE="class" FQNAME="com.jmd.autotext.service.AutoTextAccessibilityService" />
+  <package>com.jmd.helper.service</package>
+  <entry_point TYPE="class" FQNAME="com.jmd.helper.service.TaskAccessibilityService" />
   <problem_class id="ClassWithTooManyDependencies" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Class with too many dependencies</problem_class>
   <hints />
-  <description>Class 'AutoTextAccessibilityService' has too many dependencies (28 &gt; 10)</description>
+  <description>Class 'TaskAccessibilityService' has too many dependencies (28 &gt; 10)</description>
   <highlighted_element />
   <language />
 </problem>

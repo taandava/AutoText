@@ -1,19 +1,19 @@
 <problems>
 <problem>
-  <package>com.jmd.autotext.data.db</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.data.db" />
+  <package>com.jmd.helper.data.db</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.data.db" />
   <problem_class id="PackageWithTooFewClasses" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with too few classes</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.data.db' contains too few classes (2 &lt; 3)</description>
+  <description>Package 'com.jmd.helper.data.db' contains too few classes (2 &lt; 3)</description>
   <highlighted_element />
   <language />
 </problem>
 <problem>
-  <package>com.jmd.autotext.data.prefs</package>
-  <entry_point TYPE="package" FQNAME="com.jmd.autotext.data.prefs" />
+  <package>com.jmd.helper.data.prefs</package>
+  <entry_point TYPE="package" FQNAME="com.jmd.helper.data.prefs" />
   <problem_class id="PackageWithTooFewClasses" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Package with too few classes</problem_class>
   <hints />
-  <description>Package 'com.jmd.autotext.data.prefs' contains too few classes (2 &lt; 3)</description>
+  <description>Package 'com.jmd.helper.data.prefs' contains too few classes (2 &lt; 3)</description>
   <highlighted_element />
   <language />
 </problem>

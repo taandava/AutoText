@@ -1,6 +1,6 @@
 # AutoText Master Engineering Directive & Quality Assurance Verification Runbook
 
-> **The Authoritative Architectural, Defect Remediation, and Hardware Verification Record for AutoText (`com.jmd.autotext`).**  
+> **The Authoritative Architectural, Defect Remediation, and Hardware Verification Record for AutoText (`com.jmd.helper`).**  
 > *Target Platform: Android 8.0 (API 26) to Android 16+ (API 36/37) • Zero-Warning & Zero-Lint Certified • 100% On-Device Sovereignty*
 
 ---
@@ -10,16 +10,16 @@
 AutoText is a mission-critical, enterprise-grade Android task and messaging application designed for unattended multi-channel message dispatch and voice call task dispatch. 
 
 ### 1.1 Project Verification Snapshot
-- **Package ID**: `com.jmd.autotext`
+- **Package ID**: `com.jmd.helper`
 - **Application Version**: `1.0.0` (Version Code `1`)
 - **Language**: 100% Idiomatic Kotlin (0% Java)
 - **UI Framework**: Modern Jetpack Compose with Material 3 Expressive
 - **Compiler Compliance**: Kotlin 2.0.21 / AGP 9.4.1 — **0 Warnings, 0 Errors**
 - **Static Analysis**: Android Lint (`lintDebug`) — **0 Errors, 0 Actionable Code Warnings**
-- **Unit Test Suite**: `AutoTextComprehensiveTest` — **107 of 107 Tests Passing (100%)**
+- **Unit Test Suite**: `HelperComprehensiveTest` — **107 of 107 Tests Passing (100%)**
 - **Connected Test Devices**: Samsung Galaxy A04 (`SM-A045F`, serial `R9ZW105MFDR`) running **Android 14 (API Level 34)** & Vivo/iQOO I2401 (`10BF1G0HCD0024R`) running **Android 16 (API Level 36)**
 - **Hardware Test Matrix**: 16/16 Task Types & Endpoints Verified Successfully on Hardware
-- **Post-Test State**: 0 residual tasks in SQLite database (`autotext.db`)
+- **Post-Test State**: 0 residual tasks in SQLite database (`helper.db`)
 
 ---
 
@@ -42,7 +42,7 @@ During comprehensive codebase auditing and live device testing, several critical
 - **Symptom**: On dual-SIM devices, placing a cellular call on a secondary SIM slot (SIM 2) resulted in `TelephonyManager.getCallState()` continuing to report `CALL_STATE_IDLE`, causing dial timing to fail and premature timeouts.
 - **Root Cause**: On Android 12+ (API 31+), the system-level `TelephonyManager.callState` only reflects the status of the default data SIM. Secondary SIM telephony activity is isolated to subscription-specific managers.
 - **Remediation**:
-  - Engineered `com.jmd.autotext.compat.TelephonyManagerCompat`.
+  - Engineered `com.jmd.helper.compat.TelephonyManagerCompat`.
   - Iterates through `SubscriptionManager.activeSubscriptionInfoList` and queries `telephonyManager.createForSubscriptionId(subId).callStateForSubscription` across every active SIM slot.
   - Combined with `TelecomManager.isInCall` cross-checks and accessibility in-call UI inspection (`isPhoneCallUiActive()`).
 
@@ -79,18 +79,18 @@ During comprehensive codebase auditing and live device testing, several critical
 - **Root Cause**:
   1. `accessibility_service_config.xml` lacked `android:packageNames`, making the service globally visible to all apps on the system with window-content extraction flags.
   2. `isDynamicA11yOnDemandEnabled` defaulted to `false`, causing accessibility to stay permanently active in `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES`.
-  3. `MainActivity.onResume()` and `AutoTextApplication.onCreate()` ran `ensureAllServicesActive()`, forcefully re-attaching the accessibility service in secure settings even if paused.
-  4. Foreground retraction in `AutoTextAccessibilityService` only called `disableAccessibilityService()` when `hasWriteSecureSettings` was true, leaving non-ADB users stranded with active services.
+  3. `MainActivity.onResume()` and `HelperApplication.onCreate()` ran `ensureAllServicesActive()`, forcefully re-attaching the accessibility service in secure settings even if paused.
+  4. Foreground retraction in `TaskAccessibilityService` only called `disableAccessibilityService()` when `hasWriteSecureSettings` was true, leaving non-ADB users stranded with active services.
   5. Top-header status indicator displayed a false Red alarm when the service was detached during idle periods.
 - **Remediation**:
   - Explicitly scoped `accessibility_service_config.xml` with `android:packageNames` covering WhatsApp, WhatsApp Business, system dialers, and Keyguard SystemUI. Excluded all financial applications at the OS framework level.
   - Set `isDynamicA11yOnDemandEnabled` to `true` by default so accessibility remains 100% detached during idle periods.
   - Updated `ensureAllServicesActive()` and `AccessibilityWatchdogReceiver` to respect dynamic mode, banking shield, and user paused states.
-  - Configured `AutoTextAccessibilityService.onAccessibilityEvent` to execute `disableService()` (`disableSelf()`) unconditionally upon detecting any banking or payment window state.
-  - Built `AutoTextA11yTileService` Quick Settings Tile for 1-tap pause/resume from the Android notification shade.
+  - Configured `TaskAccessibilityService.onAccessibilityEvent` to execute `disableService()` (`disableSelf()`) unconditionally upon detecting any banking or payment window state.
+  - Built `TaskTileService` Quick Settings Tile for 1-tap pause/resume from the Android notification shade.
   - Redesigned `SettingsBankingShieldCard` with live Google Pay safety status, 1-tap pause button, and copyable ADB commands for zero-detection mode.
   - Updated `SystemIndicatorResolver` so dynamic stealth mode displays an Emerald Green "GPay Safe" operational badge instead of a false Red alarm.
-  - Guarded `AccessibilityWatchdogWorker`, `BootReceiver`, `MainActivity.onResume()`, and `AutoTextApplication.onCreate()` to prevent quick re-enablement when dynamic stealth, banking shield, or user paused states are active.
+  - Guarded `AccessibilityWatchdogWorker`, `BootReceiver`, `MainActivity.onResume()`, and `HelperApplication.onCreate()` to prevent quick re-enablement when dynamic stealth, banking shield, or user paused states are active.
 
 ### Defect 8: OEM Dual-SIM and In-Call Disconnection Failures
 - **Symptom**: Calling tasks on specific OEM devices (Samsung, Vivo, Oppo, Realme, Motorola, Nokia) did not respect configured call duration (e.g., 10 seconds with dialing time) and failed to hang up directly.
@@ -141,7 +141,7 @@ Modern banking, UPI, and trading applications (e.g., Saraswat Bank GOMONxT, SBI 
    - On application startup, boot, and idle return, `AccessibilityHealthManager` and lifecycle receivers proactively clean up lingering secure settings entries.
    - When a scheduled WhatsApp alarm or batch campaign triggers:
      1. `prepareAccessibilityForTask()` re-registers the service via Secure Settings.
-     2. Awaits binder connection (`AutoTextAccessibilityService.getInstance() != null`).
+     2. Awaits binder connection (`TaskAccessibilityService.getInstance() != null`).
      3. Executes the WhatsApp task dispatch cleanly.
      4. In the `finally` block, `releaseAccessibilityAfterTask()` immediately detaches the service.
 2. **Foreground Window State Retraction**:
@@ -174,28 +174,28 @@ Modern banking, UPI, and trading applications (e.g., Saraswat Bank GOMONxT, SBI 
 
 ### Trigger Emergency Stop Circuit Breaker
 ```bash
-adb shell am broadcast -a com.jmd.autotext.ACTION_EMERGENCY_STOP -p com.jmd.autotext
+adb shell am broadcast -a com.jmd.helper.ACTION_EMERGENCY_STOP -p com.jmd.helper
 ```
 
 ### Reset Emergency Stop Circuit Breaker
 ```bash
-adb shell am broadcast -a com.jmd.autotext.ACTION_RESET_EMERGENCY_STOP -p com.jmd.autotext
+adb shell am broadcast -a com.jmd.helper.ACTION_RESET_EMERGENCY_STOP -p com.jmd.helper
 ```
 
 ### Trigger Single Task Test
 ```bash
-adb shell "am broadcast -a com.jmd.autotext.ACTION_TEST_TASK --es channel FAKE_CALL -p com.jmd.autotext"
+adb shell "am broadcast -a com.jmd.helper.ACTION_TEST_TASK --es channel FAKE_CALL -p com.jmd.helper"
 ```
 
 ### Dump Runtime Diagnostic Logs
 ```bash
-adb shell am broadcast -a com.jmd.autotext.ACTION_DUMP_LOGS -p com.jmd.autotext
-adb shell cat /sdcard/Android/data/com.jmd.autotext/files/autotext_execution_dump.txt
+adb shell am broadcast -a com.jmd.helper.ACTION_DUMP_LOGS -p com.jmd.helper
+adb shell cat /sdcard/Android/data/com.jmd.helper/files/autotext_execution_dump.txt
 ```
 
 ### Delete All Temporary Tasks
 ```bash
-adb shell am broadcast -a com.jmd.autotext.ACTION_DELETE_ALL_TASKS -p com.jmd.autotext
+adb shell am broadcast -a com.jmd.helper.ACTION_DELETE_ALL_TASKS -p com.jmd.helper
 ```
 
 ### Verify System Auto-Rotate State

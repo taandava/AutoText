@@ -31,14 +31,14 @@
 | **Phone Calls** | Direct Call Execution | `SequentialTaskEngine.executeCallTask()` | **PASS** | TelecomManager.placeCall with SIM selection |
 | | Multi-Brand OEM Dual-SIM | `OemBrandHelper.kt` | **PASS** | Universal cross-vendor SIM selection extras (Samsung, Vivo, Oppo, Realme, Xiaomi, Motorola, Nokia, Transsion) |
 | | Exact Call Duration Enforcement | `SequentialTaskEngine.waitForCallDurationWithEarlyCheck()` | **PASS** | Sliced polling adhering strictly to form duration condition (including dial-time inclusion mode) |
-| | Scheduled Call Disconnection | `AutoTextAccessibilityService.requestEndPhoneCall()` | **PASS** | Multi-tier: TelecomManager.endCall, showInCallScreen foregrounding + 20+ multi-lingual OEM disconnect IDs, KEYCODE_HEADSETHOOK |
+| | Scheduled Call Disconnection | `TaskAccessibilityService.requestEndPhoneCall()` | **PASS** | Multi-tier: TelecomManager.endCall, showInCallScreen foregrounding + 20+ multi-lingual OEM disconnect IDs, KEYCODE_HEADSETHOOK |
 | | Inter-call Delay Pacing | `SequentialTaskEngine.executeCallTask()` | **PASS** | Enforces configured seconds between calls |
 | | Sequence Ordering | `SequentialTaskEngine.executeCallTask()` | **PASS** | GIVEN vs RANDOM ordering |
 | **WhatsApp** | Personal & Business WA | `WhatsAppPackageHelper.kt` | **PASS** | Identifies `com.whatsapp` and `com.whatsapp.w4b` |
 | | Direct Chat Task Dispatch | `WhatsAppDirectSendEngine.kt` | **PASS** | Semantic text entry verification and designated Send button resolution |
 | | Voice Note Button Collision Shield | `VoiceNoteProtectionGuard.kt` | **PASS** | Prohibits coordinate clicking on microphone; enforces active text content before sending |
 | | Outbound VoIP Calls | `WhatsAppCallEngine.kt` | **PASS** | Toolbar icon vs dropdown menu disambiguation ("Voice call" vs "Video call") |
-| | VoIP Duration Auto-Hangup | `WhatsAppCallEngine.kt`, `AutoTextAccessibilityService.requestEndWhatsAppCall()` | **PASS** | Multi-window hierarchy inspection for WhatsApp in-call disconnect button |
+| | VoIP Duration Auto-Hangup | `WhatsAppCallEngine.kt`, `TaskAccessibilityService.requestEndWhatsAppCall()` | **PASS** | Multi-window hierarchy inspection for WhatsApp in-call disconnect button |
 | | Status Story Posting | `WhatsAppStatusEngine.kt` | **PASS** | Posts to Updates/Status tab with quick image selection and text captions |
 | | Group Message Search | `WhatsAppGroupEngine.kt` | **PASS** | Searches group title in chats tab |
 | **Banking Protection** | Default-Deny UI Policy | `ProtectedApplicationManager.kt` | **PASS** | Only authorized targets receive UI taps |
@@ -48,10 +48,10 @@
 | | Google Pay Zero Block | `SettingsBankingShieldCard.kt`, `accessibility_service_config.xml` | **PASS** | Scoped packageNames, 1-tap pause tile |
 | **Screen Auto-Unlock & Lock** | Screen Wake & Keyguard Dismiss | `TaskLauncherActivity.kt` | **PASS** | PowerManager wake lock & KeyguardManager |
 | | Physical Tap PIN Unlock | `KeyguardUnlockEngine.kt` | **PASS** | Enters PIN digits via gesture coordinates |
-| | Biometric-Safe Hardware Auto-Lock | `AutoTextAccessibilityService.lockScreenNow()`, `AutoTextDeviceAdminReceiver.kt` | **PASS** | Emulates physical Power button press (`GLOBAL_ACTION_LOCK_SCREEN`); preserves biometric fingerprint and face wake |
+| | Biometric-Safe Hardware Auto-Lock | `TaskAccessibilityService.lockScreenNow()`, `HelperDeviceAdminReceiver.kt` | **PASS** | Emulates physical Power button press (`GLOBAL_ACTION_LOCK_SCREEN`); preserves biometric fingerprint and face wake |
 | **Safety & Policy** | Google Play Terminology Sanitization | UI screens, string resources, notification channels | **PASS** | Scrubbed aggressive task dispatch terminology; standardized on "Task" and two-word combinations |
 | | Global Emergency Stop | `TaskSafetyManager.kt` | **PASS** | Instant emergency stop via broadcast or UI |
-| | Human Touch Detection | `AutoTextAccessibilityService.kt` | **PASS** | Yields to human user, auto-postpones task |
+| | Human Touch Detection | `TaskAccessibilityService.kt` | **PASS** | Yields to human user, auto-postpones task |
 | | Portrait Orientation Guard | `AccessibilityHealthManager.enforceAutoRotateInvariant` | **PASS** | Restores portrait lock (ACCELEROMETER_ROTATION=0) |
 | **Programmatic API Layer** | Unified Feature Endpoints | `TaskFeatureApi.kt` | **PASS** | Typed, suspendable, validated endpoints for WhatsApp messages/status/calls, SMS, phone calls, reminders, call simulation, sound modes |
 | **Persistence & Logs** | Thread-Safe SQLite WAL | `DatabaseHelper.kt` | **PASS** | 15 tables with transactional integrity |

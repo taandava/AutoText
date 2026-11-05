@@ -1,9 +1,9 @@
 <problems>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>262</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
   <hints />
   <description>Top level element is not completed #loc</description>
@@ -13,10 +13,10 @@
   <length>39</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>262</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
   <hints />
   <description>Valid XML document must have a root tag #loc</description>
@@ -26,10 +26,10 @@
   <length>0</length>
 </problem>
 <problem>
-  <file>file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md</file>
+  <file>file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md</file>
   <line>458</line>
   <module>AutoText.app.main</module>
-  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md" />
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/assets/HELPER_FEATURES_AND_LOGIC.md" />
   <problem_class id="Annotator" severity="ERROR" attribute_key="WRONG_REFERENCES_ATTRIBUTES">Annotator</problem_class>
   <hints />
   <description>ALIAS or CLOSE_SQUARE expected, got '(' #loc</description>
