@@ -1,8 +1,8 @@
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation Subsystem
+ * Module: WhatsApp Task Subsystem
  *
- * WhatsApp Voice Call automation engine inspecting the accessibility hierarchy
+ * WhatsApp Voice Call engine inspecting the accessibility hierarchy
  * to locate and click the voice call action in personal and business WhatsApp conversations,
  * confirm calling dialogs, and verify VoIP call screen transitions.
  *

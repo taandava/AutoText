@@ -2,13 +2,13 @@
 
 /**
  * Package: com.jmd.autotext.service
- * Module: Accessibility Automation Service
+ * Module: Task Accessibility Service
  *
  * Background accessibility service delivering physical UI interaction, window inspection,
  * dynamic popup dismissal, text population, and send button clicks across WhatsApp Messenger and WhatsApp Business.
  *
  * Linked With:
- * - Engine: [com.jmd.autotext.engine.WhatsAppAutomationSender], [com.jmd.autotext.engine.SequentialTaskEngine]
+ * - Engine: [com.jmd.autotext.engine.WhatsAppSender], [com.jmd.autotext.engine.SequentialTaskEngine]
  * - Sub-Engines: [com.jmd.autotext.whatsapp.WhatsAppDirectSendEngine], [com.jmd.autotext.whatsapp.WhatsAppStatusEngine],
  *   [com.jmd.autotext.whatsapp.WhatsAppGroupEngine], [com.jmd.autotext.whatsapp.PopupShield],
  *   [com.jmd.autotext.whatsapp.VoiceNoteProtectionGuard], [com.jmd.autotext.whatsapp.KeyguardUnlockEngine]
@@ -46,7 +46,7 @@ import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 import androidx.core.content.ContextCompat
 import com.jmd.autotext.AutoTextApplication
-import com.jmd.autotext.ui.activity.AutomationLauncherActivity
+import com.jmd.autotext.ui.activity.TaskLauncherActivity
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.core.PhoneNumberNormalizer
@@ -70,15 +70,15 @@ import com.jmd.autotext.whatsapp.WhatsAppGroupEngine
 import com.jmd.autotext.whatsapp.WhatsAppIntentDispatcher
 import com.jmd.autotext.whatsapp.WhatsAppStatusEngine
 import com.jmd.autotext.whatsapp.WhatsAppCallEngine
-import com.jmd.autotext.core.AutomationSafetyManager
+import com.jmd.autotext.core.TaskSafetyManager
 
 /**
- * Android Accessibility Service executing automated WhatsApp UI workflows.
+ * Android Accessibility Service executing WhatsApp task workflows.
  *
  * Implements strict security invariants:
  * - Never modifies device auto-rotate or unrelated display settings.
  * - Safely recovers from lockouts, dialog traps, or blocked numbers.
- * - Supports emergency stop via [AutomationSafetyManager].
+ * - Supports emergency stop via [TaskSafetyManager].
  */
 class AutoTextAccessibilityService : AccessibilityService() {
 
@@ -225,7 +225,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         private var pendingRecipient: String = ""
         private var pendingMessage: String = ""
         private var pendingMediaUri: String = ""
-        private var isAutomating = false
+        private var isDispatching = false
         private var sendAttemptCount = 0
 
         private const val STANDBY_EVENT_MASK =
@@ -234,7 +234,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             AccessibilityEvent.TYPE_TOUCH_INTERACTION_START or
             AccessibilityEvent.TYPE_GESTURE_DETECTION_START
 
-        private const val ACTIVE_AUTOMATION_EVENT_MASK =
+        private const val ACTIVE_DISPATCH_EVENT_MASK =
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
             AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED or
             AccessibilityEvent.TYPE_VIEW_CLICKED or
@@ -250,10 +250,10 @@ class AutoTextAccessibilityService : AccessibilityService() {
             isStandbyThrottlingActive = standby
         }
 
-        private fun setAutomatingState(automating: Boolean) {
-            isAutomating = automating
-            setStandbyEventMask(!automating)
-            if (!automating) {
+        private fun setDispatchingState(dispatching: Boolean) {
+            isDispatching = dispatching
+            setStandbyEventMask(!dispatching)
+            if (!dispatching) {
                 instance?.let { s ->
                     val prefs = PreferenceManager(s.applicationContext ?: s)
                     if (prefs.isDynamicA11yOnDemandEnabled && !isUnlockPending && !isTestUnlockMode) {
@@ -266,7 +266,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         }
 
         /**
-         * Returns the task ID currently undergoing accessibility automation, or 0 if idle.
+         * Returns the task ID currently undergoing accessibility dispatch, or 0 if idle.
          */
         fun getActiveTaskId(): Long = pendingTaskId
 
@@ -308,7 +308,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         private var shouldRelockAfterSend: Boolean = false
         private var isBatchCampaignMode = false
 
-        enum class AutomationMode {
+        enum class DispatchMode {
             DIRECT_SEND,
             WHATSAPP_SEARCH_GROUP,
             WHATSAPP_STATUS,
@@ -318,7 +318,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         }
 
         @Volatile
-        var currentMode: AutomationMode = AutomationMode.DIRECT_SEND
+        var currentMode: DispatchMode = DispatchMode.DIRECT_SEND
             private set
 
         // Callback when user taps a chat in manual picker mode
@@ -345,12 +345,12 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val appLabel = if (isBusiness) "WhatsApp Business" else "WhatsApp"
 
             if (targetPkg == null) {
-                setAutomatingState(false)
-                currentMode = AutomationMode.DIRECT_SEND
+                setDispatchingState(false)
+                currentMode = DispatchMode.DIRECT_SEND
                 context.showAppToast("$appLabel is not installed")
                 return
             }
-            if (AutomationSafetyManager.isEmergencyStopActive(context)) {
+            if (TaskSafetyManager.isEmergencyStopActive(context)) {
                 context.showAppToast("Emergency stop is active. Reset safeguards in Settings first.")
                 return
             }
@@ -384,13 +384,13 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
 
                 instance?.cancelIdleDetach()
-                currentMode = AutomationMode.MANUAL_PICK_CHAT
+                currentMode = DispatchMode.MANUAL_PICK_CHAT
                 pendingPackageName = targetPkg
-                setAutomatingState(true)
+                setDispatchingState(true)
                 sendAttemptCount = 0
                 onManualChatInfoPicked = onPicked
                 onManualChatPicked = null
-                AutomationSafetyManager.lastPickerLaunchTimestamp = System.currentTimeMillis()
+                TaskSafetyManager.lastPickerLaunchTimestamp = System.currentTimeMillis()
                 try {
                     val launchIntent = context.packageManager.getLaunchIntentForPackage(targetPkg)
                     if (launchIntent != null) {
@@ -401,7 +401,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                         instance?.let { s ->
                             s.handler.removeCallbacksAndMessages(null)
                             s.handler.postDelayed({
-                                if (isAutomating && currentMode == AutomationMode.MANUAL_PICK_CHAT) {
+                                if (isDispatching && currentMode == DispatchMode.MANUAL_PICK_CHAT) {
                                     Log.i(TAG, "Manual chat picker safety timeout (45s) reached. Resetting mode.")
                                     clearPending()
                                     s.scheduleIdleDetach(3000L)
@@ -409,14 +409,14 @@ class AutoTextAccessibilityService : AccessibilityService() {
                             }, 45_000L)
                         }
                     } else {
-                        setAutomatingState(false)
-                        currentMode = AutomationMode.DIRECT_SEND
+                        setDispatchingState(false)
+                        currentMode = DispatchMode.DIRECT_SEND
                         context.showAppToast("Could not open $appLabel")
                     }
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to launch $appLabel for manual chat pick", e)
-                    setAutomatingState(false)
-                    currentMode = AutomationMode.DIRECT_SEND
+                    setDispatchingState(false)
+                    currentMode = DispatchMode.DIRECT_SEND
                 }
             }
         }
@@ -443,13 +443,13 @@ class AutoTextAccessibilityService : AccessibilityService() {
 
         // Preserve the requested operation for result logging even after a group is opened and
         // currentMode transitions to DIRECT_SEND for the actual message-send phase.
-        private var pendingOperationMode: AutomationMode = AutomationMode.DIRECT_SEND
+        private var pendingOperationMode: DispatchMode = DispatchMode.DIRECT_SEND
 
         // When true, the app is brought back to the foreground once a WhatsApp chat scan finishes.
         private var pendingReturnToApp: Boolean = false
 
         /**
-         * Opens WhatsApp and drives the automated accessibility chat scanner across recent conversation items.
+         * Opens WhatsApp and drives the chat scanner across recent conversation items.
          *
          * @param context Local context for launching package intent.
          * @param targetPackage WhatsApp package to inspect (standard or business).
@@ -471,14 +471,14 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val appLabel = if (isBusiness) "WhatsApp Business" else "WhatsApp"
 
             if (targetPkg == null) {
-                setAutomatingState(false)
-                currentMode = AutomationMode.DIRECT_SEND
+                setDispatchingState(false)
+                currentMode = DispatchMode.DIRECT_SEND
                 pendingPackageName = null
                 lastSendResult = RESULT_INVALID
                 context.showAppToast("$appLabel is not installed")
                 return
             }
-            if (AutomationSafetyManager.isEmergencyStopActive(context)) {
+            if (TaskSafetyManager.isEmergencyStopActive(context)) {
                 context.showAppToast("Emergency stop is active. Reset safeguards in Settings first.")
                 return
             }
@@ -512,9 +512,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
 
                 instance?.cancelIdleDetach()
-                currentMode = AutomationMode.WHATSAPP_SCAN_CHATS
+                currentMode = DispatchMode.WHATSAPP_SCAN_CHATS
                 pendingPackageName = targetPkg
-                setAutomatingState(true)
+                setDispatchingState(true)
                 sendAttemptCount = 0
                 instance?.let { s ->
                     s.whatsAppChatScanner.resetScanState(scanTarget)
@@ -529,22 +529,22 @@ class AutoTextAccessibilityService : AccessibilityService() {
                         Log.d(TAG, "startWhatsAppChatScan: Launched $targetPkg for chat scan")
                         context.showAppToast("Scanning $appLabel chats...")
                     } else {
-                        setAutomatingState(false)
-                        currentMode = AutomationMode.DIRECT_SEND
+                        setDispatchingState(false)
+                        currentMode = DispatchMode.DIRECT_SEND
                         pendingPackageName = null
                         lastSendResult = RESULT_INVALID
                         context.showAppToast("Could not open $appLabel")
                     }
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to launch $appLabel for scan", e)
-                    setAutomatingState(false)
-                    currentMode = AutomationMode.DIRECT_SEND
+                    setDispatchingState(false)
+                    currentMode = DispatchMode.DIRECT_SEND
                 }
             }
         }
 
         /**
-         * Arms automation engine for group message dispatch by transitioning to group search mode.
+         * Arms task engine for group message dispatch by transitioning to group search mode.
          *
          * @param taskId Unique task ID.
          * @param packageName WhatsApp package to target.
@@ -561,12 +561,12 @@ class AutoTextAccessibilityService : AccessibilityService() {
             shouldRelock: Boolean = false,
             isBatchCampaign: Boolean = false
         ) {
-            currentMode = AutomationMode.WHATSAPP_SEARCH_GROUP
+            currentMode = DispatchMode.WHATSAPP_SEARCH_GROUP
             prepareForSend(taskId, packageName, groupName, messageText, shouldRelock, isBatchCampaign)
         }
 
         /**
-         * Arms automation engine for posting text or media to WhatsApp Status.
+         * Arms task engine for posting text or media to WhatsApp Status.
          *
          * @param taskId Unique task ID.
          * @param packageName WhatsApp package to target.
@@ -581,14 +581,14 @@ class AutoTextAccessibilityService : AccessibilityService() {
             shouldRelock: Boolean = false,
             mediaUri: String = ""
         ) {
-            currentMode = AutomationMode.WHATSAPP_STATUS
+            currentMode = DispatchMode.WHATSAPP_STATUS
             pendingMediaUri = mediaUri
             instance?.whatsAppStatusEngine?.resetState()
             prepareForSend(taskId, packageName, "STATUS", messageText, shouldRelock, isBatchCampaign = false)
         }
 
         /**
-         * Arms automation engine for executing outbound WhatsApp voice calls.
+         * Arms task engine for executing outbound WhatsApp voice calls.
          *
          * @param taskId Unique task ID.
          * @param packageName WhatsApp package to target.
@@ -603,20 +603,20 @@ class AutoTextAccessibilityService : AccessibilityService() {
             callDurationSeconds: Int = 0,
             shouldRelock: Boolean = false
         ) {
-            currentMode = AutomationMode.WHATSAPP_VOICE_CALL
+            currentMode = DispatchMode.WHATSAPP_VOICE_CALL
             pendingOperationMode = currentMode
             pendingTaskId = taskId
             pendingPackageName = packageName
             pendingRecipient = recipient
             pendingMessage = "WhatsApp Voice Call"
-            setAutomatingState(true)
+            setDispatchingState(true)
             sendAttemptCount = 0
             isBatchCampaignMode = false
             instance?.hasAttemptedSendClick = false
             instance?.whatsAppCallEngine?.resetState()
             shouldRelockAfterSend = shouldRelock
             lastSendResult = RESULT_PENDING
-            Log.d(TAG, "Prepared automated WhatsApp voice call for $packageName, recipient: $recipient, duration: ${callDurationSeconds}s, relock: $shouldRelock")
+            Log.d(TAG, "Prepared scheduled WhatsApp voice call for $packageName, recipient: $recipient, duration: ${callDurationSeconds}s, relock: $shouldRelock")
             AppFileLogger.action(AutoTextApplication.instance, TAG, "Prepared WhatsApp voice call to $recipient for task #$taskId")
 
             instance?.let { s ->
@@ -682,22 +682,22 @@ class AutoTextAccessibilityService : AccessibilityService() {
             shouldRelock: Boolean = false,
             isBatchCampaign: Boolean = false
         ) {
-            if (currentMode != AutomationMode.WHATSAPP_SEARCH_GROUP && currentMode != AutomationMode.WHATSAPP_STATUS) {
-                currentMode = AutomationMode.DIRECT_SEND
+            if (currentMode != DispatchMode.WHATSAPP_SEARCH_GROUP && currentMode != DispatchMode.WHATSAPP_STATUS) {
+                currentMode = DispatchMode.DIRECT_SEND
             }
             pendingOperationMode = currentMode
             pendingTaskId = taskId
             pendingPackageName = packageName
             pendingRecipient = recipient
             pendingMessage = messageText
-            setAutomatingState(true)
+            setDispatchingState(true)
             sendAttemptCount = 0
             isBatchCampaignMode = isBatchCampaign
             instance?.hasAttemptedSendClick = false
             instance?.groupSearchStep = 0
             shouldRelockAfterSend = shouldRelock
             lastSendResult = RESULT_PENDING
-            Log.d(TAG, "Prepared automated WhatsApp send for $packageName, mode: $currentMode, recipient: $recipient, relock: $shouldRelock, batch: $isBatchCampaign")
+            Log.d(TAG, "Prepared WhatsApp send for $packageName, mode: $currentMode, recipient: $recipient, relock: $shouldRelock, batch: $isBatchCampaign")
             AppFileLogger.action(AutoTextApplication.instance, TAG, "Prepared WhatsApp send ($currentMode) to $recipient for task #$taskId")
 
             instance?.let { s ->
@@ -744,7 +744,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             }
         }
 
-        // Pending automation to launch once screen is confirmed unlocked
+        // Pending task to launch once screen is confirmed unlocked
         @Volatile var pendingUnlockTaskId: Long = -1L
         @Volatile var pendingUnlockChannel: ChannelType = ChannelType.WHATSAPP
         @Volatile var pendingUnlockRecipient: String = ""
@@ -753,7 +753,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         @Volatile var pendingUnlockBatch: Boolean = false
 
         /**
-         * Queues automation payload parameters to execute immediately upon confirmed lockscreen dismissal.
+         * Queues task payload parameters to execute immediately upon confirmed lockscreen dismissal.
          *
          * @param taskId Unique task ID.
          * @param channel Target channel.
@@ -763,7 +763,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
          * @param isBatch True if running inside batch campaign.
          * @param mediaUri Local URI of image or video.
          */
-        fun setPendingAutomation(
+        fun setPendingTask(
             taskId: Long,
             channel: ChannelType,
             recipient: String,
@@ -779,7 +779,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             pendingUnlockMediaUri = mediaUri
             shouldRelockAfterSend = shouldRelock
             pendingUnlockBatch = isBatch
-            Log.i(TAG, "Queued pending automation for post-unlock: to=$recipient, task=$taskId, media=$mediaUri")
+            Log.i(TAG, "Queued pending task for post-unlock: to=$recipient, task=$taskId, media=$mediaUri")
         }
 
         /**
@@ -877,7 +877,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         }
 
         /**
-         * Diagnostic tool locking the phone immediately and triggering automated unlock 4 seconds later to verify setup.
+         * Diagnostic tool locking the phone immediately and triggering scheduled unlock 4 seconds later to verify setup.
          *
          * @param context Local Android context.
          * @param pin Secret lockscreen PIN to test.
@@ -941,9 +941,9 @@ class AutoTextAccessibilityService : AccessibilityService() {
 
                 // 3. Hardware RTC AlarmManager guarantee
                 val alarmManager = appContext.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-                val testIntent = Intent(appContext, AutomationLauncherActivity::class.java).apply {
-                    putExtra(AutomationLauncherActivity.EXTRA_IS_TEST_UNLOCK, true)
-                    putExtra(AutomationLauncherActivity.EXTRA_PIN, effectivePin)
+                val testIntent = Intent(appContext, TaskLauncherActivity::class.java).apply {
+                    putExtra(TaskLauncherActivity.EXTRA_IS_TEST_UNLOCK, true)
+                    putExtra(TaskLauncherActivity.EXTRA_PIN, effectivePin)
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
                 val pendingIntent = PendingIntent.getActivity(
@@ -964,7 +964,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                     Log.w(TAG, "Cannot set exact alarm: ${se.message}, relying on WakeLock handler")
                 }
 
-                // 4. Delay using Duration and launch AutomationLauncherActivity
+                // 4. Delay using Duration and launch TaskLauncherActivity
                 delay(3500.milliseconds)
 
                 try {
@@ -985,16 +985,16 @@ class AutoTextAccessibilityService : AccessibilityService() {
         }
 
         /**
-         * Clears all pending automation variables, disarms keyguard watchdog, and resets engine back to idle.
+         * Clears all pending task variables, disarms keyguard watchdog, and resets engine back to idle.
          */
         @JvmStatic
         fun clearPending() {
             if (lastSendResult == RESULT_PENDING) lastSendResult = RESULT_TIMEOUT
-            setAutomatingState(false)
+            setDispatchingState(false)
             isUnlockPending = false
             isTestUnlockMode = false
             isBatchCampaignMode = false
-            currentMode = AutomationMode.DIRECT_SEND
+            currentMode = DispatchMode.DIRECT_SEND
             unlockPin = ""
             pendingPackageName = null
             pendingTaskId = 0
@@ -1018,29 +1018,29 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 s.keyguardUnlockEngine.unlockLoopAttempts = 0
                 s.handler.removeCallbacksAndMessages(null)
             }
-            Log.i(TAG, "clearPending: All automations and pending tasks stopped.")
+            Log.i(TAG, "clearPending: All pending tasks stopped.")
         }
 
         /**
-         * Checks whether accessibility automation is currently running an active dispatch workflow.
+         * Checks whether accessibility service is currently running an active dispatch workflow.
          */
-        fun isCurrentlyAutomating(): Boolean = isAutomating || isUnlockPending || isTestUnlockMode
+        fun isCurrentlyDispatching(): Boolean = isDispatching || isUnlockPending || isTestUnlockMode
 
         /**
-         * Checks whether accessibility automation is currently in manual chat picker mode waiting for user touch.
+         * Checks whether accessibility task is currently in manual chat picker mode waiting for user touch.
          */
-        fun isManualPickMode(): Boolean = isAutomating && currentMode == AutomationMode.MANUAL_PICK_CHAT
+        fun isManualPickMode(): Boolean = isDispatching && currentMode == DispatchMode.MANUAL_PICK_CHAT
 
         /**
-         * Safely aborts active accessibility automation when a protected banking/financial app is encountered.
+         * Safely aborts active accessibility task when a protected banking/financial app is encountered.
          */
         @JvmStatic
         fun abortDueToProtectedApp(pkg: String) {
             val taskId = pendingTaskId
-            Log.w(TAG, "Aborting accessibility automation due to protected app: $pkg (Task #$taskId)")
+            Log.w(TAG, "Aborting task dispatch due to protected app: $pkg (Task #$taskId)")
             clearPending()
             instance?.let { s ->
-                AppFileLogger.action(s, TAG, "Aborted automation for Task #$taskId: Protected app ($pkg) detected")
+                AppFileLogger.action(s, TAG, "Aborted task for Task #$taskId: Protected app ($pkg) detected")
                 val prefs = PreferenceManager(s.applicationContext ?: s)
                 if (prefs.isDynamicA11yOnDemandEnabled && AccessibilityHealthManager.hasWriteSecureSettings(s)) {
                     AccessibilityHealthManager.disableAccessibilityService(s.applicationContext ?: s)
@@ -1049,14 +1049,14 @@ class AutoTextAccessibilityService : AccessibilityService() {
         }
 
         /**
-         * Safely aborts active accessibility automation upon detected human interaction.
+         * Safely aborts active task dispatch upon detected human interaction.
          */
         fun abortDueToHumanInterruption() {
             val taskId = pendingTaskId
             clearPending()
-            Log.w(TAG, "Active accessibility automation aborted due to human interaction (Task #$taskId)")
+            Log.w(TAG, "Active task dispatch aborted due to human interaction (Task #$taskId)")
             instance?.let { s ->
-                AppFileLogger.action(s, TAG, "Aborted active accessibility automation for Task #$taskId due to detected human interaction.")
+                AppFileLogger.action(s, TAG, "Aborted active task dispatch for Task #$taskId due to detected human interaction.")
             }
         }
 
@@ -1117,8 +1117,8 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val appContext = applicationContext ?: this
             val prefs = PreferenceManager(appContext)
             // Only detach dynamically if WRITE_SECURE_SETTINGS is held so the service can auto-reconnect on demand
-            if (prefs.isDynamicA11yOnDemandEnabled && AccessibilityHealthManager.hasWriteSecureSettings(appContext) && !isAutomating && !isUnlockPending && !isTestUnlockMode) {
-                Log.i(TAG, "Idle detach: No active automation, safely detaching accessibility for banking app isolation")
+            if (prefs.isDynamicA11yOnDemandEnabled && AccessibilityHealthManager.hasWriteSecureSettings(appContext) && !isDispatching && !isUnlockPending && !isTestUnlockMode) {
+                Log.i(TAG, "Idle detach: No active task, safely detaching accessibility for banking app isolation")
                 AccessibilityHealthManager.disableAccessibilityService(appContext)
             }
         } catch (e: Exception) {
@@ -1304,12 +1304,12 @@ class AutoTextAccessibilityService : AccessibilityService() {
     private val sendRunnable: Runnable = object : Runnable {
         override fun run() {
             try {
-                if (!isAutomating || currentMode == AutomationMode.MANUAL_PICK_CHAT) return
+                if (!isDispatching || currentMode == DispatchMode.MANUAL_PICK_CHAT) return
                 // Count every processing pass so all state-machine branches have a bounded timeout.
                 sendAttemptCount++
                 val targetPkg = pendingPackageName
                 if (targetPkg.isNullOrBlank()) {
-                    Log.e(TAG, "Automation was active without a target package; clearing the invalid pending operation.")
+                    Log.e(TAG, "Task was active without a target package; clearing the invalid pending operation.")
                     clearPending()
                     return
                 }
@@ -1341,7 +1341,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
 
                 // --- Pop-up & Overlay Shield: dismiss notification shade, Truecaller,
-                // floating overlays, and system dialogs before evaluating automation actions
+                // floating overlays, and system dialogs before evaluating task actions
                 if (PopupShield.clearOverlaysAndNotificationShade(this@AutoTextAccessibilityService, targetPkg)) {
                     Log.d(TAG, "sendRunnable: overlay/popup cleared; pausing 300ms for UI to settle")
                     handler.postDelayed(this, 300L)
@@ -1364,7 +1364,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
 
                 when (currentMode) {
-                    AutomationMode.WHATSAPP_SEARCH_GROUP -> {
+                    DispatchMode.WHATSAPP_SEARCH_GROUP -> {
                         whatsAppGroupEngine.tryHandleGroupSearchAndSend(
                             root = activeRoot,
                             pkg = targetPkg,
@@ -1372,7 +1372,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                             sendAttemptCount = sendAttemptCount,
                             windows = windows,
                             onOpenChat = {
-                            currentMode = AutomationMode.DIRECT_SEND
+                            currentMode = DispatchMode.DIRECT_SEND
                             sendAttemptCount = 0
                             hasAttemptedSendClick = false
                             handler.removeCallbacks(sendRunnable)
@@ -1382,7 +1382,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                             onRetry = { handler.postDelayed(sendRunnable, it) }
                         )
                     }
-                    AutomationMode.WHATSAPP_STATUS -> {
+                    DispatchMode.WHATSAPP_STATUS -> {
                         whatsAppStatusEngine.tryHandleStatusPost(
                             root = activeRoot,
                             targetPkg = targetPkg,
@@ -1395,7 +1395,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                             onRetry = { handler.postDelayed(sendRunnable, it) }
                         )
                     }
-                    AutomationMode.DIRECT_SEND -> {
+                    DispatchMode.DIRECT_SEND -> {
                         whatsAppDirectSendEngine.tryClickSendButton(
                             root = activeRoot,
                             pkg = targetPkg,
@@ -1410,15 +1410,15 @@ class AutoTextAccessibilityService : AccessibilityService() {
                             onAttemptClicked = { hasAttemptedSendClick = true }
                         )
                     }
-                    AutomationMode.WHATSAPP_SCAN_CHATS -> {
+                    DispatchMode.WHATSAPP_SCAN_CHATS -> {
                         whatsAppChatScanner.tryScanWhatsAppChats(
                             root = activeRoot,
                             pkg = targetPkg,
                             sendAttemptCount = sendAttemptCount,
                             onRetry = { handler.postDelayed(sendRunnable, it) },
                             onFinish = {
-                                setAutomatingState(false)
-                                currentMode = AutomationMode.DIRECT_SEND
+                                setDispatchingState(false)
+                                currentMode = DispatchMode.DIRECT_SEND
                                 if (pendingReturnToApp) {
                                     pendingReturnToApp = false
                                     runCatching {
@@ -1432,7 +1432,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                             }
                         )
                     }
-                    AutomationMode.WHATSAPP_VOICE_CALL -> {
+                    DispatchMode.WHATSAPP_VOICE_CALL -> {
                         whatsAppCallEngine.tryHandleVoiceCall(
                             root = activeRoot,
                             pkg = targetPkg,
@@ -1444,14 +1444,14 @@ class AutoTextAccessibilityService : AccessibilityService() {
                             onRetry = { handler.postDelayed(sendRunnable, it) }
                         )
                     }
-                    AutomationMode.MANUAL_PICK_CHAT -> {
+                    DispatchMode.MANUAL_PICK_CHAT -> {
                         // User manual tap selection handled reactively via onAccessibilityEvent
                     }
                 }
             } catch (t: Throwable) {
-                Log.e(TAG, "Error inside WhatsApp automation state machine", t)
+                Log.e(TAG, "Error inside WhatsApp task state machine", t)
                 val targetPkg = pendingPackageName
-                if (isAutomating && targetPkg != null) {
+                if (isDispatching && targetPkg != null) {
                     if (sendAttemptCount >= 45) {
                         handleSendTimeout(targetPkg)
                     } else {
@@ -1470,7 +1470,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
-            info.eventTypes = ACTIVE_AUTOMATION_EVENT_MASK
+            info.eventTypes = ACTIVE_DISPATCH_EVENT_MASK
             serviceInfo = info
             com.jmd.autotext.core.PrivacyManager.getInstance(this).updateAccessibilityScoping()
         } catch (e: Exception) {
@@ -1480,7 +1480,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         instance = this
         Log.d(TAG, "AutoText Accessibility Service Connected & Active (Global Interaction & Idle Guard Active)")
         // A task may have been queued while Android was still binding this service.
-        if (isAutomating) {
+        if (isDispatching) {
             cancelIdleDetach()
             handler.removeCallbacks(sendRunnable)
             handler.postDelayed(sendRunnable, 500L)
@@ -1524,7 +1524,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
-            info.eventTypes = ACTIVE_AUTOMATION_EVENT_MASK
+            info.eventTypes = ACTIVE_DISPATCH_EVENT_MASK
             serviceInfo = info
             com.jmd.autotext.core.PrivacyManager.getInstance(this).updateAccessibilityScoping()
         } catch (e: Exception) {
@@ -1533,7 +1533,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
         AccessibilityHealthManager.recordHeartbeat()
         Log.i(TAG, "AutoText Accessibility Service Re-bound by OS and Active")
         AppFileLogger.i(this, TAG, "AutoText Accessibility Service Re-bound by OS and Active")
-        if (isAutomating) {
+        if (isDispatching) {
             handler.removeCallbacks(sendRunnable)
             handler.postDelayed(sendRunnable, 300L)
         } else if (isUnlockPending) {
@@ -1601,7 +1601,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         try {
             if (event == null) return
-            if (!isAutomating) {
+            if (!isDispatching) {
                 val type = event.eventType
                 if (type == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED ||
                     type == AccessibilityEvent.TYPE_VIEW_SCROLLED ||
@@ -1621,7 +1621,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(this)
             if (privacyMgr.isAppExcluded(currentPkg) || isFinancialOrBankingPackage(currentPkg) || com.jmd.autotext.core.ProtectedApplicationManager.isProtectedPackage(currentPkg)) {
                 com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(this, currentPkg, "onAccessibilityEvent")
-                if (!isAutomating) {
+                if (!isDispatching) {
                     Log.i(TAG, "Banking/Shielded app foreground ($currentPkg), immediately retracting accessibility registration")
                     disableService()
                     if (com.jmd.autotext.core.AccessibilityHealthManager.hasWriteSecureSettings(this)) {
@@ -1633,8 +1633,8 @@ class AutoTextAccessibilityService : AccessibilityService() {
 
             val eventType = event.eventType
 
-            // Standby Event Throttling: When idle and not automating or unlocking, filter non-interaction events
-            if (isStandbyThrottlingActive && !isAutomating && !isUnlockPending) {
+            // Standby Event Throttling: When idle and not dispatching or unlocking, filter non-interaction events
+            if (isStandbyThrottlingActive && !isDispatching && !isUnlockPending) {
                 if (eventType != AccessibilityEvent.TYPE_TOUCH_INTERACTION_START &&
                     eventType != AccessibilityEvent.TYPE_GESTURE_DETECTION_START &&
                     eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
@@ -1643,16 +1643,16 @@ class AutoTextAccessibilityService : AccessibilityService() {
             }
 
             // 0a. Detect Genuine Human Touch Interactions without false scroll/layout flags.
-            // Exclude touches generated by our own automated gesture taps within the last 1.8 seconds.
-            val isRecentAutomatedGesture = (System.currentTimeMillis() - AccessibilityNodeUtils.lastAutomatedGestureTimestamp) < 1800L
-            val isGenuineUserTouch = !isRecentAutomatedGesture && when (eventType) {
+            // Exclude touches generated by our own gesture taps within the last 1.8 seconds.
+            val isRecentGesture = (System.currentTimeMillis() - AccessibilityNodeUtils.lastGestureTimestamp) < 1800L
+            val isGenuineUserTouch = !isRecentGesture && when (eventType) {
                 AccessibilityEvent.TYPE_GESTURE_DETECTION_START,
                 AccessibilityEvent.TYPE_TOUCH_INTERACTION_START -> true
                 else -> false
             }
 
-            // Recognized system and automation-related packages that must never trigger takeover aborts
-            val isAllowedAutomationPackage = currentPkg.contains("whatsapp", ignoreCase = true) ||
+            // Recognized system and task-related packages that must never trigger takeover aborts
+            val isAllowedTargetPackage = currentPkg.contains("whatsapp", ignoreCase = true) ||
                 currentPkg == packageName ||
                 currentPkg.equals("android", ignoreCase = true) ||
                 currentPkg.contains("permissioncontroller", ignoreCase = true) ||
@@ -1674,37 +1674,37 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 currentPkg.contains("nexuslauncher", ignoreCase = true) ||
                 currentPkg.contains("trebuchet", ignoreCase = true)
 
-            val isManualPick = isAutomating && currentMode == AutomationMode.MANUAL_PICK_CHAT
+            val isManualPick = isDispatching && currentMode == DispatchMode.MANUAL_PICK_CHAT
 
-            if (isAutomating && !isManualPick) {
-                // If user switched away from target automation package to an unrelated third-party app
-                if (!isAllowedAutomationPackage) {
-                    Log.w(TAG, "Human interrupted automation! User navigated to: $currentPkg")
-                    AutomationSafetyManager.recordHumanInteraction(this, "User navigated to $currentPkg during automation")
+            if (isDispatching && !isManualPick) {
+                // If user switched away from target task package to an unrelated third-party app
+                if (!isAllowedTargetPackage) {
+                    Log.w(TAG, "Human interrupted task! User navigated to: $currentPkg")
+                    TaskSafetyManager.recordHumanInteraction(this, "User navigated to $currentPkg during task")
                     return
                 }
-                // Real physical touch detected during automation
+                // Real physical touch detected during task
                 if (isGenuineUserTouch) {
-                    Log.w(TAG, "Physical human touch interaction detected during automation in $currentPkg")
-                    AutomationSafetyManager.recordHumanInteraction(this, "Physical touch interaction in $currentPkg")
+                    Log.w(TAG, "Physical human touch interaction detected during task in $currentPkg")
+                    TaskSafetyManager.recordHumanInteraction(this, "Physical touch interaction in $currentPkg")
                     return
                 }
-            } else if (!isAutomating) {
+            } else if (!isDispatching) {
                 // When idle, only record interaction if screen is on and it's a real user touch event
                 val pm = getSystemService(POWER_SERVICE) as? PowerManager
                 val km = getSystemService(KEYGUARD_SERVICE) as? KeyguardManager
                 if (pm?.isInteractive == true && km?.isKeyguardLocked == false && isGenuineUserTouch) {
-                    AutomationSafetyManager.recordHumanInteraction(this, "Physical touch in $currentPkg")
+                    TaskSafetyManager.recordHumanInteraction(this, "Physical touch in $currentPkg")
                 }
             }
 
-            // 0. Global Automation Emergency Stop
+            // 0. Global Task Emergency Stop
             val prefs = com.jmd.autotext.data.prefs.PreferenceManager(this)
-            val isEmergencyStop = AutomationSafetyManager.isEmergencyStopActive(this)
+            val isEmergencyStop = TaskSafetyManager.isEmergencyStopActive(this)
             if (isEmergencyStop || !prefs.isTasksMasterEnabled) {
-                if (isAutomating) {
-                    Log.w(TAG, "Master switch disabled or emergency stop active! Halting accessibility automation immediately.")
-                    setAutomatingState(false)
+                if (isDispatching) {
+                    Log.w(TAG, "Master switch disabled or emergency stop active! Halting task dispatch immediately.")
+                    setDispatchingState(false)
                     isUnlockPending = false
                     clearPending()
                     handler.removeCallbacksAndMessages(null)
@@ -1728,7 +1728,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
             }
 
             // 2. Handle Manual Chat / Group Picker mode
-            if (isAutomating && currentMode == AutomationMode.MANUAL_PICK_CHAT) {
+            if (isDispatching && currentMode == DispatchMode.MANUAL_PICK_CHAT) {
                 if (currentPkg.contains("whatsapp", ignoreCase = true)) {
                     val root = rootInActiveWindow
                     var pickedName = ""
@@ -1756,8 +1756,8 @@ class AutoTextAccessibilityService : AccessibilityService() {
                     val repo = AppRepository(applicationContext)
                     if (cleanPicked.isNotBlank() && repo.isValidPickedChatName(cleanPicked)) {
                         Log.i(TAG, "User clicked and selected WhatsApp chat: '$cleanPicked'")
-                        setAutomatingState(false)
-                        currentMode = AutomationMode.DIRECT_SEND
+                        setDispatchingState(false)
+                        currentMode = DispatchMode.DIRECT_SEND
 
                         val chatInfo = analyzePickedChat(
                             sourceNode = clickedNode,
@@ -1824,8 +1824,8 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 }
             }
 
-            // 3. Handle WhatsApp send automation
-            if (!isAutomating) return
+            // 3. Handle WhatsApp send task
+            if (!isDispatching) return
             val targetPkg = pendingPackageName ?: return
             if (!currentPkg.contains(targetPkg, ignoreCase = true) &&
                 !currentPkg.contains("inputmethod", ignoreCase = true) &&
@@ -2189,10 +2189,10 @@ class AutoTextAccessibilityService : AccessibilityService() {
     private fun finishSendSuccess(pkg: String) {
         lastSendResult = RESULT_SUCCESS
         val channelName = when {
-            pkg.contains("w4b", ignoreCase = true) && pendingOperationMode == AutomationMode.WHATSAPP_STATUS -> "WhatsApp Business Status"
+            pkg.contains("w4b", ignoreCase = true) && pendingOperationMode == DispatchMode.WHATSAPP_STATUS -> "WhatsApp Business Status"
             pkg.contains("w4b", ignoreCase = true) -> "WhatsApp Business"
-            pendingOperationMode == AutomationMode.WHATSAPP_STATUS -> "WhatsApp Status"
-            pendingOperationMode == AutomationMode.WHATSAPP_SEARCH_GROUP -> "WhatsApp Group"
+            pendingOperationMode == DispatchMode.WHATSAPP_STATUS -> "WhatsApp Status"
+            pendingOperationMode == DispatchMode.WHATSAPP_SEARCH_GROUP -> "WhatsApp Group"
             else -> "WhatsApp"
         }
         AppRepository(applicationContext).insertLog(
@@ -2209,11 +2209,11 @@ class AutoTextAccessibilityService : AccessibilityService() {
         AppFileLogger.action(applicationContext, TAG, "Successfully delivered $channelName to $pendingRecipient for task #$pendingTaskId")
         showAppToast("Sent: $channelName")
 
-        setAutomatingState(false)
+        setDispatchingState(false)
         hasAttemptedSendClick = false
         groupSearchStep = 0
         whatsAppStatusEngine.resetState()
-        currentMode = AutomationMode.DIRECT_SEND
+        currentMode = DispatchMode.DIRECT_SEND
 
         val needsRelock = shouldRelockAfterSend || keyguardUnlockEngine.shouldRelockAfterSend
         if (needsRelock) {
@@ -2249,10 +2249,10 @@ class AutoTextAccessibilityService : AccessibilityService() {
         AppFileLogger.action(applicationContext, TAG, "Successfully placed $channelName to $pendingRecipient for task #$pendingTaskId")
         showAppToast("Calling: $channelName")
 
-        setAutomatingState(false)
+        setDispatchingState(false)
         hasAttemptedSendClick = false
         whatsAppCallEngine.resetState()
-        currentMode = AutomationMode.DIRECT_SEND
+        currentMode = DispatchMode.DIRECT_SEND
     }
 
     fun requestEndWhatsAppCall(pkg: String): Boolean {
@@ -2272,10 +2272,14 @@ class AutoTextAccessibilityService : AccessibilityService() {
      */
     fun requestEndPhoneCall(): Boolean {
         val tm = getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
-        try {
-            tm?.showInCallScreen(false)
-        } catch (e: Exception) {
-            Log.d(TAG, "showInCallScreen: ${e.message}")
+        if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            try {
+                tm?.showInCallScreen(false)
+            } catch (e: SecurityException) {
+                Log.d(TAG, "showInCallScreen permission: ${e.message}")
+            } catch (e: Exception) {
+                Log.d(TAG, "showInCallScreen: ${e.message}")
+            }
         }
 
         if (attemptClickEndButton()) return true
@@ -2393,15 +2397,15 @@ class AutoTextAccessibilityService : AccessibilityService() {
     private fun handleSendTimeout(pkg: String) {
         lastSendResult = RESULT_TIMEOUT
         val channelName = when {
-            pendingOperationMode == AutomationMode.WHATSAPP_VOICE_CALL && pkg.contains("w4b", ignoreCase = true) -> "WhatsApp Business Call"
-            pendingOperationMode == AutomationMode.WHATSAPP_VOICE_CALL -> "WhatsApp Call"
-            pkg.contains("w4b", ignoreCase = true) && pendingOperationMode == AutomationMode.WHATSAPP_STATUS -> "WhatsApp Business Status"
+            pendingOperationMode == DispatchMode.WHATSAPP_VOICE_CALL && pkg.contains("w4b", ignoreCase = true) -> "WhatsApp Business Call"
+            pendingOperationMode == DispatchMode.WHATSAPP_VOICE_CALL -> "WhatsApp Call"
+            pkg.contains("w4b", ignoreCase = true) && pendingOperationMode == DispatchMode.WHATSAPP_STATUS -> "WhatsApp Business Status"
             pkg.contains("w4b", ignoreCase = true) -> "WhatsApp Business"
-            pendingOperationMode == AutomationMode.WHATSAPP_STATUS -> "WhatsApp Status"
-            pendingOperationMode == AutomationMode.WHATSAPP_SEARCH_GROUP -> "WhatsApp Group"
+            pendingOperationMode == DispatchMode.WHATSAPP_STATUS -> "WhatsApp Status"
+            pendingOperationMode == DispatchMode.WHATSAPP_SEARCH_GROUP -> "WhatsApp Group"
             else -> "WhatsApp"
         }
-        AppFileLogger.w(applicationContext, TAG, "Automation timeout reached sending to $pendingRecipient")
+        AppFileLogger.w(applicationContext, TAG, "Dispatch timeout reached sending to $pendingRecipient")
         AppRepository(applicationContext).insertLog(
             ExecutionLog(
                 taskId = pendingTaskId,
@@ -2409,17 +2413,17 @@ class AutoTextAccessibilityService : AccessibilityService() {
                 recipient = pendingRecipient,
                 messageSnippet = pendingMessage.take(160),
                 status = "FAILED",
-                details = "Automation timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage."
+                details = "Task timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage."
             )
         )
         if (!isBatchCampaignMode && pendingTaskId > 0) {
             AppRepository(applicationContext).updateTaskStatus(pendingTaskId, TaskStatus.FAILED)
         }
-        setAutomatingState(false)
+        setDispatchingState(false)
         hasAttemptedSendClick = false
         groupSearchStep = 0
         whatsAppStatusEngine.resetState()
-        currentMode = AutomationMode.DIRECT_SEND
+        currentMode = DispatchMode.DIRECT_SEND
 
         val needsRelock = shouldRelockAfterSend || keyguardUnlockEngine.shouldRelockAfterSend
         if (needsRelock) {
@@ -2437,7 +2441,7 @@ class AutoTextAccessibilityService : AccessibilityService() {
     override fun onInterrupt() {
         Log.w(TAG, "Accessibility Service Interrupted")
         if (lastSendResult == RESULT_PENDING) lastSendResult = RESULT_TIMEOUT
-        setAutomatingState(false)
+        setDispatchingState(false)
         isUnlockPending = false
         hasAttemptedSendClick = false
         handler.removeCallbacks(sendRunnable)

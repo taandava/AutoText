@@ -4,7 +4,7 @@ import com.jmd.autotext.core.ProtectedApplicationManager
 import com.jmd.autotext.core.PermissionManager
 import com.jmd.autotext.ui.model.TaskTypeItem
 
-import com.jmd.autotext.core.AutomationSafetyManager
+import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.core.DEFAULT_MESSAGE_TEXT
 import com.jmd.autotext.core.MessageTemplateResolver
 import com.jmd.autotext.core.PhoneNumberNormalizer
@@ -20,7 +20,7 @@ class AutoTextComprehensiveTest {
 
     @Before
     fun setUp() {
-        AutomationSafetyManager.resetEmergencyStop(null)
+        TaskSafetyManager.resetEmergencyStop(null)
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════
@@ -101,48 +101,48 @@ class AutoTextComprehensiveTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════
-    // 3. AUTOMATION SAFETY MANAGER & CIRCUIT BREAKER TESTS
+    // 3. TASK SAFETY MANAGER & CIRCUIT BREAKER TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
     @Test
     fun testEmergencyStopKillSwitch() {
-        assertFalse(AutomationSafetyManager.isEmergencyStopActive.get())
-        assertTrue(AutomationSafetyManager.canExecute(ChannelType.WHATSAPP))
+        assertFalse(TaskSafetyManager.isEmergencyStopActive.get())
+        assertTrue(TaskSafetyManager.canExecute(ChannelType.WHATSAPP))
 
-        AutomationSafetyManager.isEmergencyStopActive.set(true)
-        assertTrue(AutomationSafetyManager.isEmergencyStopActive.get())
-        assertFalse(AutomationSafetyManager.canExecute(ChannelType.WHATSAPP))
-        assertFalse(AutomationSafetyManager.canExecute(ChannelType.CALL))
-        assertFalse(AutomationSafetyManager.canExecute(ChannelType.SMS))
+        TaskSafetyManager.isEmergencyStopActive.set(true)
+        assertTrue(TaskSafetyManager.isEmergencyStopActive.get())
+        assertFalse(TaskSafetyManager.canExecute(ChannelType.WHATSAPP))
+        assertFalse(TaskSafetyManager.canExecute(ChannelType.CALL))
+        assertFalse(TaskSafetyManager.canExecute(ChannelType.SMS))
 
-        AutomationSafetyManager.resetEmergencyStop(null)
-        assertFalse(AutomationSafetyManager.isEmergencyStopActive.get())
-        assertTrue(AutomationSafetyManager.canExecute(ChannelType.WHATSAPP))
+        TaskSafetyManager.resetEmergencyStop(null)
+        assertFalse(TaskSafetyManager.isEmergencyStopActive.get())
+        assertTrue(TaskSafetyManager.canExecute(ChannelType.WHATSAPP))
     }
 
     @Test
     fun testCircuitBreakerTripsAfterThreeConsecutiveFailures() {
         val channel = ChannelType.WHATSAPP_BUSINESS
-        assertFalse(AutomationSafetyManager.isCircuitBreakerTripped(channel))
+        assertFalse(TaskSafetyManager.isCircuitBreakerTripped(channel))
 
-        AutomationSafetyManager.recordFailure(channel, null)
-        assertFalse(AutomationSafetyManager.isCircuitBreakerTripped(channel))
+        TaskSafetyManager.recordFailure(channel, null)
+        assertFalse(TaskSafetyManager.isCircuitBreakerTripped(channel))
 
-        AutomationSafetyManager.recordFailure(channel, null)
-        assertFalse(AutomationSafetyManager.isCircuitBreakerTripped(channel))
+        TaskSafetyManager.recordFailure(channel, null)
+        assertFalse(TaskSafetyManager.isCircuitBreakerTripped(channel))
 
         // 3rd failure trips the circuit breaker
-        AutomationSafetyManager.recordFailure(channel, null)
-        assertTrue(AutomationSafetyManager.isCircuitBreakerTripped(channel))
-        assertFalse(AutomationSafetyManager.canExecute(channel))
+        TaskSafetyManager.recordFailure(channel, null)
+        assertTrue(TaskSafetyManager.isCircuitBreakerTripped(channel))
+        assertFalse(TaskSafetyManager.canExecute(channel))
 
         // Other channels remain unaffected
-        assertTrue(AutomationSafetyManager.canExecute(ChannelType.SMS))
+        assertTrue(TaskSafetyManager.canExecute(ChannelType.SMS))
 
         // Successful execution clears the circuit breaker
-        AutomationSafetyManager.recordSuccess(channel)
-        assertFalse(AutomationSafetyManager.isCircuitBreakerTripped(channel))
-        assertTrue(AutomationSafetyManager.canExecute(channel))
+        TaskSafetyManager.recordSuccess(channel)
+        assertFalse(TaskSafetyManager.isCircuitBreakerTripped(channel))
+        assertTrue(TaskSafetyManager.canExecute(channel))
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════
@@ -503,12 +503,12 @@ class AutoTextComprehensiveTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════
-    // 12. WHATSAPP VOICE CALL AUTOMATION MODE & CHANNEL TESTS
+    // 12. WHATSAPP VOICE CALL DISPATCH MODE & CHANNEL TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
     @Test
-    fun testWhatsAppVoiceCallAutomationModeExists() {
-        val modes = com.jmd.autotext.service.AutoTextAccessibilityService.Companion.AutomationMode.entries.map { it.name }
+    fun testWhatsAppVoiceCallDispatchModeExists() {
+        val modes = com.jmd.autotext.service.AutoTextAccessibilityService.Companion.DispatchMode.entries.map { it.name }
         assertTrue(modes.contains("WHATSAPP_VOICE_CALL"))
     }
 
@@ -782,9 +782,9 @@ class AutoTextComprehensiveTest {
     @Test
     fun testHumanInteractionRecordingAndIdleState() {
         val baseTime = System.currentTimeMillis()
-        AutomationSafetyManager.lastHumanInteractionTimestamp.set(baseTime)
+        TaskSafetyManager.lastHumanInteractionTimestamp.set(baseTime)
 
-        fun isIdle(elapsedMillis: Long): Boolean = elapsedMillis >= AutomationSafetyManager.USER_IDLE_COOLDOWN_MS
+        fun isIdle(elapsedMillis: Long): Boolean = elapsedMillis >= TaskSafetyManager.USER_IDLE_COOLDOWN_MS
 
         // Elapsed time < USER_IDLE_COOLDOWN_MS (10s) must NOT be idle
         assertFalse("Device should not be idle 3s after human interaction", isIdle(3000L))
@@ -796,15 +796,15 @@ class AutoTextComprehensiveTest {
     @Test
     fun testHumanInterruptionFlagAndPostponeCalculation() {
         // Interruption flag behavior
-        AutomationSafetyManager.isInterruptedByHuman.set(true)
-        assertTrue("Interruption flag should be set", AutomationSafetyManager.isInterruptedByHuman.get())
+        TaskSafetyManager.isInterruptedByHuman.set(true)
+        assertTrue("Interruption flag should be set", TaskSafetyManager.isInterruptedByHuman.get())
 
-        AutomationSafetyManager.isInterruptedByHuman.set(false)
-        assertFalse("Interruption flag should be reset", AutomationSafetyManager.isInterruptedByHuman.get())
+        TaskSafetyManager.isInterruptedByHuman.set(false)
+        assertFalse("Interruption flag should be reset", TaskSafetyManager.isInterruptedByHuman.get())
 
         // Postpone calculation
         val currentTrigger = 1700000000000L
-        val postponeDuration = AutomationSafetyManager.DEFAULT_POSTPONE_INTERVAL_MS
+        val postponeDuration = TaskSafetyManager.DEFAULT_POSTPONE_INTERVAL_MS
         val newTrigger = currentTrigger + postponeDuration
 
         val task = ScheduledTask(
@@ -993,7 +993,7 @@ class AutoTextComprehensiveTest {
             val result = com.jmd.autotext.core.TaskContentValidator.validateContent(
                 context = null,
                 channel = channel,
-                messageText = "Automated test dispatch",
+                messageText = "Scheduled test dispatch",
                 mediaUri = null
             )
             assertTrue(
@@ -1181,7 +1181,7 @@ class AutoTextComprehensiveTest {
         assertEquals("com.example.secureapp", config.packageName)
         assertEquals("Secure App", config.appName)
         assertTrue("isExcluded must default to true", config.isExcluded)
-        assertTrue("disableAutomation must default to true", config.disableAutomation)
+        assertTrue("disableTaskAction must default to true", config.disableTaskAction)
         assertTrue("blockOverlays must default to true", config.blockOverlays)
         assertTrue("suppressNotifications must default to true", config.suppressNotifications)
         assertTrue("disableClipboard must default to true", config.disableClipboard)
@@ -1229,8 +1229,8 @@ class AutoTextComprehensiveTest {
     }
 
     @Test
-    fun testBaseAutomationTargetPackages() {
-        val targets = com.jmd.autotext.core.PrivacyManager.BASE_AUTOMATION_TARGET_PACKAGES
+    fun testBaseTaskTargetPackages() {
+        val targets = com.jmd.autotext.core.PrivacyManager.BASE_TASK_TARGET_PACKAGES
         assertTrue(targets.contains("com.whatsapp"))
         assertTrue(targets.contains("com.whatsapp.w4b"))
         assertTrue(targets.contains("com.android.systemui"))
@@ -1267,7 +1267,7 @@ class AutoTextComprehensiveTest {
         )
         assertFalse(modified.isExcluded)
         assertFalse(modified.blockOverlays)
-        assertTrue(modified.disableAutomation)
+        assertTrue(modified.disableTaskAction)
         assertEquals("User whitelisted", modified.customNotes)
     }
 
@@ -1308,7 +1308,7 @@ class AutoTextComprehensiveTest {
 
     @Test
     fun testProtectedApplicationManagerDefaultDenyAllowlist() {
-        // Only authorized automation targets are permitted
+        // Only authorized task targets are permitted
         assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.whatsapp"))
         assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.whatsapp.w4b"))
         assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.google.android.dialer"))
@@ -1421,7 +1421,7 @@ class AutoTextComprehensiveTest {
         val a11y = permMap[PermissionManager.ID_ACCESSIBILITY]
         assertNotNull(a11y)
         assertTrue(a11y!!.isCritical)
-        assertEquals("Task Service", a11y.featureName)
+        assertEquals("Task", a11y.featureName)
         assertFalse(a11y.deniedImpact.isEmpty())
         assertFalse(a11y.revocationSafety.isEmpty())
 
@@ -1576,7 +1576,7 @@ class AutoTextComprehensiveTest {
         assertTrue(ProtectedApplicationManager.isProtectedPackage("com.sbi.lotusintouch"))
         assertTrue(ProtectedApplicationManager.isProtectedPackage("com.saraswatbank.gomobile"))
 
-        // Verify banking apps cannot be authorized automation targets
+        // Verify banking apps cannot be authorized task targets
         assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.google.android.apps.nbu.paisa.user"))
         assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.phonepe.app"))
         assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.saraswat.app"))
@@ -1644,7 +1644,7 @@ class AutoTextComprehensiveTest {
         assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.android.systemui"))
         assertTrue(ProtectedApplicationManager.isAuthorizedTarget("com.jmd.autotext"))
 
-        // Indian banking & payment applications must be strictly protected and denied from automation targets
+        // Indian banking & payment applications must be strictly protected and denied from task targets
         assertTrue(ProtectedApplicationManager.isProtectedPackage("com.boi.mobile"))
         assertTrue(ProtectedApplicationManager.isProtectedPackage("com.sbi.lotusintouch"))
         assertTrue(ProtectedApplicationManager.isProtectedPackage("com.tatadigital.tcp"))
@@ -1677,7 +1677,7 @@ class AutoTextComprehensiveTest {
             assertTrue("Expected space in display format: $formatted", formatted.startsWith("+91 "))
         }
 
-        // Indian national helplines must be strictly blocked from automated dispatch
+        // Indian national helplines must be strictly blocked from scheduled dispatch
         val helplines = listOf("112", "100", "101", "108", "1930", "1947", "1909", "155260", "104", "1097", "1064", "1076", "14416", "1033", "1071", "1099", "182")
         for (helpline in helplines) {
             assertTrue("Expected emergency/helpline block for $helpline", PhoneNumberNormalizer.isEmergencyNumber(helpline))
@@ -1741,7 +1741,7 @@ class AutoTextComprehensiveTest {
             "in.org.npci.upiapp"
         )
         for (pkg in additionalIndianApps) {
-            assertTrue("Expected $pkg to be protected from UI automation", ProtectedApplicationManager.isProtectedPackage(pkg))
+            assertTrue("Expected $pkg to be protected from UI actions", ProtectedApplicationManager.isProtectedPackage(pkg))
             assertFalse("Expected $pkg to NOT be authorized target", ProtectedApplicationManager.isAuthorizedTarget(pkg))
             assertTrue("Expected $pkg to be flagged in AccessibilityService financial check", com.jmd.autotext.service.AutoTextAccessibilityService.isFinancialOrBankingPackage(pkg))
         }
@@ -1831,8 +1831,8 @@ class AutoTextComprehensiveTest {
             "isManualPickMode must be false when service is idle",
             com.jmd.autotext.service.AutoTextAccessibilityService.isManualPickMode()
         )
-        val modes = com.jmd.autotext.service.AutoTextAccessibilityService.Companion.AutomationMode.entries.map { it.name }
-        assertTrue("AutomationMode.MANUAL_PICK_CHAT must be present", modes.contains("MANUAL_PICK_CHAT"))
+        val modes = com.jmd.autotext.service.AutoTextAccessibilityService.Companion.DispatchMode.entries.map { it.name }
+        assertTrue("DispatchMode.MANUAL_PICK_CHAT must be present", modes.contains("MANUAL_PICK_CHAT"))
     }
 
     @Test
@@ -2057,28 +2057,28 @@ class AutoTextComprehensiveTest {
         val items = listOf(
             TaskTypeItem(
                 title = "SMS Message",
-                description = "Schedule direct automated SMS via device SIM card",
+                description = "Schedule direct SMS via device SIM card",
                 emoji = "📩",
                 color = androidx.compose.ui.graphics.Color.Blue,
                 channel = ChannelType.SMS
             ),
             TaskTypeItem(
                 title = "WhatsApp Chat",
-                description = "Automated WhatsApp messages with optional media attachments",
+                description = "Send WhatsApp messages with optional media attachments",
                 emoji = "💬",
                 color = androidx.compose.ui.graphics.Color.Green,
                 channel = ChannelType.WHATSAPP
             ),
             TaskTypeItem(
                 title = "WhatsApp Business",
-                description = "Send automated WhatsApp Business direct messages with media",
+                description = "Send WhatsApp Business direct messages with media",
                 emoji = "💼",
                 color = androidx.compose.ui.graphics.Color.Cyan,
                 channel = ChannelType.WHATSAPP_BUSINESS
             ),
             TaskTypeItem(
                 title = "WhatsApp Group",
-                description = "Send automated WhatsApp group messages or announcements",
+                description = "Send WhatsApp group messages or announcements",
                 emoji = "👥",
                 color = androidx.compose.ui.graphics.Color.Green,
                 channel = ChannelType.WHATSAPP_GROUP
@@ -2100,7 +2100,7 @@ class AutoTextComprehensiveTest {
             ),
             TaskTypeItem(
                 title = "WhatsApp Call",
-                description = "Schedule automated WhatsApp or WA Business voice call",
+                description = "Schedule WhatsApp voice call",
                 emoji = "📞",
                 color = androidx.compose.ui.graphics.Color.Green,
                 channel = null,
@@ -2123,7 +2123,7 @@ class AutoTextComprehensiveTest {
             ),
             TaskTypeItem(
                 title = "Daily Auto Campaign",
-                description = "High-speed paced automated outreach batch",
+                description = "High-speed paced outreach batch",
                 emoji = "⚡",
                 color = androidx.compose.ui.graphics.Color.Yellow,
                 channel = null,
@@ -2138,7 +2138,7 @@ class AutoTextComprehensiveTest {
             ),
             TaskTypeItem(
                 title = "Sound Mode Switcher",
-                description = "Automatically switch between Silent, Vibrate, and Normal sound",
+                description = "Switch between Silent, Vibrate, and Normal sound",
                 emoji = "🔊",
                 color = androidx.compose.ui.graphics.Color.Cyan,
                 channel = ChannelType.SOUND_MODE
@@ -2292,8 +2292,8 @@ class AutoTextComprehensiveTest {
 
     @Test
     fun testEmergencyStopSuppressionAndStatusInvariant() {
-        AutomationSafetyManager.triggerEmergencyStop(null, "Test Emergency Stop")
-        assertTrue(AutomationSafetyManager.isEmergencyStopActive(null))
+        TaskSafetyManager.triggerEmergencyStop(null, "Test Emergency Stop")
+        assertTrue(TaskSafetyManager.isEmergencyStopActive(null))
 
         val recurringTask = ScheduledTask(
             id = 201L,
@@ -2312,8 +2312,8 @@ class AutoTextComprehensiveTest {
         assertEquals(TaskStatus.PENDING, targetRecurring)
         assertEquals(TaskStatus.FAILED, targetOnce)
 
-        AutomationSafetyManager.resetEmergencyStop(null)
-        assertFalse(AutomationSafetyManager.isEmergencyStopActive(null))
+        TaskSafetyManager.resetEmergencyStop(null)
+        assertFalse(TaskSafetyManager.isEmergencyStopActive(null))
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════

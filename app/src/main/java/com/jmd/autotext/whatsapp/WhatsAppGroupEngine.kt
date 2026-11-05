@@ -2,9 +2,9 @@
 
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation Subsystem
+ * Module: WhatsApp Task Subsystem
  *
- * Automated group messaging dispatcher. Locates WhatsApp groups via search query, opens the group chat,
+ * Scheduled group messaging dispatcher. Locates WhatsApp groups via search query, opens the group chat,
  * verifies conversation context, and invokes text transmission.
  *
  * Linked With:
@@ -20,7 +20,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 
 /**
- * WhatsApp group search and automated messaging dispatch engine.
+ * WhatsApp group search and message dispatch engine.
  *
  * @param service Active accessibility service instance.
  * @param loggerTag Logging tag for diagnostic output.

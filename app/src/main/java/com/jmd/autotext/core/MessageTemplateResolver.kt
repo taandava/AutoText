@@ -1,8 +1,8 @@
 /**
  * Package: com.jmd.autotext.core
- * Module: Core Automation Utilities
+ * Module: Core Task Utilities
  *
- * Provides dynamic placeholder substitution for automated message drafting and templating.
+ * Provides dynamic placeholder substitution for scheduled message drafting and templating.
  */
 package com.jmd.autotext.core
 

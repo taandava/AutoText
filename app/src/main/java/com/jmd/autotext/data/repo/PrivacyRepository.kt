@@ -217,13 +217,13 @@ class PrivacyRepository(context: Context) {
                             put("package_name", pkg.trim())
                             put("app_name", friendlyName)
                             put("is_excluded", 1)
-                            put("disable_automation", 1)
+                            put("disable_task_action", 1)
                             put("block_overlays", 1)
                             put("suppress_notifications", 1)
                             put("disable_clipboard", 1)
                             put("mask_sensitive_content", 1)
                             put("disable_rules", 1)
-                            put("custom_notes", "Automated Banking & UPI Shield")
+                            put("custom_notes", "Bank & UPI Shield")
                             put("updated_at", now)
                         }
                         db.insertWithOnConflict(
@@ -292,7 +292,7 @@ class PrivacyRepository(context: Context) {
             put("package_name", config.packageName.trim())
             put("app_name", config.appName.trim())
             put("is_excluded", if (config.isExcluded) 1 else 0)
-            put("disable_automation", if (config.disableAutomation) 1 else 0)
+            put("disable_task_action", if (config.disableTaskAction) 1 else 0)
             put("block_overlays", if (config.blockOverlays) 1 else 0)
             put("suppress_notifications", if (config.suppressNotifications) 1 else 0)
             put("disable_clipboard", if (config.disableClipboard) 1 else 0)
@@ -308,7 +308,7 @@ class PrivacyRepository(context: Context) {
             packageName = cursor.getString(cursor.getColumnIndexOrThrow("package_name")),
             appName = cursor.getString(cursor.getColumnIndexOrThrow("app_name")),
             isExcluded = cursor.getInt(cursor.getColumnIndexOrThrow("is_excluded")) == 1,
-            disableAutomation = cursor.getInt(cursor.getColumnIndexOrThrow("disable_automation")) == 1,
+            disableTaskAction = cursor.getInt(cursor.getColumnIndexOrThrow("disable_task_action")) == 1,
             blockOverlays = cursor.getInt(cursor.getColumnIndexOrThrow("block_overlays")) == 1,
             suppressNotifications = cursor.getInt(cursor.getColumnIndexOrThrow("suppress_notifications")) == 1,
             disableClipboard = cursor.getInt(cursor.getColumnIndexOrThrow("disable_clipboard")) == 1,

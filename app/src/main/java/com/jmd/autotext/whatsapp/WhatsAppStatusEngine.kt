@@ -2,9 +2,9 @@
 
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation Subsystem
+ * Module: WhatsApp Task Subsystem
  *
- * Dedicated status story publishing engine automating text and photo/video story posting
+ * Dedicated status story publishing engine dispatching text and photo/video story posting
  * for both personal WhatsApp and WhatsApp Business. Navigates to Updates tab, clicks pencil/camera FAB,
  * enters story caption/text, confirms My Status audience, and clicks publish.
  *
@@ -14,7 +14,7 @@
  * - Node Utils: [com.jmd.autotext.whatsapp.AccessibilityNodeUtils]
  * - Popup Shield: [com.jmd.autotext.whatsapp.PopupShield]
  * - Diagnostics: [com.jmd.autotext.core.AppFileLogger]
- * - Senders: [com.jmd.autotext.engine.WhatsAppAutomationSender]
+ * - Senders: [com.jmd.autotext.engine.WhatsAppSender]
  */
 package com.jmd.autotext.whatsapp
 
@@ -25,7 +25,7 @@ import android.view.accessibility.AccessibilityWindowInfo
 import com.jmd.autotext.core.AppFileLogger
 
 /**
- * Status story automation engine for WhatsApp and WhatsApp Business.
+ * Status story engine for WhatsApp and WhatsApp Business.
  */
 class WhatsAppStatusEngine(
     private val service: AccessibilityService,

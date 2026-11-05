@@ -5,7 +5,7 @@
  * Module: UI In-App Documentation Screen Layer
  *
  * In-app interactive documentation, feature guides, troubleshooting references,
- * and automation architecture explanations for users.
+ * and task architecture explanations for users.
  *
  * Linked With:
  * - Host: `MainAppHost`

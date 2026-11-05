@@ -2,16 +2,16 @@
 
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation Subsystem
+ * Module: WhatsApp Task Subsystem
  *
  * Provides autonomous lockscreen unlocking (swipe gestures, accessibility PIN entry, coordinate tapping)
- * and security relocking post-automation via [android.app.admin.DevicePolicyManager].
+ * and security relocking post-task via [android.app.admin.DevicePolicyManager].
  *
  * Linked With:
  * - Service: [com.jmd.autotext.service.AutoTextAccessibilityService]
  * - Receiver: [com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver]
  * - Preferences: [com.jmd.autotext.data.prefs.PreferenceManager]
- * - Engines: [com.jmd.autotext.engine.SequentialTaskEngine], [com.jmd.autotext.engine.WhatsAppAutomationSender]
+ * - Engines: [com.jmd.autotext.engine.SequentialTaskEngine], [com.jmd.autotext.engine.WhatsAppSender]
  */
 package com.jmd.autotext.whatsapp
 

@@ -3,7 +3,7 @@
  * Module: Compat Layer
  *
  * Provides safe clipboard synchronization, clip attachment, sensitive content protection,
- * and automatic clipboard wipe across Android versions.
+ * and scheduled clipboard wipe across Android versions.
  */
 package com.jmd.autotext.compat
 
@@ -46,7 +46,7 @@ object ClipboardCompat {
      * Copies text to system clipboard with privacy safeguards:
      * 1. Marks content as sensitive ([ClipDescription.EXTRA_IS_SENSITIVE]) on Android 13+ (API 33+)
      *    to hide visual clipboard overlay and prevent clipboard manager leakage.
-     * 2. Automatically schedules clipboard wipe after [autoClearSeconds] if > 0.
+     * 2. Schedules clipboard wipe after [autoClearSeconds] if > 0.
      * 3. Verifies target package exclusion via PrivacyManager before proceeding.
      */
     @JvmStatic
@@ -109,7 +109,7 @@ object ClipboardCompat {
                         } else {
                             cm.setPrimaryClip(ClipData.newPlainText("", ""))
                         }
-                        Log.d(TAG, "System clipboard cleared automatically for privacy.")
+                        Log.d(TAG, "System clipboard cleared directly for privacy.")
                     }
                 }
             } catch (t: Throwable) {

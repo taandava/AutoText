@@ -176,7 +176,7 @@ fun ComposeSimulatedCallAndSoundCard(
 
 
 /**
- * Recipient selector and automated calling policy card for cellular and WhatsApp outbound voice calls.
+ * Recipient selector and calling policy card for cellular and WhatsApp outbound voice calls.
  *
  * @param selectedRecipients List of selected target phone numbers.
  * @param duplicateWarning Warning text if a contact is already added.

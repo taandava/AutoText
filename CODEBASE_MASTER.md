@@ -25,7 +25,7 @@
 # 1. Project Mission & Executive Overview
 
 ## 1.1 Core Mission
-**AutoText** (`com.jmd.autotext`) is a high-reliability, 100% on-device Android communication and task scheduling application designed for unattended multi-channel message dispatch, automated cellular calling, and intelligent auto-reply rules. 
+**AutoText** (`com.jmd.autotext`) is a high-reliability, 100% on-device Android communication and task scheduling application designed for unattended multi-channel message dispatch, scheduled cellular calling, and intelligent auto-reply rules. 
 
 Built with zero third-party cloud dependencies, zero external analytics, and zero network tracking (`android.permission.INTERNET` is completely omitted), AutoText guarantees enterprise data sovereignty and absolute user privacy while delivering commercial-grade dispatch reliability.
 
@@ -43,7 +43,7 @@ Built with zero third-party cloud dependencies, zero external analytics, and zer
   - Samsung Galaxy A04 (`SM-A045F`, Android 14 API 34, Hardware ID: `R9ZW105MFDR`)
   - Vivo / iQOO I2401 (`I2401`, Android 16 API 36, Hardware ID: `10BF1G0HCD0024R`)
 - **Data Sovereignty:** 100% On-Device Sovereignty. No remote servers, no cloud telemetry, no internet permission.
-- **Policy Compliance:** Full compliance with Google Play Store and OEM package policies; sanitized terminology ("Task Service", "Smart Dispatch").
+- **Policy Compliance:** Full compliance with Google Play Store and OEM package policies; sanitized terminology ("Task", "Smart Dispatch").
 
 ---
 
@@ -57,7 +57,7 @@ Built with zero third-party cloud dependencies, zero external analytics, and zer
                                     │
 ┌───────────────────────────────────▼────────────────────────────────────┐
 │                  Programmatic API Layer (Endpoints)                    │
-│   AutomationFeatureApi: Typed, Suspendable, Validated Action Endpoints │
+│   TaskFeatureApi: Typed, Suspendable, Validated Action Endpoints │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
 ┌───────────────────────────────────▼────────────────────────────────────┐
@@ -70,7 +70,7 @@ Built with zero third-party cloud dependencies, zero external analytics, and zer
 │  └──────────────────────────────────┬───────────────────────────────┘  │
 │      │                              │                               │  │
 │      ▼                              ▼                               ▼  │
-│   SmsSender             WhatsAppAutomationSender             CallEngine │
+│   SmsSender             WhatsAppSender             CallEngine │
 └──────┬──────────────────────────────┬───────────────────────────────┬──┘
        │                              │                               │
 ┌──────▼──────────────────────────────▼───────────────────────────────▼──┐
@@ -83,7 +83,7 @@ Built with zero third-party cloud dependencies, zero external analytics, and zer
 │  │    PermissionManager    │              │     OemBrandHelper      │  │
 │  └─────────────────────────┘              └─────────────────────────┘  │
 │  ┌─────────────────────────┐              ┌─────────────────────────┐  │
-│  │  AutomationSafetyManager│              │   AccessibilityHealth   │  │
+│  │  TaskSafetyManager│              │   AccessibilityHealth   │  │
 │  └─────────────────────────┘              └─────────────────────────┘  │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │
@@ -106,7 +106,7 @@ app/src/main/
 ├── java/com/jmd/autotext/
 │   ├── AutoTextApplication.kt             # Application root, crash handler & startup recovery
 │   ├── api/
-│   │   └── AutomationFeatureApi.kt        # Programmatic endpoints for all app operations
+│   │   └── TaskFeatureApi.kt        # Programmatic endpoints for all app operations
 │   ├── compat/
 │   │   ├── AccessibilityCompat.kt         # Dynamic gesture dispatch & window traversal
 │   │   ├── ClipboardCompat.kt             # Secure clip data handling & text delivery
@@ -117,7 +117,7 @@ app/src/main/
 │   │   ├── AccessibilityHealthManager.kt  # Auto-healing, secure settings & rotation invariant
 │   │   ├── AppExtensions.kt               # Standard Android utility extensions
 │   │   ├── AppFileLogger.kt               # Thread-safe rotating diagnostics & error traces
-│   │   ├── AutomationSafetyManager.kt     # Idle detection, touch interrupt & emergency stop
+│   │   ├── TaskSafetyManager.kt     # Idle detection, touch interrupt & emergency stop
 │   │   ├── MessageTemplateResolver.kt     # Dynamic personalizer ({name}, {time}, {date}, etc.)
 │   │   ├── OemBrandHelper.kt              # Universal multi-brand OEM dual-SIM & dialer extras
 │   │   ├── OverlayPermissionHelper.kt     # System alert window permission manager
@@ -152,7 +152,7 @@ app/src/main/
 │   │   ├── ContactIngestionEngine.kt      # Scans system contacts, call logs & SMS into pool
 │   │   ├── SequentialTaskEngine.kt        # Single-threaded serial executor with 250ms polling
 │   │   ├── SmsSender.kt                   # Multi-part GSM-7/UCS-2 SMS cellular dispatcher
-│   │   └── WhatsAppAutomationSender.kt    # WhatsApp intent launching & accessibility bridge
+│   │   └── WhatsAppSender.kt    # WhatsApp intent launching & accessibility bridge
 │   ├── receiver/
 │   │   ├── AccessibilityWatchdogReceiver.kt # 15-minute exact watchdog heartbeat tick
 │   │   ├── AutoTextDeviceAdminReceiver.kt # Hardware screen locking bridge (GLOBAL_ACTION_LOCK_SCREEN)
@@ -170,12 +170,12 @@ app/src/main/
 │   │   └── DailyCampaignWorker.kt         # WorkManager worker with cooperative cancellation
 │   ├── service/
 │   │   ├── AutoTextA11yTileService.kt     # Quick Settings tile for 1-tap pause/resume
-│   │   ├── AutoTextAccessibilityService.kt# Touch automation, Power button lock & call hangup
+│   │   ├── AutoTextAccessibilityService.kt# Touch task dispatch, Power button lock & call hangup
 │   │   ├── AutoTextNotificationListenerService.kt # Notification auto-reply listener
 │   │   └── TaskForegroundService.kt       # Foreground service lifecycle coordinator
 │   ├── ui/
 │   │   ├── activity/
-│   │   │   ├── AutomationLauncherActivity.kt # Wake lock & keyguard dismiss window manager
+│   │   │   ├── TaskLauncherActivity.kt # Wake lock & keyguard dismiss window manager
 │   │   │   ├── CallSimulationActivity.kt     # In-call simulation UI with ringtone/vibration
 │   │   │   ├── MainActivity.kt               # Main Jetpack Compose application host
 │   │   │   └── ReminderAlarmActivity.kt      # Fullscreen reminder & alarm alert
@@ -201,23 +201,23 @@ app/src/main/
 
 # 4. Multi-Channel Dispatch Engines & Workflows
 
-AutoText supports 16 distinct automated communication workflows and execution endpoints:
+AutoText supports 16 distinct scheduled communication workflows and execution endpoints:
 1. **SMS Cellular Modem Dispatch:** Direct transmission via Android Telephony with explicit SIM slot binding (SIM 1 / SIM 2) across Qualcomm, MediaTek, Exynos, and Unisoc chipsets.
 2. **WhatsApp Direct Chat:** Accessibility-driven direct chat messaging for `com.whatsapp`, including message insertion and designated Send button resolution.
 3. **Voice Note Protection Guard:** Prevents misdirected taps on the voice note (microphone) button when the Send button has not yet appeared.
-4. **WhatsApp Business Direct Chat:** Isolated direct chat automation for `com.whatsapp.w4b`.
-5. **WhatsApp Group Messaging:** Chat search and dispatch automation to specified group names.
-6. **WhatsApp Status Stories:** Automated publishing of text updates and image/video media to WhatsApp Status.
+4. **WhatsApp Business Direct Chat:** Isolated direct chat task dispatch for `com.whatsapp.w4b`.
+5. **WhatsApp Group Messaging:** Chat search and dispatch task dispatch to specified group names.
+6. **WhatsApp Status Stories:** Scheduled publishing of text updates and image/video media to WhatsApp Status.
 7. **WhatsApp Business Status Stories:** Background posting of updates to WhatsApp Business Status.
-8. **Cellular Phone Calls:** Universal multi-brand OEM dual-SIM dialing (Samsung, Vivo, Oppo, Realme, Xiaomi, Motorola, Nokia, Transsion), exact call duration holding with early termination detection, and automated call termination (`ANSWER_PHONE_CALLS`, `TelecomManager.endCall()`, in-call accessibility node traversal, media key emulation).
-9. **WhatsApp VoIP Calls:** Automated voice calling with toolbar vs popup dropdown menu disambiguation ("Voice call" vs "Video call"), connected status detection via conversation timer inspection (`00:01`, `01:23`), and auto-hangup.
+8. **Cellular Phone Calls:** Universal multi-brand OEM dual-SIM dialing (Samsung, Vivo, Oppo, Realme, Xiaomi, Motorola, Nokia, Transsion), exact call duration holding with early termination detection, and scheduled call termination (`ANSWER_PHONE_CALLS`, `TelecomManager.endCall()`, in-call accessibility node traversal, media key emulation).
+9. **WhatsApp VoIP Calls:** Scheduled voice calling with toolbar vs popup dropdown menu disambiguation ("Voice call" vs "Video call"), connected status detection via conversation timer inspection (`00:01`, `01:23`), and auto-hangup.
 10. **WhatsApp Business VoIP Calls:** Voice calling via WhatsApp Business with duration holding.
 11. **Simulated Incoming Calls (Call Simulation):** Fullscreen simulated call screen with OEM ringtone, vibration motor pulsing, and realistic caller UI skins.
 12. **System Reminders / Alarms:** Android native System Alarm Clock registration and fullscreen alarm alerts.
 13. **Sound Mode Profiles:** Do-Not-Disturb / Audio profile switcher (Normal, Vibrate, Silent) with volume level management.
 14. **Contact Sequences & Drip Campaigns:** Multi-step follow-up sequences across SMS and WhatsApp with customizable delays.
 15. **Daily Contact Campaigns:** Dynamic pool scanning from contacts/call-logs/SMS with paced dispatch throttles.
-16. **Programmatic API Layer (`AutomationFeatureApi.kt`):** Typed, suspendable endpoints for all features.
+16. **Programmatic API Layer (`TaskFeatureApi.kt`):** Typed, suspendable endpoints for all features.
 
 ---
 
@@ -264,7 +264,7 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 - **Rule:** All activities are locked to portrait orientation, and `Settings.System.ACCELEROMETER_ROTATION = 0` is actively enforced.
 
 ### ADR-007: Stranded RUNNING Task Recovery
-- **Rule:** Any task left in `TaskStatus.RUNNING` due to process abort, crash, or emergency stop is automatically reconciled back to `PENDING` (recurring) or `FAILED` (single-run) on startup, reschedule, or pipeline exit.
+- **Rule:** Any task left in `TaskStatus.RUNNING` due to process abort, crash, or emergency stop is directly reconciled back to `PENDING` (recurring) or `FAILED` (single-run) on startup, reschedule, or pipeline exit.
 
 ### ADR-008: Hardware Power Button Emulation for Biometric-Safe Screen Lock
 - **Rule:** Strictly forbidden from calling `DevicePolicyManager.lockNow()`, which forces biometric lockout. Emulates physical hardware Power button press (`GLOBAL_ACTION_LOCK_SCREEN`) through accessibility service to preserve fingerprint and face unlock.
@@ -273,10 +273,10 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 - **Rule:** Dynamic vendor-agnostic dual-SIM selection and multi-tier call hangup via `OemBrandHelper.kt` supporting Samsung, Vivo, Oppo, Realme, Xiaomi, Motorola, Nokia, and Transsion.
 
 ### ADR-010: Google Play & OEM Anti-Abuse Terminology Policy Sanitization
-- **Rule:** Standardized on clean, compliant 2-word naming conventions: "Task Service", "Smart Dispatch", "Scheduled Tasks". Eradicated aggressive automation jargon.
+- **Rule:** Standardized on clean, compliant 2-word naming conventions: "Task", "Smart Dispatch", "Scheduled Tasks". Eradicated aggressive task dispatch jargon.
 
 ### ADR-011: Unified Programmatic Feature Endpoints Architecture
-- **Rule:** All actions exposed through typed, suspendable, validated endpoints in `AutomationFeatureApi.kt` returning standardized `TaskExecutionResult`.
+- **Rule:** All actions exposed through typed, suspendable, validated endpoints in `TaskFeatureApi.kt` returning standardized `TaskExecutionResult`.
 
 ---
 
@@ -287,7 +287,7 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 - **Header Status Indicators:** 7 real-time indicators in the top bar:
   1. Stealth Guard (Banking Shield)
   2. Screen Orientation Guard
-  3. Task Service Engine
+  3. Task Engine
   4. Notification Quick-Reply Listener
   5. Device Admin & Screen Auto-Lock
   6. Unrestricted Battery & Power
@@ -306,7 +306,7 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 | Component | Responsibility | Audit Result | Status |
 |:---|:---|:---|:---:|
 | `DatabaseHelper.kt` | SQLite WAL open helper & 15 tables | Schema indices & WAL journal verified | **PASS** |
-| `AutomationFeatureApi.kt` | Programmatic feature endpoints | Typed, suspendable, validated API endpoints | **PASS** |
+| `TaskFeatureApi.kt` | Programmatic feature endpoints | Typed, suspendable, validated API endpoints | **PASS** |
 | `OemBrandHelper.kt` | Multi-brand OEM dual-SIM & in-call handling | Cross-vendor SIM extras & disconnect node IDs verified | **PASS** |
 | `BackupRepository.kt` | JSON backup export & restore | All 15 tables including privacy configs mapped | **PASS** |
 | `PermissionManager.kt` | Permissions specification & checks | Runtime permissions (Call Log, Media, Answer Phone Calls) verified | **PASS** |
@@ -314,7 +314,7 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 | `SequentialTaskEngine.kt` | Serial task executor & pipeline | Stranded task recovery, exact duration & 250ms polling verified | **PASS** |
 | `AutoTextDeviceAdminReceiver.kt` | Screen lock bridge | `lockNow()` delegates strictly to `GLOBAL_ACTION_LOCK_SCREEN` | **PASS** |
 | `ProtectedApplicationManager.kt` | Financial isolation engine | 60+ banking packages cataloged; default-deny active | **PASS** |
-| `AutomationSafetyManager.kt` | Safety circuit breaker & stop | Null-safe emergency stop & touch yields verified | **PASS** |
+| `TaskSafetyManager.kt` | Safety circuit breaker & stop | Null-safe emergency stop & touch yields verified | **PASS** |
 | `KeyguardUnlockEngine.kt` | Lockscreen PIN gesture unlock | Coordinate-based stroke taps verified | **PASS** |
 | `DocumentationScreen.kt` | In-app technical guide reader | All 14 markdown category filters aligned | **PASS** |
 
@@ -331,7 +331,7 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 | | RUNNING State | `SequentialTaskEngine.kt` | **PASS** | Mutex locked, active tracking |
 | | RUNNING Recovery | `TaskRepository.recoverInterruptedRunningTasks()`, `SequentialTaskEngine.kt` | **PASS** | Auto-reconciles orphaned RUNNING tasks on boot, reschedule, and engine pipeline exit |
 | | SUCCESS State | `SequentialTaskEngine.kt`, `LogRepository.kt` | **PASS** | Recorded in DB with execution log |
-| | FAILED State | `SequentialTaskEngine.kt`, `AutomationSafetyManager.kt` | **PASS** | Recorded with failure reason |
+| | FAILED State | `SequentialTaskEngine.kt`, `TaskSafetyManager.kt` | **PASS** | Recorded with failure reason |
 | | CANCELLED State | `SequentialTaskEngine.cancelTask()`, `AlarmScheduler.cancelTask()` | **PASS** | Active job cancelled, alarms disarmed |
 | | PAUSED State | `TaskRepository.toggleTask()`, `TasksScreen.kt` | **PASS** | Suppresses alarm until resumed |
 | **Scheduling** | Immediate Execution | `TasksScreen.kt` ("Send Now") | **PASS** | Bypasses alarm, queues directly |
@@ -347,35 +347,35 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 | | CSV Contacts Import | `ContactImportView.kt` | **PASS** | Parses CSV headers, validates phones |
 | | Ingestion from Device | `ContactIngestionEngine.kt` | **PASS** | Scans contacts, call logs, SMS |
 | **SMS** | Multi-SIM Cellular Modem | `SmsSender.kt`, `SmsManagerCompat.kt`, `OemBrandHelper.kt` | **PASS** | Explicit SIM slot binding across Qualcomm, MediaTek, Samsung Exynos, and Unisoc |
-| | Multi-part PDU SMS | `SmsSender.kt` | **PASS** | Automatically splits & tracks parts |
+| | Multi-part PDU SMS | `SmsSender.kt` | **PASS** | Directly splits & tracks parts |
 | | SMS Quota Management | `SmsQuotaManager.kt` | **PASS** | Prevents carrier block from burst limits |
 | | Incoming SMS Auto-Reply | `SmsReceiver.kt`, `AutoReplyRepository.kt` | **PASS** | Trigger pattern match with cooldown |
 | **Phone Calls** | Direct Call Execution | `SequentialTaskEngine.executeCallTask()` | **PASS** | TelecomManager.placeCall with SIM selection |
 | | Multi-Brand OEM Dual-SIM | `OemBrandHelper.kt` | **PASS** | Universal cross-vendor SIM selection extras (Samsung, Vivo, Oppo, Realme, Xiaomi, Motorola, Nokia, Transsion) |
 | | Exact Call Duration Enforcement | `SequentialTaskEngine.waitForCallDurationWithEarlyCheck()` | **PASS** | Sliced polling adhering strictly to form duration condition (including dial-time inclusion mode) |
-| | Automated Call Disconnection | `AutoTextAccessibilityService.requestEndPhoneCall()` | **PASS** | Multi-tier: TelecomManager.endCall, showInCallScreen foregrounding + 20+ multi-lingual OEM disconnect IDs, KEYCODE_HEADSETHOOK |
+| | Scheduled Call Disconnection | `AutoTextAccessibilityService.requestEndPhoneCall()` | **PASS** | Multi-tier: TelecomManager.endCall, showInCallScreen foregrounding + 20+ multi-lingual OEM disconnect IDs, KEYCODE_HEADSETHOOK |
 | | Inter-call Delay Pacing | `SequentialTaskEngine.executeCallTask()` | **PASS** | Enforces configured seconds between calls |
 | | Sequence Ordering | `SequentialTaskEngine.executeCallTask()` | **PASS** | GIVEN vs RANDOM ordering |
 | **WhatsApp** | Personal & Business WA | `WhatsAppPackageHelper.kt` | **PASS** | Identifies `com.whatsapp` and `com.whatsapp.w4b` |
-| | Direct Chat Automation | `WhatsAppDirectSendEngine.kt` | **PASS** | Semantic text entry verification and designated Send button resolution |
+| | Direct Chat Task Dispatch | `WhatsAppDirectSendEngine.kt` | **PASS** | Semantic text entry verification and designated Send button resolution |
 | | Voice Note Button Collision Shield | `VoiceNoteProtectionGuard.kt` | **PASS** | Prohibits coordinate clicking on microphone; enforces active text content before sending |
 | | Outbound VoIP Calls | `WhatsAppCallEngine.kt` | **PASS** | Toolbar icon vs dropdown menu disambiguation ("Voice call" vs "Video call") |
 | | VoIP Duration Auto-Hangup | `WhatsAppCallEngine.kt`, `AutoTextAccessibilityService.requestEndWhatsAppCall()` | **PASS** | Multi-window hierarchy inspection for WhatsApp in-call disconnect button |
-| | Status Story Posting | `WhatsAppStatusEngine.kt` | **PASS** | Posts to Updates/Status tab with automatic image selection and text captions |
+| | Status Story Posting | `WhatsAppStatusEngine.kt` | **PASS** | Posts to Updates/Status tab with quick image selection and text captions |
 | | Group Message Search | `WhatsAppGroupEngine.kt` | **PASS** | Searches group title in chats tab |
 | **Banking Protection** | Default-Deny UI Policy | `ProtectedApplicationManager.kt` | **PASS** | Only authorized targets receive UI taps |
 | | Financial App Catalog | `ProtectedApplicationManager.KNOWN_PROTECTED_PACKAGES` | **PASS** | 60+ Indian and global banking/UPI apps |
 | | Pre-Action Context Check | `ProtectedApplicationManager.verifyContextBeforeInteraction` | **PASS** | Verifies foreground package before taps |
 | | Dynamic Standby Detachment | `AccessibilityHealthManager.kt` | **PASS** | Detaches a11y service during idle periods |
 | | Google Pay Zero Block | `SettingsBankingShieldCard.kt`, `accessibility_service_config.xml` | **PASS** | Scoped packageNames, 1-tap pause tile |
-| **Screen Auto-Unlock & Lock** | Screen Wake & Keyguard Dismiss | `AutomationLauncherActivity.kt` | **PASS** | PowerManager wake lock & KeyguardManager |
+| **Screen Auto-Unlock & Lock** | Screen Wake & Keyguard Dismiss | `TaskLauncherActivity.kt` | **PASS** | PowerManager wake lock & KeyguardManager |
 | | Physical Tap PIN Unlock | `KeyguardUnlockEngine.kt` | **PASS** | Enters PIN digits via gesture coordinates |
 | | Biometric-Safe Hardware Auto-Lock | `AutoTextAccessibilityService.lockScreenNow()`, `AutoTextDeviceAdminReceiver.kt` | **PASS** | Emulates physical Power button press (`GLOBAL_ACTION_LOCK_SCREEN`); preserves biometric fingerprint and face wake |
-| **Safety & Policy** | Google Play Terminology Sanitization | UI screens, string resources, notification channels | **PASS** | Scrubbed aggressive automation terminology; standardized on "Task Service" and two-word combinations |
-| | Global Emergency Stop | `AutomationSafetyManager.kt` | **PASS** | Instant emergency stop via broadcast or UI |
+| **Safety & Policy** | Google Play Terminology Sanitization | UI screens, string resources, notification channels | **PASS** | Scrubbed aggressive task dispatch terminology; standardized on "Task" and two-word combinations |
+| | Global Emergency Stop | `TaskSafetyManager.kt` | **PASS** | Instant emergency stop via broadcast or UI |
 | | Human Touch Detection | `AutoTextAccessibilityService.kt` | **PASS** | Yields to human user, auto-postpones task |
 | | Portrait Orientation Guard | `AccessibilityHealthManager.enforceAutoRotateInvariant` | **PASS** | Restores portrait lock (ACCELEROMETER_ROTATION=0) |
-| **Programmatic API Layer** | Unified Feature Endpoints | `AutomationFeatureApi.kt` | **PASS** | Typed, suspendable, validated endpoints for WhatsApp messages/status/calls, SMS, phone calls, reminders, call simulation, sound modes |
+| **Programmatic API Layer** | Unified Feature Endpoints | `TaskFeatureApi.kt` | **PASS** | Typed, suspendable, validated endpoints for WhatsApp messages/status/calls, SMS, phone calls, reminders, call simulation, sound modes |
 
 ---
 
@@ -402,8 +402,8 @@ AutoText uses SQLite with Write-Ahead Logging (`PRAGMA journal_mode=WAL`) across
 - Fixed WhatsApp toolbar icon vs dropdown menu disambiguation and enforced voice note button protection.
 
 ### Phase 17: Terminology Sanitization, Programmatic Feature API, Warning Eradication & Dual-Device Verification
-- Sanitized terminology across UI and resources to "Task Service" and clean 2-word combinations.
-- Built `AutomationFeatureApi.kt` providing typed, suspendable programmatic endpoints for all features.
+- Sanitized terminology across UI and resources to "Task" and clean 2-word combinations.
+- Built `TaskFeatureApi.kt` providing typed, suspendable programmatic endpoints for all features.
 - Resolved all compiler and naming convention diagnostics.
 - Ran comprehensive unit tests: **107 of 107 tests passing (100%)**.
 - Deployed and verified on both Samsung Galaxy A04 and Vivo / iQOO I2401.
@@ -477,10 +477,10 @@ Production rules in `app/proguard-rules.pro` preserve line number tables, all da
 
 | Audit Axis | Target Scope | Verified Invariants | Status |
 |:---|:---|:---|:---:|
-| **Axis 1: Activity Lifecycle & Leaks** | `MainActivity`, `AutomationLauncherActivity`, `CallSimulationActivity`, `ReminderAlarmActivity` | `WakeLock` released in `onPause` & `onDestroy`; `TextToSpeech` cleanly shutdown; handler & decorView runnables removed on destroy | **PASS** |
+| **Axis 1: Activity Lifecycle & Leaks** | `MainActivity`, `TaskLauncherActivity`, `CallSimulationActivity`, `ReminderAlarmActivity` | `WakeLock` released in `onPause` & `onDestroy`; `TextToSpeech` cleanly shutdown; handler & decorView runnables removed on destroy | **PASS** |
 | **Axis 2: Subsystem Logic & Timeouts** | `KeyguardUnlockEngine`, `WhatsAppCallEngine`, `SequentialTaskEngine` | Two-finger bouncer swipe gesture; coordinate ratio fallbacks; call duration regex `^(\d{1,2}:)?\d{1,2}:\d{2}$`; 250ms sliced polling timeout bounds | **PASS** |
 | **Axis 3: Receiver Intent Security** | `SmsReceiver`, `PhoneCallReceiver`, `TaskAlarmReceiver`, `BootReceiver` | Safe intent extraction inside try-catch; corrupted carrier extras tolerated; missing task IDs degraded cleanly without crash loops | **PASS** |
-| **Axis 4: Database Consistency** | `DatabaseHelper`, `TaskRepository`, `DailyCampaignRepository` | 15 relational tables; Write-Ahead Logging (WAL); foreign keys enabled; automated migration v1->v8; zero stranded `RUNNING` tasks | **PASS** |
+| **Axis 4: Database Consistency** | `DatabaseHelper`, `TaskRepository`, `DailyCampaignRepository` | 15 relational tables; Write-Ahead Logging (WAL); foreign keys enabled; scheduled migration v1->v8; zero stranded `RUNNING` tasks | **PASS** |
 | **Axis 5: Biometric Screen Locking** | `AutoTextDeviceAdminReceiver`, `AutoTextAccessibilityService` | `GLOBAL_ACTION_LOCK_SCREEN` used exclusively; zero biometric lockouts; fingerprint and face unlock preserved | **PASS** |
 | **Axis 6: Multi-Brand OEM Compatibility** | `OemBrandHelper`, `SequentialTaskEngine` | Universal dual-SIM intent extras and in-call disconnect node IDs for Samsung, Vivo, Oppo, Realme, Xiaomi, Motorola, Nokia | **PASS** |
 | **Axis 7: Verification & Hardware Telemetry** | Samsung Galaxy A04 (Android 14) & Vivo / iQOO I2401 (Android 16) | 107/107 unit tests passed (100%); release APK signed & stream-installed; zero ANRs; zero uncaught exceptions in device logcat | **PASS** |

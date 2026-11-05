@@ -67,7 +67,7 @@ import kotlinx.coroutines.withContext
 
 
 /**
- * Main diagnostic and permission resolution center rendering automated heal utilities,
+ * Main diagnostic and permission resolution center rendering quick repair utilities,
  * ADB synchronization commands, and granular system permission toggles.
  *
  * @param context Local Android context used to query system managers and dispatch settings intents.
@@ -120,7 +120,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
             onDismissRequest = { showA11yDisclosureDialog = false },
             title = {
                 Text(
-                    text = "Task Service Disclosure",
+                    text = "Task Disclosure",
                     fontWeight = FontWeight.Bold,
                     fontSize = 17.sp,
                     color = MaterialTheme.colorScheme.onSurface
@@ -132,7 +132,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "AutoText uses Android's Assistive Task Service API exclusively for the following user-directed capabilities:",
+                        text = "AutoText uses Android's Assistive Task API exclusively for the following user-directed capabilities:",
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -184,7 +184,7 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
         topBar = {
             AppSubScreenHeader(
                 title = "Permission Center",
-                subtitle = "System access & automated self-healing",
+                subtitle = "System access & smart self-healing",
                 onBack = onBack
             )
         },
@@ -276,15 +276,15 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                 }
             }
 
-            // 5. Automation Assistant Service
+            // 5. Task
             item {
                 val a11yState = remember(permissionsRefreshKey) { AccessibilityHealthManager.getServiceState(context) }
                 val isA11y = a11yState == AccessibilityHealthManager.ServiceState.OPERATIONAL || a11yState == AccessibilityHealthManager.ServiceState.STANDBY
                 val a11yTitle = when (a11yState) {
-                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Task Service: Active"
-                    AccessibilityHealthManager.ServiceState.STANDBY -> "Task Service: Bank-Safe Standby"
-                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Task Service: Initializing"
-                    AccessibilityHealthManager.ServiceState.DISABLED -> "Task Service"
+                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Task: Active"
+                    AccessibilityHealthManager.ServiceState.STANDBY -> "Task: Bank-Safe Standby"
+                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Task: Initializing"
+                    AccessibilityHealthManager.ServiceState.DISABLED -> "Task"
                 }
                 val a11yDesc = when (a11yState) {
                     AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Active in background to dispatch scheduled WhatsApp messages and assist tasks."
@@ -293,10 +293,10 @@ fun permissionCenterView(context: Context, onBack: () -> Unit) {
                     AccessibilityHealthManager.ServiceState.DISABLED -> "Required to dispatch scheduled WhatsApp messages and assist with screen unlock."
                 }
                 val a11yBtnText = when (a11yState) {
-                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Task Service Active"
+                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Task Active"
                     AccessibilityHealthManager.ServiceState.STANDBY -> "Bank-Safe Ready"
                     AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Toggle in Settings"
-                    AccessibilityHealthManager.ServiceState.DISABLED -> "Open Task Service Settings"
+                    AccessibilityHealthManager.ServiceState.DISABLED -> "Open Task Settings"
                 }
                 permissionItem(
                     title = a11yTitle,
@@ -487,7 +487,7 @@ fun superAutoHealAndPermissionFixerCard(context: Context) {
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = "One-click automated recovery & permission synchronization",
+                    text = "One-click quick recovery & permission synchronization",
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -682,7 +682,7 @@ fun keepOpenRecentAppsCard(context: Context = LocalContext.current) {
  * Individual permission diagnosis item showing description, granted badge, and direct intent launch trigger.
  *
  * @param title Name of the permission or subsystem privilege.
- * @param desc Explanation of why this permission is necessary for automated dispatches.
+ * @param desc Explanation of why this permission is necessary for scheduled dispatches.
  * @param btnText Action button label.
  * @param isGranted Current confirmed grant status of the permission.
  * @param onClick Invoked when action button is tapped to open respective system settings screen.

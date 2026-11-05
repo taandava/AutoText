@@ -10,7 +10,7 @@
  * Linked With:
  * - Direct Boot Receivers: [com.jmd.autotext.receiver.BootReceiver], [com.jmd.autotext.receiver.TaskAlarmReceiver]
  * - UI Screens: `SettingsScreen`, `MainAppHost`
- * - Core Safety: [com.jmd.autotext.core.AutomationSafetyManager], [com.jmd.autotext.core.SmsQuotaManager]
+ * - Core Safety: [com.jmd.autotext.core.TaskSafetyManager], [com.jmd.autotext.core.SmsQuotaManager]
  * - WhatsApp Engines: [com.jmd.autotext.whatsapp.KeyguardUnlockEngine]
  */
 package com.jmd.autotext.data.prefs
@@ -169,7 +169,7 @@ class PreferenceManager(private val context: Context) {
 
     /**
      * Encrypts sensitive secrets (such as the device lockscreen PIN) using Hardware Keystore AES/GCM/NoPadding
-     * when available, with automatic fallback to Direct Boot compatible derived AES-GCM.
+     * when available, with quick fallback to Direct Boot compatible derived AES-GCM.
      *
      * @param secret Plaintext string to encrypt.
      * @return Base64 ciphertext string prefixed with "HW_ENC:" or "ENC:".
@@ -200,7 +200,7 @@ class PreferenceManager(private val context: Context) {
     /**
      * Decrypts AES/GCM encrypted secrets prefixed with "ENC:".
      * First attempts decryption using the device-hardware bound key. If that fails (e.g. legacy stored secret),
-     * falls back to the legacy package seed and automatically re-encrypts using the modern key.
+     * falls back to the legacy package seed and directly re-encrypts using the modern key.
      * Transparently returns legacy plaintext values for backwards compatibility.
      *
      * @param stored Stored encrypted or legacy plaintext string.
@@ -472,7 +472,7 @@ class PreferenceManager(private val context: Context) {
     /**
      * Cellular SMS Quota Safety Enforcement switch.
      * When enabled, enforces [dailySmsSafetyLimit] (default 100 SMS/day).
-     * When disabled, enables unlimited personal automation dispatch without regulatory throttling.
+     * When disabled, enables unlimited personal task dispatch without regulatory throttling.
      */
     var isSmsQuotaLimitEnabled: Boolean
         get() = prefs.getBoolean(KEY_SMS_QUOTA_LIMIT_ENABLED, true)
@@ -491,7 +491,7 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getBoolean(KEY_BANKING_SHIELD_ENABLED, true)
         set(value) = prefs.edit { putBoolean(KEY_BANKING_SHIELD_ENABLED, value) }
 
-    /** Alias for [isBankingShieldEnabled] reflecting uninterrupted standby automation. */
+    /** Alias for [isBankingShieldEnabled] reflecting uninterrupted standby task. */
     
     var isPrivacyModeEnabled: Boolean
         get() = prefs.getBoolean(KEY_PRIVACY_MODE_ENABLED, true)

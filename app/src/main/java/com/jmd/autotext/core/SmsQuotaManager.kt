@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.autotext.core
- * Module: Core Automation Utilities
+ * Module: Core Task Utilities
  *
  * Provides cellular SMS quota tracking, TRAI/carrier daily limit enforcement (100 SMS/day safeguard),
  * multi-part PDU segment calculation, provider reconciliation, and in-flight reservation management.
@@ -19,7 +19,7 @@ import kotlin.math.abs
  * Enterprise manager governing cellular SMS quota consumption.
  *
  * Integrates internal execution logs with device-wide `content://sms/sent` records
- * to track both automated and user-sent SMS segments against carrier thresholds.
+ * to track both scheduled and user-sent SMS segments against carrier thresholds.
  */
 object SmsQuotaManager {
     private const val TAG = "SmsQuotaManager"
@@ -239,7 +239,7 @@ object SmsQuotaManager {
         val isReached = remaining <= 0
 
         val details = if (isReached) {
-            "Daily limit of $limit SMS reached across device ($sent sent today). Automated SMS is paused to prevent carrier blocking."
+            "Daily limit of $limit SMS reached across device ($sent sent today). SMS dispatch is paused to prevent carrier blocking."
         } else {
             "$sent / $limit SMS sent today across device. $remaining SMS remaining in quota."
         }

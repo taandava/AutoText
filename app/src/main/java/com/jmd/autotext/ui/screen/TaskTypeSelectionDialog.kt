@@ -36,13 +36,13 @@ import com.jmd.autotext.ui.model.*
 import com.jmd.autotext.ui.theme.*
 
 /**
- * Modal selection dialog providing categorized creation options for all supported automation types.
+ * Modal selection dialog providing categorized creation options for all supported task types.
  *
  * Supported Dispatch Pathways:
  * - Direct Messaging: SMS via SIM, WhatsApp Chat, WhatsApp Business Chat, WhatsApp Group dispatch.
- * - Calling Automation: Cellular Phone Calls, WhatsApp VoIP Voice Calls, Incoming Call simulation.
+ * - Calling Tasks: Cellular Phone Calls, WhatsApp VoIP Voice Calls, Incoming Call simulation.
  * - Media Updates: Personal WhatsApp Status, WhatsApp Business Status updates with captions.
- * - Advanced Outreach: Multi-step Contact Sequences, Automated Unique Contact Daily Campaigns.
+ * - Advanced Outreach: Multi-step Contact Sequences, Unique Contact Daily Campaigns.
  * - Device Controls: Timed Alarms and Scheduled Device Sound Mode toggles.
  *
  * @param onDismiss Invoked when user taps outside or cancels selection.
@@ -63,28 +63,28 @@ fun TaskTypeSelectionDialog(
     val taskTypes = listOf(
         TaskTypeItem(
             title = "SMS Message",
-            description = "Schedule direct automated SMS via device SIM card",
+            description = "Schedule direct SMS via device SIM card",
             emoji = "📩",
             color = MaterialTheme.colorScheme.primary,
             channel = ChannelType.SMS,
         ),
         TaskTypeItem(
             title = "WhatsApp Chat",
-            description = "Automated WhatsApp messages with optional media attachments",
+            description = "Send WhatsApp messages with optional media attachments",
             emoji = "💬",
             color = MaterialTheme.colorScheme.tertiary,
             channel = ChannelType.WHATSAPP,
         ),
         TaskTypeItem(
             title = "WhatsApp Business",
-            description = "Send automated WhatsApp Business direct messages with media",
+            description = "Send WhatsApp Business direct messages with media",
             emoji = "💼",
             color = MaterialTheme.colorScheme.secondary,
             channel = ChannelType.WHATSAPP_BUSINESS,
         ),
         TaskTypeItem(
             title = "WhatsApp Group",
-            description = "Send automated WhatsApp group messages or announcements",
+            description = "Send WhatsApp group messages or announcements",
             emoji = "👥",
             color = MaterialTheme.colorScheme.tertiary,
             channel = ChannelType.WHATSAPP_GROUP,
@@ -106,7 +106,7 @@ fun TaskTypeSelectionDialog(
         ),
         TaskTypeItem(
             title = "WhatsApp Call",
-            description = "Schedule automated WhatsApp or WA Business voice call to selected contact",
+            description = "Schedule WhatsApp voice call to selected contact",
             emoji = "📞",
             color = MaterialTheme.colorScheme.tertiary,
             channel = null,
@@ -129,7 +129,7 @@ fun TaskTypeSelectionDialog(
         ),
         TaskTypeItem(
             title = "Daily Auto Campaign",
-            description = "High-speed paced automated outreach batch with 10-second intervals",
+            description = "High-speed paced outreach batch with 10-second intervals",
             emoji = "⚡",
             color = MaterialTheme.colorScheme.primary,
             channel = null,
@@ -144,7 +144,7 @@ fun TaskTypeSelectionDialog(
         ),
         TaskTypeItem(
             title = "Sound Mode Switcher",
-            description = "Automatically switch between Silent, Vibrate, and Normal sound",
+            description = "Switch between Silent, Vibrate, and Normal sound",
             emoji = "🔊",
             color = MaterialTheme.colorScheme.secondary,
             channel = ChannelType.SOUND_MODE,
@@ -210,7 +210,7 @@ fun TaskTypeSelectionDialog(
                                     "STATUS" -> "Select which app to post your Status story to"
                                     "SEQUENCE" -> "Select messaging channel for this multi-step sequence"
                                     "WA_CALL" -> "Select WhatsApp or WhatsApp Business for this voice call"
-                                    else -> "Select what automated action you want to schedule"
+                                    else -> "Select what action you want to schedule"
                                 },
                                 fontSize = 11.5.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -303,7 +303,7 @@ fun TaskTypeSelectionDialog(
                         ) {
                             DialogOptionTile(
                                 title = "WhatsApp Voice Call",
-                                description = "Automated VoIP voice call via personal WhatsApp Messenger",
+                                description = "Direct VoIP voice call via personal WhatsApp Messenger",
                                 badge = "Personal",
                                 emoji = "📞",
                                 color = MaterialTheme.colorScheme.tertiary,
@@ -314,7 +314,7 @@ fun TaskTypeSelectionDialog(
 
                             DialogOptionTile(
                                 title = "WhatsApp Business Voice Call",
-                                description = "Automated VoIP voice call via WhatsApp Business (W4B)",
+                                description = "Direct VoIP voice call via WhatsApp Business (W4B)",
                                 badge = "Business",
                                 emoji = "💼",
                                 color = MaterialTheme.colorScheme.secondary,

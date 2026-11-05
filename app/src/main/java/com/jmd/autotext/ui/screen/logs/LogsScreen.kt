@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.autotext.ui.screen.logs
- * Module: UI Automation Logs & Audit Screen Layer
+ * Module: UI Task Logs & Audit Screen Layer
  *
  * Primary coordinator screen managing:
  * - Execution history audit ledger.

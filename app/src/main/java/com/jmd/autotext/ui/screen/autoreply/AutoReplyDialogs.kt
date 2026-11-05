@@ -81,7 +81,7 @@ fun AutoReplyTypeSelectionSheet(
                 AppBadge(text = "4 TYPES", color = MaterialTheme.colorScheme.primary, showDot = false)
             }
             Text(
-                "Choose the communication channel to automate. Each option opens its dedicated, tailored configuration form:",
+                "Choose the communication channel to schedule. Each option opens its dedicated, tailored configuration form:",
                 fontSize = 11.5.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -162,7 +162,7 @@ fun AutoReplyTypeSelectionSheet(
 
 
 /**
- * Comprehensive modal dialog for creating or updating an automated reply rule with channel, triggers, recipient filters, and schedule.
+ * Comprehensive modal dialog for creating or updating an scheduled reply rule with channel, triggers, recipient filters, and schedule.
  *
  * @param initialRule Existing rule to edit, or null when creating a new rule.
  * @param onDismiss Callback to dismiss editor dialog.
@@ -218,7 +218,7 @@ fun AutoReplyRuleDialog(
         topBar = {
             AppSubScreenHeader(
                 title = if (initialRule != null && initialRule.id > 0L) "Edit Auto-Reply Rule" else "New Auto-Reply Rule",
-                subtitle = "Automated reply configuration",
+                subtitle = "Scheduled reply configuration",
                 onBack = onDismiss
             )
         },
@@ -328,7 +328,7 @@ fun AutoReplyRuleDialog(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            "Select which call event triggers an automatic response:",
+                            "Select which call event triggers an quick response:",
                             fontSize = 11.5.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -369,7 +369,7 @@ fun AutoReplyRuleDialog(
                                 Column {
                                     Text("Reply Method: SMS Message", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.primary)
                                     Text(
-                                        "When a phone call is missed or ended, AutoText immediately sends an automated SMS reply to the caller's mobile number via your device SIM. Landlines and toll-free numbers are filtered out automatically.",
+                                        "When a phone call is missed or ended, AutoText immediately sends a quick SMS reply to the caller's mobile number via your device SIM. Landlines and toll-free numbers are filtered out directly.",
                                         fontSize = 11.5.sp,
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 16.sp
@@ -393,7 +393,7 @@ fun AutoReplyRuleDialog(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            "Triggers automatically on incoming SMS messages received on your device:",
+                            "Triggers directly on incoming SMS messages received on your device:",
                             fontSize = 11.5.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -447,7 +447,7 @@ fun AutoReplyRuleDialog(
                                 Column {
                                     Text("Reply Method: SMS Message", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.primary)
                                     Text(
-                                        "Automated response is sent as an SMS message via your SIM card.",
+                                        "Quick response is sent as an SMS message via your SIM card.",
                                         fontSize = 11.5.sp,
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 16.sp
@@ -545,7 +545,7 @@ fun AutoReplyRuleDialog(
                                     Text("📞", fontSize = 18.sp)
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        "Triggers automatically whenever a voice or video call is ${if (callEventType == "CALL_ENDED") "ended" else "missed"} in WhatsApp.",
+                                        "Triggers directly whenever a voice or video call is ${if (callEventType == "CALL_ENDED") "ended" else "missed"} in WhatsApp.",
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
@@ -569,7 +569,7 @@ fun AutoReplyRuleDialog(
                                 Column {
                                     Text("Reply Method: WhatsApp Chat Only", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.tertiary)
                                     Text(
-                                        "Sends an automated reply directly inside the same WhatsApp chat via Android notification quick reply.",
+                                        "Sends a quick reply directly inside the same WhatsApp chat via Android notification quick reply.",
                                         fontSize = 11.5.sp,
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 16.sp
@@ -667,7 +667,7 @@ fun AutoReplyRuleDialog(
                                     Text("📞", fontSize = 18.sp)
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        "Triggers automatically whenever a business voice or video call is ${if (callEventType == "CALL_ENDED") "ended" else "missed"} in WhatsApp Business.",
+                                        "Triggers directly whenever a business voice or video call is ${if (callEventType == "CALL_ENDED") "ended" else "missed"} in WhatsApp Business.",
                                         fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
@@ -691,7 +691,7 @@ fun AutoReplyRuleDialog(
                                 Column {
                                     Text("Reply Method: WA Business Only", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.primary)
                                     Text(
-                                        "Sends an automated reply directly inside WhatsApp Business only via Android notification quick reply.",
+                                        "Sends a quick reply directly inside WhatsApp Business only via Android notification quick reply.",
                                         fontSize = 11.5.sp,
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 16.sp

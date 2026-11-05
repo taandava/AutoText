@@ -4,14 +4,14 @@
  * Package: com.jmd.autotext.scheduler
  * Module: Schedulers Layer
  *
- * Background WorkManager [CoroutineWorker] executing automated daily outreach batch campaigns.
+ * Background WorkManager [CoroutineWorker] executing scheduled daily outreach batch campaigns.
  * Coordinates dynamic contact ingestion, per-contact cooldowns, gap delays (pacing), SMS quota tracking,
- * and dispatching via [SmsSender] or [WhatsAppAutomationSender].
+ * and dispatching via [SmsSender] or [WhatsAppSender].
  *
  * Linked With:
  * - Scheduler: [com.jmd.autotext.scheduler.DailyCampaignScheduler]
  * - Ingestion Engine: [com.jmd.autotext.engine.ContactIngestionEngine]
- * - Senders: [com.jmd.autotext.engine.SmsSender], [com.jmd.autotext.engine.WhatsAppAutomationSender]
+ * - Senders: [com.jmd.autotext.engine.SmsSender], [com.jmd.autotext.engine.WhatsAppSender]
  * - Repositories: [com.jmd.autotext.data.repo.AppRepository], [com.jmd.autotext.data.repo.DailyCampaignRepository]
  * - Quotas: [com.jmd.autotext.core.SmsQuotaManager]
  * - Diagnostics: [com.jmd.autotext.core.AppFileLogger]
@@ -34,7 +34,7 @@ import com.jmd.autotext.data.repo.AppRepository
 import com.jmd.autotext.engine.ContactIngestionEngine
 import com.jmd.autotext.engine.SequentialTaskEngine
 import com.jmd.autotext.engine.SmsSender
-import com.jmd.autotext.engine.WhatsAppAutomationSender
+import com.jmd.autotext.engine.WhatsAppSender
 import com.jmd.autotext.service.AutoTextAccessibilityService
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -64,7 +64,7 @@ class DailyCampaignWorker(
      * Executes the background campaign workflow:
      * 1. Validates campaign status, schedule date, and permission readiness (Accessibility for WhatsApp, SEND_SMS for cellular).
      * 2. Checks India TRAI regulatory SMS quotas (100 SMS/day ceiling) and campaign daily allowance limits.
-     * 3. Triggers automated contact ingestion if auto-scan is enabled.
+     * 3. Triggers scheduled contact ingestion if auto-scan is enabled.
      * 4. Queries pending recipient pool contacts and paces sequential dispatch according to configured throttle delays.
      * 5. Logs detailed execution results and updates campaign progress ledgers.
      *
@@ -97,7 +97,7 @@ class DailyCampaignWorker(
             return Result.success()
         }
 
-        if (com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(applicationContext)) {
+        if (com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) {
             AppFileLogger.i(applicationContext, TAG, "Emergency Stop is ACTIVE. Skipping campaign #$campaignId.")
             return Result.success()
         }
@@ -118,7 +118,7 @@ class DailyCampaignWorker(
 
         val privacyMgr = com.jmd.autotext.core.PrivacyManager.getInstance(applicationContext)
         if (isWhatsApp) {
-            privacyMgr.prepareAccessibilityForAutomation()
+            privacyMgr.prepareAccessibilityForTask()
             val isA11yActive = AccessibilityHealthManager.waitForServiceReadiness(applicationContext, 4000L)
             if (!isA11yActive) {
                 val errorMsg = "Accessibility Service is not operational. Waiting for service reconnection before dispatching WhatsApp campaign."
@@ -133,7 +133,7 @@ class DailyCampaignWorker(
                     )
                 )
                 AppFileLogger.w(applicationContext, TAG, errorMsg)
-                privacyMgr.releaseAccessibilityAfterAutomation()
+                privacyMgr.releaseAccessibilityAfterTask()
                 return Result.retry()
             }
         } else {
@@ -234,7 +234,7 @@ class DailyCampaignWorker(
         }
 
         val smsSender = if (!isWhatsApp) SmsSender(applicationContext) else null
-        val waSender = if (isWhatsApp) WhatsAppAutomationSender(applicationContext) else null
+        val waSender = if (isWhatsApp) WhatsAppSender(applicationContext) else null
 
         var successCount = 0
         var failCount = 0
@@ -263,7 +263,7 @@ class DailyCampaignWorker(
                 AutoTextAccessibilityService.clearPending()
                 return Result.success()
             }
-            if (com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(applicationContext)) {
+            if (com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) {
                 AppFileLogger.w(applicationContext, TAG, "Emergency Stop was triggered mid-batch! Halting campaign #${config.id}.")
                 AutoTextAccessibilityService.clearPending()
                 return Result.success()
@@ -293,8 +293,8 @@ class DailyCampaignWorker(
 
                 val shouldRelockThisItem = isLast && prefs.isAutoLockAfterSendEnabled
 
-                val automationMutex = SequentialTaskEngine.getUiAutomationMutex(applicationContext)
-                automationMutex.withLock {
+                val taskDispatchMutex = SequentialTaskEngine.getUiTaskMutex(applicationContext)
+                taskDispatchMutex.withLock {
                     var sendOutcome = AutoTextAccessibilityService.RESULT_NONE
                     var attemptsMade = 0
                     val maxImmediateAttempts = 3 // 1 initial + up to 2 immediate retries
@@ -330,7 +330,7 @@ class DailyCampaignWorker(
                             val maxWaitMs = 16000L
                             var waitedMs = 0L
                             while (AutoTextAccessibilityService.lastSendResult == AutoTextAccessibilityService.RESULT_PENDING && waitedMs < maxWaitMs) {
-                                if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive || !prefs.isTasksMasterEnabled || com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(applicationContext)) {
+                                if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive || !prefs.isTasksMasterEnabled || com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) {
                                     AutoTextAccessibilityService.clearPending()
                                     return Result.success()
                                 }
@@ -390,10 +390,10 @@ class DailyCampaignWorker(
                                     recipient = "${item.phone} ($displayName)",
                                     messageSnippet = message.take(60),
                                     status = "FAILED",
-                                    details = "WhatsApp automation timed out after $attemptsMade attempts (contact kept in priority retry queue)"
+                                    details = "WhatsApp dispatch timed out after $attemptsMade attempts (contact kept in priority retry queue)"
                                 )
                             )
-                            AppFileLogger.w(applicationContext, TAG, "WhatsApp automation failed after $attemptsMade attempts for ${item.phone}. Added to priority retry queue.")
+                            AppFileLogger.w(applicationContext, TAG, "WhatsApp dispatch failed after $attemptsMade attempts for ${item.phone}. Added to priority retry queue.")
                             AppFileLogger.campaignLedger(
                                 context = applicationContext,
                                 campaignId = config.id,
@@ -403,7 +403,7 @@ class DailyCampaignWorker(
                                 status = "TIMEOUT",
                                 messageSnippet = message.take(80),
                                 attempt = item.waSendCount + attemptsMade,
-                                details = "WhatsApp automation timed out after $attemptsMade attempts (kept in queue for next cycle)"
+                                details = "WhatsApp dispatch timed out after $attemptsMade attempts (kept in queue for next cycle)"
                             )
                         }
                     }
@@ -559,7 +559,7 @@ class DailyCampaignWorker(
                 var elapsed = 0L
                 val step = 250L
                 while (elapsed < intervalMs) {
-                    if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive || !prefs.isTasksMasterEnabled || com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(applicationContext)) {
+                    if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive || !prefs.isTasksMasterEnabled || com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) {
                         AppFileLogger.w(applicationContext, TAG, "Daily Campaign #${config.id} interval delay aborted: Campaign paused or master switch disabled.")
                         AutoTextAccessibilityService.clearPending()
                         return Result.success()
@@ -592,7 +592,7 @@ class DailyCampaignWorker(
 
         val finalConfig = repo.getDailyCampaignConfig(config.id)
         if (successCount == 0 && failCount > 0) {
-            if (!finalConfig.isActive || !prefs.isTasksMasterEnabled || com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(applicationContext)) {
+            if (!finalConfig.isActive || !prefs.isTasksMasterEnabled || com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) {
                 AppFileLogger.w(applicationContext, TAG, "Daily campaign #${config.id} had failures, but campaign is inactive or stopped. Will NOT retry.")
                 return Result.success()
             }
@@ -610,7 +610,7 @@ class DailyCampaignWorker(
         return Result.success()
         } finally {
             if (isWhatsApp) {
-                privacyMgr.releaseAccessibilityAfterAutomation()
+                privacyMgr.releaseAccessibilityAfterTask()
             }
         }
     }

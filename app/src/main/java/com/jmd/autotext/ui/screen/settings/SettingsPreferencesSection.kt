@@ -101,7 +101,7 @@ fun SettingsPreferencesCards(
             }
         }
 
-        // WhatsApp Automation Speed & Timing
+        // WhatsApp Task Speed & Timing
         AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -112,7 +112,7 @@ fun SettingsPreferencesCards(
                 AppBadge(text = "${waDelay}s Pace", color = MaterialTheme.colorScheme.tertiary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Delay between automated WhatsApp message dispatches to keep sending organic and reliable.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Delay between WhatsApp message dispatches to keep sending organic and reliable.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -183,7 +183,7 @@ fun SettingsPreferencesCards(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text("Delivery Sound & Haptics", color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-                    Text("Play subtle alert sound upon successful automated background dispatch", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
+                    Text("Play subtle alert sound upon successful background dispatch", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                 }
                 Switch(
                     checked = dispatchSound,
@@ -199,7 +199,7 @@ fun SettingsPreferencesCards(
             }
         }
 
-        // Automation Fallback & Failure Recovery Customisation
+        // Task Fallback & Failure Recovery Customisation
         AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -377,7 +377,7 @@ fun SettingsPreferencesCards(
                 AppBadge(text = if (countryCode == "+91") "India 🇮🇳" else countryCode, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Automatic dialing prefix applied when standardizing 10-digit mobile numbers for tasks and auto-replies.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Default dialing prefix applied when standardizing 10-digit mobile numbers for tasks and replies.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {

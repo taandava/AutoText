@@ -40,7 +40,7 @@ import com.jmd.autotext.data.model.ExecutionLog
 import com.jmd.autotext.data.repo.AppRepository
 import com.jmd.autotext.engine.SequentialTaskEngine
 import com.jmd.autotext.engine.SmsSender
-import com.jmd.autotext.engine.WhatsAppAutomationSender
+import com.jmd.autotext.engine.WhatsAppSender
 import com.jmd.autotext.service.AutoTextAccessibilityService
 import com.jmd.autotext.ui.components.*
 import com.jmd.autotext.ui.theme.AppDesignTokens
@@ -255,10 +255,10 @@ fun LogDetailView(
                                 }
                             } else {
                                 coroutineScope.launch {
-                                    val mutex = SequentialTaskEngine.getUiAutomationMutex(context)
+                                    val mutex = SequentialTaskEngine.getUiTaskMutex(context)
                                     val isSuccess = mutex.withLock {
                                         withContext(Dispatchers.IO) {
-                                            val waSender = WhatsAppAutomationSender(context)
+                                            val waSender = WhatsAppSender(context)
                                             val launched = waSender.send(log.taskId, ChannelType.WHATSAPP, cleanTargetPhone, log.messageSnippet)
                                             if (!launched) {
                                                 false

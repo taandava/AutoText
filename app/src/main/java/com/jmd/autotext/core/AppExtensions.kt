@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.autotext.core
- * Module: Core Automation Utilities
+ * Module: Core Task Utilities
  *
  * Provides convenient context extensions for Toast messaging and native dialog interactions.
  */

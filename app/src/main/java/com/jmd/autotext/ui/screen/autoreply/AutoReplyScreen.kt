@@ -33,7 +33,7 @@ import com.jmd.autotext.ui.model.*
 import com.jmd.autotext.ui.theme.*
 
 /**
- * Main automated reply rules configuration screen providing master toggles,
+ * Main scheduled reply rules configuration screen providing master toggles,
  * call/message trigger rule list, anti-spam rate limiting, and rule editors.
  *
  * @param onEditingStateChanged Callback invoked when modal sheet or dialog opens/closes to hide bottom navigation.
@@ -169,7 +169,7 @@ fun AutoReplyScreen(
                     AppEmptyState(
                         emoji = "💬",
                         title = "No Auto-Reply Rules",
-                        description = "Create automatic responder rules for missed phone calls, incoming SMS or WhatsApp chats.",
+                        description = "Create quick reply rules for missed phone calls, incoming SMS or WhatsApp chats.",
                         actionText = "Create Auto-Reply Rule",
                         onActionClick = {
                             editingRule = null

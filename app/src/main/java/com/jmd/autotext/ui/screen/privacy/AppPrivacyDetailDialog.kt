@@ -34,7 +34,7 @@ fun AppPrivacyDetailDialog(
     onDismiss: () -> Unit
 ) {
     var isExcluded by remember { mutableStateOf(initialConfig.isExcluded) }
-    var disableAutomation by remember { mutableStateOf(initialConfig.disableAutomation) }
+    var disableTaskAction by remember { mutableStateOf(initialConfig.disableTaskAction) }
     var blockOverlays by remember { mutableStateOf(initialConfig.blockOverlays) }
     var suppressNotifications by remember { mutableStateOf(initialConfig.suppressNotifications) }
     var disableClipboard by remember { mutableStateOf(initialConfig.disableClipboard) }
@@ -106,13 +106,13 @@ fun AppPrivacyDetailDialog(
                         onCheckedChange = { isExcluded = it }
                     )
 
-                    // 2. Block Automation Actions
+                    // 2. Block Task Actions
                     PrivacyControlToggle(
                         title = "Block Task Actions",
                         subtitle = "Prevents any simulated taps, message dispatches, or navigation targeted at this app.",
-                        checked = disableAutomation,
+                        checked = disableTaskAction,
                         enabled = isExcluded,
-                        onCheckedChange = { disableAutomation = it }
+                        onCheckedChange = { disableTaskAction = it }
                     )
 
                     // 3. Block Overlays & Wake Windows
@@ -154,7 +154,7 @@ fun AppPrivacyDetailDialog(
                     // 7. Disable Trigger Rules
                     PrivacyControlToggle(
                         title = "Disable Incoming Trigger Rules",
-                        subtitle = "Ignores notification auto-replies or automated triggers originating from this app.",
+                        subtitle = "Ignores notification replies or scheduled triggers originating from this app.",
                         checked = disableRules,
                         enabled = isExcluded,
                         onCheckedChange = { disableRules = it }
@@ -185,7 +185,7 @@ fun AppPrivacyDetailDialog(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             isExcluded = true
-                            disableAutomation = true
+                            disableTaskAction = true
                             blockOverlays = true
                             suppressNotifications = true
                             disableClipboard = true
@@ -207,7 +207,7 @@ fun AppPrivacyDetailDialog(
                         onClick = {
                             val updated = initialConfig.copy(
                                 isExcluded = isExcluded,
-                                disableAutomation = disableAutomation,
+                                disableTaskAction = disableTaskAction,
                                 blockOverlays = blockOverlays,
                                 suppressNotifications = suppressNotifications,
                                 disableClipboard = disableClipboard,

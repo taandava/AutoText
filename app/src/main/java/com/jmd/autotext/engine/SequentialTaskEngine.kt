@@ -2,7 +2,7 @@
 
 /**
  * Package: com.jmd.autotext.engine
- * Module: Automation Engine
+ * Module: Task Engine
  *
  * Centralized sequential execution orchestrator for scheduled tasks across SMS,
  * WhatsApp chats, WhatsApp Status stories, Phone Calls, Reminders, and Sound Mode events.
@@ -10,9 +10,9 @@
  * Linked With:
  * - Schedulers: [com.jmd.autotext.scheduler.AlarmScheduler], [com.jmd.autotext.receiver.TaskAlarmReceiver]
  * - Services: [com.jmd.autotext.service.TaskForegroundService], [com.jmd.autotext.service.AutoTextAccessibilityService]
- * - Dispatchers: [com.jmd.autotext.engine.SmsSender], [com.jmd.autotext.engine.WhatsAppAutomationSender]
+ * - Dispatchers: [com.jmd.autotext.engine.SmsSender], [com.jmd.autotext.engine.WhatsAppSender]
  * - Repositories: [com.jmd.autotext.data.repo.AppRepository], [com.jmd.autotext.data.repo.TaskRepository]
- * - Safety & Quota: [com.jmd.autotext.core.AutomationSafetyManager], [com.jmd.autotext.core.SmsQuotaManager]
+ * - Safety & Quota: [com.jmd.autotext.core.TaskSafetyManager], [com.jmd.autotext.core.SmsQuotaManager]
  */
 package com.jmd.autotext.engine
 
@@ -40,10 +40,10 @@ import androidx.core.content.ContextCompat
 import com.jmd.autotext.AutoTextApplication
 import com.jmd.autotext.ui.activity.CallSimulationActivity
 import com.jmd.autotext.ui.activity.ReminderAlarmActivity
-import com.jmd.autotext.ui.activity.AutomationLauncherActivity
+import com.jmd.autotext.ui.activity.TaskLauncherActivity
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.AppFileLogger
-import com.jmd.autotext.core.AutomationSafetyManager
+import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.core.MessageTemplateResolver
 import com.jmd.autotext.core.PhoneNumberNormalizer
 import com.jmd.autotext.core.PrivacyManager
@@ -77,7 +77,7 @@ private const val WHATSAPP_SEND_TIMEOUT_MS = 25000L
 /**
  * Singleton sequential task execution pipeline.
  *
- * Guarantees serial execution of UI automation tasks via [uiAutomationMutex] and safe
+ * Guarantees serial execution of UI task tasks via [uiTaskMutex] and safe
  * concurrency for background cellular SMS dispatches via [smsMutex].
  */
 class SequentialTaskEngine private constructor(private val appContext: Context) {
@@ -86,7 +86,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     private val taskChannel = Channel<Long>(Channel.UNLIMITED)
     private val activeTaskIds = ConcurrentHashMap.newKeySet<Long>()
 
-    private val uiAutomationMutex = Mutex()
+    private val uiTaskMutex = Mutex()
     private val smsMutex = Mutex()
     private val repository = AppRepository(appContext)
 
@@ -108,7 +108,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         continue
                     }
 
-                    if (AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+                    if (TaskSafetyManager.isEmergencyStopActive(appContext)) {
                         AppFileLogger.w(appContext, TAG, "Emergency Stop is active. Dropping queued task #$taskId.")
                         continue
                     }
@@ -125,7 +125,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     }
 
                     if ((task.status == TaskStatus.PENDING_CONFIRMATION) && (task.recurrence == RecurrenceType.ONCE)) {
-                        AppFileLogger.w(appContext, TAG, "Task #$taskId is Awaiting Confirmation. Suppressing automatic redispatch to prevent duplicate delivery.")
+                        AppFileLogger.w(appContext, TAG, "Task #$taskId is Awaiting Confirmation. Suppressing redispatch to prevent duplicate delivery.")
                         continue
                     }
 
@@ -228,8 +228,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             }
         }
 
-        fun getUiAutomationMutex(context: Context): Mutex {
-            return getInstance(context).uiAutomationMutex
+        fun getUiTaskMutex(context: Context): Mutex {
+            return getInstance(context).uiTaskMutex
         }
 
         fun completeOrRescheduleTask(
@@ -258,7 +258,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 repository.updateTaskStatus(task.id, if (success) TaskStatus.DONE else TaskStatus.FAILED, now)
                 return
             }
-            if (AutomationSafetyManager.isEmergencyStopActive(context)) {
+            if (TaskSafetyManager.isEmergencyStopActive(context)) {
                 Log.i(TAG, "Emergency Stop is active. Suppressing recurrence for Task #${task.id}.")
                 AlarmScheduler(context).cancelTask(task.id)
                 val targetStatus = if (freshTask.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
@@ -392,7 +392,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             AppFileLogger.w(appContext, TAG, "Task Scheduler Engine is disabled by master switch. Refusing execution for Task #${task.id}.")
             return false
         }
-        if (AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+        if (TaskSafetyManager.isEmergencyStopActive(appContext)) {
             AppFileLogger.w(appContext, TAG, "Emergency Stop is active. Refusing execution for Task #${task.id}.")
             return false
         }
@@ -404,8 +404,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
         AppFileLogger.action(appContext, TAG, "Starting execution for Task #${task.id} (${task.title}) on [${task.channel.displayName}]")
 
-        if (!AutomationSafetyManager.canExecute(task.channel)) {
-            AppFileLogger.w(appContext, TAG, "AutomationSafetyManager refused execution for ${task.channel.displayName} (circuit breaker tripped or emergency stop active).")
+        if (!TaskSafetyManager.canExecute(task.channel)) {
+            AppFileLogger.w(appContext, TAG, "TaskSafetyManager refused execution for ${task.channel.displayName} (circuit breaker tripped or emergency stop active).")
             return false
         }
 
@@ -415,7 +415,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "com.whatsapp.w4b"
             else -> null
         }
-        if (targetPkg != null && privacyMgr.isAutomationBlockedForPackage(targetPkg)) {
+        if (targetPkg != null && privacyMgr.isTaskBlockedForPackage(targetPkg)) {
             AppFileLogger.w(appContext, TAG, "Task #${task.id} (${task.channel.displayName}) aborted: Target package $targetPkg is excluded by Privacy & App Visibility Policy.")
             repository.insertLog(
                 ExecutionLog(
@@ -446,11 +446,11 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         // 0. Pre-flight Idle Check: Only trigger and complete task when idle!
-        if (!AutomationSafetyManager.isDeviceIdle(appContext)) {
-            val idleSince = (System.currentTimeMillis() - AutomationSafetyManager.lastHumanInteractionTimestamp.get()) / 1000
+        if (!TaskSafetyManager.isDeviceIdle(appContext)) {
+            val idleSince = (System.currentTimeMillis() - TaskSafetyManager.lastHumanInteractionTimestamp.get()) / 1000
             val msg = "Postponed Task #${task.id} (${task.title}) by 30s: Device is in active human use (${idleSince}s since last interaction). Will execute once device becomes idle."
             AppFileLogger.action(appContext, TAG, msg)
-            AutomationSafetyManager.postponeTask(appContext, task.id, reason = msg)
+            TaskSafetyManager.postponeTask(appContext, task.id, reason = msg)
             return false
         }
 
@@ -463,15 +463,15 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             ChannelType.WHATSAPP_STATUS,
             ChannelType.WHATSAPP_BUSINESS_STATUS,
             -> {
-                uiAutomationMutex.withLock {
-                    privacyMgr.prepareAccessibilityForAutomation()
+                uiTaskMutex.withLock {
+                    privacyMgr.prepareAccessibilityForTask()
                     try {
                         executeWhatsAppTaskWithRetries(repository, task)
                     } finally {
                         if (prefs.isAutoLockAfterSendEnabled) {
                             executeDeviceLockPostcondition(appContext, task.title)
                         }
-                        privacyMgr.releaseAccessibilityAfterAutomation()
+                        privacyMgr.releaseAccessibilityAfterTask()
                     }
                 }
             }
@@ -486,15 +486,15 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             ChannelType.WHATSAPP_CALL,
             ChannelType.WHATSAPP_BUSINESS_CALL,
             -> {
-                uiAutomationMutex.withLock {
-                    privacyMgr.prepareAccessibilityForAutomation()
+                uiTaskMutex.withLock {
+                    privacyMgr.prepareAccessibilityForTask()
                     try {
                         executeWhatsAppCallTask(repository, task)
                     } finally {
                         if (prefs.isAutoLockAfterSendEnabled) {
                             executeDeviceLockPostcondition(appContext, task.title)
                         }
-                        privacyMgr.releaseAccessibilityAfterAutomation()
+                        privacyMgr.releaseAccessibilityAfterTask()
                     }
                 }
             }
@@ -510,18 +510,18 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         if (success) {
-            AutomationSafetyManager.recordSuccess(task.channel)
+            TaskSafetyManager.recordSuccess(task.channel)
         } else {
-            AutomationSafetyManager.recordFailure(task.channel, appContext)
+            TaskSafetyManager.recordFailure(task.channel, appContext)
         }
 
-        val isUiAutomationChannel = when (task.channel) {
+        val isUiTaskChannel = when (task.channel) {
             ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_GROUP,
             ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_BUSINESS_STATUS,
             ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> true
             else -> false
         }
-        if (!isUiAutomationChannel && task.channel != ChannelType.CALL_SIMULATION && task.channel != ChannelType.REMINDER && prefs.isAutoLockAfterSendEnabled) {
+        if (!isUiTaskChannel && task.channel != ChannelType.CALL_SIMULATION && task.channel != ChannelType.REMINDER && prefs.isAutoLockAfterSendEnabled) {
             executeDeviceLockPostcondition(appContext, task.title)
         }
         AccessibilityHealthManager.enforceAutoRotateInvariant(appContext)
@@ -536,7 +536,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     /**
      * Verifies whether the screen is interactive and keyguard is unlocked.
      * If the screen is off or keyguard is locked, turns on the display and initiates
-     * keyguard dismiss or automated PIN entry via [AutomationLauncherActivity].
+     * keyguard dismiss or scheduled PIN entry via [TaskLauncherActivity].
      */
     suspend fun ensureDeviceAwakeAndUnlocked(
         taskId: Long,
@@ -567,12 +567,12 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         val prefs = PreferenceManager(appContext)
-        val launchIntent = Intent(appContext, AutomationLauncherActivity::class.java).apply {
+        val launchIntent = Intent(appContext, TaskLauncherActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(AutomationLauncherActivity.EXTRA_TASK_ID, taskId)
-            putExtra(AutomationLauncherActivity.EXTRA_CHANNEL, channel.name)
-            putExtra(AutomationLauncherActivity.EXTRA_RECIPIENT, targetRecipient)
-            putExtra(AutomationLauncherActivity.EXTRA_WAKE_ONLY, true)
+            putExtra(TaskLauncherActivity.EXTRA_TASK_ID, taskId)
+            putExtra(TaskLauncherActivity.EXTRA_CHANNEL, channel.name)
+            putExtra(TaskLauncherActivity.EXTRA_RECIPIENT, targetRecipient)
+            putExtra(TaskLauncherActivity.EXTRA_WAKE_ONLY, true)
         }
 
         if (prefs.isScreenAssistEnabled && km?.isKeyguardLocked == true) {
@@ -673,7 +673,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             attempts++
             try {
                 val prefs = PreferenceManager(appContext)
-                if (!prefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+                if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
                     AppFileLogger.w(appContext, TAG, "WhatsApp task execution halted: Master scheduler disabled or emergency stop active.")
                     return false
                 }
@@ -686,15 +686,15 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 }
 
                 // Interruption and Idle check:
-                if (AutomationSafetyManager.isInterruptedByHuman.get() || !AutomationSafetyManager.isDeviceIdle(appContext)) {
+                if (TaskSafetyManager.isInterruptedByHuman.get() || !TaskSafetyManager.isDeviceIdle(appContext)) {
                     val msg = "Task #${task.id} (${task.title}) was interrupted by human interaction. Auto-postponing task to complete when idle."
                     AppFileLogger.action(appContext, TAG, msg)
-                    AutomationSafetyManager.isInterruptedByHuman.set(false)
-                    AutomationSafetyManager.postponeTask(appContext, task.id, reason = msg)
+                    TaskSafetyManager.isInterruptedByHuman.set(false)
+                    TaskSafetyManager.postponeTask(appContext, task.id, reason = msg)
                     return false
                 }
 
-                PrivacyManager.getInstance(appContext).prepareAccessibilityForAutomation()
+                PrivacyManager.getInstance(appContext).prepareAccessibilityForTask()
                 AccessibilityHealthManager.ensureServiceAlive(appContext)
                 if (!AccessibilityHealthManager.isServiceOperational()) {
                     val ready = AccessibilityHealthManager.waitForServiceReadiness(appContext, 3000L)
@@ -709,7 +709,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 ensureDeviceAwakeAndUnlocked(task, task.recipients.firstOrNull() ?: "")
                 delay(300.milliseconds)
 
-                val waSender = WhatsAppAutomationSender(appContext)
+                val waSender = WhatsAppSender(appContext)
 
                 val shouldRelockPref = PreferenceManager(appContext).isAutoLockAfterSendEnabled
                 if (task.channel == ChannelType.WHATSAPP_STATUS || task.channel == ChannelType.WHATSAPP_BUSINESS_STATUS) {
@@ -743,7 +743,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         val totalRecipients = task.recipients.size
                         for (i in task.recipients.indices) {
                             val livePrefs = PreferenceManager(appContext)
-                            if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+                            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
                                 AppFileLogger.w(appContext, TAG, "Task #${task.id} halted during multi-recipient loop: Master scheduler disabled or emergency stop active.")
                                 return false
                             }
@@ -755,11 +755,11 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                                 return false
                             }
 
-                            if (AutomationSafetyManager.isInterruptedByHuman.get() || !AutomationSafetyManager.isDeviceIdle(appContext)) {
+                            if (TaskSafetyManager.isInterruptedByHuman.get() || !TaskSafetyManager.isDeviceIdle(appContext)) {
                                 val msg = "Task #${task.id} (${task.title}) interrupted by human interaction between recipients. Auto-postponing task to complete when idle."
                                 AppFileLogger.action(appContext, TAG, msg)
-                                AutomationSafetyManager.isInterruptedByHuman.set(false)
-                                AutomationSafetyManager.postponeTask(appContext, task.id, reason = msg)
+                                TaskSafetyManager.isInterruptedByHuman.set(false)
+                                TaskSafetyManager.postponeTask(appContext, task.id, reason = msg)
                                 return false
                             }
 
@@ -821,7 +821,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         recipient = recipient,
                         messageSnippet = snippet,
                         status = "FAILED",
-                        details = "WhatsApp automation timed out after $attempts attempt(s) or Accessibility Service not active.",
+                        details = "WhatsApp dispatch timed out after $attempts attempt(s) or Accessibility Service not active.",
                     )
                 )
             }
@@ -851,7 +851,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
         for (i in task.recipients.indices) {
             val livePrefs = PreferenceManager(appContext)
-            if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
                 AppFileLogger.w(appContext, TAG, "SMS task #${task.id} halted during recipient loop: Master scheduler disabled or emergency stop active.")
                 return false
             }
@@ -863,11 +863,11 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 return false
             }
 
-            if (AutomationSafetyManager.isInterruptedByHuman.get() || !AutomationSafetyManager.isDeviceIdle(appContext)) {
+            if (TaskSafetyManager.isInterruptedByHuman.get() || !TaskSafetyManager.isDeviceIdle(appContext)) {
                 val msg = "SMS Task #${task.id} (${task.title}) interrupted by human interaction. Auto-postponing task to complete when idle."
                 AppFileLogger.action(appContext, TAG, msg)
-                AutomationSafetyManager.isInterruptedByHuman.set(false)
-                AutomationSafetyManager.postponeTask(appContext, task.id, reason = msg)
+                TaskSafetyManager.isInterruptedByHuman.set(false)
+                TaskSafetyManager.postponeTask(appContext, task.id, reason = msg)
                 return false
             }
 
@@ -981,7 +981,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     private suspend fun executeCallTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val prefs = PreferenceManager(appContext)
-        if (!prefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+        if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
             AppFileLogger.w(appContext, TAG, "Emergency stop or master switch disabled! Halting phone call task #${task.id}.")
             return false
         }
@@ -1021,7 +1021,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
         for ((index, rawRecipient) in rawRecipients.withIndex()) {
             val livePrefs = PreferenceManager(appContext)
-            if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
                 AppFileLogger.w(appContext, TAG, "Phone call sequence halted: Master scheduler disabled or emergency stop active.")
                 return false
             }
@@ -1032,11 +1032,11 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 return false
             }
 
-            if (AutomationSafetyManager.isInterruptedByHuman.get() || !AutomationSafetyManager.isDeviceIdle(appContext)) {
+            if (TaskSafetyManager.isInterruptedByHuman.get() || !TaskSafetyManager.isDeviceIdle(appContext)) {
                 val msg = "Phone Call Task #${task.id} (${task.title}) interrupted by human interaction. Auto-postponing task to complete when idle."
                 AppFileLogger.action(appContext, TAG, msg)
-                AutomationSafetyManager.isInterruptedByHuman.set(false)
-                AutomationSafetyManager.postponeTask(appContext, task.id, reason = msg)
+                TaskSafetyManager.isInterruptedByHuman.set(false)
+                TaskSafetyManager.postponeTask(appContext, task.id, reason = msg)
                 return false
             }
 
@@ -1170,7 +1170,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 AppFileLogger.action(appContext, TAG, "Task #${task.id}: $logSnippet")
                 if (isDirectCall) anyDirectCall = true
 
-                // 2. Call Duration Holding and Automatic Hangup Execution
+                // 2. Call Duration Holding and Quick Hangup Execution
                 if (isDirectCall && task.callDurationSeconds > 0) {
                     val durationSec = task.callDurationSeconds
                     val telephonyManager = appContext.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
@@ -1195,7 +1195,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         var idleConsecutiveMs = 0L
                         while (elapsed < totalMs) {
                             val livePrefs = PreferenceManager(appContext)
-                            if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+                            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
                                 AppFileLogger.w(appContext, TAG, "Call duration holding interrupted: Master switch disabled or emergency stop active.")
                                 completedNormally = false
                                 break
@@ -1236,7 +1236,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
                         while (dialElapsedMs < dialTimeoutMs) {
                             val livePrefs = PreferenceManager(appContext)
-                            if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) break
+                            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) break
 
                             if (com.jmd.autotext.compat.TelephonyManagerCompat.isCallConnected(appContext, telephonyManager) ||
                                 (dialElapsedMs >= 3000L && AutoTextAccessibilityService.isPhoneCallUiActive())) {
@@ -1302,7 +1302,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         elapsedMs += 3000L
                         while (elapsedMs < maxWaitMs) {
                             val livePrefs = PreferenceManager(appContext)
-                            if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) break
+                            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) break
                             val state = com.jmd.autotext.compat.TelephonyManagerCompat.getCallState(appContext, telephonyManager)
                             if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
                                 sawOffHook = true
@@ -1349,7 +1349,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 val step = 250L
                 while (elapsed < interCallDelayMs) {
                     val livePrefs = PreferenceManager(appContext)
-                    if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+                    if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
                         AppFileLogger.w(appContext, TAG, "Inter-call delay cancelled: Master switch disabled or emergency stop active.")
                         break
                     }
@@ -1369,7 +1369,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     private suspend fun executeWhatsAppCallTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val prefs = PreferenceManager(appContext)
-        if (!prefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+        if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
             AppFileLogger.w(appContext, TAG, "WhatsApp call task aborted: Master switch disabled or emergency stop active.")
             return false
         }
@@ -1442,16 +1442,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
         for ((index, rawRecipient) in rawRecipients.withIndex()) {
             val livePrefs = PreferenceManager(appContext)
-            if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
                 AppFileLogger.w(appContext, TAG, "Emergency stop or master switch disabled during WhatsApp call sequence. Halting.")
                 return false
             }
 
-            if (AutomationSafetyManager.isInterruptedByHuman.get() || !AutomationSafetyManager.isDeviceIdle(appContext)) {
+            if (TaskSafetyManager.isInterruptedByHuman.get() || !TaskSafetyManager.isDeviceIdle(appContext)) {
                 val msg = "WhatsApp Call Task #${task.id} (${task.title}) interrupted by human interaction. Auto-postponing task to complete when idle."
                 AppFileLogger.action(appContext, TAG, msg)
-                AutomationSafetyManager.isInterruptedByHuman.set(false)
-                AutomationSafetyManager.postponeTask(appContext, task.id, reason = msg)
+                TaskSafetyManager.isInterruptedByHuman.set(false)
+                TaskSafetyManager.postponeTask(appContext, task.id, reason = msg)
                 return false
             }
 
@@ -1497,7 +1497,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             var idleConsecutiveMs = 0L
                             while (elapsed < totalMs) {
                                 val livePrefs = PreferenceManager(appContext)
-                                if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+                                if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
                                     AppFileLogger.w(appContext, TAG, "WhatsApp call duration holding interrupted: Master switch disabled or emergency stop active.")
                                     completedNormally = false
                                     break
@@ -1535,7 +1535,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
                             while (dialElapsedMs < dialTimeoutMs) {
                                 val livePrefs = PreferenceManager(appContext)
-                                if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) break
+                                if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) break
 
                                 if (AutoTextAccessibilityService.isWhatsAppCallConnected()) {
                                     connected = true
@@ -1593,7 +1593,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         elapsedMs += 3000L
                         while (elapsedMs < maxWaitMs) {
                             val livePrefs = PreferenceManager(appContext)
-                            if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) break
+                            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) break
                             val inCall = AutoTextAccessibilityService.isInWhatsAppCall()
                             if (inCall) {
                                 sawInCall = true
@@ -1650,7 +1650,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 val step = 250L
                 while (elapsed < interCallDelayMs) {
                     val livePrefs = PreferenceManager(appContext)
-                    if (!livePrefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(appContext)) {
+                    if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
                         AppFileLogger.w(appContext, TAG, "WhatsApp inter-call delay cancelled: Master switch disabled or emergency stop active.")
                         break
                     }

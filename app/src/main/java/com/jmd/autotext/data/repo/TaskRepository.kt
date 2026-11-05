@@ -213,7 +213,7 @@ class TaskRepository(context: Context) {
 
     /**
      * Deletes a scheduled task by ID.
-     * Automatically cancels all pending AlarmManager alarms and, if the task is a
+     * Directly cancels all pending AlarmManager alarms and, if the task is a
      * reminder, dismisses that specific alarm from Android's system clock app.
      *
      * @param id The task ID.

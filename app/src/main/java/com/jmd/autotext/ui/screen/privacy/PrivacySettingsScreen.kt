@@ -229,7 +229,7 @@ fun PrivacySettingsScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                             Text(text = "Auto-Shield Banking & UPI Apps", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
-                            Text(text = "Automatically isolates SBI, HDFC, ICICI, PhonePe, Google Pay, Paytm, Saraswat Bank & financial apps.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(text = "Strictly isolates SBI, HDFC, ICICI, PhonePe, Google Pay, Paytm, Saraswat Bank & financial apps.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Switch(
                             checked = autoExcludeBanking,
@@ -284,7 +284,7 @@ fun PrivacySettingsScreen(
                                     AppBadge(text = "NEEDS SECURE_SETTINGS", color = MaterialTheme.colorScheme.outline)
                                 }
                             }
-                            Text(text = "Keeps accessibility completely OFF when idle. Automatically enables service only during active dispatches for 3s-5s, then disables it. Banking apps will NEVER detect accessibility.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(text = "Keeps accessibility completely OFF when idle. Enables service only during active dispatches for 3s-5s, then disables it. Banking apps will NEVER detect accessibility.", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Switch(
                             checked = dynamicA11yOnDemand,

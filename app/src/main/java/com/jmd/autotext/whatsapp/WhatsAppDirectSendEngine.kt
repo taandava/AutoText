@@ -2,7 +2,7 @@
 
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation Subsystem
+ * Module: WhatsApp Task Subsystem
  *
  * Direct message dispatcher executing accessibility tree inspection, input field text population,
  * clipboard synchronization, and send button clicks across WhatsApp and WhatsApp Business conversations.

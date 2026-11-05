@@ -18,7 +18,7 @@ import com.jmd.autotext.ui.theme.AppDesignTokens
 
 /**
  * Application settings and operational configuration screen providing controls for
- * automated lockscreen PIN unlock, accessibility banking guard, fallback touch coordinates,
+ * lockscreen PIN unlock, accessibility banking guard, fallback touch coordinates,
  * carrier preferences, and database backup/restore.
  *
  * @param context Android context for resolving system services and content resolvers.

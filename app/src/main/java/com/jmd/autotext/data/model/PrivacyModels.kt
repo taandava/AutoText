@@ -13,7 +13,7 @@ package com.jmd.autotext.data.model
  * @property packageName Unique Android package name (e.g., "com.saraswatbank.gomobile", "com.phonepe.app").
  * @property appName Human-readable application label.
  * @property isExcluded Master flag indicating whether AutoText isolates from this application.
- * @property disableAutomation When true, AutoText never automates actions inside or targeted at this app.
+ * @property disableTaskAction When true, AutoText never dispatches actions inside or targeted at this app.
  * @property blockOverlays When true, AutoText suppresses floating overlays, popups, and wake-windows when this app is active.
  * @property suppressNotifications When true, non-critical AutoText notifications are suppressed while this app is in the foreground.
  * @property disableClipboard When true, AutoText never reads from or writes to the system clipboard while interacting with this app.
@@ -26,7 +26,7 @@ data class AppPrivacyConfig(
     val packageName: String,
     val appName: String,
     val isExcluded: Boolean = true,
-    val disableAutomation: Boolean = true,
+    val disableTaskAction: Boolean = true,
     val blockOverlays: Boolean = true,
     val suppressNotifications: Boolean = true,
     val disableClipboard: Boolean = true,
@@ -59,10 +59,10 @@ data class AppInfoItem(
  * Global operational preferences controlling application-wide privacy, visibility, and system integration.
  *
  * @property isPrivacyModeEnabled Master safety toggle for all privacy restrictions.
- * @property autoExcludeBankingApps Automatically includes known banking and UPI applications in privacy shielding.
+ * @property autoExcludeBankingApps Directly includes known banking and UPI applications in privacy shielding.
  * @property maskNotificationsOnLockScreen Replaces sensitive message text on lockscreen notifications with generic status text.
  * @property maskExecutionLogs Masks message snippets in execution audit logs (e.g., replacement with asterisks).
- * @property autoClearClipboardSeconds Timeout in seconds to automatically wipe system clipboard after automation (0 = disabled).
+ * @property autoClearClipboardSeconds Timeout in seconds to directly wipe system clipboard after task (0 = disabled).
  * @property smartAccessibilityScoping Restricts AccessibilityServiceInfo.packageNames to only authorized target apps.
  * @property dynamicA11yOnDemand Dynamically enables accessibility service only during active dispatches if WRITE_SECURE_SETTINGS is granted.
  * @property suppressNotifsOverExcluded Suppresses heads-up notifications when any excluded application is active in the foreground.

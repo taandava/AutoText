@@ -150,7 +150,7 @@ data class WhatsAppGroupItem(
     val createdAt: Long = System.currentTimeMillis()
 )
 
-// ==================== AUTOMATIC REPLY RULE DATA MODELS ====================
+// ==================== QUICK REPLY RULE DATA MODELS ====================
 
 data class AutoReplyRule(
     val id: Long = 0,

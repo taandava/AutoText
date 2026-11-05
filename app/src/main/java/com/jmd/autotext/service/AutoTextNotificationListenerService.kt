@@ -5,7 +5,7 @@
  * Module: Notification Listener Service Layer
  *
  * Processes incoming notifications across messaging apps (WhatsApp, WhatsApp Business, SMS, Telegram, Messenger)
- * and dispatches automated replies via inline [RemoteInput] actions without launching UI on screen.
+ * and dispatches scheduled replies via inline [RemoteInput] actions without launching UI on screen.
  *
  * Linked With:
  * - Repositories: [com.jmd.autotext.data.repo.AppRepository], [com.jmd.autotext.data.repo.AutoReplyRepository]
@@ -34,7 +34,7 @@ import java.util.Calendar
 import kotlinx.coroutines.*
 
 /**
- * System NotificationListenerService processing incoming messages to perform automated replies via RemoteInput.
+ * System NotificationListenerService processing incoming messages to perform scheduled replies via RemoteInput.
  */
 class AutoTextNotificationListenerService : NotificationListenerService() {
 
@@ -103,7 +103,7 @@ class AutoTextNotificationListenerService : NotificationListenerService() {
                 val prefs = PreferenceManager(applicationContext)
                 if (!prefs.isAutoReplyMasterEnabled) return@launch
                 if (!prefs.isTasksMasterEnabled) return@launch
-                if (com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(applicationContext)) return@launch
+                if (com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) return@launch
 
                 val repository = AppRepository(applicationContext)
                 val enabledRules = repository.getEnabledAutoReplyRules(channel)

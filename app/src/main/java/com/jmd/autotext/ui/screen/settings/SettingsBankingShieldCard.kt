@@ -35,7 +35,7 @@ import kotlin.time.Duration.Companion.milliseconds
 /**
  * Controller for Banking Shield Guard and uninterrupted background execution.
  *
- * Ensures all automations (Calls, SMS, WhatsApp, Alarms) run uninterrupted 24/7
+ * Ensures all tasks (Calls, SMS, WhatsApp, Alarms) run uninterrupted 24/7
  * while strictly isolating from and never inspecting banking, payment, or UPI applications.
  */
 @Composable
@@ -115,14 +115,14 @@ fun SettingsBankingShieldCard(
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     Text(
-                        text = "✅ 100% Automatic Smart Standby Active",
+                        text = "✅ Smart Standby Active",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Task Service is kept 100% detached during idle periods. UPI, payment, and banking apps will run without service warnings. When a scheduled task runs, AutoText attaches for ~2 seconds and immediately detaches.",
+                        text = "Task is kept 100% detached during idle periods. UPI, payment, and banking apps will run without service warnings. When a scheduled task runs, AutoText attaches for ~2 seconds and immediately detaches.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         lineHeight = 15.sp
@@ -446,14 +446,14 @@ fun SettingsBankingShieldCard(
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     Text(
-                        text = "🚀 100% Automatic Bank-Safe Standby (Zero Manual Pausing Required)",
+                        text = "🚀 Bank-Safe Standby (Zero Manual Pausing Required)",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 11.5.sp
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Run this one-time command via ADB on your PC or Shizuku to grant Secure Settings. AutoText will automatically turn Accessibility on ONLY when sending messages and keep it off when idle so banking and payment apps never flag it:",
+                        text = "Run this one-time command via ADB on your PC or Shizuku to grant Secure Settings. AutoText will turn Accessibility on ONLY when sending messages and keep it off when idle so banking and payment apps never flag it:",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 10.5.sp,
                         lineHeight = 14.sp

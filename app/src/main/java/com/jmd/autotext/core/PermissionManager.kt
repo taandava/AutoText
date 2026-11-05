@@ -52,7 +52,7 @@ enum class PermissionCategory(val displayName: String) {
     CORE("Core Permissions"),
     TELEPHONY("Telephony & Calls"),
     MESSAGING("SMS & Messaging"),
-    SYSTEM("System & Automation"),
+    SYSTEM("System & Task"),
     MEDIA("Media & Storage")
 }
 
@@ -95,7 +95,7 @@ object PermissionManager {
         PermissionFeatureInfo(
             permissionId = ID_RECEIVE_SMS,
             featureName = "Incoming SMS Auto-Reply & Forwarding",
-            purpose = "Allows the SMS receiver to detect incoming messages and trigger automated reply rules.",
+            purpose = "Allows the SMS receiver to detect incoming messages and trigger quick reply rules.",
             canWorkWithout = true,
             isRuntimeApproval = true,
             requiresSpecialUserAction = false,
@@ -111,7 +111,7 @@ object PermissionManager {
             isRuntimeApproval = true,
             requiresSpecialUserAction = false,
             deniedImpact = "AutoText opens system dialer (ACTION_DIAL) with number pre-filled; user must tap call.",
-            revocationSafety = "Can be revoked safely; fallback to ACTION_DIAL is automatic.",
+            revocationSafety = "Can be revoked safely; fallback to ACTION_DIAL is direct.",
             category = PermissionCategory.TELEPHONY
         ),
         PermissionFeatureInfo(
@@ -171,13 +171,13 @@ object PermissionManager {
         ),
         PermissionFeatureInfo(
             permissionId = ID_ACCESSIBILITY,
-            featureName = "Task Service",
+            featureName = "Task",
             purpose = "Assists in scheduled WhatsApp message sending, status publishing, and secure screen task assistance.",
             canWorkWithout = true,
             isRuntimeApproval = false,
             requiresSpecialUserAction = true,
-            deniedImpact = "Cellular SMS, calls, alarms, and call simulations work normally. WhatsApp automated clicks are disabled.",
-            revocationSafety = "Can be safely disabled anytime; dynamic on-demand mode automatically keeps it detached during idle.",
+            deniedImpact = "Cellular SMS, calls, alarms, and call simulations work normally. WhatsApp assisted clicks are disabled.",
+            revocationSafety = "Can be safely disabled anytime; dynamic on-demand mode keeps it detached during idle.",
             category = PermissionCategory.SYSTEM
         ),
         PermissionFeatureInfo(
@@ -227,7 +227,7 @@ object PermissionManager {
         PermissionFeatureInfo(
             permissionId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) ID_READ_MEDIA_IMAGES else ID_READ_EXTERNAL_STORAGE,
             featureName = "Media & Attachment Access",
-            purpose = "Allows attaching photos and videos to scheduled WhatsApp and MMS automation tasks.",
+            purpose = "Allows attaching photos and videos to scheduled WhatsApp and MMS tasks.",
             canWorkWithout = true,
             isRuntimeApproval = true,
             requiresSpecialUserAction = false,

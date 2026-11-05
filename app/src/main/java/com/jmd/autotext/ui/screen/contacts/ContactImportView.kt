@@ -3,7 +3,7 @@
  * Module: UI Bulk Contact Import View
  *
  * Bulk contact ingestion screen supporting multi-line pasting and CSV file selection.
- * Automatically parses delimited tokens (names, mobile numbers, international formats)
+ * Directly parses delimited tokens (names, mobile numbers, international formats)
  * using [com.jmd.autotext.core.PhoneNumberNormalizer] and batch-inserts valid contacts into database.
  */
 package com.jmd.autotext.ui.screen.contacts

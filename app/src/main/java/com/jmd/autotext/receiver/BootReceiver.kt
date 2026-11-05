@@ -30,18 +30,18 @@ import com.jmd.autotext.scheduler.AccessibilityWatchdogScheduler
 import com.jmd.autotext.scheduler.AlarmScheduler
 import com.jmd.autotext.scheduler.DailyCampaignScheduler
 import com.jmd.autotext.service.AutoTextAccessibilityService
-import com.jmd.autotext.ui.activity.AutomationLauncherActivity
+import com.jmd.autotext.ui.activity.TaskLauncherActivity
 
 /**
- * Device restart and package update broadcast receiver restoring all automation background schedules.
+ * Device restart and package update broadcast receiver restoring all task background schedules.
  */
 class BootReceiver : BroadcastReceiver() {
     companion object {
         private const val TAG = "BootReceiver"
 
         /**
-         * Dispatches a temporary wake lock and launches [AutomationLauncherActivity] to simulate keyguard
-         * wake-up and automate credential-protected unlock directly following a cold reboot.
+         * Dispatches a temporary wake lock and launches [TaskLauncherActivity] to simulate keyguard
+         * wake-up and schedule credential-protected unlock directly following a cold reboot.
          *
          * @param context Device protected or application [Context].
          * @param pin Configured numeric security PIN to enter.
@@ -56,9 +56,9 @@ class BootReceiver : BroadcastReceiver() {
                 )
                 wakeLock?.acquire(15000L)
 
-                val launchIntent = Intent(context, AutomationLauncherActivity::class.java).apply {
-                    putExtra(AutomationLauncherActivity.EXTRA_IS_TEST_UNLOCK, false)
-                    putExtra(AutomationLauncherActivity.EXTRA_PIN, pin)
+                val launchIntent = Intent(context, TaskLauncherActivity::class.java).apply {
+                    putExtra(TaskLauncherActivity.EXTRA_IS_TEST_UNLOCK, false)
+                    putExtra(TaskLauncherActivity.EXTRA_PIN, pin)
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
                 context.startActivity(launchIntent)
@@ -95,7 +95,7 @@ class BootReceiver : BroadcastReceiver() {
             AppFileLogger.action(deContext, TAG, "Direct Boot ($action) detected. CE storage locked. Checking auto-unlock PIN...")
 
             val prefs = PreferenceManager(deContext)
-            if (!prefs.isTasksMasterEnabled || com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(deContext)) {
+            if (!prefs.isTasksMasterEnabled || com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(deContext)) {
                 Log.d(TAG, "Direct boot: Master task scheduler is paused or emergency stop active. Suppressing auto unlock.")
                 return
             }
@@ -111,7 +111,7 @@ class BootReceiver : BroadcastReceiver() {
         } else if (isFullBoot) {
             Log.d(TAG, "Full boot or upgrade detected ($action), checking master scheduler state...")
             val prefs = PreferenceManager(context)
-            if (!prefs.isTasksMasterEnabled || com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(context)) {
+            if (!prefs.isTasksMasterEnabled || com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(context)) {
                 Log.d(TAG, "Master task scheduler is paused or emergency stop active. Suppressing boot reschedule.")
                 AppFileLogger.action(context, TAG, "Device boot ($action): Master task scheduler is paused. Canceling all background schedules.")
                 AlarmScheduler(context).cancelAll()

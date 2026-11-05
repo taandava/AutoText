@@ -2,9 +2,9 @@
 
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation & Tree Traversal
+ * Module: WhatsApp Task & Tree Traversal
  *
- * Automated discovery engine for harvesting WhatsApp chats and groups via accessibility
+ * Discovery engine for harvesting WhatsApp chats and groups via accessibility
  * node traversal, scrolling, and pool enrichment.
  *
  * Linked With:
@@ -25,7 +25,7 @@ import com.jmd.autotext.data.model.WhatsAppGroupItem
 import com.jmd.autotext.data.repo.AppRepository
 
 /**
- * Accessibility-based scanner engine that automatically iterates WhatsApp conversation lists,
+ * Accessibility-based scanner engine that directly iterates WhatsApp conversation lists,
  * discovers chats and groups, and saves them into the local dynamic contact pool.
  */
 class WhatsAppChatScanner(

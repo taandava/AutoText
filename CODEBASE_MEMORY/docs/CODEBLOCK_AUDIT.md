@@ -59,9 +59,9 @@ This document provides a component-by-component, codeblock-by-codeblock analysis
 
 ---
 
-## 3. Automation Engine, Services & Programmatic API Layer
+## 3. Task Dispatch Engine, Services & Programmatic API Layer
 
-### 3.1 `AutomationFeatureApi.kt` (New Component)
+### 3.1 `TaskFeatureApi.kt` (New Component)
 - **Current Codeblocks:**
   - Programmatic, typed, suspendable endpoints for all features: `sendWhatsAppMessage`, `postWhatsAppStatus`, `placeWhatsAppCall`, `sendSms`, `placePhoneCall`, `hangupActiveCall`, `triggerReminder`, `triggerCallSimulation`, `applySoundMode`.
   - Standardizes parameter validation, dual-SIM routing, and returns unified `TaskExecutionResult` objects.
@@ -94,7 +94,7 @@ This document provides a component-by-component, codeblock-by-codeblock analysis
 - Material 3 Expressive styling with dark-mode primary surface tokens (`0xFF111318`), surface containers (`0xFF1D2024`), primary teal accents (`0xFF60D4D6`), and error containers (`0xFF93000A`).
 - Standardized 46.dp touch targets on text fields, dropdowns, and inline action buttons.
 - Fully accessible content descriptions on all interactive icons.
-- Sanitized terminology across all UI composables: standardized on "Task Service", "Smart Dispatch", and clean 2-word naming conventions.
+- Sanitized terminology across all UI composables: standardized on "Task", "Smart Dispatch", and clean 2-word naming conventions.
 
 ---
 
@@ -112,6 +112,6 @@ This document provides a component-by-component, codeblock-by-codeblock analysis
   - Banking shield and protected package refusal
   - Keyguard PIN tap coordinate calculations
   - Sliced polling call termination detection
-  - Terminology assertions ("Task Service" catalog completeness)
+  - Terminology assertions ("Task" catalog completeness)
   - Backup and restore of all 15 tables including `TABLE_APP_PRIVACY_CONFIGS`
   - Runtime permissions catalog completeness (including `ANSWER_PHONE_CALLS`, Call Log, Media)

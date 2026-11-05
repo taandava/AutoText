@@ -2,7 +2,7 @@
 
 /**
  * Package: com.jmd.autotext.engine
- * Module: Automation Engine Layer
+ * Module: Task Engine Layer
  *
  * Coordinates contact and recipient ingestion across device ContactsContract, CallLog,
  * cellular SMS inbox/outbox history, and WhatsApp chat history scans.

@@ -4,7 +4,7 @@
  * Package: com.jmd.autotext.receiver
  * Module: Broadcast Receivers Layer
  *
- * Listens for exact RTC_WAKEUP alarms triggered by Android AlarmManager for scheduled automation tasks.
+ * Listens for exact RTC_WAKEUP alarms triggered by Android AlarmManager for scheduled task tasks.
  * Wakes the device, logs alarm activation, updates task execution state, and enqueues the task ID
  * into [com.jmd.autotext.engine.SequentialTaskEngine].
  *
@@ -21,7 +21,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.jmd.autotext.core.AppFileLogger
-import com.jmd.autotext.core.AutomationSafetyManager
+import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.data.model.ChannelType
 import com.jmd.autotext.data.model.RecurrenceType
 import com.jmd.autotext.data.model.ScheduledTask
@@ -67,7 +67,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                 scheduler.cancelTask(task.id)
                 repository.deleteTask(task.id)
             }
-            com.jmd.autotext.core.AutomationSafetyManager.resetEmergencyStop(context)
+            com.jmd.autotext.core.TaskSafetyManager.resetEmergencyStop(context)
             AppFileLogger.action(context, TAG, "Purged all $count scheduled tasks and cancelled all active alarms.")
             return count
         }
@@ -105,7 +105,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                     scheduler.cancelTask(oldTask.id)
                     repository.deleteTask(oldTask.id)
                 }
-                com.jmd.autotext.core.AutomationSafetyManager.resetEmergencyStop(context)
+                com.jmd.autotext.core.TaskSafetyManager.resetEmergencyStop(context)
                 AppFileLogger.action(context, TAG, "Cleared existing tasks and reset safety breakers before bulk setup")
             }
             val now = System.currentTimeMillis()
@@ -165,8 +165,8 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             val tasks = repository.getAllTasks()
             val traceTail = AppFileLogger.readLogFile(context, 1000)
             val errTail = AppFileLogger.readErrorLog(context, 100)
-            val isIdle = AutomationSafetyManager.isDeviceIdle(context)
-            val lastInteraction = AutomationSafetyManager.lastHumanInteractionTimestamp.get()
+            val isIdle = TaskSafetyManager.isDeviceIdle(context)
+            val lastInteraction = TaskSafetyManager.lastHumanInteractionTimestamp.get()
             val now = System.currentTimeMillis()
 
             Log.i(TAG, "========== [START EXECUTION LOG DUMP (count=${logs.size})] ==========")
@@ -267,7 +267,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             val prefs = PreferenceManager(context)
             val repo = AppRepository(context)
             val cfg = repo.getDailyCampaignConfig(campId)
-            if (!cfg.isActive || !prefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(context)) {
+            if (!cfg.isActive || !prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(context)) {
                 AppFileLogger.w(context, TAG, "ACTION_FIRE_CAMPAIGN suppressed: Campaign #$campId is inactive or master switch is OFF.")
                 com.jmd.autotext.scheduler.DailyCampaignScheduler.cancel(context, campId)
                 return
@@ -334,14 +334,14 @@ class TaskAlarmReceiver : BroadcastReceiver() {
 
         if (intent.action == ACTION_EMERGENCY_STOP) {
             val reason = intent.getStringExtra("reason") ?: "Broadcast Trigger"
-            AutomationSafetyManager.triggerEmergencyStop(context, reason)
+            TaskSafetyManager.triggerEmergencyStop(context, reason)
             AppFileLogger.e(context, TAG, "ACTION_EMERGENCY_STOP triggered via broadcast: $reason")
             Log.e(TAG, "ACTION_EMERGENCY_STOP triggered via broadcast: $reason")
             return
         }
 
         if (intent.action == ACTION_RESET_EMERGENCY_STOP) {
-            AutomationSafetyManager.resetEmergencyStop(context)
+            TaskSafetyManager.resetEmergencyStop(context)
             AppFileLogger.action(context, TAG, "ACTION_RESET_EMERGENCY_STOP triggered via broadcast")
             Log.i(TAG, "ACTION_RESET_EMERGENCY_STOP triggered via broadcast")
             return
@@ -363,7 +363,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
 
         if (intent.action == ACTION_TEST_TASK) {
             val prefs = PreferenceManager(context)
-            if (!prefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(context)) {
+            if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(context)) {
                 AppFileLogger.w(context, TAG, "ACTION_TEST_TASK suppressed: Master scheduler disabled or Emergency Stop active.")
                 return
             }
@@ -485,18 +485,18 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        if (AutomationSafetyManager.isEmergencyStopActive(context)) {
+        if (TaskSafetyManager.isEmergencyStopActive(context)) {
             Log.d(TAG, "Task $taskId execution skipped because Emergency Stop is active")
             return
         }
 
         // Pre-flight Idle Check: Only trigger and complete task when idle (unless manually triggered from UI)
-        if (!isManualRun && !AutomationSafetyManager.isDeviceIdle(context)) {
-            val idleSince = (System.currentTimeMillis() - AutomationSafetyManager.lastHumanInteractionTimestamp.get()) / 1000
+        if (!isManualRun && !TaskSafetyManager.isDeviceIdle(context)) {
+            val idleSince = (System.currentTimeMillis() - TaskSafetyManager.lastHumanInteractionTimestamp.get()) / 1000
             val reason = "Alarm fired while device was in active human use (${idleSince}s since last interaction)"
             Log.i(TAG, "Task #$taskId postponed by 30s: $reason")
             AppFileLogger.action(context, TAG, "Auto-postponing Task #$taskId: $reason. Will trigger once device is idle.")
-            AutomationSafetyManager.postponeTask(context, taskId, reason = reason)
+            TaskSafetyManager.postponeTask(context, taskId, reason = reason)
             return
         }
 

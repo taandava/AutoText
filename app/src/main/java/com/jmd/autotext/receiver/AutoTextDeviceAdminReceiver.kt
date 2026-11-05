@@ -24,7 +24,7 @@ import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.core.showAppToast
 
 /**
- * DeviceAdminReceiver providing screen lock capabilities for security relocking post-automation.
+ * DeviceAdminReceiver providing screen lock capabilities for security relocking post-task.
  */
 class AutoTextDeviceAdminReceiver : DeviceAdminReceiver() {
 
@@ -76,7 +76,7 @@ class AutoTextDeviceAdminReceiver : DeviceAdminReceiver() {
                 putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, getComponentName(context))
                 putExtra(
                     DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                    "AutoText requires Device Administration to automatically re-lock the phone after scheduled WhatsApp and SMS messages complete."
+                    "AutoText requires Device Administration to re-lock the phone after scheduled WhatsApp and SMS messages complete."
                 )
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
@@ -100,7 +100,7 @@ class AutoTextDeviceAdminReceiver : DeviceAdminReceiver() {
             val fallbackIntents = listOf(
                 Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
                     putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, getComponentName(context))
-                    putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "AutoText requires Device Administration to automatically re-lock the phone after scheduled WhatsApp and SMS messages complete.")
+                    putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "AutoText requires Device Administration to re-lock the phone after scheduled WhatsApp and SMS messages complete.")
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
                 Intent().setComponent(ComponentName("com.android.settings", "com.android.settings.DeviceAdminAdd")).apply {

@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.autotext.core
- * Module: Core Automation Utilities
+ * Module: Core Task Utilities
  *
  * Provides system overlay window permission verification and system settings intent routing.
  */

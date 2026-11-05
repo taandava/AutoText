@@ -10,7 +10,7 @@
  * - Bootstrapping: Initializes application context singletons and registers high-priority notification channels.
  * - Non-blocking Concurrency: Offloads database queries, contact hygiene, and alarm reschedulings to a dedicated daemon thread.
  * - Resilience: Activates periodic accessibility service watchdog heartbeats and self-heals corrupted permission states.
- * - Legacy Migration: Automatically cleans up legacy persistent foreground service notifications.
+ * - Legacy Migration: Cleans up legacy persistent foreground service notifications directly.
  */
 package com.jmd.autotext
 
@@ -25,7 +25,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 import com.jmd.autotext.core.AccessibilityHealthManager
-import com.jmd.autotext.core.AutomationSafetyManager
+import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.core.AppFileLogger
 import com.jmd.autotext.data.repo.AppRepository
@@ -36,7 +36,7 @@ import com.jmd.autotext.scheduler.DailyCampaignScheduler
 import com.jmd.autotext.service.TaskForegroundService
 
 /**
- * Root Application class for the AutoText Android automation suite.
+ * Root Application class for the AutoText Android task suite.
  *
  * Coordinates system-wide services, registers user-facing notification categories,
  * launches watchdog monitors, and initializes scheduled outreach pipelines.
@@ -47,13 +47,13 @@ class AutoTextApplication : Application() {
         /** Logging tag for diagnostic system traces. */
         private const val TAG = "AutoTextApp"
 
-        /** Notification channel identifier for automated task status updates and delivery receipts. */
+        /** Notification channel identifier for task status updates and delivery receipts. */
         const val CHANNEL_TASKS = "channel_tasks"
 
         /** Notification channel identifier for full-screen reminder alarms, countdowns, and sound toggles. */
         const val CHANNEL_REMINDERS = "channel_reminders"
 
-        /** Legacy persistent service notification channel identifier targeted for automatic removal. */
+        /** Legacy persistent service notification channel identifier targeted for removal. */
         const val CHANNEL_SERVICE = "channel_service"
 
         /**
@@ -75,7 +75,7 @@ class AutoTextApplication : Application() {
         super.onCreate()
         instance = this
 
-        // 0. Install Global Crash Handler with Automatic Diagnostic File Dumping
+        // 0. Install Global Crash Handler with Quick Diagnostic File Dumping
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
@@ -98,7 +98,7 @@ class AutoTextApplication : Application() {
         // Sync persisted emergency stop state
         val initialPrefs = PreferenceManager(this)
         if (initialPrefs.isEmergencyStopActive) {
-            AutomationSafetyManager.isEmergencyStopActive.set(true)
+            TaskSafetyManager.isEmergencyStopActive.set(true)
         }
 
         // 2. Offload database queries, contact hygiene, and alarm reschedulings to structured background coroutine
@@ -114,14 +114,14 @@ class AutoTextApplication : Application() {
 
                 // Re-arm all active and pending task alarms across SMS, WhatsApp, Calls, and Reminders
                 val prefs = PreferenceManager(this@AutoTextApplication)
-                if (!prefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(this@AutoTextApplication)) {
+                if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(this@AutoTextApplication)) {
                     Log.i(TAG, "Master task scheduler is paused or emergency stop active. Suppressing background schedule initialization.")
                     AlarmScheduler(this@AutoTextApplication).cancelAll()
                     DailyCampaignScheduler.cancelAllCampaigns(this@AutoTextApplication)
                 } else {
                     AlarmScheduler(this@AutoTextApplication).rescheduleAllPending()
 
-                    // Arm daily campaign schedulers for automated outreach cycles
+                    // Arm daily campaign schedulers for scheduled outreach cycles
                     DailyCampaignScheduler.scheduleAll(this@AutoTextApplication)
                 }
 

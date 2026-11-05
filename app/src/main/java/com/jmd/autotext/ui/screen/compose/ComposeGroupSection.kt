@@ -30,7 +30,7 @@ import com.jmd.autotext.ui.components.*
 import com.jmd.autotext.ui.theme.*
 
 /**
- * Bottom sheet modal enabling users to select target WhatsApp groups ingested from automated chat scanner.
+ * Bottom sheet modal enabling users to select target WhatsApp groups ingested from chat scanner.
  *
  * @param repository Data repository reading discovered group inventory.
  * @param selectedGroupName Currently selected group name string.

@@ -248,7 +248,7 @@ fun MainAppHost(
                                         .size(26.dp)
                                         .clip(RoundedCornerShape(8.dp))
                                         .clickable {
-                                            com.jmd.autotext.core.AutomationSafetyManager.triggerEmergencyStop(context)
+                                            com.jmd.autotext.core.TaskSafetyManager.triggerEmergencyStop(context)
                                         }
                                 ) {
                                     Box(contentAlignment = Alignment.Center) {
@@ -355,11 +355,11 @@ fun MainAppHost(
                     .padding(top = padding.calculateTopPadding(), bottom = padding.calculateBottomPadding())
             ) {
                 var emergencyStopActive by remember {
-                    mutableStateOf(com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive.get())
+                    mutableStateOf(com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive.get())
                 }
                 LaunchedEffect(Unit) {
                     while (true) {
-                        emergencyStopActive = com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive.get()
+                        emergencyStopActive = com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive.get()
                         delay(1000L.milliseconds)
                     }
                 }
@@ -383,7 +383,7 @@ fun MainAppHost(
                             )
                             Button(
                                 onClick = {
-                                    com.jmd.autotext.core.AutomationSafetyManager.resetEmergencyStop(context)
+                                    com.jmd.autotext.core.TaskSafetyManager.resetEmergencyStop(context)
                                     val prefs = com.jmd.autotext.data.prefs.PreferenceManager(context)
                                     prefs.isTasksMasterEnabled = true
                                     emergencyStopActive = false

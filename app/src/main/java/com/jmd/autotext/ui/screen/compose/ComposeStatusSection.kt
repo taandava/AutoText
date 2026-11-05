@@ -331,7 +331,7 @@ fun WhatsAppStatusComposerCard(
 }
 
 /**
- * Specialized composer card for scheduling automated WhatsApp Business Status stories.
+ * Specialized composer card for scheduling WhatsApp Business Status stories.
  *
  * @param mediaUri Local URI of image or video for status update.
  * @param onMediaUriChange Callback when attached media is changed or removed.

@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.autotext.core
- * Module: Core Automation Utilities
+ * Module: Core Task Utilities
  *
  * Provides pre-flight media URI accessibility inspection, MIME resolution,
  * and channel-specific payload validation (SMS text-only vs WhatsApp multimedia).

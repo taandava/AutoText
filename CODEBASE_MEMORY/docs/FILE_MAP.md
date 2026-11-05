@@ -10,7 +10,7 @@ app/src/main/
 ├── java/com/jmd/autotext/
 │   ├── AutoTextApplication.kt
 │   ├── api/
-│   │   └── AutomationFeatureApi.kt
+│   │   └── TaskFeatureApi.kt
 │   ├── compat/
 │   │   ├── AccessibilityCompat.kt
 │   │   ├── ClipboardCompat.kt
@@ -21,7 +21,7 @@ app/src/main/
 │   │   ├── AccessibilityHealthManager.kt
 │   │   ├── AppExtensions.kt
 │   │   ├── AppFileLogger.kt
-│   │   ├── AutomationSafetyManager.kt
+│   │   ├── TaskSafetyManager.kt
 │   │   ├── MessageTemplateResolver.kt
 │   │   ├── OemBrandHelper.kt
 │   │   ├── OverlayPermissionHelper.kt
@@ -56,7 +56,7 @@ app/src/main/
 │   │   ├── ContactIngestionEngine.kt
 │   │   ├── SequentialTaskEngine.kt
 │   │   ├── SmsSender.kt
-│   │   └── WhatsAppAutomationSender.kt
+│   │   └── WhatsAppSender.kt
 │   ├── receiver/
 │   │   ├── AccessibilityWatchdogReceiver.kt
 │   │   ├── AutoTextDeviceAdminReceiver.kt
@@ -78,7 +78,7 @@ app/src/main/
 │   │   └── TaskForegroundService.kt
 │   ├── ui/
 │   │   ├── activity/
-│   │   │   ├── AutomationLauncherActivity.kt
+│   │   │   ├── TaskLauncherActivity.kt
 │   │   │   ├── CallSimulationActivity.kt
 │   │   │   ├── MainActivity.kt
 │   │   │   └── ReminderAlarmActivity.kt

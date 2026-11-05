@@ -344,7 +344,7 @@ fun DailyCampaignChannelSelectionDialog(
                 DailyChannelOptionCard(
                     title = "WhatsApp Daily Campaign",
                     badge = "Personal 1-on-1",
-                    description = "Automate 1-on-1 personal messages to unique contacts with anti-ban delay pacing",
+                    description = "Send 1-on-1 personal messages to unique contacts with safe delay pacing",
                     emoji = "💬",
                     accentColor = MaterialTheme.colorScheme.tertiary,
                     onClick = { onSelectChannel("WHATSAPP") }

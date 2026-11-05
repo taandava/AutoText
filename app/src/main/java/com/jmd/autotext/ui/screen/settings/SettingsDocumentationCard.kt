@@ -36,7 +36,7 @@ fun SettingsDocumentationCard(
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            "Complete architectural manual, 100 SMS daily TRAI limit, automated WhatsApp lockscreen unlock, silent watchdog, and 100% offline security logic bundled inside this APK as AUTOTEXT_FEATURES_AND_LOGIC.md.",
+            "Complete architectural manual, 100 SMS daily TRAI limit, WhatsApp lockscreen unlock, silent watchdog, and 100% offline security logic bundled inside this APK as AUTOTEXT_FEATURES_AND_LOGIC.md.",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 12.sp,
             lineHeight = 16.sp

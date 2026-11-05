@@ -2,7 +2,7 @@
  * Package: com.jmd.autotext.receiver
  * Module: Broadcast Receivers Layer
  *
- * Monitors telephony call state transitions (RINGING, OFFHOOK, IDLE) to trigger automated SMS
+ * Monitors telephony call state transitions (RINGING, OFFHOOK, IDLE) to trigger scheduled SMS
  * replies for missed calls, answered and ended incoming calls, or connected and ended outgoing calls.
  *
  * Accurately distinguishes between:
@@ -28,7 +28,7 @@ import android.provider.CallLog
 import android.provider.ContactsContract
 import android.telephony.TelephonyManager
 import android.util.Log
-import com.jmd.autotext.core.AutomationSafetyManager
+import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.core.MessageTemplateResolver
 import com.jmd.autotext.core.PhoneNumberNormalizer
 import com.jmd.autotext.core.SmsQuotaManager
@@ -313,8 +313,8 @@ class PhoneCallReceiver : BroadcastReceiver() {
             Log.d(TAG, "Skipping call auto-reply: Auto-Reply Responder is disabled by master switch")
             return
         }
-        if (AutomationSafetyManager.isEmergencyStopActive(context)) {
-            Log.d(TAG, "Skipping call auto-reply: Automation Emergency Stop is active")
+        if (TaskSafetyManager.isEmergencyStopActive(context)) {
+            Log.d(TAG, "Skipping call reply: Emergency Stop is active")
             return
         }
 

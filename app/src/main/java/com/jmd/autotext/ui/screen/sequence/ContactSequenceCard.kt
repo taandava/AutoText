@@ -143,7 +143,7 @@ fun ContactSequenceCard(
             }
 
             Text(
-                text = "${sequence.steps.size} automated steps",
+                text = "${sequence.steps.size} scheduled steps",
                 fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium

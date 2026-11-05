@@ -2,10 +2,10 @@
 
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation & Tree Traversal
+ * Module: WhatsApp Task & Tree Traversal
  *
  * Provides resilient accessibility node BFS search algorithms, boundary inspection,
- * gesture dispatch, physical coordinate tapping, and text-entry routines for UI automation.
+ * gesture dispatch, physical coordinate tapping, and text-entry routines for UI actions.
  *
  * Linked With:
  * - Service: [com.jmd.autotext.service.AutoTextAccessibilityService]
@@ -34,9 +34,9 @@ object AccessibilityNodeUtils {
 
     private const val TAG = "A11yNodeUtils"
 
-    /** Timestamp of the most recent physical tap or swipe gesture injected by the automation service. */
+    /** Timestamp of the most recent physical tap or swipe gesture injected by the task engine. */
     @Volatile
-    var lastAutomatedGestureTimestamp: Long = 0L
+    var lastGestureTimestamp: Long = 0L
 
     /** Returns whether an accessibility node is checked or toggled on. */
     fun isNodeChecked(node: AccessibilityNodeInfo?): Boolean =
@@ -360,7 +360,7 @@ object AccessibilityNodeUtils {
             com.jmd.autotext.core.ProtectedApplicationManager.handleProtectedAppEncountered(service, curPkg ?: "unknown", "dispatchPhysicalTap")
             return false
         }
-        lastAutomatedGestureTimestamp = System.currentTimeMillis()
+        lastGestureTimestamp = System.currentTimeMillis()
         return try {
             val path = Path().apply {
                 moveTo(x, y)
@@ -385,7 +385,7 @@ object AccessibilityNodeUtils {
     }
 
     /**
-     * Synthesizes an automated vertical swipe gesture across the display.
+     * Synthesizes an scheduled vertical swipe gesture across the display.
      *
      * @param service The active [AccessibilityService].
      * @param startYRatio Screen height ratio for swipe start (e.g. 0.75 for 75% down).

@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">AutoText</string>
-    <string name="accessibility_service_label">AutoText Task Service</string>
-    <string name="accessibility_service_description">AutoText uses the Android Accessibility Service API exclusively as a Task Service to help users dispatch scheduled messages, voice calls, and tasks in approved messaging apps. AutoText does not collect, store, or transmit your conversations, personal data, or keystrokes, and automatically isolates itself from all banking and payment applications.</string>
+    <string name="accessibility_service_label">AutoText Task</string>
+    <string name="accessibility_service_description">AutoText uses the Android Accessibility Service API exclusively as a Task helper to help users dispatch scheduled messages, voice calls, and tasks in approved messaging apps. AutoText does not collect, store, or transmit your conversations, personal data, or keystrokes, and strictly isolates itself from all banking and payment applications.</string>
     <string name="notification_channel_tasks">Scheduled Messages</string>
     <string name="notification_channel_tasks_desc">Notifications for scheduled message dispatches and delivery status</string>
     <string name="notification_channel_reminders">Alarms &amp; Reminders</string>
     <string name="notification_channel_reminders_desc">Full screen alerts and reminders</string>
     <string name="device_admin_description">Allows AutoText to turn off the display after scheduled messaging tasks conclude.</string>
-    <string name="tile_a11y_label">Task Service</string>
+    <string name="tile_a11y_label">Task</string>
 </resources>

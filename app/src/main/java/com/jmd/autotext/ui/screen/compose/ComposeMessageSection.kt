@@ -426,7 +426,7 @@ fun ComposeRecipientsAndMessageCard(
             value = messageText,
             onValueChange = onMessageTextChange,
             label = "Message Text",
-            placeholder = "Type your automated message...",
+            placeholder = "Type your message...",
             leadingIcon = Icons.Default.EditNote,
             singleLine = false,
             minLines = 3,

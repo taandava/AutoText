@@ -14,7 +14,7 @@ import android.telephony.SmsManager
 /**
  * Backward-compatible helper for [SmsManager] resolution and SIM subscription binding.
  *
- * Automatically branches between [Context.getSystemService] on Android 12+ (API 31+)
+ * Branches between [Context.getSystemService] on Android 12+ (API 31+)
  * and [SmsManager.getDefault] on legacy platforms.
  */
 object SmsManagerCompat {

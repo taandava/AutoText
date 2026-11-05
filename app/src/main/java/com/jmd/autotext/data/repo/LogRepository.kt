@@ -4,7 +4,7 @@
  * Package: com.jmd.autotext.data.repo
  * Module: Data Repositories Layer
  *
- * Persists and queries automation execution logs for SMS, WhatsApp, and call actions.
+ * Persists and queries task execution logs for SMS, WhatsApp, and call actions.
  * Maintains execution history with timestamps, delivery status, and failure diagnostics.
  *
  * Linked With:

@@ -20,7 +20,7 @@ import com.jmd.autotext.ui.components.*
 import com.jmd.autotext.ui.theme.AppDesignTokens
 
 /**
- * Configuration card managing automated screen wake, keyguard PIN input, and post-dispatch hardware lock.
+ * Configuration card managing screen wake, keyguard PIN input, and post-dispatch hardware lock.
  *
  * @param context Local context for keyguard and device admin validation.
  * @param prefs Preferences manager storing unlock credentials and auto-lock state.
@@ -40,7 +40,7 @@ fun SettingsScreenAssistCard(
     AppCard(modifier = modifier.fillMaxWidth()) {
         Text("Screen Task Assistance & Auto-Lock", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
         Spacer(modifier = Modifier.height(4.dp))
-        Text("AutoText can wake the device, assist with lockscreen entry during dispatches, and securely re-lock the device automatically.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+        Text("AutoText can wake the device, assist with lockscreen entry during dispatches, and securely re-lock the device safely.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -114,7 +114,7 @@ fun SettingsScreenAssistCard(
                 )
 
                 Text(
-                    "Biometric Transition: If your device uses fingerprint or face unlock, AutoText automatically swipes up to switch to PIN/Password entry for the scheduled task.",
+                    "Biometric Transition: If your device uses fingerprint or face unlock, AutoText swipes up to switch to PIN/Password entry for the scheduled task.",
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp)

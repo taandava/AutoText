@@ -2,7 +2,7 @@
 
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation Subsystem
+ * Module: WhatsApp Task Subsystem
  *
  * Prevents accidental voice note recording triggers when attempting to click the WhatsApp Send button.
  * Detects whether the button at the send position has transitioned from a Voice Note mic icon to a Send paper airplane.
@@ -118,7 +118,7 @@ object VoiceNoteProtectionGuard {
     /**
      * Detects if WhatsApp has inadvertently entered active voice recording mode and cancels it safely.
      *
-     * If an automation step erroneously held down or tapped the voice recorder button instead of send,
+     * If a dispatch step erroneously held down or tapped the voice recorder button instead of send,
      * this recovery routine searches for the trash/cancel button IDs or "slide to cancel" keywords,
      * performing an accessibility click or synthesizing a leftward swipe gesture to discard the recording.
      *

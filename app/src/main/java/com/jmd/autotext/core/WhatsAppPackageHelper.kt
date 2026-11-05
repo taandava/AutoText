@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.autotext.core
- * Module: Core Automation Utilities
+ * Module: Core Task Utilities
  *
  * Provides package identification, installation resolution, and intent targeting
  * for consumer WhatsApp and WhatsApp Business editions.

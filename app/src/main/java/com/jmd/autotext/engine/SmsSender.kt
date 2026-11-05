@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.autotext.engine
- * Module: Automation Engine
+ * Module: Task Engine
  *
  * Coordinates cellular SMS transmission, dual-SIM slot binding, multipart PDU assembly,
  * radio modem acknowledgement latching, and quota reconciliation.

@@ -9,8 +9,8 @@
 - Verified on physical hardware:
   - Samsung Galaxy A04 (`SM-A045F`, Android 14 SDK 34, Serial: `R9ZW105MFDR`)
   - Vivo / iQOO I2401 (`I2401`, Android 16 SDK 36, Serial: `10BF1G0HCD0024R`)
-- Zero crashes, zero ANRs, and successful call/message/task recovery automation.
-- 100% policy-compliant terminology ("Task Service", "Smart Dispatch") protecting against store and OEM package manager flags.
+- Zero crashes, zero ANRs, and successful call/message/task recovery task dispatch.
+- 100% policy-compliant terminology ("Task", "Smart Dispatch") protecting against store and OEM package manager flags.
 
 ## 2. Long-Term Maintenance & Future Tracking
 1. **Periodic Dynamic Standby Audit:**
@@ -22,4 +22,4 @@
 4. **Hardware Keyguard Unlock Invariants:**
    - Ensure swipe/PIN gesture timing remains calibrated for diverse OEM display refresh rates and touch digitizer latencies.
 5. **Programmatic Feature API Extension:**
-   - Expand `AutomationFeatureApi.kt` endpoints for any future communication channels or specialized hardware integrations.
+   - Expand `TaskFeatureApi.kt` endpoints for any future communication channels or specialized hardware integrations.

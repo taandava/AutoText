@@ -35,7 +35,7 @@
     <!-- System Overlay (Display Over Other Apps / Privacy Shield / Call Simulator) -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-    <!-- External Storage & Media Permissions (Personal Power-Automation / Unrestricted Backup & Media Attachments) -->
+    <!-- External Storage & Media Permissions (Device Storage & Media Attachments) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
@@ -71,7 +71,7 @@
         <intent>
             <action android:name="android.settings.SECURITY_SETTINGS" />
         </intent>
-        <!-- OEM Battery Optimizer & Autostart packages for Background Automation -->
+        <!-- OEM Battery Optimizer & Autostart packages for Background Tasks -->
         <package android:name="com.vivo.permissionmanager" />
         <package android:name="com.vivo.abe" />
         <package android:name="com.iqoo.secure" />
@@ -94,7 +94,7 @@
         <package android:name="com.transsion.phonemanager" />
         <package android:name="com.asus.mobilemanager" />
         <package android:name="com.sonymobile.cta" />
-        <!-- OEM Telephony & Dialer Packages for Call Automation -->
+        <!-- OEM Telephony & Dialer Packages for Call Tasks -->
         <package android:name="com.samsung.android.incallui" />
         <package android:name="com.samsung.android.app.contacts" />
         <package android:name="com.samsung.android.dialer" />
@@ -129,12 +129,12 @@
         <activity android:name=".ui.activity.ReminderAlarmActivity" android:exported="false" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:launchMode="singleTop" android:theme="@style/Theme.AutoText" />
 
         <!-- Screen-On / Keyguard Dismiss Dispatch Activity (Internal dispatch only) -->
-        <activity android:name=".ui.activity.AutomationLauncherActivity" android:exported="false" android:directBootAware="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:excludeFromRecents="true" android:noHistory="true" android:launchMode="singleInstance" android:theme="@style/Theme.AutoText.Transparent" />
+        <activity android:name=".ui.activity.TaskLauncherActivity" android:exported="false" android:directBootAware="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:excludeFromRecents="true" android:noHistory="true" android:launchMode="singleInstance" android:theme="@style/Theme.AutoText.Transparent" />
 
         <!-- Policy & Architecture Compliant Alias -->
-        <activity-alias android:name=".ui.activity.TaskLauncherActivity" android:targetActivity=".ui.activity.AutomationLauncherActivity" android:exported="false" />
+        <activity-alias android:name=".ui.activity.TaskLauncherActivity" android:targetActivity=".ui.activity.TaskLauncherActivity" android:exported="false" />
 
-        <!-- Device Administration Receiver (Hardware Screen Lock after Automation) -->
+        <!-- Device Administration Receiver (Screen Lock Postcondition) -->
         <receiver android:name=".receiver.AutoTextDeviceAdminReceiver" android:label="@string/app_name" android:description="@string/device_admin_description" android:permission="android.permission.BIND_DEVICE_ADMIN" android:exported="true">
             <meta-data android:name="android.app.device_admin" android:resource="@xml/device_admin" />
             <intent-filter>
@@ -142,7 +142,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- Accessibility Message Assistant Service (WhatsApp, WA Business) -->
+        <!-- Task Assistant Service (WhatsApp, WA Business) -->
         <service android:name=".service.AutoTextAccessibilityService" android:label="@string/accessibility_service_label" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:enabled="true" android:stopWithTask="false" android:directBootAware="true" android:exported="true">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -167,7 +167,7 @@
             </intent-filter>
         </service>
 
-        <!-- Alarm Receiver for Exact Scheduling & Automation Setup -->
+        <!-- Alarm Receiver for Exact Scheduling & Task Setup -->
         <receiver android:name=".receiver.TaskAlarmReceiver" android:directBootAware="true" android:exported="true" tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="com.jmd.autotext.ACTION_FIRE_TASK" />
@@ -204,7 +204,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- Accessibility & Automation Watchdog Heartbeat Receiver -->
+        <!-- Accessibility & Task Watchdog Heartbeat Receiver -->
         <receiver android:name=".receiver.AccessibilityWatchdogReceiver" android:directBootAware="true" android:exported="false">
             <intent-filter>
                 <action android:name="com.jmd.autotext.ACTION_WATCHDOG_HEARTBEAT" />

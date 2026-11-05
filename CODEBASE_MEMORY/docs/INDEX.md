@@ -1,7 +1,7 @@
 # 🤖 AUTONOMOUS CODEBASE ENGINEER MEMORY VAULT
 
 ## 📜 Instructions for Resumption
-This vault contains all persistent knowledge of the AutoText application. To review system state, read this file first, then `PROJECT_OVERVIEW.md` and `FEATURE_MATRIX.md`. The primary objective of producing a fully functional, reliable, feature-complete, zero-warning Android automation and task execution application has been achieved.
+This vault contains all persistent knowledge of the AutoText application. To review system state, read this file first, then `PROJECT_OVERVIEW.md` and `FEATURE_MATRIX.md`. The primary objective of producing a fully functional, reliable, feature-complete, zero-warning Android task dispatch and task execution application has been achieved.
 
 ## 🔗 Memory Index
 - [PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md): High-level summary of what AutoText *is*.
@@ -21,8 +21,8 @@ This vault contains all persistent knowledge of the AutoText application. To rev
 - **Unit Test Suite:** `AutoTextComprehensiveTest` — **107 of 107 Tests Passing (100%)**
 - **Production Build:** Signed release APK generated at `D:\GPU-D\apps\Automation\app-release.apk` (APK Signature Scheme v2 verified)
 - **Physical Device Verified:**
-  - Samsung Galaxy A04 (`SM-A045F`, Android 14 SDK 34) — 0 crashes, 0 ANRs, verified cellular call sequencing, SMS dispatches, WhatsApp automation, and stranded running task recovery.
+  - Samsung Galaxy A04 (`SM-A045F`, Android 14 SDK 34) — 0 crashes, 0 ANRs, verified cellular call sequencing, SMS dispatches, WhatsApp task dispatch, and stranded running task recovery.
   - Vivo / iQOO I2401 (`I2401`, Android 16 SDK 36) — 0 crashes, 0 ANRs, verified multi-brand OEM compatibility, call duration enforcement, and power button auto-lock.
 - **Biometric-Safe Screen Lock:** Emulates hardware physical Power button press (`GLOBAL_ACTION_LOCK_SCREEN`) rather than `dpm.lockNow()`, preserving fingerprint and face unlock.
 - **Banking Protection:** Dedicated `ProtectedApplicationManager` enforcing strict default-deny policy and bank-safe smart standby.
-- **Policy Compliance:** 100% Google Play & OEM security compliant ("Task Service", 2-word naming conventions).
+- **Policy Compliance:** 100% Google Play & OEM security compliant ("Task", 2-word naming conventions).

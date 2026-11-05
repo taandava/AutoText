@@ -2,9 +2,9 @@
 
 /**
  * Package: com.jmd.autotext.ui.screen
- * Module: UI WhatsApp Automation Onboarding Layer
+ * Module: UI WhatsApp Task Onboarding Layer
  *
- * Guided setup wizard for WhatsApp and WhatsApp Business automation.
+ * Guided setup wizard for WhatsApp and WhatsApp Business dispatch.
  * Steps through Accessibility service enablement, battery optimization disablement,
  * test ping message verification, lockscreen PIN setup, and permission status checks.
  *
@@ -45,7 +45,7 @@ import com.jmd.autotext.ui.theme.*
 
 
 /**
- * Guided onboarding and troubleshooting view for WhatsApp automation.
+ * Guided onboarding and troubleshooting view for WhatsApp tasks.
  *
  * Configures accessibility services, device lockscreen screen assistance PINs, post-dispatch
  * auto-relock policies, battery optimization allowlists, and live end-to-end ping verification.
@@ -206,7 +206,7 @@ fun WhatsAppSetupAndScreenAssistView(
                             )
 
                             Text(
-                                "Fingerprint / Face Auto-Switch: If your phone uses fingerprint, AutoText automatically swipes up to dismiss fingerprint and switch directly to number lock to enter your password.",
+                                "Fingerprint / Face Auto-Switch: If your phone uses fingerprint, AutoText swipes up to dismiss fingerprint and switch directly to number lock to enter your password.",
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(top = 4.dp)
@@ -298,7 +298,7 @@ fun WhatsAppSetupAndScreenAssistView(
                     Text("Default Country Code", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "WhatsApp requires international dial codes. If phone numbers are entered without country code (e.g. 10 digits), AutoText automatically prefixes this country code.",
+                        "WhatsApp requires international dial codes. If phone numbers are entered without country code (e.g. 10 digits), AutoText directly prefixes this country code.",
                         fontSize = 11.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -325,7 +325,7 @@ fun WhatsAppSetupAndScreenAssistView(
                 WhatsAppBatteryOptimizationCard(context = context)
             }
 
-            // 6. Live Test WhatsApp Automation Enterprise Card
+            // 6. Live Test WhatsApp Task Enterprise Card
             item {
                 WhatsAppLiveTestCard(
                     context = context,
@@ -415,7 +415,7 @@ fun WhatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
                         AccessibilityHealthManager.enableAccessibilityService(context)
                         context.showAppToast("Connected! Assistant operational. Auto-detaching in 5s to keep banking safe.")
                         android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                            if (prefs.isDynamicA11yOnDemandEnabled && !AutoTextAccessibilityService.isCurrentlyAutomating()) {
+                            if (prefs.isDynamicA11yOnDemandEnabled && !AutoTextAccessibilityService.isCurrentlyDispatching()) {
                                 AccessibilityHealthManager.disableAccessibilityService(context)
                             }
                         }, 5000L)
@@ -598,12 +598,12 @@ fun WhatsAppLiveTestCard(
                     context.showAppToast("Please enter a phone number")
                     return@GlassButton
                 }
-                val messageToSend = testMessage.trim().ifEmpty { "AutoText Test Ping: Task Service is active!" }
+                val messageToSend = testMessage.trim().ifEmpty { "AutoText Test Ping: Task is active!" }
                 scope.launch {
-                    val mutex = SequentialTaskEngine.getUiAutomationMutex(context)
+                    val mutex = SequentialTaskEngine.getUiTaskMutex(context)
                     val success = mutex.withLock {
                         withContext(Dispatchers.IO) {
-                            val sender = WhatsAppAutomationSender(context)
+                            val sender = WhatsAppSender(context)
                             sender.send(
                                 taskId = 9999L,
                                 channel = ChannelType.WHATSAPP,

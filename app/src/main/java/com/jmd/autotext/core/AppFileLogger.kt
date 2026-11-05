@@ -1,9 +1,9 @@
 /**
  * Package: com.jmd.autotext.core
- * Module: Core Automation Utilities
+ * Module: Core Task Utilities
  *
  * Provides persistent on-device diagnostic logging, campaign dispatch CSV ledgers,
- * error tracking, automatic file rotation (3 MB threshold), and log export.
+ * error tracking, scheduled file rotation (3 MB threshold), and log export.
  */
 package com.jmd.autotext.core
 
@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Enterprise logging subsystem for recording automation lifecycles and campaign ledger audits.
+ * Enterprise logging subsystem for recording task lifecycles and campaign ledger audits.
  *
  * Persists log entries directly to private application internal storage (`files/logs/`).
  */
@@ -33,7 +33,7 @@ object AppFileLogger {
     private val csvDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
 
     /**
-     * Records a diagnostic message into internal log files with automatic logcat mirroring.
+     * Records a diagnostic message into internal log files with direct logcat mirroring.
      *
      * @param context Active Android [Context].
      * @param level Severity tag ("DEBUG", "INFO", "WARN", "ACTION", "ERROR").
@@ -106,7 +106,7 @@ object AppFileLogger {
      *
      * @param context Active Android [Context].
      * @param tag Calling component or service identifier.
-     * @param actionDescription Description of user action or automated dispatch step.
+     * @param actionDescription Description of user action or dispatch step.
      */
     fun action(context: Context, tag: String, actionDescription: String) = log(context, "ACTION", tag, actionDescription)
 

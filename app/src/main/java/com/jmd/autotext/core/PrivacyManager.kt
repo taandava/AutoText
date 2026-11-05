@@ -52,10 +52,10 @@ class PrivacyManager private constructor(private val appContext: Context) {
         }
 
         /**
-         * Standard allowlist of essential system and automation target packages that AutoText
+         * Standard allowlist of essential system and task target packages that AutoText
          * requires for normal operation (unless explicitly excluded by the user).
          */
-        val BASE_AUTOMATION_TARGET_PACKAGES = setOf(
+        val BASE_TASK_TARGET_PACKAGES = setOf(
             "com.whatsapp",
             "com.whatsapp.w4b",
             "com.android.systemui",
@@ -155,7 +155,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
                 packageName = trimmed,
                 appName = trimmed.substringAfterLast('.').replaceFirstChar { it.uppercase() },
                 isExcluded = true,
-                disableAutomation = true,
+                disableTaskAction = true,
                 blockOverlays = true,
                 suppressNotifications = true,
                 disableClipboard = true,
@@ -251,16 +251,16 @@ class PrivacyManager private constructor(private val appContext: Context) {
     }
 
     /**
-     * Checks whether automation actions are disallowed for a specific package.
+     * Checks whether task actions are disallowed for a specific package.
      */
-    fun isAutomationBlockedForPackage(packageName: String): Boolean {
+    fun isTaskBlockedForPackage(packageName: String): Boolean {
         if (!prefs.isPrivacyModeEnabled) return false
         val trimmed = packageName.trim()
         if (trimmed.isBlank()) return false
 
         val config = getConfigForPackage(trimmed)
         if (config != null) {
-            return config.isExcluded && config.disableAutomation
+            return config.isExcluded && config.disableTaskAction
         }
         if (prefs.isAutoExcludeBankingEnabled && AutoTextAccessibilityService.isFinancialOrBankingPackage(trimmed)) {
             return true
@@ -297,7 +297,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
     }
 
     /**
-     * Checks whether automatic clipboard interaction is disabled for a given target package.
+     * Checks whether quick clipboard interaction is disabled for a given target package.
      */
     fun isClipboardDisabledForPackage(packageName: String): Boolean {
         if (!prefs.isPrivacyModeEnabled) return false
@@ -382,7 +382,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
         try {
             val info = service.serviceInfo ?: return
             if (prefs.isSmartAccessibilityScopingEnabled) {
-                val allowedPackages = BASE_AUTOMATION_TARGET_PACKAGES.toMutableSet()
+                val allowedPackages = BASE_TASK_TARGET_PACKAGES.toMutableSet()
                 allowedPackages.add(appContext.packageName)
 
                 // Remove any packages explicitly marked as excluded
@@ -404,9 +404,9 @@ class PrivacyManager private constructor(private val appContext: Context) {
 
     /**
      * If dynamic on-demand mode is active, ensures accessibility service is turned on right before
-     * executing an automation task.
+     * executing an task task.
      */
-    fun prepareAccessibilityForAutomation(): Boolean {
+    fun prepareAccessibilityForTask(): Boolean {
         if (!prefs.isDynamicA11yOnDemandEnabled) return true
         if (!AccessibilityHealthManager.hasWriteSecureSettings(appContext)) {
             // Cannot dynamically attach without WRITE_SECURE_SETTINGS; verify if user has service running manually
@@ -421,28 +421,28 @@ class PrivacyManager private constructor(private val appContext: Context) {
                 waitMs += 100
             }
             val ready = AutoTextAccessibilityService.getInstance() != null
-            Log.d(TAG, "prepareAccessibilityForAutomation: service ready=$ready (waited ${waitMs}ms)")
+            Log.d(TAG, "prepareAccessibilityForTask: service ready=$ready (waited ${waitMs}ms)")
             ready
         } catch (e: Exception) {
-            Log.w(TAG, "prepareAccessibilityForAutomation error: ${e.message}")
+            Log.w(TAG, "prepareAccessibilityForTask error: ${e.message}")
             false
         }
     }
 
     /**
-     * If dynamic on-demand mode is active, cleanly disables the accessibility service after an automation task finishes.
+     * If dynamic on-demand mode is active, cleanly disables the accessibility service after an task task finishes.
      */
-    fun releaseAccessibilityAfterAutomation() {
+    fun releaseAccessibilityAfterTask() {
         if (!prefs.isDynamicA11yOnDemandEnabled) return
         if (!AccessibilityHealthManager.hasWriteSecureSettings(appContext)) {
-            // Without WRITE_SECURE_SETTINGS, do not disableSelf() automatically because the app cannot re-enable itself!
+            // Without WRITE_SECURE_SETTINGS, do not disableSelf() directly because the app cannot re-enable itself!
             return
         }
         try {
             AccessibilityHealthManager.disableAccessibilityService(appContext)
-            Log.i(TAG, "Dynamic on-demand accessibility service disabled after automation")
+            Log.i(TAG, "Dynamic on-demand accessibility service disabled after task")
         } catch (e: Exception) {
-            Log.w(TAG, "releaseAccessibilityAfterAutomation error: ${e.message}")
+            Log.w(TAG, "releaseAccessibilityAfterTask error: ${e.message}")
         }
     }
 }

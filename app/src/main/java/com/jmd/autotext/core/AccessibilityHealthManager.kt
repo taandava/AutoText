@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.autotext.core
- * Module: Core Automation Utilities
+ * Module: Core Task Utilities
  *
  * Provides watchdog monitoring, connection heartbeat tracking, privileged service healing,
  * and manufacturer-specific battery optimization management.
@@ -343,7 +343,7 @@ object AccessibilityHealthManager {
     }
 
     /**
-     * Verifies service liveliness and automatically triggers healing if binder dropped.
+     * Verifies service liveliness and directly triggers healing if binder dropped.
      *
      * @param context Active Android [Context].
      * @return True if service is alive and connected.

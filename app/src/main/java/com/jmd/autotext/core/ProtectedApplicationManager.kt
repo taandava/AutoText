@@ -10,7 +10,7 @@
  * 2. Only explicitly authorized target applications (WhatsApp, WhatsApp Business, Phone/Dialer, Keyguard) may receive UI actions.
  * 3. Immediate pre-action context verification before every physical tap, click, or text entry.
  * 4. Zero inspection or traversal of protected applications' UI trees or window nodes.
- * 5. Instant cancellation of pending automation callbacks when a protected or non-authorized application is encountered.
+ * 5. Instant cancellation of pending task callbacks when a protected or non-authorized application is encountered.
  * 6. Zero collection of credentials, PINs, OTPs, card details, or screen contents.
  * 7. Zero overlay displays or notification heads-up over protected applications.
  */
@@ -160,7 +160,7 @@ object ProtectedApplicationManager {
     )
 
     /**
-     * Package name prefixes that automatically flag an application as protected/financial.
+     * Package name prefixes that directly flag an application as protected/financial.
      */
     val PROTECTED_PACKAGE_PREFIXES: List<String> = listOf(
         "com.sbi.",
@@ -235,7 +235,7 @@ object ProtectedApplicationManager {
      * Under the Default-Deny policy, AutoText will NEVER interact with any application
      * outside this explicit set.
      */
-    val AUTHORIZED_AUTOMATION_TARGETS: Set<String> = setOf(
+    val AUTHORIZED_TASK_TARGETS: Set<String> = setOf(
         // WhatsApp Applications
         "com.whatsapp",
         "com.whatsapp.w4b",
@@ -306,7 +306,7 @@ object ProtectedApplicationManager {
         if (isProtectedPackage(trimmed)) return false
 
         // Check if package or prefix matches authorized targets
-        for (auth in AUTHORIZED_AUTOMATION_TARGETS) {
+        for (auth in AUTHORIZED_TASK_TARGETS) {
             if (trimmed.equals(auth, ignoreCase = true) || trimmed.startsWith("$auth.")) {
                 return true
             }
@@ -380,7 +380,7 @@ object ProtectedApplicationManager {
 
     /**
      * Invoked immediately when a protected application is detected in the foreground.
-     * Cancels any pending automation callbacks, resets service automation state,
+     * Cancels any pending task callbacks, resets service task state,
      * logs a privacy-safe masked diagnostic record, and detaches accessibility if on-demand.
      */
     fun handleProtectedAppEncountered(context: Context, detectedPackage: String, source: String) {
@@ -392,7 +392,7 @@ object ProtectedApplicationManager {
             "Protected application encountered ($maskedPkg) from $source. Safely interrupted external UI operations."
         )
 
-        // 1. Immediately clear pending accessibility automation and watchdog callbacks
+        // 1. Immediately clear pending accessibility task and watchdog callbacks
         AutoTextAccessibilityService.clearPending()
 
         // 2. If dynamic on-demand mode is enabled, immediately unbind and detach the accessibility service

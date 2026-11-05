@@ -36,7 +36,7 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 /**
- * WorkManager scheduler governing daily automated campaign execution cycles.
+ * WorkManager scheduler governing daily scheduled campaign execution cycles.
  */
 object DailyCampaignScheduler {
 
@@ -65,7 +65,7 @@ object DailyCampaignScheduler {
         val workManager = WorkManager.getInstance(context)
         val uniqueWorkName = getPeriodicWorkName(campaignId)
 
-        if (!config.isActive || !prefs.isTasksMasterEnabled || com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(context)) {
+        if (!config.isActive || !prefs.isTasksMasterEnabled || com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(context)) {
             cancel(context, campaignId)
             return
         }
@@ -138,7 +138,7 @@ object DailyCampaignScheduler {
             AppFileLogger.w(context, "DailyCampaignScheduler", "triggerNow aborted: Task Scheduler Engine is paused.")
             return
         }
-        if (com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(context)) {
+        if (com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(context)) {
             AppFileLogger.w(context, "DailyCampaignScheduler", "triggerNow aborted: Emergency Stop active.")
             return
         }

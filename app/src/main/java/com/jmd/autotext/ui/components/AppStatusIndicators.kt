@@ -27,7 +27,7 @@ import android.app.AlarmManager
 import android.os.Build
 import com.jmd.autotext.core.AccessibilityHealthManager
 import com.jmd.autotext.core.OverlayPermissionHelper
-import com.jmd.autotext.core.AutomationSafetyManager
+import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.core.showAppToast
 import com.jmd.autotext.data.prefs.PreferenceManager
 import com.jmd.autotext.receiver.AutoTextDeviceAdminReceiver
@@ -82,7 +82,7 @@ object SystemIndicatorResolver {
         val a11yDesc = when {
             !isComponentEnabled -> "The assistant service component was disabled by the system. Tap to re-enable in system settings."
             prefs.isA11yUserPaused -> "Assistant is temporarily paused so banking and payment apps process transactions without interference. Tap to resume."
-            isDynamicStandby && !isA11yRunning -> "Bank-Safe Standby: Kept inactive while idle so payment and banking apps run with zero warnings. Automatically connects only during scheduled dispatches."
+            isDynamicStandby && !isA11yRunning -> "Bank-Safe Standby: Kept inactive while idle so payment and banking apps run with zero warnings. Directly connects only during scheduled dispatches."
             isA11yRunning -> "Active in background for scheduled message delivery. Isolated from banking and payment apps."
             else -> "Enables hands-free message sending and lockscreen assistance. Tap to enable."
         }
@@ -92,7 +92,7 @@ object SystemIndicatorResolver {
 
         val isDeviceAdminActive = AutoTextDeviceAdminReceiver.isAdminActive(context)
 
-        val isSchedulerActive = prefs.isTasksMasterEnabled && !AutomationSafetyManager.isEmergencyStopActive(context)
+        val isSchedulerActive = prefs.isTasksMasterEnabled && !TaskSafetyManager.isEmergencyStopActive(context)
 
         val isBankingShieldActive = prefs.isBankingShieldEnabled
 
@@ -235,7 +235,7 @@ object SystemIndicatorResolver {
                 isActive = isSchedulerActive,
                 actionLabel = if (!isSchedulerActive) "Resume Dispatcher" else null,
                 onAction = { ctx ->
-                    AutomationSafetyManager.resetEmergencyStop(ctx)
+                    TaskSafetyManager.resetEmergencyStop(ctx)
                     prefs.isTasksMasterEnabled = true
                 }
             ),

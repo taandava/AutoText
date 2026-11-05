@@ -2,14 +2,14 @@
 
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation Subsystem
+ * Module: WhatsApp Task Subsystem
  *
  * Formulates and fires explicit deep link intents (`api.whatsapp.com/send?phone=...` and package-targeted actions)
  * launching WhatsApp or WhatsApp Business chats, groups, and status updates while attaching security metadata.
  *
  * Linked With:
  * - Service: [com.jmd.autotext.service.AutoTextAccessibilityService]
- * - Sender: [com.jmd.autotext.engine.WhatsAppAutomationSender]
+ * - Sender: [com.jmd.autotext.engine.WhatsAppSender]
  * - Package Helper: [com.jmd.autotext.core.WhatsAppPackageHelper]
  * - Diagnostics: [com.jmd.autotext.core.AppFileLogger]
  */
@@ -33,7 +33,7 @@ object WhatsAppIntentDispatcher {
     private const val TAG = "WhatsAppIntentDisp"
 
     /**
-     * Prepares the accessibility automation service state and launches WhatsApp/WhatsApp Business
+     * Prepares the accessibility task state and launches WhatsApp/WhatsApp Business
      * targeting a recipient phone number, group name, or status feed.
      *
      * Handles text messages, media attachment sharing via `ACTION_SEND`, deep link schemes
@@ -206,13 +206,13 @@ object WhatsAppIntentDispatcher {
 
     /**
      * Dispatches an intent to open a WhatsApp direct conversation and prepares the
-     * accessibility engine to initiate an automated voice call.
+     * accessibility engine to initiate a voice call.
      *
      * @param context Context used to start activities.
      * @param taskId Unique identifier for the calling task.
      * @param channel The WhatsApp channel to target.
      * @param recipient Target phone number string.
-     * @param callDurationSeconds Desired duration in seconds before the automated call is hung up (0 for manual termination).
+     * @param callDurationSeconds Desired duration in seconds before the call is hung up (0 for manual termination).
      * @param shouldRelock Whether the device should be relocked after concluding the call.
      * @return `true` if the activity launch intent succeeded; `false` on failure.
      */

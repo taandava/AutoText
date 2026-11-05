@@ -5,7 +5,7 @@
  * Module: Data Persistence Layer
  *
  * Provides thread-safe SQLite database initialization, schema versioning, transaction isolation,
- * and automated schema migrations across database versions 1 through 6.
+ * and scheduled schema migrations across database versions 1 through 6.
  *
  * Linked With:
  * - Repositories: [com.jmd.autotext.data.repo.AppRepository], [com.jmd.autotext.data.repo.TaskRepository],
@@ -27,14 +27,14 @@ import android.database.sqlite.SQLiteOpenHelper
  * Thread-safe SQLite OpenHelper managing all relational persistence tables for AutoText.
  *
  * Manages 15 relational tables:
- * - tasks: Scheduled automation tasks across SMS, WhatsApp, Calls, Reminders, and Sound modes.
+ * - tasks: Scheduled task tasks across SMS, WhatsApp, Calls, Reminders, and Sound modes.
  * - recipients: Contact book recipients and metadata.
  * - templates: Quick message templates and dynamic token strings.
- * - auto_reply_rules: Pattern matching rules for automated incoming replies.
+ * - auto_reply_rules: Pattern matching rules for scheduled incoming replies.
  * - campaigns / drip_steps: Marketing campaigns and multi-phase drip sequences.
- * - execution_logs: Comprehensive on-device audit logs for every automation attempt.
+ * - execution_logs: Comprehensive on-device audit logs for every task attempt.
  * - dynamic_contact_pool: Ingested contact pool for daily outreach campaigns.
- * - daily_campaign_config: Automated daily batch dispatch settings and throttle pacing.
+ * - daily_campaign_config: Scheduled daily batch dispatch settings and throttle pacing.
  * - auto_reply_history: Duplicate-suppression history for incoming notification auto-replies.
  * - contact_sequences: Multi-step follow-up sequences for individual contacts.
  * - sequence_steps: Individual drip steps belonging to contact follow-up sequences.
@@ -111,7 +111,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                 package_name TEXT PRIMARY KEY,
                 app_name TEXT NOT NULL DEFAULT '',
                 is_excluded INTEGER NOT NULL DEFAULT 0,
-                disable_automation INTEGER NOT NULL DEFAULT 0,
+                disable_task_action INTEGER NOT NULL DEFAULT 0,
                 block_overlays INTEGER NOT NULL DEFAULT 0,
                 suppress_notifications INTEGER NOT NULL DEFAULT 0,
                 disable_clipboard INTEGER NOT NULL DEFAULT 0,
@@ -615,7 +615,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                 package_name TEXT PRIMARY KEY,
                 app_name TEXT NOT NULL DEFAULT '',
                 is_excluded INTEGER NOT NULL DEFAULT 0,
-                disable_automation INTEGER NOT NULL DEFAULT 0,
+                disable_task_action INTEGER NOT NULL DEFAULT 0,
                 block_overlays INTEGER NOT NULL DEFAULT 0,
                 suppress_notifications INTEGER NOT NULL DEFAULT 0,
                 disable_clipboard INTEGER NOT NULL DEFAULT 0,

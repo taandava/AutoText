@@ -395,7 +395,7 @@ fun DailyCampaignEmptyStateCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    "Set up an automated outreach cycle to unique contacts without repetitive manual messaging. Choose your outreach channel below to get started:",
+                    "Set up an outreach cycle to unique contacts without repetitive manual messaging. Choose your outreach channel below to get started:",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -428,7 +428,7 @@ fun DailyCampaignEmptyStateCard(
         ChannelSelectionCard(
             title = "WhatsApp Daily Campaign",
             badge = "Personal 1-on-1",
-            description = "Personal automated WhatsApp messages via accessibility service with auto-recovery and customizable delay.",
+            description = "Personal WhatsApp messages via accessibility service with smart recovery and customizable delay.",
             icon = Icons.AutoMirrored.Filled.Chat,
             accentColor = MaterialTheme.colorScheme.tertiary,
             buttonText = "Set Up WhatsApp Campaign",
@@ -439,7 +439,7 @@ fun DailyCampaignEmptyStateCard(
         ChannelSelectionCard(
             title = "WhatsApp Business Campaign",
             badge = "Client Outreach",
-            description = "Automate client follow-ups via WhatsApp Business app with paced delivery to protect business account standing.",
+            description = "Schedule client follow-ups via WhatsApp Business app with paced delivery to protect business account standing.",
             icon = Icons.Default.Business,
             accentColor = MaterialTheme.colorScheme.primary,
             buttonText = "Set Up WA Business Campaign",
@@ -554,7 +554,7 @@ fun ChannelSelectionCard(
  * Diagnostic card showing WhatsApp Business package installation and accessibility engine readiness.
  *
  * @param isInstalled True if com.whatsapp.w4b package is discovered on the device.
- * @param isA11yActive True if accessibility automation binder is responsive.
+ * @param isA11yActive True if accessibility task binder is responsive.
  * @param onAutoHeal Callback to trigger accessibility reactivation.
  * @param modifier Optional layout modifier.
  */
@@ -628,7 +628,7 @@ fun WhatsAppBusinessReadinessCard(
  * @param isWhatsApp True if this campaign dispatches via WhatsApp or WA Business.
  * @param config Target campaign configuration data class.
  * @param stats Real-time contact pool counts.
- * @param isA11yActive True if accessibility automation engine is running.
+ * @param isA11yActive True if accessibility task engine is running.
  * @param isScanning True if phonebook contact scan is underway.
  * @param campaignThemeColor Color accent tailored to current campaign medium.
  * @param lastScanSummary Metrics from the most recent contact scan.
@@ -1126,7 +1126,7 @@ fun DailyCampaignConfigCard(
         // Auto-scan Toggle
         GlassToggleRow(
             title = "Auto-scan before batch",
-            subtitle = "Discovers newly received contacts, SMS and calls automatically",
+            subtitle = "Discovers newly received contacts, SMS and calls directly",
             checked = config.autoScanEnabled,
             onCheckedChange = { onConfigChange(config.copy(autoScanEnabled = it)) },
             icon = Icons.Default.Sync,
@@ -1264,9 +1264,9 @@ fun DailySmsQuotaCard(
 }
 
 /**
- * Compact horizontal banner displaying accessibility automation readiness and one-click heal button.
+ * Compact horizontal banner displaying accessibility task readiness and one-click heal button.
  *
- * @param isA11yActive True if accessibility automation engine is active.
+ * @param isA11yActive True if accessibility task engine is active.
  * @param onAutoHeal Callback triggered when user taps to restart accessibility service.
  * @param modifier Optional layout modifier.
  */
@@ -1299,7 +1299,7 @@ fun WhatsAppA11yHealthBar(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    if (isA11yActive) "Task Service Ready" else "Service dropped / inactive",
+                    if (isA11yActive) "Task Ready" else "Task Inactive",
                     fontSize = 10.5.sp,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Medium

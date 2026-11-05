@@ -53,16 +53,16 @@ data class SelectedRecipient(
 /**
  * UI presentation model representing a task type option in the creation dialog grid.
  *
- * Maps user selection to specific channel dispatch configurations and specialized automation modes.
+ * Maps user selection to specific channel dispatch configurations and specialized task modes.
  *
- * @property title Display name of the automation option (e.g. "SMS Message", "WhatsApp Voice Call").
+ * @property title Display name of the task option (e.g. "SMS Message", "WhatsApp Voice Call").
  * @property description Subtitle outlining workflow capabilities.
- * @property emoji Visual iconography representing the automation action.
+ * @property emoji Visual iconography representing the task action.
  * @property color Dominant background and border highlight color.
  * @property channel Underlying [ChannelType] if mapped to a single-shot task, or null for multi-step sequences.
  * @property isSequence True if option launches the multi-step contact sequence composer.
  * @property isStatus True if option launches the WhatsApp status update publisher.
- * @property isDailyCampaign True if option routes to the automated unique contact daily outreach engine.
+ * @property isDailyCampaign True if option routes to the unique contact daily outreach engine.
  * @property isWaCall True if option configures a live WhatsApp VoIP call task.
  */
 data class TaskTypeItem(

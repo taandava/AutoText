@@ -4,7 +4,7 @@
  * Package: com.jmd.autotext.data.repo
  * Module: Data Repositories Layer
  *
- * Persists multi-step scheduled sequences of automated messages per contact across channels (SMS, WhatsApp, WhatsApp Business).
+ * Persists multi-step scheduled sequences of scheduled messages per contact across channels (SMS, WhatsApp, WhatsApp Business).
  *
  * Linked With:
  * - Database: [com.jmd.autotext.data.db.DatabaseHelper]

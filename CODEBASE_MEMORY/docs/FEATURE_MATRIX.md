@@ -9,7 +9,7 @@
 | | RUNNING State | `SequentialTaskEngine.kt` | **PASS** | Mutex locked, active tracking |
 | | RUNNING Recovery | `TaskRepository.recoverInterruptedRunningTasks()`, `SequentialTaskEngine.kt` | **PASS** | Auto-reconciles orphaned RUNNING tasks on boot, reschedule, and engine pipeline exit |
 | | SUCCESS State | `SequentialTaskEngine.kt`, `LogRepository.kt` | **PASS** | Recorded in DB with execution log |
-| | FAILED State | `SequentialTaskEngine.kt`, `AutomationSafetyManager.kt` | **PASS** | Recorded with failure reason |
+| | FAILED State | `SequentialTaskEngine.kt`, `TaskSafetyManager.kt` | **PASS** | Recorded with failure reason |
 | | CANCELLED State | `SequentialTaskEngine.cancelTask()`, `AlarmScheduler.cancelTask()` | **PASS** | Active job cancelled, alarms disarmed |
 | | PAUSED State | `TaskRepository.toggleTask()`, `TasksScreen.kt` | **PASS** | Suppresses alarm until resumed |
 | **Scheduling** | Immediate Execution | `TasksScreen.kt` ("Send Now") | **PASS** | Bypasses alarm, queues directly |
@@ -25,35 +25,35 @@
 | | CSV Contacts Import | `ContactImportView.kt` | **PASS** | Parses CSV headers, validates phones |
 | | Ingestion from Device | `ContactIngestionEngine.kt` | **PASS** | Scans contacts, call logs, SMS |
 | **SMS** | Multi-SIM Cellular Modem | `SmsSender.kt`, `SmsManagerCompat.kt`, `OemBrandHelper.kt` | **PASS** | Explicit SIM slot binding across Qualcomm, MediaTek, Samsung Exynos, and Unisoc |
-| | Multi-part PDU SMS | `SmsSender.kt` | **PASS** | Automatically splits & tracks parts |
+| | Multi-part PDU SMS | `SmsSender.kt` | **PASS** | Directly splits & tracks parts |
 | | SMS Quota Management | `SmsQuotaManager.kt` | **PASS** | Prevents carrier block from burst limits |
 | | Incoming SMS Auto-Reply | `SmsReceiver.kt`, `AutoReplyRepository.kt` | **PASS** | Trigger pattern match with cooldown |
 | **Phone Calls** | Direct Call Execution | `SequentialTaskEngine.executeCallTask()` | **PASS** | TelecomManager.placeCall with SIM selection |
 | | Multi-Brand OEM Dual-SIM | `OemBrandHelper.kt` | **PASS** | Universal cross-vendor SIM selection extras (Samsung, Vivo, Oppo, Realme, Xiaomi, Motorola, Nokia, Transsion) |
 | | Exact Call Duration Enforcement | `SequentialTaskEngine.waitForCallDurationWithEarlyCheck()` | **PASS** | Sliced polling adhering strictly to form duration condition (including dial-time inclusion mode) |
-| | Automated Call Disconnection | `AutoTextAccessibilityService.requestEndPhoneCall()` | **PASS** | Multi-tier: TelecomManager.endCall, showInCallScreen foregrounding + 20+ multi-lingual OEM disconnect IDs, KEYCODE_HEADSETHOOK |
+| | Scheduled Call Disconnection | `AutoTextAccessibilityService.requestEndPhoneCall()` | **PASS** | Multi-tier: TelecomManager.endCall, showInCallScreen foregrounding + 20+ multi-lingual OEM disconnect IDs, KEYCODE_HEADSETHOOK |
 | | Inter-call Delay Pacing | `SequentialTaskEngine.executeCallTask()` | **PASS** | Enforces configured seconds between calls |
 | | Sequence Ordering | `SequentialTaskEngine.executeCallTask()` | **PASS** | GIVEN vs RANDOM ordering |
 | **WhatsApp** | Personal & Business WA | `WhatsAppPackageHelper.kt` | **PASS** | Identifies `com.whatsapp` and `com.whatsapp.w4b` |
-| | Direct Chat Automation | `WhatsAppDirectSendEngine.kt` | **PASS** | Semantic text entry verification and designated Send button resolution |
+| | Direct Chat Task Dispatch | `WhatsAppDirectSendEngine.kt` | **PASS** | Semantic text entry verification and designated Send button resolution |
 | | Voice Note Button Collision Shield | `VoiceNoteProtectionGuard.kt` | **PASS** | Prohibits coordinate clicking on microphone; enforces active text content before sending |
 | | Outbound VoIP Calls | `WhatsAppCallEngine.kt` | **PASS** | Toolbar icon vs dropdown menu disambiguation ("Voice call" vs "Video call") |
 | | VoIP Duration Auto-Hangup | `WhatsAppCallEngine.kt`, `AutoTextAccessibilityService.requestEndWhatsAppCall()` | **PASS** | Multi-window hierarchy inspection for WhatsApp in-call disconnect button |
-| | Status Story Posting | `WhatsAppStatusEngine.kt` | **PASS** | Posts to Updates/Status tab with automatic image selection and text captions |
+| | Status Story Posting | `WhatsAppStatusEngine.kt` | **PASS** | Posts to Updates/Status tab with quick image selection and text captions |
 | | Group Message Search | `WhatsAppGroupEngine.kt` | **PASS** | Searches group title in chats tab |
 | **Banking Protection** | Default-Deny UI Policy | `ProtectedApplicationManager.kt` | **PASS** | Only authorized targets receive UI taps |
 | | Financial App Catalog | `ProtectedApplicationManager.KNOWN_PROTECTED_PACKAGES` | **PASS** | 60+ Indian and global banking/UPI apps |
 | | Pre-Action Context Check | `ProtectedApplicationManager.verifyContextBeforeInteraction` | **PASS** | Verifies foreground package before taps |
 | | Dynamic Standby Detachment | `AccessibilityHealthManager.kt` | **PASS** | Detaches a11y service during idle periods |
 | | Google Pay Zero Block | `SettingsBankingShieldCard.kt`, `accessibility_service_config.xml` | **PASS** | Scoped packageNames, 1-tap pause tile |
-| **Screen Auto-Unlock & Lock** | Screen Wake & Keyguard Dismiss | `AutomationLauncherActivity.kt` | **PASS** | PowerManager wake lock & KeyguardManager |
+| **Screen Auto-Unlock & Lock** | Screen Wake & Keyguard Dismiss | `TaskLauncherActivity.kt` | **PASS** | PowerManager wake lock & KeyguardManager |
 | | Physical Tap PIN Unlock | `KeyguardUnlockEngine.kt` | **PASS** | Enters PIN digits via gesture coordinates |
 | | Biometric-Safe Hardware Auto-Lock | `AutoTextAccessibilityService.lockScreenNow()`, `AutoTextDeviceAdminReceiver.kt` | **PASS** | Emulates physical Power button press (`GLOBAL_ACTION_LOCK_SCREEN`); preserves biometric fingerprint and face wake |
-| **Safety & Policy** | Google Play Terminology Sanitization | UI screens, string resources, notification channels | **PASS** | Scrubbed aggressive automation terminology; standardized on "Task Service" and two-word combinations |
-| | Global Emergency Stop | `AutomationSafetyManager.kt` | **PASS** | Instant emergency stop via broadcast or UI |
+| **Safety & Policy** | Google Play Terminology Sanitization | UI screens, string resources, notification channels | **PASS** | Scrubbed aggressive task dispatch terminology; standardized on "Task" and two-word combinations |
+| | Global Emergency Stop | `TaskSafetyManager.kt` | **PASS** | Instant emergency stop via broadcast or UI |
 | | Human Touch Detection | `AutoTextAccessibilityService.kt` | **PASS** | Yields to human user, auto-postpones task |
 | | Portrait Orientation Guard | `AccessibilityHealthManager.enforceAutoRotateInvariant` | **PASS** | Restores portrait lock (ACCELEROMETER_ROTATION=0) |
-| **Programmatic API Layer** | Unified Feature Endpoints | `AutomationFeatureApi.kt` | **PASS** | Typed, suspendable, validated endpoints for WhatsApp messages/status/calls, SMS, phone calls, reminders, call simulation, sound modes |
+| **Programmatic API Layer** | Unified Feature Endpoints | `TaskFeatureApi.kt` | **PASS** | Typed, suspendable, validated endpoints for WhatsApp messages/status/calls, SMS, phone calls, reminders, call simulation, sound modes |
 | **Persistence & Logs** | Thread-Safe SQLite WAL | `DatabaseHelper.kt` | **PASS** | 15 tables with transactional integrity |
 | | Execution History Audit | `LogRepository.kt`, `LogsScreen.kt` | **PASS** | Full audit log with recipient & status |
 | | Backup & Restoration | `BackupRepository.kt`, `SettingsBackupRestoreCard.kt` | **PASS** | JSON export and import of application state (including `TABLE_APP_PRIVACY_CONFIGS`) |

@@ -216,7 +216,7 @@ fun TasksListScreen(
                                 isTasksMasterEnabled = active
                                 prefs.isTasksMasterEnabled = active
                                 if (active) {
-                                    com.jmd.autotext.core.AutomationSafetyManager.resetEmergencyStop(context)
+                                    com.jmd.autotext.core.TaskSafetyManager.resetEmergencyStop(context)
                                     AlarmScheduler(context).rescheduleAllPending()
                                     com.jmd.autotext.scheduler.DailyCampaignScheduler.scheduleAll(context)
                                     context.showAppToast("Task Scheduler active: Rescheduled pending tasks and campaigns")
@@ -262,7 +262,7 @@ fun TasksListScreen(
                         AppEmptyState(
                             icon = Icons.Default.Inbox,
                             title = "No Tasks Found",
-                            description = if (searchQuery.isNotEmpty()) "No tasks match your search filter." else "No scheduled tasks in this section. Create your first automated schedule!",
+                            description = if (searchQuery.isNotEmpty()) "No tasks match your search filter." else "No scheduled tasks in this section. Create your first task schedule!",
                             actionText = "Schedule New Task",
                             onActionClick = { showTaskTypeDialog = true }
                         )

@@ -5,7 +5,7 @@
  * Module: Data Access Layer
  *
  * Governs dynamic contact pool filtering, daily quota pacing, campaign ledger recording,
- * and unique cycle deduplication for high-volume automated outreach.
+ * and unique cycle deduplication for high-volume scheduled outreach.
  *
  * Linked With:
  * - Database: [com.jmd.autotext.data.db.DatabaseHelper]

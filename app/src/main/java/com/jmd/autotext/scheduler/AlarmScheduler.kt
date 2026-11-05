@@ -24,7 +24,7 @@ import android.os.Build
 import android.provider.AlarmClock
 import android.util.Log
 import com.jmd.autotext.core.AppFileLogger
-import com.jmd.autotext.core.AutomationSafetyManager
+import com.jmd.autotext.core.TaskSafetyManager
 import com.jmd.autotext.data.model.ChannelType
 import com.jmd.autotext.data.model.RecurrenceType
 import com.jmd.autotext.data.model.ScheduledTask
@@ -76,7 +76,7 @@ class AlarmScheduler(private val context: Context) {
             AlarmScheduler(context).cancelTask(task.id, task)
             return
         }
-        if (AutomationSafetyManager.isEmergencyStopActive(context)) {
+        if (TaskSafetyManager.isEmergencyStopActive(context)) {
             Log.w(TAG, "Refusing to schedule Task #${task.id}: Emergency Stop is ACTIVE")
             AlarmScheduler(context).cancelTask(task.id, task)
             return
@@ -219,7 +219,7 @@ class AlarmScheduler(private val context: Context) {
      */
     fun rescheduleAllPending() {
         val prefs = PreferenceManager(context)
-        if (!prefs.isTasksMasterEnabled || AutomationSafetyManager.isEmergencyStopActive(context)) {
+        if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(context)) {
             Log.d(TAG, "Master task scheduler is paused or emergency stop is active. Suppressing rescheduleAllPending.")
             cancelAll()
             return

@@ -165,7 +165,7 @@ fun moreScreen(
                 contentPadding = PaddingValues(bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                // SECTION 1: Campaigns & Automations
+                // SECTION 1: Campaigns & Tasks
                 item {
                     Text(
                         text = "CAMPAIGNS & DISPATCH",

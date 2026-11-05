@@ -471,7 +471,7 @@ object OemBrandHelper {
                 "3. Settings > Apps > Special app access > Display over other apps > Verify granted."
             )
             OemBrand.HUAWEI, OemBrand.HONOR -> listOf(
-                "1. Open Settings > Apps > App launch > Find AutoText > Turn OFF 'Manage automatically' > Enable 'Auto-launch', 'Secondary launch', and 'Run in background'.",
+                "1. Open Settings > Apps > App launch > Find AutoText > Turn OFF 'Auto manage' > Enable 'Auto launch', 'Secondary launch', and 'Run in background'.",
                 "2. Open Settings > Battery > More battery settings > Stay connected when device sleeps > ON.",
                 "3. In Recent Apps screen, pull down on the AutoText card to lock it with a padlock."
             )
@@ -487,7 +487,7 @@ object OemBrandHelper {
             else -> listOf(
                 "1. Open Settings > Apps > AutoText > Battery > Select 'Unrestricted'.",
                 "2. Ensure 'Allow background activity' and 'Schedule exact alarms' are enabled in App Info.",
-                "3. Keep AutoText locked or active in Recent Apps for guaranteed background automation."
+                "3. Keep AutoText locked or active in Recent Apps for guaranteed background tasks."
             )
         }
     }

@@ -30,7 +30,7 @@ class TimeChangeReceiver : BroadcastReceiver() {
         val action = intent.action ?: return
         if (action == Intent.ACTION_TIME_CHANGED || action == Intent.ACTION_TIMEZONE_CHANGED) {
             val prefs = com.jmd.autotext.data.prefs.PreferenceManager(context)
-            if (!prefs.isTasksMasterEnabled || com.jmd.autotext.core.AutomationSafetyManager.isEmergencyStopActive(context)) {
+            if (!prefs.isTasksMasterEnabled || com.jmd.autotext.core.TaskSafetyManager.isEmergencyStopActive(context)) {
                 Log.d("TimeChangeReceiver", "Master task scheduler is paused or emergency stop active. Suppressing reschedule.")
                 AlarmScheduler(context).cancelAll()
                 com.jmd.autotext.scheduler.DailyCampaignScheduler.cancelAllCampaigns(context)

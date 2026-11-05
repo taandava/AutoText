@@ -32,7 +32,7 @@
     - Navigation Hub: Tested all 4 tabs (`Tasks`, `Campaigns`, `Auto-Reply`, `Tools`) and sub-screens (`Execution History`, `System Traces & Error Logs`, `Permission Center`, `Privacy & App Visibility`, `Settings & Security`, `Documentation Guide`, `Incoming Call Simulation`, `Bulk Contacts & Groups`, `Task Sequences`, `Message Templates`).
 - **Defect Discovery & Resolution (Interrupted Running Task Stranding)**:
   - **Symptom**: Tasks aborted mid-execution or interrupted by app termination/emergency stop remained permanently marked in `TaskStatus.RUNNING` with an active spinner in the UI and were excluded from future alarm scheduling queries.
-  - **Root Cause**: `SequentialTaskEngine.kt` transitioned tasks to `TaskStatus.RUNNING` before execution, but if cooperative cancellation occurred, `cancelAll()`, `cancelTask()`, or `CancellationException` did not reconcile the database record. Furthermore, `completeOrRescheduleTask` returned early without updating task status when `AutomationSafetyManager.isEmergencyStopActive` was true. On reboot or rescheduling, `AlarmScheduler.rescheduleAllPending()` only looked for `PENDING`, `SCHEDULED`, and `READY` tasks.
+  - **Root Cause**: `SequentialTaskEngine.kt` transitioned tasks to `TaskStatus.RUNNING` before execution, but if cooperative cancellation occurred, `cancelAll()`, `cancelTask()`, or `CancellationException` did not reconcile the database record. Furthermore, `completeOrRescheduleTask` returned early without updating task status when `TaskSafetyManager.isEmergencyStopActive` was true. On reboot or rescheduling, `AlarmScheduler.rescheduleAllPending()` only looked for `PENDING`, `SCHEDULED`, and `READY` tasks.
   - **Fixes Applied**:
     1. `TaskRepository.kt`: Implemented `recoverInterruptedRunningTasks()` which reconciles orphaned tasks from `TaskStatus.RUNNING` back to `TaskStatus.PENDING` (for recurring tasks) and `TaskStatus.FAILED` (for single-run tasks).
     2. `AppRepository.kt`: Exposed `recoverInterruptedRunningTasks()` API.
@@ -42,16 +42,16 @@
        - Added status reconciliation inside `startSequentialProcessor` exception/cancellation handlers and `finally` block ensuring any task leaving the processor while still in `RUNNING` status is safely reconciled.
        - Updated `cancelTask(taskId)` and `cancelAll()` to check for `RUNNING` tasks and update their DB status.
        - Updated `completeOrRescheduleTask` during emergency stop to update the DB status to `PENDING` (recurring) or `FAILED` (single).
-    6. `AutomationSafetyManager.kt`: Updated `triggerEmergencyStop(context: Context? = null)` to support null context safely.
+    6. `TaskSafetyManager.kt`: Updated `triggerEmergencyStop(context: Context? = null)` to support null context safely.
 - **Verification & Testing**:
-  - **Automated Unit Tests**: Added `testOrphanedRunningTaskRecoveryInvariants()` and `testEmergencyStopSuppressionAndStatusInvariant()` to `AutoTextComprehensiveTest.kt`.
+  - **Scheduled Unit Tests**: Added `testOrphanedRunningTaskRecoveryInvariants()` and `testEmergencyStopSuppressionAndStatusInvariant()` to `AutoTextComprehensiveTest.kt`.
   - Executed `./gradlew test --rerun-tasks`: **104 of 104 tests passed** (100% pass rate, 0 failures, 0 errors, 0 skipped).
   - Executed `./gradlew assembleRelease`: Compiled and signed `app-release.apk` with v2 scheme.
   - Deployed to Samsung Galaxy A04 (`adb install -r app-release.apk` -> `Success`).
 
 ### Phase 15: Extensive Multi-Axis Codebase & Runtime Audit
 - **Axis 1: Activity Lifecycle & Resource Cleanup**:
-  - `AutomationLauncherActivity.kt`: Added `onDestroy()` to cancel all pending handler callbacks and cleanly release the window WakeLock.
+  - `TaskLauncherActivity.kt`: Added `onDestroy()` to cancel all pending handler callbacks and cleanly release the window WakeLock.
   - `CallSimulationActivity.kt`: Guaranteed release of `wakeLock` in both `onPause()` and `onDestroy()`; stopped `mediaPlayer`, `fallbackRingtone`, and `vibrator` across all finish branches.
   - `ReminderAlarmActivity.kt`: Tracked and removed `autoDismissRunnable` upon activity termination; stopped and cleanly shut down `tts` engine with null reference assignment in `onDestroy()`.
 - **Axis 2: Subsystem Logic & Timeout Bounds**:
@@ -88,10 +88,10 @@
 
 ### Phase 17: Terminology Sanitization, Programmatic Feature API, Warning Eradication & Dual-Device Verification
 - **Policy Terminology Sanitization**:
-  - Scrubbed aggressive "automation" and "accessibility service" wording across UI and resources.
-  - Standardized on clean 2-word combinations: **"Task Service"**, **"Smart Dispatch"**, **"Daily Dispatch"**, **"Scheduled Tasks"**.
+  - Scrubbed aggressive "task dispatch" and "accessibility service" wording across UI and resources.
+  - Standardized on clean 2-word combinations: **"Task"**, **"Smart Dispatch"**, **"Daily Dispatch"**, **"Scheduled Tasks"**.
   - Renamed service display labels, quick-settings tiles, and notification channels in `strings.xml`.
-- **Programmatic API Layer (`AutomationFeatureApi.kt`)**:
+- **Programmatic API Layer (`TaskFeatureApi.kt`)**:
   - Engineered typed, suspendable, validated feature endpoints for:
     - `sendWhatsAppMessage`
     - `postWhatsAppStatus`
@@ -107,7 +107,7 @@
   - Resolved naming convention warnings in `MoreScreen.kt`.
   - Resolved declaration clashes in `AutoTextAccessibilityService.kt`.
 - **Unit Testing & Device Verification**:
-  - Synchronized assertion in `AutoTextComprehensiveTest.kt` for `"Task Service"`.
+  - Synchronized assertion in `AutoTextComprehensiveTest.kt` for `"Task"`.
   - Executed `./gradlew test --rerun-tasks`: **107 of 107 unit tests passed (100%)** with zero errors or failures.
   - Assembled release APK: `./gradlew assembleRelease` -> `app-release.apk`.
   - Deployed and verified on both hardware devices:

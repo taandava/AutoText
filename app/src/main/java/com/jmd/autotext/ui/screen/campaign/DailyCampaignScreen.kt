@@ -36,7 +36,7 @@ import com.jmd.autotext.ui.components.*
 import com.jmd.autotext.ui.theme.*
 
 /**
- * Dedicated recurrent daily campaign manager orchestrating SMS and WhatsApp automated multi-contact dispatches.
+ * Dedicated recurrent daily campaign manager orchestrating SMS and WhatsApp multi-contact dispatches.
  *
  * @param initialCampaignId Target campaign identifier to open on initial composition.
  * @param onCampaignIdChange Callback invoked when active campaign selection changes.

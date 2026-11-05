@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.autotext.core
- * Module: Core Automation Utilities
+ * Module: Core Task Utilities
  *
  * Provides international and national phone number standardization, emergency service rejection,
  * contact verification, duplicate detection, and multi-delimiter input ingestion.
@@ -20,7 +20,7 @@ object PhoneNumberNormalizer {
     /**
      * Standardizes raw phone input into E.164 international format (e.g. +919876543210).
      *
-     * Automatically strips whitespace, punctuation, and leading zeroes.
+     * Directly strips whitespace, punctuation, and leading zeroes.
      * Safely returns empty string if input matches an emergency service number.
      *
      * @param raw Raw input string from user, clipboard, or contact book.
@@ -232,7 +232,7 @@ object PhoneNumberNormalizer {
      * Identifies emergency service numbers and Indian national helplines
      * (112, 100, 101, 102, 108, 1090, 1091, 1098, 1930, 1075, 1070, 1077, 1072, 1073, 139,
      *  1947, 1909, 155260, 104, 1097, 1064, 1076, 14416, 1033, 1071, 1099, 182, 911, 999)
-     * to strictly block automated dispatch and protect national emergency helplines.
+     * to strictly block scheduled dispatch and protect national emergency helplines.
      *
      * @param raw Target phone string.
      * @return True if identified as emergency number, false otherwise.

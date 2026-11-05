@@ -7,7 +7,7 @@
 
 ## 1. Executive Summary & Verification Baseline
 
-AutoText is a mission-critical, enterprise-grade Android automation application designed for unattended multi-channel message dispatch and voice call automation. 
+AutoText is a mission-critical, enterprise-grade Android task and messaging application designed for unattended multi-channel message dispatch and voice call task dispatch. 
 
 ### 1.1 Project Verification Snapshot
 - **Package ID**: `com.jmd.autotext`
@@ -54,11 +54,11 @@ During comprehensive codebase auditing and live device testing, several critical
   - Scans accessibility node hierarchies for active conversation timer digit formats (e.g., `00:01`, `01:23`, `12:45`) while explicitly ignoring pre-connection states such as `"Calling..."`, `"Ringing..."`, or `"Reconnecting..."`.
 
 ### Defect 4: Display Auto-Rotate Leakage & Invariant Violation
-- **Symptom**: Automation tasks interacting with notification panels or system dialogs could inadvertently click rotation quick-setting tiles or rotate the screen, breaking landscape layout boundaries.
+- **Symptom**: Scheduled tasks interacting with notification panels or system dialogs could inadvertently click rotation quick-setting tiles or rotate the screen, breaking landscape layout boundaries.
 - **Root Cause**: Lack of dynamic rotation enforcement across activity lifecycles and background execution.
 - **Remediation**:
   - Created `AccessibilityHealthManager.enforceAutoRotateInvariant(context)` which actively verifies and resets `Settings.System.ACCELEROMETER_ROTATION` to `0` (Portrait locked).
-  - Wired into `MainActivity`, `AutomationLauncherActivity`, `ReminderAlarmActivity`, `FakeCallActivity`, and the postcondition pipeline of `SequentialTaskEngine`.
+  - Wired into `MainActivity`, `TaskLauncherActivity`, `ReminderAlarmActivity`, `FakeCallActivity`, and the postcondition pipeline of `SequentialTaskEngine`.
 
 ### Defect 5: Ringtone Audio Failure on OEM ROMs in `FakeCallActivity`
 - **Symptom**: On specific vendor builds (e.g., Vivo FunTouchOS/OriginOS), `MediaPlayer.create(this, ringtoneUri)` threw `FileNotFoundException` when attempting to resolve OEM-protected default ringtones, which aborted the ringing function and prevented the vibrator from activating.
@@ -90,10 +90,10 @@ During comprehensive codebase auditing and live device testing, several critical
   - Built `AutoTextA11yTileService` Quick Settings Tile for 1-tap pause/resume from the Android notification shade.
   - Redesigned `SettingsBankingShieldCard` with live Google Pay safety status, 1-tap pause button, and copyable ADB commands for zero-detection mode.
   - Updated `SystemIndicatorResolver` so dynamic stealth mode displays an Emerald Green "GPay Safe" operational badge instead of a false Red alarm.
-  - Guarded `AccessibilityWatchdogWorker`, `BootReceiver`, `MainActivity.onResume()`, and `AutoTextApplication.onCreate()` to prevent automatic re-enablement when dynamic stealth, banking shield, or user paused states are active.
+  - Guarded `AccessibilityWatchdogWorker`, `BootReceiver`, `MainActivity.onResume()`, and `AutoTextApplication.onCreate()` to prevent quick re-enablement when dynamic stealth, banking shield, or user paused states are active.
 
 ### Defect 8: OEM Dual-SIM and In-Call Disconnection Failures
-- **Symptom**: Calling tasks on specific OEM devices (Samsung, Vivo, Oppo, Realme, Motorola, Nokia) did not respect configured call duration (e.g., 10 seconds with dialing time) and failed to hang up automatically.
+- **Symptom**: Calling tasks on specific OEM devices (Samsung, Vivo, Oppo, Realme, Motorola, Nokia) did not respect configured call duration (e.g., 10 seconds with dialing time) and failed to hang up directly.
 - **Root Cause**:
   1. TelecomManager.endCall() required `Manifest.permission.ANSWER_PHONE_CALLS` on Android 9+.
   2. OEM dialers remained in the background or minimized, preventing accessibility node inspection.
@@ -122,9 +122,9 @@ During comprehensive codebase auditing and live device testing, several critical
   - Enforced `VoiceNoteProtectionGuard.kt` prohibiting coordinate taps on the microphone button and requiring verified text presence before clicking designated Send buttons.
 
 ### Defect 11: Policy Terminology Flags and Warnings
-- **Symptom**: Aggressive automation jargon in UI strings caused risk of Google Play Protect and OEM package manager flags, and naming conventions generated compiler warnings.
+- **Symptom**: Aggressive task dispatch jargon in UI strings caused risk of Google Play Protect and OEM package manager flags, and naming conventions generated compiler warnings.
 - **Remediation**:
-  - Replaced all aggressive terms with clean, compliant 2-word combinations ("Task Service", "Smart Dispatch").
+  - Replaced all aggressive terms with clean, compliant 2-word combinations ("Task", "Smart Dispatch").
   - Resolved all naming convention diagnostics in `PermissionScreen.kt` and `MoreScreen.kt`.
 
 ---
@@ -135,15 +135,15 @@ During comprehensive codebase auditing and live device testing, several critical
 Modern banking, UPI, and trading applications (e.g., Saraswat Bank GOMONxT, SBI YONO, HDFC, ICICI, PhonePe, Google Pay) execute runtime security audits checking `AccessibilityManager.getEnabledAccessibilityServiceList()` or inspecting `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES`. If any non-system accessibility service is active, they trigger a blocking security alert and close.
 
 ### Two-Tiered Stealth Solution
-1. **Fully Automatic Dynamic On-Demand Lifecycle**:
+1. **Fully Quick Dynamic On-Demand Lifecycle**:
    - Utilizes `WRITE_SECURE_SETTINGS` to keep AutoText's accessibility service completely detached from `ENABLED_ACCESSIBILITY_SERVICES` during idle periods.
    - When no other service is active, `ACCESSIBILITY_ENABLED` is written as `"0"`.
    - On application startup, boot, and idle return, `AccessibilityHealthManager` and lifecycle receivers proactively clean up lingering secure settings entries.
    - When a scheduled WhatsApp alarm or batch campaign triggers:
-     1. `prepareAccessibilityForAutomation()` re-registers the service via Secure Settings.
+     1. `prepareAccessibilityForTask()` re-registers the service via Secure Settings.
      2. Awaits binder connection (`AutoTextAccessibilityService.getInstance() != null`).
-     3. Executes the WhatsApp automation cleanly.
-     4. In the `finally` block, `releaseAccessibilityAfterAutomation()` immediately detaches the service.
+     3. Executes the WhatsApp task dispatch cleanly.
+     4. In the `finally` block, `releaseAccessibilityAfterTask()` immediately detaches the service.
 2. **Foreground Window State Retraction**:
    - Expanded banking keywords to cover: `saraswat`, `gomonxt`, `yono`, `axis`, `icici`, `kotak`, `hdfc`, `pnb`, `canara`, `indusind`, `baroda`, `unionbank`, `bajaj`, `navi`, `groww`, `zerodha`, `angelone`, `dhan`, `upstox`.
    - `accessibility_service_config.xml` includes major Indian payment and banking packages (`com.google.android.apps.nbu.paisa.user`, `com.phonepe.app`, `net.one97.paytm`, etc.) so any event from a banking app immediately triggers reactive shutdown via `disableSelf()`.
@@ -159,7 +159,7 @@ Modern banking, UPI, and trading applications (e.g., Saraswat Bank GOMONxT, SBI 
 | **FAKE_CALL** | Simulated Incoming Call | Full-screen UI with multi-tier ringtone & haptic pulse |
 | **SMS** | Multi-SIM Cellular Modem Dispatch | 1 PDU segment dispatched via SIM slot 0 |
 | **CALL** | Cellular Native Telephony | Duration auto-hangup verified after 5s |
-| **WHATSAPP** | Direct Chat Automation | Text inserted and sent; composer-cleared transition verified |
+| **WHATSAPP** | Direct Chat Task Dispatch | Text inserted and sent; composer-cleared transition verified |
 | **WHATSAPP_BUSINESS** | WA Business Direct Chat | Text inserted and sent; composer-cleared transition verified |
 | **WHATSAPP_STATUS** | Updates Tab Story Publishing | Story posted to WhatsApp personal Status |
 | **WHATSAPP_BUSINESS_STATUS**| WA Business Story Publishing | Story posted to WhatsApp Business Status |

@@ -1,7 +1,7 @@
 # AutoText — Architectural & Engineering Decision Records (ADR)
 
 ## ADR-001: 100% On-Device Sovereignty (Zero Network Telemetry)
-- **Context:** Automated messaging applications are frequently subjected to suspicion regarding user privacy, data harvesting, and secret remote control.
+- **Context:** Scheduled messaging applications are frequently subjected to suspicion regarding user privacy, data harvesting, and secret remote control.
 - **Decision:** AutoText requires zero internet/network permissions (`android.permission.INTERNET` is omitted from `AndroidManifest.xml`). All message composition, contact processing, database operations, and task scheduling remain 100% local on the physical hardware.
 - **Consequence:** Zero remote cloud attack vectors. Complete compliance with enterprise and privacy standards.
 
@@ -9,13 +9,13 @@
 - **Context:** Modern banking and UPI apps (Google Pay, PhonePe, Paytm, YONO SBI, HDFC Bank, etc.) inspect `AccessibilityManager.getEnabledAccessibilityServiceList()` and block operations if any third-party accessibility service is enabled.
 - **Decision:** 
   1. Accessibility configuration is strictly scoped with `android:packageNames` in `accessibility_service_config.xml` to WhatsApp, Phone/Dialer, and SystemUI.
-  2. With `WRITE_SECURE_SETTINGS` granted via ADB or root, AutoText dynamically registers its service only when an automation task fires, and immediately unbinds/detaches upon completion (`releaseAccessibilityAfterAutomation`).
+  2. With `WRITE_SECURE_SETTINGS` granted via ADB or root, AutoText dynamically registers its service only when an scheduled task fires, and immediately unbinds/detaches upon completion (`releaseAccessibilityAfterTask`).
   3. When an excluded or banking app is foregrounded, `AutoTextAccessibilityService` immediately calls `disableSelf()`.
   4. Quick Settings Tile (`AutoTextA11yTileService`) provides an instant 1-tap manual pause/resume option.
 - **Consequence:** Banking apps never detect AutoText running in the background.
 
 ## ADR-003: Dedicated Protected Application Manager (Default-Deny Policy)
-- **Context:** Automation applications must never risk touching, inspecting, or injecting gestures into financial or payment apps.
+- **Context:** Task Dispatch applications must never risk touching, inspecting, or injecting gestures into financial or payment apps.
 - **Decision:** Engineered `ProtectedApplicationManager.kt` which implements a default-deny policy. All UI interactions require explicit target verification immediately prior to tap dispatch. If an unauthorized or banking package is detected, all pending callbacks are dropped and the operation is marked safely interrupted.
 - **Consequence:** Complete isolation of banking, investment, wallet, and UPI workflows.
 
@@ -27,7 +27,7 @@
 ## ADR-005: Physical Gesture Coordinate Tap for Keyguard PIN Auto-Unlock
 - **Context:** Modern Android lockscreens reject synthetic keyboard event injection (`ACTION_SET_TEXT`) into the Keyguard PIN bouncer field.
 - **Decision:** Engineered physical gesture tap emulation in `KeyguardUnlockEngine.kt` that queries PIN keypad digit node bounds and dispatches `dispatchGesture` with `Path` stroke taps directly to physical screen coordinates.
-- **Consequence:** Unattended automated tasks execute reliably on secured devices.
+- **Consequence:** Unattended scheduled tasks execute reliably on secured devices.
 
 ## ADR-006: Hard-Locked Portrait Orientation Invariant
 - **Context:** Quick-settings panel interactions or screen rotation can disrupt accessibility gesture coordinates and Jetpack Compose bounds.
@@ -36,7 +36,7 @@
 
 ## ADR-007: Stranded Task Self-Healing & Startup Crash Recovery
 - **Context:** If a device reboots, is forcefully killed by OEM battery management, or crashes while executing an in-progress scheduled task, tasks could remain stranded in `RUNNING` or `IN_PROGRESS` status indefinitely, blocking subsequent queues.
-- **Decision:** Implemented automated orphan-task reconciliation in `TaskReconciliationReceiver.kt` and `TaskRepository.kt`. On system boot (`BOOT_COMPLETED`, `LOCKED_BOOT_COMPLETED`) and upon application launch, any task stranded in an uncompleted active state is automatically marked `FAILED` with diagnostic reason `"Process terminated unexpectedly; healed on reboot/startup"`, enabling queue progression.
+- **Decision:** Implemented scheduled orphan-task reconciliation in `TaskReconciliationReceiver.kt` and `TaskRepository.kt`. On system boot (`BOOT_COMPLETED`, `LOCKED_BOOT_COMPLETED`) and upon application launch, any task stranded in an uncompleted active state is directly marked `FAILED` with diagnostic reason `"Process terminated unexpectedly; healed on reboot/startup"`, enabling queue progression.
 - **Consequence:** Zero stuck tasks, robust recovery across power events and unexpected kills.
 
 ## ADR-008: Hardware Power Button Emulation for Biometric-Safe Screen Lock
@@ -50,11 +50,11 @@
 - **Consequence:** 100% reliable SIM routing, dialing, duration tracking, and call disconnection across all major smartphone manufacturers.
 
 ## ADR-010: Google Play & OEM Anti-Abuse Terminology Policy Sanitization
-- **Context:** Modern Android app verification, Google Play Protect, and OEM security scanners flag or reject applications using aggressive automation or accessibility abuse terminology ("automation service", "auto bot", "accessibility hack").
-- **Decision:** Completely scrubbed aggressive automation terminology from user-facing screens, strings, notification channels, and settings. Standardized on neutral, policy-compliant, 2-word naming conventions: **"Task Service"**, **"Smart Dispatch"**, **"Task Execution"**, **"Scheduled Tasks"**, and **"Daily Dispatch"**.
+- **Context:** Modern Android app verification, Google Play Protect, and OEM security scanners flag or reject applications using aggressive task dispatch or accessibility abuse terminology ("task dispatch service", "auto bot", "accessibility hack").
+- **Decision:** Completely scrubbed aggressive task dispatch terminology from user-facing screens, strings, notification channels, and settings. Standardized on neutral, policy-compliant, 2-word naming conventions: **"Task"**, **"Smart Dispatch"**, **"Task Execution"**, **"Scheduled Tasks"**, and **"Daily Dispatch"**.
 - **Consequence:** Full compliance with Google Play Store developer guidelines, OEM app installation checkers, and Android accessibility service policies.
 
 ## ADR-011: Unified Feature Endpoints Architecture
 - **Context:** Feature actions were historically invoked ad-hoc across multiple services, screens, and workers without a centralized programmatic API, making testing, batch scripting, and cross-feature orchestration difficult to trace and verify.
-- **Decision:** Engineered `AutomationFeatureApi.kt` (Task Service API) providing typed, suspendable, validated endpoints for all app operations: `sendWhatsAppMessage`, `postWhatsAppStatus`, `placeWhatsAppCall`, `sendSms`, `placePhoneCall`, `hangupActiveCall`, `triggerReminder`, `triggerCallSimulation`, and `applySoundMode`. Each endpoint encapsulates validation, dual-SIM routing, execution timeouts, and standardized `TaskExecutionResult` returns.
-- **Consequence:** Clean modular boundary, zero code duplication, and straightforward automated testing and maintenance.
+- **Decision:** Engineered `TaskFeatureApi.kt` (Task API) providing typed, suspendable, validated endpoints for all app operations: `sendWhatsAppMessage`, `postWhatsAppStatus`, `placeWhatsAppCall`, `sendSms`, `placePhoneCall`, `hangupActiveCall`, `triggerReminder`, `triggerCallSimulation`, and `applySoundMode`. Each endpoint encapsulates validation, dual-SIM routing, execution timeouts, and standardized `TaskExecutionResult` returns.
+- **Consequence:** Clean modular boundary, zero code duplication, and straightforward scheduled testing and maintenance.

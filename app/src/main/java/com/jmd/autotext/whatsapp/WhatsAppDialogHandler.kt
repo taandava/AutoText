@@ -2,7 +2,7 @@
 
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation Subsystem
+ * Module: WhatsApp Task Subsystem
  *
  * WhatsApp dialog and confirmation handler. Gracefully handles in-app modal prompts,
  * "Continue" or "OK" disclaimers, and network/session popups strictly scoped to WhatsApp packages.

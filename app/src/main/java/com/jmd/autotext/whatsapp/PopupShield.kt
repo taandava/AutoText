@@ -2,10 +2,10 @@
 
 /**
  * Package: com.jmd.autotext.whatsapp
- * Module: WhatsApp Automation Subsystem
+ * Module: WhatsApp Task Subsystem
  *
  * Scans window hierarchies to detect and dismiss intrusive blocking overlays, system permission dialogs,
- * incoming call caller ID overlays (e.g. Truecaller), and notification shades before starting UI automation.
+ * incoming call caller ID overlays (e.g. Truecaller), and notification shades before starting UI actions.
  *
  * Linked With:
  * - Service: [com.jmd.autotext.service.AutoTextAccessibilityService]
@@ -36,7 +36,7 @@ object PopupShield {
 
     /**
      * Executes an asynchronous multi-pass loop to dismiss any blocking popups, dialogs,
-     * or pulled-down notification shades before automation commences.
+     * or pulled-down notification shades before dispatch commences.
      *
      * @param service The active [AccessibilityService] used to query root windows and invoke dismiss actions.
      * @param onComplete Callback invoked on the main looper once all obstacles are cleared or max passes are exhausted.
@@ -161,7 +161,7 @@ object PopupShield {
 
     /**
      * Clears all open notification shades, floating overlays, Truecaller popups,
-     * and system dialogs to leave the screen clean and ready for automation clicks.
+     * and system dialogs to leave the screen clean and ready for task clicks.
      *
      * @param service The active [AccessibilityService] used to perform dismiss actions and global back navigation.
      * @param targetPkg The target application package name.
