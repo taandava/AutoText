@@ -55,12 +55,21 @@ fun ContactSequenceCard(
                     modifier = Modifier.size(38.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = if (sequence.contactName.isNotBlank()) sequence.contactName.take(1).uppercase() else "👤",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        if (sequence.contactName.isNotBlank()) {
+                            Text(
+                                text = sequence.contactName.take(1).uppercase(),
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        } else {
+                            Icon(
+                                imageVector = androidx.compose.material.icons.Icons.Filled.Person,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
                 }
 

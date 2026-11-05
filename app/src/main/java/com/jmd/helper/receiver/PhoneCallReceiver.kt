@@ -275,7 +275,8 @@ class PhoneCallReceiver : BroadcastReceiver() {
                     bundle,
                     null
                 )
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.d(TAG, "Bundled call log query note: ${e.message}")
                 null
             } ?: context.contentResolver.query(
                 CallLog.Calls.CONTENT_URI,

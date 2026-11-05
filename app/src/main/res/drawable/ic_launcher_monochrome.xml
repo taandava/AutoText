@@ -5,7 +5,7 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- AutoText Android 13+ Themed Monochrome Icon (💬 Speech Balloon Silhouette with Cutout Dots) -->
+    <!-- Helper Android 13+ Themed Monochrome Icon (💬 Speech Balloon Silhouette with Cutout Dots) -->
     <path
         android:fillColor="#FFFFFFFF"
         android:fillType="evenOdd"

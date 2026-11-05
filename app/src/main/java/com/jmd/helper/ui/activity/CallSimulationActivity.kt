@@ -26,7 +26,7 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-
+import com.jmd.helper.core.AppFileLogger
 import com.jmd.helper.ui.theme.HelperTheme
 import com.jmd.helper.ui.screen.CallSimulationScreen
 
@@ -65,7 +65,7 @@ open class CallSimulationActivity : ComponentActivity() {
             val pm = getSystemService(PowerManager::class.java)
             wakeLock = pm?.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
-                "AutoText:CallSimulationWakeLock",
+                "Helper:CallSimulationWakeLock",
             )
             wakeLock?.acquire(30000L)
         } catch (e: Exception) {
@@ -195,7 +195,8 @@ open class CallSimulationActivity : ComponentActivity() {
             if (wakeLock?.isHeld == true) {
                 wakeLock?.release()
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppFileLogger.d(this, "CallSimulation", "WakeLock release: ${e.message}")
         }
         wakeLock = null
     }

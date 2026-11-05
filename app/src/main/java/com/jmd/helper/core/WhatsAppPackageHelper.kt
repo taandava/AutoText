@@ -94,7 +94,7 @@ object WhatsAppPackageHelper {
                 pm.getPackageInfo(packageName, 0)
             }
             true
-        } catch (_: PackageManager.NameNotFoundException) {
+        } catch (e: PackageManager.NameNotFoundException) {
             false
         }
     }

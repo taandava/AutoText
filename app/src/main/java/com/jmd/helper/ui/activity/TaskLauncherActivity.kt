@@ -63,7 +63,7 @@ class TaskLauncherActivity : Activity() {
             val pm = getSystemService(POWER_SERVICE) as PowerManager
             wakeLock = pm.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
-                "AutoText:LauncherWakeLock",
+                "Helper:LauncherWakeLock",
             )
             wakeLock?.acquire(15000L)
         } catch (e: Exception) {
@@ -284,7 +284,8 @@ class TaskLauncherActivity : Activity() {
             if (wakeLock?.isHeld == true) {
                 wakeLock?.release()
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppFileLogger.d(this, "TaskLauncher", "WakeLock release: ${e.message}")
         }
         wakeLock = null
     }

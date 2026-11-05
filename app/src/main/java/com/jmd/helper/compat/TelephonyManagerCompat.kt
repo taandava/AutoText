@@ -13,6 +13,7 @@ import android.os.Build
 import android.telecom.TelecomManager
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
+import android.util.Log
 import androidx.core.content.ContextCompat
 
 /**
@@ -23,6 +24,8 @@ import androidx.core.content.ContextCompat
  * Gracefully recovers from missing permissions and runtime security exceptions without failing task execution.
  */
 object TelephonyManagerCompat {
+
+    private const val TAG = "TelephonyCompat"
 
     /**
      * Retrieves current call state for the given TelephonyManager instance.
@@ -41,9 +44,11 @@ object TelephonyManagerCompat {
                 val method = TelephonyManager::class.java.getMethod("getCallState")
                 (method.invoke(tm) as? Int) ?: TelephonyManager.CALL_STATE_IDLE
             }
-        } catch (_: SecurityException) {
+        } catch (e: SecurityException) {
+            Log.d(TAG, "Call state security note: ${e.message}")
             TelephonyManager.CALL_STATE_IDLE
-        } catch (_: Throwable) {
+        } catch (t: Throwable) {
+            Log.d(TAG, "Call state resolution note: ${t.message}")
             TelephonyManager.CALL_STATE_IDLE
         }
     }
@@ -84,10 +89,10 @@ object TelephonyManagerCompat {
                     }
                     if (anyRinging) return TelephonyManager.CALL_STATE_RINGING
                 }
-            } catch (_: SecurityException) {
-                // Fall back to default subscription state
-            } catch (_: Throwable) {
-                // Fall back to default subscription state
+            } catch (e: SecurityException) {
+                Log.d(TAG, "Multi-SIM call state security note: ${e.message}")
+            } catch (t: Throwable) {
+                Log.d(TAG, "Multi-SIM call state resolution note: ${t.message}")
             }
         }
 
@@ -130,10 +135,10 @@ object TelephonyManagerCompat {
                 if (hasPerm && telecomManager.isInCall) {
                     return true
                 }
-            } catch (_: SecurityException) {
-                // Non-fatal permission limitation
-            } catch (_: Throwable) {
-                // Ignore unexpected reflection or vendor-specific telecom faults
+            } catch (e: SecurityException) {
+                Log.d(TAG, "TelecomManager isInCall permission note: ${e.message}")
+            } catch (t: Throwable) {
+                Log.d(TAG, "TelecomManager isInCall resolution note: ${t.message}")
             }
         }
         return false

@@ -90,7 +90,7 @@ object MessageTemplateResolver {
             .replace("{first_name}", firstName, ignoreCase = true)
             .replace("{phone}", cleanPhone, ignoreCase = true)
             .replace("{event}", event.ifBlank { "notification" }, ignoreCase = true)
-            .replace("{channel}", channel.ifBlank { "AutoText" }, ignoreCase = true)
+            .replace("{channel}", channel.ifBlank { "Helper" }, ignoreCase = true)
             .replace("{recipient_count}", recipientCount.toString(), ignoreCase = true)
     }
 }

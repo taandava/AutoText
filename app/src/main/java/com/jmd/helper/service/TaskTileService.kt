@@ -10,7 +10,7 @@ import com.jmd.helper.core.showAppToast
 import com.jmd.helper.data.prefs.PreferenceManager
 
 /**
- * System Quick Settings Tile for AutoText Accessibility Service.
+ * System Quick Settings Tile for Helper Accessibility Service.
  *
  * Allows users to 1-tap pause Accessibility (via disableSelf) before opening banking or payment apps,
  * and 1-tap resume or open Accessibility Settings.
@@ -35,20 +35,20 @@ class TaskTileService : TileService() {
             if (AccessibilityHealthManager.hasWriteSecureSettings(context)) {
                 AccessibilityHealthManager.disableAccessibilityService(context)
             }
-            showAppToast("AutoText A11y Paused. Banking & payment apps protected.")
+            showAppToast("Helper A11y Paused. Banking & payment apps protected.")
             updateTileState()
         } else {
             // Tap to resume / enable accessibility
             prefs.isA11yUserPaused = false
             if (AccessibilityHealthManager.hasWriteSecureSettings(context)) {
                 AccessibilityHealthManager.enableAccessibilityService(context)
-                showAppToast("AutoText A11y Active.")
+                showAppToast("Helper A11y Active.")
                 updateTileState()
             } else {
                 val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
-                showAppToast("Tap AutoText in Downloaded Apps to enable")
+                showAppToast("Tap Helper in Downloaded Apps to enable")
                 launchSettingsAndCollapse(intent)
             }
         }
@@ -79,13 +79,13 @@ class TaskTileService : TileService() {
         val isRunning = AccessibilityHealthManager.isServiceOperational()
         if (isRunning) {
             tile.state = Tile.STATE_ACTIVE
-            tile.label = "AutoText Assistant"
+            tile.label = "Helper Assistant"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 tile.subtitle = "Active (Tap to Pause)"
             }
         } else {
             tile.state = Tile.STATE_INACTIVE
-            tile.label = "AutoText Assistant"
+            tile.label = "Helper Assistant"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 tile.subtitle = "Paused (Banking Safe)"
             }

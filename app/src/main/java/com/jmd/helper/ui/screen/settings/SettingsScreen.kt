@@ -111,6 +111,13 @@ fun SettingsView(
                 )
             }
 
+            // 0b. System Integrity, Feature Diagnostic & Auto-Repair Suite
+            item {
+                SettingsSystemSelfTestCard(
+                    context = context
+                )
+            }
+
             // 1. Lock Screen Assistance Card
             item {
                 SettingsScreenAssistCard(

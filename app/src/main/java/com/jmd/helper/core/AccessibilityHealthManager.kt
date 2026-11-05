@@ -38,7 +38,7 @@ object AccessibilityHealthManager {
     }
 
     /**
-     * Enforces the system invariant that auto-rotate is never enabled by AutoText.
+     * Enforces the system invariant that auto-rotate is never enabled by Helper.
      * When [PreferenceManager.isPreventSystemAutoRotateEnabled] is true, checks [Settings.System.ACCELEROMETER_ROTATION]
      * and forces it to 0 (portrait locked) if enabled.
      */
@@ -99,7 +99,8 @@ object AccessibilityHealthManager {
             val component = ComponentName(context, TaskAccessibilityService::class.java)
             val state = context.packageManager.getComponentEnabledSetting(component)
             state != PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppFileLogger.d(context, TAG, "isServiceComponentEnabled note: ${e.message}")
             true
         }
     }
@@ -199,7 +200,8 @@ object AccessibilityHealthManager {
     fun hasWriteSecureSettings(context: Context): Boolean {
         return try {
             context.checkCallingOrSelfPermission(android.Manifest.permission.WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppFileLogger.d(context, TAG, "hasWriteSecureSettings note: ${e.message}")
             false
         }
     }
@@ -213,7 +215,7 @@ object AccessibilityHealthManager {
             // 1. Ask service binder to disableSelf()
             TaskAccessibilityService.disableServiceIfActive()
 
-            // 2. If WRITE_SECURE_SETTINGS is present, remove AutoText from ENABLED_ACCESSIBILITY_SERVICES
+            // 2. If WRITE_SECURE_SETTINGS is present, remove Helper from ENABLED_ACCESSIBILITY_SERVICES
             if (hasWriteSecureSettings(context)) {
                 val cr = context.contentResolver
                 val expectedShort = ComponentName(context, TaskAccessibilityService::class.java).flattenToString()
@@ -255,7 +257,7 @@ object AccessibilityHealthManager {
             val expectedFull = "${context.packageName}/${TaskAccessibilityService::class.java.name}"
             val current = Settings.Secure.getString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
 
-            // Strip any existing AutoText tokens first to ensure a clean ContentObserver trigger in AOSP
+            // Strip any existing Helper tokens first to ensure a clean ContentObserver trigger in AOSP
             val cleanExisting = current.splitToSequence(":")
                 .map { it.trim() }
                 .filter { token ->

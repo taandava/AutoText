@@ -77,7 +77,7 @@ class TaskAccessibilityService : AccessibilityService() {
     private val keyguardUnlockEngine by lazy { KeyguardUnlockEngine(this, handler) }
 
     companion object {
-        private const val TAG = "AutoTextA11y"
+        private const val TAG = "HelperA11y"
 
         var isServiceRunning = false
             private set
@@ -198,7 +198,7 @@ class TaskAccessibilityService : AccessibilityService() {
                 val pkg = root?.packageName?.toString() ?: ""
                 pkg.contains("systemui", ignoreCase = true) || pkg.contains("keyguard", ignoreCase = true)
             } catch (t: Throwable) {
-                AppFileLogger.w("AutoTextA11yService", "isKeyguardWindowShowing check failed: ${t.message}")
+                AppFileLogger.w("HelperA11yService", "isKeyguardWindowShowing check failed: ${t.message}")
                 false
             }
         }
@@ -280,7 +280,7 @@ class TaskAccessibilityService : AccessibilityService() {
             return try {
                 instance?.performGlobalAction(GLOBAL_ACTION_BACK) ?: false
             } catch (t: Throwable) {
-                AppFileLogger.w("AutoTextA11yService", "navigateBack failed: ${t.message}")
+                AppFileLogger.w("HelperA11yService", "navigateBack failed: ${t.message}")
                 false
             }
         }
@@ -356,7 +356,7 @@ class TaskAccessibilityService : AccessibilityService() {
                 }
 
                 if (!isServiceRunning || instance == null) {
-                    context.showAppToast("Please enable AutoText Assistant in Settings > Accessibility to pick chats", isLong = true)
+                    context.showAppToast("Please enable Helper Assistant in Settings > Accessibility to pick chats", isLong = true)
                     runCatching {
                         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -438,7 +438,7 @@ class TaskAccessibilityService : AccessibilityService() {
          * @param targetPackage WhatsApp package to inspect (standard or business).
          * @param channel Target channel type.
          * @param scanTarget Scan target scope (ALL_CHATS, GROUPS_ONLY, DIRECT_CHATS_ONLY).
-         * @param returnToApp When true, returns to AutoText application upon completing scan.
+         * @param returnToApp When true, returns to Helper application upon completing scan.
          */
         fun startWhatsAppChatScan(
             context: Context,
@@ -484,7 +484,7 @@ class TaskAccessibilityService : AccessibilityService() {
                 }
 
                 if (!isServiceRunning || instance == null) {
-                    context.showAppToast("Please enable AutoText Assistant in Settings > Accessibility to scan chats", isLong = true)
+                    context.showAppToast("Please enable Helper Assistant in Settings > Accessibility to scan chats", isLong = true)
                     runCatching {
                         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -899,7 +899,7 @@ class TaskAccessibilityService : AccessibilityService() {
                 }
 
                 if (!isServiceRunning) {
-                    context.showAppToast("Please enable AutoText Assistant in Settings > Accessibility first", isLong = true)
+                    context.showAppToast("Please enable Helper Assistant in Settings > Accessibility first", isLong = true)
                     runCatching {
                         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -916,7 +916,7 @@ class TaskAccessibilityService : AccessibilityService() {
 
                 // 1. Acquire PARTIAL_WAKE_LOCK BEFORE locking so CPU CANNOT sleep during countdown
                 val pm = appContext.getSystemService(POWER_SERVICE) as? PowerManager
-                val cpuWakeLock = pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AutoText:TestCountdownWakeLock")
+                val cpuWakeLock = pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Helper:TestCountdownWakeLock")
                 cpuWakeLock?.acquire(15000L)
 
                 // 2. Lock physical screen
@@ -953,7 +953,7 @@ class TaskAccessibilityService : AccessibilityService() {
                 try {
                     val screenWakeLock = pm?.newWakeLock(
                         PowerManager.PARTIAL_WAKE_LOCK,
-                        "AutoText:TestUnlockWakeLock"
+                        "Helper:TestUnlockWakeLock"
                     )
                     screenWakeLock?.acquire(15000L)
                     appContext.startActivity(testIntent)
@@ -1129,7 +1129,7 @@ class TaskAccessibilityService : AccessibilityService() {
 
                 unlockWakeLock = pm?.newWakeLock(
                     PowerManager.PARTIAL_WAKE_LOCK,
-                    "AutoText:UnlockWakeLock"
+                    "Helper:UnlockWakeLock"
                 )
                 unlockWakeLock?.acquire(15000L)
                 Log.d(TAG, "Acquired unlock WakeLock for 15s")
@@ -1461,7 +1461,7 @@ class TaskAccessibilityService : AccessibilityService() {
         }
         isServiceRunning = true
         instance = this
-        Log.d(TAG, "AutoText Accessibility Service Connected & Active (Global Interaction & Idle Guard Active)")
+        Log.d(TAG, "Helper Accessibility Service Connected & Active (Global Interaction & Idle Guard Active)")
         // A task may have been queued while Android was still binding this service.
         if (isDispatching) {
             cancelIdleDetach()
@@ -1491,8 +1491,8 @@ class TaskAccessibilityService : AccessibilityService() {
     override fun onUnbind(intent: Intent?): Boolean {
         isServiceRunning = false
         instance = null
-        Log.w(TAG, "AutoText Accessibility Service Unbound by OS")
-        AppFileLogger.w(applicationContext ?: this, TAG, "AutoText Accessibility Service Unbound by OS")
+        Log.w(TAG, "Helper Accessibility Service Unbound by OS")
+        AppFileLogger.w(applicationContext ?: this, TAG, "Helper Accessibility Service Unbound by OS")
         // Returning true is critical so Android framework invokes onRebind when reconnecting
         return true
     }
@@ -1514,8 +1514,8 @@ class TaskAccessibilityService : AccessibilityService() {
             Log.w(TAG, "Failed configuring serviceInfo or scoping: ${e.message}")
         }
         AccessibilityHealthManager.recordHeartbeat()
-        Log.i(TAG, "AutoText Accessibility Service Re-bound by OS and Active")
-        AppFileLogger.i(this, TAG, "AutoText Accessibility Service Re-bound by OS and Active")
+        Log.i(TAG, "Helper Accessibility Service Re-bound by OS and Active")
+        AppFileLogger.i(this, TAG, "Helper Accessibility Service Re-bound by OS and Active")
         if (isDispatching) {
             handler.removeCallbacks(sendRunnable)
             handler.postDelayed(sendRunnable, 300L)
@@ -1541,7 +1541,7 @@ class TaskAccessibilityService : AccessibilityService() {
         instance = null
         releaseUnlockWakeLock()
         handler.removeCallbacksAndMessages(null)
-        Log.d(TAG, "AutoText Accessibility Service Destroyed")
+        Log.d(TAG, "Helper Accessibility Service Destroyed")
     }
 
     /**
@@ -1793,7 +1793,7 @@ class TaskAccessibilityService : AccessibilityService() {
                             showAppToast("Selected $typeLabel: $cleanPicked")
                         }
 
-                        // Bring AutoText app back to front
+                        // Bring Helper app back to front
                         handler.postDelayed({
                             val appIntent = packageManager.getLaunchIntentForPackage(packageName)?.apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT

@@ -44,7 +44,7 @@ fun readDocumentationAsset(context: Context): String {
     return try {
         context.assets.open("HELPER_FEATURES_AND_LOGIC.md").bufferedReader().use { it.readText() }
     } catch (e: Exception) {
-        "AutoText Features and Logic Documentation\n\nError reading bundled asset: ${e.message}"
+        "Helper Features and Logic Documentation\n\nError reading bundled asset: ${e.message}"
     }
 }
 
@@ -113,9 +113,9 @@ fun DocumentationView(
                         onClick = {
                             val shareIntent = Intent(Intent.ACTION_SEND)
                             shareIntent.type = "text/plain"
-                            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "AutoText - Complete Specifications & Logic Guide")
+                            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Helper - Complete Specifications & Logic Guide")
                             shareIntent.putExtra(Intent.EXTRA_TEXT, fullDocText)
-                            context.startActivity(Intent.createChooser(shareIntent, "Share AutoText Documentation"))
+                            context.startActivity(Intent.createChooser(shareIntent, "Share Helper Documentation"))
                         },
                     ) {
                         Icon(Icons.Default.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.primary)
@@ -123,7 +123,7 @@ fun DocumentationView(
                     IconButton(
                         onClick = {
                             val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            com.jmd.helper.compat.ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("AutoText Guide", fullDocText))
+                            com.jmd.helper.compat.ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("Helper Guide", fullDocText))
                             context.showAppToast("Guide copied")
                         },
                     ) {

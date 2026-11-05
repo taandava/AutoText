@@ -72,7 +72,7 @@ object SmsQuotaManager {
             val smsManager = com.jmd.helper.compat.SmsManagerCompat.getDefault(context)
             val parts = smsManager.divideMessage(messageText) ?: emptyList()
             maxOf(1, parts.size)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             val hasUnicode = messageText.any { it.code > 127 }
             if (hasUnicode) {
                 if (messageText.length <= 70) 1 else ((messageText.length + 66) / 67)
@@ -99,7 +99,8 @@ object SmsQuotaManager {
                 ((log.status == "SUCCESS") || (log.status == "DISPATCHED")) &&
                     log.channel.contains("SMS", ignoreCase = true)
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppFileLogger.w(context, TAG, "Failed fetching app logs: ${e.message}")
             emptyList()
         }
 
@@ -183,7 +184,8 @@ object SmsQuotaManager {
     fun isQuotaEnforcementEnabled(context: Context): Boolean {
         return try {
             PreferenceManager(context).isSmsQuotaLimitEnabled
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppFileLogger.d(context, TAG, "Quota enforcement preference note: ${e.message}")
             true
         }
     }
@@ -198,7 +200,8 @@ object SmsQuotaManager {
         if (!isQuotaEnforcementEnabled(context)) return Int.MAX_VALUE
         return try {
             PreferenceManager(context).dailySmsSafetyLimit
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            AppFileLogger.d(context, TAG, "Quota limit preference note: ${e.message}")
             INDIA_DAILY_SMS_LIMIT
         }
     }

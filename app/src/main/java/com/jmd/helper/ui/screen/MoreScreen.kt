@@ -179,7 +179,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Daily SMS",
-                        "📩",
+                        Icons.Filled.Sms,
                         MaterialTheme.colorScheme.primary,
                     ) {
                         navigateToSubSection("DAILY_SMS")
@@ -188,7 +188,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Daily WhatsApp",
-                        "💬",
+                        Icons.AutoMirrored.Filled.Chat,
                         Color(0xFF2E7D32),
                     ) {
                         navigateToSubSection("DAILY_WHATSAPP")
@@ -197,7 +197,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "WhatsApp & Screen Setup",
-                        "📱",
+                        Icons.Filled.StayCurrentPortrait,
                         Color(0xFF0D9488),
                     ) {
                         navigateToSubSection("WHATSAPP_SETUP")
@@ -206,7 +206,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Task Sequences",
-                        "🔗",
+                        Icons.Filled.LinearScale,
                         Color(0xFFF57C00),
                     ) {
                         navigateToSubSection("SEQUENCES")
@@ -215,7 +215,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Message Templates",
-                        "📝",
+                        Icons.Filled.Description,
                         Color(0xFF8B5CF6),
                     ) {
                         navigateToSubSection("TEMPLATES")
@@ -224,7 +224,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Bulk Contacts & Groups",
-                        "👥",
+                        Icons.Filled.GroupAdd,
                         Color(0xFF2E7D32),
                     ) {
                         navigateToSubSection("BULK_CONTACTS")
@@ -245,7 +245,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Execution History",
-                        "📜",
+                        Icons.Filled.History,
                         Color(0xFFF57C00),
                     ) {
                         navigateToSubSection("LOGS")
@@ -254,8 +254,8 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "System Traces & Error Logs",
-                        "💻",
-                        Color(0xFFF57C00)
+                        Icons.Filled.Terminal,
+                        Color(0xFF6366F1)
                     ) {
                         navigateToSubSection("SYSTEM_LOGS")
                     }
@@ -275,7 +275,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Permission Center",
-                        "🛡️",
+                        Icons.Filled.Security,
                         MaterialTheme.colorScheme.primary
                     ) {
                         navigateToSubSection("PERMISSIONS")
@@ -284,7 +284,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Incoming Call Simulation",
-                        "🎭",
+                        Icons.Filled.PhoneInTalk,
                         Color(0xFFE91E63)
                     ) {
                         com.jmd.helper.ui.activity.CallSimulationActivity.start(
@@ -298,7 +298,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Privacy & App Visibility",
-                        "🛡️",
+                        Icons.Filled.Shield,
                         Color(0xFFE65100)
                     ) {
                         navigateToSubSection("PRIVACY")
@@ -307,7 +307,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Settings & Security",
-                        "⚙️",
+                        Icons.Filled.Settings,
                         Color(0xFF64748B)
                     ) {
                         navigateToSubSection("SETTINGS")
@@ -316,7 +316,7 @@ fun MoreScreenView(
                 item {
                     MenuItemCard(
                         "Documentation Guide",
-                        "📖",
+                        Icons.AutoMirrored.Filled.MenuBook,
                         Color(0xFF0D9488)
                     ) {
                         navigateToSubSection("DOCS")
@@ -331,7 +331,7 @@ fun MoreScreenView(
 @Composable
 fun MenuItemCard(
     title: String,
-    emoji: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     iconColor: Color,
     onClick: () -> Unit
 ) {
@@ -357,9 +357,11 @@ fun MenuItemCard(
                     .border(1.dp, iconColor.copy(alpha = 0.25f), RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = emoji,
-                    fontSize = 20.sp
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(22.dp)
                 )
             }
 

@@ -12,11 +12,11 @@ package com.jmd.helper.data.model
  *
  * @property packageName Unique Android package name (e.g., "com.saraswatbank.gomobile", "com.phonepe.app").
  * @property appName Human-readable application label.
- * @property isExcluded Master flag indicating whether AutoText isolates from this application.
- * @property disableTaskAction When true, AutoText never dispatches actions inside or targeted at this app.
- * @property blockOverlays When true, AutoText suppresses floating overlays, popups, and wake-windows when this app is active.
- * @property suppressNotifications When true, non-critical AutoText notifications are suppressed while this app is in the foreground.
- * @property disableClipboard When true, AutoText never reads from or writes to the system clipboard while interacting with this app.
+ * @property isExcluded Master flag indicating whether Helper isolates from this application.
+ * @property disableTaskAction When true, Helper never dispatches actions inside or targeted at this app.
+ * @property blockOverlays When true, Helper suppresses floating overlays, popups, and wake-windows when this app is active.
+ * @property suppressNotifications When true, non-critical Helper notifications are suppressed while this app is in the foreground.
+ * @property disableClipboard When true, Helper never reads from or writes to the system clipboard while interacting with this app.
  * @property maskSensitiveContent When true, message contents, contact names, and phone numbers related to this app are masked in logs.
  * @property disableRules When true, incoming notification auto-replies or trigger rules originating from this app are ignored.
  * @property customNotes Optional user notes or security audit labels.

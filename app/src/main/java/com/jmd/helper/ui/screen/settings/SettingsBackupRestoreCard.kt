@@ -6,7 +6,16 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -79,22 +88,22 @@ fun SettingsBackupRestoreCard(
                 ) {
                     GlassButton(
                         text = "Save to File",
-                        emoji = "💾",
+                        icon = Icons.Filled.Save,
                         variant = GlassButtonVariant.PRIMARY,
                         modifier = Modifier.weight(1f),
                         onClick = {
                             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-                            exportFileLauncher.launch("AutoText_Backup_$timeStamp.json")
+                            exportFileLauncher.launch("Helper_Backup_$timeStamp.json")
                         }
                     )
 
                     GlassButton(
                         text = "Direct SD Card",
-                        emoji = "📁",
+                        icon = Icons.Filled.Folder,
                         variant = GlassButtonVariant.SECONDARY,
                         modifier = Modifier.weight(1f),
                         onClick = {
-                            val backupDir = File(android.os.Environment.getExternalStorageDirectory(), "Documents/AutoText/backups")
+                            val backupDir = File(android.os.Environment.getExternalStorageDirectory(), "Documents/Helper/backups")
                             val result = repository.exportDatabaseToLocalDirectory(backupDir)
                             result.onSuccess { file ->
                                 context.showAppToast("Saved to ${file.name}")
@@ -111,14 +120,14 @@ fun SettingsBackupRestoreCard(
                 ) {
                     GlassButton(
                         text = "Share File",
-                        emoji = "📤",
+                        icon = Icons.Filled.Share,
                         variant = GlassButtonVariant.SUCCESS,
                         modifier = Modifier.weight(1f),
                         onClick = {
                             try {
                                 val json = repository.exportDatabaseToJson()
                                 val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-                                val fileName = "AutoText_Backup_$timeStamp.json"
+                                val fileName = "Helper_Backup_$timeStamp.json"
                                 val backupFile = File(context.cacheDir, fileName)
                                 backupFile.writeText(json)
 
@@ -131,11 +140,11 @@ fun SettingsBackupRestoreCard(
                                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                     type = "application/json"
                                     putExtra(Intent.EXTRA_STREAM, uri)
-                                    putExtra(Intent.EXTRA_SUBJECT, "AutoText Backup $timeStamp")
-                                    putExtra(Intent.EXTRA_TEXT, "AutoText JSON Complete Data Backup ($fileName)")
+                                    putExtra(Intent.EXTRA_SUBJECT, "Helper Backup $timeStamp")
+                                    putExtra(Intent.EXTRA_TEXT, "Helper JSON Complete Data Backup ($fileName)")
                                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                 }
-                                context.startActivity(Intent.createChooser(shareIntent, "Save or Share AutoText Backup"))
+                                context.startActivity(Intent.createChooser(shareIntent, "Save or Share Helper Backup"))
                                 context.showAppToast("Backup file generated (${json.length} bytes)")
                             } catch (e: Exception) {
                                 com.jmd.helper.core.AppFileLogger.w("SettingsBackupRestoreCard", "File share fallback to plain text: ${e.message}")
@@ -144,20 +153,20 @@ fun SettingsBackupRestoreCard(
                                     type = "text/plain"
                                     putExtra(Intent.EXTRA_TEXT, json)
                                 }
-                                context.startActivity(Intent.createChooser(shareIntent, "Share AutoText Backup JSON"))
+                                context.startActivity(Intent.createChooser(shareIntent, "Share Helper Backup JSON"))
                             }
                         }
                     )
 
                     GlassButton(
                         text = "Copy JSON",
-                        emoji = "📋",
+                        icon = Icons.Filled.ContentCopy,
                         variant = GlassButtonVariant.SECONDARY,
                         modifier = Modifier.weight(1f),
                         onClick = {
                             val json = repository.exportDatabaseToJson()
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText("AutoText Backup JSON", json)
+                            val clip = ClipData.newPlainText("Helper Backup JSON", json)
                             com.jmd.helper.compat.ClipboardCompat.setPrimaryClip(clipboard, clip)
                             context.showAppToast("Backup JSON copied")
                         }
@@ -175,7 +184,7 @@ fun SettingsBackupRestoreCard(
             ) {
                 GlassButton(
                     text = "Select Backup File",
-                    emoji = "📂",
+                    icon = Icons.Filled.FolderOpen,
                     variant = GlassButtonVariant.PRIMARY,
                     modifier = Modifier.weight(1.2f),
                     onClick = {
@@ -185,7 +194,7 @@ fun SettingsBackupRestoreCard(
 
                 GlassButton(
                     text = if (showRestoreDialog) "Hide Restore" else "Paste JSON",
-                    emoji = "📋",
+                    icon = Icons.Filled.ContentPaste,
                     variant = GlassButtonVariant.SECONDARY,
                     modifier = Modifier.weight(1f),
                     onClick = {
@@ -205,7 +214,12 @@ fun SettingsBackupRestoreCard(
                 borderColor = MaterialTheme.colorScheme.tertiary
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("✅", fontSize = 20.sp)
+                    Icon(
+                        imageVector = Icons.Filled.CheckCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Backup Restored Successfully", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.tertiary, fontSize = 14.sp)
                 }
@@ -220,7 +234,7 @@ fun SettingsBackupRestoreCard(
                 Spacer(modifier = Modifier.height(8.dp))
                 GlassButton(
                     text = "Dismiss",
-                    emoji = "✓",
+                    icon = Icons.Filled.Check,
                     onClick = onDismissSummary,
                     variant = GlassButtonVariant.SECONDARY,
                     modifier = Modifier.fillMaxWidth()
@@ -235,7 +249,12 @@ fun SettingsBackupRestoreCard(
                 borderColor = MaterialTheme.colorScheme.primary
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("🔄", fontSize = 20.sp)
+                    Icon(
+                        imageVector = Icons.Filled.Sync,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Restore from JSON Backup", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                     Spacer(modifier = Modifier.weight(1f))
@@ -253,7 +272,7 @@ fun SettingsBackupRestoreCard(
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
                     GlassButton(
                         text = "Select File",
-                        emoji = "📂",
+                        icon = Icons.Filled.FolderOpen,
                         onClick = {
                             showRestoreDialog = false
                             filePickerLauncher.launch("*/*")
@@ -263,7 +282,7 @@ fun SettingsBackupRestoreCard(
                     )
                     GlassButton(
                         text = "Paste Clipboard",
-                        emoji = "📋",
+                        icon = Icons.Filled.ContentPaste,
                         onClick = {
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                             val text = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
@@ -292,7 +311,7 @@ fun SettingsBackupRestoreCard(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
                     GlassButton(
                         text = "Restore All Now",
-                        emoji = "🔄",
+                        icon = Icons.Filled.Sync,
                         onClick = {
                             if (pasteJsonText.isNotBlank()) {
                                 val result = repository.importDatabaseFromJson(pasteJsonText.trim())

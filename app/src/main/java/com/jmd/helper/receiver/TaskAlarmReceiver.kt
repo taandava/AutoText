@@ -131,7 +131,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                     includeDialTimeInCallDuration = includeDialTimeInCallDuration,
                     delayBetweenCallsSeconds = delayBetweenCallsSeconds,
                     soundModeSetting = "NORMAL",
-                    simulatedCallerName = "AutoText Test",
+                    simulatedCallerName = "Helper Test",
                     simulatedCallerNumber = recipients.firstOrNull() ?: "9769602020",
                     status = TaskStatus.PENDING
                 )
@@ -154,7 +154,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
 
         /**
          * Dumps complete diagnostics, active tasks, execution logs, and system error traces to
-         * a file in external storage (autotext_execution_dump.txt) for IDE inspection and support.
+         * a file in external storage (helper_execution_dump.txt) for IDE inspection and support.
          *
          * @param context Active Android [Context].
          * @return Dump file if created successfully, null otherwise.
@@ -177,7 +177,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
 
             return try {
                 val outDir = context.getExternalFilesDir(null) ?: context.filesDir
-                val outFile = java.io.File(outDir, "autotext_execution_dump.txt")
+                val outFile = java.io.File(outDir, "helper_execution_dump.txt")
                 val content = buildString {
                     appendLine("=== SYSTEM IDLE & SAFETY STATE ===")
                     appendLine("isDeviceIdle = $isIdle")
@@ -376,7 +376,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             val callDurationSec = intent.getIntExtra("callDurationSeconds", 10)
             val includeDialTime = intent.getBooleanExtra("includeDialTimeInCallDuration", true)
             val delayBetweenCalls = intent.getIntExtra("delayBetweenCallsSeconds", 5)
-            val msgText = intent.getStringExtra("messageText") ?: "AutoText test message for $recipientsParam"
+            val msgText = intent.getStringExtra("messageText") ?: "Helper test message for $recipientsParam"
             if (intent.hasExtra("autoLock")) {
                 PreferenceManager(context).isAutoLockAfterSendEnabled = intent.getBooleanExtra("autoLock", true)
             }

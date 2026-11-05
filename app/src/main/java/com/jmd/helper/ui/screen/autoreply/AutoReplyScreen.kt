@@ -152,7 +152,7 @@ fun AutoReplyScreen(
                         showTypeSelectionSheet = true
                     },
                     variant = GlassButtonVariant.PRIMARY,
-                    emoji = "➕",
+                    icon = Icons.Filled.Add,
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                     shape = AppDesignTokens.ShapePill
                 )
@@ -167,7 +167,7 @@ fun AutoReplyScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AppEmptyState(
-                        emoji = "💬",
+                        icon = Icons.Filled.Quickreply,
                         title = "No Auto-Reply Rules",
                         description = "Create quick reply rules for missed phone calls, incoming SMS or WhatsApp chats.",
                         actionText = "Create Auto-Reply Rule",

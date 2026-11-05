@@ -2,6 +2,8 @@
 
 package com.jmd.helper.ui.screen.settings
 
+import androidx.compose.material.icons.automirrored.filled.*
+
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -13,6 +15,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -249,34 +254,54 @@ fun SystemLogViewerView(
                         reloadTrigger++
                         context.showAppToast("Logs refreshed")
                     }) {
-                        Text("🔄", fontSize = 16.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Refresh,
+                            contentDescription = "Refresh",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                     IconButton(onClick = {
                         val shareIntent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, "AutoText Diagnostic Report - $activeTitle")
+                            putExtra(Intent.EXTRA_SUBJECT, "Helper Diagnostic Report - $activeTitle")
                             putExtra(Intent.EXTRA_TEXT, activeContent)
                         }
                         context.startActivity(Intent.createChooser(shareIntent, "Share $activeTitle"))
                     }) {
-                        Text("📤", fontSize = 16.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Share,
+                            contentDescription = "Share",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                     IconButton(onClick = {
                         val allIntent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, "AutoText Complete Ledger & Diagnostic Logs Bundle")
+                            putExtra(Intent.EXTRA_SUBJECT, "Helper Complete Ledger & Diagnostic Logs Bundle")
                             putExtra(Intent.EXTRA_TEXT, AppFileLogger.exportAllLogsSummary(context))
                         }
                         context.startActivity(Intent.createChooser(allIntent, "Export Complete Audit Bundle"))
                     }) {
-                        Text("📦", fontSize = 16.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Archive,
+                            contentDescription = "Export All",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                     IconButton(onClick = {
                         AppFileLogger.clearAllLogs(context)
                         reloadTrigger++
                         context.showAppToast("Logs cleared")
                     }) {
-                        Text("🗑️", fontSize = 16.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Clear",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 }
             )
@@ -295,36 +320,48 @@ fun SystemLogViewerView(
                     .padding(horizontal = 12.dp, vertical = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                data class LogTabItem(val index: Int, val title: String, val icon: androidx.compose.ui.graphics.vector.ImageVector, val accent: Color)
                 val tabs = listOf(
-                    Triple(1, "⚡ Actions & Exec", MaterialTheme.colorScheme.primary),
-                    Triple(0, "📊 Task Batch Ledger", MaterialTheme.colorScheme.tertiary),
-                    Triple(2, "🚨 Errors & Traces", MaterialTheme.colorScheme.error)
+                    LogTabItem(1, "Actions & Exec", Icons.Filled.Bolt, MaterialTheme.colorScheme.primary),
+                    LogTabItem(0, "Batch Ledger", Icons.AutoMirrored.Filled.ListAlt, MaterialTheme.colorScheme.tertiary),
+                    LogTabItem(2, "Errors & Traces", Icons.Filled.ErrorOutline, MaterialTheme.colorScheme.error)
                 )
-                tabs.forEach { (index, title, accent) ->
-                    val isSelected = selectedTab == index
+                tabs.forEach { tab ->
+                    val isSelected = selectedTab == tab.index
                     Surface(
                         onClick = {
-                            selectedTab = index
+                            selectedTab = tab.index
                             levelFilter = "ALL"
                         },
                         shape = AppDesignTokens.ShapePill,
-                        color = if (isSelected) accent.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceContainerHigh,
+                        color = if (isSelected) tab.accent.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceContainerHigh,
                         border = BorderStroke(
                             1.dp,
-                            if (isSelected) accent else MaterialTheme.colorScheme.outlineVariant
+                            if (isSelected) tab.accent else MaterialTheme.colorScheme.outlineVariant
                         ),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(
-                            text = title,
-                            fontSize = 11.sp,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                            color = if (isSelected) accent else MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 7.dp, horizontal = 2.dp),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Center
-                        )
+                        Row(
+                            modifier = Modifier.padding(vertical = 7.dp, horizontal = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = tab.icon,
+                                contentDescription = null,
+                                tint = if (isSelected) tab.accent else MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = tab.title,
+                                fontSize = 11.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isSelected) tab.accent else MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
                 }
             }
@@ -338,17 +375,19 @@ fun SystemLogViewerView(
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
+                    data class LevelFilterItem(val key: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector?)
                     listOf(
-                        Pair("ALL", "All"),
-                        Pair("ACTION", "⚡ Action"),
-                        Pair("INFO", "ℹ️ Info"),
-                        Pair("WARN", "⚠️ Warn"),
-                        Pair("ERROR", "🚨 Error")
-                    ).forEach { (key, label) ->
+                        LevelFilterItem("ALL", "All", null),
+                        LevelFilterItem("ACTION", "Action", Icons.Filled.Bolt),
+                        LevelFilterItem("INFO", "Info", Icons.Filled.Info),
+                        LevelFilterItem("WARN", "Warn", Icons.Filled.Warning),
+                        LevelFilterItem("ERROR", "Error", Icons.Filled.Error)
+                    ).forEach { item ->
                         GlassChip(
-                            selected = levelFilter == key,
-                            onClick = { levelFilter = key },
-                            label = label
+                            selected = levelFilter == item.key,
+                            onClick = { levelFilter = item.key },
+                            label = item.label,
+                            icon = item.icon
                         )
                     }
                 }
@@ -360,16 +399,18 @@ fun SystemLogViewerView(
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
+                    data class StatusFilterItem(val key: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector?)
                     listOf(
-                        Pair("ALL", "All"),
-                        Pair("SUCCESS", "✅ Success"),
-                        Pair("QUEUED", "⏳ Queued"),
-                        Pair("FAILED", "❌ Failed")
-                    ).forEach { (key, label) ->
+                        StatusFilterItem("ALL", "All", null),
+                        StatusFilterItem("SUCCESS", "Success", Icons.Filled.CheckCircle),
+                        StatusFilterItem("QUEUED", "Queued", Icons.Filled.HourglassTop),
+                        StatusFilterItem("FAILED", "Failed", Icons.Filled.Cancel)
+                    ).forEach { item ->
                         GlassChip(
-                            selected = levelFilter == key,
-                            onClick = { levelFilter = key },
-                            label = label
+                            selected = levelFilter == item.key,
+                            onClick = { levelFilter = item.key },
+                            label = item.label,
+                            icon = item.icon
                         )
                     }
                 }
@@ -393,11 +434,23 @@ fun SystemLogViewerView(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
-                    leadingIcon = { Text("🔍", fontSize = 13.sp, modifier = Modifier.padding(start = 6.dp)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(start = 6.dp).size(16.dp)
+                        )
+                    },
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
                             IconButton(onClick = { searchQuery = "" }) {
-                                Text("❌", fontSize = 11.sp)
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = "Clear search",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(16.dp)
+                                )
                             }
                         }
                     },
@@ -440,9 +493,11 @@ fun SystemLogViewerView(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = if (selectedTab == 2) "🛡️" else "📜",
-                            fontSize = 42.sp
+                        Icon(
+                            imageVector = if (selectedTab == 2) Icons.Filled.Shield else Icons.AutoMirrored.Filled.Article,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                            modifier = Modifier.size(48.dp)
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
@@ -523,13 +578,13 @@ private fun ActionLogCard(
     log: ParsedSystemLogItem.ActionLog,
     onCopy: () -> Unit
 ) {
-    val (badgeColor, badgeEmoji) = when (log.level) {
-        "ACTION" -> Pair(MaterialTheme.colorScheme.primary, "⚡")
-        "INFO" -> Pair(MaterialTheme.colorScheme.secondary, "ℹ️")
-        "WARN" -> Pair(Color(0xFFEAB308), "⚠️")
-        "ERROR" -> Pair(MaterialTheme.colorScheme.error, "🚨")
-        "SUCCESS" -> Pair(MaterialTheme.colorScheme.tertiary, "✅")
-        else -> Pair(MaterialTheme.colorScheme.onSurfaceVariant, "📄")
+    val (badgeColor, badgeIcon) = when (log.level) {
+        "ACTION" -> Pair(MaterialTheme.colorScheme.primary, Icons.Filled.Bolt)
+        "INFO" -> Pair(MaterialTheme.colorScheme.secondary, Icons.Filled.Info)
+        "WARN" -> Pair(Color(0xFFEAB308), Icons.Filled.Warning)
+        "ERROR" -> Pair(MaterialTheme.colorScheme.error, Icons.Filled.Error)
+        "SUCCESS" -> Pair(MaterialTheme.colorScheme.tertiary, Icons.Filled.CheckCircle)
+        else -> Pair(MaterialTheme.colorScheme.onSurfaceVariant, Icons.Filled.Description)
     }
 
     AppCard(
@@ -550,7 +605,12 @@ private fun ActionLogCard(
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(badgeEmoji, fontSize = 10.sp)
+                    Icon(
+                        imageVector = badgeIcon,
+                        contentDescription = null,
+                        tint = badgeColor,
+                        modifier = Modifier.size(12.dp)
+                    )
                     Spacer(modifier = Modifier.width(3.dp))
                     Text(
                         text = log.level,
@@ -614,16 +674,16 @@ private fun LedgerLogCard(
 ) {
     val isSuccess = log.status.equals("SUCCESS", ignoreCase = true) || log.status.equals("DISPATCHED", ignoreCase = true)
     val isQueued = log.status.equals("QUEUED", ignoreCase = true)
-    val (statusColor, statusEmoji) = when {
-        isSuccess -> Pair(MaterialTheme.colorScheme.tertiary, "✅")
-        isQueued -> Pair(Color(0xFFEAB308), "⏳")
-        else -> Pair(MaterialTheme.colorScheme.error, "❌")
+    val (statusColor, statusIcon) = when {
+        isSuccess -> Pair(MaterialTheme.colorScheme.tertiary, Icons.Filled.CheckCircle)
+        isQueued -> Pair(Color(0xFFEAB308), Icons.Filled.HourglassTop)
+        else -> Pair(MaterialTheme.colorScheme.error, Icons.Filled.Cancel)
     }
 
-    val (channelEmoji, channelColor) = when {
-        log.channel.contains("SMS", ignoreCase = true) -> Pair("📩", MaterialTheme.colorScheme.secondary)
-        log.channel.contains("BUSINESS", ignoreCase = true) -> Pair("💼", MaterialTheme.colorScheme.primary)
-        else -> Pair("💬", MaterialTheme.colorScheme.tertiary)
+    val (channelIcon, channelColor) = when {
+        log.channel.contains("SMS", ignoreCase = true) -> Pair(Icons.AutoMirrored.Filled.Message, MaterialTheme.colorScheme.secondary)
+        log.channel.contains("BUSINESS", ignoreCase = true) -> Pair(Icons.Filled.BusinessCenter, MaterialTheme.colorScheme.primary)
+        else -> Pair(Icons.AutoMirrored.Filled.Chat, MaterialTheme.colorScheme.tertiary)
     }
 
     AppCard(
@@ -634,7 +694,12 @@ private fun LedgerLogCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(statusEmoji, fontSize = 16.sp)
+            Icon(
+                imageVector = statusIcon,
+                contentDescription = log.status,
+                tint = statusColor,
+                modifier = Modifier.size(16.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
 
             Column(modifier = Modifier.weight(1f)) {
@@ -669,7 +734,12 @@ private fun LedgerLogCard(
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(channelEmoji, fontSize = 9.sp)
+                            Icon(
+                                imageVector = channelIcon,
+                                contentDescription = null,
+                                tint = channelColor,
+                                modifier = Modifier.size(11.dp)
+                            )
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
                                 text = log.channel,
@@ -758,7 +828,12 @@ private fun ErrorLogCard(
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("🚨", fontSize = 10.sp)
+                    Icon(
+                        imageVector = Icons.Filled.Error,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(12.dp)
+                    )
                     Spacer(modifier = Modifier.width(3.dp))
                     Text(
                         text = "ERROR",

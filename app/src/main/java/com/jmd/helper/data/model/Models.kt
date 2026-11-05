@@ -4,7 +4,7 @@
  * Package: com.jmd.helper.data.model
  * Module: Data Models Layer
  *
- * Defines core immutable data contracts and domain models across the entire AutoText ecosystem.
+ * Defines core immutable data contracts and domain models across the entire Helper ecosystem.
  * Encompasses scheduled tasks, dynamic contact items, campaign configurations, auto-reply rules,
  * execution logs, channel types, and recurrence rules.
  *

@@ -30,7 +30,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.jmd.helper.core.AccessibilityHealthManager
+import com.jmd.helper.core.AppLifecycleObserver
+import com.jmd.helper.core.AppTrace
 import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.data.repo.AppRepository
 import com.jmd.helper.engine.ContactIngestionEngine
@@ -60,14 +63,19 @@ class MainActivity : ComponentActivity() {
      * triggers background contact discovery, and mounts Compose hierarchy.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        setShowWhenLocked(true)
-        setTurnScreenOn(true)
-        enableEdgeToEdge()
-        handleIncomingIntent(intent)
-        checkAndRequestPermissions()
-        triggerBackgroundContactIngestion()
-        AccessibilityHealthManager.enforceAutoRotateInvariant(applicationContext)
+        AppLifecycleObserver.init()
+
+        AppTrace.section("MainActivity.onCreate") {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+            enableEdgeToEdge()
+            handleIncomingIntent(intent)
+            checkAndRequestPermissions()
+            triggerBackgroundContactIngestion()
+            AccessibilityHealthManager.enforceAutoRotateInvariant(applicationContext)
+        }
 
         setContent {
             val prefs = remember { PreferenceManager(applicationContext) }

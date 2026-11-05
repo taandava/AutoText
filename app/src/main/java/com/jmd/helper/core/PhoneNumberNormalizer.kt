@@ -182,7 +182,11 @@ object PhoneNumberNormalizer {
             cursor?.use {
                 if (it.moveToFirst()) it.getString(0) else null
             }
-        } catch (_: Exception) {
+        } catch (e: SecurityException) {
+            android.util.Log.d("PhoneNumberNormalizer", "Contact lookup permission note: ${e.message}")
+            null
+        } catch (e: Exception) {
+            android.util.Log.d("PhoneNumberNormalizer", "Contact lookup note: ${e.message}")
             null
         }
     }
@@ -223,7 +227,8 @@ object PhoneNumberNormalizer {
                 arrayOf(identifier.trim())
             )
             c.use { it.moveToFirst() }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            android.util.Log.d("PhoneNumberNormalizer", "Dynamic pool lookup note: ${e.message}")
             false
         }
     }

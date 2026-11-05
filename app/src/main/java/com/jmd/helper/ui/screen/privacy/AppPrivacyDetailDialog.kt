@@ -101,7 +101,7 @@ fun AppPrivacyDetailDialog(
                     // 1. Master Isolation Switch
                     PrivacyControlToggle(
                         title = "Shield & Exclude Application",
-                        subtitle = "Isolates AutoText completely from this app and omits it from accessibility targets.",
+                        subtitle = "Isolates Helper completely from this app and omits it from accessibility targets.",
                         checked = isExcluded,
                         onCheckedChange = { isExcluded = it }
                     )

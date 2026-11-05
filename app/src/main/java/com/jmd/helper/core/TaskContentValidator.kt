@@ -71,7 +71,7 @@ object TaskContentValidator {
 
         val scheme = try {
             clean.toUri().scheme?.lowercase()
-        } catch (_: Throwable) {
+        } catch (e: Throwable) {
             clean.substringBefore("://", "").lowercase().ifEmpty { null }
         }
 
@@ -96,7 +96,7 @@ object TaskContentValidator {
                 context.contentResolver.openInputStream(parsedUri)?.use {
                     isAccessible = true
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 // If content resolver fails or file scheme direct check
                 if (scheme == "file" || scheme == null) {
                     val f = resolveFile(clean)

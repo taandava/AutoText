@@ -263,7 +263,7 @@ fun ComposePhoneCallCard(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        if (selectedRecipients.size > 1) "AutoText will place calls sequentially to each number until all are completed" else "AutoText will dial each scheduled number in sequence",
+                        if (selectedRecipients.size > 1) "Helper will place calls sequentially to each number until all are completed" else "Helper will dial each scheduled number in sequence",
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

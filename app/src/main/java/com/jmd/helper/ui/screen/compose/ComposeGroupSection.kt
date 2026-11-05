@@ -158,7 +158,7 @@ fun WhatsAppGroupPickerSheet(
                                 }
                             },
                             variant = GlassButtonVariant.PRIMARY,
-                            emoji = "➕"
+                            icon = Icons.Filled.Add
                         )
                     }
                 }
@@ -288,7 +288,7 @@ fun WhatsAppGroupComposerCard(
                     text = "Saved Groups",
                     onClick = { showSavedGroupsSheet = true },
                     variant = GlassButtonVariant.SECONDARY,
-                    emoji = "👥",
+                    icon = Icons.Filled.Groups,
                     contentPadding = PaddingValues(horizontal = 9.dp, vertical = 5.dp),
                     shape = AppDesignTokens.ShapePill
                 )
@@ -317,7 +317,7 @@ fun WhatsAppGroupComposerCard(
                         }
                     },
                     variant = GlassButtonVariant.PRIMARY,
-                    emoji = "➕",
+                    icon = Icons.Filled.Add,
                     contentPadding = PaddingValues(horizontal = 9.dp, vertical = 5.dp),
                     shape = AppDesignTokens.ShapePill
                 )

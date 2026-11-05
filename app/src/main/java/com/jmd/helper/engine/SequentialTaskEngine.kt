@@ -568,7 +568,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         try {
             val wakeLock = pm?.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
-                "AutoText:ExecutionWakeLock",
+                "Helper:ExecutionWakeLock",
             )
             wakeLock?.acquire(45000L)
         } catch (e: Exception) {
@@ -1856,7 +1856,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     val notif = NotificationCompat.Builder(appContext, HelperApplication.CHANNEL_REMINDERS)
                         .setSmallIcon(android.R.drawable.ic_lock_silent_mode)
                         .setContentTitle("Do Not Disturb Access Needed")
-                        .setContentText("Tap to grant Notification Policy access for AutoText Sound Mode tasks.")
+                        .setContentText("Tap to grant Notification Policy access for Helper Sound Mode tasks.")
                         .setContentIntent(pi)
                         .setAutoCancel(true)
                         .setPriority(NotificationCompat.PRIORITY_HIGH)

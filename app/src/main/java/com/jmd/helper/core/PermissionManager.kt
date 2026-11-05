@@ -57,7 +57,7 @@ enum class PermissionCategory(val displayName: String) {
 }
 
 /**
- * Centralized, verifiable Permission Manager for AutoText.
+ * Centralized, verifiable Permission Manager for Helper.
  */
 object PermissionManager {
 
@@ -106,18 +106,18 @@ object PermissionManager {
         PermissionFeatureInfo(
             permissionId = ID_CALL_PHONE,
             featureName = "Direct Phone Call Placement",
-            purpose = "Allows AutoText to dial scheduled phone calls directly without requiring manual user tap in dialer.",
+            purpose = "Allows Helper to dial scheduled phone calls directly without requiring manual user tap in dialer.",
             canWorkWithout = true,
             isRuntimeApproval = true,
             requiresSpecialUserAction = false,
-            deniedImpact = "AutoText opens system dialer (ACTION_DIAL) with number pre-filled; user must tap call.",
+            deniedImpact = "Helper opens system dialer (ACTION_DIAL) with number pre-filled; user must tap call.",
             revocationSafety = "Can be revoked safely; fallback to ACTION_DIAL is direct.",
             category = PermissionCategory.TELEPHONY
         ),
         PermissionFeatureInfo(
             permissionId = ID_READ_PHONE_STATE,
             featureName = "Call State & Connected Timing",
-            purpose = "Allows AutoText to detect when a dialed call is answered (OFFHOOK) vs ringing.",
+            purpose = "Allows Helper to detect when a dialed call is answered (OFFHOOK) vs ringing.",
             canWorkWithout = true,
             isRuntimeApproval = true,
             requiresSpecialUserAction = false,
@@ -183,7 +183,7 @@ object PermissionManager {
         PermissionFeatureInfo(
             permissionId = ID_DEVICE_ADMIN,
             featureName = "Hardware Screen Auto-Lock",
-            purpose = "Allows AutoText to immediately re-lock the phone via simulated power button lock after unattended tasks conclude.",
+            purpose = "Allows Helper to immediately re-lock the phone via simulated power button lock after unattended tasks conclude.",
             canWorkWithout = true,
             isRuntimeApproval = false,
             requiresSpecialUserAction = true,
@@ -216,7 +216,7 @@ object PermissionManager {
         PermissionFeatureInfo(
             permissionId = ID_OVERLAY,
             featureName = "Display Over Other Apps (Overlay)",
-            purpose = "Allows AutoText to display privacy shields, countdown overlays, and incoming call simulation alerts over other applications.",
+            purpose = "Allows Helper to display privacy shields, countdown overlays, and incoming call simulation alerts over other applications.",
             canWorkWithout = true,
             isRuntimeApproval = false,
             requiresSpecialUserAction = true,
@@ -330,7 +330,7 @@ object PermissionManager {
     }
 
     /**
-     * Checks if battery optimization is ignored for AutoText background survival.
+     * Checks if battery optimization is ignored for Helper background survival.
      */
     fun isBatteryOptimizationIgnored(context: Context): Boolean {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
@@ -338,7 +338,7 @@ object PermissionManager {
     }
 
     /**
-     * Checks if AutoText Accessibility Service is active and bound.
+     * Checks if Helper Accessibility Service is active and bound.
      */
     fun isAccessibilityOperational(context: Context): Boolean {
         return TaskAccessibilityService.isServiceRunning || AccessibilityHealthManager.isAccessibilityEnabledInSystem(context)

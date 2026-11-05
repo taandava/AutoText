@@ -30,7 +30,7 @@ class AccessibilityWatchdogWorker(
 
     companion object {
         private const val TAG = "A11yWatchdogWorker"
-        const val UNIQUE_WORK_NAME = "AutoTextA11yWatchdogWork"
+        const val UNIQUE_WORK_NAME = "HelperA11yWatchdogWork"
     }
 
     override suspend fun doWork(): Result {

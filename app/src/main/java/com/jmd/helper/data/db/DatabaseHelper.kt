@@ -23,7 +23,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 /**
- * Thread-safe SQLite OpenHelper managing all relational persistence tables for AutoText.
+ * Thread-safe SQLite OpenHelper managing all relational persistence tables for Helper.
  *
  * Manages 15 relational tables:
  * - tasks: Scheduled task tasks across SMS, WhatsApp, Calls, Reminders, and Sound modes.
@@ -50,8 +50,8 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             if (!newDb.exists() && oldDb.exists()) {
                 oldDb.copyTo(newDb, overwrite = false)
             }
-        } catch (_: Throwable) {
-            // Ignore legacy database migration errors safely
+        } catch (t: Throwable) {
+            Log.w(TAG, "Legacy database copy note: ${t.message}")
         }
     }
 

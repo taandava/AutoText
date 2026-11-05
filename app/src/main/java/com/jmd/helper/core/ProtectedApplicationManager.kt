@@ -2,7 +2,7 @@
  * Package: com.jmd.helper.core
  * Module: Security & Protected Application Isolation Layer
  *
- * Dedicated Protected Application Manager enforcing strict isolation between AutoText
+ * Dedicated Protected Application Manager enforcing strict isolation between Helper
  * and banking, UPI, payment, financial authentication, and designated sensitive applications.
  *
  * Enforces Part 8 Invariants:
@@ -232,7 +232,7 @@ object ProtectedApplicationManager {
 
     /**
      * Strict Allowlist of Authorized Target Applications.
-     * Under the Default-Deny policy, AutoText will NEVER interact with any application
+     * Under the Default-Deny policy, Helper will NEVER interact with any application
      * outside this explicit set.
      */
     val AUTHORIZED_TASK_TARGETS: Set<String> = setOf(
@@ -260,7 +260,7 @@ object ProtectedApplicationManager {
         "com.google.android.systemui",
         "com.android.keyguard",
 
-        // AutoText Self
+        // Helper Self
         "com.jmd.helper"
     )
 

@@ -73,11 +73,11 @@ object SystemIndicatorResolver {
         }
 
         val a11yName = when {
-            !isComponentEnabled -> "AutoText Assistant (Disabled in System)"
-            prefs.isA11yUserPaused -> "AutoText Assistant (Paused for Payments)"
-            isDynamicStandby && !isA11yRunning -> "AutoText Scheduled Assistant (Bank-Safe Standby)"
-            isA11yRunning -> "AutoText Scheduled Assistant (Active)"
-            else -> "AutoText Scheduled Assistant"
+            !isComponentEnabled -> "Helper Assistant (Disabled in System)"
+            prefs.isA11yUserPaused -> "Helper Assistant (Paused for Payments)"
+            isDynamicStandby && !isA11yRunning -> "Helper Scheduled Assistant (Bank-Safe Standby)"
+            isA11yRunning -> "Helper Scheduled Assistant (Active)"
+            else -> "Helper Scheduled Assistant"
         }
 
         val a11yDesc = when {
@@ -114,7 +114,7 @@ object SystemIndicatorResolver {
             SystemIndicator(
                 id = "banking_shield_guard",
                 name = "Payment Compatibility Guard",
-                description = "Protects banking and payment applications (UPI, wallets, net banking) from accessibility alerts by keeping AutoText isolated or detached when idle.",
+                description = "Protects banking and payment applications (UPI, wallets, net banking) from accessibility alerts by keeping Helper isolated or detached when idle.",
                 icon = Icons.Default.Security,
                 isActive = isBankingShieldActive,
                 actionLabel = if (!isBankingShieldActive) "Enable Guard" else null,
@@ -155,7 +155,7 @@ object SystemIndicatorResolver {
                             ctx.showAppToast("Safe Standby: Assistant detached for banking safety.")
                         } else {
                             AccessibilityHealthManager.enableAccessibilityService(ctx)
-                            ctx.showAppToast("⚡ Connected! AutoText Assistant is ready.")
+                            ctx.showAppToast("Connected! Helper Assistant is ready.")
                         }
                     } else if (isA11yRunning) {
                         prefs.isA11yUserPaused = true
@@ -167,7 +167,7 @@ object SystemIndicatorResolver {
                     } else if (hasWriteSecure) {
                         prefs.isA11yUserPaused = false
                         AccessibilityHealthManager.enableAccessibilityService(ctx)
-                        ctx.showAppToast("⚡ AutoText Scheduled Assistant Enabled!")
+                        ctx.showAppToast("Helper Scheduled Assistant Enabled!")
                     } else {
                         prefs.isA11yUserPaused = false
                         AccessibilityHealthManager.ensureServiceComponentEnabled(ctx)
@@ -199,17 +199,12 @@ object SystemIndicatorResolver {
             SystemIndicator(
                 id = "device_admin",
                 name = "Device Admin & Screen Auto-Lock",
-                description = "Allows AutoText to immediately re-lock the phone screen after completing unattended background tasks, securing your device against unauthorized access.",
+                description = "Allows Helper to immediately re-lock the phone screen after completing unattended background tasks, securing your device against unauthorized access.",
                 icon = Icons.Default.Lock,
                 isActive = isDeviceAdminActive,
                 actionLabel = if (!isDeviceAdminActive) "Enable Device Admin" else null,
                 onAction = { ctx ->
-                    runCatching {
-                        val intent = HelperDeviceAdminReceiver.getAddDeviceAdminIntent(ctx).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                        ctx.startActivity(intent)
-                    }
+                    HelperDeviceAdminReceiver.requestActivation(ctx)
                 }
             ),
             SystemIndicator(
@@ -243,7 +238,7 @@ object SystemIndicatorResolver {
             SystemIndicator(
                 id = "display_overlay",
                 name = "Display Over Other Apps (Overlay)",
-                description = "Allows AutoText to display privacy shields, countdown overlays, and incoming call simulation alerts over other applications.",
+                description = "Allows Helper to display privacy shields, countdown overlays, and incoming call simulation alerts over other applications.",
                 icon = Icons.Default.Layers,
                 isActive = isOverlayActive,
                 actionLabel = if (!isOverlayActive) "Grant Overlay Permission" else null,

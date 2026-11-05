@@ -20,6 +20,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.core.net.toUri
 import com.jmd.helper.core.AppFileLogger
 import com.jmd.helper.core.showAppToast
 
@@ -30,19 +31,19 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
 
     override fun onEnabled(context: Context, intent: Intent) {
         super.onEnabled(context, intent)
-        Log.i(TAG, "Device Admin enabled for AutoText")
+        Log.i(TAG, "Device Admin enabled for Helper")
         AppFileLogger.i(context, TAG, "Device Admin enabled successfully")
-        context.showAppToast("AutoText Device Administration enabled")
+        context.showAppToast("Helper Device Administration enabled")
     }
 
     override fun onDisabled(context: Context, intent: Intent) {
         super.onDisabled(context, intent)
-        Log.i(TAG, "Device Admin disabled for AutoText")
+        Log.i(TAG, "Device Admin disabled for Helper")
         AppFileLogger.i(context, TAG, "Device Admin disabled")
     }
 
     companion object {
-        private const val TAG = "AutoTextDeviceAdmin"
+        private const val TAG = "HelperDeviceAdmin"
 
         /**
          * Returns the concrete [ComponentName] for [HelperDeviceAdminReceiver].
@@ -55,7 +56,7 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
         }
 
         /**
-         * Checks whether AutoText is currently an active device administrator.
+         * Checks whether Helper is currently an active device administrator.
          *
          * @param context Active context.
          * @return `true` if registered and active in [DevicePolicyManager]; `false` otherwise.
@@ -76,7 +77,7 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
                 putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, getComponentName(context))
                 putExtra(
                     DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                    "AutoText requires Device Administration to re-lock the phone after scheduled WhatsApp and SMS messages complete."
+                    "Helper requires Device Administration to re-lock the phone after scheduled WhatsApp and SMS messages complete."
                 )
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
@@ -89,40 +90,72 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
          * @return `true` if an administration prompt or security settings activity was opened.
          */
         fun requestActivation(context: Context): Boolean {
+            if (isAdminActive(context)) {
+                context.showAppToast("Device Admin is already active!")
+                return true
+            }
+
+            AppFileLogger.i(context, TAG, "Requesting Device Admin activation...")
+
+            // 1. Try standard ACTION_ADD_DEVICE_ADMIN
             val primaryIntent = getAddDeviceAdminIntent(context)
             try {
                 context.startActivity(primaryIntent)
+                context.showAppToast("Tap 'Activate' or 'Turn on' to enable Device Admin")
                 return true
             } catch (e: Exception) {
                 Log.w(TAG, "Standard ADD_DEVICE_ADMIN intent failed: ${e.message}")
+                AppFileLogger.w(context, TAG, "Standard ADD_DEVICE_ADMIN intent failed: ${e.message}")
             }
 
+            // 2. Comprehensive fallback intents across Android versions and OEMs
             val fallbackIntents = listOf(
-                Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN).apply {
+                // Universal AOSP & Samsung One UI Device Admin list page
+                Intent("android.settings.DEVICE_ADMIN_SETTINGS").apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                },
+                // Samsung One UI explicit settings activity
+                Intent().apply {
+                    component = ComponentName("com.android.settings", "com.android.settings.Settings\$DeviceAdminSettingsActivity")
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                },
+                // Standard AOSP Device Admin list
+                Intent().apply {
+                    component = ComponentName("com.android.settings", "com.android.settings.DeviceAdminSettings")
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                },
+                // Direct DeviceAdminAdd with component extra
+                Intent().apply {
+                    component = ComponentName("com.android.settings", "com.android.settings.DeviceAdminAdd")
                     putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, getComponentName(context))
-                    putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "AutoText requires Device Administration to re-lock the phone after scheduled WhatsApp and SMS messages complete.")
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
-                Intent().setComponent(ComponentName("com.android.settings", "com.android.settings.DeviceAdminAdd")).apply {
+                // Oppo / Realme
+                Intent().apply {
+                    component = ComponentName("com.android.settings", "com.oplus.settings.feature.security.OplusDeviceAdminAdd")
                     putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, getComponentName(context))
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
-                Intent().setComponent(ComponentName("com.android.settings", "com.android.settings.Settings" + "$" + "DeviceAdminSettingsActivity")).apply {
+                // Vivo
+                Intent().apply {
+                    component = ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.PurviewTabActivity")
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
-                Intent().setComponent(ComponentName("com.android.settings", "com.oplus.settings.feature.security.OplusDeviceAdminAdd")).apply {
-                    putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, getComponentName(context))
+                // Xiaomi / MIUI
+                Intent().apply {
+                    component = ComponentName("com.miui.securitycenter", "com.miui.permcenter.permissions.PermissionsEditorActivity")
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
-                Intent().setComponent(ComponentName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.PurviewTabActivity")).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                },
-                Intent().setComponent(ComponentName("com.miui.securitycenter", "com.miui.permcenter.permissions.PermissionsEditorActivity")).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                },
+                // General Security Settings
                 Intent(android.provider.Settings.ACTION_SECURITY_SETTINGS).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
+                // App Details Settings (helps user allow restricted settings if blocked on Android 13/14)
+                Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = "package:${context.packageName}".toUri()
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                },
+                // General Settings
                 Intent(android.provider.Settings.ACTION_SETTINGS).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
@@ -131,11 +164,14 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
             for (fb in fallbackIntents) {
                 try {
                     context.startActivity(fb)
+                    context.showAppToast("Select 'Helper' and enable Device Admin")
                     return true
                 } catch (e: Exception) {
                     Log.d(TAG, "Fallback device admin intent failed: ${e.message}")
                 }
             }
+
+            context.showAppToast("Please open phone Settings > Security > Device Admin apps to enable Helper")
             return false
         }
 

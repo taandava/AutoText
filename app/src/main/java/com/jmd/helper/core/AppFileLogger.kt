@@ -24,9 +24,9 @@ import java.util.*
 object AppFileLogger {
     private const val TAG = "AppFileLogger"
     private const val LOG_DIR_NAME = "logs"
-    private const val EXEC_LOG_FILE = "autotext_execution.log"
-    private const val ERROR_LOG_FILE = "autotext_error.log"
-    private const val LEDGER_FILE = "autotext_campaign_ledger.csv"
+    private const val EXEC_LOG_FILE = "helper_execution.log"
+    private const val ERROR_LOG_FILE = "helper_error.log"
+    private const val LEDGER_FILE = "helper_campaign_ledger.csv"
     private const val MAX_FILE_SIZE_BYTES = 3 * 1024 * 1024L // 3 MB
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
@@ -223,13 +223,14 @@ object AppFileLogger {
                 logDir.mkdirs()
             }
             logDir
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed resolving/creating log dir: ${e.message}")
             null
         }
     }
 
     /**
-     * Resolves file handle for execution log (`autotext_execution.log`).
+     * Resolves file handle for execution log (`helper_execution.log`).
      *
      * @param context Active Android [Context].
      * @return Execution log [File] reference, or null.
@@ -240,7 +241,7 @@ object AppFileLogger {
     }
 
     /**
-     * Resolves file handle for dedicated error log (`autotext_error.log`).
+     * Resolves file handle for dedicated error log (`helper_error.log`).
      *
      * @param context Active Android [Context].
      * @return Error log [File] reference, or null.
@@ -251,7 +252,7 @@ object AppFileLogger {
     }
 
     /**
-     * Resolves file handle for CSV campaign ledger (`autotext_campaign_ledger.csv`).
+     * Resolves file handle for CSV campaign ledger (`helper_campaign_ledger.csv`).
      *
      * @param context Active Android [Context].
      * @return Ledger [File] reference, or null.
@@ -326,7 +327,8 @@ object AppFileLogger {
             val dir = getLogDir(context) ?: return false
             dir.listFiles()?.forEach { it.delete() }
             true
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed clearing logs: ${e.message}")
             false
         }
     }
@@ -340,7 +342,7 @@ object AppFileLogger {
     fun exportAllLogsSummary(context: Context): String {
         val sb = StringBuilder()
         sb.append("===================================================\n")
-        sb.append("  AUTOTEXT COMPREHENSIVE DIAGNOSTIC LOG & AUDIT LEDGER\n")
+        sb.append("  HELPER COMPREHENSIVE DIAGNOSTIC LOG & AUDIT LEDGER\n")
         sb.append("  Exported at: ").append(dateFormat.format(Date())).append("\n")
         sb.append("===================================================\n\n")
 

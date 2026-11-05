@@ -435,7 +435,7 @@ object TaskFeatureApi {
             val notifId = (request.taskId + 60000).toInt()
             val reminderIntent = Intent(context, ReminderAlarmActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                putExtra("title", request.title.ifBlank { "AutoText Reminder" })
+                putExtra("title", request.title.ifBlank { "Helper Reminder" })
                 putExtra("message", request.message)
                 putExtra("task_id", request.taskId)
                 putExtra("notif_id", notifId)

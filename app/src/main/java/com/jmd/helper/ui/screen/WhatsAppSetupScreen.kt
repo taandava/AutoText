@@ -128,7 +128,7 @@ fun WhatsAppSetupAndScreenAssistView(
 
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "Allows AutoText to wake your screen, assist with PIN entry when locked, dispatch scheduled tasks, and securely re-lock the screen.",
+                        "Allows Helper to wake your screen, assist with PIN entry when locked, dispatch scheduled tasks, and securely re-lock the screen.",
                         fontSize = 11.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -206,7 +206,7 @@ fun WhatsAppSetupAndScreenAssistView(
                             )
 
                             Text(
-                                "Fingerprint / Face Auto-Switch: If your phone uses fingerprint, AutoText swipes up to dismiss fingerprint and switch directly to number lock to enter your password.",
+                                "Fingerprint / Face Auto-Switch: If your phone uses fingerprint, Helper swipes up to dismiss fingerprint and switch directly to number lock to enter your password.",
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(top = 4.dp)
@@ -298,7 +298,7 @@ fun WhatsAppSetupAndScreenAssistView(
                     Text("Default Country Code", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "WhatsApp requires international dial codes. If phone numbers are entered without country code (e.g. 10 digits), AutoText directly prefixes this country code.",
+                        "WhatsApp requires international dial codes. If phone numbers are entered without country code (e.g. 10 digits), Helper directly prefixes this country code.",
                         fontSize = 11.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -378,9 +378,9 @@ fun WhatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
             Column {
                 Text(
                     text = when {
-                        isOperational -> "AutoText Assistant: Connected"
-                        isDynamicStandby -> "AutoText Assistant: Bank-Safe Standby"
-                        else -> "AutoText Assistant: Setup Required"
+                        isOperational -> "Helper Assistant: Connected"
+                        isDynamicStandby -> "Helper Assistant: Bank-Safe Standby"
+                        else -> "Helper Assistant: Setup Required"
                     },
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
@@ -390,7 +390,7 @@ fun WhatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
                     text = when {
                         isOperational -> "Active in background. Ready to dispatch scheduled messages with screen assistance."
                         isDynamicStandby -> "Active & Ready. Safely detached while idle so banking and payment apps work with 0 warnings. Auto-connects in 0.05s on task!"
-                        else -> "Enable AutoText Assistant in Settings > Accessibility > Installed apps."
+                        else -> "Enable Helper Assistant in Settings > Accessibility > Installed apps."
                     },
                     fontSize = 11.5.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -466,7 +466,7 @@ fun WhatsAppRestrictedSettingsCard(context: Context) {
                     "3. Tap 'Allow restricted settings'.\n" +
                     "4. Enter your phone PIN/fingerprint.\n" +
                     "5. Return here and enable Accessibility!\n\n" +
-                    "• Samsung tip: In Settings > Accessibility, tap 'Installed apps' to locate AutoText Assistant.",
+                    "• Samsung tip: In Settings > Accessibility, tap 'Installed apps' to locate Helper Assistant.",
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 18.sp
@@ -492,7 +492,7 @@ fun WhatsAppRestrictedSettingsCard(context: Context) {
 
 
 /**
- * Battery optimization guidance card helping users exempt AutoText from background process freezing.
+ * Battery optimization guidance card helping users exempt Helper from background process freezing.
  *
  * @param context Active Android [Context].
  */
@@ -503,8 +503,8 @@ fun WhatsAppBatteryOptimizationCard(context: Context) {
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             "To ensure tasks trigger on time when phone is locked:\n" +
-                    "• Exempt AutoText from battery optimization.\n" +
-                    "• On Samsung: Device Care -> Battery -> Background usage limits -> Never sleeping apps -> Add AutoText.\n" +
+                    "• Exempt Helper from battery optimization.\n" +
+                    "• On Samsung: Device Care -> Battery -> Background usage limits -> Never sleeping apps -> Add Helper.\n" +
                     "• On Xiaomi / Vivo / Oppo: Enable 'Autostart' in App settings.",
             fontSize = 11.5.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -598,7 +598,7 @@ fun WhatsAppLiveTestCard(
                     context.showAppToast("Please enter a phone number")
                     return@GlassButton
                 }
-                val messageToSend = testMessage.trim().ifEmpty { "AutoText Test Ping: Task is active!" }
+                val messageToSend = testMessage.trim().ifEmpty { "Helper Test Ping: Task is active!" }
                 scope.launch {
                     val mutex = SequentialTaskEngine.getUiTaskMutex(context)
                     val success = mutex.withLock {

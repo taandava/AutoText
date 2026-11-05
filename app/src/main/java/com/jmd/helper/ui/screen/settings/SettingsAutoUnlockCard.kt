@@ -5,7 +5,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.StopCircle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +22,6 @@ import com.jmd.helper.core.showAppToast
 import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.ui.components.*
-import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
  * Configuration card managing screen wake, keyguard PIN input, and post-dispatch hardware lock.
@@ -40,7 +44,7 @@ fun SettingsScreenAssistCard(
     AppCard(modifier = modifier.fillMaxWidth()) {
         Text("Screen Task Assistance & Auto-Lock", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
         Spacer(modifier = Modifier.height(4.dp))
-        Text("AutoText can wake the device, assist with lockscreen entry during dispatches, and securely re-lock the device safely.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+        Text("Helper can wake the device, assist with lockscreen entry during dispatches, and securely re-lock the device safely.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -114,7 +118,7 @@ fun SettingsScreenAssistCard(
                 )
 
                 Text(
-                    "Biometric Transition: If your device uses fingerprint or face unlock, AutoText swipes up to switch to PIN/Password entry for the scheduled task.",
+                    "Biometric Transition: If your device uses fingerprint or face unlock, Helper swipes up to switch to PIN/Password entry for the scheduled task.",
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp)
@@ -157,7 +161,7 @@ fun SettingsScreenAssistCard(
                         context.showAppToast("Locking phone...")
                         TaskAccessibilityService.lockScreenNow()
                     },
-                    emoji = "🔒",
+                    icon = Icons.Filled.Lock,
                     variant = GlassButtonVariant.SECONDARY,
                     modifier = Modifier.weight(1f)
                 )
@@ -171,7 +175,7 @@ fun SettingsScreenAssistCard(
                         }
                         TaskAccessibilityService.testLockAndAutoUnlock(context, currentPin)
                     },
-                    emoji = "🔓",
+                    icon = Icons.Filled.LockOpen,
                     variant = GlassButtonVariant.PRIMARY,
                     modifier = Modifier.weight(1f)
                 )
@@ -185,7 +189,7 @@ fun SettingsScreenAssistCard(
                     TaskAccessibilityService.clearPending()
                     context.showAppToast("Tasks stopped")
                 },
-                emoji = "🛑",
+                icon = Icons.Filled.StopCircle,
                 variant = GlassButtonVariant.DANGER,
                 modifier = Modifier.fillMaxWidth()
             )

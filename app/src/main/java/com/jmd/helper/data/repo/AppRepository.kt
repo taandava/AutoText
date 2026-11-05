@@ -525,7 +525,7 @@ class AppRepository(private val context: Context) {
                 taskRepo.deleteTask(taskId)
             }
         } catch (e: Exception) {
-            Log.w("AutoTextRepo", "Error deleting linked sequence tasks for sequence #$id: ${e.message}")
+            Log.w("HelperRepo", "Error deleting linked sequence tasks for sequence #$id: ${e.message}")
         }
         return sequenceRepo.deleteSequence(id)
     }
@@ -574,7 +574,7 @@ class AppRepository(private val context: Context) {
                     }
                 }
             } catch (e: Exception) {
-                Log.w("AutoTextRepo", "Error updating linked sequence tasks for sequence #$id toggle: ${e.message}")
+                Log.w("HelperRepo", "Error updating linked sequence tasks for sequence #$id toggle: ${e.message}")
             }
         }
         return updated

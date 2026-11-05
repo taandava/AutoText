@@ -715,7 +715,7 @@ class HelperComprehensiveTest {
                 channel = channel,
                 recipients = recipients,
                 recipientNames = recipients,
-                messageText = "AutoText test ${channel.displayName} message at {time}",
+                messageText = "Helper test ${channel.displayName} message at {time}",
                 triggerTimeMillis = baseTime + ((index + 1) * staggerSeconds * 1000L),
                 recurrence = RecurrenceType.REPEAT_SECONDS,
                 customIntervalMinutes = repeatIntervalSeconds,
@@ -723,7 +723,7 @@ class HelperComprehensiveTest {
                 includeDialTimeInCallDuration = true,
                 delayBetweenCallsSeconds = 5,
                 soundModeSetting = "NORMAL",
-                simulatedCallerName = "AutoText Test",
+                simulatedCallerName = "Helper Test",
                 simulatedCallerNumber = testRecipients.first(),
                 status = TaskStatus.PENDING
             )
@@ -848,7 +848,7 @@ class HelperComprehensiveTest {
             messageText = "Remember to visit clinic"
         )
         val label1 = AlarmScheduler.getSystemAlarmLabel(task1)
-        assertEquals("AutoText #23: Doctor Appointment", label1)
+        assertEquals("Helper #23: Doctor Appointment", label1)
 
         // Blank title fallback to message text
         val task2 = ScheduledTask(
@@ -858,7 +858,7 @@ class HelperComprehensiveTest {
             messageText = "Take medicine on time"
         )
         val label2 = AlarmScheduler.getSystemAlarmLabel(task2)
-        assertEquals("AutoText #24: Take medicine on time", label2)
+        assertEquals("Helper #24: Take medicine on time", label2)
 
         // Blank title and blank message fallback to default
         val task3 = ScheduledTask(
@@ -868,7 +868,7 @@ class HelperComprehensiveTest {
             messageText = ""
         )
         val label3 = AlarmScheduler.getSystemAlarmLabel(task3)
-        assertEquals("AutoText #25: Reminder", label3)
+        assertEquals("Helper #25: Reminder", label3)
 
         // Guarantee uniqueness across different task IDs even with identical titles
         val task4 = ScheduledTask(
@@ -878,7 +878,7 @@ class HelperComprehensiveTest {
         )
         val label4 = AlarmScheduler.getSystemAlarmLabel(task4)
         assertNotEquals("Tasks with different IDs must have distinct alarm labels", label1, label4)
-        assertTrue("Label must contain task ID", label4.startsWith("AutoText #26:"))
+        assertTrue("Label must contain task ID", label4.startsWith("Helper #26:"))
     }
 
     @Test
@@ -889,18 +889,18 @@ class HelperComprehensiveTest {
             title = "Meeting",
             channel = ChannelType.REMINDER
         )
-        val autoTextLabel = AlarmScheduler.getSystemAlarmLabel(task)
+        val helperLabel = AlarmScheduler.getSystemAlarmLabel(task)
 
-        // Verify AutoText label never equals any personal alarm label
+        // Verify Helper label never equals any personal alarm label
         for (personalLabel in userPersonalAlarmLabels) {
-            assertNotEquals("AutoText alarm label must never collide with personal alarm", personalLabel, autoTextLabel)
+            assertNotEquals("Helper alarm label must never collide with personal alarm", personalLabel, helperLabel)
         }
-        assertTrue("AutoText alarm must be prefixed with unique AutoText tag", autoTextLabel.startsWith("AutoText #99:"))
+        assertTrue("Helper alarm must be prefixed with unique Helper tag", helperLabel.startsWith("Helper #99:"))
     }
 
     @Test
     fun testWatchdogHeartbeatResilienceConstants() {
-        assertEquals("AutoTextA11yWatchdogWork", com.jmd.helper.scheduler.AccessibilityWatchdogWorker.UNIQUE_WORK_NAME)
+        assertEquals("HelperA11yWatchdogWork", com.jmd.helper.scheduler.AccessibilityWatchdogWorker.UNIQUE_WORK_NAME)
         assertEquals("com.jmd.helper.ACTION_WATCHDOG_HEARTBEAT", AlarmScheduler.ACTION_FIRE_TASK.let {
             com.jmd.helper.scheduler.AccessibilityWatchdogScheduler.ACTION_WATCHDOG_HEARTBEAT
         })
@@ -1015,10 +1015,10 @@ class HelperComprehensiveTest {
 
     @Test
     fun testLocalBackupListingFilterAndSorting() {
-        val tempDir = java.nio.file.Files.createTempDirectory("autotext_backup_test").toFile()
+        val tempDir = java.nio.file.Files.createTempDirectory("helper_backup_test").toFile()
         try {
-            val f1 = java.io.File(tempDir, "AutoText_Backup_20261026_100000.json").apply { writeText("{}") }
-            val f2 = java.io.File(tempDir, "AutoText_Backup_20261026_110000.json").apply { writeText("{}") }
+            val f1 = java.io.File(tempDir, "Helper_Backup_20261026_100000.json").apply { writeText("{}") }
+            val f2 = java.io.File(tempDir, "Helper_Backup_20261026_110000.json").apply { writeText("{}") }
             val ignoreNonJson = java.io.File(tempDir, "notes.txt").apply { writeText("ignore") }
 
             f1.setLastModified(1000L)

@@ -14,6 +14,7 @@
 package com.jmd.helper.ui.model
 
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.jmd.helper.data.model.*
 
 /**
@@ -28,15 +29,17 @@ import com.jmd.helper.data.model.*
  * @property emoji Expressive visual emoji icon for the card header.
  * @property color Primary theme accent color associated with this channel.
  * @property defaultEvent Default event trigger identifier used during rule creation.
+ * @property icon Optional Material 3 vector icon.
  */
 data class AutoReplyTypeItem(
     val channel: ChannelType,
     val title: String,
     val eventDescription: String,
     val replyMethodDescription: String,
-    val emoji: String,
+    val emoji: String = "",
     val color: Color,
     val defaultEvent: String,
+    val icon: ImageVector? = null
 )
 
 /**
@@ -64,17 +67,19 @@ data class SelectedRecipient(
  * @property isStatus True if option launches the WhatsApp status update publisher.
  * @property isDailyCampaign True if option routes to the unique contact daily outreach engine.
  * @property isWaCall True if option configures a live WhatsApp VoIP call task.
+ * @property icon Optional Material 3 vector icon.
  */
 data class TaskTypeItem(
     val title: String,
     val description: String,
-    val emoji: String,
+    val emoji: String = "",
     val color: Color,
     val channel: ChannelType?,
     val isSequence: Boolean = false,
     val isStatus: Boolean = false,
     val isDailyCampaign: Boolean = false,
-    val isWaCall: Boolean = false
+    val isWaCall: Boolean = false,
+    val icon: ImageVector? = null
 )
 
 

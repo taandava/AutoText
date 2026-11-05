@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
-        <exclude domain="sharedpref" path="autotext_settings.xml" />
+        <exclude domain="sharedpref" path="helper_settings.xml" />
         <exclude domain="sharedpref" path="app_preferences.xml" />
-        <exclude domain="device_sharedpref" path="autotext_de_prefs.xml" />
+        <exclude domain="device_sharedpref" path="helper_de_prefs.xml" />
         <exclude domain="device_sharedpref" path="device_protected_prefs.xml" />
         <exclude domain="database" path="helper.db" />
         <exclude domain="database" path="helper.db-journal" />
@@ -11,9 +11,9 @@
         <exclude domain="database" path="helper.db-shm" />
     </cloud-backup>
     <device-transfer>
-        <exclude domain="sharedpref" path="autotext_settings.xml" />
+        <exclude domain="sharedpref" path="helper_settings.xml" />
         <exclude domain="sharedpref" path="app_preferences.xml" />
-        <exclude domain="device_sharedpref" path="autotext_de_prefs.xml" />
+        <exclude domain="device_sharedpref" path="helper_de_prefs.xml" />
         <exclude domain="device_sharedpref" path="device_protected_prefs.xml" />
         <exclude domain="database" path="helper.db" />
         <exclude domain="database" path="helper.db-journal" />

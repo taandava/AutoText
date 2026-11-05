@@ -326,7 +326,7 @@ fun ContactSequenceStudio(
                         title = "SMS Message Sequence",
                         description = "Step-by-step drip messages via device SIM card (Carrier Direct)",
                         badge = "SIM Direct",
-                        emoji = "📩",
+                        icon = Icons.AutoMirrored.Filled.Message,
                         color = MaterialTheme.colorScheme.primary,
                         onClick = {
                             sequenceChannel = ChannelType.SMS
@@ -339,8 +339,8 @@ fun ContactSequenceStudio(
                         title = "WhatsApp Sequence",
                         description = "Multi-step scheduled messages via personal WhatsApp",
                         badge = "Personal WA",
-                        emoji = "💬",
-                        color = MaterialTheme.colorScheme.tertiary,
+                        icon = Icons.AutoMirrored.Filled.Chat,
+                        color = Color(0xFF16A34A),
                         onClick = {
                             sequenceChannel = ChannelType.WHATSAPP
                             steps.indices.forEach { i -> steps[i] = steps[i].copy(channel = ChannelType.WHATSAPP) }
@@ -352,8 +352,8 @@ fun ContactSequenceStudio(
                         title = "WhatsApp Business (W4B) Sequence",
                         description = "Client outreach and paced follow-up sequence via WhatsApp Business",
                         badge = "Business W4B",
-                        emoji = "💼",
-                        color = MaterialTheme.colorScheme.primary,
+                        icon = Icons.Filled.BusinessCenter,
+                        color = Color(0xFF0D9488),
                         onClick = {
                             sequenceChannel = ChannelType.WHATSAPP_BUSINESS
                             steps.indices.forEach { i -> steps[i] = steps[i].copy(channel = ChannelType.WHATSAPP_BUSINESS) }
@@ -435,14 +435,19 @@ fun ContactSequenceStudio(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("👤", fontSize = 16.sp)
+                            Icon(
+                                imageVector = Icons.Filled.Person,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(16.dp)
+                            )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text("Target Contact", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.5.sp)
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             GlassButton(
                                 text = "From Pool",
-                                emoji = "👥",
+                                icon = Icons.Filled.Groups,
                                 onClick = { showPoolPicker = true },
                                 variant = GlassButtonVariant.SECONDARY,
                                 contentPadding = PaddingValues(horizontal = 7.dp, vertical = 3.dp),
@@ -450,7 +455,7 @@ fun ContactSequenceStudio(
                             )
                             GlassButton(
                                 text = "WA Contacts",
-                                emoji = "💬",
+                                icon = Icons.AutoMirrored.Filled.Chat,
                                 onClick = { showWhatsAppContactsPicker = true },
                                 variant = GlassButtonVariant.SECONDARY,
                                 contentPadding = PaddingValues(horizontal = 7.dp, vertical = 3.dp),
@@ -458,7 +463,7 @@ fun ContactSequenceStudio(
                             )
                             GlassButton(
                                 text = "Contacts",
-                                emoji = "👤",
+                                icon = Icons.Filled.Contacts,
                                 onClick = { contactPickerLauncher.launch(null) },
                                 variant = GlassButtonVariant.SECONDARY,
                                 contentPadding = PaddingValues(horizontal = 7.dp, vertical = 3.dp),
@@ -511,12 +516,12 @@ fun ContactSequenceStudio(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text("Sequence Channel:", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Spacer(modifier = Modifier.width(6.dp))
-                            val (badgeText, badgeColor, badgeEmoji) = when (sequenceChannel) {
-                                ChannelType.WHATSAPP_BUSINESS -> Triple("WA Business (W4B)", MaterialTheme.colorScheme.primary, "💼")
-                                ChannelType.WHATSAPP -> Triple("WhatsApp (Personal)", MaterialTheme.colorScheme.tertiary, "💬")
-                                else -> Triple("SMS (Carrier Direct)", MaterialTheme.colorScheme.primary, "📩")
+                            val (badgeText, badgeColor, badgeIcon) = when (sequenceChannel) {
+                                ChannelType.WHATSAPP_BUSINESS -> Triple("WA Business (W4B)", Color(0xFF0D9488), Icons.Filled.BusinessCenter)
+                                ChannelType.WHATSAPP -> Triple("WhatsApp (Personal)", Color(0xFF16A34A), Icons.AutoMirrored.Filled.Chat)
+                                else -> Triple("SMS (Carrier Direct)", MaterialTheme.colorScheme.primary, Icons.AutoMirrored.Filled.Message)
                             }
-                            AppBadge(text = badgeText, emoji = badgeEmoji, color = badgeColor)
+                            AppBadge(text = badgeText, icon = badgeIcon, color = badgeColor, showDot = false)
                         }
                         Text(
                             text = "Change Channel",
@@ -646,7 +651,7 @@ fun ContactSequenceStudio(
             item {
                 GlassButton(
                     text = "Add Next Message / Task Step",
-                    emoji = "➕",
+                    icon = Icons.Filled.Add,
                     variant = GlassButtonVariant.SECONDARY,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
@@ -669,7 +674,7 @@ fun ContactSequenceStudio(
                 Spacer(modifier = Modifier.height(4.dp))
                 GlassButton(
                     text = if (isSaving) "Saving Sequence..." else if (sequenceId > 0) "Update Sequence & Reschedule" else "Arm & Save Contact Sequence",
-                    emoji = if (isSaving) "⏳" else "💾",
+                    icon = if (isSaving) Icons.Filled.HourglassTop else Icons.Filled.Save,
                     variant = GlassButtonVariant.PRIMARY,
                     enabled = !isSaving,
                     modifier = Modifier.fillMaxWidth(),
@@ -724,7 +729,7 @@ private fun SequenceChannelCard(
     title: String,
     description: String,
     badge: String,
-    emoji: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     color: Color,
     onClick: () -> Unit
 ) {
@@ -751,7 +756,12 @@ private fun SequenceChannelCard(
                     .border(1.dp, color.copy(alpha = 0.5f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = emoji, fontSize = 20.sp)
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(20.dp)
+                )
             }
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -946,13 +956,24 @@ fun StepEditorCard(
                     color = channelColor.copy(alpha = 0.15f),
                     border = BorderStroke(1.dp, channelColor.copy(alpha = 0.4f))
                 ) {
-                    Text(
-                        text = "⚡ $timingBadgeText",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = channelColor,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                    )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Bolt,
+                            contentDescription = null,
+                            tint = channelColor,
+                            modifier = Modifier.size(10.dp)
+                        )
+                        Spacer(modifier = Modifier.width(3.dp))
+                        Text(
+                            text = timingBadgeText,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = channelColor
+                        )
+                    }
                 }
                 if (projectedTriggerTimestamp > 0L && step.specificTriggerTime == 0L) {
                     Spacer(modifier = Modifier.height(2.dp))

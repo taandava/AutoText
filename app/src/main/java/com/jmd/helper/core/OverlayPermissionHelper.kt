@@ -78,8 +78,8 @@ object OverlayPermissionHelper {
                 oemIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(oemIntent)
                 return true
-            } catch (_: Exception) {
-                // Try next OEM fallback
+            } catch (e: Exception) {
+                AppFileLogger.d("OverlayPermissionHelper", "OEM overlay intent fallback: ${e.message}")
             }
         }
 

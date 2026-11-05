@@ -34,11 +34,11 @@ class PreferenceManager(private val context: Context) {
                 val deContext = context.createDeviceProtectedStorageContext()
                 deContext.getSharedPreferences("helper_settings", Context.MODE_PRIVATE)
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             try {
                 val deContext = context.createDeviceProtectedStorageContext()
                 deContext.getSharedPreferences("helper_settings", Context.MODE_PRIVATE)
-            } catch (_: Exception) {
+            } catch (inner: Exception) {
                 context.getSharedPreferences("helper_settings", Context.MODE_PRIVATE)
             }
         }
@@ -46,11 +46,14 @@ class PreferenceManager(private val context: Context) {
         target
     }
 
+    val sharedPreferences: SharedPreferences
+        get() = prefs
+
     private val dePrefs: SharedPreferences by lazy {
         val target = try {
             val deContext = context.createDeviceProtectedStorageContext()
             deContext.getSharedPreferences("helper_de_prefs", Context.MODE_PRIVATE)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             prefs
         }
         migrateLegacyPreferences(target, "autotext_de_prefs")
@@ -63,22 +66,22 @@ class PreferenceManager(private val context: Context) {
                 val legacy = context.getSharedPreferences(legacyName, Context.MODE_PRIVATE)
                 val allLegacy = legacy.all
                 if (allLegacy.isNotEmpty()) {
-                    val editor = target.edit()
-                    for ((k, v) in allLegacy) {
-                        when (v) {
-                            is Boolean -> editor.putBoolean(k, v)
-                            is Int -> editor.putInt(k, v)
-                            is Long -> editor.putLong(k, v)
-                            is Float -> editor.putFloat(k, v)
-                            is String -> editor.putString(k, v)
-                            is Set<*> -> @Suppress("UNCHECKED_CAST") editor.putStringSet(k, v as Set<String>)
+                    target.edit {
+                        for ((k, v) in allLegacy) {
+                            when (v) {
+                                is Boolean -> putBoolean(k, v)
+                                is Int -> putInt(k, v)
+                                is Long -> putLong(k, v)
+                                is Float -> putFloat(k, v)
+                                is String -> putString(k, v)
+                                is Set<*> -> putStringSet(k, v.filterIsInstance<String>().toSet())
+                            }
                         }
                     }
-                    editor.apply()
                 }
             }
-        } catch (_: Throwable) {
-            // Ignore legacy settings migration errors safely
+        } catch (t: Throwable) {
+            Log.w(TAG, "Legacy settings migration note: ${t.message}")
         }
     }
 
@@ -174,7 +177,7 @@ class PreferenceManager(private val context: Context) {
                 keyGen.init(spec)
                 keyGen.generateKey()
             }
-        } catch (_: Throwable) {
+        } catch (t: Throwable) {
             // AndroidKeyStore is unavailable in JVM unit tests or pre-unlock direct boot storage
             null
         }
@@ -193,7 +196,7 @@ class PreferenceManager(private val context: Context) {
             System.arraycopy(iv, 0, combined, 0, iv.size)
             System.arraycopy(ciphertext, 0, combined, iv.size, ciphertext.size)
             "ENC:" + android.util.Base64.encodeToString(combined, android.util.Base64.NO_WRAP)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             secret
         }
     }
@@ -267,7 +270,7 @@ class PreferenceManager(private val context: Context) {
 
         val decrypted = try {
             decryptSecretWithKey(stored, getDeviceSecretKey())
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             ""
         }
         if (decrypted.isNotEmpty()) return decrypted
@@ -286,7 +289,7 @@ class PreferenceManager(private val context: Context) {
                 }
             }
             legacyDecrypted
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             ""
         }
     }
@@ -345,7 +348,7 @@ class PreferenceManager(private val context: Context) {
                 } else {
                     prefs.getBoolean(KEY_AUTO_UNLOCK_ENABLED, false)
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 dePrefs.getBoolean(KEY_AUTO_UNLOCK_ENABLED, false)
             }
         }
@@ -366,7 +369,7 @@ class PreferenceManager(private val context: Context) {
                 } else {
                     prefs.getString(KEY_AUTO_UNLOCK_TYPE, "PIN") ?: "PIN"
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 dePrefs.getString(KEY_AUTO_UNLOCK_TYPE, "PIN") ?: "PIN"
             }
         }
@@ -408,7 +411,7 @@ class PreferenceManager(private val context: Context) {
                 } else {
                     prefs.getString(KEY_DEVICE_UNLOCK_PIN, "").orEmpty()
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 dePrefs.getString(KEY_DEVICE_UNLOCK_PIN, "").orEmpty()
             }
             return decryptSecret(raw)
@@ -451,7 +454,7 @@ class PreferenceManager(private val context: Context) {
                 } else {
                     prefs.getString(KEY_APP_THEME, "SYSTEM") ?: "SYSTEM"
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 dePrefs.getString(KEY_APP_THEME, "SYSTEM") ?: "SYSTEM"
             }
         }
@@ -481,7 +484,7 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit { putInt(KEY_CUSTOM_CLICK_COORDINATE_OFFSET_Y, value) }
 
     var customAppName: String
-        get() = prefs.getString(KEY_CUSTOM_APP_NAME, "AutoText") ?: "AutoText"
+        get() = prefs.getString(KEY_CUSTOM_APP_NAME, "Helper") ?: "Helper"
         set(value) = prefs.edit { putString(KEY_CUSTOM_APP_NAME, value) }
 
     var appIconVariant: String

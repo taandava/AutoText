@@ -36,8 +36,8 @@ object ClipboardCompat {
         if (clipboardManager != null && clipData != null) {
             try {
                 clipboardManager.setPrimaryClip(clipData)
-            } catch (_: Throwable) {
-                // Clipboard access error ignored for resilience
+            } catch (t: Throwable) {
+                Log.w(TAG, "Clipboard set error: ${t.message}")
             }
         }
     }

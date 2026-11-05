@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -166,7 +167,7 @@ fun TemplateFormView(
                         onSaved()
                     }
                 },
-                emoji = "💾",
+                icon = Icons.Filled.Save,
                 variant = GlassButtonVariant.PRIMARY,
                 enabled = formTitle.isNotBlank() && formContent.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()

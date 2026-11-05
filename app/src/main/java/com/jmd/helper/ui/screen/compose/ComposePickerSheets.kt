@@ -293,7 +293,8 @@ fun ContactPoolPickerSheet(
                             textAlign = TextAlign.Center
                         )
                         GlassButton(
-                            text = if (isSyncing) "Populating Pool..." else "⚡ Sync & Populate Contact Pool",
+                            text = if (isSyncing) "Populating Pool..." else "Sync & Populate Contact Pool",
+                            icon = Icons.Filled.Sync,
                             onClick = {
                                 if (!isSyncing) {
                                     isSyncing = true
@@ -309,7 +310,6 @@ fun ContactPoolPickerSheet(
                                 }
                             },
                             variant = GlassButtonVariant.PRIMARY,
-                            icon = Icons.Default.Sync,
                             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
                             shape = AppDesignTokens.ShapePill
                         )

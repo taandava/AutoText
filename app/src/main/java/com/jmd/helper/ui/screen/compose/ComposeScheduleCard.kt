@@ -9,7 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -131,12 +132,21 @@ fun ComposeScheduleOptionsCard(
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        "🔘 Run Once",
-                        fontSize = 12.sp,
-                        fontWeight = if (!isRepeat) FontWeight.Bold else FontWeight.Normal,
-                        color = if (!isRepeat) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.RadioButtonChecked,
+                            contentDescription = null,
+                            tint = if (!isRepeat) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            "Run Once",
+                            fontSize = 12.sp,
+                            fontWeight = if (!isRepeat) FontWeight.Bold else FontWeight.Normal,
+                            color = if (!isRepeat) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
 
                 // Option: Repeat
@@ -161,12 +171,21 @@ fun ComposeScheduleOptionsCard(
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        "🔁 Repeat",
-                        fontSize = 12.sp,
-                        fontWeight = if (isRepeat) FontWeight.Bold else FontWeight.Normal,
-                        color = if (isRepeat) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.Repeat,
+                            contentDescription = null,
+                            tint = if (isRepeat) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            "Repeat",
+                            fontSize = 12.sp,
+                            fontWeight = if (isRepeat) FontWeight.Bold else FontWeight.Normal,
+                            color = if (isRepeat) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
 
@@ -291,8 +310,15 @@ fun ComposeScheduleOptionsCard(
                         .padding(horizontal = 10.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Icon(
+                        imageVector = Icons.Filled.Bolt,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "⚡ Next run repeats every $countNum $unitLabel after completion.",
+                        text = "Next run repeats every $countNum $unitLabel after completion.",
                         fontSize = 11.5.sp,
                         color = MaterialTheme.colorScheme.tertiary
                     )

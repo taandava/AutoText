@@ -53,10 +53,10 @@ fun ActiveCampaignOverviewCard(
         isWa -> MaterialTheme.colorScheme.tertiary
         else -> MaterialTheme.colorScheme.primary
     }
-    val channelEmoji = when {
-        isBiz -> "💼"
-        isWa -> "💬"
-        else -> "📩"
+    val channelIcon = when {
+        isBiz -> Icons.Filled.BusinessCenter
+        isWa -> Icons.AutoMirrored.Filled.Chat
+        else -> Icons.AutoMirrored.Filled.Message
     }
 
     AppCardElevated(
@@ -78,7 +78,12 @@ fun ActiveCampaignOverviewCard(
                         .border(1.dp, themeColor.copy(alpha = 0.4f), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(channelEmoji, fontSize = 18.sp)
+                    Icon(
+                        imageVector = channelIcon,
+                        contentDescription = null,
+                        tint = themeColor,
+                        modifier = Modifier.size(18.dp)
+                    )
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Column(modifier = Modifier.weight(1f)) {
@@ -102,7 +107,7 @@ fun ActiveCampaignOverviewCard(
                                 isWa -> "WhatsApp"
                                 else -> "SMS"
                             },
-                            emoji = channelEmoji,
+                            icon = channelIcon,
                             color = themeColor,
                             showDot = false
                         )
@@ -111,7 +116,7 @@ fun ActiveCampaignOverviewCard(
                             val simLabel = if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"
                             AppBadge(
                                 text = simLabel,
-                                emoji = "📱",
+                                icon = Icons.Filled.Smartphone,
                                 color = MaterialTheme.colorScheme.primary,
                                 showDot = false
                             )
@@ -158,21 +163,21 @@ fun ActiveCampaignOverviewCard(
                 modifier = Modifier.weight(1f),
                 title = "Sent Today",
                 value = "$sentToday / ${campaign.dailyLimit}",
-                emoji = "📤",
+                icon = Icons.AutoMirrored.Filled.Send,
                 iconTint = themeColor
             )
             AppStatCard(
                 modifier = Modifier.weight(1f),
                 title = "Unique Pending",
                 value = "${stats.unsentCount}",
-                emoji = "⏳",
+                icon = Icons.Filled.HourglassTop,
                 iconTint = MaterialTheme.colorScheme.primary
             )
             AppStatCard(
                 modifier = Modifier.weight(1f),
                 title = "Cycle Sent",
                 value = "${stats.sentCount}",
-                emoji = "✅",
+                icon = Icons.Filled.CheckCircle,
                 iconTint = MaterialTheme.colorScheme.tertiary
             )
         }
@@ -188,21 +193,21 @@ fun ActiveCampaignOverviewCard(
                 text = "Run Batch Now",
                 onClick = onRunNow,
                 variant = GlassButtonVariant.PRIMARY,
-                emoji = "🚀",
+                icon = Icons.Filled.RocketLaunch,
                 modifier = Modifier.weight(1.3f)
             )
             GlassButton(
                 text = "Configure",
                 onClick = onConfigure,
                 variant = GlassButtonVariant.SECONDARY,
-                emoji = "⚙️",
+                icon = Icons.Filled.Settings,
                 modifier = Modifier.weight(1f)
             )
             GlassButton(
                 text = "Contacts",
                 onClick = onViewContacts,
                 variant = GlassButtonVariant.SECONDARY,
-                emoji = "👥",
+                icon = Icons.Filled.Groups,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -314,7 +319,7 @@ fun PausedCampaignOverviewCard(
                     text = "Resume",
                     onClick = onResume,
                     variant = GlassButtonVariant.PRIMARY,
-                    emoji = "▶️",
+                    icon = Icons.Filled.PlayArrow,
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                     shape = AppDesignTokens.ShapePill
@@ -323,7 +328,7 @@ fun PausedCampaignOverviewCard(
                     text = "Edit",
                     onClick = onConfigure,
                     variant = GlassButtonVariant.SECONDARY,
-                    emoji = "✏️",
+                    icon = Icons.Filled.Edit,
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                     shape = AppDesignTokens.ShapePill
@@ -333,7 +338,12 @@ fun PausedCampaignOverviewCard(
                         onClick = onDelete,
                         modifier = Modifier.size(32.dp)
                     ) {
-                        Text("🗑️", fontSize = 16.sp)
+                        Icon(
+                            imageVector = Icons.Filled.DeleteOutline,
+                            contentDescription = "Delete",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 }
             }

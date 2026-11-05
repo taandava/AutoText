@@ -2,7 +2,7 @@
  * Package: com.jmd.helper
  * Module: Application Root
  *
- * Serves as the central Android Application entry point and orchestrator for AutoText.
+ * Serves as the central Android Application entry point and orchestrator for Helper.
  * Manages global application lifecycle hooks, notification channels, background alarm
  * reconciliations, accessibility health monitoring, and defensive self-healing routines.
  *
@@ -17,6 +17,7 @@ package com.jmd.helper
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.util.Log
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +37,7 @@ import com.jmd.helper.scheduler.DailyCampaignScheduler
 import com.jmd.helper.service.TaskForegroundService
 
 /**
- * Root Application class for the AutoText Android task suite.
+ * Root Application class for the Helper Android task suite.
  *
  * Coordinates system-wide services, registers user-facing notification categories,
  * launches watchdog monitors, and initializes scheduled outreach pipelines.
@@ -45,7 +46,7 @@ class HelperApplication : Application() {
 
     companion object {
         /** Logging tag for diagnostic system traces. */
-        private const val TAG = "AutoTextApp"
+        private const val TAG = "HelperApp"
 
         /** Notification channel identifier for task status updates and delivery receipts. */
         const val CHANNEL_TASKS = "channel_tasks"
@@ -63,6 +64,43 @@ class HelperApplication : Application() {
         @Volatile
         lateinit var instance: HelperApplication
             private set
+
+        /**
+         * Creates and configures the system notification channels with appropriate sound,
+         * vibration, and importance levels, while retiring obsolete legacy channels.
+         */
+        fun createNotificationChannels(context: Context) {
+            val notificationManager = context.getSystemService(NotificationManager::class.java) ?: return
+
+            // Retire legacy persistent service notification channel so no sticky notification remains
+            try {
+                notificationManager.deleteNotificationChannel(CHANNEL_SERVICE)
+            } catch (e: Exception) {
+                Log.d(TAG, "Delete legacy service channel: ${e.message}")
+            }
+
+            // Channel for task completions, execution failures, and message dispatches
+            val tasksChannel = NotificationChannel(
+                CHANNEL_TASKS,
+                context.getString(R.string.notification_channel_tasks),
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply {
+                description = context.getString(R.string.notification_channel_tasks_desc)
+                enableVibration(true)
+            }
+
+            // High-importance channel for reminder alarms and timer alerts
+            val remindersChannel = NotificationChannel(
+                CHANNEL_REMINDERS,
+                context.getString(R.string.notification_channel_reminders),
+                NotificationManager.IMPORTANCE_HIGH,
+            ).apply {
+                description = context.getString(R.string.notification_channel_reminders_desc)
+                enableVibration(true)
+            }
+
+            notificationManager.createNotificationChannels(listOf(tasksChannel, remindersChannel))
+        }
     }
 
     val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -90,7 +128,7 @@ class HelperApplication : Application() {
         }
 
         // 1. Register system notification channels required on Android 8.0 (API 26) and above
-        createNotificationChannels()
+        createNotificationChannels(this)
 
         // 1a. Ensure accessibility service component is active in PackageManager
         AccessibilityHealthManager.ensureServiceComponentEnabled(this)
@@ -149,43 +187,6 @@ class HelperApplication : Application() {
         } catch (e: Exception) {
             Log.d(TAG, "Cancel legacy notification: ${e.message}")
         }
-    }
-
-    /**
-     * Creates and configures the system notification channels with appropriate sound,
-     * vibration, and importance levels, while retiring obsolete legacy channels.
-     */
-    private fun createNotificationChannels() {
-        val notificationManager = getSystemService(NotificationManager::class.java) ?: return
-
-        // Retire legacy persistent service notification channel so no sticky notification remains
-        try {
-            notificationManager.deleteNotificationChannel(CHANNEL_SERVICE)
-        } catch (e: Exception) {
-            Log.d(TAG, "Delete legacy service channel: ${e.message}")
-        }
-
-        // Channel for task completions, execution failures, and message dispatches
-        val tasksChannel = NotificationChannel(
-            CHANNEL_TASKS,
-            getString(R.string.notification_channel_tasks),
-            NotificationManager.IMPORTANCE_HIGH,
-        ).apply {
-            description = getString(R.string.notification_channel_tasks_desc)
-            enableVibration(true)
-        }
-
-        // High-importance channel for reminder alarms and timer alerts
-        val remindersChannel = NotificationChannel(
-            CHANNEL_REMINDERS,
-            getString(R.string.notification_channel_reminders),
-            NotificationManager.IMPORTANCE_HIGH,
-        ).apply {
-            description = getString(R.string.notification_channel_reminders_desc)
-            enableVibration(true)
-        }
-
-        notificationManager.createNotificationChannels(listOf(tasksChannel, remindersChannel))
     }
 }
 

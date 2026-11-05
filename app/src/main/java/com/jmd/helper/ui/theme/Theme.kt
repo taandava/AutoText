@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.sp
 // ============================================================================
 
 /**
- * Standardized design constants and theme tokens for AutoText.
+ * Standardized design constants and theme tokens for Helper.
  */
 val AppDesignTokens = Material3DesignTokens
 
@@ -93,7 +93,7 @@ object OrangeBrandPalette {
 }
 
 /**
- * Material 3 Design Tokens for AutoText
+ * Material 3 Design Tokens for Helper
  * Compact, full-width, responsive, with an expressive Orange brand identity.
  */
 object Material3DesignTokens {
@@ -233,7 +233,7 @@ object Material3DesignTokens {
 // ============================================================================
 // 2. TYPOGRAPHY HIERARCHY (Compact, High Readability)
 // ============================================================================
-private val AutoTextTypography = Typography(
+private val HelperTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
@@ -436,7 +436,7 @@ val LightColorScheme = lightColorScheme(
 )
 
 /**
- * Top-level AutoText Theme Composable.
+ * Top-level Helper Theme Composable.
  * Supports SYSTEM (default), LIGHT, DARK, and Android 12+ Wallpaper Dynamic Color.
  */
 @Composable
@@ -476,7 +476,7 @@ fun HelperTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = AutoTextTypography,
+        typography = HelperTypography,
         shapes = Shapes(
             extraSmall = AppDesignTokens.ShapeXSmall,
             small = AppDesignTokens.ShapeSmall,

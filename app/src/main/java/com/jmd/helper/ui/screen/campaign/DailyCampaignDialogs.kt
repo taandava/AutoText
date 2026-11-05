@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -107,13 +108,19 @@ fun CreateDailyCampaignSheet(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = when (selectedChannel) {
-                            "WHATSAPP_BUSINESS" -> "💼"
-                            "WHATSAPP" -> "💬"
-                            else -> "📩"
+                    Icon(
+                        imageVector = when (selectedChannel) {
+                            "WHATSAPP_BUSINESS" -> Icons.Filled.BusinessCenter
+                            "WHATSAPP" -> Icons.AutoMirrored.Filled.Chat
+                            else -> Icons.AutoMirrored.Filled.Message
                         },
-                        fontSize = 18.sp
+                        contentDescription = null,
+                        tint = when (selectedChannel) {
+                            "WHATSAPP_BUSINESS" -> Color(0xFF0D9488)
+                            "WHATSAPP" -> Color(0xFF16A34A)
+                            else -> Color(0xFF2563EB)
+                        },
+                        modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
@@ -267,7 +274,7 @@ fun CreateDailyCampaignSheet(
                     onSave(newCfg)
                 },
                 variant = GlassButtonVariant.PRIMARY,
-                emoji = "🚀",
+                icon = Icons.Filled.RocketLaunch,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -335,7 +342,7 @@ fun DailyCampaignChannelSelectionDialog(
                     title = "SMS Daily Campaign",
                     badge = "Carrier Direct",
                     description = "Cellular SMS outreach via SIM card with dual SIM and India daily quota protection (100 SMS/day)",
-                    emoji = "📩",
+                    icon = Icons.AutoMirrored.Filled.Message,
                     accentColor = MaterialTheme.colorScheme.primary,
                     onClick = { onSelectChannel("SMS") }
                 )
@@ -345,8 +352,8 @@ fun DailyCampaignChannelSelectionDialog(
                     title = "WhatsApp Daily Campaign",
                     badge = "Personal 1-on-1",
                     description = "Send 1-on-1 personal messages to unique contacts with safe delay pacing",
-                    emoji = "💬",
-                    accentColor = MaterialTheme.colorScheme.tertiary,
+                    icon = Icons.AutoMirrored.Filled.Chat,
+                    accentColor = Color(0xFF16A34A),
                     onClick = { onSelectChannel("WHATSAPP") }
                 )
 
@@ -355,8 +362,8 @@ fun DailyCampaignChannelSelectionDialog(
                     title = "WhatsApp Business (W4B) Campaign",
                     badge = "Client Outreach",
                     description = "Client follow-ups via WhatsApp Business app (com.whatsapp.w4b) with paced delivery safeguards",
-                    emoji = "💼",
-                    accentColor = MaterialTheme.colorScheme.primary,
+                    icon = Icons.Filled.BusinessCenter,
+                    accentColor = Color(0xFF0D9488),
                     onClick = { onSelectChannel("WHATSAPP_BUSINESS") }
                 )
             }
@@ -369,7 +376,7 @@ private fun DailyChannelOptionCard(
     title: String,
     badge: String,
     description: String,
-    emoji: String,
+    icon: ImageVector,
     accentColor: Color,
     onClick: () -> Unit
 ) {
@@ -396,7 +403,12 @@ private fun DailyChannelOptionCard(
                     .border(1.dp, accentColor.copy(alpha = 0.5f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = emoji, fontSize = 20.sp)
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = accentColor,
+                    modifier = Modifier.size(22.dp)
+                )
             }
 
             Spacer(modifier = Modifier.width(12.dp))

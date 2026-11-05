@@ -131,14 +131,13 @@
         <!-- Screen-On / Keyguard Dismiss Dispatch Activity (Internal dispatch only) -->
         <activity android:name=".ui.activity.TaskLauncherActivity" android:exported="false" android:directBootAware="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:showOnLockScreen="true" android:showWhenLocked="true" android:turnScreenOn="true" android:excludeFromRecents="true" android:noHistory="true" android:launchMode="singleInstance" android:theme="@style/Theme.Helper.Transparent" />
 
-        <!-- Policy & Architecture Compliant Alias -->
-        <activity-alias android:name=".ui.activity.TaskLauncherActivity" android:targetActivity=".ui.activity.TaskLauncherActivity" android:exported="false" />
-
         <!-- Device Administration Receiver (Screen Lock Postcondition) -->
         <receiver android:name=".receiver.HelperDeviceAdminReceiver" android:label="@string/app_name" android:description="@string/device_admin_description" android:permission="android.permission.BIND_DEVICE_ADMIN" android:exported="true">
             <meta-data android:name="android.app.device_admin" android:resource="@xml/device_admin" />
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
             </intent-filter>
         </receiver>
 
@@ -229,6 +228,30 @@
         <!-- File Provider -->
         <provider android:name="androidx.core.content.FileProvider" android:authorities="com.jmd.helper.fileprovider" android:exported="false" android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Jetpack Glance App Widget Receiver -->
+        <receiver
+            android:name=".ui.widget.HelperAppWidgetReceiver"
+            android:label="@string/app_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/helper_appwidget_info" />
+        </receiver>
+
+        <!-- AndroidX Startup Initializer -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.jmd.helper.core.HelperAppInitializer"
+                android:value="androidx.startup" />
         </provider>
 
     </application>

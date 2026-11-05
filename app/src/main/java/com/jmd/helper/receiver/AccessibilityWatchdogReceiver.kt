@@ -34,7 +34,7 @@ class AccessibilityWatchdogReceiver : BroadcastReceiver() {
         val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
         val wakeLock = pm?.newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK,
-            "AutoText:WatchdogWakeLock"
+            "Helper:WatchdogWakeLock"
         )
         wakeLock?.acquire(2000L)
 

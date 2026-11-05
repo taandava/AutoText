@@ -8,6 +8,8 @@
  */
 package com.jmd.helper.ui.screen.logs
 
+import androidx.compose.material.icons.automirrored.filled.*
+
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -16,6 +18,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -102,9 +106,11 @@ fun LogDetailView(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = if (isSuccess) "✅" else if (isQueued) "⏳" else "❌",
-                        fontSize = 30.sp
+                    Icon(
+                        imageVector = if (isSuccess) Icons.Filled.CheckCircle else if (isQueued) Icons.Filled.HourglassTop else Icons.Filled.Cancel,
+                        contentDescription = null,
+                        tint = statusColor,
+                        modifier = Modifier.size(32.dp)
                     )
                     Spacer(modifier = Modifier.width(14.dp))
                     Column {
@@ -129,10 +135,23 @@ fun LogDetailView(
                         Text("Recipient:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                         Text(log.recipient, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                     }
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text("Channel:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
-                        val channelEmoji = if (log.channel.equals("SMS", ignoreCase = true)) "📩" else "💬"
-                        Text("$channelEmoji ${log.channel}", color = if (log.channel.equals("SMS", ignoreCase = true)) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                        val isSms = log.channel.equals("SMS", ignoreCase = true)
+                        val channelColor = if (isSms) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Icon(
+                                imageVector = if (isSms) Icons.AutoMirrored.Filled.Message else Icons.AutoMirrored.Filled.Chat,
+                                contentDescription = null,
+                                tint = channelColor,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Text(log.channel, color = channelColor, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                        }
                     }
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text("Task ID:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
@@ -158,7 +177,12 @@ fun LogDetailView(
                         com.jmd.helper.compat.ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("Dispatched Message", log.messageSnippet))
                         context.showAppToast("Message copied")
                     }) {
-                        Text("📋", fontSize = 18.sp)
+                        Icon(
+                            imageVector = Icons.Filled.ContentCopy,
+                            contentDescription = "Copy message",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.height(6.dp))
@@ -281,7 +305,7 @@ fun LogDetailView(
                                 }
                             }
                         },
-                        emoji = "🔄",
+                        icon = Icons.Filled.Refresh,
                         variant = GlassButtonVariant.PRIMARY,
                         enabled = !isRetrying,
                         modifier = Modifier.fillMaxWidth()

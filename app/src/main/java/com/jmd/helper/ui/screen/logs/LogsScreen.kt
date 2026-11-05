@@ -11,6 +11,8 @@
  */
 package com.jmd.helper.ui.screen.logs
 
+import androidx.compose.material.icons.automirrored.filled.*
+
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -21,6 +23,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -130,18 +136,33 @@ fun LogsView(
                 actions = {
                     IconButton(onClick = {
                         val dateStr = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-                        csvExportLauncher.launch("autotext_execution_logs_$dateStr.csv")
+                        csvExportLauncher.launch("helper_execution_logs_$dateStr.csv")
                     }) {
-                        Text("📥", fontSize = 18.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Download,
+                            contentDescription = "Export CSV",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                     IconButton(onClick = onNavigateToSystemLogs) {
-                        Text("📜", fontSize = 18.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Description,
+                            contentDescription = "System Logs",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                     IconButton(onClick = {
                         repository.clearLogs()
                         logs = emptyList()
                     }) {
-                        Text("🗑️", fontSize = 18.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Clear Logs",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
             )
@@ -161,19 +182,20 @@ fun LogsView(
                     .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                data class LogFilterChip(val key: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector)
                 listOf(
-                    Triple("ALL", "All (${logs.size})", "📊"),
-                    Triple("SMS", "SMS (${logs.count { it.channel.equals("SMS", ignoreCase = true) }})", "📩"),
-                    Triple("WHATSAPP", "WhatsApp (${logs.count { it.channel.contains("WHATSAPP", ignoreCase = true) }})", "💬"),
-                    Triple("CALLS", "Calls (${logs.count { it.channel.contains("CALL", ignoreCase = true) }})", "📞"),
-                    Triple("CAMPAIGNS", "Campaigns (${logs.count { it.details.contains("campaign", ignoreCase = true) || it.details.contains("pool", ignoreCase = true) || it.messageSnippet.contains("Daily", ignoreCase = true) }})", "🚀"),
-                    Triple("FAILED", "Failed (${logs.count { it.status.equals("FAILED", ignoreCase = true) || it.status.equals("QUEUED", ignoreCase = true) }})", "❌")
-                ).forEach { (key, label, chipEmoji) ->
+                    LogFilterChip("ALL", "All (${logs.size})", Icons.Filled.BarChart),
+                    LogFilterChip("SMS", "SMS (${logs.count { it.channel.equals("SMS", ignoreCase = true) }})", Icons.AutoMirrored.Filled.Message),
+                    LogFilterChip("WHATSAPP", "WhatsApp (${logs.count { it.channel.contains("WHATSAPP", ignoreCase = true) }})", Icons.AutoMirrored.Filled.Chat),
+                    LogFilterChip("CALLS", "Calls (${logs.count { it.channel.contains("CALL", ignoreCase = true) }})", Icons.Filled.Phone),
+                    LogFilterChip("CAMPAIGNS", "Campaigns (${logs.count { it.details.contains("campaign", ignoreCase = true) || it.details.contains("pool", ignoreCase = true) || it.messageSnippet.contains("Daily", ignoreCase = true) }})", Icons.Filled.RocketLaunch),
+                    LogFilterChip("FAILED", "Failed (${logs.count { it.status.equals("FAILED", ignoreCase = true) || it.status.equals("QUEUED", ignoreCase = true) }})", Icons.Filled.Cancel)
+                ).forEach { item ->
                     GlassChip(
-                        selected = selectedFilter == key,
-                        onClick = { selectedFilter = key },
-                        label = label,
-                        emoji = chipEmoji
+                        selected = selectedFilter == item.key,
+                        onClick = { selectedFilter = item.key },
+                        label = item.label,
+                        icon = item.icon
                     )
                 }
             }
@@ -182,7 +204,7 @@ fun LogsView(
                 AppEmptyState(
                     title = "No Execution Records",
                     description = "Sent, auto-replied, and scheduled messages will appear here.",
-                    emoji = "📜",
+                    icon = Icons.Filled.History,
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
@@ -206,10 +228,10 @@ fun LogsView(
                             isQueued -> MaterialTheme.colorScheme.primary
                             else -> MaterialTheme.colorScheme.error
                         }
-                        val statusEmoji = when {
-                            isSuccess -> "✅"
-                            isQueued -> "⏳"
-                            else -> "❌"
+                        val statusIcon = when {
+                            isSuccess -> Icons.Filled.CheckCircle
+                            isQueued -> Icons.Filled.HourglassTop
+                            else -> Icons.Filled.Cancel
                         }
 
                         AppCard(
@@ -220,8 +242,13 @@ fun LogsView(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Status Emoji
-                                Text(statusEmoji, fontSize = 20.sp)
+                                // Status Icon
+                                Icon(
+                                    imageVector = statusIcon,
+                                    contentDescription = log.status,
+                                    tint = statusColor,
+                                    modifier = Modifier.size(20.dp)
+                                )
 
                                 Spacer(modifier = Modifier.width(12.dp))
 
@@ -241,19 +268,19 @@ fun LogsView(
                                             modifier = Modifier.weight(1f, fill = false)
                                         )
                                         Spacer(modifier = Modifier.width(6.dp))
-                                        val (displayChannel, channelEmoji, channelColor) = when {
+                                        val (displayChannel, channelIcon, channelColor) = when {
                                             log.channel.contains("Call", ignoreCase = true) && log.channel.contains("Phone", ignoreCase = true) ->
-                                                Triple("Phone Call", "📞", MaterialTheme.colorScheme.primary)
+                                                Triple("Phone Call", Icons.Filled.Phone, MaterialTheme.colorScheme.primary)
                                             log.channel.contains("Call", ignoreCase = true) ->
-                                                Triple("WA Call", "📞", MaterialTheme.colorScheme.tertiary)
+                                                Triple("WA Call", Icons.Filled.PhoneInTalk, MaterialTheme.colorScheme.tertiary)
                                             log.channel.contains("Status", ignoreCase = true) ->
-                                                Triple("WA Status", "🌟", MaterialTheme.colorScheme.primary)
+                                                Triple("WA Status", Icons.Filled.AutoAwesome, MaterialTheme.colorScheme.primary)
                                             log.channel.contains("SMS", ignoreCase = true) ->
-                                                Triple("SMS", "📩", MaterialTheme.colorScheme.primary)
+                                                Triple("SMS", Icons.AutoMirrored.Filled.Message, MaterialTheme.colorScheme.primary)
                                             log.channel.contains("Business", ignoreCase = true) || log.channel.contains("w4b", ignoreCase = true) ->
-                                                Triple("W4B", "💼", MaterialTheme.colorScheme.tertiary)
+                                                Triple("W4B", Icons.Filled.BusinessCenter, MaterialTheme.colorScheme.tertiary)
                                             else ->
-                                                Triple("WhatsApp", "💬", MaterialTheme.colorScheme.tertiary)
+                                                Triple("WhatsApp", Icons.AutoMirrored.Filled.Chat, MaterialTheme.colorScheme.tertiary)
                                         }
                                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                                             Surface(
@@ -261,13 +288,24 @@ fun LogsView(
                                                 color = channelColor.copy(alpha = 0.15f),
                                                 border = BorderStroke(1.dp, channelColor.copy(alpha = 0.35f))
                                             ) {
-                                                Text(
-                                                    text = "$channelEmoji $displayChannel",
-                                                    color = channelColor,
-                                                    fontSize = 10.sp,
-                                                    fontWeight = FontWeight.Bold,
-                                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                                )
+                                                Row(
+                                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Icon(
+                                                        imageVector = channelIcon,
+                                                        contentDescription = null,
+                                                        tint = channelColor,
+                                                        modifier = Modifier.size(11.dp)
+                                                    )
+                                                    Spacer(modifier = Modifier.width(3.dp))
+                                                    Text(
+                                                        text = displayChannel,
+                                                        color = channelColor,
+                                                        fontSize = 10.sp,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                }
                                             }
                                             Surface(
                                                 shape = AppDesignTokens.ShapePill,
@@ -298,7 +336,12 @@ fun LogsView(
                                 }
 
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("➡️", fontSize = 14.sp)
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(14.dp)
+                                )
                             }
                         }
                     }

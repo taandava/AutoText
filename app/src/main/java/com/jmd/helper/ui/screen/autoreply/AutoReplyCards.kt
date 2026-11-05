@@ -2,6 +2,8 @@
 
 package com.jmd.helper.ui.screen.autoreply
 
+import androidx.compose.material.icons.automirrored.filled.*
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,9 +11,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EditNote
-import androidx.compose.material.icons.filled.Pin
-import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -55,28 +56,28 @@ fun AutoReplyRuleCard(
         else -> MaterialTheme.colorScheme.tertiary
     }
 
-    val (channelEmoji, channelText) = when (rule.channel) {
-        ChannelType.CALL -> "📞" to "Calls (SMS)"
-        ChannelType.SMS -> "📩" to "SMS"
-        ChannelType.WHATSAPP -> "💬" to "WhatsApp"
-        ChannelType.WHATSAPP_BUSINESS -> "💼" to "WA Business"
-        else -> "💬" to rule.channel.displayName
+    val (channelIcon, channelText) = when (rule.channel) {
+        ChannelType.CALL -> Icons.Filled.Phone to "Calls (SMS)"
+        ChannelType.SMS -> Icons.AutoMirrored.Filled.Message to "SMS"
+        ChannelType.WHATSAPP -> Icons.AutoMirrored.Filled.Chat to "WhatsApp"
+        ChannelType.WHATSAPP_BUSINESS -> Icons.Filled.BusinessCenter to "WA Business"
+        else -> Icons.AutoMirrored.Filled.Chat to rule.channel.displayName
     }
 
-    val (eventEmoji, eventBadgeText) = when (rule.channel) {
+    val (eventIcon, eventBadgeText) = when (rule.channel) {
         ChannelType.CALL -> when (rule.callEventType.uppercase()) {
-            "MISSED_CALL" -> "📞" to "Missed Call"
-            "CALL_ENDED" -> "📞" to "Call Ended"
-            else -> "📞" to "Missed & Ended"
+            "MISSED_CALL" -> Icons.AutoMirrored.Filled.PhoneMissed to "Missed Call"
+            "CALL_ENDED" -> Icons.Filled.CallEnd to "Call Ended"
+            else -> Icons.Filled.PhoneInTalk to "Missed & Ended"
         }
-        ChannelType.SMS -> "📩" to "Incoming SMS"
+        ChannelType.SMS -> Icons.AutoMirrored.Filled.Message to "Incoming SMS"
         ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS -> when (rule.callEventType.uppercase()) {
-            "MISSED_CALL" -> "📞" to "Missed Call"
-            "CALL_ENDED" -> "📞" to "Call Ended"
-            "MESSAGE" -> "💬" to "Message"
-            else -> "💬" to "All Events"
+            "MISSED_CALL" -> Icons.AutoMirrored.Filled.PhoneMissed to "Missed Call"
+            "CALL_ENDED" -> Icons.Filled.CallEnd to "Call Ended"
+            "MESSAGE" -> Icons.AutoMirrored.Filled.Chat to "Message"
+            else -> Icons.Filled.Forum to "All Events"
         }
-        else -> "💬" to rule.channel.displayName
+        else -> Icons.AutoMirrored.Filled.Chat to rule.channel.displayName
     }
 
     val replyMechanismText = when (rule.channel) {
@@ -106,14 +107,14 @@ fun AutoReplyRuleCard(
                 ) {
                     AppBadge(
                         text = channelText,
-                        emoji = channelEmoji,
+                        icon = channelIcon,
                         color = themeColor,
                         showDot = false
                     )
                     Spacer(modifier = Modifier.width(5.dp))
                     AppBadge(
                         text = eventBadgeText,
-                        emoji = eventEmoji,
+                        icon = eventIcon,
                         color = if (eventBadgeText.contains("Missed", ignoreCase = true)) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                         showDot = false
                     )
@@ -148,21 +149,30 @@ fun AutoReplyRuleCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (rule.channel in listOf(ChannelType.CALL, ChannelType.SMS)) {
-                    AppBadge(text = "Mobile Only", emoji = "📱", color = MaterialTheme.colorScheme.primary, showDot = false)
+                    AppBadge(text = "Mobile Only", icon = Icons.Filled.Smartphone, color = MaterialTheme.colorScheme.primary, showDot = false)
                 } else {
-                    AppBadge(text = "App Chat", emoji = "💬", color = themeColor, showDot = false)
+                    AppBadge(text = "App Chat", icon = Icons.AutoMirrored.Filled.Chat, color = themeColor, showDot = false)
                 }
                 AppBadge(
                     text = if (rule.maxDailyReplies <= 0) "Unlimited" else "Max ${rule.maxDailyReplies}x/day",
-                    emoji = "📊",
+                    icon = Icons.Filled.BarChart,
                     color = MaterialTheme.colorScheme.primary,
                     showDot = false
                 )
-                Text(
-                    text = "⏱️ ${rule.cooldownSeconds}s cooldown",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Filled.Schedule,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(13.dp)
+                    )
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(
+                        text = "${rule.cooldownSeconds}s cooldown",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
 
             // Message Snippet
@@ -198,7 +208,12 @@ fun AutoReplyRuleCard(
                     onClick = onDelete,
                     modifier = Modifier.size(28.dp)
                 ) {
-                    Text("🗑️", fontSize = 16.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(16.dp)
+                    )
                 }
             }
         }

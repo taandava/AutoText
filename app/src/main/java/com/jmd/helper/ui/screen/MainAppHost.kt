@@ -9,6 +9,8 @@
  */
 package com.jmd.helper.ui.screen
 
+import androidx.compose.material.icons.automirrored.filled.*
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -17,8 +19,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -149,16 +150,16 @@ fun MainAppHost(
                             delay(1500L.milliseconds)
                         }
                     }
-                    val appTitle = prefs.customAppName.ifBlank { "AutoText" }
+                    val appTitle = prefs.customAppName.ifBlank { "Helper" }
                     val iconVariant = prefs.appIconVariant
-                    val appEmoji = when (iconVariant) {
-                        "MESSENGER" -> "💬"
-                        "BUSINESS" -> "💼"
-                        "ROCKET" -> "🚀"
-                        "FIRE" -> "🔥"
-                        "DIAMOND" -> "💎"
-                        "ASSISTANT", "COMPANION", "BOT" -> "✨"
-                        else -> "⚡"
+                    val appIcon = when (iconVariant) {
+                        "MESSENGER" -> Icons.AutoMirrored.Filled.Chat
+                        "BUSINESS" -> Icons.Filled.BusinessCenter
+                        "ROCKET" -> Icons.Filled.RocketLaunch
+                        "FIRE" -> Icons.Filled.LocalFireDepartment
+                        "DIAMOND" -> Icons.Filled.Diamond
+                        "ASSISTANT", "COMPANION", "BOT" -> Icons.Filled.SmartToy
+                        else -> Icons.Filled.Bolt
                     }
                     val iconColor = when (iconVariant) {
                         "MESSENGER" -> MaterialTheme.colorScheme.primary
@@ -197,9 +198,11 @@ fun MainAppHost(
                                         .background(iconColor.copy(alpha = 0.15f)),
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    Text(
-                                        text = appEmoji,
-                                        fontSize = 16.sp,
+                                    Icon(
+                                        imageVector = appIcon,
+                                        contentDescription = null,
+                                        tint = iconColor,
+                                        modifier = Modifier.size(18.dp)
                                     )
                                 }
                                 Spacer(modifier = Modifier.width(7.dp))
@@ -298,14 +301,15 @@ fun MainAppHost(
                         tonalElevation = 2.dp
                     ) {
                     val navItems = listOf(
-                        Triple(0, "Tasks", "📅"),
-                        Triple(1, "Campaigns", "🚀"),
-                        Triple(2, "Auto-Reply", "💬"),
-                        Triple(3, "Tools", "⚙️")
+                        Triple(0, "Tasks", Icons.Filled.Schedule to Color(0xFF2563EB)),
+                        Triple(1, "Campaigns", Icons.Filled.RocketLaunch to Color(0xFFEF4444)),
+                        Triple(2, "Auto-Reply", Icons.Filled.Quickreply to Color(0xFF16A34A)),
+                        Triple(3, "Tools", Icons.Filled.Tune to Color(0xFF8B5CF6))
                     )
 
-                    navItems.forEach { (tabIndex, title, emoji) ->
+                    navItems.forEach { (tabIndex, title, iconPair) ->
                         val isSelected = currentTab == tabIndex
+                        val (iconVector, activeColor) = iconPair
                         NavigationBarItem(
                             selected = isSelected,
                             alwaysShowLabel = true,
@@ -322,9 +326,11 @@ fun MainAppHost(
                                 currentTab = tabIndex
                             },
                             icon = {
-                                Text(
-                                    text = emoji,
-                                    fontSize = 19.sp
+                                Icon(
+                                    imageVector = iconVector,
+                                    contentDescription = title,
+                                    tint = if (isSelected) activeColor else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(22.dp)
                                 )
                             },
                             label = {
@@ -336,9 +342,9 @@ fun MainAppHost(
                                 )
                             },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                selectedTextColor = MaterialTheme.colorScheme.primary,
-                                indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedIconColor = activeColor,
+                                selectedTextColor = activeColor,
+                                indicatorColor = activeColor.copy(alpha = 0.15f),
                                 unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -375,12 +381,21 @@ fun MainAppHost(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                "🛑 EMERGENCY STOP ACTIVE — Tasks paused",
-                                color = MaterialTheme.colorScheme.onErrorContainer,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Filled.StopCircle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    "EMERGENCY STOP ACTIVE — Tasks paused",
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                             Button(
                                 onClick = {
                                     com.jmd.helper.core.TaskSafetyManager.resetEmergencyStop(context)

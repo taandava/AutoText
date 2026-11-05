@@ -180,6 +180,7 @@ fun AppBadge(
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
     showDot: Boolean = true,
+    icon: ImageVector? = null,
     emoji: String? = null
 ) {
     val effectiveColor = if (color != Color.Unspecified) color else MaterialTheme.colorScheme.primary
@@ -191,7 +192,15 @@ fun AppBadge(
             .padding(horizontal = 8.dp, vertical = 2.5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (!emoji.isNullOrEmpty()) {
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = effectiveColor,
+                modifier = Modifier.size(12.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+        } else if (!emoji.isNullOrEmpty()) {
             Text(
                 text = emoji,
                 fontSize = 11.5.sp
@@ -325,16 +334,16 @@ fun GlassChip(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            if (!emoji.isNullOrEmpty()) {
-                Text(text = emoji, fontSize = 13.sp)
-                Spacer(modifier = Modifier.width(4.dp))
-            } else if (icon != null) {
+            if (icon != null) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = if (selected) effectiveActive else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(13.dp)
                 )
+                Spacer(modifier = Modifier.width(4.dp))
+            } else if (!emoji.isNullOrEmpty()) {
+                Text(text = emoji, fontSize = 13.sp)
                 Spacer(modifier = Modifier.width(4.dp))
             }
             Text(
@@ -616,15 +625,15 @@ fun AppStatCard(
         backgroundColor = MaterialTheme.colorScheme.surfaceContainerLow,
         onClick = onClick
     ) {
-        if (!emoji.isNullOrEmpty()) {
-            Text(text = emoji, fontSize = 18.sp)
-        } else if (icon != null) {
+        if (icon != null) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = iconTint,
                 modifier = Modifier.size(18.dp)
             )
+        } else if (!emoji.isNullOrEmpty()) {
+            Text(text = emoji, fontSize = 18.sp)
         }
         Spacer(modifier = Modifier.height(2.dp))
         Text(
@@ -680,15 +689,23 @@ fun AppEmptyState(
                 .padding(vertical = 12.dp, horizontal = AppDesignTokens.CardPaddingH),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!emoji.isNullOrEmpty()) {
+            if (icon != null) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            } else if (!emoji.isNullOrEmpty()) {
                 Text(text = emoji, fontSize = 26.sp)
-            } else if (icon != null) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(22.dp)
-                )
             }
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -739,7 +756,6 @@ fun AppDialogCard(
  * bold title, optional subtitle, back navigation, and customizable actions.
  */
 @Composable
-@Suppress("ComposableLambdaParameterNaming")
 fun AppSubScreenHeader(
     title: String,
     onBack: () -> Unit,

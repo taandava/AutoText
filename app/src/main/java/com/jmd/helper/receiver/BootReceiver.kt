@@ -52,7 +52,7 @@ class BootReceiver : BroadcastReceiver() {
 
                 val wakeLock = pm?.newWakeLock(
                     PowerManager.PARTIAL_WAKE_LOCK,
-                    "AutoText:BootUnlockWakeLock"
+                    "Helper:BootUnlockWakeLock"
                 )
                 wakeLock?.acquire(15000L)
 

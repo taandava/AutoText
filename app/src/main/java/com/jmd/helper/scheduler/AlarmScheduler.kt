@@ -155,7 +155,7 @@ class AlarmScheduler(private val context: Context) {
 
     /**
      * Dismisses the device-level system alarm from Android's system clock app using [AlarmClock.ACTION_DISMISS_ALARM].
-     * Specifically matches ONLY the exact unique label set for this task (`AutoText #<id>: ...`)
+     * Specifically matches ONLY the exact unique label set for this task (`Helper #<id>: ...`)
      * using [AlarmClock.ALARM_SEARCH_MODE_LABEL], strictly preserving all other user-configured alarms.
      *
      * @param task Target reminder task to dismiss from system clock.
@@ -243,7 +243,7 @@ class AlarmScheduler(private val context: Context) {
 
         /**
          * Generates a unique, non-colliding system alarm label identifying this exact task.
-         * Prepends `AutoText #<id>: ` to ensure searches specifically match only alarms
+         * Prepends `Helper #<id>: ` to ensure searches specifically match only alarms
          * scheduled by this application and never dismiss user personal alarms.
          *
          * @param task Target [ScheduledTask].
@@ -252,7 +252,7 @@ class AlarmScheduler(private val context: Context) {
         @JvmStatic
         fun getSystemAlarmLabel(task: ScheduledTask): String {
             val cleanTitle = task.title.ifBlank { task.messageText.ifBlank { "Reminder" } }.trim()
-            return "AutoText #${task.id}: $cleanTitle"
+            return "Helper #${task.id}: $cleanTitle"
         }
 
         /**

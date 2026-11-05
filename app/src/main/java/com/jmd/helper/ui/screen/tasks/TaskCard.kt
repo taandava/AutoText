@@ -7,8 +7,13 @@
  */
 package com.jmd.helper.ui.screen.tasks
 
+import androidx.compose.material.icons.automirrored.filled.*
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +31,7 @@ import com.jmd.helper.data.model.ScheduledTask
 import com.jmd.helper.data.model.TaskStatus
 import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.AppDesignTokens
+import com.jmd.helper.ui.theme.MaterialIconMapper
 
 /**
  * Interactive card displaying an individual scheduled task with channel badge, schedule timestamp,
@@ -48,32 +54,10 @@ fun TaskCard(
     val currentLocale = LocalLocale.current.platformLocale
     val dateStr = SimpleDateFormat("EEE, dd MMM • hh:mm a", currentLocale).format(Date(task.triggerTimeMillis))
 
-    val (channelColor, channelEmoji) = when (task.channel) {
-        ChannelType.SMS -> MaterialTheme.colorScheme.primary to "📩"
-        ChannelType.WHATSAPP -> MaterialTheme.colorScheme.tertiary to "💬"
-        ChannelType.WHATSAPP_BUSINESS -> MaterialTheme.colorScheme.secondary to "💼"
-        ChannelType.WHATSAPP_GROUP -> MaterialTheme.colorScheme.tertiary to "👥"
-        ChannelType.WHATSAPP_STATUS -> MaterialTheme.colorScheme.primary to "📸"
-        ChannelType.WHATSAPP_BUSINESS_STATUS -> MaterialTheme.colorScheme.primary to "📸💼"
-        ChannelType.CALL -> MaterialTheme.colorScheme.primary to "📞"
-        ChannelType.WHATSAPP_CALL -> MaterialTheme.colorScheme.tertiary to "📞"
-        ChannelType.WHATSAPP_BUSINESS_CALL -> MaterialTheme.colorScheme.secondary to "📞💼"
-        ChannelType.CALL_SIMULATION -> MaterialTheme.colorScheme.error to "🎭"
-        ChannelType.REMINDER -> MaterialTheme.colorScheme.primary to "⏰"
-        ChannelType.SOUND_MODE -> MaterialTheme.colorScheme.secondary to "🔊"
-    }
-
-    val (statusColor, statusEmoji) = when (task.status) {
-        TaskStatus.DRAFT -> MaterialTheme.colorScheme.outline to "📝"
-        TaskStatus.VALIDATING -> MaterialTheme.colorScheme.secondary to "🔍"
-        TaskStatus.READY -> MaterialTheme.colorScheme.primary to "✨"
-        TaskStatus.SCHEDULED, TaskStatus.PENDING -> MaterialTheme.colorScheme.primary to "⏱️"
-        TaskStatus.RUNNING -> MaterialTheme.colorScheme.tertiary to "⚡"
-        TaskStatus.SUCCESS, TaskStatus.DONE -> MaterialTheme.colorScheme.tertiary to "✅"
-        TaskStatus.FAILED -> MaterialTheme.colorScheme.error to "❌"
-        TaskStatus.PAUSED, TaskStatus.CANCELLED -> MaterialTheme.colorScheme.outline to "⏸️"
-        TaskStatus.PENDING_CONFIRMATION -> MaterialTheme.colorScheme.secondary to "⏳"
-    }
+    val channelColor = MaterialIconMapper.channelColor(task.channel)
+    val channelIcon = MaterialIconMapper.channelIcon(task.channel)
+    val statusColor = MaterialIconMapper.statusColor(task.status)
+    val statusIcon = MaterialIconMapper.statusIcon(task.status)
 
     AppCard(
         modifier = Modifier.fillMaxWidth(),
@@ -93,13 +77,13 @@ fun TaskCard(
                 ) {
                     AppBadge(
                         text = task.channel.displayName,
-                        emoji = channelEmoji,
+                        icon = channelIcon,
                         color = channelColor,
                         showDot = false
                     )
                     AppBadge(
                         text = task.status.displayName,
-                        emoji = statusEmoji,
+                        icon = statusIcon,
                         color = statusColor,
                         showDot = false
                     )
@@ -136,7 +120,12 @@ fun TaskCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(vertical = 2.dp)
                 ) {
-                    Text(if (isVid) "🎥" else "📸", fontSize = 14.sp)
+                    Icon(
+                        imageVector = if (isVid) Icons.Filled.Videocam else Icons.Filled.PhotoCamera,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(15.dp)
+                    )
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         if (isVid) "Video Media Attached" else "Photo Media Attached",
@@ -187,7 +176,12 @@ fun TaskCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 2.dp)
                 ) {
-                    Text("⏰", fontSize = 13.sp)
+                    Icon(
+                        imageVector = Icons.Filled.Alarm,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(15.dp)
+                    )
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = "Local Device Alarm • Text-to-Speech",
@@ -202,7 +196,12 @@ fun TaskCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 2.dp)
                 ) {
-                    Text("👤", fontSize = 13.sp)
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(14.dp)
+                    )
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = task.recipients.joinToString(", "),
@@ -223,7 +222,12 @@ fun TaskCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("🔁", fontSize = 13.sp)
+                    Icon(
+                        imageVector = Icons.Filled.Repeat,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(14.dp)
+                    )
                     Spacer(modifier = Modifier.width(4.dp))
                     val recurrenceLabel = when (task.recurrence) {
                         RecurrenceType.ONCE -> "Once"
@@ -253,7 +257,7 @@ fun TaskCard(
                                 text = "Send Now",
                                 onClick = onRunNow,
                                 variant = GlassButtonVariant.SUCCESS,
-                                emoji = "🚀",
+                                icon = Icons.AutoMirrored.Filled.Send,
                                 modifier = Modifier.height(28.dp),
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 3.dp),
                                 shape = AppDesignTokens.ShapePill
@@ -264,7 +268,7 @@ fun TaskCard(
                                 text = "Resolve",
                                 onClick = onRunNow,
                                 variant = GlassButtonVariant.SECONDARY,
-                                emoji = "⏳",
+                                icon = Icons.Filled.HourglassTop,
                                 modifier = Modifier.height(28.dp),
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 3.dp),
                                 shape = AppDesignTokens.ShapePill
@@ -275,7 +279,7 @@ fun TaskCard(
                                 text = "Retry",
                                 onClick = onRunNow,
                                 variant = GlassButtonVariant.PRIMARY,
-                                emoji = "🔄",
+                                icon = Icons.Filled.Refresh,
                                 modifier = Modifier.height(28.dp),
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 3.dp),
                                 shape = AppDesignTokens.ShapePill
@@ -288,7 +292,12 @@ fun TaskCard(
                         onClick = onDelete,
                         modifier = Modifier.size(36.dp)
                     ) {
-                        Text("🗑️", fontSize = 18.sp)
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Delete",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 }
             }

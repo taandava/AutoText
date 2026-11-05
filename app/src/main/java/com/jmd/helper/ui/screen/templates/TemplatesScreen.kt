@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.FormatQuote
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -79,7 +81,11 @@ fun TemplatesView(repository: AppRepository, onBack: () -> Unit) {
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.White
                     ) {
-                        Text("➕", fontSize = 18.sp)
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add Template",
+                            tint = Color.White
+                        )
                     }
                 }
             },
@@ -102,8 +108,8 @@ fun TemplatesView(repository: AppRepository, onBack: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     com.jmd.helper.ui.components.GlassButton(
-                        text = "Load Starter India Templates 🇮🇳",
-                        emoji = "✨",
+                        text = "Load Starter India Templates",
+                        icon = Icons.Filled.AutoAwesome,
                         variant = com.jmd.helper.ui.components.GlassButtonVariant.PRIMARY,
                         onClick = {
                             val starters = listOf(

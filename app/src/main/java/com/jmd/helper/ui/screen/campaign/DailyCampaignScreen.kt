@@ -227,7 +227,7 @@ fun DailyAutoSenderScreen(
                     ) {
                         GlassButton(
                             text = if (isScanning) "Syncing..." else "Sync Pool",
-                            emoji = "🔄",
+                            icon = Icons.Filled.Refresh,
                             variant = GlassButtonVariant.SECONDARY,
                             isLoading = isScanning,
                             onClick = {
@@ -252,7 +252,7 @@ fun DailyAutoSenderScreen(
                         )
                         GlassButton(
                             text = "New Campaign",
-                            emoji = "➕",
+                            icon = Icons.Filled.Add,
                             variant = GlassButtonVariant.PRIMARY,
                             onClick = {
                                 showSelectChannelDialog = true

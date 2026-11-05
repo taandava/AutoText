@@ -361,7 +361,7 @@ class DailyCampaignWorker(
                                 status = "SUCCESS",
                                 messageSnippet = message.take(80),
                                 attempt = item.waSendCount + attemptsMade,
-                                details = "Batch campaign dispatch delivered via AutoText Service (attempt $attemptsMade)"
+                                details = "Batch campaign dispatch delivered via Helper Service (attempt $attemptsMade)"
                             )
                         }
                         TaskAccessibilityService.RESULT_INVALID -> {

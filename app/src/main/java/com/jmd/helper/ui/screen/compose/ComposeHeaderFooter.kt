@@ -47,7 +47,12 @@ fun ComposeTopHeader(
                     onClick = onCancel,
                     modifier = Modifier.size(32.dp)
                 ) {
-                    Text("❌", fontSize = 16.sp)
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Cancel",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
@@ -65,19 +70,11 @@ fun ComposeTopHeader(
                 }
             }
 
-            val channelColor = when (selectedChannel) {
-                ChannelType.SMS -> MaterialTheme.colorScheme.primary
-                ChannelType.WHATSAPP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL -> MaterialTheme.colorScheme.tertiary
-                ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> MaterialTheme.colorScheme.secondary
-                ChannelType.CALL, ChannelType.REMINDER -> MaterialTheme.colorScheme.primary
-                ChannelType.CALL_SIMULATION -> MaterialTheme.colorScheme.error
-                ChannelType.SOUND_MODE -> MaterialTheme.colorScheme.primary
-                else -> MaterialTheme.colorScheme.primary
-            }
             AppBadge(
                 text = selectedChannel.displayName,
-                emoji = selectedChannel.emoji,
-                color = channelColor
+                icon = MaterialIconMapper.channelIcon(selectedChannel),
+                color = MaterialIconMapper.channelColor(selectedChannel),
+                showDot = false
             )
         }
     }
@@ -118,7 +115,7 @@ fun ComposeBottomBar(
                 text = "Cancel",
                 onClick = onCancel,
                 variant = GlassButtonVariant.SECONDARY,
-                emoji = "❌",
+                icon = Icons.Filled.Close,
                 modifier = Modifier.weight(1f)
             )
 
@@ -127,7 +124,7 @@ fun ComposeBottomBar(
                     text = "Delete",
                     onClick = onDelete,
                     variant = GlassButtonVariant.DANGER,
-                    emoji = "🗑️",
+                    icon = Icons.Filled.DeleteOutline,
                     modifier = Modifier.weight(1.1f)
                 )
             }
@@ -136,7 +133,7 @@ fun ComposeBottomBar(
                 text = if (isEditing) "Save Changes" else "Schedule Task",
                 onClick = onSave,
                 variant = GlassButtonVariant.PRIMARY,
-                emoji = if (isEditing) "✅" else "⏰",
+                icon = if (isEditing) Icons.Filled.Check else Icons.Filled.Schedule,
                 modifier = Modifier.weight(1.8f)
             )
         }

@@ -13,6 +13,8 @@
  */
 package com.jmd.helper.ui.screen
 
+import androidx.compose.material.icons.automirrored.filled.*
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -64,89 +66,89 @@ fun TaskTypeSelectionDialog(
         TaskTypeItem(
             title = "SMS Message",
             description = "Schedule direct SMS via device SIM card",
-            emoji = "📩",
+            icon = Icons.AutoMirrored.Filled.Message,
             color = MaterialTheme.colorScheme.primary,
             channel = ChannelType.SMS,
         ),
         TaskTypeItem(
             title = "WhatsApp Chat",
             description = "Send WhatsApp messages with optional media attachments",
-            emoji = "💬",
-            color = MaterialTheme.colorScheme.tertiary,
+            icon = Icons.AutoMirrored.Filled.Chat,
+            color = Color(0xFF16A34A),
             channel = ChannelType.WHATSAPP,
         ),
         TaskTypeItem(
             title = "WhatsApp Business",
             description = "Send WhatsApp Business direct messages with media",
-            emoji = "💼",
-            color = MaterialTheme.colorScheme.secondary,
+            icon = Icons.Filled.BusinessCenter,
+            color = Color(0xFF0D9488),
             channel = ChannelType.WHATSAPP_BUSINESS,
         ),
         TaskTypeItem(
             title = "WhatsApp Group",
             description = "Send WhatsApp group messages or announcements",
-            emoji = "👥",
-            color = MaterialTheme.colorScheme.tertiary,
+            icon = Icons.Filled.Groups,
+            color = Color(0xFF059669),
             channel = ChannelType.WHATSAPP_GROUP,
         ),
         TaskTypeItem(
             title = "Status Story",
             description = "Schedule auto-posting text or photo/video stories to Status",
-            emoji = "📸",
-            color = MaterialTheme.colorScheme.primary,
+            icon = Icons.Filled.PhotoCamera,
+            color = Color(0xFF7C3AED),
             channel = null,
             isStatus = true,
         ),
         TaskTypeItem(
             title = "Phone Call",
             description = "Schedule direct phone call via device SIM card to specified destinations",
-            emoji = "📞",
-            color = MaterialTheme.colorScheme.primary,
+            icon = Icons.Filled.Phone,
+            color = Color(0xFF10B981),
             channel = ChannelType.CALL,
         ),
         TaskTypeItem(
             title = "WhatsApp Call",
             description = "Schedule WhatsApp voice call to selected contact",
-            emoji = "📞",
-            color = MaterialTheme.colorScheme.tertiary,
+            icon = Icons.Filled.PhoneInTalk,
+            color = Color(0xFF06B6D4),
             channel = null,
             isWaCall = true,
         ),
         TaskTypeItem(
             title = "Call Simulation",
             description = "Simulate incoming call alert with custom caller name and ring style",
-            emoji = "🎭",
-            color = MaterialTheme.colorScheme.error,
+            icon = Icons.AutoMirrored.Filled.PhoneForwarded,
+            color = Color(0xFFD97706),
             channel = ChannelType.CALL_SIMULATION,
         ),
         TaskTypeItem(
             title = "Contact Sequence (Multi-Task)",
             description = "Step-by-step drip messages for a contact across SMS & WhatsApp",
-            emoji = "🔗",
-            color = MaterialTheme.colorScheme.primary,
+            icon = Icons.Filled.LinearScale,
+            color = Color(0xFFF57C00),
             channel = null,
             isSequence = true,
         ),
         TaskTypeItem(
             title = "Daily Auto Campaign",
             description = "High-speed paced outreach batch with 10-second intervals",
-            emoji = "⚡",
-            color = MaterialTheme.colorScheme.primary,
+            icon = Icons.Filled.RocketLaunch,
+            color = Color(0xFFEF4444),
             channel = null,
             isDailyCampaign = true,
         ),
         TaskTypeItem(
             title = "Alarm / Reminder",
             description = "Local on-device audio alarm and reminder notification",
-            emoji = "⏰",
-            color = MaterialTheme.colorScheme.primary,
+            icon = Icons.Filled.Alarm,
+            color = Color(0xFFE11D48),
             channel = ChannelType.REMINDER,
         ),
         TaskTypeItem(
             title = "Sound Mode Switcher",
             description = "Switch between Silent, Vibrate, and Normal sound",
-            emoji = "🔊",
-            color = MaterialTheme.colorScheme.secondary,
+            icon = Icons.AutoMirrored.Filled.VolumeUp,
+            color = Color(0xFFEA580C),
             channel = ChannelType.SOUND_MODE,
         ),
     )
@@ -236,8 +238,8 @@ fun TaskTypeSelectionDialog(
                                 title = "WhatsApp Status",
                                 description = "Auto-post text or photo/video stories to personal WhatsApp",
                                 badge = "Personal",
-                                emoji = "📸",
-                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = Icons.Filled.PhotoCamera,
+                                color = Color(0xFF16A34A),
                                 onClick = {
                                     onSelectChannel(ChannelType.WHATSAPP_STATUS)
                                 }
@@ -247,8 +249,8 @@ fun TaskTypeSelectionDialog(
                                 title = "WhatsApp Business Status",
                                 description = "Auto-post text or media updates to WhatsApp Business (W4B)",
                                 badge = "Business",
-                                emoji = "💼",
-                                color = MaterialTheme.colorScheme.secondary,
+                                icon = Icons.Filled.Camera,
+                                color = Color(0xFF0D9488),
                                 onClick = {
                                     onSelectChannel(ChannelType.WHATSAPP_BUSINESS_STATUS)
                                 }
@@ -265,7 +267,7 @@ fun TaskTypeSelectionDialog(
                                 title = "SMS Message Sequence",
                                 description = "Step-by-step drip messages via device SIM card (Carrier Direct)",
                                 badge = "SIM Direct",
-                                emoji = "📩",
+                                icon = Icons.AutoMirrored.Filled.Message,
                                 color = MaterialTheme.colorScheme.primary,
                                 onClick = {
                                     onSelectSequence(ChannelType.SMS)
@@ -276,8 +278,8 @@ fun TaskTypeSelectionDialog(
                                 title = "WhatsApp Sequence",
                                 description = "Multi-step scheduled messages via personal WhatsApp",
                                 badge = "Personal WA",
-                                emoji = "💬",
-                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = Icons.AutoMirrored.Filled.Chat,
+                                color = Color(0xFF16A34A),
                                 onClick = {
                                     onSelectSequence(ChannelType.WHATSAPP)
                                 }
@@ -287,8 +289,8 @@ fun TaskTypeSelectionDialog(
                                 title = "WhatsApp Business (W4B) Sequence",
                                 description = "Client outreach and paced follow-up sequence via WhatsApp Business",
                                 badge = "Business W4B",
-                                emoji = "💼",
-                                color = MaterialTheme.colorScheme.secondary,
+                                icon = Icons.Filled.BusinessCenter,
+                                color = Color(0xFF0D9488),
                                 onClick = {
                                     onSelectSequence(ChannelType.WHATSAPP_BUSINESS)
                                 }
@@ -305,8 +307,8 @@ fun TaskTypeSelectionDialog(
                                 title = "WhatsApp Voice Call",
                                 description = "Direct VoIP voice call via personal WhatsApp Messenger",
                                 badge = "Personal",
-                                emoji = "📞",
-                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = Icons.Filled.PhoneInTalk,
+                                color = Color(0xFF16A34A),
                                 onClick = {
                                     onSelectChannel(ChannelType.WHATSAPP_CALL)
                                 }
@@ -316,8 +318,8 @@ fun TaskTypeSelectionDialog(
                                 title = "WhatsApp Business Voice Call",
                                 description = "Direct VoIP voice call via WhatsApp Business (W4B)",
                                 badge = "Business",
-                                emoji = "💼",
-                                color = MaterialTheme.colorScheme.secondary,
+                                icon = Icons.Filled.ContactPhone,
+                                color = Color(0xFF0D9488),
                                 onClick = {
                                     onSelectChannel(ChannelType.WHATSAPP_BUSINESS_CALL)
                                 }
@@ -372,9 +374,11 @@ fun TaskTypeSelectionDialog(
                                                 .background(item.color.copy(alpha = 0.12f)),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            Text(
-                                                text = item.emoji,
-                                                fontSize = 18.sp
+                                            Icon(
+                                                imageVector = item.icon ?: Icons.AutoMirrored.Filled.Send,
+                                                contentDescription = null,
+                                                tint = item.color,
+                                                modifier = Modifier.size(20.dp)
                                             )
                                         }
 
@@ -417,7 +421,7 @@ private fun DialogOptionTile(
     title: String,
     description: String,
     badge: String,
-    emoji: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
     color: Color,
     onClick: () -> Unit
 ) {
@@ -443,7 +447,12 @@ private fun DialogOptionTile(
                     .background(color.copy(alpha = 0.12f)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = emoji, fontSize = 20.sp)
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(22.dp)
+                )
             }
 
             Spacer(modifier = Modifier.width(12.dp))

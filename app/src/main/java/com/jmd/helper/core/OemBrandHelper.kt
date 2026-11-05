@@ -209,7 +209,7 @@ object OemBrandHelper {
                 intents.add(Intent().apply {
                     component = ComponentName("com.miui.powerkeeper", "com.miui.powerkeeper.ui.HiddenAppsConfigActivity")
                     putExtra("package_name", pkg)
-                    putExtra("package_label", "AutoText")
+                    putExtra("package_label", "Helper")
                 })
                 intents.add(Intent("miui.intent.action.APP_PERM_EDITOR").apply {
                     setClassName("com.miui.securitycenter", "com.miui.permcenter.permissions.PermissionsEditorActivity")
@@ -298,8 +298,8 @@ object OemBrandHelper {
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(intent)
                 return true
-            } catch (_: Exception) {
-                // Continue to next fallback
+            } catch (e: Exception) {
+                AppFileLogger.d(context, "OemBrandHelper", "OEM background intent fallback: ${e.message}")
             }
         }
         return false
@@ -425,69 +425,69 @@ object OemBrandHelper {
 
     /**
      * Step-by-step user instructions customized to the detected device brand for keeping
-     * AutoText alive in the background and granting autostart privileges.
+     * Helper alive in the background and granting autostart privileges.
      */
     fun getOemGuidance(): List<String> {
         return when (currentBrand) {
             OemBrand.VIVO -> listOf(
-                "1. Open Settings > Battery > 'Background power consumption' > Find AutoText and select 'High background power consumption'.",
-                "2. Open Settings > More settings > Permission management > 'Autostart' > Enable AutoText.",
-                "3. In Recent Apps overview, tap the three dots (⋮) or pull down on AutoText > Tap 'Lock' so the padlock appears.",
+                "1. Open Settings > Battery > 'Background power consumption' > Find Helper and select 'High background power consumption'.",
+                "2. Open Settings > More settings > Permission management > 'Autostart' > Enable Helper.",
+                "3. In Recent Apps overview, tap the three dots (⋮) or pull down on Helper > Tap 'Lock' so the padlock appears.",
                 "4. Enable 'Floating window' / 'Display over other apps' in Settings > More Settings > Permission management."
             )
             OemBrand.SAMSUNG -> listOf(
-                "1. Open Settings > Apps > AutoText > Battery > Select 'Unrestricted'.",
-                "2. Open Settings > Battery > 'Background usage limits' > 'Never sleeping apps' > Tap '+' and add AutoText.",
-                "3. In Recent Apps (||| button), tap the AutoText app icon at the top of the card > Tap 'Keep open' (padlock icon).",
+                "1. Open Settings > Apps > Helper > Battery > Select 'Unrestricted'.",
+                "2. Open Settings > Battery > 'Background usage limits' > 'Never sleeping apps' > Tap '+' and add Helper.",
+                "3. In Recent Apps (||| button), tap the Helper app icon at the top of the card > Tap 'Keep open' (padlock icon).",
                 "4. Settings > Battery > More battery settings > Turn OFF 'Put unused apps to sleep'."
             )
             OemBrand.XIAOMI -> listOf(
-                "1. Open Security app > Manage apps > AutoText > Turn ON 'Autostart'.",
-                "2. In the same AutoText screen > Battery saver > Choose 'No restrictions'.",
+                "1. Open Security app > Manage apps > Helper > Turn ON 'Autostart'.",
+                "2. In the same Helper screen > Battery saver > Choose 'No restrictions'.",
                 "3. In Other permissions > Enable 'Display pop-up windows while running in the background'.",
-                "4. In Recent Apps screen > Long-press the AutoText card > Tap the Padlock icon to lock it in RAM."
+                "4. In Recent Apps screen > Long-press the Helper card > Tap the Padlock icon to lock it in RAM."
             )
             OemBrand.OPPO, OemBrand.REALME -> listOf(
-                "1. Open Settings > Battery > More battery settings > App battery management > AutoText > Enable 'Allow background activity' and 'Allow auto-launch'.",
-                "2. In Phone Manager / Safecenter > Privacy permissions > Startup manager > Ensure AutoText is ON.",
-                "3. In Recent Apps overview > Tap the three dots (⋮) on AutoText > Select 'Lock'.",
-                "4. Settings > Special app access > Display over other apps > Allow AutoText."
+                "1. Open Settings > Battery > More battery settings > App battery management > Helper > Enable 'Allow background activity' and 'Allow auto-launch'.",
+                "2. In Phone Manager / Safecenter > Privacy permissions > Startup manager > Ensure Helper is ON.",
+                "3. In Recent Apps overview > Tap the three dots (⋮) on Helper > Select 'Lock'.",
+                "4. Settings > Special app access > Display over other apps > Allow Helper."
             )
             OemBrand.ONEPLUS -> listOf(
-                "1. Open Settings > Battery > Battery usage > AutoText > Set to 'Don't optimize' (Unrestricted).",
-                "2. Open Settings > Apps > Auto-launch > Enable AutoText.",
-                "3. In Recent Apps > Tap three dots (⋮) on AutoText > Select 'Lock'.",
+                "1. Open Settings > Battery > Battery usage > Helper > Set to 'Don't optimize' (Unrestricted).",
+                "2. Open Settings > Apps > Auto-launch > Enable Helper.",
+                "3. In Recent Apps > Tap three dots (⋮) on Helper > Select 'Lock'.",
                 "4. Settings > Apps > Special app access > Display over other apps > Ensure enabled."
             )
             OemBrand.MOTOROLA -> listOf(
-                "1. Open Settings > Apps > AutoText > Battery > Select 'Unrestricted'.",
-                "2. Open Settings > Battery > Adaptive Battery > Tap 'Exempt apps' and add AutoText.",
+                "1. Open Settings > Apps > Helper > Battery > Select 'Unrestricted'.",
+                "2. Open Settings > Battery > Adaptive Battery > Tap 'Exempt apps' and add Helper.",
                 "3. In Settings > Apps > Special app access > Display over other apps > Verify granted.",
-                "4. In Recent Apps screen, keep AutoText active without swiping it away."
+                "4. In Recent Apps screen, keep Helper active without swiping it away."
             )
             OemBrand.NOKIA -> listOf(
-                "1. Open Settings > Apps & notifications > AutoText > Battery > Battery optimization > Select 'Not optimized'.",
-                "2. If 'Evenwell PowerSaver' or 'Duraspeed' is present in your build, disable battery saver for AutoText.",
+                "1. Open Settings > Apps & notifications > Helper > Battery > Battery optimization > Select 'Not optimized'.",
+                "2. If 'Evenwell PowerSaver' or 'Duraspeed' is present in your build, disable battery saver for Helper.",
                 "3. Settings > Apps > Special app access > Display over other apps > Verify granted."
             )
             OemBrand.HUAWEI, OemBrand.HONOR -> listOf(
-                "1. Open Settings > Apps > App launch > Find AutoText > Turn OFF 'Auto manage' > Enable 'Auto launch', 'Secondary launch', and 'Run in background'.",
+                "1. Open Settings > Apps > App launch > Find Helper > Turn OFF 'Auto manage' > Enable 'Auto launch', 'Secondary launch', and 'Run in background'.",
                 "2. Open Settings > Battery > More battery settings > Stay connected when device sleeps > ON.",
-                "3. In Recent Apps screen, pull down on the AutoText card to lock it with a padlock."
+                "3. In Recent Apps screen, pull down on the Helper card to lock it with a padlock."
             )
             OemBrand.TRANSSION -> listOf(
-                "1. Open Phone Master / Phone Manager > Auto-start management > Enable AutoText.",
-                "2. Open Power Marathon / Battery Lab > High power consumption apps > Exclude AutoText.",
-                "3. In Recent Apps screen, lock AutoText to prevent memory purging."
+                "1. Open Phone Master / Phone Manager > Auto-start management > Enable Helper.",
+                "2. Open Power Marathon / Battery Lab > High power consumption apps > Exclude Helper.",
+                "3. In Recent Apps screen, lock Helper to prevent memory purging."
             )
             OemBrand.ASUS -> listOf(
-                "1. Open Mobile Manager > PowerMaster > Auto-start Manager > Allow AutoText.",
-                "2. Settings > Battery > Battery optimization > Select 'Don't optimize' for AutoText."
+                "1. Open Mobile Manager > PowerMaster > Auto-start Manager > Allow Helper.",
+                "2. Settings > Battery > Battery optimization > Select 'Don't optimize' for Helper."
             )
             else -> listOf(
-                "1. Open Settings > Apps > AutoText > Battery > Select 'Unrestricted'.",
+                "1. Open Settings > Apps > Helper > Battery > Select 'Unrestricted'.",
                 "2. Ensure 'Allow background activity' and 'Schedule exact alarms' are enabled in App Info.",
-                "3. Keep AutoText locked or active in Recent Apps for guaranteed background tasks."
+                "3. Keep Helper locked or active in Recent Apps for guaranteed background tasks."
             )
         }
     }

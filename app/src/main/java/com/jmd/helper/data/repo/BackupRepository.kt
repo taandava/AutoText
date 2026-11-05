@@ -18,19 +18,183 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.core.database.sqlite.transaction
+import com.jmd.helper.core.AppFileLogger
 import com.jmd.helper.data.db.DatabaseHelper
+import com.jmd.helper.data.model.AutoReplyBackupDto
+import com.jmd.helper.data.model.BackupPayloadDto
+import com.jmd.helper.data.model.CampaignBackupDto
+import com.jmd.helper.data.model.ContactBackupDto
+import com.jmd.helper.data.model.TaskBackupDto
+import com.jmd.helper.data.model.TemplateBackupDto
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.File
 import org.json.JSONArray
 import org.json.JSONObject
 
 /**
  * Repository executing database export and atomic table restoration via JSON serialization.
+ * Supports both high-speed Kotlinx Serialization typed payloads and schema-agnostic raw table dumps.
  *
  * @param context Application context.
  */
 class BackupRepository(context: Context) {
 
     private val dbHelper = DatabaseHelper.getInstance(context)
+
+    private val jsonSerializer = Json {
+        prettyPrint = true
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+    }
+
+    /**
+     * Exports key domain entities using reflection-free, typed Kotlinx Serialization.
+     */
+    fun exportStructuredBackupToJson(): String {
+        val db = dbHelper.readableDatabase
+
+        val tasks = mutableListOf<TaskBackupDto>()
+        try {
+            db.query(DatabaseHelper.TABLE_TASKS, null, null, null, null, null, null).use { c ->
+                while (c.moveToNext()) {
+                    tasks.add(
+                        TaskBackupDto(
+                            id = c.getLong(c.getColumnIndexOrThrow("id")),
+                            title = c.getString(c.getColumnIndexOrThrow("title")),
+                            message = c.getString(c.getColumnIndexOrThrow("message")),
+                            recipient = c.getString(c.getColumnIndexOrThrow("recipient")),
+                            scheduledTime = c.getLong(c.getColumnIndexOrThrow("scheduled_time")),
+                            channel = c.getString(c.getColumnIndexOrThrow("channel")),
+                            status = c.getString(c.getColumnIndexOrThrow("status")),
+                            recurrence = c.getString(c.getColumnIndexOrThrow("recurrence")),
+                            recurrenceIntervalMins = c.getLong(c.getColumnIndexOrThrow("recurrence_interval_mins")),
+                            mediaUri = c.getString(c.getColumnIndexOrThrow("media_uri")),
+                            callDurationSeconds = c.getInt(c.getColumnIndexOrThrow("call_duration_seconds")),
+                            simSlot = c.getInt(c.getColumnIndexOrThrow("sim_slot")),
+                            soundMode = c.getString(c.getColumnIndexOrThrow("sound_mode"))
+                        )
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            AppFileLogger.w("BackupRepository", "Failed to serialize tasks for typed backup: ${e.message}")
+        }
+
+        val templates = mutableListOf<TemplateBackupDto>()
+        try {
+            db.query(DatabaseHelper.TABLE_TEMPLATES, null, null, null, null, null, null).use { c ->
+                while (c.moveToNext()) {
+                    templates.add(
+                        TemplateBackupDto(
+                            id = c.getLong(c.getColumnIndexOrThrow("id")),
+                            title = c.getString(c.getColumnIndexOrThrow("title")),
+                            category = c.getString(c.getColumnIndexOrThrow("category")),
+                            content = c.getString(c.getColumnIndexOrThrow("content")),
+                            createdAt = c.getLong(c.getColumnIndexOrThrow("created_at"))
+                        )
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            AppFileLogger.w("BackupRepository", "Failed to serialize templates for typed backup: ${e.message}")
+        }
+
+        val rules = mutableListOf<AutoReplyBackupDto>()
+        try {
+            db.query(DatabaseHelper.TABLE_AUTO_REPLY, null, null, null, null, null, null).use { c ->
+                while (c.moveToNext()) {
+                    rules.add(
+                        AutoReplyBackupDto(
+                            id = c.getLong(c.getColumnIndexOrThrow("id")),
+                            title = c.getString(c.getColumnIndexOrThrow("title")),
+                            channel = c.getString(c.getColumnIndexOrThrow("channel")),
+                            eventType = c.getString(c.getColumnIndexOrThrow("event_type")),
+                            keywordTrigger = c.getString(c.getColumnIndexOrThrow("keyword_trigger")),
+                            replyMessage = c.getString(c.getColumnIndexOrThrow("reply_message")),
+                            isEnabled = c.getInt(c.getColumnIndexOrThrow("is_enabled")) == 1,
+                            simSlot = c.getInt(c.getColumnIndexOrThrow("sim_slot"))
+                        )
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            AppFileLogger.w("BackupRepository", "Failed to serialize auto-reply rules: ${e.message}")
+        }
+
+        val payload = BackupPayloadDto(
+            version = 2,
+            app = "Helper",
+            exportedAt = System.currentTimeMillis(),
+            tasks = tasks,
+            templates = templates,
+            autoReplyRules = rules
+        )
+
+        return jsonSerializer.encodeToString(payload)
+    }
+
+    /**
+     * Imports structured backup using Kotlinx Serialization.
+     */
+    fun importStructuredBackupFromJson(jsonStr: String): Result<String> {
+        return try {
+            val payload = jsonSerializer.decodeFromString<BackupPayloadDto>(jsonStr)
+            val db = dbHelper.writableDatabase
+            var count = 0
+
+            db.transaction {
+                for (task in payload.tasks) {
+                    val cv = ContentValues().apply {
+                        put("title", task.title)
+                        put("message", task.message)
+                        put("recipient", task.recipient)
+                        put("scheduled_time", task.scheduledTime)
+                        put("channel", task.channel)
+                        put("status", task.status)
+                        put("recurrence", task.recurrence)
+                        put("recurrence_interval_mins", task.recurrenceIntervalMins)
+                        put("media_uri", task.mediaUri)
+                        put("call_duration_seconds", task.callDurationSeconds)
+                        put("sim_slot", task.simSlot)
+                        put("sound_mode", task.soundMode)
+                    }
+                    db.insertWithOnConflict(DatabaseHelper.TABLE_TASKS, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+                    count++
+                }
+
+                for (tpl in payload.templates) {
+                    val cv = ContentValues().apply {
+                        put("title", tpl.title)
+                        put("category", tpl.category)
+                        put("content", tpl.content)
+                        put("created_at", tpl.createdAt)
+                    }
+                    db.insertWithOnConflict(DatabaseHelper.TABLE_TEMPLATES, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+                    count++
+                }
+
+                for (rule in payload.autoReplyRules) {
+                    val cv = ContentValues().apply {
+                        put("title", rule.title)
+                        put("channel", rule.channel)
+                        put("event_type", rule.eventType)
+                        put("keyword_trigger", rule.keywordTrigger)
+                        put("reply_message", rule.replyMessage)
+                        put("is_enabled", if (rule.isEnabled) 1 else 0)
+                        put("sim_slot", rule.simSlot)
+                    }
+                    db.insertWithOnConflict(DatabaseHelper.TABLE_AUTO_REPLY, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+                    count++
+                }
+            }
+
+            Result.success("Restored $count items via Kotlinx Serialization")
+        } catch (e: Exception) {
+            AppFileLogger.w("BackupRepository", "Structured import failed, falling back to raw table import: ${e.message}")
+            importDatabaseFromJson(jsonStr)
+        }
+    }
 
     /**
      * Serializes all application SQLite tables into a formatted JSON string for export.
@@ -160,7 +324,7 @@ class BackupRepository(context: Context) {
      * Directly saves a timestamped JSON backup file to the specified target directory.
      * Leveraging MANAGE_EXTERNAL_STORAGE when available for direct offline data retention.
      *
-     * @param directory Target directory (e.g. /sdcard/Documents/AutoText/backups/).
+     * @param directory Target directory (e.g. /sdcard/Documents/Helper/backups/).
      * @return [Result] containing the written [File] or failure exception.
      */
     fun exportDatabaseToLocalDirectory(directory: java.io.File): Result<java.io.File> {
@@ -169,7 +333,7 @@ class BackupRepository(context: Context) {
                 directory.mkdirs()
             }
             val timeStamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.US).format(java.util.Date())
-            val targetFile = java.io.File(directory, "AutoText_Backup_$timeStamp.json")
+            val targetFile = java.io.File(directory, "Helper_Backup_$timeStamp.json")
             val json = exportDatabaseToJson()
             targetFile.writeText(json)
             Result.success(targetFile)

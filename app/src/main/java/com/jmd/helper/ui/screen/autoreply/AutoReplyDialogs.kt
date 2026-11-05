@@ -90,37 +90,37 @@ fun AutoReplyTypeSelectionSheet(
                 AutoReplyTypeItem(
                     channel = ChannelType.CALL,
                     title = "Phone Call Auto-Responder",
-                    eventDescription = "2 Triggers: 📞 Missed Call or 📴 Call Ended",
-                    replyMethodDescription = "Replies strictly via 📩 SMS through device SIM",
-                    emoji = "📞",
+                    eventDescription = "2 Triggers: Missed Call or Call Ended",
+                    replyMethodDescription = "Replies strictly via SMS through device SIM",
+                    icon = Icons.Filled.Phone,
                     color = MaterialTheme.colorScheme.primary,
                     defaultEvent = "MISSED_CALL"
                 ),
                 AutoReplyTypeItem(
                     channel = ChannelType.SMS,
                     title = "SMS Text Auto-Responder",
-                    eventDescription = "Trigger: 📩 Incoming SMS Keyword Match (* for all)",
-                    replyMethodDescription = "Replies strictly via 📩 SMS through device SIM",
-                    emoji = "📩",
-                    color = MaterialTheme.colorScheme.primary,
+                    eventDescription = "Trigger: Incoming SMS Keyword Match (* for all)",
+                    replyMethodDescription = "Replies strictly via SMS through device SIM",
+                    icon = Icons.AutoMirrored.Filled.Message,
+                    color = Color(0xFF2563EB),
                     defaultEvent = "MESSAGE"
                 ),
                 AutoReplyTypeItem(
                     channel = ChannelType.WHATSAPP,
                     title = "WhatsApp Auto-Responder",
-                    eventDescription = "3 Triggers: 💬 Message, 📞 Missed Call, or 📴 Call Ended",
-                    replyMethodDescription = "Replies strictly in 💬 WhatsApp chat via quick-reply",
-                    emoji = "💬",
-                    color = MaterialTheme.colorScheme.tertiary,
+                    eventDescription = "3 Triggers: Message, Missed Call, or Call Ended",
+                    replyMethodDescription = "Replies strictly in WhatsApp chat via quick-reply",
+                    icon = Icons.AutoMirrored.Filled.Chat,
+                    color = Color(0xFF16A34A),
                     defaultEvent = "MESSAGE"
                 ),
                 AutoReplyTypeItem(
                     channel = ChannelType.WHATSAPP_BUSINESS,
                     title = "WhatsApp Business Auto-Responder",
-                    eventDescription = "3 Triggers: 💬 Message, 📞 Missed Call, or 📴 Call Ended",
-                    replyMethodDescription = "Replies strictly in 💼 WhatsApp Business chat via quick-reply",
-                    emoji = "💼",
-                    color = MaterialTheme.colorScheme.primary,
+                    eventDescription = "3 Triggers: Message, Missed Call, or Call Ended",
+                    replyMethodDescription = "Replies strictly in WhatsApp Business chat via quick-reply",
+                    icon = Icons.Filled.BusinessCenter,
+                    color = Color(0xFF0D9488),
                     defaultEvent = "MESSAGE"
                 )
             )
@@ -143,7 +143,12 @@ fun AutoReplyTypeSelectionSheet(
                                 .border(1.dp, item.color.copy(alpha = 0.4f), CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(item.emoji, fontSize = 22.sp)
+                            Icon(
+                                imageVector = item.icon ?: Icons.AutoMirrored.Filled.Chat,
+                                contentDescription = null,
+                                tint = item.color,
+                                modifier = Modifier.size(22.dp)
+                            )
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
@@ -269,10 +274,10 @@ fun AutoReplyRuleDialog(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 val targetPlatforms = listOf(
-                    ChannelType.CALL to ("Phone Calls" to "📞"),
-                    ChannelType.SMS to ("SMS" to "📩"),
-                    ChannelType.WHATSAPP to ("WhatsApp" to "💬"),
-                    ChannelType.WHATSAPP_BUSINESS to ("WA Business" to "💼")
+                    ChannelType.CALL to ("Phone Calls" to Icons.Filled.Phone),
+                    ChannelType.SMS to ("SMS" to Icons.AutoMirrored.Filled.Message),
+                    ChannelType.WHATSAPP to ("WhatsApp" to Icons.AutoMirrored.Filled.Chat),
+                    ChannelType.WHATSAPP_BUSINESS to ("WA Business" to Icons.Filled.BusinessCenter)
                 )
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -282,7 +287,7 @@ fun AutoReplyRuleDialog(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             rowChannels.forEach { (ch, pair) ->
-                                val (title, emoji) = pair
+                                val (title, iconVector) = pair
                                 val isSelected = selectedChannel == ch
                                 val chipColor = when (ch) {
                                     ChannelType.CALL, ChannelType.SMS -> MaterialTheme.colorScheme.primary
@@ -304,7 +309,7 @@ fun AutoReplyRuleDialog(
                                     },
                                     label = title,
                                     activeColor = chipColor,
-                                    emoji = emoji,
+                                    icon = iconVector,
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -339,15 +344,15 @@ fun AutoReplyRuleDialog(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             listOf(
-                                Triple("MISSED_CALL", "Missed Call", "📞"),
-                                Triple("CALL_ENDED", "Call Ended", "📴")
-                            ).forEach { (eventKey, eventLabel, eventEmoji) ->
+                                Triple("MISSED_CALL", "Missed Call", Icons.AutoMirrored.Filled.PhoneMissed),
+                                Triple("CALL_ENDED", "Call Ended", Icons.Filled.CallEnd)
+                            ).forEach { (eventKey, eventLabel, eventIcon) ->
                                 GlassChip(
                                     selected = callEventType == eventKey,
                                     onClick = { callEventType = eventKey },
                                     label = eventLabel,
                                     activeColor = MaterialTheme.colorScheme.primary,
-                                    emoji = eventEmoji,
+                                    icon = eventIcon,
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -364,12 +369,17 @@ fun AutoReplyRuleDialog(
                                 modifier = Modifier.padding(10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("📩", fontSize = 20.sp)
+                                Icon(
+                                    imageVector = Icons.Filled.Sms,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
                                     Text("Reply Method: SMS Message", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.primary)
                                     Text(
-                                        "When a phone call is missed or ended, AutoText immediately sends a quick SMS reply to the caller's mobile number via your device SIM. Landlines and toll-free numbers are filtered out directly.",
+                                        "When a phone call is missed or ended, Helper immediately sends a quick SMS reply to the caller's mobile number via your device SIM. Landlines and toll-free numbers are filtered out directly.",
                                         fontSize = 11.5.sp,
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 16.sp
@@ -442,7 +452,12 @@ fun AutoReplyRuleDialog(
                                 modifier = Modifier.padding(10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("📩", fontSize = 20.sp)
+                                Icon(
+                                    imageVector = Icons.Filled.Sms,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
                                     Text("Reply Method: SMS Message", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.primary)
@@ -482,16 +497,16 @@ fun AutoReplyRuleDialog(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             listOf(
-                                Triple("MESSAGE", "Message", "💬"),
-                                Triple("MISSED_CALL", "Missed Call", "📞"),
-                                Triple("CALL_ENDED", "Call Ended", "📴")
-                            ).forEach { (eventKey, eventLabel, eventEmoji) ->
+                                Triple("MESSAGE", "Message", Icons.AutoMirrored.Filled.Chat),
+                                Triple("MISSED_CALL", "Missed Call", Icons.AutoMirrored.Filled.PhoneMissed),
+                                Triple("CALL_ENDED", "Call Ended", Icons.Filled.CallEnd)
+                            ).forEach { (eventKey, eventLabel, eventIcon) ->
                                 GlassChip(
                                     selected = callEventType == eventKey,
                                     onClick = { callEventType = eventKey },
                                     label = eventLabel,
                                     activeColor = MaterialTheme.colorScheme.tertiary,
-                                    emoji = eventEmoji,
+                                    icon = eventIcon,
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -542,7 +557,12 @@ fun AutoReplyRuleDialog(
                                     modifier = Modifier.padding(10.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("📞", fontSize = 18.sp)
+                                    Icon(
+                                        imageVector = Icons.Filled.Phone,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         "Triggers directly whenever a voice or video call is ${if (callEventType == "CALL_ENDED") "ended" else "missed"} in WhatsApp.",
@@ -564,7 +584,12 @@ fun AutoReplyRuleDialog(
                                 modifier = Modifier.padding(10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("💬", fontSize = 20.sp)
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Chat,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.tertiary,
+                                    modifier = Modifier.size(24.dp)
+                                )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
                                     Text("Reply Method: WhatsApp Chat Only", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.tertiary)
@@ -604,16 +629,16 @@ fun AutoReplyRuleDialog(
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             listOf(
-                                Triple("MESSAGE", "Message", "💬"),
-                                Triple("MISSED_CALL", "Missed Call", "📞"),
-                                Triple("CALL_ENDED", "Call Ended", "📴")
-                            ).forEach { (eventKey, eventLabel, eventEmoji) ->
+                                Triple("MESSAGE", "Message", Icons.AutoMirrored.Filled.Chat),
+                                Triple("MISSED_CALL", "Missed Call", Icons.AutoMirrored.Filled.PhoneMissed),
+                                Triple("CALL_ENDED", "Call Ended", Icons.Filled.CallEnd)
+                            ).forEach { (eventKey, eventLabel, eventIcon) ->
                                 GlassChip(
                                     selected = callEventType == eventKey,
                                     onClick = { callEventType = eventKey },
                                     label = eventLabel,
                                     activeColor = MaterialTheme.colorScheme.primary,
-                                    emoji = eventEmoji,
+                                    icon = eventIcon,
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -664,7 +689,12 @@ fun AutoReplyRuleDialog(
                                     modifier = Modifier.padding(10.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("📞", fontSize = 18.sp)
+                                    Icon(
+                                        imageVector = Icons.Filled.Phone,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         "Triggers directly whenever a business voice or video call is ${if (callEventType == "CALL_ENDED") "ended" else "missed"} in WhatsApp Business.",
@@ -686,7 +716,12 @@ fun AutoReplyRuleDialog(
                                 modifier = Modifier.padding(10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("💼", fontSize = 20.sp)
+                                Icon(
+                                    imageVector = Icons.Filled.BusinessCenter,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Column {
                                     Text("Reply Method: WA Business Only", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.primary)
@@ -732,14 +767,14 @@ fun AutoReplyRuleDialog(
                     text = "Cancel",
                     onClick = onDismiss,
                     variant = GlassButtonVariant.SECONDARY,
-                    emoji = "❌",
+                    icon = Icons.Filled.Close,
                     modifier = Modifier.weight(1f)
                 )
 
                 GlassButton(
                     text = if (initialRule != null && initialRule.id > 0L) "Update Rule" else "Save Rule",
                     variant = GlassButtonVariant.PRIMARY,
-                    emoji = "✅",
+                    icon = Icons.Filled.Check,
                     onClick = {
                         val computedDailyLimit = when (dailyLimitMode) {
                             "1" -> 1

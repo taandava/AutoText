@@ -20,7 +20,7 @@ import com.jmd.helper.service.TaskAccessibilityService
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Central singleton orchestrating privacy rules and app visibility restrictions across AutoText.
+ * Central singleton orchestrating privacy rules and app visibility restrictions across Helper.
  */
 class PrivacyManager private constructor(private val appContext: Context) {
 
@@ -52,7 +52,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
         }
 
         /**
-         * Standard allowlist of essential system and task target packages that AutoText
+         * Standard allowlist of essential system and task target packages that Helper
          * requires for normal operation (unless explicitly excluded by the user).
          */
         val BASE_TASK_TARGET_PACKAGES = setOf(
@@ -234,7 +234,7 @@ class PrivacyManager private constructor(private val appContext: Context) {
     }
 
     /**
-     * Checks whether an application is marked as excluded from AutoText.
+     * Checks whether an application is marked as excluded from Helper.
      */
     fun isAppExcluded(packageName: String): Boolean {
         if (!prefs.isPrivacyModeEnabled) return false

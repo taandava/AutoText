@@ -187,11 +187,11 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                     actions = {
                         when (selectedTab) {
                             0 -> {
-                                IconButton(onClick = { csvExportLauncher.launch("autotext_contacts.csv") }) {
-                                    Text("📥", fontSize = 18.sp)
+                                IconButton(onClick = { csvExportLauncher.launch("helper_contacts.csv") }) {
+                                    Icon(Icons.Filled.FileDownload, contentDescription = "Export CSV", modifier = Modifier.size(20.dp))
                                 }
                                 IconButton(onClick = { csvPickerLauncher.launch("*/*") }) {
-                                    Text("📤", fontSize = 18.sp)
+                                    Icon(Icons.Filled.FileUpload, contentDescription = "Import CSV", modifier = Modifier.size(20.dp))
                                 }
                                 IconButton(
                                     onClick = {
@@ -199,7 +199,7 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                         isAddingContact = true
                                     },
                                 ) {
-                                    Text("➕", fontSize = 18.sp)
+                                    Icon(Icons.Filled.PersonAdd, contentDescription = "Add Contact", modifier = Modifier.size(20.dp))
                                 }
                             }
                             1 -> {
@@ -219,12 +219,12 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                         }
                                     },
                                 ) {
-                                    Text("🔄", fontSize = 18.sp)
+                                    Icon(Icons.Filled.Sync, contentDescription = "Sync", modifier = Modifier.size(20.dp))
                                 }
                             }
                             else -> {
                                 IconButton(onClick = { groupRefreshTrigger++ }) {
-                                    Text("🔄", fontSize = 18.sp)
+                                    Icon(Icons.Filled.Refresh, contentDescription = "Refresh", modifier = Modifier.size(20.dp))
                                 }
                             }
                         }
@@ -244,14 +244,14 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                     containerColor = MaterialTheme.colorScheme.primary,
                                     contentColor = Color.Black
                                 ) {
-                                    Text("➕", fontSize = 20.sp)
+                                    Icon(Icons.Filled.Add, contentDescription = "Add", modifier = Modifier.size(22.dp))
                                 }
 
                                 ExtendedFloatingActionButton(
                                     onClick = { isImporting = true },
                                     containerColor = MaterialTheme.colorScheme.tertiary,
                                     contentColor = Color.Black,
-                                    icon = { Text("📤", fontSize = 16.sp) },
+                                    icon = { Icon(Icons.Filled.FileUpload, contentDescription = null, modifier = Modifier.size(18.dp)) },
                                     text = { Text("Import CSV", fontWeight = FontWeight.Bold) }
                                 )
                             }
@@ -277,7 +277,7 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                 },
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = Color.Black,
-                                icon = { Text("🔄", fontSize = 16.sp) },
+                                icon = { Icon(Icons.Filled.Sync, contentDescription = null, modifier = Modifier.size(18.dp)) },
                                 text = { Text(if (isSyncingPool) "Syncing..." else "Sync Lead Pool", fontWeight = FontWeight.Bold) }
                             )
                         }
@@ -297,7 +297,7 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                 },
                                 containerColor = MaterialTheme.colorScheme.tertiary,
                                 contentColor = Color.Black,
-                                icon = { Text("👥", fontSize = 16.sp) },
+                                icon = { Icon(Icons.Filled.Groups, contentDescription = null, modifier = Modifier.size(18.dp)) },
                                 text = { Text("Harvest Groups", fontWeight = FontWeight.Bold) }
                             )
                         }
@@ -320,9 +320,9 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                 item {
                     GlassSegmentedControl(
                         items = listOf(
-                            "📄 Custom & CSV",
-                            "👥 Dynamic Pool (${poolStats.totalCount})",
-                            "👥 WA Groups (${groupsList.size})"
+                            "Custom & CSV",
+                            "Dynamic Pool (${poolStats.totalCount})",
+                            "WA Groups (${groupsList.size})"
                         ),
                         selectedIndex = selectedTab,
                         onItemSelected = { selectedTab = it },
@@ -352,7 +352,7 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                     GlassButton(
                                         text = "Export CSV",
                                         icon = Icons.Default.FileDownload,
-                                        onClick = { csvExportLauncher.launch("autotext_contacts.csv") },
+                                        onClick = { csvExportLauncher.launch("helper_contacts.csv") },
                                         variant = GlassButtonVariant.SECONDARY
                                     )
                                     GlassButton(

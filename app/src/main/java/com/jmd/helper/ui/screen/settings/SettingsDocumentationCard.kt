@@ -1,9 +1,15 @@
 package com.jmd.helper.ui.screen.settings
-import androidx.compose.material3.MaterialTheme
+
+import androidx.compose.material.icons.automirrored.filled.*
 
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,7 +36,12 @@ fun SettingsDocumentationCard(
 ) {
     AppCard(modifier = modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("📖", fontSize = 22.sp)
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(22.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Text("Technical Manual & Logic Guide", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
         }
@@ -46,7 +57,7 @@ fun SettingsDocumentationCard(
             GlassButton(
                 text = "Read Guide",
                 onClick = onOpenDocumentation,
-                emoji = "📖",
+                icon = Icons.AutoMirrored.Filled.MenuBook,
                 variant = GlassButtonVariant.PRIMARY,
                 modifier = Modifier.weight(1f)
             )
@@ -56,12 +67,12 @@ fun SettingsDocumentationCard(
                     val doc = readDocumentationAsset(context)
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
-                        putExtra(Intent.EXTRA_SUBJECT, "AutoText - Complete Specifications & Logic Guide")
+                        putExtra(Intent.EXTRA_SUBJECT, "Helper - Complete Specifications & Logic Guide")
                         putExtra(Intent.EXTRA_TEXT, doc)
                     }
-                    context.startActivity(Intent.createChooser(shareIntent, "Share AutoText Documentation"))
+                    context.startActivity(Intent.createChooser(shareIntent, "Share Helper Documentation"))
                 },
-                emoji = "📤",
+                icon = Icons.Filled.Share,
                 variant = GlassButtonVariant.SECONDARY,
                 modifier = Modifier.weight(1f)
             )

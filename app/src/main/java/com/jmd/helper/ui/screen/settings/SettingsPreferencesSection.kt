@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Tune
@@ -96,7 +97,7 @@ fun SettingsPreferencesCards(
                         prefs.isDynamicColorEnabled = checked
                         onThemeChanged(appTheme)
                     },
-                    emoji = "🎨"
+                    icon = Icons.Filled.Palette
                 )
             }
         }
@@ -149,7 +150,7 @@ fun SettingsPreferencesCards(
                 AppBadge(text = if (contactSyncHours == 0) "Manual" else "Every ${contactSyncHours}h", color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Background synchronization interval to ingest phonebook contacts into AutoText.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Background synchronization interval to ingest phonebook contacts into Helper.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -210,7 +211,7 @@ fun SettingsPreferencesCards(
                 AppBadge(text = "Reliability", color = MaterialTheme.colorScheme.tertiary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Customize how AutoText recovers when WhatsApp UI buttons or views fail to click.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Customize how Helper recovers when WhatsApp UI buttons or views fail to click.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -310,14 +311,14 @@ fun SettingsPreferencesCards(
         AppCard(modifier = Modifier.fillMaxWidth()) {
             Text("App Security Lock", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Require PIN to open the AutoText app itself.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Require PIN to open the Helper app itself.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("AutoText In-App Protection", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                Text("Helper In-App Protection", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
                 Switch(
                     checked = appLock,
                     onCheckedChange = {
@@ -374,14 +375,14 @@ fun SettingsPreferencesCards(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Default Country Code", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                AppBadge(text = if (countryCode == "+91") "India 🇮🇳" else countryCode, color = MaterialTheme.colorScheme.primary)
+                AppBadge(text = if (countryCode == "+91") "India (+91)" else countryCode, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text("Default dialing prefix applied when standardizing 10-digit mobile numbers for tasks and replies.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
-                listOf("+91" to "+91 India 🇮🇳", "+1" to "+1 US/CA", "+44" to "+44 UK", "+971" to "+971 UAE").forEach { (code, label) ->
+                listOf("+91" to "+91 India", "+1" to "+1 US/CA", "+44" to "+44 UK", "+971" to "+971 UAE").forEach { (code, label) ->
                     GlassChip(
                         selected = countryCode == code,
                         onClick = {

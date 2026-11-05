@@ -11,7 +11,16 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.RocketLaunch
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.StopCircle
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -74,10 +83,11 @@ fun SettingsBankingShieldCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "🛡️",
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(end = 8.dp)
+                Icon(
+                    imageVector = Icons.Filled.Shield,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(22.dp).padding(end = 6.dp)
                 )
                 Column {
                     Text(
@@ -114,15 +124,24 @@ fun SettingsBankingShieldCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
-                    Text(
-                        text = "✅ Smart Standby Active",
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 12.sp
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Smart Standby Active",
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 12.sp
+                        )
+                    }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Task is kept 100% detached during idle periods. UPI, payment, and banking apps will run without service warnings. When a scheduled task runs, AutoText attaches for ~2 seconds and immediately detaches.",
+                        text = "Task is kept 100% detached during idle periods. UPI, payment, and banking apps will run without service warnings. When a scheduled task runs, Helper attaches for ~2 seconds and immediately detaches.",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 11.sp,
                         lineHeight = 15.sp
@@ -133,7 +152,7 @@ fun SettingsBankingShieldCard(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         GlassButton(
-                            text = "🧹 Clear App Cache",
+                            text = "Clear App Cache",
                             onClick = {
                                 try {
                                     val pm = context.packageManager
@@ -163,12 +182,12 @@ fun SettingsBankingShieldCard(
                                     context.showAppToast("Could not open payment app info.")
                                 }
                             },
-                            emoji = "🧹",
+                            icon = Icons.Filled.CleaningServices,
                             variant = GlassButtonVariant.SECONDARY,
                             modifier = Modifier.weight(1f)
                         )
                         GlassButton(
-                            text = "💳 Open Payment App",
+                            text = "Open Payment App",
                             onClick = {
                                 val pm = context.packageManager
                                 val paymentPackages = listOf("com.google.android.apps.nbu.paisa.user", "com.phonepe.app", "net.one97.paytm", "in.org.npci.upiapp")
@@ -195,7 +214,7 @@ fun SettingsBankingShieldCard(
                                     }
                                 }
                             },
-                            emoji = "💳",
+                            icon = Icons.Filled.CreditCard,
                             variant = GlassButtonVariant.PRIMARY,
                             modifier = Modifier.weight(1f)
                         )
@@ -210,12 +229,21 @@ fun SettingsBankingShieldCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
-                    Text(
-                        text = "⚠️ Accessibility is Running in Background",
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.error,
-                        fontSize = 12.sp
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.Warning,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Accessibility is Running in Background",
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 12.sp
+                        )
+                    }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Some banking and UPI payment apps flag active third-party accessibility services. Tap 'Pause Assistant for Banking' below before opening your banking apps, or enable Bank-Safe Smart Standby via ADB.",
@@ -225,7 +253,7 @@ fun SettingsBankingShieldCard(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     GlassButton(
-                        text = "🛑 Pause Assistant for Banking",
+                        text = "Pause Assistant for Banking",
                         onClick = {
                             prefs.isA11yUserPaused = true
                             TaskAccessibilityService.disableServiceIfActive()
@@ -236,13 +264,13 @@ fun SettingsBankingShieldCard(
                             userPaused = true
                             context.showAppToast("Accessibility paused! Banking and payment apps isolated.")
                         },
-                        emoji = "🛑",
+                        icon = Icons.Filled.StopCircle,
                         variant = GlassButtonVariant.PRIMARY,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     GlassButton(
-                        text = "🧹 Clear Payment App Cache",
+                        text = "Clear Payment App Cache",
                         onClick = {
                             try {
                                 val pm = context.packageManager
@@ -264,13 +292,13 @@ fun SettingsBankingShieldCard(
                                 context.showAppToast("Could not open payment app info.")
                             }
                         },
-                        emoji = "🧹",
+                        icon = Icons.Filled.CleaningServices,
                         variant = GlassButtonVariant.SECONDARY,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     GlassButton(
-                        text = "💳 Open Payment App",
+                        text = "Open Payment App",
                         onClick = {
                             val pm = context.packageManager
                             val paymentPackages = listOf("com.google.android.apps.nbu.paisa.user", "com.phonepe.app", "net.one97.paytm", "in.org.npci.upiapp")
@@ -297,7 +325,7 @@ fun SettingsBankingShieldCard(
                                 }
                             }
                         },
-                        emoji = "💳",
+                        icon = Icons.Filled.CreditCard,
                         variant = GlassButtonVariant.PRIMARY,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -310,12 +338,21 @@ fun SettingsBankingShieldCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
-                    Text(
-                        text = "✅ Banking & Payment Safe (Assistant is Off)",
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 12.sp
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Banking & Payment Safe (Assistant is Off)",
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 12.sp
+                        )
+                    }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Accessibility is currently paused or detached. Banking and payment transactions will complete without any interference.",
@@ -342,13 +379,13 @@ fun SettingsBankingShieldCard(
                                 }
                             }
                         },
-                        emoji = "⚡",
+                        icon = Icons.Filled.Bolt,
                         variant = GlassButtonVariant.SECONDARY,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     GlassButton(
-                        text = "💳 Open Payment App",
+                        text = "Open Payment App",
                         onClick = {
                             val pm = context.packageManager
                             val paymentPackages = listOf("com.google.android.apps.nbu.paisa.user", "com.phonepe.app", "net.one97.paytm", "in.org.npci.upiapp")
@@ -375,7 +412,7 @@ fun SettingsBankingShieldCard(
                                 }
                             }
                         },
-                        emoji = "💳",
+                        icon = Icons.Filled.CreditCard,
                         variant = GlassButtonVariant.PRIMARY,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -445,15 +482,24 @@ fun SettingsBankingShieldCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
-                    Text(
-                        text = "🚀 Bank-Safe Standby (Zero Manual Pausing Required)",
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 11.5.sp
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.RocketLaunch,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Bank-Safe Standby (Zero Manual Pausing Required)",
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 11.5.sp
+                        )
+                    }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Run this one-time command via ADB on your PC or Shizuku to grant Secure Settings. AutoText will turn Accessibility on ONLY when sending messages and keep it off when idle so banking and payment apps never flag it:",
+                        text = "Run this one-time command via ADB on your PC or Shizuku to grant Secure Settings. Helper will turn Accessibility on ONLY when sending messages and keep it off when idle so banking and payment apps never flag it:",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 10.5.sp,
                         lineHeight = 14.sp
@@ -505,13 +551,24 @@ fun SettingsBankingShieldCard(
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = "💡 Quick Settings Tile Available: Swipe down from your notification bar and add the 'AutoText A11y' tile to pause and resume accessibility with 1 tap from anywhere before paying.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 10.5.sp,
-                lineHeight = 14.sp,
-                modifier = Modifier.padding(8.dp)
-            )
+            Row(
+                modifier = Modifier.padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Lightbulb,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Quick Settings Tile Available: Swipe down from your notification bar and add the 'Helper A11y' tile to pause and resume accessibility with 1 tap from anywhere before paying.",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 10.5.sp,
+                    lineHeight = 14.sp
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -519,7 +576,7 @@ fun SettingsBankingShieldCard(
         GlassButton(
             text = "Configure Privacy & App Visibility",
             onClick = onOpenPrivacySettings,
-            emoji = "🛡️",
+            icon = Icons.Filled.Shield,
             variant = GlassButtonVariant.PRIMARY,
             modifier = Modifier.fillMaxWidth()
         )
@@ -536,7 +593,7 @@ fun SettingsBankingShieldCard(
                     AccessibilityHealthManager.ensureAllServicesActive(context)
                     context.showAppToast("Services Verified")
                 },
-                emoji = "⚡",
+                icon = Icons.Filled.Bolt,
                 variant = GlassButtonVariant.PRIMARY,
                 modifier = Modifier.weight(1f)
             )
@@ -550,7 +607,7 @@ fun SettingsBankingShieldCard(
                         context.showAppToast("Export complete")
                     }
                 },
-                emoji = "📋",
+                icon = Icons.Filled.ContentCopy,
                 variant = GlassButtonVariant.SECONDARY,
                 modifier = Modifier.weight(1f)
             )

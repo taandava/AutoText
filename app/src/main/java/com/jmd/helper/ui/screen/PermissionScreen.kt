@@ -41,7 +41,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoFixHigh
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.HourglassTop
+import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Smartphone
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -128,7 +134,7 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "AutoText uses Android's Assistive Task API exclusively for the following user-directed capabilities:",
+                        text = "Helper uses Android's Assistive Task API exclusively for the following user-directed capabilities:",
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -146,8 +152,8 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "• AutoText does NOT collect, store, or transmit your private chat messages, keystrokes, personal passwords, or screen contents.\n" +
-                               "• AutoText strictly isolates itself from and NEVER inspects, reads, or interacts with banking, payment, or UPI apps (such as Google Pay, PhonePe, Paytm, or net banking apps).\n" +
+                        text = "• Helper does NOT collect, store, or transmit your private chat messages, keystrokes, personal passwords, or screen contents.\n" +
+                               "• Helper strictly isolates itself from and NEVER inspects, reads, or interacts with banking, payment, or UPI apps (such as Google Pay, PhonePe, Paytm, or net banking apps).\n" +
                                "• 100% on-device operation: Zero cloud analytics or third-party tracking.\n" +
                                "• You retain full control and may pause or revoke this service at any time.",
                         fontSize = 12.sp,
@@ -211,11 +217,29 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
             item {
                 PermissionItem(
                     title = "Power Button Auto-Lock (Biometrics & Fingerprint Safe)",
-                    desc = "AutoText uses the Android Assistive Power Lock gesture (GLOBAL_ACTION_LOCK_SCREEN) mimicking a physical Power button press. Your fingerprint, face unlock, and biometrics remain 100% active and are never locked out.",
+                    desc = "Helper uses the Android Assistive Power Lock gesture (GLOBAL_ACTION_LOCK_SCREEN) mimicking a physical Power button press. Your fingerprint, face unlock, and biometrics remain 100% active and are never locked out.",
                     btnText = "Power Lock Ready",
                     isGranted = true,
                 ) {
                     context.showAppToast("Power button auto-lock active (fingerprint preserved)")
+                }
+            }
+
+            // 2b. Device Administration (Hardware Auto-Lock)
+            item {
+                val isAdmin = remember(permissionsRefreshKey) { HelperDeviceAdminReceiver.isAdminActive(context) }
+                PermissionItem(
+                    title = if (isAdmin) "Device Administration: Active" else "Device Administration (Hardware Auto-Lock)",
+                    desc = if (isAdmin) "Device administrator status is active. Helper can securely re-lock the screen after unattended tasks."
+                           else "Grants hardware-level screen lock authorization to immediately secure your phone after unattended tasks conclude.",
+                    btnText = if (isAdmin) "Device Admin Active" else "Enable Device Admin",
+                    isGranted = isAdmin,
+                ) {
+                    if (!isAdmin) {
+                        HelperDeviceAdminReceiver.requestActivation(context)
+                    } else {
+                        context.showAppToast("Device Admin is active")
+                    }
                 }
             }
 
@@ -224,8 +248,8 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
                 val hasOverlay = remember(permissionsRefreshKey) { OverlayPermissionHelper.canDrawOverlays(context) }
                 PermissionItem(
                     title = if (hasOverlay) "Display Over Other Apps: Granted" else "Display Over Other Apps (Overlay)",
-                    desc = if (hasOverlay) "Allows AutoText to display privacy shields, countdown overlays, and incoming call simulation alerts."
-                           else "Allows AutoText to display privacy shields and incoming call simulation alerts. If AutoText is missing or greyed out in the system list, tap 'Open App Info' below to enable restricted settings.",
+                    desc = if (hasOverlay) "Allows Helper to display privacy shields, countdown overlays, and incoming call simulation alerts."
+                           else "Allows Helper to display privacy shields and incoming call simulation alerts. If Helper is missing or greyed out in the system list, tap 'Open App Info' below to enable restricted settings.",
                     btnText = if (hasOverlay) "Overlay Active" else "Grant Overlay Permission",
                     isGranted = hasOverlay,
                 ) {
@@ -477,7 +501,7 @@ fun SuperAutoHealAndPermissionFixerCard(context: Context) {
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(
-                    text = "⚡ Master Auto-Heal & Universal Fixer",
+                    text = "Master Auto-Heal & Universal Fixer",
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.5.sp,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -545,7 +569,7 @@ fun SuperAutoHealAndPermissionFixerCard(context: Context) {
                         }
                     }
                 },
-                emoji = if (isHealing) "⏳" else "🔄",
+                icon = if (isHealing) Icons.Filled.HourglassTop else Icons.Filled.Sync,
                 variant = GlassButtonVariant.SUCCESS,
                 modifier = Modifier.weight(1f),
             )
@@ -557,7 +581,7 @@ fun SuperAutoHealAndPermissionFixerCard(context: Context) {
                     com.jmd.helper.compat.ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("Universal ADB Command", universalAdbCommand))
                     context.showAppToast("ADB command copied")
                 },
-                emoji = "📋",
+                icon = Icons.Filled.ContentCopy,
                 variant = GlassButtonVariant.PRIMARY,
                 modifier = Modifier.weight(1.2f),
             )
@@ -616,7 +640,12 @@ fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
 
     AppCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("📱", fontSize = 20.sp)
+            Icon(
+                imageVector = Icons.Filled.Smartphone,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(20.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(
@@ -666,7 +695,7 @@ fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
                         context.showAppToast("Unable to open overlay settings directly")
                     }
                 },
-                emoji = "🪟",
+                icon = Icons.Filled.Layers,
                 variant = GlassButtonVariant.SECONDARY,
                 modifier = Modifier.weight(1f),
             )
@@ -725,7 +754,7 @@ fun PermissionItem(
             text = btnText,
             onClick = onClick,
             variant = if (isGranted) GlassButtonVariant.SUCCESS else GlassButtonVariant.SECONDARY,
-            emoji = if (isGranted) "✅" else "⚙️",
+            icon = if (isGranted) Icons.Filled.CheckCircle else Icons.Filled.Settings,
             shape = AppDesignTokens.ShapePill,
         )
     }

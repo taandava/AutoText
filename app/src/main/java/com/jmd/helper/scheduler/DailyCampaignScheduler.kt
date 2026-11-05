@@ -40,8 +40,8 @@ import java.util.concurrent.TimeUnit
  */
 object DailyCampaignScheduler {
 
-    private fun getPeriodicWorkName(campaignId: Long) = "autotext_daily_campaign_work_$campaignId"
-    private fun getImmediateWorkName(campaignId: Long) = "autotext_daily_campaign_immediate_$campaignId"
+    private fun getPeriodicWorkName(campaignId: Long) = "helper_daily_campaign_work_$campaignId"
+    private fun getImmediateWorkName(campaignId: Long) = "helper_daily_campaign_immediate_$campaignId"
 
     /**
      * Convenience alias for [scheduleOrUpdate].

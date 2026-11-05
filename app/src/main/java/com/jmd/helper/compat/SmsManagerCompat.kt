@@ -10,6 +10,7 @@ package com.jmd.helper.compat
 import android.content.Context
 import android.os.Build
 import android.telephony.SmsManager
+import android.util.Log
 
 /**
  * Backward-compatible helper for [SmsManager] resolution and SIM subscription binding.
@@ -18,6 +19,8 @@ import android.telephony.SmsManager
  * and [SmsManager.getDefault] on legacy platforms.
  */
 object SmsManagerCompat {
+
+    private const val TAG = "SmsManagerCompat"
 
     /**
      * Resolves default [SmsManager] instance for the device.
@@ -62,8 +65,9 @@ object SmsManagerCompat {
         return try {
             val method = SmsManager::class.java.getMethod("getDefault")
             (method.invoke(null) as? SmsManager) ?: throw IllegalStateException("Unable to resolve default SmsManager on device")
-        } catch (_: Throwable) {
-            throw IllegalStateException("Unable to resolve default SmsManager on device")
+        } catch (t: Throwable) {
+            Log.e(TAG, "Legacy default SmsManager resolution error: ${t.message}", t)
+            throw IllegalStateException("Unable to resolve default SmsManager on device: ${t.message}", t)
         }
     }
 
@@ -81,7 +85,8 @@ object SmsManagerCompat {
                 Int::class.javaPrimitiveType,
             )
             method.invoke(null, subscriptionId) as? SmsManager
-        } catch (_: Throwable) {
+        } catch (t: Throwable) {
+            Log.w(TAG, "Legacy SmsManager resolution for subId $subscriptionId: ${t.message}")
             null
         }
     }

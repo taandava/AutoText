@@ -129,7 +129,10 @@ class TaskNotificationListenerService : NotificationListenerService() {
                     // Apply contact / non-contact filters
                     val isKnownContact = try {
                         PhoneNumberNormalizer.isContact(applicationContext, title)
-                    } catch (_: Exception) { false }
+                    } catch (e: Exception) {
+                        Log.d(TAG, "Contact check note for $title: ${e.message}")
+                        false
+                    }
                     if (rule.replyToContactsOnly && !isKnownContact) continue
                     if (rule.replyToNonContactsOnly && isKnownContact) continue
 
