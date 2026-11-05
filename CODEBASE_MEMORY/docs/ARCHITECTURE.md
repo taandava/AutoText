@@ -9,6 +9,14 @@
 └──────────────────────────────┬──────────────────────────────┘
                                │
 ┌──────────────────────────────▼──────────────────────────────┐
+│             Programmatic API Layer (Endpoints)              │
+│ ┌─────────────────────────────────────────────────────────┐ │
+│ │                  AutomationFeatureApi                   │ │
+│ │ (Typed, validated endpoints: WA, SMS, Calls, Reminders) │ │
+│ └─────────────────────────────────────────────────────────┘ │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+┌──────────────────────────────▼──────────────────────────────┐
 │                    Domain & Engine Layer                    │
 │ ┌─────────────────────────────────────────────────────────┐ │
 │ │                  SequentialTaskEngine                   │ │
@@ -26,7 +34,10 @@
 │ │ (Default-deny, Financial Isolation, Context Verification) │
 │ └─────────────────────────────────────────────────────────┘ │
 │ ┌───────────────────────┐         ┌───────────────────────┐ │
-│ │   PermissionManager   │         │  AccessibilityHealth  │ │
+│ │   PermissionManager   │         │    OemBrandHelper     │ │
+│ └───────────────────────┘         └───────────────────────┘ │
+│ ┌───────────────────────┐         ┌───────────────────────┐ │
+│ │  AccessibilityHealth  │         │ AutomationSafetyMgr   │ │
 │ └───────────────────────┘         └───────────────────────┘ │
 └──────────────────────────────┬──────────────────────────────┘
                                │
@@ -40,34 +51,38 @@
 ## 2. Component Directory Responsibilities
 
 ### 2.1 UI Layer (`com.jmd.autotext.ui`)
-- `activity`: Host and standalone activities (`MainActivity`, `FakeCallActivity`, `ReminderAlarmActivity`, `AutomationLauncherActivity`).
+- `activity`: Host and standalone activities (`MainActivity`, `CallSimulationActivity`, `ReminderAlarmActivity`, `AutomationLauncherActivity`).
 - `components`: Reusable Material 3 Expressive glassmorphism elements (`GlassComponents.kt`, `AppStatusIndicators.kt`, `Pickers.kt`).
 - `screen`: Screen composables grouped by domain (`compose`, `tasks`, `contacts`, `campaign`, `autoreply`, `logs`, `privacy`, `sequence`, `settings`).
 
-### 2.2 Task Execution Engine (`com.jmd.autotext.engine`)
-- `SequentialTaskEngine`: Central serial orchestrator with channel-based queue, state machine enforcement (`DRAFT` → `VALIDATING` → `READY` → `SCHEDULED` → `RUNNING` → `SUCCESS`/`FAILED`/`CANCELLED`), mutex isolation (`uiAutomationMutex`, `smsMutex`), pre-flight human idle checks, and device auto-lock postconditions.
+### 2.2 Programmatic API Layer (`com.jmd.autotext.api`)
+- `AutomationFeatureApi`: Unified entrypoint providing typed, suspendable, validated programmatic endpoints for all operations (`sendWhatsAppMessage`, `postWhatsAppStatus`, `placeWhatsAppCall`, `sendSms`, `placePhoneCall`, `hangupActiveCall`, `triggerReminder`, `triggerCallSimulation`, `applySoundMode`). Standardizes parameters, error mapping, and result envelopes (`TaskExecutionResult`).
+
+### 2.3 Task Execution Engine (`com.jmd.autotext.engine`)
+- `SequentialTaskEngine`: Central serial orchestrator with channel-based queue, state machine enforcement (`DRAFT` → `VALIDATING` → `READY` → `SCHEDULED` → `RUNNING` → `SUCCESS`/`FAILED`/`CANCELLED`), mutex isolation (`uiAutomationMutex`, `smsMutex`), pre-flight human idle checks, exact call duration holding with early termination detection, and biometric-safe device auto-lock postconditions.
 - `SmsSender`: Direct cellular dispatch with multi-SIM slot indexing, multi-part SMS concatenation, and real-time carrier delivery callback listener.
 - `WhatsAppAutomationSender`: Bridges task parameters to intent dispatchers and accessibility preparation.
 - `ContactIngestionEngine`: Background ingestion from system contacts, call logs, SMS, and WhatsApp chats into the dynamic outreach pool.
 
-### 2.3 Core Security, Privacy & Health (`com.jmd.autotext.core`)
-- `ProtectedApplicationManager`: Strict default-deny policy for UI interactions, active foreground context verification, known financial package catalog, and instant event abandonment.
-- `PermissionManager`: Centralized permission-to-feature mapping, verified runtime checks, transparent user-directed settings navigation, and graceful degradation rules.
+### 2.4 Core Security, Privacy & OEM Layer (`com.jmd.autotext.core`)
+- `OemBrandHelper`: Universal multi-brand OEM compatibility engine providing dual-SIM intent extras and in-call disconnect profiles for Samsung, Vivo, iQOO, Oppo, Realme, Xiaomi, OnePlus, Motorola, Nokia, and Transsion devices across Qualcomm, MediaTek, Exynos, and Unisoc chipsets.
+- `ProtectedApplicationManager`: Strict default-deny policy for UI interactions, active foreground context verification, known financial package catalog (60+ banking/UPI apps), and instant event abandonment.
+- `PermissionManager`: Centralized permission-to-feature mapping, verified runtime checks (including `ANSWER_PHONE_CALLS`), transparent user-directed settings navigation, and graceful degradation rules.
 - `PrivacyManager`: App exclusion management, smart accessibility scoping, dynamic zero-detection activation, and audit log masking.
 - `AccessibilityHealthManager`: Service operational state tracking, dynamic on-demand lifecycle control, and system auto-rotate invariant enforcement.
 - `AutomationSafetyManager`: Circuit breakers, failure counters, emergency stop flags, and human touch interruption detection.
 
-### 2.4 Data Persistence Layer (`com.jmd.autotext.data`)
+### 2.5 Data Persistence Layer (`com.jmd.autotext.data`)
 - `DatabaseHelper`: Thread-safe SQLite OpenHelper with WAL enabled, managing 15 relational tables across schema migrations.
 - `Repositories`: Clean data access abstractions (`TaskRepository`, `PrivacyRepository`, `AppRepository`, `DailyCampaignRepository`, `AutoReplyRepository`, `LogRepository`, `SequenceRepository`, `TemplateRepository`, `WhatsAppRepository`).
 - `PreferenceManager`: SharedPreferences backing for application configuration, standby shield options, and auto-unlock credentials.
 
-### 2.5 Services & Receivers (`com.jmd.autotext.service`, `com.jmd.autotext.receiver`)
-- `AutoTextAccessibilityService`: Background accessibility service for physical UI interaction, window inspection, and keyguard unlock.
+### 2.6 Services & Receivers (`com.jmd.autotext.service`, `com.jmd.autotext.receiver`)
+- `AutoTextAccessibilityService`: Background accessibility service for physical UI interaction, window inspection, keyguard unlock, biometric-safe hardware power button screen locking (`GLOBAL_ACTION_LOCK_SCREEN`), and multi-tier call disconnection.
 - `AutoTextNotificationListenerService`: Listens for incoming chat notifications to drive automated reply rules.
 - `AutoTextA11yTileService`: Quick Settings tile for 1-tap pause/resume of accessibility for Google Pay compatibility.
 - `TaskForegroundService`: Foreground service lifecycle manager.
 - `TaskAlarmReceiver`: Exact AlarmManager intent target executing scheduled tasks, campaigns, and diagnostics.
 - `BootReceiver`: Boot completed receiver restoring active scheduled alarms.
+- `TaskReconciliationReceiver`: Startup and boot reconciliation receiver healing orphaned or stranded running tasks.
 - `PhoneCallReceiver` & `SmsReceiver`: Telephony broadcast listeners for incoming triggers and auto-replies.
-

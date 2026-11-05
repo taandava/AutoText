@@ -6,11 +6,15 @@
 app/src/main/
 ├── AndroidManifest.xml
 ├── assets/
+│   └── AUTOTEXT_FEATURES_AND_LOGIC.md
 ├── java/com/jmd/autotext/
 │   ├── AutoTextApplication.kt
+│   ├── api/
+│   │   └── AutomationFeatureApi.kt
 │   ├── compat/
 │   │   ├── AccessibilityCompat.kt
 │   │   ├── ClipboardCompat.kt
+│   │   ├── PackageManagerCompat.kt
 │   │   ├── SmsManagerCompat.kt
 │   │   └── TelephonyManagerCompat.kt
 │   ├── core/
@@ -19,6 +23,7 @@ app/src/main/
 │   │   ├── AppFileLogger.kt
 │   │   ├── AutomationSafetyManager.kt
 │   │   ├── MessageTemplateResolver.kt
+│   │   ├── OemBrandHelper.kt
 │   │   ├── OverlayPermissionHelper.kt
 │   │   ├── PermissionManager.kt
 │   │   ├── PhoneNumberNormalizer.kt
@@ -74,7 +79,7 @@ app/src/main/
 │   ├── ui/
 │   │   ├── activity/
 │   │   │   ├── AutomationLauncherActivity.kt
-│   │   │   ├── FakeCallActivity.kt
+│   │   │   ├── CallSimulationActivity.kt
 │   │   │   ├── MainActivity.kt
 │   │   │   └── ReminderAlarmActivity.kt
 │   │   ├── components/
@@ -85,8 +90,8 @@ app/src/main/
 │   │   ├── model/
 │   │   │   └── UiModels.kt
 │   │   ├── screen/
-│   │   │   ├── DocumentationScreen.kt
 │   │   │   ├── CallSimulationScreen.kt
+│   │   │   ├── DocumentationScreen.kt
 │   │   │   ├── MainAppHost.kt
 │   │   │   ├── MoreScreen.kt
 │   │   │   ├── PermissionScreen.kt
@@ -170,4 +175,3 @@ app/src/test/
 └── java/com/jmd/autotext/
     └── AutoTextComprehensiveTest.kt
 ```
-

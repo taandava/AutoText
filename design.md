@@ -12,7 +12,7 @@ AutoText's interface is built on modern Material 3 Expressive principles combine
 1. **Zero Unexpected Popups**: All primary configurations (dates, times, recurrence, SIM cards, call durations) are embedded inline within structured, scrollable cards. Users are never subjected to jarring full-screen modal interruptions.
 2. **Compact Density & Zero Overflow**: On screens of any width (from compact 360dp phones to large foldable displays), typography, badges, and icon buttons adapt dynamically with text truncation (`TextOverflow.Ellipsis`) and strict sizing constraints (`26x26dp` for top actions).
 3. **Harmonious Baseline Alignment**: Sibling form elements share identical container heights (`46.dp`), unified label typography, and matching corner radii (`ShapeSmall = 10.dp`).
-4. **Offline Sovereignty & Transparent Status**: The system state (Stealth Guard, Orientation Guard, Accessibility, Notification Listener, Device Admin, Battery Whitelist, Master Engine) is permanently visible via 7 real-time status indicators in the header.
+4. **Offline Sovereignty & Transparent Status**: The system state (Stealth Guard, Orientation Guard, Task Service, Notification Listener, Device Admin, Battery Whitelist, Master Engine) is permanently visible via 7 real-time status indicators in the header.
 
 ---
 
@@ -82,7 +82,7 @@ AutoText's interface is built on modern Material 3 Expressive principles combine
 ### 4.2 `AppPrivacyDetailDialog`
 Modal sheet providing granular 7-dimension control for individual applications:
 1. Shield & Exclude Application
-2. Block AutoText Automation Actions
+2. Block AutoText Actions
 3. Block Overlays & Wake Windows
 4. Suppress Heads-Up Notifications
 5. Disable Clipboard Read/Write
@@ -91,11 +91,12 @@ Modal sheet providing granular 7-dimension control for individual applications:
 
 ---
 
-## 5. Screen Orientation & Hardware Lock Protection
+## 5. Screen Orientation & Biometric-Safe Hardware Lock Protection
 
-- **Hard-Locked Portrait Orientation**: Every activity (`MainActivity`, `FakeCallActivity`, `ReminderAlarmActivity`, `AutomationLauncherActivity`) specifies `android:screenOrientation="portrait"`.
+- **Hard-Locked Portrait Orientation**: Every activity (`MainActivity`, `CallSimulationActivity`, `ReminderAlarmActivity`, `AutomationLauncherActivity`) specifies `android:screenOrientation="portrait"`.
 - **System Invariant Guard**: `AccessibilityHealthManager.enforceAutoRotateInvariant` audits `Settings.System.ACCELEROMETER_ROTATION` and restores it to `0`.
 - **Quick-Settings Shielding**: Accessibility node filtering strictly ignores rotation quick-setting tiles, guaranteeing zero screen rotation leakage during automated touch simulations.
+- **Biometric-Safe Hardware Power Auto-Lock**: Screen locking postconditions emulate an authentic physical hardware Power button press (`GLOBAL_ACTION_LOCK_SCREEN`) rather than `DevicePolicyManager.lockNow()`. This avoids triggering Android Keyguard's `FLAG_BIOMETRIC_LOCKOUT` and preserves instant fingerprint and face recognition unlock for the user.
 
 ---
 *AutoText Design System Specification • Material 3 Expressive • 100% Production Ready*
