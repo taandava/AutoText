@@ -537,19 +537,44 @@ object AppSemanticColors {
 }
 
 /**
- * Universal 8-point layout grid and spacing tokens for Jetpack Compose.
+ * Universal CSS-Grid & 8-point layout grid tokens for Jetpack Compose.
+ * Formulates standard responsive spacing, corner radii, elevation, touch targets,
+ * and adaptive layout boundaries across the entire application.
  */
 object AppLayoutGrid {
-    val SpaceMicro    = 2.dp   // Inline dot separation & badges
-    val SpaceXS       = 4.dp   // Compact badge vertical padding
-    val SpaceSmall    = 8.dp   // Row element spacing
-    val SpaceStandard = 12.dp  // Card horizontal padding & icon gutter
-    val SpaceMedium   = 16.dp  // Group card separation
-    val SpaceLarge    = 20.dp  // Section division
-    val SpaceSection  = 24.dp  // Major screen gutter
+    // 8-Point Spacing Scale
+    val SpaceNone     = 0.dp
+    val SpaceMicro    = 2.dp   // Inline dot separation, micro badges
+    val SpaceXS       = 4.dp   // Compact badge padding, tight element gaps
+    val SpaceSmall    = 8.dp   // Inner row spacing, icon-to-label gaps
+    val SpaceStandard = 12.dp  // Card inner horizontal padding, standard gutters
+    val SpaceMedium   = 16.dp  // Group card separation, standard screen margins
+    val SpaceLarge    = 20.dp  // Section division & card gap
+    val SpaceSection  = 24.dp  // Major screen section boundaries
+    val SpaceHero     = 32.dp  // Hero card vertical accent padding
 
-    val CardCornerRadius     = 16.dp // Grouped container card
-    val SquircleCornerRadius = 10.dp // Icon container
-    val PillCornerRadius     = 999.dp // Status badges & pills
+    // Shape & Corner Radii Scale
+    val CardCornerRadius     = 18.dp  // Elevated container cards
+    val SquircleCornerRadius = 12.dp  // Icon squircle containers
+    val ChipCornerRadius     = 8.dp   // Inner chips & status badges
+    val PillCornerRadius     = 999.dp // Action buttons, interactive pills
+
+    // Responsive Layout & Accessibility Boundaries
+    val ScreenGutterCompact  = 12.dp  // Compact portrait phones
+    val ScreenGutterStandard = 16.dp  // Standard display margins
+    val ScreenGutterExpanded = 24.dp  // Large screen & foldable margins
+    val MaxContentWidth      = 640.dp // Maximum readable content width for tablets
+    val MinTouchTarget       = 48.dp  // Strict WCAG / Material accessibility target
+
+    // Border Width Scale
+    val BorderWidthHairline = 0.5.dp
+    val BorderWidthStandard = 1.dp
+    val BorderWidthFocus    = 2.dp
+
+    // Elevation Scale
+    val ElevationNone   = 0.dp
+    val ElevationLow    = 1.dp
+    val ElevationMedium = 3.dp
+    val ElevationHigh   = 6.dp
 }
 

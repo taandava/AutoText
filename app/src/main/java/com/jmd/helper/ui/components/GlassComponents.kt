@@ -834,7 +834,7 @@ fun AppGroupCard(
             containerColor = backgroundColor,
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
-        border = BorderStroke(1.dp, borderColor)
+        border = BorderStroke(com.jmd.helper.ui.theme.AppLayoutGrid.BorderWidthStandard, borderColor)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -852,8 +852,11 @@ fun AppGroupDivider(
     startIndent: Dp = 60.dp
 ) {
     HorizontalDivider(
-        modifier = modifier.padding(start = startIndent, end = 14.dp),
-        thickness = 0.6.dp,
+        modifier = modifier.padding(
+            start = startIndent,
+            end = com.jmd.helper.ui.theme.AppLayoutGrid.SpaceStandard
+        ),
+        thickness = com.jmd.helper.ui.theme.AppLayoutGrid.BorderWidthHairline,
         color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
     )
 }
@@ -891,16 +894,21 @@ fun AppGroupRow(
                     }
                 } else Modifier
             )
-            .padding(horizontal = 14.dp, vertical = 12.dp)
+            .padding(
+                horizontal = com.jmd.helper.ui.theme.AppLayoutGrid.SpaceMedium,
+                vertical = com.jmd.helper.ui.theme.AppLayoutGrid.SpaceStandard
+            )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = com.jmd.helper.ui.theme.AppLayoutGrid.MinTouchTarget),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Squircle leading icon
             Box(
                 modifier = Modifier
-                    .size(38.dp)
+                    .size(40.dp)
                     .background(
                         color = iconContainerColor,
                         shape = RoundedCornerShape(com.jmd.helper.ui.theme.AppLayoutGrid.SquircleCornerRadius)
@@ -911,44 +919,44 @@ fun AppGroupRow(
                     imageVector = icon,
                     contentDescription = null,
                     tint = iconTint,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(22.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(com.jmd.helper.ui.theme.AppLayoutGrid.SpaceStandard))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    fontSize = 13.5.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(com.jmd.helper.ui.theme.AppLayoutGrid.SpaceMicro))
                 Text(
                     text = subtitle,
-                    fontSize = 11.5.sp,
+                    fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = 15.sp,
+                    lineHeight = 16.sp,
                     maxLines = if (isExpanded) Int.MAX_VALUE else 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(com.jmd.helper.ui.theme.AppLayoutGrid.SpaceSmall))
 
             trailingContent()
 
             if (detailedPurpose != null) {
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(com.jmd.helper.ui.theme.AppLayoutGrid.SpaceXS))
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = if (isExpanded) "Collapse" else "Expand",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     modifier = Modifier
-                        .size(18.dp)
+                        .size(20.dp)
                         .scale(1f, if (isExpanded) -1f else 1f)
                 )
             }
@@ -964,33 +972,39 @@ fun AppGroupRow(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 10.dp, start = 50.dp)
+                        .padding(
+                            top = com.jmd.helper.ui.theme.AppLayoutGrid.SpaceSmall,
+                            start = 52.dp
+                        )
                 ) {
                     Text(
                         text = detailedPurpose,
-                        fontSize = 11.5.sp,
+                        fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = 16.5.sp
+                        lineHeight = 17.sp
                     )
                     if (onSettingsClick != null) {
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(com.jmd.helper.ui.theme.AppLayoutGrid.SpaceSmall))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.End
                         ) {
                             TextButton(
                                 onClick = onSettingsClick,
-                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                                contentPadding = PaddingValues(
+                                    horizontal = com.jmd.helper.ui.theme.AppLayoutGrid.SpaceSmall,
+                                    vertical = com.jmd.helper.ui.theme.AppLayoutGrid.SpaceMicro
+                                )
                             ) {
                                 Text(
                                     text = "System Settings",
-                                    fontSize = 11.5.sp,
+                                    fontSize = 12.sp,
                                     fontWeight = FontWeight.SemiBold
                                 )
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                                     contentDescription = null,
-                                    modifier = Modifier.size(14.dp)
+                                    modifier = Modifier.size(16.dp)
                                 )
                             }
                         }

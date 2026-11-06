@@ -2043,11 +2043,39 @@ Helper has transitioned from raw emoji icons to **Material 3 vector icons** (`an
   - Failed / Cancelled: `Icons.Filled.Cancel`
   - Queued: `Icons.Filled.Schedule`
 
-### 7.2 Glassmorphic Theme Tokens
+### 7.2 Glassmorphic & Expressive Theme Tokens
 - `AppDesignTokens.VoidBackground`: Pure black `#070A0F` base container for OLED battery savings.
 - `AppDesignTokens.GlassSurfaceSubtle`: Semitransparent tonal surface `#0D1527` with 0.75dp border.
 - `AppDesignTokens.ShapePill`: Rounded corner pill (`50.dp`) for badges, chips, and quick filters.
-- `AppDesignTokens.ShapeMedium`: Rounded card (`12.dp`) for cards and elevated dialogs.
+- `AppDesignTokens.ShapeMedium`: Rounded card (`14.dp`) for cards and elevated dialogs.
+
+### 7.3 Universal CSS-Grid & 8-Point Layout Tokens (`AppLayoutGrid`)
+The entire user interface strictly follows a responsive layout grid inspired by CSS Grid and 8-point Material Design:
+- **Spacing Scale**:
+  - `SpaceNone = 0.dp`
+  - `SpaceMicro = 2.dp` — Inline dot separators, micro badges
+  - `SpaceXS = 4.dp` — Compact badge vertical padding, tight gaps
+  - `SpaceSmall = 8.dp` — Row item spacing, icon-label separation
+  - `SpaceStandard = 12.dp` — Inner card padding, gutter standard
+  - `SpaceMedium = 16.dp` — Group card separation, standard screen margins
+  - `SpaceLarge = 20.dp` — Major card boundary
+  - `SpaceSection = 24.dp` — Major screen section separation
+  - `SpaceHero = 32.dp` — Hero card vertical accents
+- **Shape & Radii Scale**:
+  - `CardCornerRadius = 18.dp` — Grouped container cards
+  - `SquircleCornerRadius = 12.dp` — Icon squircle backgrounds
+  - `ChipCornerRadius = 8.dp` — Inner status indicators
+  - `PillCornerRadius = 999.dp` — Interactive action pills and badges
+- **Accessibility & Responsive Metrics**:
+  - `MinTouchTarget = 48.dp` — Strict compliance with accessibility touch target rules
+  - `ScreenGutterCompact = 12.dp`, `ScreenGutterStandard = 16.dp`, `ScreenGutterExpanded = 24.dp`
+  - `MaxContentWidth = 640.dp` — Prevents over-stretching on tablets and foldables
+
+### 7.4 Modular Permission Center Architecture
+The Permission Center is decomposed into high-cohesion, single-responsibility composables:
+- `PermissionHeroCard`: Animated circular gauge (0–100%), overall health badge, real-time mini status indicators, and one-tap "Auto-Heal" and "ADB Fast Setup" triggers.
+- `PermissionGroupCard` & `PermissionRowItem`: Grouped cards with category headers, readiness counters (`3/3 Ready`), squircle leading icons, status pills, and expandable policy rationale accordions.
+- `PermissionDialogs`: Google Play-compliant Accessibility Service disclosure and one-click universal ADB privilege grant modal.
 
 ---
 

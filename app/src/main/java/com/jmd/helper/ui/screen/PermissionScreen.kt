@@ -22,8 +22,6 @@ package com.jmd.helper.ui.screen
 
 import android.Manifest
 import android.app.AlarmManager
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -32,73 +30,37 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.jmd.helper.core.*
 import com.jmd.helper.receiver.HelperDeviceAdminReceiver
 import com.jmd.helper.ui.components.*
-import com.jmd.helper.ui.theme.AppDesignTokens
+import com.jmd.helper.ui.screen.permission.*
 import com.jmd.helper.ui.theme.AppLayoutGrid
 import com.jmd.helper.ui.theme.AppSemanticColors
-import com.jmd.helper.ui.theme.isAppDarkTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-/**
- * Universal ADB Privilege Grant Command.
- */
-private const val UNIVERSAL_ADB_COMMAND =
-    "adb shell \"pm grant com.jmd.helper android.permission.WRITE_SECURE_SETTINGS; " +
-    "pm grant com.jmd.helper android.permission.READ_PHONE_STATE; " +
-    "pm grant com.jmd.helper android.permission.CALL_PHONE; " +
-    "pm grant com.jmd.helper android.permission.ANSWER_PHONE_CALLS; " +
-    "pm grant com.jmd.helper android.permission.READ_CALL_LOG; " +
-    "pm grant com.jmd.helper android.permission.READ_CONTACTS; " +
-    "pm grant com.jmd.helper android.permission.POST_NOTIFICATIONS; " +
-    "pm grant com.jmd.helper android.permission.READ_SMS; " +
-    "pm grant com.jmd.helper android.permission.SEND_SMS; " +
-    "pm grant com.jmd.helper android.permission.READ_MEDIA_IMAGES; " +
-    "pm grant com.jmd.helper android.permission.READ_MEDIA_VIDEO; " +
-    "appops set com.jmd.helper SYSTEM_ALERT_WINDOW allow; " +
-    "appops set com.jmd.helper TURN_SCREEN_ON allow; " +
-    "appops set com.jmd.helper SCHEDULE_EXACT_ALARM allow; " +
-    "appops set com.jmd.helper START_ACTIVITIES_FROM_BACKGROUND allow; " +
-    "appops set com.jmd.helper ACCESS_RESTRICTED_SETTINGS allow; " +
-    "appops set com.jmd.helper AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore; " +
-    "dumpsys deviceidle whitelist +com.jmd.helper; " +
-    "dpm set-active-admin com.jmd.helper/.receiver.HelperDeviceAdminReceiver\""
 
 /**
  * Material 3 Expressive System Health & Permission Center.
@@ -192,7 +154,6 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
         hasRuntimePerms
     ).count { it }
 
-    // Section metrics
     val coreCount = listOf(isA11yActive, canExactAlarm, hasNotifListener).count { it }
     val bgCount = listOf(isIgnoringBattery, true).count { it }
     val deviceCount = listOf(true, hasOverlay, isAdminActive, hasRuntimePerms, hasDnd).count { it }
@@ -227,10 +188,10 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = AppLayoutGrid.SpaceStandard),
+                .padding(horizontal = AppLayoutGrid.SpaceMedium),
             contentPadding = PaddingValues(
-                top = 10.dp,
-                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 28.dp
+                top = AppLayoutGrid.SpaceSmall,
+                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + AppLayoutGrid.SpaceSection
             ),
             verticalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceMedium),
         ) {
@@ -429,15 +390,17 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { oemExpanded = !oemExpanded }
-                            .padding(horizontal = 14.dp, vertical = 12.dp)
+                            .padding(horizontal = AppLayoutGrid.SpaceMedium, vertical = AppLayoutGrid.SpaceStandard)
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .defaultMinSize(minHeight = AppLayoutGrid.MinTouchTarget),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(38.dp)
+                                    .size(40.dp)
                                     .background(
                                         color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
                                         shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius)
@@ -448,21 +411,21 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
                                     imageVector = Icons.Default.Smartphone,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.secondary,
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(22.dp)
                                 )
                             }
-                            Spacer(modifier = Modifier.width(12.dp))
+                            Spacer(modifier = Modifier.width(AppLayoutGrid.SpaceStandard))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = "OEM Autostart ($brandSummary)",
-                                    fontSize = 13.5.sp,
+                                    fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
-                                Spacer(modifier = Modifier.height(2.dp))
+                                Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceMicro))
                                 Text(
                                     text = "Hardware settings to prevent background kills",
-                                    fontSize = 11.5.sp,
+                                    fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -471,7 +434,7 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
                                 contentDescription = if (oemExpanded) "Collapse" else "Expand",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                                 modifier = Modifier
-                                    .size(18.dp)
+                                    .size(20.dp)
                                     .scale(1f, if (oemExpanded) -1f else 1f)
                             )
                         }
@@ -485,29 +448,29 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 10.dp, start = 50.dp),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    .padding(top = AppLayoutGrid.SpaceSmall, start = 52.dp),
+                                verticalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceXS)
                             ) {
                                 brandGuidance.forEach { step ->
                                     Row(modifier = Modifier.fillMaxWidth()) {
                                         Text(
                                             text = "• ",
-                                            fontSize = 11.5.sp,
+                                            fontSize = 12.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.primary
                                         )
                                         Text(
                                             text = step,
-                                            fontSize = 11.5.sp,
+                                            fontSize = 12.sp,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             lineHeight = 16.sp
                                         )
                                     }
                                 }
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceSmall))
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    horizontalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceSmall)
                                 ) {
                                     GlassButton(
                                         text = "Open Auto-Start",
@@ -725,453 +688,6 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
 }
 
 /**
- * Modern Material 3 Hero System Health Card with dynamic luminance contrast.
- */
-@Composable
-private fun PermissionHeroCard(
-    context: Context,
-    grantedCount: Int,
-    totalCount: Int,
-    isA11yActive: Boolean,
-    canExactAlarm: Boolean,
-    hasNotifListener: Boolean,
-    isIgnoringBattery: Boolean,
-    onOpenAdbDialog: () -> Unit,
-    onHealDone: () -> Unit
-) {
-    val scope = rememberCoroutineScope()
-    var isHealing by remember { mutableStateOf(false) }
-    val isAllGranted = grantedCount >= totalCount
-
-    val healthPercentage = (grantedCount.toFloat() / totalCount.toFloat()).coerceIn(0f, 1f)
-    val animatedProgress by animateFloatAsState(targetValue = healthPercentage, label = "HealthProgress")
-
-    val successAccent = AppSemanticColors.success
-    val primaryAccent = MaterialTheme.colorScheme.primary
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(AppLayoutGrid.CardCornerRadius),
-        colors = CardDefaults.cardColors(
-            containerColor = AppSemanticColors.heroContainer,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        border = BorderStroke(
-            1.dp,
-            if (isAllGranted) AppSemanticColors.successBorder else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(14.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp)
-                            .background(
-                                color = if (isAllGranted) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (isAllGranted) Icons.Default.Shield else Icons.Default.SecurityUpdateWarning,
-                            contentDescription = null,
-                            tint = if (isAllGranted) successAccent else primaryAccent,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    Column {
-                        Text(
-                            text = if (isAllGranted) "System Protected & Ready" else "System Health Check",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = if (isAllGranted) {
-                                "All $totalCount core privileges authorized & healthy."
-                            } else {
-                                "$grantedCount of $totalCount privileges authorized."
-                            },
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-
-                // Progress Percentage Badge
-                Surface(
-                    shape = CircleShape,
-                    color = if (isAllGranted) AppSemanticColors.successContainer else primaryAccent.copy(alpha = 0.12f),
-                    border = BorderStroke(1.5.dp, if (isAllGranted) successAccent else primaryAccent),
-                    modifier = Modifier.size(46.dp)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "${(healthPercentage * 100).toInt()}%",
-                            fontSize = 12.5.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = if (isAllGranted) successAccent else primaryAccent
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // Progress Bar
-            LinearProgressIndicator(
-                progress = { animatedProgress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(6.dp)
-                    .clip(RoundedCornerShape(3.dp)),
-                color = if (isAllGranted) successAccent else primaryAccent,
-                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 4 Mini Indicators Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                HealthMiniChip(name = "Engine", isGranted = isA11yActive)
-                HealthMiniChip(name = "Alarms", isGranted = canExactAlarm)
-                HealthMiniChip(name = "Notifs", isGranted = hasNotifListener)
-                HealthMiniChip(name = "Battery", isGranted = isIgnoringBattery)
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // Quick Actions Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                GlassButton(
-                    text = if (isHealing) "Healing..." else "Auto-Heal Engine",
-                    onClick = {
-                        if (isHealing) return@GlassButton
-                        isHealing = true
-                        scope.launch {
-                            val healed = withContext(Dispatchers.IO) {
-                                AccessibilityHealthManager.ensureAllServicesActive(context)
-                                AccessibilityHealthManager.ensureServiceAlive(context)
-                            }
-                            isHealing = false
-                            onHealDone()
-                            if (healed) {
-                                context.showAppToast("Services verified and operational")
-                            } else {
-                                context.showAppToast("Auto-heal executed. Review individual items below.", isLong = true)
-                            }
-                        }
-                    },
-                    icon = if (isHealing) Icons.Default.HourglassTop else Icons.Default.Sync,
-                    variant = GlassButtonVariant.SUCCESS,
-                    modifier = Modifier.weight(1.1f)
-                )
-
-                GlassButton(
-                    text = "ADB Setup",
-                    onClick = onOpenAdbDialog,
-                    icon = Icons.Default.Terminal,
-                    variant = GlassButtonVariant.PRIMARY,
-                    modifier = Modifier.weight(0.9f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun HealthMiniChip(name: String, isGranted: Boolean) {
-    val activeColor = AppSemanticColors.success
-    val inactiveColor = MaterialTheme.colorScheme.outline
-    val bg = if (isGranted) AppSemanticColors.successContainer else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
-
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-        color = bg,
-        modifier = Modifier.padding(horizontal = 2.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(6.dp)
-                    .background(
-                        color = if (isGranted) activeColor else inactiveColor,
-                        shape = CircleShape
-                    )
-            )
-            Spacer(modifier = Modifier.width(5.dp))
-            Text(
-                text = name,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Medium,
-                color = if (isGranted) activeColor else MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
-/**
- * Section title header for categorized permission groups with status counter badge.
- */
-@Composable
-private fun PermissionSectionHeader(
-    title: String,
-    subtitle: String,
-    grantedCount: Int,
-    totalCount: Int
-) {
-    val isComplete = grantedCount >= totalCount
-    val badgeColor = if (isComplete) AppSemanticColors.success else MaterialTheme.colorScheme.primary
-    val badgeBg = if (isComplete) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 2.dp, vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                fontSize = 13.5.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = subtitle,
-                fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        Surface(
-            shape = AppDesignTokens.ShapePill,
-            color = badgeBg,
-            border = BorderStroke(1.dp, badgeColor.copy(alpha = 0.35f))
-        ) {
-            Text(
-                text = "$grantedCount/$totalCount Ready",
-                fontSize = 10.5.sp,
-                fontWeight = FontWeight.Bold,
-                color = badgeColor,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun PermissionStatusActiveChip() {
-    Surface(
-        shape = AppDesignTokens.ShapePill,
-        color = AppSemanticColors.successContainer,
-        border = BorderStroke(1.dp, AppSemanticColors.successBorder)
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = null,
-                tint = AppSemanticColors.success,
-                modifier = Modifier.size(12.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "Active",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                color = AppSemanticColors.success
-            )
-        }
-    }
-}
-
-@Composable
-private fun PermissionGrantActionButton(text: String, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        shape = AppDesignTokens.ShapePill,
-        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-        modifier = Modifier.height(32.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        )
-    ) {
-        Text(
-            text = text,
-            fontSize = 11.5.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-    }
-}
-
-/**
- * Universal ADB Privilege Grant Dialog providing one-click command copying.
- */
-@Composable
-private fun AdbSetupModalDialog(context: Context, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                imageVector = Icons.Default.Terminal,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        },
-        title = {
-            Text(
-                text = "Universal ADB Setup",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
-        },
-        text = {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "Grants all required background execution privileges (secure settings, runtime permissions, and battery whitelist) with zero interactive prompts.",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = UNIVERSAL_ADB_COMMAND,
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    com.jmd.helper.compat.ClipboardCompat.setPrimaryClip(
-                        cm,
-                        ClipData.newPlainText("Universal ADB Command", UNIVERSAL_ADB_COMMAND)
-                    )
-                    context.showAppToast("ADB command copied to clipboard")
-                    onDismiss()
-                }
-            ) {
-                Text("Copy Command", fontWeight = FontWeight.Bold)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Close")
-            }
-        }
-    )
-}
-
-/**
- * Accessibility Service Policy & User Disclosure Dialog.
- */
-@Composable
-private fun A11yDisclosureDialog(context: Context, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = "Task Service Disclosure",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        },
-        text = {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "Helper uses Android's Accessibility Service API exclusively for user-directed automated task dispatch:",
-                    fontSize = 12.5.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "• Hands-free scheduled message preparation and delivery in user-approved messaging applications (WhatsApp and WhatsApp Business).\n" +
-                           "• Unattended device wake and user-configured PIN entry assistance when scheduled tasks trigger while locked.\n" +
-                           "• Power button simulation (GLOBAL_ACTION_LOCK_SCREEN) post-dispatch to preserve biometric authentication.",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "Privacy & Safety Guarantees:",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.5.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "• Helper does NOT collect, store, or transmit your private chat messages, keystrokes, personal passwords, or screen contents.\n" +
-                           "• Helper strictly isolates itself from all banking, payment, and UPI applications.\n" +
-                           "• 100% on-device execution with zero cloud telemetry.",
-                    fontSize = 11.5.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismiss()
-                    context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    })
-                }
-            ) {
-                Text("Agree & Open Settings", fontWeight = FontWeight.Bold)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}
-
-/**
  * Self-healing and watchdog quick fix card.
  */
 @Composable
@@ -1224,11 +740,14 @@ fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
     AppGroupCard(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.padding(AppLayoutGrid.SpaceMedium)) {
+            Row(
+                modifier = Modifier.defaultMinSize(minHeight = AppLayoutGrid.MinTouchTarget),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Box(
                     modifier = Modifier
-                        .size(38.dp)
+                        .size(40.dp)
                         .background(
                             color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
                             shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius)
@@ -1239,39 +758,39 @@ fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
                         imageVector = Icons.Default.Smartphone,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(22.dp)
                     )
                 }
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(AppLayoutGrid.SpaceStandard))
                 Column {
                     Text(
                         text = "OEM Autostart ($brandSummary)",
-                        fontSize = 13.5.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "Hardware settings to prevent background kills",
-                        fontSize = 11.5.sp,
+                        fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceSmall))
 
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceXS)) {
                 brandGuidance.forEach { step ->
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = "• ",
-                            fontSize = 11.5.sp,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
                             text = step,
-                            fontSize = 11.5.sp,
+                            fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 16.sp
                         )
@@ -1279,11 +798,11 @@ fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceStandard))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceSmall)
             ) {
                 GlassButton(
                     text = "Open Auto-Start",

@@ -1,6 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <lint>
-    <!-- Adaptive launcher icons use custom system vectors with legacy fallback assets -->
-    <issue id="IconLauncherShape" severity="ignore" />
-    <issue id="IconDuplicates" severity="ignore" />
 </lint>
