@@ -628,18 +628,4 @@ fun WhatsAppLiveTestCard(
     }
 }
 
-/**
- * Backward-compatible deprecated alias for [WhatsAppSetupAndScreenAssistView].
- */
-@Deprecated(
-    message = "Use WhatsAppSetupAndScreenAssistView for policy-compliant naming",
-    replaceWith = ReplaceWith("WhatsAppSetupAndScreenAssistView(context, prefs, onBack)")
-)
-@Composable
-fun WhatsAppSetupAndAutoUnlockView(
-    context: Context,
-    prefs: PreferenceManager,
-    onBack: () -> Unit
-) = WhatsAppSetupAndScreenAssistView(context, prefs, onBack)
-
 

@@ -1,9 +1,6 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
-    <inspection_tool class="FunctionName" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="namePattern" value="[a-zA-Z][A-Za-z0-9]*" />
-    </inspection_tool>
+    <inspection_tool class="FunctionName" enabled="false" level="WARNING" enabled_by_default="false" />
   </profile>
 </component>
-
