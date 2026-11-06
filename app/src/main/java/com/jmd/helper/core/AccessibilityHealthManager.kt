@@ -12,7 +12,16 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.provider.Settings
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import com.jmd.helper.data.prefs.PreferenceManager
+import com.jmd.helper.HelperApplication
 import com.jmd.helper.receiver.HelperDeviceAdminReceiver
 import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.service.TaskNotificationListenerService
@@ -177,9 +186,18 @@ object AccessibilityHealthManager {
     fun isAccessibilitySettingEnabled(context: Context): Boolean = isAccessibilityEnabledInSystem(context)
 
     /**
-     * Polls for accessibility service readiness up to [timeoutMs] before dependent tasks run.
+     * Polls for accessibility service readiness up to [timeout] before dependent tasks run.
      */
-    fun waitForServiceReadiness(context: Context, timeoutMs: Long = 5000L): Boolean {
+    fun waitForServiceReadiness(
+        context: Context,
+        timeout: Duration = 5.seconds,
+    ): Boolean = waitForServiceReadiness(context, timeout.inWholeMilliseconds)
+
+    /**
+     * Polls for accessibility service readiness up to [timeoutMs] before dependent tasks run.
+     * Legacy overload accepting milliseconds.
+     */
+    fun waitForServiceReadiness(context: Context, timeoutMs: Long): Boolean {
         if (isServiceOperational()) return true
         if (hasWriteSecureSettings(context) && !isAccessibilityEnabledInSystem(context)) {
             enableAccessibilityService(context)
@@ -192,17 +210,26 @@ object AccessibilityHealthManager {
     }
 
     /**
-     * Cooperatively suspends polling for accessibility service readiness up to [timeoutMs] before dependent tasks run.
+     * Cooperatively suspends polling for accessibility service readiness up to [timeout] before dependent tasks run.
      * Prevents blocking worker threads in coroutine scopes.
      */
-    suspend fun awaitServiceReadiness(context: Context, timeoutMs: Long = 5000L): Boolean {
+    suspend fun awaitServiceReadiness(
+        context: Context,
+        timeout: Duration = 5.seconds,
+    ): Boolean = awaitServiceReadiness(context, timeout.inWholeMilliseconds)
+
+    /**
+     * Cooperatively suspends polling for accessibility service readiness up to [timeoutMs] before dependent tasks run.
+     * Legacy overload accepting milliseconds.
+     */
+    suspend fun awaitServiceReadiness(context: Context, timeoutMs: Long): Boolean {
         if (isServiceOperational()) return true
         if (hasWriteSecureSettings(context) && !isAccessibilityEnabledInSystem(context)) {
             enableAccessibilityService(context)
         }
         val start = System.currentTimeMillis()
         while (!isServiceOperational() && (System.currentTimeMillis() - start) < timeoutMs) {
-            kotlinx.coroutines.delay(100L)
+            delay(100.milliseconds)
         }
         return isServiceOperational()
     }
@@ -437,9 +464,15 @@ object AccessibilityHealthManager {
                 Log.i(TAG, "Directly enabled Notification Listener in settings via WRITE_SECURE_SETTINGS")
             }
             healNotificationListener(context)
-            Thread {
-                HelperDeviceAdminReceiver.ensureActive(context)
-            }.start()
+            try {
+                val appScope = (context.applicationContext as? HelperApplication)?.applicationScope
+                    ?: CoroutineScope(Dispatchers.IO + SupervisorJob())
+                appScope.launch(Dispatchers.IO) {
+                    HelperDeviceAdminReceiver.ensureActive(context)
+                }
+            } catch (t: Throwable) {
+                Log.w(TAG, "Device admin activation launch note: ${t.message}")
+            }
 
             true
         } catch (e: Exception) {

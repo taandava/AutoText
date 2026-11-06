@@ -355,9 +355,15 @@ object AccessibilityNodeUtils {
             }
             if (node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args)) return true
 
-            val clip = ClipData.newPlainText("text", text)
-            val cm = service.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return false
-            com.jmd.helper.compat.ClipboardCompat.setPrimaryClip(cm, clip)
+            val copied = com.jmd.helper.compat.ClipboardCompat.copyToClipboardWithPrivacy(
+                context = service,
+                label = "text",
+                text = text,
+                targetPackage = nodePkg ?: curPkg,
+                isSensitive = true,
+                autoClearSeconds = 15
+            )
+            if (!copied) return false
             return node.performAction(AccessibilityNodeInfo.ACTION_PASTE)
         } catch (t: Throwable) {
             Log.e(TAG, "setTextOnInput error: ${t.message}")

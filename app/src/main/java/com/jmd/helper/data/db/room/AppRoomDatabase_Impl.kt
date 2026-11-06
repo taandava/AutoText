@@ -1,5 +1,7 @@
+@file:Suppress("RestrictedApi")
 package com.jmd.helper.data.db.room
 
+import android.annotation.SuppressLint
 import androidx.room.DatabaseConfiguration
 import androidx.room.InvalidationTracker
 import androidx.room.RoomOpenHelper
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.flowOf
  * zero-overhead integration over the local `helper.db` SQLite database.
  * The `_Impl` suffix is strictly required by AndroidX Room's reflection generator.
  */
+@SuppressLint("RestrictedApi")
 @Suppress("ClassName")
 class AppRoomDatabase_Impl : AppRoomDatabase() {
 

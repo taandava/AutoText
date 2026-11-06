@@ -2,6 +2,7 @@ package com.jmd.helper
 
 import android.content.Context
 import app.cash.turbine.test
+import com.jmd.helper.core.AccessibilityHealthManager
 import com.jmd.helper.data.db.room.RoomTypeConverters
 import com.jmd.helper.data.model.BackupPayloadDto
 import com.jmd.helper.data.model.ChannelType
@@ -12,6 +13,8 @@ import com.jmd.helper.whatsapp.AccessibilityNodeUtils
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.encodeToString
@@ -260,5 +263,24 @@ class ModernStackArchitectureTest {
         val updated = before + 500L
         AccessibilityNodeUtils.lastGestureTimestamp = updated
         assertEquals(updated, AccessibilityNodeUtils.lastGestureTimestamp)
+    }
+
+    @Test
+    fun `test accessibility health manager duration overloads`() = runTest {
+        val mockContext = mockk<Context>(relaxed = true)
+        every { mockContext.checkCallingOrSelfPermission(any()) } returns -1 // PERMISSION_DENIED
+
+        // Duration overload with explicit duration
+        val resultDuration = AccessibilityHealthManager.awaitServiceReadiness(mockContext, 10.milliseconds)
+        // Service is not running in test JVM environment, so expected to return false without throwing
+        assertEquals(false, resultDuration)
+
+        // Legacy Long millisecond overload
+        val resultLong = AccessibilityHealthManager.awaitServiceReadiness(mockContext, 10L)
+        assertEquals(false, resultLong)
+
+        // Synchronous waitForServiceReadiness Duration overload
+        val resultSyncDuration = AccessibilityHealthManager.waitForServiceReadiness(mockContext, 10.milliseconds)
+        assertEquals(false, resultSyncDuration)
     }
 }

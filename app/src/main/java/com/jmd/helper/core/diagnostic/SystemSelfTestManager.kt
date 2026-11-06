@@ -369,7 +369,7 @@ object SystemSelfTestManager {
             val isWal = db.isWriteAheadLoggingEnabled
             val version = db.version
             DiagnosticResultItem(
-                id = "room_orm",
+                id = "sqlite_storage_engine",
                 title = "Database Engine & Storage",
                 category = "Data & Storage",
                 level = DiagnosticLevel.PASS,
@@ -380,7 +380,7 @@ object SystemSelfTestManager {
             throw e
         } catch (e: Exception) {
             DiagnosticResultItem(
-                id = "room_orm",
+                id = "sqlite_storage_engine",
                 title = "Database Engine & Storage",
                 category = "Data & Storage",
                 level = DiagnosticLevel.WARNING,

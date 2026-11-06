@@ -280,27 +280,46 @@ class KeyguardUnlockEngine(
                 }
 
                 if (!digitTapped) {
-                    val dm = service.resources.displayMetrics
-                    val width = dm.widthPixels.toFloat()
-                    val height = dm.heightPixels.toFloat()
-                    val isTallScreen = height > 2400f
-                    val (colRatio, rowRatio) = when (digitChar) {
-                        '1' -> Pair(0.241f, if (isTallScreen) 0.530f else 0.524f)
-                        '2' -> Pair(0.500f, if (isTallScreen) 0.530f else 0.524f)
-                        '3' -> Pair(0.759f, if (isTallScreen) 0.530f else 0.524f)
-                        '4' -> Pair(0.241f, if (isTallScreen) 0.635f else 0.619f)
-                        '5' -> Pair(0.500f, if (isTallScreen) 0.635f else 0.619f)
-                        '6' -> Pair(0.759f, if (isTallScreen) 0.635f else 0.619f)
-                        '7' -> Pair(0.241f, if (isTallScreen) 0.740f else 0.714f)
-                        '8' -> Pair(0.500f, if (isTallScreen) 0.740f else 0.714f)
-                        '9' -> Pair(0.759f, if (isTallScreen) 0.740f else 0.714f)
-                        '0' -> Pair(0.500f, if (isTallScreen) 0.845f else 0.809f)
-                        else -> Pair(0.500f, if (isTallScreen) 0.845f else 0.809f)
+                    val containerRect = findKeypadContainer(currentRoots)
+                    val (tapX, tapY) = if (containerRect != null && containerRect.width() > 200 && containerRect.height() > 200) {
+                        val colIdx = when (digitChar) {
+                            '1', '4', '7' -> 0
+                            '2', '5', '8', '0' -> 1
+                            '3', '6', '9' -> 2
+                            else -> 1
+                        }
+                        val rowIdx = when (digitChar) {
+                            '1', '2', '3' -> 0
+                            '4', '5', '6' -> 1
+                            '7', '8', '9' -> 2
+                            '0' -> 3
+                            else -> 3
+                        }
+                        val x = containerRect.left + (containerRect.width() * (2 * colIdx + 1) / 6f)
+                        val y = containerRect.top + (containerRect.height() * (2 * rowIdx + 1) / 8f)
+                        Pair(x, y)
+                    } else {
+                        val dm = service.resources.displayMetrics
+                        val width = dm.widthPixels.toFloat()
+                        val height = dm.heightPixels.toFloat()
+                        val isTallScreen = height > 2400f
+                        val (colRatio, rowRatio) = when (digitChar) {
+                            '1' -> Pair(0.241f, if (isTallScreen) 0.530f else 0.524f)
+                            '2' -> Pair(0.500f, if (isTallScreen) 0.530f else 0.524f)
+                            '3' -> Pair(0.759f, if (isTallScreen) 0.530f else 0.524f)
+                            '4' -> Pair(0.241f, if (isTallScreen) 0.635f else 0.619f)
+                            '5' -> Pair(0.500f, if (isTallScreen) 0.635f else 0.619f)
+                            '6' -> Pair(0.759f, if (isTallScreen) 0.635f else 0.619f)
+                            '7' -> Pair(0.241f, if (isTallScreen) 0.740f else 0.714f)
+                            '8' -> Pair(0.500f, if (isTallScreen) 0.740f else 0.714f)
+                            '9' -> Pair(0.759f, if (isTallScreen) 0.740f else 0.714f)
+                            '0' -> Pair(0.500f, if (isTallScreen) 0.845f else 0.809f)
+                            else -> Pair(0.500f, if (isTallScreen) 0.845f else 0.809f)
+                        }
+                        Pair(width * colRatio, height * rowRatio)
                     }
-                    val tapX = width * colRatio
-                    val tapY = height * rowRatio
                     dispatchPhysicalTap(tapX, tapY)
-                    Log.d(loggerTag, "Coordinate fallback physical tap for keyguard keypad entry [${index + 1}/${pin.length}] at ($tapX, $tapY)")
+                    Log.d(loggerTag, "Coordinate fallback physical tap for keyguard keypad entry [${index + 1}/${pin.length}] at ($tapX, $tapY) (container=${containerRect != null})")
                 }
 
                 handler.postDelayed({
@@ -362,6 +381,26 @@ class KeyguardUnlockEngine(
         }
 
         tapNextDigit(0)
+    }
+
+    private fun findKeypadContainer(roots: List<AccessibilityNodeInfo>): android.graphics.Rect? {
+        val containerIds = listOf(
+            "pinContainer", "keyguard_pin_view", "pin_view", "numeric_keypad",
+            "keyboard_container", "keypad_layout", "sec_pin_view", "vivo_pin_view"
+        )
+        for (root in roots) {
+            for (id in containerIds) {
+                val nodes = AccessibilityNodeUtils.findNodesByViewId(root, "com.android.systemui", id)
+                for (node in nodes) {
+                    val rect = android.graphics.Rect()
+                    node.getBoundsInScreen(rect)
+                    if (rect.width() > 200 && rect.height() > 200) {
+                        return rect
+                    }
+                }
+            }
+        }
+        return null
     }
 
     private fun findKeypadDigitNode(root: AccessibilityNodeInfo, digit: Char): AccessibilityNodeInfo? {

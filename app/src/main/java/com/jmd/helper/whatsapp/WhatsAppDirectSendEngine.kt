@@ -104,6 +104,12 @@ class WhatsAppDirectSendEngine(
 
             if (hasAttemptedSendClick) {
                 if (inputNode == null) {
+                    val activeRootPkg = service.rootInActiveWindow?.packageName?.toString() ?: curPkg
+                    if (!activeRootPkg.contains(pkg, ignoreCase = true) && !pkg.contains(activeRootPkg, ignoreCase = true)) {
+                        Log.d(loggerTag, "Active window transitioned to non-target package ($activeRootPkg) after send click; awaiting target stabilization...")
+                        onRetry(400L)
+                        return
+                    }
                     Log.d(loggerTag, "WhatsApp composer is no longer visible after send click; treating UI transition as send confirmation.")
                     AppFileLogger.action(service, loggerTag, "WhatsApp composer closed/transitioned after send click; UI submission confirmed.")
                     onSuccess()

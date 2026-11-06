@@ -31,8 +31,10 @@ import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.data.repo.AppRepository
 import com.jmd.helper.engine.SmsSender
 import java.util.Calendar
+import com.jmd.helper.HelperApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 /**
@@ -64,13 +66,13 @@ class SmsReceiver : BroadcastReceiver() {
             AppFileLogger.action(context, TAG, "Incoming SMS from $maskedPhone (${messageBody.length} chars)")
 
             val pendingResult = goAsync()
-            android.os.Handler(android.os.Looper.getMainLooper()).post {
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        processSmsAsync(context, senderPhone, messageBody)
-                    } finally {
-                        pendingResult.finish()
-                    }
+            val appScope = (context.applicationContext as? HelperApplication)?.applicationScope
+                ?: CoroutineScope(Dispatchers.IO + SupervisorJob())
+            appScope.launch(Dispatchers.IO) {
+                try {
+                    processSmsAsync(context, senderPhone, messageBody)
+                } finally {
+                    pendingResult.finish()
                 }
             }
         } catch (t: Throwable) {

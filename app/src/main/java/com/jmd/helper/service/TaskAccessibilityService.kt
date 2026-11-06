@@ -787,7 +787,9 @@ class TaskAccessibilityService : AccessibilityService() {
                 val ctx: Context = inst ?: runCatching { HelperApplication.instance }.getOrNull() ?: return false
                 if (inst == null && AccessibilityHealthManager.hasWriteSecureSettings(ctx)) {
                     AccessibilityHealthManager.enableAccessibilityService(ctx)
-                    Thread.sleep(250)
+                    if (Looper.myLooper() != Looper.getMainLooper()) {
+                        runCatching { Thread.sleep(250) }
+                    }
                     inst = instance
                 }
                 if (inst != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

@@ -28,6 +28,7 @@ import android.provider.CallLog
 import android.provider.ContactsContract
 import android.telephony.TelephonyManager
 import android.util.Log
+import com.jmd.helper.HelperApplication
 import com.jmd.helper.core.AppFileLogger
 import com.jmd.helper.core.MessageTemplateResolver
 import com.jmd.helper.core.PhoneNumberNormalizer
@@ -40,6 +41,7 @@ import com.jmd.helper.data.repo.AppRepository
 import com.jmd.helper.engine.SmsSender
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
@@ -117,7 +119,9 @@ class PhoneCallReceiver : BroadcastReceiver() {
 
                     if (isPotentialEvent) {
                         val pendingResult = goAsync()
-                        CoroutineScope(Dispatchers.IO).launch {
+                        val appScope = (context.applicationContext as? HelperApplication)?.applicationScope
+                            ?: CoroutineScope(Dispatchers.IO + SupervisorJob())
+                        appScope.launch(Dispatchers.IO) {
                             try {
                                 handleCallTransition(
                                     context = context,
