@@ -13,7 +13,7 @@
  * - Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.TaskRepository]
  * - Engines: [com.jmd.helper.engine.SequentialTaskEngine], [com.jmd.helper.engine.ContactIngestionEngine]
  * - UI Screens: `ComposeTaskScreen`, `TasksScreen`,
- *   `TasksScreen`, `DailyCampaignScreen`
+ *   `DailyCampaignScreen`
  */
 package com.jmd.helper.data.model
 

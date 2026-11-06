@@ -41,8 +41,8 @@ abstract class AppRoomDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context): AppRoomDatabase {
             return Room.databaseBuilder(context, AppRoomDatabase::class.java, DATABASE_NAME)
-                .fallbackToDestructiveMigration()
-                .fallbackToDestructiveMigrationOnDowngrade()
+                .fallbackToDestructiveMigration(dropAllTables = true)
+                .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
                 .build()
                 .also {
                     AppFileLogger.i("AppRoomDatabase", "Room Database instance initialized over $DATABASE_NAME")

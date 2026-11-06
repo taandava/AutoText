@@ -15,8 +15,8 @@ android {
         applicationId = "com.jmd.helper"
         minSdk = 27
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
     }
 
     val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -116,7 +116,7 @@ dependencies {
     implementation(composeBom)
 
     implementation("androidx.activity:activity-compose:1.13.0")
-    implementation("androidx.fragment:fragment-ktx:1.8.5")
+    implementation("androidx.fragment:fragment-ktx:1.9.1")
     implementation("androidx.core:core-ktx:1.19.1")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.11.0")
@@ -134,37 +134,37 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 
     // 1. Architecture & Persistence: DataStore, Serialization, Room Runtime
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("androidx.room:room-runtime:2.8.5")
+    implementation("androidx.room:room-ktx:2.8.5")
+    implementation("androidx.datastore:datastore-preferences:1.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
     // 2. Background Execution, Startup & WorkManager
     implementation("androidx.startup:startup-runtime:1.2.0")
-    implementation("androidx.concurrent:concurrent-futures-ktx:1.2.0")
+    implementation("androidx.concurrent:concurrent-futures-ktx:1.3.0")
 
     // 3. UI, Media & Compose Performance
     implementation("io.coil-kt:coil-compose:2.7.0")
-    implementation("androidx.navigation:navigation-compose:2.8.3")
+    implementation("androidx.navigation:navigation-compose:2.9.0")
     implementation("androidx.profileinstaller:profileinstaller:1.4.1")
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.window:window:1.3.0")
-    implementation("androidx.tracing:tracing-ktx:1.2.0")
-    implementation("androidx.lifecycle:lifecycle-process:2.8.7")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
-    implementation("androidx.glance:glance-appwidget:1.1.1")
-    implementation("androidx.glance:glance-material3:1.1.1")
+    implementation("androidx.core:core-splashscreen:1.2.0")
+    implementation("androidx.window:window:1.5.1")
+    implementation("androidx.tracing:tracing-ktx:1.3.0")
+    implementation("androidx.lifecycle:lifecycle-process:2.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+    implementation("androidx.glance:glance-appwidget:1.2.0")
+    implementation("androidx.glance:glance-material3:1.2.0")
 
     // 4. Security & Biometrics
     implementation("androidx.biometric:biometric:1.2.0-alpha05")
-    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation("androidx.security:security-crypto:1.1.0")
 
     // 5. Reliability & Debugging
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
     // 6. Enhanced Testing
-    testImplementation("io.mockk:mockk:1.13.13")
-    testImplementation("app.cash.turbine:turbine:1.2.0")
+    testImplementation("io.mockk:mockk:1.13.14")
+    testImplementation("app.cash.turbine:turbine:1.2.1")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
 }
 

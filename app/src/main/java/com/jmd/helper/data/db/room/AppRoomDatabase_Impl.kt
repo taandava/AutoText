@@ -1,4 +1,4 @@
-@file:Suppress("RestrictedApi")
+@file:Suppress("RestrictedApi", "DEPRECATION", "OVERRIDE_DEPRECATION")
 package com.jmd.helper.data.db.room
 
 import android.annotation.SuppressLint
@@ -66,6 +66,7 @@ class AppRoomDatabase_Impl : AppRoomDatabase() {
     override fun executionLogDao(): ExecutionLogDao = _executionLogDao
     override fun autoReplyDao(): AutoReplyDao = _autoReplyDao
 
+    @Suppress("DEPRECATION")
     override fun createOpenHelper(config: DatabaseConfiguration): SupportSQLiteOpenHelper {
         val delegate = object : RoomOpenHelper.Delegate(com.jmd.helper.data.db.DatabaseHelper.DATABASE_VERSION) {
             override fun createAllTables(db: SupportSQLiteDatabase) {}
@@ -89,7 +90,7 @@ class AppRoomDatabase_Impl : AppRoomDatabase() {
             .name(config.name)
             .callback(roomOpenHelper)
             .build()
-        val factory = config.sqliteOpenHelperFactory
+        val factory = config.sqliteOpenHelperFactory ?: FrameworkSQLiteOpenHelperFactory()
         return factory.create(helperConfig)
     }
 
@@ -126,6 +127,7 @@ class AppRoomDatabase_Impl : AppRoomDatabase() {
         return typeConvertersMap
     }
 
+    @Suppress("DEPRECATION")
     override fun getRequiredAutoMigrationSpecs(): Set<Class<out AutoMigrationSpec>> {
         return emptySet()
     }

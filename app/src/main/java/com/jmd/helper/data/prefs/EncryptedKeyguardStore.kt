@@ -11,6 +11,7 @@ import com.jmd.helper.core.AppFileLogger
  * Hardware-backed encrypted credential store using AndroidX Security Crypto and AES-256-GCM.
  * Stores sensitive screen unlock PINs, bypass codes, and cryptographic salts in hardware keystore.
  */
+@Suppress("DEPRECATION")
 class EncryptedKeyguardStore(context: Context) {
 
     private val prefs: SharedPreferences
