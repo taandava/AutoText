@@ -2423,7 +2423,7 @@ class HelperComprehensiveTest {
     @Test
     fun testOemBrandEnumAndGuidanceCompleteness() {
         // Verify all target OEM brands are declared
-        val brands = com.jmd.helper.core.OemBrand.values()
+        val brands = com.jmd.helper.core.OemBrand.entries
         assertTrue("Expected at least 15 brand classifications", brands.size >= 15)
 
         val targetBrands = listOf(

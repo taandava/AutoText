@@ -867,7 +867,8 @@ System broadcast receivers reacting to exact RTC alarms, device reboots, telepho
 - **Declared Types:** `class BootReceiver : BroadcastReceiver`
 - **Subsystem Integrations:** Jetpack DataStore, PowerManager WakeLock, AppFileLogger Telemetry, PreferenceManager Key-Value Store
 - **Architectural Purpose:** Catches [Intent.ACTION_BOOT_COMPLETED], [Intent.ACTION_LOCKED_BOOT_COMPLETED], and [Intent.ACTION_MY_PACKAGE_REPLACED] events to reschedule pending alarms, reinitialize accessibility watchdogs, and resume daily campaign cadences. Linked With: - Direct Boot: Operates in encrypted Direct Boot mode before user credentials are typed. - Schedulers: [...
-- **Core Functions & APIs (2 total):**
+- **Core Functions & APIs (3 total):**
+  - `triggerPostRebootScreenAssist(context: Context, pin: String)`
   - `triggerPostRebootAutoUnlock(context: Context, pin: String)`
   - `onReceive(context: Context, intent: Intent)`
 

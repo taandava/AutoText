@@ -23,6 +23,7 @@ import android.util.Log
 import androidx.core.net.toUri
 import com.jmd.helper.core.AppFileLogger
 import com.jmd.helper.core.showAppToast
+import com.jmd.helper.service.TaskAccessibilityService
 
 /**
  * DeviceAdminReceiver providing screen lock capabilities for security relocking post-task.
@@ -116,7 +117,7 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
                 },
                 // Samsung One UI explicit settings activity
                 Intent().apply {
-                    component = ComponentName("com.android.settings", "com.android.settings.Settings\$DeviceAdminSettingsActivity")
+                    component = ComponentName("com.android.settings", "com.android.settings.Settings" + "$" + "DeviceAdminSettingsActivity")
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 },
                 // Standard AOSP Device Admin list
@@ -197,11 +198,11 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
             return try {
                 Log.i(TAG, "Locking screen via power button simulation (biometric safe)")
                 AppFileLogger.i(context, TAG, "Dispatched power-button screen lock (fingerprint safe)")
-                val powerLockDispatched = com.jmd.helper.service.TaskAccessibilityService.lockScreenNow()
+                val powerLockDispatched = TaskAccessibilityService.lockScreenNow()
                 if (powerLockDispatched) {
                     true
                 } else {
-                    com.jmd.helper.service.TaskAccessibilityService.minimizeToHome()
+                    TaskAccessibilityService.minimizeToHome()
                     true
                 }
             } catch (e: Exception) {

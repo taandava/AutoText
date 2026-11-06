@@ -7,6 +7,7 @@
  * Primary UI application host managing bottom navigation tabs, deep-link text ingestion,
  * full-screen composer sheets, sequence studios, and task type selection dialogs.
  */
+@file:Suppress("FunctionName")
 package com.jmd.helper.ui.screen
 
 import androidx.compose.material.icons.automirrored.filled.*

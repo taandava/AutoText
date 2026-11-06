@@ -1,3 +1,4 @@
+@file:Suppress("FunctionName")
 package com.jmd.helper.ui.screen.settings
 
 import android.content.Context

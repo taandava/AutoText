@@ -295,8 +295,10 @@ class ModernStackArchitectureTest {
     @Test
     fun `test helper application implements workmanager configuration provider`() {
         val app = com.jmd.helper.HelperApplication()
-        val configProvider: Any = app
-        assertTrue("HelperApplication must implement Configuration.Provider", configProvider is androidx.work.Configuration.Provider)
+        assertTrue(
+            "HelperApplication must implement Configuration.Provider",
+            androidx.work.Configuration.Provider::class.java.isAssignableFrom(com.jmd.helper.HelperApplication::class.java)
+        )
         val config = app.workManagerConfiguration
         assertNotNull(config)
     }

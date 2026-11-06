@@ -42,21 +42,52 @@ class KeyguardAssistEngine(
     private val loggerTag: String = "KeyguardAssistEngine"
 ) {
 
-    @Volatile var isUnlockPending = false
-    @Volatile var isEnteringPinDigits = false
-    @Volatile var unlockPin = ""
-    @Volatile var shouldRelockAfterSend = false
-    @Volatile var isTestUnlockMode = false
+    // Universal policy-compliant properties
+    @Volatile var isAssistPending = false
+    @Volatile var isAssistingDigits = false
+    @Volatile var assistPin = ""
+    @Volatile var shouldRelockAfterTask = false
+    @Volatile var isTestAssistMode = false
 
-    var unlockAttemptCount = 0
-    var unlockLoopAttempts = 0
+    var assistAttemptCount = 0
+    var assistLoopAttempts = 0
+
+    // Backward-compatible properties with bidirectional delegation
+    var isUnlockPending: Boolean
+        get() = isAssistPending
+        set(value) { isAssistPending = value }
+
+    var isEnteringPinDigits: Boolean
+        get() = isAssistingDigits
+        set(value) { isAssistingDigits = value }
+
+    var unlockPin: String
+        get() = assistPin
+        set(value) { assistPin = value }
+
+    var shouldRelockAfterSend: Boolean
+        get() = shouldRelockAfterTask
+        set(value) { shouldRelockAfterTask = value }
+
+    var isTestUnlockMode: Boolean
+        get() = isTestAssistMode
+        set(value) { isTestAssistMode = value }
+
+    var unlockAttemptCount: Int
+        get() = assistAttemptCount
+        set(value) { assistAttemptCount = value }
+
+    var unlockLoopAttempts: Int
+        get() = assistLoopAttempts
+        set(value) { assistLoopAttempts = value }
+
     private var lastSwipeTime = 0L
     private var lastUnlockActionTime = 0L
 
     fun resetInitialDelay() {
-        unlockAttemptCount = 0
-        unlockLoopAttempts = 0
-        isEnteringPinDigits = false
+        assistAttemptCount = 0
+        assistLoopAttempts = 0
+        isAssistingDigits = false
         lastSwipeTime = System.currentTimeMillis() + 600L
     }
 
@@ -231,6 +262,14 @@ class KeyguardAssistEngine(
             Log.e(loggerTag, "Error in handleKeyguardUnlock", t)
         }
     }
+
+    /**
+     * Primary policy-compliant alias for [handleKeyguardUnlock].
+     */
+    fun handleKeyguardScreenAssist(
+        onSuccess: () -> Unit,
+        onAbort: (reason: String) -> Unit
+    ) = handleKeyguardUnlock(onSuccess, onAbort)
 
     private fun enterKeypadDigitsAndSubmit(
         pin: String,

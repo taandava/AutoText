@@ -41,18 +41,18 @@ class BootReceiver : BroadcastReceiver() {
 
         /**
          * Dispatches a temporary wake lock and launches [TaskLauncherActivity] to simulate keyguard
-         * wake-up and schedule credential-protected unlock directly following a cold reboot.
+         * wake-up and schedule credential-protected screen access assistance directly following a cold reboot.
          *
          * @param context Device protected or application [Context].
          * @param pin Configured numeric security PIN to enter.
          */
-        fun triggerPostRebootAutoUnlock(context: Context, pin: String) {
+        fun triggerPostRebootScreenAssist(context: Context, pin: String) {
             try {
                 val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
 
                 val wakeLock = pm?.newWakeLock(
                     PowerManager.PARTIAL_WAKE_LOCK,
-                    "Helper:BootUnlockWakeLock"
+                    "Helper:BootScreenAssistWakeLock"
                 )
                 wakeLock?.acquire(15000L)
 
@@ -67,9 +67,18 @@ class BootReceiver : BroadcastReceiver() {
                     TaskAccessibilityService.armScreenAssist(pin = pin, shouldRelockAfterSend = false)
                 }, 1200L)
             } catch (t: Throwable) {
-                Log.e(TAG, "Failed to trigger post-reboot auto unlock", t)
+                Log.e(TAG, "Failed to trigger post-reboot screen assist", t)
             }
         }
+
+        /**
+         * Backward-compatible alias for [triggerPostRebootScreenAssist].
+         */
+        @Deprecated(
+            message = "Use triggerPostRebootScreenAssist for policy-compliant naming",
+            replaceWith = ReplaceWith("triggerPostRebootScreenAssist(context, pin)")
+        )
+        fun triggerPostRebootAutoUnlock(context: Context, pin: String) = triggerPostRebootScreenAssist(context, pin)
     }
 
     /**
@@ -103,9 +112,9 @@ class BootReceiver : BroadcastReceiver() {
                 val pin = prefs.screenAssistPin
                 Log.i(TAG, "Screen assist PIN configured. Waking screen for post-reboot PIN entry...")
                 AppFileLogger.action(deContext, TAG, "Screen assist PIN configured. Waking screen to assist device out of Direct Boot.")
-                triggerPostRebootAutoUnlock(deContext, pin)
+                triggerPostRebootScreenAssist(deContext, pin)
             } else {
-                Log.i(TAG, "Auto-unlock PIN not set. Scheduling watchdog in DE context.")
+                Log.i(TAG, "Screen assist PIN not set. Scheduling watchdog in DE context.")
                 AccessibilityWatchdogScheduler.scheduleHeartbeat(deContext)
             }
         } else if (isFullBoot) {

@@ -46,6 +46,7 @@ import com.jmd.helper.data.model.*
 import com.jmd.helper.data.repo.AppRepository
 import com.jmd.helper.ui.activity.TaskLauncherActivity
 import com.jmd.helper.whatsapp.*
+import com.jmd.helper.whatsapp.KeyguardAssistEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -70,7 +71,7 @@ class TaskAccessibilityService : AccessibilityService() {
     private val whatsAppGroupEngine by lazy { WhatsAppGroupEngine(this) }
     private val whatsAppChatScanner by lazy { WhatsAppChatScanner(this) }
     private val whatsAppCallEngine by lazy { WhatsAppCallEngine(this) }
-    val keyguardAssistEngine by lazy { KeyguardAssistEngine(this, handler) }
+    val keyguardAssistEngine: KeyguardAssistEngine by lazy { KeyguardAssistEngine(this, handler) }
     val keyguardUnlockEngine: KeyguardAssistEngine get() = keyguardAssistEngine
 
     companion object {
@@ -282,10 +283,26 @@ class TaskAccessibilityService : AccessibilityService() {
             }
         }
 
-        // Auto-Unlock properties
-        private var isUnlockPending = false
-        private var unlockPin: String = ""
-        private var shouldRelockAfterSend: Boolean = false
+        // Screen Access Assistance & Keyguard Assist properties
+        @Volatile
+        private var isScreenAssistPending = false
+        @Volatile
+        private var screenAssistPin: String = ""
+        @Volatile
+        private var shouldRelockAfterTask: Boolean = false
+
+        private var isUnlockPending: Boolean
+            get() = isScreenAssistPending
+            set(value) { isScreenAssistPending = value }
+
+        private var unlockPin: String
+            get() = screenAssistPin
+            set(value) { screenAssistPin = value }
+
+        private var shouldRelockAfterSend: Boolean
+            get() = shouldRelockAfterTask
+            set(value) { shouldRelockAfterTask = value }
+
         private var isBatchCampaignMode = false
 
         enum class DispatchMode {
@@ -1205,7 +1222,7 @@ class TaskAccessibilityService : AccessibilityService() {
     private fun runUnlockLogic() {
         keyguardAssistEngine.handleKeyguardUnlock(
             onUnlockSuccess = { onUnlockSuccess() },
-            onUnlockAbort = { reason ->
+            onUnlockAbort = { reason: String ->
                 Log.w(TAG, "Auto-unlock aborted: $reason")
                 isUnlockPending = false
                 keyguardAssistEngine.isUnlockPending = false

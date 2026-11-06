@@ -13,6 +13,7 @@
  * - Health: [com.jmd.helper.core.AccessibilityHealthManager]
  * - Components: `GlassComponentsKt`
  */
+@file:Suppress("FunctionName")
 package com.jmd.helper.ui.screen
 
 import android.content.*
