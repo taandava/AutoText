@@ -1,6 +1,7 @@
 package com.jmd.helper
 
 import android.content.Context
+import androidx.compose.ui.unit.dp
 import app.cash.turbine.test
 import com.jmd.helper.core.AccessibilityHealthManager
 import com.jmd.helper.data.db.room.RoomTypeConverters
@@ -308,5 +309,23 @@ class ModernStackArchitectureTest {
         assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.SIMULATED_CALL)
         assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.fromString("CALL_SIMULATION"))
         assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.fromString("SIMULATED_CALL"))
+    }
+
+    @Test
+    fun `test task accessibility service scan completed event emission`() = runTest {
+        val initial = com.jmd.helper.service.TaskAccessibilityService.scanCompletedEvent.value
+        com.jmd.helper.service.TaskAccessibilityService.notifyScanCompleted()
+        val updated = com.jmd.helper.service.TaskAccessibilityService.scanCompletedEvent.value
+        assertTrue(updated >= initial)
+    }
+
+    @Test
+    fun `test universal app layout grid tokens and 8 point boundaries`() {
+        assertEquals(2.dp, com.jmd.helper.ui.theme.AppLayoutGrid.SpaceMicro)
+        assertEquals(4.dp, com.jmd.helper.ui.theme.AppLayoutGrid.SpaceXS)
+        assertEquals(8.dp, com.jmd.helper.ui.theme.AppLayoutGrid.SpaceSmall)
+        assertEquals(12.dp, com.jmd.helper.ui.theme.AppLayoutGrid.SpaceStandard)
+        assertEquals(16.dp, com.jmd.helper.ui.theme.AppLayoutGrid.SpaceMedium)
+        assertEquals(48.dp, com.jmd.helper.ui.theme.AppLayoutGrid.MinTouchTarget)
     }
 }

@@ -284,7 +284,9 @@ private fun CategoryPillarItem(
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1
+                maxLines = 2,
+                lineHeight = 12.sp,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(

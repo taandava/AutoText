@@ -42,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jmd.helper.ui.theme.AppDesignTokens
@@ -83,7 +84,8 @@ fun GlassButton(
     elevation: Dp = 0.dp,
     contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
     emoji: String? = null,
-    maxLines: Int = 1,
+    fontSize: TextUnit = 13.sp,
+    maxLines: Int = 2,
     overflow: TextOverflow = TextOverflow.Ellipsis,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -162,12 +164,13 @@ fun GlassButton(
                     }
                     Text(
                         text = text,
-                        fontSize = 13.sp,
+                        fontSize = fontSize,
                         fontWeight = FontWeight.Bold,
                         color = contentColor,
                         maxLines = maxLines,
                         overflow = overflow,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f, fill = false)
                     )
                 }
             }
@@ -935,7 +938,7 @@ fun AppGroupRow(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(com.jmd.helper.ui.theme.AppLayoutGrid.SpaceMicro))

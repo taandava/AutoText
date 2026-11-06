@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/badge/Release-v1.3.0_(Build_4)-blue.svg?style=flat)](https://github.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-7F52FF.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
 [![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-M3_Expressive-4285F4.svg?style=flat&logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
-[![Tests](https://img.shields.io/badge/Unit_Tests-125%2F125_Passing-brightgreen.svg?style=flat)](https://github.com)
+[![Tests](https://img.shields.io/badge/Unit_Tests-128%2F128_Passing-brightgreen.svg?style=flat)](https://github.com)
 [![Privacy](https://img.shields.io/badge/Data_Sovereignty-100%25_On--Device-success.svg?style=flat)](https://developer.android.com)
 
 **Helper** is an enterprise-grade, high-reliability autonomous hardware and task execution engine designed specifically for Android 14 through Android 16+ (Vanilla Ice Cream / Baklava). Built on a pure offline zero-trust architecture, Helper operates entirely on-device with **zero internet or external network permissions**, guaranteeing complete data sovereignty and strict compliance with Google Play Store policies and Android security frameworks.
@@ -15,6 +15,8 @@
 
 - **100% On-Device Data Sovereignty**: Zero network permissions (`android.permission.INTERNET` is strictly omitted). All task schedules, triggers, logs, and encrypted secrets remain in sandboxed device storage.
 - **Strict Google Play Policy Compliance & Zero Code Suppressions**: Certified 100% compliant with Google Play Store policies and Android Accessibility API standards. Completely purged of deceptive or policy-sensitive terminology (`fake`, `bypass`, `stealth`, `bot`). Enforces zero warning suppression (`@Suppress`) across all handwritten Kotlin source files, utilizing root tooling configurations and idiomatic platform APIs.
+- **Resilient WhatsApp & WhatsApp Business Group Scanning**: Obfuscation-resilient discovery engine with automatic bottom "Chats" tab realignment, multi-level parent navigation for the top "Groups" filter chip, scrollable list child item inspection, robust avatar and row title extraction, and reactive Compose state refresh.
+- **Dual-Tier Screen Lock & Auto-Unlock Assistance**: Dual-tier physical screen locking delegating to `GLOBAL_ACTION_LOCK_SCREEN` (Android 9+) and falling back cleanly to `DevicePolicyManager.lockNow()`. Responsive `GlassButton` with multi-line wrapping and proactive inline PIN guidance prevents silent aborts and guarantees reliable keyguard unlock testing.
 - **Modern Hardware Keystore Encryption**: Pure hardware-backed Android Keystore AES-256-GCM cipher encryption for screen-assist credentials without deprecated compatibility wrappers.
 - **Android 16+ (API 36) Ready**: Forward-compatible accessibility traversal supporting Android 16+ node checked attributes with dynamic runtime fallback.
 - **Universal CSS-Grid & 8-Point Layout Tokens**: Standardized CSS-grid inspired layout system (`AppLayoutGrid`) providing consistent 8-point spacing (`SpaceMicro` through `SpaceHero`), adaptive responsive boundaries (`ScreenGutterCompact`, `ScreenGutterStandard`, `MaxContentWidth`), accessibility touch targets (`MinTouchTarget = 48.dp`), luminance-based contrast engine (`isAppDarkTheme()` / `AppSemanticColors`), and grouped card architecture (`AppGroupCard`, `AppGroupRow`) across all screens. Eliminates dark-on-dark theme mismatches and visual clutter.

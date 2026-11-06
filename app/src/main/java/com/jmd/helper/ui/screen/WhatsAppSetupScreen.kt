@@ -247,21 +247,20 @@ fun WhatsAppSetupAndScreenAssistView(
                     GlassButton(
                         text = "Test Screen Wake & Unlock",
                         onClick = {
-                            val currentPin = pinCode.ifBlank { prefs.screenAssistPin }.trim()
-                            if (currentPin.isBlank() && prefs.screenAssistType != "SWIPE") {
-                                context.showAppToast("Please enter your screen lock PIN first", isLong = true)
-                                return@GlassButton
-                            }
                             if (!isScreenAssistEnabled) {
                                 isScreenAssistEnabled = true
                                 prefs.isScreenAssistEnabled = true
+                            }
+                            val currentPin = pinCode.ifBlank { prefs.screenAssistPin }.trim()
+                            if (currentPin.isBlank() && prefs.screenAssistType != "SWIPE") {
+                                context.showAppToast("Enter your screen lock PIN above to test unlock", isLong = true)
+                                return@GlassButton
                             }
                             TaskAccessibilityService.testScreenAssist(context, currentPin)
                         },
                         icon = Icons.Default.LockOpen,
                         variant = GlassButtonVariant.PRIMARY,
-                        modifier = Modifier.fillMaxWidth(),
-                        maxLines = 1
+                        modifier = Modifier.fillMaxWidth()
                     )
 
                     Text(

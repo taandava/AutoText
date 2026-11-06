@@ -84,6 +84,13 @@ class TaskAccessibilityService : AccessibilityService() {
         var isServiceRunning = false
             private set
 
+        val scanCompletedEvent = kotlinx.coroutines.flow.MutableStateFlow(0L)
+
+        @JvmStatic
+        fun notifyScanCompleted() {
+            scanCompletedEvent.value = System.currentTimeMillis()
+        }
+
         @Volatile
         var isTestUnlockMode = false
 
@@ -819,16 +826,25 @@ class TaskAccessibilityService : AccessibilityService() {
                         AppFileLogger.i(ctx, TAG, "Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)")
                         return true
                     } else {
-                        Log.w(TAG, "GLOBAL_ACTION_LOCK_SCREEN returned false; falling back to minimizeToHome")
+                        Log.w(TAG, "GLOBAL_ACTION_LOCK_SCREEN returned false; trying DevicePolicyManager fallback")
                     }
                 } else if (inst == null) {
-                    Log.w(TAG, "lockScreenNow: AccessibilityService instance is null; cannot dispatch GLOBAL_ACTION_LOCK_SCREEN")
+                    Log.w(TAG, "lockScreenNow: AccessibilityService instance is null; trying DevicePolicyManager fallback")
                 }
-                // Avoid third-party Device Admin lockNow() to preserve fingerprint and biometric unlock.
-                // Instead, return to Home Launcher so private chat screens are safely minimized.
+
+                // Check Device Admin fallback if Accessibility lock is unavailable or failed
+                val dpm = ctx.getSystemService(Context.DEVICE_POLICY_SERVICE) as? android.app.admin.DevicePolicyManager
+                val adminComponent = android.content.ComponentName(ctx, com.jmd.helper.receiver.HelperDeviceAdminReceiver::class.java)
+                if (dpm != null && dpm.isAdminActive(adminComponent)) {
+                    dpm.lockNow()
+                    Log.i(TAG, "Screen locked cleanly via DevicePolicyManager.lockNow()")
+                    AppFileLogger.i(ctx, TAG, "Screen locked cleanly via DevicePolicyManager.lockNow()")
+                    return true
+                }
+
                 inst?.performGlobalAction(GLOBAL_ACTION_HOME)
-                Log.i(TAG, "Screen auto-lock minimized to Home launcher; avoided third-party lockNow to preserve fingerprint biometric unlock.")
-                AppFileLogger.i(ctx, TAG, "Screen auto-lock minimized to Home launcher (Biometrics safe)")
+                Log.w(TAG, "Screen auto-lock minimized to Home launcher; neither GLOBAL_ACTION_LOCK_SCREEN nor DeviceAdmin was available.")
+                AppFileLogger.w(ctx, TAG, "Screen auto-lock minimized to Home launcher (No physical lock available)")
                 true
             } catch (t: Throwable) {
                 Log.e(TAG, "Error executing lockScreenNow", t)

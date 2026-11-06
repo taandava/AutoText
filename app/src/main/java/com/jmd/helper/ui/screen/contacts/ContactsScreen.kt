@@ -79,7 +79,8 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
     }
 
     var groupsRefreshTrigger by remember { mutableIntStateOf(0) }
-    val waGroups = remember(groupsRefreshTrigger) { repository.getWhatsAppGroupItems() }
+    val scanTimestamp by TaskAccessibilityService.scanCompletedEvent.collectAsState()
+    val waGroups = remember(groupsRefreshTrigger, scanTimestamp) { repository.getWhatsAppGroupItems() }
 
     if (sequenceTargetContactPhone.isNotBlank()) {
         ContactSequenceStudio(

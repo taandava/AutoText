@@ -83,19 +83,19 @@ fun PermissionStatusActiveChip() {
         border = BorderStroke(AppLayoutGrid.BorderWidthStandard, AppSemanticColors.successBorder)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
                 tint = AppSemanticColors.success,
-                modifier = Modifier.size(13.dp)
+                modifier = Modifier.size(14.dp)
             )
-            Spacer(modifier = Modifier.width(AppLayoutGrid.SpaceXS))
+            Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = "Active",
-                fontSize = 11.sp,
+                fontSize = 11.5.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppSemanticColors.success
             )
@@ -111,21 +111,27 @@ fun PermissionGrantActionButton(
     text: String,
     onClick: () -> Unit
 ) {
-    Button(
+    Surface(
         onClick = onClick,
         shape = AppDesignTokens.ShapePill,
-        contentPadding = PaddingValues(horizontal = AppLayoutGrid.SpaceStandard, vertical = AppLayoutGrid.SpaceXS),
-        modifier = Modifier.height(34.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        )
+        color = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        tonalElevation = 2.dp,
+        modifier = Modifier.defaultMinSize(minHeight = 36.dp)
     ) {
-        Text(
-            text = text,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = text,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary,
+                maxLines = 1
+            )
+        }
     }
 }
 

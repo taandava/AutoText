@@ -42,7 +42,7 @@ Built with **zero third-party cloud dependencies**, **zero external analytics**,
 - **Verified Hardware:**
   - Samsung Galaxy A04 (`SM-A045F`, Android 14 API 34, Hardware ID: `R9ZW105MFDR`)
   - Vivo / iQOO I2401 (`I2401`, Android 16 API 36, Hardware ID: `10BF1G0HCD0024R`)
-- **Unit Test Suite:** 125 of 125 Unit Tests Passing (100% Success Rate across HelperComprehensiveTest [111 tests] and ModernStackArchitectureTest [14 tests])
+- **Unit Test Suite:** 128 of 128 Unit Tests Passing (100% Success Rate across HelperComprehensiveTest [111 tests] and ModernStackArchitectureTest [17 tests])
 - **Data Sovereignty:** 100% On-Device Sovereignty. No remote servers, no cloud telemetry, no internet permission.
 - **Persistence:** 16 Relational SQLite Tables + Jetpack Room ORM Entities + Jetpack DataStore Flow Cache
 - **Policy Compliance:** Full compliance with Google Play Store and OEM policies; sanitized terminology ("Task", "Smart Dispatch", "Helper", "Simulated Call").
@@ -52,9 +52,10 @@ Built with **zero third-party cloud dependencies**, **zero external analytics**,
 2. **Zero Persistent Notification Footprint**: Unlike conventional task utilities that maintain an ongoing foreground service notification 24/7, Helper relies on Android's Doze-safe `AlarmManager.setExactAndAllowWhileIdle()` and background WorkManager coroutines. It leaves **zero** sticky banners or icons in the user's status bar when idle.
 3. **Display Invariant Protection (Strict Portrait Locking & Never Auto-Rotate)**: Helper strictly enforces a device display invariant ensuring system auto-rotation is never enabled by background tasks or activity launches. All activities are hard-locked to portrait orientation, system quick setting tiles and navigation bar rotation buttons are insulated from task clicks, and `ACCELEROMETER_ROTATION` is dynamically audited and kept disabled (`0`).
 4. **Immediate Task Halt & Emergency Stop**: Toggling off the master scheduler or activating Emergency Stop instantly aborts all ongoing tasks, slices long delays into 250ms cancellation polling chunks, drains execution channels, and purges accessibility queues.
-5. **Full Unattended Task with Screen Task Assistance & Auto-Lock Postcondition**: Tasks execute safely even when the phone is locked. The engine wakes the display, dismisses the keyguard, inputs the user-configured AES-GCM encrypted security PIN via touch assistance, executes the task, returns to the home launcher, and locks the hardware screen immediately via Device Admin delegating to `GLOBAL_ACTION_LOCK_SCREEN`.
-6. **Strict Banking & Payment Application Isolation**: Enforces a strict default-deny policy where external UI interactions are strictly prohibited from inspecting, traversing, overlaying, or clicking inside Google Pay, PhonePe, Paytm, BHIM, UPI, net banking, or financial identity apps.
-7. **India-Centric Communications Standard**: Built-in default country code `+91`, Indian 10-digit mobile number normalization (6/7/8/9), TRAI 100 SMS/day quota safety guard, and localized message templates in INR (`₹`) and Indian English/Hindi tokens.
+5. **Full Unattended Task with Screen Task Assistance & Dual-Tier Hardware Lock**: Tasks execute safely even when the phone is locked. The engine wakes the display, dismisses the keyguard, inputs the user-configured AES-GCM encrypted security PIN via touch assistance, executes the task, returns to the home launcher, and locks the hardware screen via dual-tier locking (`GLOBAL_ACTION_LOCK_SCREEN` on Android 9+ with seamless `DevicePolicyManager.lockNow()` fallback).
+6. **Obfuscation-Resilient WhatsApp & WA Business Group Harvesting**: Employs an intelligent discovery engine that automatically aligns to the "Chats" navigation tab, identifies top "Groups" filter chips via multilingual text and compound accessibility descriptions, traverses scrollable item children without relying on obfuscated view IDs, and notifies the UI for instantaneous reactive updates.
+7. **Strict Banking & Payment Application Isolation**: Enforces a strict default-deny policy where external UI interactions are strictly prohibited from inspecting, traversing, overlaying, or clicking inside Google Pay, PhonePe, Paytm, BHIM, UPI, net banking, or financial identity apps.
+8. **India-Centric Communications Standard**: Built-in default country code `+91`, Indian 10-digit mobile number normalization (6/7/8/9), TRAI 100 SMS/day quota safety guard, and localized message templates in INR (`₹`) and Indian English/Hindi tokens.
 
 ---
 

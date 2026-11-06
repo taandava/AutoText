@@ -155,21 +155,20 @@ fun SettingsScreenAssistCard(
             GlassButton(
                 text = "Test Screen Wake & Unlock",
                 onClick = {
-                    val currentPin = assistPin.ifBlank { prefs.screenAssistPin }.trim()
-                    if (currentPin.isBlank() && assistType != "SWIPE") {
-                        context.showAppToast("Please enter your screen lock PIN first", isLong = true)
-                        return@GlassButton
-                    }
                     if (!isScreenAssistEnabled) {
                         isScreenAssistEnabled = true
                         prefs.isScreenAssistEnabled = true
+                    }
+                    val currentPin = assistPin.ifBlank { prefs.screenAssistPin }.trim()
+                    if (currentPin.isBlank() && assistType != "SWIPE") {
+                        context.showAppToast("Enter your screen lock PIN above to test unlock", isLong = true)
+                        return@GlassButton
                     }
                     TaskAccessibilityService.testScreenAssist(context, currentPin)
                 },
                 icon = Icons.Filled.LockOpen,
                 variant = GlassButtonVariant.PRIMARY,
-                modifier = Modifier.fillMaxWidth(),
-                maxLines = 1
+                modifier = Modifier.fillMaxWidth()
             )
 
             Text(
