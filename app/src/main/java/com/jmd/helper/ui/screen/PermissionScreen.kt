@@ -2,7 +2,7 @@
  * Package: com.jmd.helper.ui.screen
  * Module: UI Permission & Health Screen Layer
  *
- * Dedicated permission verification and diagnostic hub displaying real-time status of:
+ * Material 3 Expressive System Health Hub presenting real-time privilege states:
  * - Accessibility Service (Task Engine)
  * - Notification Listener Service
  * - Exact Alarm privileges
@@ -15,8 +15,8 @@
  * Linked With:
  * - Health Manager: [com.jmd.helper.core.AccessibilityHealthManager]
  * - Overlay Helper: [com.jmd.helper.core.OverlayPermissionHelper]
- * - Components: `GlassComponentsKt`, `AppCard`, `AppSubScreenHeader`
- * - Design System: [com.jmd.helper.ui.theme.OrangeBrandPalette], [com.jmd.helper.ui.theme.AppDesignTokens]
+ * - Components: [com.jmd.helper.ui.components.AppGroupCard], [com.jmd.helper.ui.components.AppGroupRow], [com.jmd.helper.ui.components.GlassButton]
+ * - Design System: [com.jmd.helper.ui.theme.AppSemanticColors], [com.jmd.helper.ui.theme.AppLayoutGrid]
  */
 package com.jmd.helper.ui.screen
 
@@ -40,7 +40,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -56,7 +55,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -68,12 +67,11 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.jmd.helper.core.*
 import com.jmd.helper.receiver.HelperDeviceAdminReceiver
-import com.jmd.helper.ui.components.AppCard
-import com.jmd.helper.ui.components.AppSubScreenHeader
-import com.jmd.helper.ui.components.GlassButton
-import com.jmd.helper.ui.components.GlassButtonVariant
+import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.AppDesignTokens
-import com.jmd.helper.ui.theme.OrangeBrandPalette
+import com.jmd.helper.ui.theme.AppLayoutGrid
+import com.jmd.helper.ui.theme.AppSemanticColors
+import com.jmd.helper.ui.theme.isAppDarkTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -103,7 +101,7 @@ private const val UNIVERSAL_ADB_COMMAND =
     "dpm set-active-admin com.jmd.helper/.receiver.HelperDeviceAdminReceiver\""
 
 /**
- * Modern Material 3 Expressive Permission & System Health Hub.
+ * Material 3 Expressive System Health & Permission Center.
  *
  * @param context Android [Context] for system managers and settings intent dispatch.
  * @param onBack Callback invoked when user navigates back.
@@ -194,9 +192,9 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
         hasRuntimePerms
     ).count { it }
 
-    // Grouping metrics for category headers
+    // Section metrics
     val coreCount = listOf(isA11yActive, canExactAlarm, hasNotifListener).count { it }
-    val bgCount = listOf(isIgnoringBattery, true).count { it } // Battery + Sideload Guide
+    val bgCount = listOf(isIgnoringBattery, true).count { it }
     val deviceCount = listOf(true, hasOverlay, isAdminActive, hasRuntimePerms, hasDnd).count { it }
 
     // Dialogs
@@ -229,12 +227,12 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 14.dp),
+                .padding(horizontal = AppLayoutGrid.SpaceStandard),
             contentPadding = PaddingValues(
                 top = 10.dp,
                 bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 28.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceMedium),
         ) {
             // 1. Hero Health Dashboard Card
             item {
@@ -251,86 +249,126 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
                 )
             }
 
-            // 2. Section: Core Automation Engine
+            // 2. Group 1: Core Automation Engine
             item {
                 PermissionSectionHeader(
                     title = "Core Automation Engine",
-                    subtitle = "Foundational services powering scheduled task execution",
+                    subtitle = "Foundational services powering scheduled execution",
                     grantedCount = coreCount,
                     totalCount = 3
                 )
             }
 
             item {
-                val a11yTitle = when (a11yState) {
-                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Task Service: Active"
-                    AccessibilityHealthManager.ServiceState.STANDBY -> "Task Service: Bank-Safe Standby"
-                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Task Service: Connecting"
-                    AccessibilityHealthManager.ServiceState.DISABLED -> "Task Accessibility Service"
-                }
-                val a11ySubtitle = when (a11yState) {
-                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Active in background to dispatch scheduled messaging tasks."
-                    AccessibilityHealthManager.ServiceState.STANDBY -> "Bank-Safe Standby: Operates on-demand for tasks only."
-                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Enabled in settings, connecting background binder."
-                    AccessibilityHealthManager.ServiceState.DISABLED -> "Required to dispatch scheduled WhatsApp tasks hands-free."
-                }
-                PermissionCardItem(
-                    icon = Icons.Default.VerifiedUser,
-                    title = a11yTitle,
-                    subtitle = a11ySubtitle,
-                    isGranted = isA11yActive,
-                    grantButtonText = if (a11yState == AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND) "Toggle" else "Enable",
-                    detailedPurpose = "Allows Helper to interact with approved messaging applications at user-scheduled times to populate and dispatch tasks. Never reads personal data or interacts with banking apps.",
-                    onClick = {
-                        if (isA11yActive) {
+                AppGroupCard {
+                    // Row 1: Accessibility Task Service
+                    val a11yTitle = when (a11yState) {
+                        AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Task Service: Active"
+                        AccessibilityHealthManager.ServiceState.STANDBY -> "Task Service: Bank-Safe Standby"
+                        AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Task Service: Connecting"
+                        AccessibilityHealthManager.ServiceState.DISABLED -> "Task Accessibility Service"
+                    }
+                    val a11ySubtitle = when (a11yState) {
+                        AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Active in background to dispatch scheduled messaging tasks."
+                        AccessibilityHealthManager.ServiceState.STANDBY -> "Bank-Safe Standby: Operates on-demand for tasks only."
+                        AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Enabled in settings, connecting background binder."
+                        AccessibilityHealthManager.ServiceState.DISABLED -> "Required to dispatch scheduled messaging tasks hands-free."
+                    }
+                    AppGroupRow(
+                        title = a11yTitle,
+                        subtitle = a11ySubtitle,
+                        icon = Icons.Default.VerifiedUser,
+                        iconTint = if (isA11yActive) AppSemanticColors.success else MaterialTheme.colorScheme.primary,
+                        iconContainerColor = if (isA11yActive) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                        trailingContent = {
+                            if (isA11yActive) {
+                                PermissionStatusActiveChip()
+                            } else {
+                                PermissionGrantActionButton(
+                                    text = if (a11yState == AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND) "Toggle" else "Enable",
+                                    onClick = { showA11yDisclosureDialog = true }
+                                )
+                            }
+                        },
+                        detailedPurpose = "Allows Helper to interact with approved messaging applications at user-scheduled times to populate and dispatch tasks. Never reads personal data or interacts with banking apps.",
+                        onSettingsClick = {
                             context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
-                        } else {
-                            showA11yDisclosureDialog = true
                         }
-                    }
-                )
-            }
+                    )
 
-            item {
-                PermissionCardItem(
-                    icon = Icons.Default.Alarm,
-                    title = if (canExactAlarm) "Exact Alarms & Triggers: Active" else "Schedule Exact Alarms",
-                    subtitle = "Fires scheduled tasks at the exact specified second without battery jitter.",
-                    isGranted = canExactAlarm,
-                    grantButtonText = "Grant",
-                    detailedPurpose = "Required on Android 12+ (API 31+) to invoke high-precision RTC alarms, ensuring time-critical tasks trigger promptly without system delay.",
-                    onClick = {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                                data = "package:${context.packageName}".toUri()
+                    AppGroupDivider()
+
+                    // Row 2: Exact Alarms
+                    AppGroupRow(
+                        title = if (canExactAlarm) "Exact Alarms & Triggers: Active" else "Schedule Exact Alarms",
+                        subtitle = "Fires scheduled tasks at the exact specified second without battery jitter.",
+                        icon = Icons.Default.Alarm,
+                        iconTint = if (canExactAlarm) AppSemanticColors.success else MaterialTheme.colorScheme.primary,
+                        iconContainerColor = if (canExactAlarm) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                        trailingContent = {
+                            if (canExactAlarm) {
+                                PermissionStatusActiveChip()
+                            } else {
+                                PermissionGrantActionButton(
+                                    text = "Grant",
+                                    onClick = {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                            context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                                data = "package:${context.packageName}".toUri()
+                                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                            })
+                                        }
+                                    }
+                                )
+                            }
+                        },
+                        detailedPurpose = "Required on Android 12+ (API 31+) to invoke high-precision RTC alarms, ensuring time-critical tasks trigger promptly without system delay.",
+                        onSettingsClick = {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                    data = "package:${context.packageName}".toUri()
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                })
+                            }
+                        }
+                    )
+
+                    AppGroupDivider()
+
+                    // Row 3: Notification Listener
+                    AppGroupRow(
+                        title = if (hasNotifListener) "Notification Listener: Active" else "Notification Listener Access",
+                        subtitle = "Detects incoming chats for automated rules and quick responses.",
+                        icon = Icons.Default.NotificationsActive,
+                        iconTint = if (hasNotifListener) AppSemanticColors.success else MaterialTheme.colorScheme.primary,
+                        iconContainerColor = if (hasNotifListener) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                        trailingContent = {
+                            if (hasNotifListener) {
+                                PermissionStatusActiveChip()
+                            } else {
+                                PermissionGrantActionButton(
+                                    text = "Enable",
+                                    onClick = {
+                                        context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
+                                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                        })
+                                    }
+                                )
+                            }
+                        },
+                        detailedPurpose = "Enables Helper to read notification actions in messaging apps to process auto-replies directly in the background without needing to illuminate the display.",
+                        onSettingsClick = {
+                            context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             })
-                        } else {
-                            context.showAppToast("Exact alarm privileges active")
                         }
-                    }
-                )
+                    )
+                }
             }
 
-            item {
-                PermissionCardItem(
-                    icon = Icons.Default.NotificationsActive,
-                    title = if (hasNotifListener) "Notification Listener: Active" else "Notification Listener Access",
-                    subtitle = "Detects incoming chats for automated rules and quick responses.",
-                    isGranted = hasNotifListener,
-                    grantButtonText = "Enable",
-                    detailedPurpose = "Enables Helper to read notification actions in messaging apps to process auto-replies directly in the background without needing to illuminate the display.",
-                    onClick = {
-                        context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        })
-                    }
-                )
-            }
-
-            // 3. Section: Background Reliability & Battery
+            // 3. Group 2: Background Reliability & Battery
             item {
                 PermissionSectionHeader(
                     title = "Background Reliability",
@@ -341,49 +379,197 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
             }
 
             item {
-                PermissionCardItem(
-                    icon = Icons.Default.BatteryChargingFull,
-                    title = if (isIgnoringBattery) "Battery Saver: Exempted" else "Battery Optimization Exemption",
-                    subtitle = "Prevents system power savers from freezing scheduled timers.",
-                    isGranted = isIgnoringBattery,
-                    grantButtonText = "Exempt",
-                    detailedPurpose = "Adds Helper to the system battery optimization allowlist, ensuring background task schedulers are never frozen during Doze mode.",
-                    onClick = {
-                        try {
-                            context.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
+                AppGroupCard {
+                    // Row 1: Battery Saver Exemption
+                    AppGroupRow(
+                        title = if (isIgnoringBattery) "Battery Saver: Exempted" else "Battery Saver Exemption",
+                        subtitle = "Prevents system power savers from freezing scheduled timers.",
+                        icon = Icons.Default.BatteryChargingFull,
+                        iconTint = if (isIgnoringBattery) AppSemanticColors.success else MaterialTheme.colorScheme.primary,
+                        iconContainerColor = if (isIgnoringBattery) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                        trailingContent = {
+                            if (isIgnoringBattery) {
+                                PermissionStatusActiveChip()
+                            } else {
+                                PermissionGrantActionButton(
+                                    text = "Exempt",
+                                    onClick = {
+                                        try {
+                                            context.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
+                                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                            })
+                                        } catch (e: Exception) {
+                                            AppFileLogger.w("PermissionScreen", "Failed to launch battery settings: ${e.message}")
+                                            context.showAppToast("Unable to open battery optimization settings directly")
+                                        }
+                                    }
+                                )
+                            }
+                        },
+                        detailedPurpose = "Adds Helper to the system battery optimization allowlist, ensuring background task schedulers are never frozen during Doze mode.",
+                        onSettingsClick = {
+                            try {
+                                context.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                })
+                            } catch (e: Exception) {
+                                context.showAppToast("Unable to open battery optimization settings directly")
+                            }
+                        }
+                    )
+
+                    AppGroupDivider()
+
+                    // Row 2: OEM Autostart Guidance
+                    val brandSummary = remember { OemBrandHelper.getDeviceSummary() }
+                    val brandGuidance = remember { OemBrandHelper.getOemGuidance() }
+                    var oemExpanded by remember { mutableStateOf(false) }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { oemExpanded = !oemExpanded }
+                            .padding(horizontal = 14.dp, vertical = 12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+                                        shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Smartphone,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "OEM Autostart ($brandSummary)",
+                                    fontSize = 13.5.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "Hardware settings to prevent background kills",
+                                    fontSize = 11.5.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowDown,
+                                contentDescription = if (oemExpanded) "Collapse" else "Expand",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .scale(1f, if (oemExpanded) -1f else 1f)
+                            )
+                        }
+
+                        // Guidance steps
+                        AnimatedVisibility(
+                            visible = oemExpanded,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 10.dp, start = 50.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                brandGuidance.forEach { step ->
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        Text(
+                                            text = "• ",
+                                            fontSize = 11.5.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                        Text(
+                                            text = step,
+                                            fontSize = 11.5.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            lineHeight = 16.sp
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    GlassButton(
+                                        text = "Open Auto-Start",
+                                        onClick = {
+                                            if (!OemBrandHelper.openOemBackgroundSettings(context)) {
+                                                context.showAppToast("Unable to open OEM autostart settings directly")
+                                            }
+                                        },
+                                        icon = Icons.Default.Settings,
+                                        variant = GlassButtonVariant.PRIMARY,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    GlassButton(
+                                        text = "Special Overlays",
+                                        onClick = {
+                                            if (!OverlayPermissionHelper.launchOverlaySettings(context)) {
+                                                context.showAppToast("Unable to open overlay settings directly")
+                                            }
+                                        },
+                                        icon = Icons.Default.Layers,
+                                        variant = GlassButtonVariant.SECONDARY,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    AppGroupDivider()
+
+                    // Row 3: Sideloaded App Guidance
+                    AppGroupRow(
+                        title = "Sideloaded App Guidance (Android 13+)",
+                        subtitle = "If settings are greyed out: App Info -> 3 dots -> Allow restricted settings.",
+                        icon = Icons.Default.Security,
+                        iconTint = MaterialTheme.colorScheme.primary,
+                        iconContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                        trailingContent = {
+                            PermissionGrantActionButton(
+                                text = "App Info",
+                                onClick = {
+                                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                        data = "package:${context.packageName}".toUri()
+                                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    }
+                                    context.startActivity(intent)
+                                }
+                            )
+                        },
+                        detailedPurpose = "On Android 13+, sideloaded APKs have accessibility and notification permissions restricted by default. Tapping the three dots in App Info unlocks full access.",
+                        onSettingsClick = {
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = "package:${context.packageName}".toUri()
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            })
-                        } catch (e: Exception) {
-                            AppFileLogger.w("PermissionScreen", "Failed to launch battery settings: ${e.message}")
-                            context.showAppToast("Unable to open battery optimization settings directly")
+                            }
+                            context.startActivity(intent)
                         }
-                    }
-                )
+                    )
+                }
             }
 
-            item {
-                OemAutostartCard(context)
-            }
-
-            item {
-                PermissionCardItem(
-                    icon = Icons.Default.Security,
-                    title = "Sideloaded App Guidance (Android 13+)",
-                    subtitle = "If settings are greyed out: App Info -> 3 dots -> Allow restricted settings.",
-                    isGranted = true,
-                    grantButtonText = "App Info",
-                    detailedPurpose = "On Android 13+, sideloaded APKs have accessibility and notification permissions restricted by default. Tapping the three dots in App Info unlocks full access.",
-                    onClick = {
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = "package:${context.packageName}".toUri()
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        }
-                        context.startActivity(intent)
-                    }
-                )
-            }
-
-            // 4. Section: Device Controls & Communications
+            // 4. Group 3: Device Controls & Communications
             item {
                 PermissionSectionHeader(
                     title = "Device Controls & Communications",
@@ -394,113 +580,152 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
             }
 
             item {
-                PermissionCardItem(
-                    icon = Icons.Default.LockClock,
-                    title = "Power Button Auto-Lock (Biometrics Safe)",
-                    subtitle = "Preserves fingerprint and face unlock without locking out credentials.",
-                    isGranted = true,
-                    grantButtonText = "Ready",
-                    detailedPurpose = "Helper uses the system power button simulation (GLOBAL_ACTION_LOCK_SCREEN) to turn off the screen post-dispatch without forcing hardware PIN lockout.",
-                    onClick = {
-                        context.showAppToast("Power button auto-lock active (fingerprint preserved)")
-                    }
-                )
-            }
+                AppGroupCard {
+                    // Row 1: Biometric Safe Power Button Lock
+                    AppGroupRow(
+                        title = "Power Button Auto-Lock",
+                        subtitle = "Hardware lock simulation preserving biometric credentials.",
+                        icon = Icons.Default.LockClock,
+                        iconTint = AppSemanticColors.success,
+                        iconContainerColor = AppSemanticColors.successContainer,
+                        trailingContent = { PermissionStatusActiveChip() },
+                        detailedPurpose = "Helper uses the system power button simulation (GLOBAL_ACTION_LOCK_SCREEN) to turn off the screen post-dispatch without forcing hardware PIN lockout."
+                    )
 
-            item {
-                PermissionCardItem(
-                    icon = Icons.Default.Layers,
-                    title = if (hasOverlay) "Display Over Other Apps: Granted" else "Display Over Other Apps",
-                    subtitle = "Renders privacy shields, countdown overlays, and incoming alerts.",
-                    isGranted = hasOverlay,
-                    grantButtonText = "Grant",
-                    detailedPurpose = "Required to render transient privacy overlays during automated screen actions and display simulated call interfaces.",
-                    onClick = {
-                        if (!hasOverlay) {
-                            if (!OverlayPermissionHelper.launchOverlaySettings(context)) {
-                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                    data = "package:${context.packageName}".toUri()
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                }
-                                context.startActivity(intent)
+                    AppGroupDivider()
+
+                    // Row 2: Display Over Other Apps
+                    AppGroupRow(
+                        title = if (hasOverlay) "Display Over Other Apps: Granted" else "Display Over Other Apps",
+                        subtitle = "Renders privacy shields, countdown overlays, and incoming alerts.",
+                        icon = Icons.Default.Layers,
+                        iconTint = if (hasOverlay) AppSemanticColors.success else MaterialTheme.colorScheme.primary,
+                        iconContainerColor = if (hasOverlay) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                        trailingContent = {
+                            if (hasOverlay) {
+                                PermissionStatusActiveChip()
+                            } else {
+                                PermissionGrantActionButton(
+                                    text = "Grant",
+                                    onClick = {
+                                        if (!OverlayPermissionHelper.launchOverlaySettings(context)) {
+                                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                                data = "package:${context.packageName}".toUri()
+                                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                            }
+                                            context.startActivity(intent)
+                                        }
+                                    }
+                                )
                             }
-                        } else {
-                            context.showAppToast("Overlay permission active")
+                        },
+                        detailedPurpose = "Required to render transient privacy overlays during automated screen actions and display simulated call interfaces.",
+                        onSettingsClick = {
+                            OverlayPermissionHelper.launchOverlaySettings(context)
                         }
-                    }
-                )
-            }
+                    )
 
-            item {
-                PermissionCardItem(
-                    icon = Icons.Default.AdminPanelSettings,
-                    title = if (isAdminActive) "Device Admin: Active" else "Device Administration",
-                    subtitle = "Hardware screen lock authorization to secure phone post-task.",
-                    isGranted = isAdminActive,
-                    grantButtonText = "Activate",
-                    detailedPurpose = "Grants standard device administration privileges solely used to secure the display immediately after scheduled tasks conclude.",
-                    onClick = {
-                        if (!isAdminActive) {
+                    AppGroupDivider()
+
+                    // Row 3: Device Administration
+                    AppGroupRow(
+                        title = if (isAdminActive) "Device Administration: Active" else "Device Administration",
+                        subtitle = "Hardware screen lock authorization to secure phone post-task.",
+                        icon = Icons.Default.AdminPanelSettings,
+                        iconTint = if (isAdminActive) AppSemanticColors.success else MaterialTheme.colorScheme.primary,
+                        iconContainerColor = if (isAdminActive) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                        trailingContent = {
+                            if (isAdminActive) {
+                                PermissionStatusActiveChip()
+                            } else {
+                                PermissionGrantActionButton(
+                                    text = "Activate",
+                                    onClick = { HelperDeviceAdminReceiver.requestActivation(context) }
+                                )
+                            }
+                        },
+                        detailedPurpose = "Grants standard device administration privileges solely used to secure the display immediately after scheduled tasks conclude.",
+                        onSettingsClick = {
                             HelperDeviceAdminReceiver.requestActivation(context)
-                        } else {
-                            context.showAppToast("Device Administration is active")
                         }
-                    }
-                )
-            }
+                    )
 
-            item {
-                PermissionCardItem(
-                    icon = Icons.Default.Contacts,
-                    title = if (hasRuntimePerms) "Communications Access: Active" else "Contacts, SMS & Phone Access",
-                    subtitle = "Auto-discovers contacts and permits direct cellular messaging.",
-                    isGranted = hasRuntimePerms,
-                    grantButtonText = "Grant All",
-                    detailedPurpose = "Required to populate recipient contact names, dispatch carrier SMS tasks, and handle incoming call automation.",
-                    onClick = {
-                        if (!hasRuntimePerms) {
-                            runtimePermissionsLauncher.launch(coreRuntimePermissions.toTypedArray())
-                        } else {
+                    AppGroupDivider()
+
+                    // Row 4: Contacts, SMS & Phone Access
+                    AppGroupRow(
+                        title = if (hasRuntimePerms) "Communications Access: Active" else "Contacts, SMS & Phone Access",
+                        subtitle = "Auto-discovers contacts and permits direct cellular messaging.",
+                        icon = Icons.Default.Contacts,
+                        iconTint = if (hasRuntimePerms) AppSemanticColors.success else MaterialTheme.colorScheme.primary,
+                        iconContainerColor = if (hasRuntimePerms) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                        trailingContent = {
+                            if (hasRuntimePerms) {
+                                PermissionStatusActiveChip()
+                            } else {
+                                PermissionGrantActionButton(
+                                    text = "Grant All",
+                                    onClick = { runtimePermissionsLauncher.launch(coreRuntimePermissions.toTypedArray()) }
+                                )
+                            }
+                        },
+                        detailedPurpose = "Required to populate recipient contact names, dispatch carrier SMS tasks, and handle incoming call automation.",
+                        onSettingsClick = {
                             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                                 data = "package:${context.packageName}".toUri()
                                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             }
                             context.startActivity(intent)
                         }
-                    }
-                )
-            }
+                    )
 
-            item {
-                PermissionCardItem(
-                    icon = Icons.AutoMirrored.Filled.VolumeUp,
-                    title = if (hasDnd) "Do Not Disturb & Sound: Active" else "Do Not Disturb / Sound Policy",
-                    subtitle = "Required for Sound Mode Switcher (Silent / Vibrate / Normal).",
-                    isGranted = hasDnd,
-                    grantButtonText = "Grant",
-                    detailedPurpose = "Allows Helper to programmatically adjust the system audio stream and sound mode profile between Normal, Vibrate, and Silent states.",
-                    onClick = {
-                        if (!hasDnd) {
+                    AppGroupDivider()
+
+                    // Row 5: Do Not Disturb & Sound Policy
+                    AppGroupRow(
+                        title = if (hasDnd) "Do Not Disturb & Sound: Active" else "Do Not Disturb / Sound Policy",
+                        subtitle = "Required for Sound Mode Switcher (Silent / Vibrate / Normal).",
+                        icon = Icons.AutoMirrored.Filled.VolumeUp,
+                        iconTint = if (hasDnd) AppSemanticColors.success else MaterialTheme.colorScheme.primary,
+                        iconContainerColor = if (hasDnd) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                        trailingContent = {
+                            if (hasDnd) {
+                                PermissionStatusActiveChip()
+                            } else {
+                                PermissionGrantActionButton(
+                                    text = "Grant",
+                                    onClick = {
+                                        try {
+                                            context.startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
+                                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                            })
+                                        } catch (e: Exception) {
+                                            AppFileLogger.w("PermissionScreen", "Failed to launch DND settings: ${e.message}")
+                                            context.showAppToast("Unable to open notification policy settings directly")
+                                        }
+                                    }
+                                )
+                            }
+                        },
+                        detailedPurpose = "Allows Helper to programmatically adjust the system audio stream and sound mode profile between Normal, Vibrate, and Silent states.",
+                        onSettingsClick = {
                             try {
                                 context.startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
                                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                 })
                             } catch (e: Exception) {
-                                AppFileLogger.w("PermissionScreen", "Failed to launch DND settings: ${e.message}")
                                 context.showAppToast("Unable to open notification policy settings directly")
                             }
-                        } else {
-                            context.showAppToast("Sound policy access active")
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }
 }
 
 /**
- * Hero System Health Overview Card displaying visual readiness metrics and quick actions.
+ * Modern Material 3 Hero System Health Card with dynamic luminance contrast.
  */
 @Composable
 private fun PermissionHeroCard(
@@ -516,165 +741,171 @@ private fun PermissionHeroCard(
 ) {
     val scope = rememberCoroutineScope()
     var isHealing by remember { mutableStateOf(false) }
-    val isDark = isSystemInDarkTheme()
     val isAllGranted = grantedCount >= totalCount
 
     val healthPercentage = (grantedCount.toFloat() / totalCount.toFloat()).coerceIn(0f, 1f)
     val animatedProgress by animateFloatAsState(targetValue = healthPercentage, label = "HealthProgress")
 
-    val successAccent = if (isDark) OrangeBrandPalette.SuccessGreenDark else OrangeBrandPalette.SuccessGreen
-    val successBg = if (isDark) OrangeBrandPalette.SuccessGreenDarkContainer else OrangeBrandPalette.SuccessGreenContainer
+    val successAccent = AppSemanticColors.success
     val primaryAccent = MaterialTheme.colorScheme.primary
 
-    val containerBg = if (isAllGranted) {
-        if (isDark) Color(0xFF10281E) else Color(0xFFF1F8F3)
-    } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = if (isDark) 0.45f else 0.65f)
-    }
-    val borderColor = if (isAllGranted) {
-        if (isDark) successAccent.copy(alpha = 0.4f) else OrangeBrandPalette.SuccessGreenBorder
-    } else {
-        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f)
-    }
-
-    AppCard(
+    Card(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = containerBg,
-        borderColor = borderColor,
+        shape = RoundedCornerShape(AppLayoutGrid.CardCornerRadius),
+        colors = CardDefaults.cardColors(
+            containerColor = AppSemanticColors.heroContainer,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        border = BorderStroke(
+            1.dp,
+            if (isAllGranted) AppSemanticColors.successBorder else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+        )
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .background(
-                                color = if (isAllGranted) successAccent else primaryAccent,
-                                shape = CircleShape
-                            )
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = if (isAllGranted) "System Protected & Ready" else "System Health Check",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = if (isAllGranted) {
-                        "All $totalCount essential system privileges are fully authorized."
-                    } else {
-                        "$grantedCount of $totalCount privileges authorized. Missing authorizations highlighted below."
-                    },
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = 16.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            // Percentage Badge
-            Surface(
-                shape = CircleShape,
-                color = if (isAllGranted) successBg else primaryAccent.copy(alpha = 0.12f),
-                border = BorderStroke(2.dp, if (isAllGranted) successAccent else primaryAccent),
-                modifier = Modifier.size(50.dp)
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text(
-                        text = "${(healthPercentage * 100).toInt()}%",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = if (isAllGranted) successAccent else primaryAccent
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(14.dp))
-
-        // Progress Bar
-        LinearProgressIndicator(
-            progress = { animatedProgress },
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(6.dp)
-                .clip(RoundedCornerShape(3.dp)),
-            color = if (isAllGranted) successAccent else primaryAccent,
-            trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Mini status indicators row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(14.dp)
         ) {
-            HealthIndicatorPill(name = "Engine", isGranted = isA11yActive, isDark = isDark)
-            HealthIndicatorPill(name = "Alarms", isGranted = canExactAlarm, isDark = isDark)
-            HealthIndicatorPill(name = "Notifs", isGranted = hasNotifListener, isDark = isDark)
-            HealthIndicatorPill(name = "Battery", isGranted = isIgnoringBattery, isDark = isDark)
-        }
-
-        Spacer(modifier = Modifier.height(14.dp))
-
-        // Quick Actions Row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            GlassButton(
-                text = if (isHealing) "Healing..." else "Auto-Heal Engine",
-                onClick = {
-                    if (isHealing) return@GlassButton
-                    isHealing = true
-                    scope.launch {
-                        val healed = withContext(Dispatchers.IO) {
-                            AccessibilityHealthManager.ensureAllServicesActive(context)
-                            AccessibilityHealthManager.ensureServiceAlive(context)
-                        }
-                        isHealing = false
-                        onHealDone()
-                        if (healed) {
-                            context.showAppToast("Services verified and operational")
-                        } else {
-                            context.showAppToast("Auto-heal executed. Review individual items below.", isLong = true)
-                        }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .background(
+                                color = if (isAllGranted) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isAllGranted) Icons.Default.Shield else Icons.Default.SecurityUpdateWarning,
+                            contentDescription = null,
+                            tint = if (isAllGranted) successAccent else primaryAccent,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
-                },
-                icon = if (isHealing) Icons.Default.HourglassTop else Icons.Default.Sync,
-                variant = GlassButtonVariant.SUCCESS,
-                modifier = Modifier.weight(1.1f)
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column {
+                        Text(
+                            text = if (isAllGranted) "System Protected & Ready" else "System Health Check",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = if (isAllGranted) {
+                                "All $totalCount core privileges authorized & healthy."
+                            } else {
+                                "$grantedCount of $totalCount privileges authorized."
+                            },
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                // Progress Percentage Badge
+                Surface(
+                    shape = CircleShape,
+                    color = if (isAllGranted) AppSemanticColors.successContainer else primaryAccent.copy(alpha = 0.12f),
+                    border = BorderStroke(1.5.dp, if (isAllGranted) successAccent else primaryAccent),
+                    modifier = Modifier.size(46.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(
+                            text = "${(healthPercentage * 100).toInt()}%",
+                            fontSize = 12.5.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = if (isAllGranted) successAccent else primaryAccent
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Progress Bar
+            LinearProgressIndicator(
+                progress = { animatedProgress },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(3.dp)),
+                color = if (isAllGranted) successAccent else primaryAccent,
+                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
             )
 
-            GlassButton(
-                text = "ADB Power Setup",
-                onClick = onOpenAdbDialog,
-                icon = Icons.Default.Terminal,
-                variant = GlassButtonVariant.PRIMARY,
-                modifier = Modifier.weight(0.9f)
-            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // 4 Mini Indicators Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                HealthMiniChip(name = "Engine", isGranted = isA11yActive)
+                HealthMiniChip(name = "Alarms", isGranted = canExactAlarm)
+                HealthMiniChip(name = "Notifs", isGranted = hasNotifListener)
+                HealthMiniChip(name = "Battery", isGranted = isIgnoringBattery)
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Quick Actions Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                GlassButton(
+                    text = if (isHealing) "Healing..." else "Auto-Heal Engine",
+                    onClick = {
+                        if (isHealing) return@GlassButton
+                        isHealing = true
+                        scope.launch {
+                            val healed = withContext(Dispatchers.IO) {
+                                AccessibilityHealthManager.ensureAllServicesActive(context)
+                                AccessibilityHealthManager.ensureServiceAlive(context)
+                            }
+                            isHealing = false
+                            onHealDone()
+                            if (healed) {
+                                context.showAppToast("Services verified and operational")
+                            } else {
+                                context.showAppToast("Auto-heal executed. Review individual items below.", isLong = true)
+                            }
+                        }
+                    },
+                    icon = if (isHealing) Icons.Default.HourglassTop else Icons.Default.Sync,
+                    variant = GlassButtonVariant.SUCCESS,
+                    modifier = Modifier.weight(1.1f)
+                )
+
+                GlassButton(
+                    text = "ADB Setup",
+                    onClick = onOpenAdbDialog,
+                    icon = Icons.Default.Terminal,
+                    variant = GlassButtonVariant.PRIMARY,
+                    modifier = Modifier.weight(0.9f)
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun HealthIndicatorPill(name: String, isGranted: Boolean, isDark: Boolean) {
-    val activeColor = if (isDark) OrangeBrandPalette.SuccessGreenDark else OrangeBrandPalette.SuccessGreen
+private fun HealthMiniChip(name: String, isGranted: Boolean) {
+    val activeColor = AppSemanticColors.success
     val inactiveColor = MaterialTheme.colorScheme.outline
-    val bg = if (isGranted) {
-        if (isDark) Color(0xFF10B981).copy(alpha = 0.15f) else Color(0xFFE8F5E9)
-    } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
-    }
+    val bg = if (isGranted) AppSemanticColors.successContainer else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
 
     Surface(
         shape = RoundedCornerShape(8.dp),
@@ -715,29 +946,20 @@ private fun PermissionSectionHeader(
     totalCount: Int
 ) {
     val isComplete = grantedCount >= totalCount
-    val isDark = isSystemInDarkTheme()
-    val badgeColor = if (isComplete) {
-        if (isDark) OrangeBrandPalette.SuccessGreenDark else OrangeBrandPalette.SuccessGreen
-    } else {
-        MaterialTheme.colorScheme.primary
-    }
-    val badgeBg = if (isComplete) {
-        if (isDark) Color(0xFF10B981).copy(alpha = 0.15f) else Color(0xFFE8F5E9)
-    } else {
-        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-    }
+    val badgeColor = if (isComplete) AppSemanticColors.success else MaterialTheme.colorScheme.primary
+    val badgeBg = if (isComplete) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp, vertical = 4.dp),
+            .padding(horizontal = 2.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                fontSize = 14.sp,
+                fontSize = 13.5.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -764,301 +986,51 @@ private fun PermissionSectionHeader(
     }
 }
 
-/**
- * Compact, high-end permission item with squircle icon, status chip, and tap-to-expand details.
- */
 @Composable
-private fun PermissionCardItem(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    isGranted: Boolean,
-    grantButtonText: String,
-    detailedPurpose: String,
-    onClick: () -> Unit
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-    val isDark = isSystemInDarkTheme()
-    val accentGreen = if (isDark) OrangeBrandPalette.SuccessGreenDark else OrangeBrandPalette.SuccessGreen
-    val greenContainer = if (isDark) Color(0xFF10B981).copy(alpha = 0.16f) else Color(0xFFE8F5E9)
-    val chevronRotation by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f, label = "ChevronRotation")
-
-    AppCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { isExpanded = !isExpanded },
-        backgroundColor = if (isGranted) {
-            if (isDark) Color(0xFF10B981).copy(alpha = 0.04f) else Color(0xFFF9FDF9)
-        } else {
-            MaterialTheme.colorScheme.surface
-        },
-        borderColor = if (isGranted) {
-            if (isDark) Color(0xFF4ADE80).copy(alpha = 0.20f) else Color(0xFFC8E6C9)
-        } else {
-            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
-        }
+private fun PermissionStatusActiveChip() {
+    Surface(
+        shape = AppDesignTokens.ShapePill,
+        color = AppSemanticColors.successContainer,
+        border = BorderStroke(1.dp, AppSemanticColors.successBorder)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Squircle leading icon
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        color = if (isGranted) greenContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
-                        shape = RoundedCornerShape(12.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = if (isGranted) accentGreen else MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = subtitle,
-                    fontSize = 11.5.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = 15.sp,
-                    maxLines = if (isExpanded) Int.MAX_VALUE else 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // Trailing action or status chip
-            if (isGranted) {
-                Surface(
-                    shape = AppDesignTokens.ShapePill,
-                    color = greenContainer,
-                    border = BorderStroke(1.dp, if (isDark) Color(0xFF4ADE80).copy(alpha = 0.35f) else Color(0xFFA5D6A7)),
-                    modifier = Modifier.clickable { onClick() }
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                            tint = accentGreen,
-                            modifier = Modifier.size(12.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Active",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = accentGreen
-                        )
-                    }
-                }
-            } else {
-                Button(
-                    onClick = onClick,
-                    shape = AppDesignTokens.ShapePill,
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                    modifier = Modifier.height(32.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Text(
-                        text = grantButtonText,
-                        fontSize = 11.5.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(4.dp))
-
             Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = if (isExpanded) "Collapse" else "Expand",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                modifier = Modifier
-                    .size(20.dp)
-                    .rotate(chevronRotation)
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                tint = AppSemanticColors.success,
+                modifier = Modifier.size(12.dp)
             )
-        }
-
-        // Expandable Detail Accordion
-        AnimatedVisibility(
-            visible = isExpanded,
-            enter = expandVertically() + fadeIn(),
-            exit = shrinkVertically() + fadeOut()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp)
-            ) {
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
-                    thickness = 0.8.dp
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = detailedPurpose,
-                    fontSize = 11.5.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = 16.5.sp
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(
-                        onClick = onClick,
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
-                    ) {
-                        Text(
-                            text = "Open System Settings",
-                            fontSize = 11.5.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = null,
-                            modifier = Modifier.size(14.dp)
-                        )
-                    }
-                }
-            }
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "Active",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = AppSemanticColors.success
+            )
         }
     }
 }
 
-/**
- * OEM Brand tailored autostart guidance card.
- */
 @Composable
-private fun OemAutostartCard(context: Context) {
-    val brandSummary = remember { OemBrandHelper.getDeviceSummary() }
-    val brandGuidance = remember { OemBrandHelper.getOemGuidance() }
-    var isExpanded by remember { mutableStateOf(false) }
-    val chevronRotation by animateFloatAsState(targetValue = if (isExpanded) 180f else 0f, label = "OemChevronRotation")
-
-    AppCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { isExpanded = !isExpanded }
+private fun PermissionGrantActionButton(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        shape = AppDesignTokens.ShapePill,
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+        modifier = Modifier.height(32.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(12.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Smartphone,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "OEM Autostart ($brandSummary)",
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = "Hardware settings to prevent background kills",
-                    fontSize = 11.5.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = if (isExpanded) "Collapse" else "Expand",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                modifier = Modifier
-                    .size(20.dp)
-                    .rotate(chevronRotation)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            brandGuidance.take(if (isExpanded) brandGuidance.size else 2).forEach { step ->
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "• ",
-                        fontSize = 11.5.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = step,
-                        fontSize = 11.5.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = 16.sp
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            GlassButton(
-                text = "Open Auto-Start",
-                onClick = {
-                    if (!OemBrandHelper.openOemBackgroundSettings(context)) {
-                        context.showAppToast("Unable to open OEM autostart settings directly")
-                    }
-                },
-                icon = Icons.Default.Settings,
-                variant = GlassButtonVariant.PRIMARY,
-                modifier = Modifier.weight(1f)
-            )
-            GlassButton(
-                text = "Special Overlays",
-                onClick = {
-                    if (!OverlayPermissionHelper.launchOverlaySettings(context)) {
-                        context.showAppToast("Unable to open overlay settings directly")
-                    }
-                },
-                icon = Icons.Default.Layers,
-                variant = GlassButtonVariant.SECONDARY,
-                modifier = Modifier.weight(1f)
-            )
-        }
+        Text(
+            text = text,
+            fontSize = 11.5.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
     }
 }
 
@@ -1204,18 +1176,41 @@ private fun A11yDisclosureDialog(context: Context, onDismiss: () -> Unit) {
  */
 @Composable
 fun SuperAutoHealAndPermissionFixerCard(context: Context) {
-    var healRefreshKey by remember { mutableIntStateOf(0) }
-    PermissionHeroCard(
-        context = context,
-        grantedCount = 8,
-        totalCount = 8,
-        isA11yActive = true,
-        canExactAlarm = true,
-        hasNotifListener = true,
-        isIgnoringBattery = true,
-        onOpenAdbDialog = {},
-        onHealDone = { healRefreshKey++ }
-    )
+    var isHealing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    AppGroupCard {
+        AppGroupRow(
+            title = "Auto-Heal Services & Watchdog",
+            subtitle = "Restores and binds any dropped background services or alarms.",
+            icon = Icons.Default.Sync,
+            iconTint = AppSemanticColors.success,
+            iconContainerColor = AppSemanticColors.successContainer,
+            trailingContent = {
+                GlassButton(
+                    text = if (isHealing) "Healing..." else "Auto-Heal",
+                    onClick = {
+                        if (isHealing) return@GlassButton
+                        isHealing = true
+                        scope.launch {
+                            val healed = withContext(Dispatchers.IO) {
+                                AccessibilityHealthManager.ensureAllServicesActive(context)
+                                AccessibilityHealthManager.ensureServiceAlive(context)
+                            }
+                            isHealing = false
+                            if (healed) {
+                                context.showAppToast("Services verified and operational")
+                            } else {
+                                context.showAppToast("Auto-heal executed. Review individual items in Permission Center.")
+                            }
+                        }
+                    },
+                    icon = if (isHealing) Icons.Default.HourglassTop else Icons.Default.Sync,
+                    variant = GlassButtonVariant.SUCCESS
+                )
+            }
+        )
+    }
 }
 
 /**
@@ -1223,5 +1218,96 @@ fun SuperAutoHealAndPermissionFixerCard(context: Context) {
  */
 @Composable
 fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
-    OemAutostartCard(context)
+    val brandSummary = remember { OemBrandHelper.getDeviceSummary() }
+    val brandGuidance = remember { OemBrandHelper.getOemGuidance() }
+
+    AppGroupCard(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Smartphone,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = "OEM Autostart ($brandSummary)",
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Hardware settings to prevent background kills",
+                        fontSize = 11.5.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                brandGuidance.forEach { step ->
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "• ",
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = step,
+                            fontSize = 11.5.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                GlassButton(
+                    text = "Open Auto-Start",
+                    onClick = {
+                        if (!OemBrandHelper.openOemBackgroundSettings(context)) {
+                            context.showAppToast("Unable to open OEM autostart settings directly")
+                        }
+                    },
+                    icon = Icons.Default.Settings,
+                    variant = GlassButtonVariant.PRIMARY,
+                    modifier = Modifier.weight(1f)
+                )
+                GlassButton(
+                    text = "Special Overlays",
+                    onClick = {
+                        if (!OverlayPermissionHelper.launchOverlaySettings(context)) {
+                            context.showAppToast("Unable to open overlay settings directly")
+                        }
+                    },
+                    icon = Icons.Default.Layers,
+                    variant = GlassButtonVariant.SECONDARY,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
 }

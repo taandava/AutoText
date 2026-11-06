@@ -2442,11 +2442,12 @@ In November 2026, a meticulous, line-by-line inspection of all source files was 
    - Refactored `AccessibilityNodeUtils.kt`'s `recycleSafely()` receiver parameter to perform defensive null checks (`if (this == null) return`), resolving language server `UnusedReceiverParameter` diagnostics without `@Suppress`.
    - Purged `@Suppress("DEPRECATION")` from `AccessibilityCompat.kt` by evaluating tri-state checked status on API 36+ and non-deprecated reflection access on legacy APIs.
    - Purged `@Suppress("DEPRECATION")` from `EncryptedKeyguardStore.kt` by implementing pure hardware-backed Android KeyStore AES-256-GCM cipher encryption without deprecated third-party libraries.
-2. **Material 3 Expressive Permission Center Overhaul**:
-   - Upgraded `PermissionScreen.kt` with a live percentage gauge, animated smooth progress bars, and high-contrast M3 status chips.
-   - Designed Hero System Health Card featuring live readiness percentage, health status indicator, mini-status indicators for foundational channels (Engine, Alarms, Notifications, Battery), and quick-action buttons for automated self-healing and ADB command access.
-   - Categorized into Core Automation Engine, Background Reliability, and Device Controls & Communications with live category readiness pills (e.g. `[3/3 Ready]`, `[2/2 Ready]`, `[5/5 Ready]`).
-   - Created compact, high-density `PermissionCardItem` featuring tinted squircle icons, concise benefit descriptions, animated 180° rotation chevrons, compact status chips, and tap-to-expand rationale dialogs.
+2. **Universal Layout Grid, Grouped Card Architecture & Permission Center Overhaul**:
+   - Formulated universal 8-point layout grid `AppLayoutGrid` (`SpaceMicro` 2dp through `SpaceSection` 24dp) and shape scale (`CardCornerRadius = 16dp`, `Squircle = 10dp`, `Pill = 999dp`).
+   - Implemented `isAppDarkTheme()` composable extension based on `MaterialTheme.colorScheme.surface.luminance() < 0.5f` and `AppSemanticColors`, completely eliminating theme-mismatch contrast failures (such as dark pine containers rendering black text).
+   - Designed universal `AppGroupCard`, `AppGroupRow`, and `AppGroupDivider` in `GlassComponents.kt`, replacing 8 loose, bulky cards in `PermissionScreen.kt` with 3 cohesive grouped cards (`Core Automation Engine`, `Background Reliability & Battery`, `Device Controls & Communications`).
+   - Upgraded `PermissionScreen.kt` with a live percentage gauge, animated smooth progress bars, 4 mini health chips (Engine, Alarms, Notifications, Battery), and quick actions for Auto-Heal and ADB setup.
+   - Enhanced each permission row with 38.dp squircle icons, clean title/subtitle without repetitive "Active" words, active checkmark chips, and smooth expandable disclosure accordions.
 3. **Intent & Policy Sanitization**:
    - Removed legacy `ACTION_TEST_AUTO_UNLOCK` filter from `AndroidManifest.xml`, ensuring only policy-compliant `ACTION_TEST_SCREEN_ASSIST` is exposed.
 

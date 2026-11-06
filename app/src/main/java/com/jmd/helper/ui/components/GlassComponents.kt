@@ -28,10 +28,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -92,7 +92,7 @@ fun GlassButton(
         label = "m3ButtonScale"
     )
 
-    val isDark = isSystemInDarkTheme()
+    val isDark = com.jmd.helper.ui.theme.isAppDarkTheme()
     val containerColor = when (variant) {
         GlassButtonVariant.PRIMARY -> MaterialTheme.colorScheme.primary
         GlassButtonVariant.SECONDARY -> MaterialTheme.colorScheme.secondaryContainer
@@ -814,3 +814,190 @@ fun AppSubScreenHeader(
         }
     }
 }
+
+/**
+ * Modern Material 3 Expressive Grouped Card Container.
+ * Designed to cleanly encapsulate grouped settings and permission rows with unified borders and background.
+ */
+@Composable
+fun AppGroupCard(
+    modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(com.jmd.helper.ui.theme.AppLayoutGrid.CardCornerRadius),
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    borderColor: Color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = shape,
+        colors = CardDefaults.cardColors(
+            containerColor = backgroundColor,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        border = BorderStroke(1.dp, borderColor)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            content = content
+        )
+    }
+}
+
+/**
+ * Clean hairline divider between items in an [AppGroupCard].
+ */
+@Composable
+fun AppGroupDivider(
+    modifier: Modifier = Modifier,
+    startIndent: Dp = 60.dp
+) {
+    HorizontalDivider(
+        modifier = modifier.padding(start = startIndent, end = 14.dp),
+        thickness = 0.6.dp,
+        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+    )
+}
+
+/**
+ * Universal interactive row inside an [AppGroupCard].
+ * Features leading squircle icon, title, subtitle, trailing action/status control, and expandable rationale accordion.
+ */
+@Composable
+fun AppGroupRow(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    modifier: Modifier = Modifier,
+    iconTint: Color = MaterialTheme.colorScheme.primary,
+    iconContainerColor: Color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+    trailingContent: @Composable () -> Unit = {},
+    detailedPurpose: String? = null,
+    onSettingsClick: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .then(
+                if (detailedPurpose != null || onClick != null) {
+                    Modifier.clickable {
+                        if (detailedPurpose != null) {
+                            isExpanded = !isExpanded
+                        } else {
+                            onClick?.invoke()
+                        }
+                    }
+                } else Modifier
+            )
+            .padding(horizontal = 14.dp, vertical = 12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Squircle leading icon
+            Box(
+                modifier = Modifier
+                    .size(38.dp)
+                    .background(
+                        color = iconContainerColor,
+                        shape = RoundedCornerShape(com.jmd.helper.ui.theme.AppLayoutGrid.SquircleCornerRadius)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    fontSize = 13.5.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = subtitle,
+                    fontSize = 11.5.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 15.sp,
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            trailingContent()
+
+            if (detailedPurpose != null) {
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    modifier = Modifier
+                        .size(18.dp)
+                        .scale(1f, if (isExpanded) -1f else 1f)
+                )
+            }
+        }
+
+        // Expandable Detail Accordion
+        if (detailedPurpose != null) {
+            androidx.compose.animation.AnimatedVisibility(
+                visible = isExpanded,
+                enter = androidx.compose.animation.expandVertically() + androidx.compose.animation.fadeIn(),
+                exit = androidx.compose.animation.shrinkVertically() + androidx.compose.animation.fadeOut()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, start = 50.dp)
+                ) {
+                    Text(
+                        text = detailedPurpose,
+                        fontSize = 11.5.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 16.5.sp
+                    )
+                    if (onSettingsClick != null) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            TextButton(
+                                onClick = onSettingsClick,
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                            ) {
+                                Text(
+                                    text = "System Settings",
+                                    fontSize = 11.5.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

@@ -489,3 +489,67 @@ fun HelperTheme(
         content = content
     )
 }
+
+/**
+ * Returns true if the active application surface color is dark, independent of OS dark mode.
+ * Eliminates theme-mismatch contrast bugs across all screens and custom components.
+ */
+@Composable
+fun isAppDarkTheme(): Boolean = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+
+/**
+ * Universal dynamic semantic color tokens ensuring high contrast legibility in both Light and Dark themes.
+ */
+object AppSemanticColors {
+    val success: Color
+        @Composable get() = if (isAppDarkTheme()) Color(0xFF4ADE80) else Color(0xFF1B5E20)
+
+    val successContainer: Color
+        @Composable get() = if (isAppDarkTheme()) Color(0xFF0F3D24) else Color(0xFFE8F5E9)
+
+    val onSuccessContainer: Color
+        @Composable get() = if (isAppDarkTheme()) Color(0xFF4ADE80) else Color(0xFF1B5E20)
+
+    val successBorder: Color
+        @Composable get() = if (isAppDarkTheme()) Color(0xFF4ADE80).copy(alpha = 0.35f) else Color(0xFFA5D6A7)
+
+    val warning: Color
+        @Composable get() = if (isAppDarkTheme()) Color(0xFFFFB74D) else Color(0xFFE65100)
+
+    val warningContainer: Color
+        @Composable get() = if (isAppDarkTheme()) Color(0xFF3E2723) else Color(0xFFFFF3E0)
+
+    val onWarningContainer: Color
+        @Composable get() = if (isAppDarkTheme()) Color(0xFFFFB74D) else Color(0xFFE65100)
+
+    val warningBorder: Color
+        @Composable get() = if (isAppDarkTheme()) Color(0xFFFFB74D).copy(alpha = 0.35f) else Color(0xFFFFCC80)
+
+    val heroContainer: Color
+        @Composable get() = if (isAppDarkTheme()) {
+            MaterialTheme.colorScheme.surfaceContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerLowest
+        }
+
+    val heroBorder: Color
+        @Composable get() = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+}
+
+/**
+ * Universal 8-point layout grid and spacing tokens for Jetpack Compose.
+ */
+object AppLayoutGrid {
+    val SpaceMicro    = 2.dp   // Inline dot separation & badges
+    val SpaceXS       = 4.dp   // Compact badge vertical padding
+    val SpaceSmall    = 8.dp   // Row element spacing
+    val SpaceStandard = 12.dp  // Card horizontal padding & icon gutter
+    val SpaceMedium   = 16.dp  // Group card separation
+    val SpaceLarge    = 20.dp  // Section division
+    val SpaceSection  = 24.dp  // Major screen gutter
+
+    val CardCornerRadius     = 16.dp // Grouped container card
+    val SquircleCornerRadius = 10.dp // Icon container
+    val PillCornerRadius     = 999.dp // Status badges & pills
+}
+
