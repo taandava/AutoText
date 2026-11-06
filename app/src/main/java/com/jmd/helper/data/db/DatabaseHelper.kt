@@ -553,17 +553,10 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         """.trimIndent())
         try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_seq_steps ON $TABLE_SEQUENCE_STEPS(sequence_id)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
-        db.execSQL("""
-            CREATE TABLE IF NOT EXISTS $TABLE_WHATSAPP_GROUPS (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL UNIQUE,
-                group_jid TEXT DEFAULT '',
-                member_count TEXT DEFAULT '',
-                created_at INTEGER NOT NULL
-            )
-        """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_wa_groups_name ON $TABLE_WHATSAPP_GROUPS(name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
-        addColumnIfNotExists(db, TABLE_WHATSAPP_GROUPS, "group_jid", "TEXT DEFAULT ''")
+        // Note: WhatsApp groups feature removed in favor of 100% reliable direct phone/contact dispatch.
+        // Drop legacy table if present.
+        try { db.execSQL("DROP TABLE IF EXISTS $TABLE_WHATSAPP_GROUPS") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_TASK_DELIVERIES (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -39,7 +39,6 @@ import com.jmd.helper.data.model.RecurrenceType
 import com.jmd.helper.data.model.ScheduledTask
 import com.jmd.helper.data.model.TaskStatus
 import com.jmd.helper.data.model.WhatsAppContactItem
-import com.jmd.helper.data.model.WhatsAppGroupItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -580,15 +579,7 @@ class AppRepository(private val context: Context) {
         return updated
     }
 
-    // ==================== WHATSAPP GROUPS & CONTACTS ====================
-    fun bulkSaveWhatsAppGroupItems(groups: List<WhatsAppGroupItem>): Int = whatsAppRepo.bulkSaveWhatsAppGroupItems(groups)
-    fun saveWhatsAppGroup(groupName: String, groupJid: String = "", memberCount: String = ""): Boolean =
-        whatsAppRepo.saveWhatsAppGroup(groupName, groupJid, memberCount)
-    fun getWhatsAppGroupItems(): List<WhatsAppGroupItem> = whatsAppRepo.getWhatsAppGroupItems()
-    fun deleteWhatsAppGroup(groupName: String): Boolean = whatsAppRepo.deleteWhatsAppGroup(groupName)
-    fun isValidGroupName(name: String): Boolean = whatsAppRepo.isValidGroupName(name)
-    fun isSavedGroup(name: String): Boolean = whatsAppRepo.isSavedGroup(name)
-    fun cleanupMistakenGroups() = whatsAppRepo.cleanupMistakenGroups()
+    // ==================== WHATSAPP CONTACTS ====================
     fun isValidPickedChatName(name: String): Boolean = whatsAppRepo.isValidPickedChatName(name)
     fun findPhoneForContactName(name: String): String? = whatsAppRepo.findPhoneForContactName(name)
     fun findPhotoForContactName(name: String): String = whatsAppRepo.findPhotoForContactName(name)

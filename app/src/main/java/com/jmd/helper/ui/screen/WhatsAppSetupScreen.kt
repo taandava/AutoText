@@ -41,6 +41,8 @@ import com.jmd.helper.data.prefs.*
 import com.jmd.helper.engine.*
 import com.jmd.helper.service.*
 import com.jmd.helper.ui.components.*
+import com.jmd.helper.ui.screen.permission.AutoHealWatchdogCard
+import com.jmd.helper.ui.screen.permission.OemAutostartCard
 import com.jmd.helper.ui.theme.*
 
 
@@ -104,12 +106,12 @@ fun WhatsAppSetupAndScreenAssistView(
 
             // 2B. Self-Healing & Never-Stop Watchdog Card
             item {
-                SuperAutoHealAndPermissionFixerCard(context)
+                AutoHealWatchdogCard(context)
             }
 
-            // 2C. Keep Open in Recent Apps Card
+            // 2C. OEM Background Execution & Autostart Card
             item {
-                KeepOpenRecentAppsCard()
+                OemAutostartCard(context)
             }
 
             // 3. Screen Auto-Unlock & Auto-Lock Settings Enterprise Card

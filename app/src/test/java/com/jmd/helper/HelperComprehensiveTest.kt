@@ -634,7 +634,6 @@ class HelperComprehensiveTest {
     fun testPickedChatTypesEnumValues() {
         val types = PickedChatType.entries.map { it.name }
         assertTrue(types.contains("INDIVIDUAL"))
-        assertTrue(types.contains("GROUP"))
         assertTrue(types.contains("BROADCAST"))
         assertTrue(types.contains("STATUS"))
         assertTrue(types.contains("CHANNEL"))
@@ -647,12 +646,6 @@ class HelperComprehensiveTest {
         assertEquals(PickedChatType.INDIVIDUAL, infoIndividual.type)
         assertEquals("+919876543210", infoIndividual.phoneOrId)
         assertEquals("online", infoIndividual.subtitle)
-
-        val infoGroup = PickedChatInfo("Project Team", PickedChatType.GROUP, null, "5 participants")
-        assertEquals("Project Team", infoGroup.title)
-        assertEquals(PickedChatType.GROUP, infoGroup.type)
-        assertNull(infoGroup.phoneOrId)
-        assertEquals("5 participants", infoGroup.subtitle)
 
         val infoBroadcast = PickedChatInfo("Family Broadcast", PickedChatType.BROADCAST, null, "12 recipients")
         assertEquals(PickedChatType.BROADCAST, infoBroadcast.type)
@@ -837,7 +830,7 @@ class HelperComprehensiveTest {
         }
 
         // Verify count of all task types
-        assertEquals(12, tasks.size)
+        assertEquals(11, tasks.size)
 
         // Verify each channel type is uniquely present
         val presentChannels = tasks.map { it.channel }.toSet()
@@ -1092,9 +1085,9 @@ class HelperComprehensiveTest {
     // ═══════════════════════════════════════════════════════════════════════════════════
 
     @Test
-    fun testAllTwelveChannelsValidationAcceptsTextPayload() {
+    fun testAllChannelsValidationAcceptsTextPayload() {
         val channels = com.jmd.helper.data.model.ChannelType.entries
-        assertEquals(12, channels.size)
+        assertEquals(11, channels.size)
 
         for (channel in channels) {
             val result = com.jmd.helper.core.TaskContentValidator.validateContent(
@@ -1854,15 +1847,14 @@ class HelperComprehensiveTest {
     // ═══════════════════════════════════════════════════════════════════════════════════
 
     @Test
-    fun testAllTwelveChannelsCompleteness() {
+    fun testAllChannelsCompleteness() {
         val allChannels = ChannelType.entries
-        assertEquals("Expected exactly 12 channels", 12, allChannels.size)
+        assertEquals("Expected exactly 11 channels", 11, allChannels.size)
 
         val expectedChannels = setOf(
             ChannelType.SMS,
             ChannelType.WHATSAPP,
             ChannelType.WHATSAPP_BUSINESS,
-            ChannelType.WHATSAPP_GROUP,
             ChannelType.WHATSAPP_STATUS,
             ChannelType.WHATSAPP_BUSINESS_STATUS,
             ChannelType.CALL,
@@ -2085,11 +2077,10 @@ class HelperComprehensiveTest {
     @Test
     fun testAllChannelTypesCoverage() {
         val allChannels = ChannelType.entries
-        assertEquals("There should be exactly 12 channel types", 12, allChannels.size)
+        assertEquals("There should be exactly 11 channel types", 11, allChannels.size)
         assertTrue(allChannels.contains(ChannelType.SMS))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS))
-        assertTrue(allChannels.contains(ChannelType.WHATSAPP_GROUP))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_STATUS))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS_STATUS))
         assertTrue(allChannels.contains(ChannelType.CALL))
@@ -2103,23 +2094,6 @@ class HelperComprehensiveTest {
             assertNotNull(ch.displayName)
             assertTrue(ch.displayName.isNotBlank())
         }
-    }
-
-    @Test
-    fun testWhatsAppGroupPrefixStripping() {
-        val stripGroupPrefix = { value: String ->
-            value.replaceFirst(Regex("^group\\s*:", RegexOption.IGNORE_CASE), "").trim()
-        }
-        val normalizeTitle = { value: String ->
-            stripGroupPrefix(value).replace(Regex("\\s+"), " ").lowercase()
-        }
-
-        assertEquals("Family", stripGroupPrefix("group:Family"))
-        assertEquals("Colleagues", stripGroupPrefix("GROUP: Colleagues"))
-        assertEquals("Project Alpha", stripGroupPrefix("group : Project Alpha"))
-        assertEquals("Football Team", stripGroupPrefix("Football Team"))
-        assertEquals("family", normalizeTitle("group: Family"))
-        assertEquals("project alpha", normalizeTitle("GROUP :  Project   Alpha "))
     }
 
     @Test
@@ -2177,13 +2151,6 @@ class HelperComprehensiveTest {
                 emoji = "💼",
                 color = androidx.compose.ui.graphics.Color.Cyan,
                 channel = ChannelType.WHATSAPP_BUSINESS
-            ),
-            TaskTypeItem(
-                title = "WhatsApp Group",
-                description = "Send WhatsApp group messages or announcements",
-                emoji = "👥",
-                color = androidx.compose.ui.graphics.Color.Green,
-                channel = ChannelType.WHATSAPP_GROUP
             ),
             TaskTypeItem(
                 title = "Status Story",
@@ -2247,12 +2214,11 @@ class HelperComprehensiveTest {
             )
         )
 
-        assertEquals(12, items.size)
+        assertEquals(11, items.size)
         val channels = items.mapNotNull { it.channel }.toSet()
         assertTrue(channels.contains(ChannelType.SMS))
         assertTrue(channels.contains(ChannelType.WHATSAPP))
         assertTrue(channels.contains(ChannelType.WHATSAPP_BUSINESS))
-        assertTrue(channels.contains(ChannelType.WHATSAPP_GROUP))
         assertTrue(channels.contains(ChannelType.CALL))
         assertTrue(channels.contains(ChannelType.CALL_SIMULATION))
         assertTrue(channels.contains(ChannelType.REMINDER))

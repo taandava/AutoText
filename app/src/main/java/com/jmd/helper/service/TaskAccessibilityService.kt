@@ -68,7 +68,6 @@ class TaskAccessibilityService : AccessibilityService() {
 
     private val whatsAppStatusEngine by lazy { WhatsAppStatusEngine(this) }
     private val whatsAppDirectSendEngine by lazy { WhatsAppDirectSendEngine(this) }
-    private val whatsAppGroupEngine by lazy { WhatsAppGroupEngine(this) }
     private val whatsAppChatScanner by lazy { WhatsAppChatScanner(this) }
     private val whatsAppCallEngine by lazy { WhatsAppCallEngine(this) }
     val keyguardAssistEngine: KeyguardAssistEngine by lazy { KeyguardAssistEngine(this, handler) }
@@ -307,7 +306,6 @@ class TaskAccessibilityService : AccessibilityService() {
 
         enum class DispatchMode {
             DIRECT_SEND,
-            WHATSAPP_SEARCH_GROUP,
             WHATSAPP_STATUS,
             WHATSAPP_SCAN_CHATS,
             MANUAL_PICK_CHAT,
@@ -541,28 +539,6 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
-         * Arms task engine for group message dispatch by transitioning to group search mode.
-         *
-         * @param taskId Unique task ID.
-         * @param packageName WhatsApp package to target.
-         * @param groupName Group chat title.
-         * @param messageText Message body to dispatch.
-         * @param shouldRelock True to auto-lock device upon completing dispatch.
-         * @param isBatchCampaign True if part of recurring daily taskBatch.
-         */
-        fun prepareForGroup(
-            taskId: Long,
-            packageName: String,
-            groupName: String,
-            messageText: String,
-            shouldRelock: Boolean = false,
-            isBatchCampaign: Boolean = false
-        ) {
-            currentMode = DispatchMode.WHATSAPP_SEARCH_GROUP
-            prepareForSend(taskId, packageName, groupName, messageText, shouldRelock, isBatchCampaign)
-        }
-
-        /**
          * Arms task engine for posting text or media to WhatsApp Status.
          *
          * @param taskId Unique task ID.
@@ -679,7 +655,7 @@ class TaskAccessibilityService : AccessibilityService() {
             shouldRelock: Boolean = false,
             isBatchCampaign: Boolean = false
         ) {
-            if (currentMode != DispatchMode.WHATSAPP_SEARCH_GROUP && currentMode != DispatchMode.WHATSAPP_STATUS) {
+            if (currentMode != DispatchMode.WHATSAPP_STATUS) {
                 currentMode = DispatchMode.DIRECT_SEND
             }
             pendingOperationMode = currentMode
@@ -691,7 +667,6 @@ class TaskAccessibilityService : AccessibilityService() {
             sendAttemptCount = 0
             isBatchCampaignMode = isBatchCampaign
             instance?.hasAttemptedSendClick = false
-            instance?.groupSearchStep = 0
             shouldRelockAfterSend = shouldRelock
             lastSendResult = RESULT_PENDING
             Log.d(TAG, "Prepared WhatsApp send for $packageName, mode: $currentMode, recipient: $recipient, relock: $shouldRelock, batch: $isBatchCampaign")
@@ -1010,7 +985,6 @@ class TaskAccessibilityService : AccessibilityService() {
             instance?.let { s ->
                 s.releaseUnlockWakeLock()
                 s.hasAttemptedSendClick = false
-                s.groupSearchStep = 0
                 s.whatsAppCallEngine.resetState()
                 s.keyguardAssistEngine.isUnlockPending = false
                 s.keyguardAssistEngine.isEnteringPinDigits = false
@@ -1136,7 +1110,6 @@ class TaskAccessibilityService : AccessibilityService() {
     }
 
     private var hasAttemptedSendClick = false
-    @Volatile var groupSearchStep = 0
     private var unlockWakeLock: PowerManager.WakeLock? = null
 
     private fun acquireUnlockWakeLock() {
@@ -1364,24 +1337,6 @@ class TaskAccessibilityService : AccessibilityService() {
                 }
 
                 when (currentMode) {
-                    DispatchMode.WHATSAPP_SEARCH_GROUP -> {
-                        whatsAppGroupEngine.tryHandleGroupSearchAndSend(
-                            root = activeRoot,
-                            pkg = targetPkg,
-                            pendingGroupRecipient = pendingRecipient,
-                            sendAttemptCount = sendAttemptCount,
-                            windows = windows,
-                            onOpenChat = {
-                            currentMode = DispatchMode.DIRECT_SEND
-                            sendAttemptCount = 0
-                            hasAttemptedSendClick = false
-                            handler.removeCallbacks(sendRunnable)
-                            handler.postDelayed(sendRunnable, 350L)
-                        },
-                            onTimeout = { handleSendTimeout(targetPkg) },
-                            onRetry = { handler.postDelayed(sendRunnable, it) }
-                        )
-                    }
                     DispatchMode.WHATSAPP_STATUS -> {
                         whatsAppStatusEngine.tryHandleStatusPost(
                             root = activeRoot,
@@ -1781,11 +1736,6 @@ class TaskAccessibilityService : AccessibilityService() {
                                         source = src
                                     )
                                 ))
-                                // Clean up any erroneous entry in groups table
-                                repo.deleteWhatsAppGroup(chatInfo.title)
-                            }
-                            PickedChatType.GROUP -> {
-                                repo.saveWhatsAppGroup(chatInfo.title, memberCount = chatInfo.subtitle)
                             }
                             PickedChatType.BROADCAST, PickedChatType.CHANNEL, PickedChatType.STATUS -> {
                                 // Handled via callback
@@ -2147,7 +2097,6 @@ class TaskAccessibilityService : AccessibilityService() {
         val resolvedPhone = phoneFound ?: directDigits
 
         if (resolvedPhone != null) {
-            repo.deleteWhatsAppGroup(clean)
             return PickedChatInfo(
                 title = clean,
                 type = PickedChatType.INDIVIDUAL,
@@ -2167,15 +2116,7 @@ class TaskAccessibilityService : AccessibilityService() {
             return PickedChatInfo(clean, PickedChatType.CHANNEL, subtitle = convSubtitle)
         }
 
-        // C. Group (requires positive proof)
-        val hasGroupSignals = (hasGroupKeywordInRow || convHasGroupHeader || isSubGroup) && !isSubIndividual && !convHasCallButtons
-        if (hasGroupSignals) {
-            return PickedChatInfo(clean, PickedChatType.GROUP, subtitle = convSubtitle)
-        }
-
-        // D. Individual / Normal Chat (default fallback for contacts)
-        repo.deleteWhatsAppGroup(clean)
-
+        // C. Individual / Normal Chat (default fallback for contacts)
         return PickedChatInfo(
             title = clean,
             type = PickedChatType.INDIVIDUAL,
@@ -2190,7 +2131,6 @@ class TaskAccessibilityService : AccessibilityService() {
             pkg.contains("w4b", ignoreCase = true) && pendingOperationMode == DispatchMode.WHATSAPP_STATUS -> "WhatsApp Business Status"
             pkg.contains("w4b", ignoreCase = true) -> "WhatsApp Business"
             pendingOperationMode == DispatchMode.WHATSAPP_STATUS -> "WhatsApp Status"
-            pendingOperationMode == DispatchMode.WHATSAPP_SEARCH_GROUP -> "WhatsApp Group"
             else -> "WhatsApp"
         }
         AppRepository(applicationContext).insertLog(
@@ -2209,7 +2149,6 @@ class TaskAccessibilityService : AccessibilityService() {
 
         setDispatchingState(false)
         hasAttemptedSendClick = false
-        groupSearchStep = 0
         whatsAppStatusEngine.resetState()
         currentMode = DispatchMode.DIRECT_SEND
 
@@ -2400,7 +2339,6 @@ class TaskAccessibilityService : AccessibilityService() {
             pkg.contains("w4b", ignoreCase = true) && pendingOperationMode == DispatchMode.WHATSAPP_STATUS -> "WhatsApp Business Status"
             pkg.contains("w4b", ignoreCase = true) -> "WhatsApp Business"
             pendingOperationMode == DispatchMode.WHATSAPP_STATUS -> "WhatsApp Status"
-            pendingOperationMode == DispatchMode.WHATSAPP_SEARCH_GROUP -> "WhatsApp Group"
             else -> "WhatsApp"
         }
         AppFileLogger.w(applicationContext, TAG, "Dispatch timeout reached sending to $pendingRecipient")
@@ -2419,7 +2357,6 @@ class TaskAccessibilityService : AccessibilityService() {
         }
         setDispatchingState(false)
         hasAttemptedSendClick = false
-        groupSearchStep = 0
         whatsAppStatusEngine.resetState()
         currentMode = DispatchMode.DIRECT_SEND
 

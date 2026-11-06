@@ -177,9 +177,6 @@ class HelperApplication : Application(), Configuration.Provider {
                     AccessibilityHealthManager.ensureAllServicesActive(this@HelperApplication)
                 }
                 AccessibilityHealthManager.enforceAutoRotateInvariant(this@HelperApplication)
-
-                // Self-heal and purge any individual contacts that were previously misclassified as groups
-                AppRepository(this@HelperApplication).cleanupMistakenGroups()
             } catch (e: Exception) {
                 Log.e(TAG, "Error during background initialization", e)
                 AppFileLogger.e(this@HelperApplication, TAG, "Non-fatal error during background initialization: ${e.message}", e)

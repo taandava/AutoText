@@ -314,13 +314,6 @@ fun ComposeTaskScreen(
 
     // WhatsApp Specific States
     var showWhatsAppContactsDialog by remember { mutableStateOf(false) }
-    var selectedGroupName by remember {
-        mutableStateOf(
-            if (taskToEdit != null && taskToEdit.channel == ChannelType.WHATSAPP_GROUP) {
-                taskToEdit.recipients.firstOrNull()?.removePrefix("group:") ?: ""
-            } else ""
-        )
-    }
 
     // Dialog states
     var showTemplateDialog by remember { mutableStateOf(false) }
@@ -379,8 +372,8 @@ fun ComposeTaskScreen(
             }
         }
 
-        // Ingest any text remaining in manual input if not status or group
-        if (selectedChannel != ChannelType.WHATSAPP_STATUS && selectedChannel != ChannelType.WHATSAPP_BUSINESS_STATUS && selectedChannel != ChannelType.WHATSAPP_GROUP) {
+        // Ingest any text remaining in manual input if not status
+        if (selectedChannel != ChannelType.WHATSAPP_STATUS && selectedChannel != ChannelType.WHATSAPP_BUSINESS_STATUS) {
             if (recipientsInput.isNotBlank()) {
                 val parsed = PhoneNumberNormalizer.parseMultiInput(recipientsInput)
                 if (parsed.isNotEmpty()) {
@@ -408,18 +401,6 @@ fun ComposeTaskScreen(
             if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
             finalRecipients = listOf("My Status (w4b)")
             finalRecipientNames = listOf("WhatsApp Business Status")
-        } else if (selectedChannel == ChannelType.WHATSAPP_GROUP) {
-            val grp = if (selectedGroupName.isNotBlank()) selectedGroupName.trim()
-                      else if (recipientsInput.isNotBlank()) recipientsInput.trim()
-                      else selectedRecipients.firstOrNull()?.name ?: ""
-            if (grp.isBlank()) {
-                context.showAppToast("Select group name", isLong = true)
-                return@saveTaskAction
-            }
-            if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
-            repository.saveWhatsAppGroup(grp)
-            finalRecipients = listOf("group:$grp")
-            finalRecipientNames = listOf(grp)
         } else if (selectedChannel == ChannelType.REMINDER) {
             if (title.isBlank() && messageText.isBlank()) {
                 context.showAppToast("Enter reminder title", isLong = true)
@@ -672,20 +653,6 @@ fun ComposeTaskScreen(
                         onMessageTextChange = { messageText = it },
                         onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") },
                         onOpenTemplates = { showTemplateDialog = true }
-                    )
-                }
-                ChannelType.WHATSAPP_GROUP -> {
-                    WhatsAppGroupComposerCard(
-                        context = context,
-                        repository = repository,
-                        selectedGroupName = selectedGroupName,
-                        onSelectGroupName = { selectedGroupName = it },
-                        messageText = messageText,
-                        onMessageTextChange = { messageText = it },
-                        onOpenTemplates = { showTemplateDialog = true },
-                        mediaUri = mediaUri,
-                        onMediaUriChange = { mediaUri = it },
-                        onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") }
                     )
                 }
                 else -> {

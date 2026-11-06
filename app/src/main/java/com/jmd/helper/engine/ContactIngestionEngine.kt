@@ -333,41 +333,6 @@ class ContactIngestionEngine(
                 }
             }
 
-            val waRepo = WhatsAppRepository(context)
-            val groups = waRepo.getWhatsAppGroupItems()
-            for ((_, groupName, _, memberCountStr) in groups) {
-                waChatsScanned++
-                val groupTitle = groupName.trim()
-                if (groupTitle.isBlank()) continue
-                val isBizGroup = memberCountStr.contains("Business", ignoreCase = true) || memberCountStr.contains("W4B", ignoreCase = true)
-                if (isBizGroup) waBusinessScanned++
-
-                val phoneMatch = Regex("""\+?[0-9]{10,13}""").find(groupTitle)?.value
-                if ((phoneMatch != null) && PhoneNumberNormalizer.isMobileNumber(phoneMatch)) {
-                    val normalized = PhoneNumberNormalizer.normalize(phoneMatch)
-                    val src = if (isBizGroup) "WA_BUSINESS" else "WA_CHAT"
-                    if (!candidates.containsKey(normalized)) {
-                        candidates[normalized] = DynamicContactItem(
-                            name = groupTitle,
-                            phone = phoneMatch,
-                            normalizedNumber = normalized,
-                            source = src,
-                        )
-                    }
-                } else if (waRepo.isValidGroupName(groupTitle)) {
-                    val groupKey = "group:$groupTitle"
-                    val groupSource = if (isBizGroup) "WA_BUSINESS" else "WA_GROUP"
-                    if (!candidates.containsKey(groupKey)) {
-                        candidates[groupKey] = DynamicContactItem(
-                            name = groupTitle,
-                            phone = groupKey,
-                            normalizedNumber = groupKey,
-                            source = groupSource,
-                        )
-                    }
-                }
-            }
-
             // Also ingest any WhatsApp/WhatsApp Business sender numbers from notification auto-reply history
             val db = DatabaseHelper.getInstance(context).readableDatabase
             db.query(

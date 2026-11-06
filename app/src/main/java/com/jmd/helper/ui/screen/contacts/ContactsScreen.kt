@@ -58,7 +58,7 @@ import com.jmd.helper.whatsapp.WhatsAppChatScanner
 fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var selectedTab by remember { mutableIntStateOf(0) } // 0 = Custom/CSV, 1 = Dynamic Pool, 2 = WhatsApp Groups
+    var selectedTab by remember { mutableIntStateOf(0) } // 0 = Custom/CSV, 1 = Dynamic Pool
     var recipients by remember { mutableStateOf(repository.getAllRecipients()) }
     var isImporting by remember { mutableStateOf(value = false) }
     var isAddingContact by remember { mutableStateOf(value = false) }
@@ -66,21 +66,14 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
     var sequenceTargetContactName by remember { mutableStateOf("") }
     var sequenceTargetContactPhone by remember { mutableStateOf("") }
 
-    // Dynamic Pool & WhatsApp Groups State
+    // Dynamic Pool State
     var poolSearch by remember { mutableStateOf("") }
-    var groupSearch by remember { mutableStateOf("") }
     var poolRefreshTrigger by remember { mutableIntStateOf(0) }
-    var groupRefreshTrigger by remember { mutableIntStateOf(0) }
     var isSyncingPool by remember { mutableStateOf(value = false) }
 
     val poolStats = remember(poolRefreshTrigger) { repository.getDynamicPoolStats() }
     val poolContacts = remember(poolSearch, poolRefreshTrigger) {
         repository.getDynamicPool(limit = 1000, searchQuery = poolSearch)
-    }
-    val groupsList = remember(groupSearch, groupRefreshTrigger) {
-        val all = repository.getWhatsAppGroupItems()
-        if (groupSearch.isBlank()) all
-        else all.filter { it.name.contains(groupSearch, ignoreCase = true) }
     }
 
     if (sequenceTargetContactPhone.isNotBlank()) {
@@ -177,10 +170,9 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             topBar = {
                 AppSubScreenHeader(
-                    title = "Contacts & Groups Hub",
+                    title = "Contacts Hub",
                     subtitle = when (selectedTab) {
                         1 -> "${poolStats.totalCount} dynamic pool leads"
-                        2 -> "${groupsList.size} discovered WhatsApp groups"
                         else -> "${recipients.size} saved custom & CSV contacts"
                     },
                     onBack = onBack,
@@ -202,7 +194,7 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                     Icon(Icons.Filled.PersonAdd, contentDescription = "Add Contact", modifier = Modifier.size(20.dp))
                                 }
                             }
-                            1 -> {
+                            else -> {
                                 IconButton(
                                     onClick = {
                                         if (!isSyncingPool) {
@@ -222,11 +214,6 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                     Icon(Icons.Filled.Sync, contentDescription = "Sync", modifier = Modifier.size(20.dp))
                                 }
                             }
-                            else -> {
-                                IconButton(onClick = { groupRefreshTrigger++ }) {
-                                    Icon(Icons.Filled.Refresh, contentDescription = "Refresh", modifier = Modifier.size(20.dp))
-                                }
-                            }
                         }
                     }
                 )
@@ -242,21 +229,21 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                         isAddingContact = true
                                     },
                                     containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = Color.Black
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
                                 ) {
                                     Icon(Icons.Filled.Add, contentDescription = "Add", modifier = Modifier.size(22.dp))
                                 }
 
                                 ExtendedFloatingActionButton(
                                     onClick = { isImporting = true },
-                                    containerColor = MaterialTheme.colorScheme.tertiary,
-                                    contentColor = Color.Black,
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                                     icon = { Icon(Icons.Filled.FileUpload, contentDescription = null, modifier = Modifier.size(18.dp)) },
                                     text = { Text("Import CSV", fontWeight = FontWeight.Bold) }
                                 )
                             }
                         }
-                        1 -> {
+                        else -> {
                             ExtendedFloatingActionButton(
                                 onClick = {
                                     if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
@@ -276,29 +263,9 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                     }
                                 },
                                 containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = Color.Black,
+                                contentColor = MaterialTheme.colorScheme.onPrimary,
                                 icon = { Icon(Icons.Filled.Sync, contentDescription = null, modifier = Modifier.size(18.dp)) },
                                 text = { Text(if (isSyncingPool) "Syncing..." else "Sync Lead Pool", fontWeight = FontWeight.Bold) }
-                            )
-                        }
-                        else -> {
-                            ExtendedFloatingActionButton(
-                                onClick = {
-                                    val installedPkg = WhatsAppPackageHelper.getInstalledWhatsAppPackage(context)
-                                    val isBiz = installedPkg == WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS
-                                    val ch = if (isBiz) ChannelType.WHATSAPP_BUSINESS else ChannelType.WHATSAPP
-                                    TaskAccessibilityService.startWhatsAppChatScan(
-                                        context,
-                                        targetPackage = installedPkg,
-                                        channel = ch,
-                                        scanTarget = WhatsAppChatScanner.ScanTarget.ALL_CHATS
-                                    )
-                                    context.showAppToast("Scanning chats for groups...")
-                                },
-                                containerColor = MaterialTheme.colorScheme.tertiary,
-                                contentColor = Color.Black,
-                                icon = { Icon(Icons.Filled.Groups, contentDescription = null, modifier = Modifier.size(18.dp)) },
-                                text = { Text("Harvest Groups", fontWeight = FontWeight.Bold) }
                             )
                         }
                     }
@@ -316,21 +283,16 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Unified 3-Tab Segmented Selector
+                // Unified 2-Tab Segmented Selector
                 item {
                     GlassSegmentedControl(
                         items = listOf(
-                            "Custom & CSV",
-                            "Dynamic Pool (${poolStats.totalCount})",
-                            "WA Groups (${groupsList.size})"
+                            "Custom & CSV (${recipients.size})",
+                            "Dynamic Pool (${poolStats.totalCount})"
                         ),
                         selectedIndex = selectedTab,
                         onItemSelected = { selectedTab = it },
-                        activeColor = when (selectedTab) {
-                            1 -> MaterialTheme.colorScheme.primary
-                            2 -> MaterialTheme.colorScheme.tertiary
-                            else -> MaterialTheme.colorScheme.primary
-                        }
+                        activeColor = MaterialTheme.colorScheme.primary
                     )
                 }
 
@@ -501,80 +463,6 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                                 modifier = Modifier.size(18.dp)
                                             )
                                         }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // TAB 2: WhatsApp Groups
-                else {
-                    item {
-                        GlassSearchField(
-                            value = groupSearch,
-                            onValueChange = { groupSearch = it },
-                            placeholder = "Search ${groupsList.size} discovered groups...",
-                            leadingIcon = Icons.Default.Search,
-                            onClear = { groupSearch = "" }
-                        )
-                    }
-
-                    if (groupsList.isEmpty()) {
-                        item {
-                            AppEmptyState(
-                                title = "No WhatsApp Groups Found",
-                                description = "Tap 'Harvest Groups' below or use 'Pick in WA' when composing group messages to discover groups.",
-                                icon = Icons.Default.GroupOff,
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)
-                            )
-                        }
-                    } else {
-                        items(groupsList, key = { it.id }) { g ->
-                            AppCard(modifier = Modifier.fillMaxWidth()) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                                        ContactAvatar(
-                                            name = g.name,
-                                            size = 36.dp,
-                                            badgeIcon = Icons.Default.Group,
-                                            badgeColor = MaterialTheme.colorScheme.tertiary
-                                        )
-                                        Spacer(modifier = Modifier.width(10.dp))
-                                        Column {
-                                            Text(
-                                                text = g.name,
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onSurface,
-                                                fontSize = 13.5.sp,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                            Text(
-                                                text = if (g.memberCountStr.isNotBlank()) "${g.memberCountStr} participants • WhatsApp Group" else "WhatsApp Group",
-                                                color = MaterialTheme.colorScheme.tertiary,
-                                                fontSize = 11.sp
-                                            )
-                                        }
-                                    }
-                                    IconButton(
-                                        onClick = {
-                                            repository.deleteWhatsAppGroup(g.name)
-                                            groupRefreshTrigger++
-                                            context.showAppToast("Group removed")
-                                        },
-                                        modifier = Modifier.size(28.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = "Delete Group",
-                                            tint = MaterialTheme.colorScheme.error,
-                                            modifier = Modifier.size(18.dp)
-                                        )
                                     }
                                 }
                             }

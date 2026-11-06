@@ -197,7 +197,6 @@ object SystemSelfTestManager {
             val cv = android.content.ContentValues().apply { put("status", "PENDING") }
             val tenMinutesAgo = System.currentTimeMillis() - (10L * 60 * 1000)
             db.update(DatabaseHelper.TABLE_TASKS, cv, "status = 'RUNNING' AND trigger_time < ?", arrayOf(tenMinutesAgo.toString()))
-            AppRepository(appContext).cleanupMistakenGroups()
             AppFileLogger.i(appContext, TAG, "Auto-Fix: Database optimized and orphaned tasks recovered")
         } catch (e: Exception) {
             AppFileLogger.e(appContext, TAG, "Auto-Fix database maintenance error: ${e.message}", e)
@@ -290,7 +289,6 @@ object SystemSelfTestManager {
                 DatabaseHelper.TABLE_AUTO_REPLY_HISTORY,
                 DatabaseHelper.TABLE_CONTACT_SEQUENCES,
                 DatabaseHelper.TABLE_SEQUENCE_STEPS,
-                DatabaseHelper.TABLE_WHATSAPP_GROUPS,
                 DatabaseHelper.TABLE_DAILY_CAMPAIGN_SENT,
                 DatabaseHelper.TABLE_TASK_DELIVERIES,
                 DatabaseHelper.TABLE_APP_PRIVACY_CONFIGS

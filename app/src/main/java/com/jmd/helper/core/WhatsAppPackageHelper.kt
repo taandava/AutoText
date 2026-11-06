@@ -39,9 +39,6 @@ object WhatsAppPackageHelper {
             ChannelType.WHATSAPP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL -> {
                 if (isPackageInstalled(pm, PACKAGE_WHATSAPP)) PACKAGE_WHATSAPP else null
             }
-            ChannelType.WHATSAPP_GROUP -> {
-                getInstalledWhatsAppPackage(context)
-            }
             else -> getInstalledWhatsAppPackage(context)
         }
     }

@@ -36,17 +36,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Modern Material 3 Hero System Health Card with dynamic luminance contrast and animated progress gauge.
+ * Modern Material 3 Hero System Health Card with dynamic luminance contrast,
+ * animated progress gauge, and full 8-privilege status chip grid.
  */
 @Composable
 fun PermissionHeroCard(
     context: Context,
     grantedCount: Int,
-    totalCount: Int,
-    isA11yActive: Boolean,
-    canExactAlarm: Boolean,
-    hasNotifListener: Boolean,
-    isIgnoringBattery: Boolean,
+    totalCount: Int = 8,
+    privilegeStates: Map<AppPrivilege, Boolean>,
     onOpenAdbDialog: () -> Unit,
     onHealDone: () -> Unit
 ) {
@@ -77,6 +75,7 @@ fun PermissionHeroCard(
                 .fillMaxWidth()
                 .padding(AppLayoutGrid.SpaceMedium)
         ) {
+            // Header: Title, Description, and Percentage Gauge
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -88,7 +87,7 @@ fun PermissionHeroCard(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(46.dp)
+                            .size(44.dp)
                             .background(
                                 color = if (isAllGranted) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
                                 shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius)
@@ -115,7 +114,7 @@ fun PermissionHeroCard(
                         Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceMicro))
                         Text(
                             text = if (isAllGranted) {
-                                "All $totalCount core privileges authorized & healthy."
+                                "All $totalCount privileges authorized & active."
                             } else {
                                 "$grantedCount of $totalCount privileges authorized."
                             },
@@ -130,7 +129,7 @@ fun PermissionHeroCard(
                     shape = CircleShape,
                     color = if (isAllGranted) AppSemanticColors.successContainer else primaryAccent.copy(alpha = 0.12f),
                     border = BorderStroke(1.5.dp, if (isAllGranted) successAccent else primaryAccent),
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(46.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
@@ -158,15 +157,29 @@ fun PermissionHeroCard(
 
             Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceStandard))
 
-            // Mini Indicators Row
-            Row(
+            // Comprehensive 8-Privilege Micro Status Chips Grid
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceXS)
             ) {
-                HealthMiniChip(name = "Engine", isGranted = isA11yActive)
-                HealthMiniChip(name = "Alarms", isGranted = canExactAlarm)
-                HealthMiniChip(name = "Notifs", isGranted = hasNotifListener)
-                HealthMiniChip(name = "Battery", isGranted = isIgnoringBattery)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    HealthMiniChip(name = "Engine", isGranted = privilegeStates[AppPrivilege.ACCESSIBILITY] == true)
+                    HealthMiniChip(name = "Alarms", isGranted = privilegeStates[AppPrivilege.EXACT_ALARM] == true)
+                    HealthMiniChip(name = "Notifs", isGranted = privilegeStates[AppPrivilege.NOTIFICATION_LISTENER] == true)
+                    HealthMiniChip(name = "Battery", isGranted = privilegeStates[AppPrivilege.BATTERY_SAVER] == true)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    HealthMiniChip(name = "Overlay", isGranted = privilegeStates[AppPrivilege.OVERLAY] == true)
+                    HealthMiniChip(name = "Admin", isGranted = privilegeStates[AppPrivilege.DEVICE_ADMIN] == true)
+                    HealthMiniChip(name = "Comms", isGranted = privilegeStates[AppPrivilege.COMMUNICATIONS] == true)
+                    HealthMiniChip(name = "Sound", isGranted = privilegeStates[AppPrivilege.NOTIFICATION_POLICY] == true)
+                }
             }
 
             Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceMedium))

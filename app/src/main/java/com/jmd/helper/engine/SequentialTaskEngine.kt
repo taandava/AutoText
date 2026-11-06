@@ -396,7 +396,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
         val privacyMgr = com.jmd.helper.core.PrivacyManager.getInstance(appContext)
         val targetPkg = when (task.channel) {
-            ChannelType.WHATSAPP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_GROUP -> "com.whatsapp"
+            ChannelType.WHATSAPP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL -> "com.whatsapp"
             ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "com.whatsapp.w4b"
             else -> null
         }
@@ -444,7 +444,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val success = when (task.channel) {
             ChannelType.WHATSAPP,
             ChannelType.WHATSAPP_BUSINESS,
-            ChannelType.WHATSAPP_GROUP,
             ChannelType.WHATSAPP_STATUS,
             ChannelType.WHATSAPP_BUSINESS_STATUS,
             -> {
@@ -504,7 +503,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         val isUiTaskChannel = when (task.channel) {
-            ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_GROUP,
+            ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS,
             ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_BUSINESS_STATUS,
             ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> true
             else -> false

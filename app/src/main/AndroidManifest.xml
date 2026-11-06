@@ -37,8 +37,7 @@
 
     <!-- External Storage & Media Permissions (Device Storage & Media Attachments) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
@@ -105,7 +104,7 @@
         <package android:name="com.vivo.phone" />
     </queries>
 
-    <application android:name=".HelperApplication" android:allowBackup="true" android:dataExtractionRules="@xml/data_extraction_rules" android:fullBackupContent="@xml/backup_rules" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true" android:usesCleartextTraffic="false" android:enableOnBackInvokedCallback="true" android:requestLegacyExternalStorage="true" tools:targetApi="33" tools:ignore="ScopedStorage" android:theme="@style/Theme.Helper">
+    <application android:name=".HelperApplication" android:allowBackup="true" android:dataExtractionRules="@xml/data_extraction_rules" android:fullBackupContent="@xml/backup_rules" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:roundIcon="@mipmap/ic_launcher_round" android:supportsRtl="true" android:usesCleartextTraffic="false" android:enableOnBackInvokedCallback="true" tools:targetApi="33" android:theme="@style/Theme.Helper">
 
         <!-- Main Activity -->
         <activity android:name=".ui.activity.MainActivity" android:launchMode="singleTask" android:exported="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.Helper">

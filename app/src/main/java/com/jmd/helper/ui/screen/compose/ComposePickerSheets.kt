@@ -712,14 +712,13 @@ fun WhatsAppContactsPickerSheet(
                         }
                     ) { _, contact ->
                         val isChecked = isContactSelected(contact.phone)
-                        val isGroup = contact.phone.startsWith("group:") || contact.normalizedPhone.startsWith("group:")
 
                         AppCard(
                             onClick = {
                                 toggleContact(contact.name, contact.phone, isChecked)
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            borderColor = if (isChecked) (if (isGroup) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary) else MaterialTheme.colorScheme.outlineVariant
+                            borderColor = if (isChecked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -731,8 +730,8 @@ fun WhatsAppContactsPickerSheet(
                                         name = contact.name.ifBlank { contact.phone },
                                         photoUri = contact.photoUri,
                                         size = 38.dp,
-                                        badgeIcon = if (isGroup) Icons.Default.Group else Icons.AutoMirrored.Filled.Send,
-                                        badgeColor = if (isGroup) MaterialTheme.colorScheme.primary else (if (isBusiness) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary)
+                                        badgeIcon = Icons.AutoMirrored.Filled.Send,
+                                        badgeColor = if (isBusiness) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary
                                     )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Column(modifier = Modifier.weight(1f)) {
@@ -749,14 +748,7 @@ fun WhatsAppContactsPickerSheet(
                                                 overflow = TextOverflow.Ellipsis,
                                                 modifier = Modifier.weight(1f, fill = false)
                                             )
-                                            if (isGroup) {
-                                                Spacer(modifier = Modifier.width(6.dp))
-                                                AppBadge(
-                                                    text = if (isBusiness) "W4B Group" else "Group",
-                                                    color = MaterialTheme.colorScheme.primary,
-                                                    showDot = false
-                                                )
-                                            } else if (contact.accountType.contains("w4b", ignoreCase = true)) {
+                                            if (contact.accountType.contains("w4b", ignoreCase = true)) {
                                                 Spacer(modifier = Modifier.width(6.dp))
                                                 AppBadge(
                                                     text = "W4B",
@@ -767,10 +759,10 @@ fun WhatsAppContactsPickerSheet(
                                         }
                                         Spacer(modifier = Modifier.height(2.dp))
                                         Text(
-                                            text = if (isGroup) "WhatsApp Group Chat" else contact.phone,
+                                            text = contact.phone,
                                             fontSize = 11.5.sp,
                                             fontWeight = FontWeight.Medium,
-                                            color = if (isGroup) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary,
+                                            color = MaterialTheme.colorScheme.tertiary,
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis
                                         )
@@ -783,7 +775,7 @@ fun WhatsAppContactsPickerSheet(
                                         toggleContact(contact.name, contact.phone, isChecked)
                                     },
                                     colors = CheckboxDefaults.colors(
-                                        checkedColor = if (isGroup) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary,
+                                        checkedColor = MaterialTheme.colorScheme.primary,
                                         uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                         checkmarkColor = AppDesignTokens.GlassBackground
                                     )

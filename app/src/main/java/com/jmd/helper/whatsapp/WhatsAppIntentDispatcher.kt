@@ -104,52 +104,16 @@ object WhatsAppIntentDispatcher {
                     }
                 }
             }
-            ChannelType.WHATSAPP_GROUP -> {
-                TaskAccessibilityService.prepareForGroup(
+            else -> {
+                val cleanPhone = PhoneNumberNormalizer.formatForWhatsApp(recipient, PreferenceManager(context).defaultCountryCode)
+                TaskAccessibilityService.prepareForSend(
                     taskId = taskId,
                     packageName = targetPkg,
-                    groupName = recipient,
+                    recipient = cleanPhone,
                     messageText = message,
                     shouldRelock = shouldRelock,
                     isBatchCampaign = isBatch
                 )
-                val launchIntent = context.packageManager.getLaunchIntentForPackage(targetPkg)
-                if (launchIntent != null) {
-                    launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    context.startActivity(launchIntent)
-                    Log.d(TAG, "launchWhatsApp: Launched WhatsApp for Group search: $recipient")
-                }
-            }
-            else -> {
-                val isNamedTarget = recipient.startsWith("group:", ignoreCase = true) ||
-                        recipient.startsWith("chat:", ignoreCase = true) ||
-                        recipient.startsWith("broadcast:", ignoreCase = true)
-                if (isNamedTarget) {
-                    val targetTitle = recipient.substringAfter(':').trim()
-                    TaskAccessibilityService.prepareForGroup(
-                        taskId = taskId,
-                        packageName = targetPkg,
-                        groupName = targetTitle,
-                        messageText = message,
-                        shouldRelock = shouldRelock,
-                        isBatchCampaign = isBatch
-                    )
-                    val launchIntent = context.packageManager.getLaunchIntentForPackage(targetPkg)
-                    if (launchIntent != null) {
-                        launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        context.startActivity(launchIntent)
-                        Log.d(TAG, "launchWhatsApp: Launched WhatsApp for named target search: $recipient")
-                    }
-                } else {
-                    val cleanPhone = PhoneNumberNormalizer.formatForWhatsApp(recipient, PreferenceManager(context).defaultCountryCode)
-                    TaskAccessibilityService.prepareForSend(
-                        taskId = taskId,
-                        packageName = targetPkg,
-                        recipient = cleanPhone,
-                        messageText = message,
-                        shouldRelock = shouldRelock,
-                        isBatchCampaign = isBatch
-                    )
 
                     if (mediaUri.isNotBlank()) {
                         try {
@@ -202,7 +166,6 @@ object WhatsAppIntentDispatcher {
                 }
             }
         }
-    }
 
     /**
      * Dispatches an intent to open a WhatsApp direct conversation and prepares the

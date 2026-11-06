@@ -173,7 +173,7 @@ object TaskContentValidator {
                 if (hasText) {
                     ContentValidationResult.AcceptTextOnly
                 } else {
-                    if (channel in listOf(ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_GROUP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_BUSINESS_STATUS)) {
+                    if (channel in listOf(ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_BUSINESS_STATUS)) {
                         ContentValidationResult.Reject("Enter message text or attach an image/video")
                     } else {
                         ContentValidationResult.Reject("Enter message text")

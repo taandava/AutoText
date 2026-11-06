@@ -330,7 +330,6 @@ class BackupRepository(context: Context) {
             DatabaseHelper.TABLE_CONTACT_SEQUENCES,
             DatabaseHelper.TABLE_SEQUENCE_STEPS,
             DatabaseHelper.TABLE_RECIPIENTS,
-            DatabaseHelper.TABLE_WHATSAPP_GROUPS,
             DatabaseHelper.TABLE_CAMPAIGNS,
             DatabaseHelper.TABLE_DRIP_STEPS,
             DatabaseHelper.TABLE_LOGS,
@@ -387,7 +386,6 @@ class BackupRepository(context: Context) {
                     DatabaseHelper.TABLE_CONTACT_SEQUENCES,
                     DatabaseHelper.TABLE_SEQUENCE_STEPS,
                     DatabaseHelper.TABLE_RECIPIENTS,
-                    DatabaseHelper.TABLE_WHATSAPP_GROUPS,
                     DatabaseHelper.TABLE_CAMPAIGNS,
                     DatabaseHelper.TABLE_DRIP_STEPS,
                     DatabaseHelper.TABLE_LOGS,
@@ -437,9 +435,9 @@ class BackupRepository(context: Context) {
 
     /**
      * Directly saves a timestamped JSON backup file to the specified target directory.
-     * Leveraging MANAGE_EXTERNAL_STORAGE when available for direct offline data retention.
+     * Uses Scoped Storage and app-specific directories for offline data sovereignty.
      *
-     * @param directory Target directory (e.g. /sdcard/Documents/Helper/backups/).
+     * @param directory Target directory (e.g. app-specific documents directory).
      * @return [Result] containing the written [File] or failure exception.
      */
     fun exportDatabaseToLocalDirectory(directory: java.io.File): Result<java.io.File> {

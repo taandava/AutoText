@@ -42,9 +42,9 @@ com.jmd.helper/
 │   ├── components/         # GlassCard, GlassButton, StatusPill, AppGroupCard, AppGroupRow
 │   ├── navigation/         # NavGraph, Route definitions, animated transitions
 │   ├── screen/             # Dashboard, Logs, Settings, WhatsAppSetup, ScreenAssistCard
-│   │   └── permission/     # PermissionHeroCard, PermissionRowItem, PermissionDialogs
+│   │   └── permission/     # AppPrivilege, PermissionHeroCard, PermissionRowItem, GuidanceCards
 │   └── theme/              # Color, Type, Shape, Theme, AppLayoutGrid & Semantic Palette
-└── whatsapp/               # KeyguardAssistEngine, WhatsAppCallEngine, DirectSend, GroupEngine
+└── whatsapp/               # KeyguardAssistEngine, WhatsAppCallEngine, DirectSend, StatusEngine
 ```
 
 ---

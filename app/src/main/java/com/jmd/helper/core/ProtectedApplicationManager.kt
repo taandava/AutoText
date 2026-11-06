@@ -370,7 +370,6 @@ object ProtectedApplicationManager {
             ChannelType.SOUND_MODE -> true
             ChannelType.WHATSAPP,
             ChannelType.WHATSAPP_STATUS,
-            ChannelType.WHATSAPP_GROUP,
             ChannelType.WHATSAPP_CALL -> true
             ChannelType.WHATSAPP_BUSINESS,
             ChannelType.WHATSAPP_BUSINESS_STATUS,

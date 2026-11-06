@@ -103,11 +103,6 @@ fun ComposeRecipientsAndMessageCard(
                                             onAddManualRecipient()
                                         }
                                     }
-                                    PickedChatType.GROUP -> {
-                                        onAddDirectRecipient?.invoke(chatInfo.title, "group:${chatInfo.title}") ?: run {
-                                            onAddManualRecipient()
-                                        }
-                                    }
                                     PickedChatType.INDIVIDUAL -> {
                                         val clean = chatInfo.title
                                         val repo = AppRepository(localCtx)
