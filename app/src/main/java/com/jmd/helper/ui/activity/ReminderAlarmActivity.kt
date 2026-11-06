@@ -103,7 +103,7 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
      * @param text Detailed reminder body text.
      */
     private fun snooze(minutes: Int, title: String, text: String) {
-        val am = getSystemService(ALARM_SERVICE) as AlarmManager
+        val am = getSystemService(AlarmManager::class.java) ?: return
         val intent = Intent(this, ReminderAlarmActivity::class.java).apply {
             putExtra("reminder_title", title)
             putExtra("reminder_text", text)

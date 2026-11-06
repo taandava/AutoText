@@ -60,8 +60,8 @@ class TaskLauncherActivity : Activity() {
 
         // Acquire wake lock to ensure CPU remains active during unlock execution
         try {
-            val pm = getSystemService(POWER_SERVICE) as PowerManager
-            wakeLock = pm.newWakeLock(
+            val pm = getSystemService(PowerManager::class.java)
+            wakeLock = pm?.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
                 "Helper:LauncherWakeLock",
             )
@@ -79,8 +79,8 @@ class TaskLauncherActivity : Activity() {
         window.setBackgroundDrawable(android.graphics.Color.TRANSPARENT.toDrawable())
 
         runCatching {
-            val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            nm.cancel(9988)
+            val nm = getSystemService(NotificationManager::class.java)
+            nm?.cancel(9988)
         }
 
         val prefs = PreferenceManager(this)
@@ -96,7 +96,7 @@ class TaskLauncherActivity : Activity() {
                 AccessibilityHealthManager.ensureServiceAlive(this)
             }
         }
-        val keyguardManager = getSystemService(KEYGUARD_SERVICE) as KeyguardManager
+        val keyguardManager = getSystemService(KeyguardManager::class.java)
 
         val dismissCallback = object : KeyguardManager.KeyguardDismissCallback() {
             override fun onDismissSucceeded() {

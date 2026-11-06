@@ -182,7 +182,7 @@ class HelperApplication : Application() {
 
         // 3. Ensure any legacy persistent foreground notifications are cancelled
         try {
-            val nm = getSystemService(NOTIFICATION_SERVICE) as? NotificationManager
+            val nm = getSystemService(NotificationManager::class.java)
             nm?.cancel(TaskForegroundService.NOTIFICATION_ID)
         } catch (e: Exception) {
             Log.d(TAG, "Cancel legacy notification: ${e.message}")
