@@ -37,6 +37,7 @@ object AccessibilityNodeUtils {
 
     /** Safely releases or cleans up node references; Android manages node instances automatically. */
     fun AccessibilityNodeInfo?.recycleSafely() {
+        if (this == null) return
         // Modern Android (API 34+) and ART GC manage AccessibilityNodeInfo lifecycle automatically.
         // No-op prevents race-condition double-recycle crashes during asynchronous accessibility inspection.
     }

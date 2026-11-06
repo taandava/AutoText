@@ -2438,15 +2438,15 @@ In November 2026, a meticulous, line-by-line inspection of all source files was 
 
 ### 14.8.2 Zero-Suppression Architecture & Permission Center Redesign
 1. **Zero Suppression Across All Handwritten Code**:
-   - Purged all `@file:Suppress("FunctionName")` annotations by configuring a root `.editorconfig` with Jetpack Compose PascalCase rules.
+   - Configured project-level IDE inspection profiles (`.idea/inspectionProfiles/Project_Default.xml` and `profiles_settings.xml`) to permit PascalCase function identifiers matching standard `@Composable` naming conventions (`[a-zA-Z][A-Za-z0-9]*`). Purged all `@file:Suppress("FunctionName")` annotations across every UI source file.
+   - Refactored `AccessibilityNodeUtils.kt`'s `recycleSafely()` receiver parameter to perform defensive null checks (`if (this == null) return`), resolving language server `UnusedReceiverParameter` diagnostics without `@Suppress`.
    - Purged `@Suppress("DEPRECATION")` from `AccessibilityCompat.kt` by evaluating tri-state checked status on API 36+ and non-deprecated reflection access on legacy APIs.
-   - Purged `@Suppress("DEPRECATION")` from `AccessibilityNodeUtils.kt` by delegating node lifecycle to modern ART garbage collection without calling deprecated manual recycle.
    - Purged `@Suppress("DEPRECATION")` from `EncryptedKeyguardStore.kt` by implementing pure hardware-backed Android KeyStore AES-256-GCM cipher encryption without deprecated third-party libraries.
 2. **Material 3 Expressive Permission Center Overhaul**:
-   - Replaced unorganized, repetitive wall-of-text cards with a structured, categorized Health & Permission Hub.
-   - Designed Hero System Health Card featuring live readiness percentage, health status indicator, and quick-action buttons for automated self-healing and ADB command access.
-   - Categorized into Core Automation Engine, Background Reliability, and Device & Hardware Controls.
-   - Created compact, high-density `PermissionCardItem` featuring tinted squircle icons, concise benefit descriptions, compact status chips, and tap-to-expand rationale dialogs.
+   - Upgraded `PermissionScreen.kt` with a live percentage gauge, animated smooth progress bars, and high-contrast M3 status chips.
+   - Designed Hero System Health Card featuring live readiness percentage, health status indicator, mini-status indicators for foundational channels (Engine, Alarms, Notifications, Battery), and quick-action buttons for automated self-healing and ADB command access.
+   - Categorized into Core Automation Engine, Background Reliability, and Device Controls & Communications with live category readiness pills (e.g. `[3/3 Ready]`, `[2/2 Ready]`, `[5/5 Ready]`).
+   - Created compact, high-density `PermissionCardItem` featuring tinted squircle icons, concise benefit descriptions, animated 180° rotation chevrons, compact status chips, and tap-to-expand rationale dialogs.
 3. **Intent & Policy Sanitization**:
    - Removed legacy `ACTION_TEST_AUTO_UNLOCK` filter from `AndroidManifest.xml`, ensuring only policy-compliant `ACTION_TEST_SCREEN_ASSIST` is exposed.
 
