@@ -21,6 +21,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Path
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
@@ -34,6 +35,17 @@ object AccessibilityNodeUtils {
 
     private const val TAG = "A11yNodeUtils"
 
+    /** Safely recycles an AccessibilityNodeInfo instance on pre-Android 14 (API 34) devices. */
+    @Suppress("DEPRECATION")
+    fun AccessibilityNodeInfo?.recycleSafely() {
+        if (this == null) return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            try {
+                this.recycle()
+            } catch (_: Throwable) {}
+        }
+    }
+
     /** Timestamp of the most recent physical tap or swipe gesture injected by the task engine. */
     @Volatile
     var lastGestureTimestamp: Long = 0L
@@ -41,7 +53,6 @@ object AccessibilityNodeUtils {
     /** Returns whether an accessibility node is checked or toggled on. */
     fun isNodeChecked(node: AccessibilityNodeInfo?): Boolean =
         com.jmd.helper.compat.AccessibilityCompat.isNodeChecked(node)
-
 
     /**
      * Traverses descendants breadth-first starting from this node, returning the first node satisfying [predicate].
@@ -54,9 +65,20 @@ object AccessibilityNodeUtils {
         q.add(this)
         while (q.isNotEmpty()) {
             val curr = q.removeFirst()
-            if (predicate(curr)) return curr
+            if (predicate(curr)) {
+                while (q.isNotEmpty()) {
+                    val remaining = q.removeFirst()
+                    if (remaining != curr && remaining != this) {
+                        remaining.recycleSafely()
+                    }
+                }
+                return curr
+            }
             for (i in 0 until curr.childCount) {
                 curr.getChild(i)?.let { q.add(it) }
+            }
+            if (curr != this) {
+                curr.recycleSafely()
             }
         }
         return null
@@ -74,9 +96,14 @@ object AccessibilityNodeUtils {
         q.add(this)
         while (q.isNotEmpty()) {
             val curr = q.removeFirst()
-            if (predicate(curr)) list.add(curr)
+            if (predicate(curr)) {
+                list.add(curr)
+            }
             for (i in 0 until curr.childCount) {
                 curr.getChild(i)?.let { q.add(it) }
+            }
+            if (curr != this && !list.contains(curr)) {
+                curr.recycleSafely()
             }
         }
         return list

@@ -82,50 +82,67 @@ class WhatsAppGroupEngine(
                 return
             }
 
+            val cleanQueryText = stripGroupPrefix(pendingGroupRecipient)
+
             // 1. Directly tap matching chat row if visible in chat list
-            val matchingItem = findMatchingChatResult(root, pendingGroupRecipient)
+            val matchingItem = findMatchingChatResult(root, cleanQueryText)
             if (matchingItem != null) {
                 val clicked = AccessibilityNodeUtils.clickElement(matchingItem, service)
-                Log.i(loggerTag, "Tapped visible chat row for '$pendingGroupRecipient' (result=$clicked)")
+                Log.i(loggerTag, "Tapped visible chat row for '$cleanQueryText' (result=$clicked)")
                 if (clicked) {
                     onRetry(600L)
-                } else if (sendAttemptCount > 25) onTimeout() else onRetry(350L)
-                return
-            }
-
-            // 2. If not immediately visible, scroll chat list forward (attempts 2..5)
-            if (sendAttemptCount in 2..5) {
-                val scrollable = findScrollableList(root)
-                var scrolled = scrollable?.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) ?: false
-                if (!scrolled) {
-                    scrolled = AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.75f, endYRatio = 0.35f)
+                    return
                 }
-                Log.d(loggerTag, "Scrolled chat list forward looking for '$pendingGroupRecipient' (result=$scrolled)")
-                onRetry(550L)
-                return
             }
 
-            // 3. In later attempts (>= 6), use search if available
-            if (sendAttemptCount in 6..18) {
-                val searchInput = findSearchInput(root)
-                if (searchInput != null) {
-                    val cleanQueryText = stripGroupPrefix(pendingGroupRecipient)
+            // 2. Check if search input is already active
+            val searchInput = findSearchInput(root)
+            if (searchInput != null) {
+                val currentSearch = searchInput.text?.toString()?.trim().orEmpty()
+                if (!currentSearch.equals(cleanQueryText, ignoreCase = true)) {
                     val typed = AccessibilityNodeUtils.setTextOnInput(searchInput, cleanQueryText, service)
                     Log.d(loggerTag, "Typed search query '$cleanQueryText' into search input: $typed")
-                    onRetry(650L)
+                    onRetry(500L)
                     return
                 } else {
-                    val searchIcon = findSearchIcon(root, pkg, windows)
-                    if (searchIcon != null) {
-                        val clicked = AccessibilityNodeUtils.clickElement(searchIcon, service)
-                        Log.d(loggerTag, "Clicked search icon: $clicked")
-                        onRetry(500L)
-                        return
+                    // Search query is typed; inspect roots for matching result item
+                    val candidateRoots = if (!windows.isNullOrEmpty()) {
+                        AccessibilityNodeUtils.getTargetRoots(service, windows)
+                    } else {
+                        listOf(root)
                     }
+                    for (candRoot in candidateRoots) {
+                        val resultItem = findMatchingChatResult(candRoot, cleanQueryText)
+                        if (resultItem != null) {
+                            val clicked = AccessibilityNodeUtils.clickElement(resultItem, service)
+                            Log.i(loggerTag, "Tapped search result row for '$cleanQueryText' (result=$clicked)")
+                            if (clicked) {
+                                onRetry(600L)
+                                return
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Search input not open yet; locate and click the search icon immediately
+                val searchIcon = findSearchIcon(root, pkg, windows)
+                if (searchIcon != null) {
+                    val clicked = AccessibilityNodeUtils.clickElement(searchIcon, service)
+                    Log.d(loggerTag, "Clicked search icon: $clicked")
+                    onRetry(450L)
+                    return
+                } else if (sendAttemptCount in 2..4) {
+                    // Reveal top toolbar if list was scrolled
+                    val scrollable = findScrollableList(root)
+                    val scrolled = scrollable?.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+                        ?: AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.35f, endYRatio = 0.75f)
+                    Log.d(loggerTag, "Scrolled backward to reveal search bar: $scrolled")
+                    onRetry(450L)
+                    return
                 }
             }
 
-            if (sendAttemptCount <= 25) {
+            if (sendAttemptCount <= 30) {
                 onRetry(350L)
             } else {
                 Log.w(loggerTag, "Chat '$pendingGroupRecipient' not open or resolved within attempt limit")
@@ -200,19 +217,29 @@ class WhatsAppGroupEngine(
         val q = ArrayDeque<AccessibilityNodeInfo>()
         q.add(root)
         val exactMatches = mutableListOf<AccessibilityNodeInfo>()
-        val partialMatches = mutableListOf<AccessibilityNodeInfo>()
+        val prefixMatches = mutableListOf<AccessibilityNodeInfo>()
+        val partialTitleMatches = mutableListOf<AccessibilityNodeInfo>()
+
+        val snippetIds = listOf("snippet", "msg", "message", "last_msg", "status", "date_time", "timestamp")
+
         while (q.isNotEmpty()) {
             val node = q.removeFirst()
             val className = node.className?.toString().orEmpty()
             val id = node.viewIdResourceName?.lowercase().orEmpty()
-            val isInput = node.isEditable || className.contains("EditText", ignoreCase = true) || id.contains("search")
-            if (node.isVisibleToUser && !isInput) {
+            val isInput = node.isEditable || className.contains("EditText", ignoreCase = true)
+            val isSnippet = snippetIds.any { id.contains(it) }
+
+            if (node.isVisibleToUser && !isInput && !isSnippet) {
                 val texts = listOfNotNull(node.text?.toString(), node.contentDescription?.toString())
                     .map(::normalizeTitle)
+                val isTitleView = id.contains("title") || id.contains("name") || id.contains("contact")
+
                 if (texts.any { it == cleanQuery }) {
                     exactMatches.add(node)
-                } else if (texts.any { it.startsWith(cleanQuery) || it.contains(cleanQuery) || (cleanQuery.contains(it) && it.length >= 4) }) {
-                    partialMatches.add(node)
+                } else if (texts.any { it.startsWith(cleanQuery) }) {
+                    prefixMatches.add(node)
+                } else if (isTitleView && texts.any { it.contains(cleanQuery) }) {
+                    partialTitleMatches.add(node)
                 }
             }
             for (i in 0 until node.childCount) node.getChild(i)?.let { q.add(it) }
@@ -220,7 +247,8 @@ class WhatsAppGroupEngine(
 
         val candidate = exactMatches.firstOrNull { it.text?.toString()?.let(::normalizeTitle) == cleanQuery }
             ?: exactMatches.firstOrNull()
-            ?: partialMatches.firstOrNull()
+            ?: prefixMatches.firstOrNull()
+            ?: partialTitleMatches.firstOrNull()
 
         if (candidate != null) {
             var target: AccessibilityNodeInfo? = candidate
@@ -256,7 +284,7 @@ class WhatsAppGroupEngine(
             node.getBoundsInScreen(bounds)
             val text = node.text?.toString()?.trim().orEmpty()
             if (node.isVisibleToUser && text.isNotBlank() && !node.isEditable && cls.contains("TextView", true) &&
-                bounds.top in 0..240 && (id.contains("title") || id.contains("contact") || id.contains("conversation"))) {
+                bounds.top in 0..450 && (id.contains("title") || id.contains("contact") || id.contains("conversation"))) {
                 return text
             }
             for (i in 0 until node.childCount) node.getChild(i)?.let { queue.add(it) }

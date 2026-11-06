@@ -117,24 +117,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("CREATE TABLE $TABLE_TASKS (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, channel TEXT, recipients TEXT, recipient_names TEXT, message_text TEXT, trigger_time INTEGER, recurrence TEXT, custom_interval_minutes INTEGER, days_of_week TEXT, status TEXT, sim_slot INTEGER, ask_before_send INTEGER, sound_mode TEXT, simulated_caller_name TEXT DEFAULT '', simulated_caller_number TEXT DEFAULT '', simulated_call_style TEXT DEFAULT 'PIXEL', fake_caller_name TEXT DEFAULT '', fake_caller_number TEXT DEFAULT '', fake_call_style TEXT DEFAULT 'PIXEL', created_at INTEGER, last_executed INTEGER, execution_count INTEGER, media_uri TEXT, call_duration_seconds INTEGER DEFAULT 0, include_dial_time INTEGER DEFAULT 0, call_sequence_mode TEXT DEFAULT 'GIVEN', delay_between_calls_seconds INTEGER DEFAULT 5, call_failure_policy TEXT DEFAULT 'CONTINUE')")
         try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_status_trigger ON $TABLE_TASKS(status, trigger_time)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
-        db.execSQL("""
-            CREATE TABLE IF NOT EXISTS $TABLE_APP_PRIVACY_CONFIGS (
-                package_name TEXT PRIMARY KEY,
-                app_name TEXT NOT NULL DEFAULT '',
-                is_excluded INTEGER NOT NULL DEFAULT 0,
-                disable_task_action INTEGER NOT NULL DEFAULT 0,
-                block_overlays INTEGER NOT NULL DEFAULT 0,
-                suppress_notifications INTEGER NOT NULL DEFAULT 0,
-                disable_clipboard INTEGER NOT NULL DEFAULT 0,
-                mask_sensitive_content INTEGER NOT NULL DEFAULT 0,
-                disable_rules INTEGER NOT NULL DEFAULT 0,
-                custom_notes TEXT NOT NULL DEFAULT '',
-                updated_at INTEGER NOT NULL DEFAULT 0
-            )
-        """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
-
 
         db.execSQL("CREATE TABLE $TABLE_RECIPIENTS (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, phone_or_email TEXT, group_name TEXT)")
 

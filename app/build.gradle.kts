@@ -65,6 +65,9 @@ android {
         }
         debug {
             isMinifyEnabled = false
+            if (hasValidReleaseKeystore) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
@@ -130,10 +133,9 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     testImplementation("junit:junit:4.13.2")
 
-    // 1. Architecture & Persistence: Room, DataStore, Serialization
+    // 1. Architecture & Persistence: DataStore, Serialization, Room Runtime
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 

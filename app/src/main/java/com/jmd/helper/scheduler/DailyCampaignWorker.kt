@@ -102,9 +102,28 @@ class DailyCampaignWorker(
             return Result.success()
         }
 
-        if ((!isManual) && (config.lastRunDate == todayStr)) {
-            AppFileLogger.i(applicationContext, TAG, "Campaign already executed today ($todayStr). Skipping duplicate run.")
-            return Result.success()
+        if (!isManual) {
+            val nowCal = java.util.Calendar.getInstance()
+            val targetCal = java.util.Calendar.getInstance().apply {
+                set(java.util.Calendar.HOUR_OF_DAY, config.scheduledHour)
+                set(java.util.Calendar.MINUTE, config.scheduledMinute)
+                set(java.util.Calendar.SECOND, 0)
+                set(java.util.Calendar.MILLISECOND, 0)
+            }
+            // Strict invariant: Non-manual background workers MUST NOT fire before the scheduled time window
+            if (nowCal.timeInMillis < targetCal.timeInMillis - 60_000L) {
+                AppFileLogger.w(
+                    applicationContext,
+                    TAG,
+                    "Premature trigger intercepted: Current time (${nowCal.time}) is before scheduled dispatch window (${targetCal.time}) for Campaign #${config.id}. Aborting background dispatch."
+                )
+                return Result.success()
+            }
+
+            if (config.lastRunDate == todayStr) {
+                AppFileLogger.i(applicationContext, TAG, "Campaign already executed today ($todayStr). Skipping duplicate run.")
+                return Result.success()
+            }
         }
 
         val isWhatsApp = config.channel.equals("WHATSAPP", ignoreCase = true) ||
@@ -119,7 +138,7 @@ class DailyCampaignWorker(
         val privacyMgr = com.jmd.helper.core.PrivacyManager.getInstance(applicationContext)
         if (isWhatsApp) {
             privacyMgr.prepareAccessibilityForTask()
-            val isA11yActive = AccessibilityHealthManager.waitForServiceReadiness(applicationContext, 4000L)
+            val isA11yActive = AccessibilityHealthManager.awaitServiceReadiness(applicationContext, 4000L)
             if (!isA11yActive) {
                 val errorMsg = "Accessibility Service is not operational. Waiting for service reconnection before dispatching WhatsApp campaign."
                 repo.insertLog(

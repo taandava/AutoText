@@ -272,7 +272,7 @@ class KeyguardUnlockEngine(
                             val tapY = rect.centerY().toFloat()
                             digitTapped = dispatchPhysicalTap(tapX, tapY)
                             if (digitTapped) {
-                                Log.i(loggerTag, "Dispatched physical tap on digit '$digitChar' at ($tapX, $tapY) [${index + 1}/${pin.length}]")
+                                Log.d(loggerTag, "Dispatched physical tap on keyguard keypad entry [${index + 1}/${pin.length}] at ($tapX, $tapY)")
                                 break
                             }
                         }
@@ -300,7 +300,7 @@ class KeyguardUnlockEngine(
                     val tapX = width * colRatio
                     val tapY = height * rowRatio
                     dispatchPhysicalTap(tapX, tapY)
-                    Log.i(loggerTag, "Coordinate fallback physical tap for digit '$digitChar' at ($tapX, $tapY) [${index + 1}/${pin.length}]")
+                    Log.d(loggerTag, "Coordinate fallback physical tap for keyguard keypad entry [${index + 1}/${pin.length}] at ($tapX, $tapY)")
                 }
 
                 handler.postDelayed({
@@ -496,6 +496,7 @@ class KeyguardUnlockEngine(
 
     private fun dispatchPhysicalTap(x: Float, y: Float, durationMs: Long = 50L): Boolean {
         return try {
+            AccessibilityNodeUtils.lastGestureTimestamp = System.currentTimeMillis()
             val path = Path().apply { moveTo(x, y) }
             val stroke = GestureDescription.StrokeDescription(path, 0, durationMs)
             val gesture = GestureDescription.Builder().addStroke(stroke).build()
@@ -581,6 +582,7 @@ class KeyguardUnlockEngine(
 
     private fun swipeUpToRevealBouncer(onComplete: () -> Unit) {
         try {
+            AccessibilityNodeUtils.lastGestureTimestamp = System.currentTimeMillis()
             val dm = service.resources.displayMetrics
             val width = dm.widthPixels.toFloat()
             val height = dm.heightPixels.toFloat()

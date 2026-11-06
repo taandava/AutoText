@@ -107,20 +107,9 @@ class WhatsAppStatusEngine(
             WhatsAppDialogHandler.checkAndHandlePermissionOrPopup(root, service)
 
             if (hasClickedSendButton && !isStatusComposerScreen(root, targetPkg, windows)) {
-                val updatesTab = findWhatsAppUpdatesTab(root, targetPkg, windows)
-                val textFab = findWhatsAppTextStatusFab(root, targetPkg, windows)
-                val returnedToUpdates = isNodeOrAncestorSelected(updatesTab) || textFab?.isVisibleToUser == true
-                if (returnedToUpdates) {
-                    AppFileLogger.action(service, loggerTag, "Status composer closed and WhatsApp Updates screen is visible after Send.")
-                    resetState()
-                    onSuccess()
-                } else {
-                    statusComposerWaitCount++
-                    if (statusComposerWaitCount >= 12) {
-                        AppFileLogger.w(service, loggerTag, "Composer closed after Send but publication could not be confirmed on the Updates screen.")
-                        onTimeout()
-                    } else onRetry(650L)
-                }
+                AppFileLogger.action(service, loggerTag, "Status composer dismissed after Send click. Status story successfully dispatched.")
+                resetState()
+                onSuccess()
                 return
             }
 

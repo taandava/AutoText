@@ -186,8 +186,7 @@ fun SettingsScreenAssistCard(
             GlassButton(
                 text = "Emergency Stop All Scheduled Tasks",
                 onClick = {
-                    TaskAccessibilityService.clearPending()
-                    context.showAppToast("Tasks stopped")
+                    com.jmd.helper.core.TaskSafetyManager.triggerEmergencyStop(context, "User clicked Emergency Stop in Settings")
                 },
                 icon = Icons.Filled.StopCircle,
                 variant = GlassButtonVariant.DANGER,

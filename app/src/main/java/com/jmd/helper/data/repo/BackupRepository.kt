@@ -57,22 +57,38 @@ class BackupRepository(context: Context) {
         val tasks = mutableListOf<TaskBackupDto>()
         try {
             db.query(DatabaseHelper.TABLE_TASKS, null, null, null, null, null, null).use { c ->
+                val idIdx = c.getColumnIndex("id")
+                val titleIdx = c.getColumnIndex("title")
+                val msgIdx = if (c.getColumnIndex("message_text") >= 0) c.getColumnIndex("message_text") else c.getColumnIndex("message")
+                val recIdx = if (c.getColumnIndex("recipients") >= 0) c.getColumnIndex("recipients") else c.getColumnIndex("recipient")
+                val recNamesIdx = c.getColumnIndex("recipient_names")
+                val timeIdx = if (c.getColumnIndex("trigger_time") >= 0) c.getColumnIndex("trigger_time") else c.getColumnIndex("scheduled_time")
+                val channelIdx = c.getColumnIndex("channel")
+                val statusIdx = c.getColumnIndex("status")
+                val recTypeIdx = c.getColumnIndex("recurrence")
+                val intervalIdx = if (c.getColumnIndex("custom_interval_minutes") >= 0) c.getColumnIndex("custom_interval_minutes") else c.getColumnIndex("recurrence_interval_mins")
+                val mediaIdx = c.getColumnIndex("media_uri")
+                val callDurIdx = c.getColumnIndex("call_duration_seconds")
+                val simIdx = c.getColumnIndex("sim_slot")
+                val soundIdx = c.getColumnIndex("sound_mode")
+
                 while (c.moveToNext()) {
                     tasks.add(
                         TaskBackupDto(
-                            id = c.getLong(c.getColumnIndexOrThrow("id")),
-                            title = c.getString(c.getColumnIndexOrThrow("title")),
-                            message = c.getString(c.getColumnIndexOrThrow("message")),
-                            recipient = c.getString(c.getColumnIndexOrThrow("recipient")),
-                            scheduledTime = c.getLong(c.getColumnIndexOrThrow("scheduled_time")),
-                            channel = c.getString(c.getColumnIndexOrThrow("channel")),
-                            status = c.getString(c.getColumnIndexOrThrow("status")),
-                            recurrence = c.getString(c.getColumnIndexOrThrow("recurrence")),
-                            recurrenceIntervalMins = c.getLong(c.getColumnIndexOrThrow("recurrence_interval_mins")),
-                            mediaUri = c.getString(c.getColumnIndexOrThrow("media_uri")),
-                            callDurationSeconds = c.getInt(c.getColumnIndexOrThrow("call_duration_seconds")),
-                            simSlot = c.getInt(c.getColumnIndexOrThrow("sim_slot")),
-                            soundMode = c.getString(c.getColumnIndexOrThrow("sound_mode"))
+                            id = if (idIdx >= 0) c.getLong(idIdx) else 0L,
+                            title = if (titleIdx >= 0) c.getString(titleIdx).orEmpty() else "",
+                            message = if (msgIdx >= 0) c.getString(msgIdx).orEmpty() else "",
+                            recipient = if (recIdx >= 0) c.getString(recIdx).orEmpty() else "",
+                            recipientNames = if (recNamesIdx >= 0) c.getString(recNamesIdx).orEmpty() else "",
+                            scheduledTime = if (timeIdx >= 0) c.getLong(timeIdx) else 0L,
+                            channel = if (channelIdx >= 0) c.getString(channelIdx).orEmpty() else "",
+                            status = if (statusIdx >= 0) c.getString(statusIdx).orEmpty() else "",
+                            recurrence = if (recTypeIdx >= 0) c.getString(recTypeIdx).orEmpty() else "NONE",
+                            recurrenceIntervalMins = if (intervalIdx >= 0) c.getLong(intervalIdx) else 0L,
+                            mediaUri = if (mediaIdx >= 0) c.getString(mediaIdx) else null,
+                            callDurationSeconds = if (callDurIdx >= 0) c.getInt(callDurIdx) else 0,
+                            simSlot = if (simIdx >= 0) c.getInt(simIdx) else 0,
+                            soundMode = if (soundIdx >= 0) c.getString(soundIdx) else null
                         )
                     )
                 }
@@ -84,14 +100,19 @@ class BackupRepository(context: Context) {
         val templates = mutableListOf<TemplateBackupDto>()
         try {
             db.query(DatabaseHelper.TABLE_TEMPLATES, null, null, null, null, null, null).use { c ->
+                val idIdx = c.getColumnIndex("id")
+                val titleIdx = c.getColumnIndex("title")
+                val catIdx = c.getColumnIndex("category")
+                val contentIdx = c.getColumnIndex("content")
+
                 while (c.moveToNext()) {
                     templates.add(
                         TemplateBackupDto(
-                            id = c.getLong(c.getColumnIndexOrThrow("id")),
-                            title = c.getString(c.getColumnIndexOrThrow("title")),
-                            category = c.getString(c.getColumnIndexOrThrow("category")),
-                            content = c.getString(c.getColumnIndexOrThrow("content")),
-                            createdAt = c.getLong(c.getColumnIndexOrThrow("created_at"))
+                            id = if (idIdx >= 0) c.getLong(idIdx) else 0L,
+                            title = if (titleIdx >= 0) c.getString(titleIdx).orEmpty() else "",
+                            category = if (catIdx >= 0) c.getString(catIdx).orEmpty() else "",
+                            content = if (contentIdx >= 0) c.getString(contentIdx).orEmpty() else "",
+                            createdAt = System.currentTimeMillis()
                         )
                     )
                 }
@@ -103,17 +124,25 @@ class BackupRepository(context: Context) {
         val rules = mutableListOf<AutoReplyBackupDto>()
         try {
             db.query(DatabaseHelper.TABLE_AUTO_REPLY, null, null, null, null, null, null).use { c ->
+                val idIdx = c.getColumnIndex("id")
+                val nameIdx = if (c.getColumnIndex("name") >= 0) c.getColumnIndex("name") else c.getColumnIndex("title")
+                val channelIdx = c.getColumnIndex("channel")
+                val callEventIdx = if (c.getColumnIndex("call_event_type") >= 0) c.getColumnIndex("call_event_type") else c.getColumnIndex("event_type")
+                val patternIdx = if (c.getColumnIndex("trigger_pattern") >= 0) c.getColumnIndex("trigger_pattern") else c.getColumnIndex("keyword_trigger")
+                val replyIdx = if (c.getColumnIndex("reply_text") >= 0) c.getColumnIndex("reply_text") else c.getColumnIndex("reply_message")
+                val enabledIdx = c.getColumnIndex("is_enabled")
+
                 while (c.moveToNext()) {
                     rules.add(
                         AutoReplyBackupDto(
-                            id = c.getLong(c.getColumnIndexOrThrow("id")),
-                            title = c.getString(c.getColumnIndexOrThrow("title")),
-                            channel = c.getString(c.getColumnIndexOrThrow("channel")),
-                            eventType = c.getString(c.getColumnIndexOrThrow("event_type")),
-                            keywordTrigger = c.getString(c.getColumnIndexOrThrow("keyword_trigger")),
-                            replyMessage = c.getString(c.getColumnIndexOrThrow("reply_message")),
-                            isEnabled = c.getInt(c.getColumnIndexOrThrow("is_enabled")) == 1,
-                            simSlot = c.getInt(c.getColumnIndexOrThrow("sim_slot"))
+                            id = if (idIdx >= 0) c.getLong(idIdx) else 0L,
+                            title = if (nameIdx >= 0) c.getString(nameIdx).orEmpty() else "",
+                            channel = if (channelIdx >= 0) c.getString(channelIdx).orEmpty() else "",
+                            eventType = if (callEventIdx >= 0) c.getString(callEventIdx).orEmpty() else "MESSAGE",
+                            keywordTrigger = if (patternIdx >= 0) c.getString(patternIdx).orEmpty() else "*",
+                            replyMessage = if (replyIdx >= 0) c.getString(replyIdx).orEmpty() else "",
+                            isEnabled = enabledIdx >= 0 && c.getInt(enabledIdx) == 1,
+                            simSlot = 0
                         )
                     )
                 }
@@ -122,13 +151,71 @@ class BackupRepository(context: Context) {
             AppFileLogger.w("BackupRepository", "Failed to serialize auto-reply rules: ${e.message}")
         }
 
+        val campaigns = mutableListOf<CampaignBackupDto>()
+        try {
+            db.query(DatabaseHelper.TABLE_DAILY_CAMPAIGN, null, null, null, null, null, null).use { c ->
+                val idIdx = c.getColumnIndex("id")
+                val titleIdx = c.getColumnIndex("title")
+                val chanIdx = c.getColumnIndex("channel")
+                val tmplIdx = c.getColumnIndex("message_template")
+                val limIdx = c.getColumnIndex("daily_limit")
+                val simIdx = c.getColumnIndex("sim_slot")
+                val actIdx = c.getColumnIndex("is_active")
+                while (c.moveToNext()) {
+                    campaigns.add(
+                        CampaignBackupDto(
+                            id = if (idIdx >= 0) c.getLong(idIdx) else 0L,
+                            title = if (titleIdx >= 0) c.getString(titleIdx).orEmpty() else "",
+                            channel = if (chanIdx >= 0) c.getString(chanIdx).orEmpty() else "SMS",
+                            messageTemplate = if (tmplIdx >= 0) c.getString(tmplIdx).orEmpty() else "",
+                            dailyLimit = if (limIdx >= 0) c.getInt(limIdx) else 50,
+                            simSlot = if (simIdx >= 0) c.getInt(simIdx) else 0,
+                            isActive = actIdx >= 0 && c.getInt(actIdx) == 1
+                        )
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            AppFileLogger.w("BackupRepository", "Failed to serialize daily campaigns: ${e.message}")
+        }
+
+        val contacts = mutableListOf<ContactBackupDto>()
+        try {
+            db.query(DatabaseHelper.TABLE_DYNAMIC_POOL, null, null, null, null, null, null).use { c ->
+                val idIdx = c.getColumnIndex("id")
+                val nameIdx = c.getColumnIndex("name")
+                val phoneIdx = c.getColumnIndex("phone")
+                val normIdx = c.getColumnIndex("normalized_number")
+                val waCountIdx = c.getColumnIndex("wa_send_count")
+                val lastSentIdx = c.getColumnIndex("last_sent_at")
+                val sendCountIdx = c.getColumnIndex("send_count")
+                while (c.moveToNext()) {
+                    contacts.add(
+                        ContactBackupDto(
+                            id = if (idIdx >= 0) c.getLong(idIdx) else 0L,
+                            displayName = if (nameIdx >= 0) c.getString(nameIdx).orEmpty() else "",
+                            phoneNumber = if (phoneIdx >= 0) c.getString(phoneIdx).orEmpty() else "",
+                            normalizedPhone = if (normIdx >= 0) c.getString(normIdx).orEmpty() else "",
+                            isWhatsAppUser = waCountIdx >= 0 && c.getInt(waCountIdx) > 0,
+                            lastReachedTimestamp = if (lastSentIdx >= 0) c.getLong(lastSentIdx) else 0L,
+                            reachCount = if (sendCountIdx >= 0) c.getInt(sendCountIdx) else 0
+                        )
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            AppFileLogger.w("BackupRepository", "Failed to serialize dynamic pool contacts: ${e.message}")
+        }
+
         val payload = BackupPayloadDto(
             version = 2,
             app = "Helper",
             exportedAt = System.currentTimeMillis(),
             tasks = tasks,
             templates = templates,
-            autoReplyRules = rules
+            autoReplyRules = rules,
+            dailyCampaigns = campaigns,
+            contacts = contacts
         )
 
         return jsonSerializer.encodeToString(payload)
@@ -147,44 +234,72 @@ class BackupRepository(context: Context) {
                 for (task in payload.tasks) {
                     val cv = ContentValues().apply {
                         put("title", task.title)
-                        put("message", task.message)
-                        put("recipient", task.recipient)
-                        put("scheduled_time", task.scheduledTime)
+                        put("message_text", task.message)
+                        put("recipients", task.recipient)
+                        put("recipient_names", task.recipientNames)
+                        put("trigger_time", task.scheduledTime)
                         put("channel", task.channel)
                         put("status", task.status)
                         put("recurrence", task.recurrence)
-                        put("recurrence_interval_mins", task.recurrenceIntervalMins)
-                        put("media_uri", task.mediaUri)
+                        put("custom_interval_minutes", task.recurrenceIntervalMins.toInt())
+                        put("media_uri", task.mediaUri ?: "")
                         put("call_duration_seconds", task.callDurationSeconds)
                         put("sim_slot", task.simSlot)
-                        put("sound_mode", task.soundMode)
+                        put("sound_mode", task.soundMode ?: "NORMAL")
                     }
                     db.insertWithOnConflict(DatabaseHelper.TABLE_TASKS, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
                     count++
                 }
 
-                for (tpl in payload.templates) {
+                for ((_, title, category, content) in payload.templates) {
                     val cv = ContentValues().apply {
-                        put("title", tpl.title)
-                        put("category", tpl.category)
-                        put("content", tpl.content)
-                        put("created_at", tpl.createdAt)
+                        put("title", title)
+                        put("category", category)
+                        put("content", content)
                     }
                     db.insertWithOnConflict(DatabaseHelper.TABLE_TEMPLATES, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
                     count++
                 }
 
-                for (rule in payload.autoReplyRules) {
+                for ((_, title, channel, eventType, keywordTrigger, replyMessage, isEnabled) in payload.autoReplyRules) {
                     val cv = ContentValues().apply {
-                        put("title", rule.title)
-                        put("channel", rule.channel)
-                        put("event_type", rule.eventType)
-                        put("keyword_trigger", rule.keywordTrigger)
-                        put("reply_message", rule.replyMessage)
-                        put("is_enabled", if (rule.isEnabled) 1 else 0)
-                        put("sim_slot", rule.simSlot)
+                        put("name", title)
+                        put("channel", channel)
+                        put("call_event_type", eventType)
+                        put("trigger_pattern", keywordTrigger)
+                        put("reply_text", replyMessage)
+                        put("is_enabled", if (isEnabled) 1 else 0)
                     }
                     db.insertWithOnConflict(DatabaseHelper.TABLE_AUTO_REPLY, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+                    count++
+                }
+
+                for (camp in payload.dailyCampaigns) {
+                    val cv = ContentValues().apply {
+                        put("id", camp.id)
+                        put("title", camp.title)
+                        put("channel", camp.channel)
+                        put("message_template", camp.messageTemplate)
+                        put("daily_limit", camp.dailyLimit)
+                        put("sim_slot", camp.simSlot)
+                        put("is_active", if (camp.isActive) 1 else 0)
+                    }
+                    db.insertWithOnConflict(DatabaseHelper.TABLE_DAILY_CAMPAIGN, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+                    count++
+                }
+
+                for (contact in payload.contacts) {
+                    val cv = ContentValues().apply {
+                        put("name", contact.displayName)
+                        put("phone", contact.phoneNumber)
+                        put("normalized_number", contact.normalizedPhone.ifBlank { contact.phoneNumber })
+                        put("source", "BACKUP")
+                        put("enabled", 1)
+                        put("last_sent_at", contact.lastReachedTimestamp)
+                        put("send_count", contact.reachCount)
+                        put("created_at", System.currentTimeMillis())
+                    }
+                    db.insertWithOnConflict(DatabaseHelper.TABLE_DYNAMIC_POOL, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
                     count++
                 }
             }

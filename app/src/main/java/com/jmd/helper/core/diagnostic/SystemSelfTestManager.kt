@@ -26,7 +26,6 @@ import com.jmd.helper.core.AppFileLogger
 import com.jmd.helper.core.PrivacyManager
 import com.jmd.helper.core.WhatsAppPackageHelper
 import com.jmd.helper.data.db.DatabaseHelper
-import com.jmd.helper.data.db.room.AppRoomDatabase
 import com.jmd.helper.data.model.BackupPayloadDto
 import com.jmd.helper.data.prefs.AppDataStore
 import com.jmd.helper.data.prefs.PreferenceManager
@@ -365,28 +364,30 @@ object SystemSelfTestManager {
 
     private fun checkRoomDatabase(context: Context): DiagnosticResultItem {
         return try {
-            val roomDb = AppRoomDatabase.getInstance(context)
-            val isOpen = roomDb.isOpen
+            val dbHelper = DatabaseHelper.getInstance(context)
+            val db = dbHelper.readableDatabase
+            val isWal = db.isWriteAheadLoggingEnabled
+            val version = db.version
             DiagnosticResultItem(
                 id = "room_orm",
-                title = "Jetpack Room ORM Database",
+                title = "Database Engine & Storage",
                 category = "Data & Storage",
                 level = DiagnosticLevel.PASS,
-                summary = "Room ORM instance connected over helper.db",
-                details = "Room database v${roomDb.openHelper.readableDatabase.version} initialized. DAOs (TaskDao, ExecutionLogDao, AutoReplyDao) active."
+                summary = "SQLite WAL database engine v$version active",
+                details = "Database helper.db v$version connected with WAL=$isWal (Primary unified storage driver: DatabaseHelper)."
             )
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             DiagnosticResultItem(
                 id = "room_orm",
-                title = "Jetpack Room ORM Database",
+                title = "Database Engine & Storage",
                 category = "Data & Storage",
                 level = DiagnosticLevel.WARNING,
-                summary = "Room check note: ${e.message}",
-                details = "Room ORM error: ${e.message}. SQLite legacy layer remains fully active as primary persistence.",
+                summary = "Storage check note: ${e.message}",
+                details = "Storage access error: ${e.message}.",
                 canAutoFix = true,
-                fixActionDescription = "Rebuild Room database instance"
+                fixActionDescription = "Re-initialize SQLite helper instance"
             )
         }
     }

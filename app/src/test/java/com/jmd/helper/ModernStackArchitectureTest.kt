@@ -8,6 +8,7 @@ import com.jmd.helper.data.model.ChannelType
 import com.jmd.helper.data.model.RecurrenceType
 import com.jmd.helper.data.model.TaskBackupDto
 import com.jmd.helper.data.model.TaskStatus
+import com.jmd.helper.whatsapp.AccessibilityNodeUtils
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -56,18 +57,47 @@ class ModernStackArchitectureTest {
                     simSlot = 1,
                     soundMode = null
                 )
+            ),
+            dailyCampaigns = listOf(
+                com.jmd.helper.data.model.CampaignBackupDto(
+                    id = 1,
+                    title = "Daily Client Followup",
+                    channel = "WHATSAPP",
+                    messageTemplate = "Good morning {name}!",
+                    dailyLimit = 25,
+                    simSlot = 0,
+                    isActive = true
+                )
+            ),
+            contacts = listOf(
+                com.jmd.helper.data.model.ContactBackupDto(
+                    id = 10,
+                    displayName = "Rohit Mehta",
+                    phoneNumber = "+919876543210",
+                    normalizedPhone = "919876543210",
+                    isWhatsAppUser = true,
+                    lastReachedTimestamp = 1735689600000L,
+                    reachCount = 3
+                )
             )
         )
 
         val serialized = json.encodeToString(originalPayload)
         assertTrue(serialized.contains("Monthly Report Dispatch"))
         assertTrue(serialized.contains("+919876543210"))
+        assertTrue(serialized.contains("Daily Client Followup"))
+        assertTrue(serialized.contains("Rohit Mehta"))
 
         val deserialized = json.decodeFromString<BackupPayloadDto>(serialized)
         assertEquals(1, deserialized.tasks.size)
         assertEquals("Monthly Report Dispatch", deserialized.tasks[0].title)
         assertEquals("+919876543210", deserialized.tasks[0].recipient)
         assertEquals("WHATSAPP", deserialized.tasks[0].channel)
+        assertEquals(1, deserialized.dailyCampaigns.size)
+        assertEquals("Daily Client Followup", deserialized.dailyCampaigns[0].title)
+        assertEquals(1, deserialized.contacts.size)
+        assertEquals("Rohit Mehta", deserialized.contacts[0].displayName)
+        assertTrue(deserialized.contacts[0].isWhatsAppUser)
     }
 
     @Test
@@ -167,5 +197,68 @@ class ModernStackArchitectureTest {
         assertEquals(false, report.isPerfect)
         assertEquals(false, report.hasCriticalFailures)
         assertEquals(2, report.items.size)
+    }
+
+    @Test
+    fun `test task backup dto preserves recipient names during roundtrip`() {
+        val taskWithNames = TaskBackupDto(
+            id = 202,
+            title = "Multi-Recipient Task",
+            message = "Meeting reminder",
+            recipient = "+919876543210,+919123456789",
+            recipientNames = "Alice Johnson, Bob Smith",
+            scheduledTime = 1735689600000L,
+            channel = "WHATSAPP",
+            status = "PENDING"
+        )
+        val payload = BackupPayloadDto(
+            version = 2,
+            app = "Helper",
+            tasks = listOf(taskWithNames)
+        )
+
+        val serialized = json.encodeToString(payload)
+        assertTrue(serialized.contains("Alice Johnson, Bob Smith"))
+
+        val deserialized = json.decodeFromString<BackupPayloadDto>(serialized)
+        assertEquals("Alice Johnson, Bob Smith", deserialized.tasks[0].recipientNames)
+        assertEquals("+919876543210,+919123456789", deserialized.tasks[0].recipient)
+    }
+
+    @Test
+    fun `test legacy backup json without recipientNames deserializes cleanly`() {
+        val legacyJson = """
+            {
+                "version": 2,
+                "app": "Helper",
+                "tasks": [
+                    {
+                        "id": 303,
+                        "title": "Legacy Task",
+                        "message": "Hello",
+                        "recipient": "+919999988888",
+                        "scheduledTime": 1735689600000,
+                        "channel": "SMS",
+                        "status": "COMPLETED"
+                    }
+                ]
+            }
+        """.trimIndent()
+
+        val deserialized = json.decodeFromString<BackupPayloadDto>(legacyJson)
+        assertEquals(1, deserialized.tasks.size)
+        assertEquals("Legacy Task", deserialized.tasks[0].title)
+        assertEquals("", deserialized.tasks[0].recipientNames)
+    }
+
+    @Test
+    fun `test accessibility node utils gesture timestamp update`() {
+        val before = System.currentTimeMillis()
+        AccessibilityNodeUtils.lastGestureTimestamp = before
+        assertEquals(before, AccessibilityNodeUtils.lastGestureTimestamp)
+
+        val updated = before + 500L
+        AccessibilityNodeUtils.lastGestureTimestamp = updated
+        assertEquals(updated, AccessibilityNodeUtils.lastGestureTimestamp)
     }
 }

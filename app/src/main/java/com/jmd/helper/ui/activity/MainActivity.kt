@@ -25,6 +25,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,8 +69,6 @@ class MainActivity : ComponentActivity() {
         AppLifecycleObserver.init()
 
         AppTrace.section("MainActivity.onCreate") {
-            setShowWhenLocked(true)
-            setTurnScreenOn(true)
             enableEdgeToEdge()
             handleIncomingIntent(intent)
             checkAndRequestPermissions()
@@ -125,7 +124,7 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         AccessibilityHealthManager.ensureServiceComponentEnabled(applicationContext)
         // Ensure accessibility and notification services are silently auto-healed in background
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val prefs = PreferenceManager(applicationContext)
             if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
                 AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
@@ -153,7 +152,7 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val scanner = ContactIngestionEngine(applicationContext, repo)
                 val (newAdded, totalPoolCount) = scanner.scanAndIngestAll()

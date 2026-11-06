@@ -62,6 +62,46 @@ class HelperComprehensiveTest {
         assertEquals("9876543210", PhoneNumberNormalizer.cleanPhoneNumber("98765 43210"))
     }
 
+    @Test
+    fun testHyphenatedInternationalPhoneNumberNotClassifiedAsGroup() {
+        val testNumbers = listOf(
+            "+1-555-123-4567",
+            "+44-20-7946-0958",
+            "+91-98765-43210",
+            "+1 (555) 123-4567",
+            "98765-43210"
+        )
+        for (num in testNumbers) {
+            val digitsOnly = num.filter { it.isDigit() }
+            val isPhone = digitsOnly.length >= 7 && num.all { it.isDigit() || it in "+- ()" }
+            val isGroup = num.startsWith("group:", ignoreCase = true) || (!isPhone)
+            assertTrue("Expected $num to be identified as phone", isPhone)
+            assertFalse("Expected $num not to be identified as group", isGroup)
+        }
+
+        val groupInputs = listOf(
+            "group:Family Group",
+            "group:Marketing 2026",
+            "College Friends",
+            "Project Beta"
+        )
+        for (grp in groupInputs) {
+            val digitsOnly = grp.filter { it.isDigit() }
+            val isPhone = digitsOnly.length >= 7 && grp.all { it.isDigit() || it in "+- ()" }
+            val isGroup = grp.startsWith("group:", ignoreCase = true) || (!isPhone)
+            assertTrue("Expected '$grp' to be identified as group", isGroup)
+        }
+    }
+
+    @Test
+    fun testEmergencyStopResetState() {
+        TaskSafetyManager.triggerEmergencyStop(null, "Test Emergency Stop")
+        assertTrue(TaskSafetyManager.isEmergencyStopActive.get())
+
+        TaskSafetyManager.resetEmergencyStop(null)
+        assertFalse(TaskSafetyManager.isEmergencyStopActive.get())
+    }
+
     // ═══════════════════════════════════════════════════════════════════════════════════
     // 2. MESSAGE TEMPLATE RESOLVER TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
@@ -465,6 +505,73 @@ class HelperComprehensiveTest {
         assertEquals("SMS", configs[0].channel)
         assertEquals("WHATSAPP", configs[1].channel)
         assertEquals("WHATSAPP_BUSINESS", configs[2].channel)
+    }
+
+    @Test
+    fun testDailyCampaignScheduleTargetCalculation() {
+        val config = DailyCampaignConfig(
+            id = 1,
+            channel = "SMS",
+            scheduledHour = 9,
+            scheduledMinute = 0,
+            isActive = true
+        )
+
+        // Case 1: Early morning (e.g. 6:22 AM). Target must be TODAY at 9:00 AM
+        val morningCal = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 6)
+            set(java.util.Calendar.MINUTE, 22)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val target1 = (morningCal.clone() as java.util.Calendar).apply {
+            set(java.util.Calendar.HOUR_OF_DAY, config.scheduledHour)
+            set(java.util.Calendar.MINUTE, config.scheduledMinute)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        if (target1.before(morningCal)) {
+            target1.add(java.util.Calendar.DAY_OF_YEAR, 1)
+        }
+        assertTrue("Target at 6:22 AM should remain today at 9:00 AM", target1.after(morningCal))
+        assertEquals(9, target1.get(java.util.Calendar.HOUR_OF_DAY))
+        assertEquals(0, target1.get(java.util.Calendar.MINUTE))
+        assertEquals(morningCal.get(java.util.Calendar.DAY_OF_YEAR), target1.get(java.util.Calendar.DAY_OF_YEAR))
+
+        // Premature check: At 6:22 AM, morningCal is strictly before 9:00 AM
+        val isPremature = morningCal.timeInMillis < target1.timeInMillis - 60_000L
+        assertTrue("Dispatch at 6:22 AM for a 9:00 AM campaign must be flagged premature", isPremature)
+
+        // Case 2: Post-window (e.g. 10:30 AM). Target must advance to TOMORROW at 9:00 AM
+        val lateCal = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 10)
+            set(java.util.Calendar.MINUTE, 30)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        val target2 = (lateCal.clone() as java.util.Calendar).apply {
+            set(java.util.Calendar.HOUR_OF_DAY, config.scheduledHour)
+            set(java.util.Calendar.MINUTE, config.scheduledMinute)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+        if (target2.before(lateCal)) {
+            target2.add(java.util.Calendar.DAY_OF_YEAR, 1)
+        }
+        assertTrue("Target at 10:30 AM must advance to tomorrow", target2.after(lateCal))
+        val dayDiff = target2.get(java.util.Calendar.DAY_OF_YEAR) - lateCal.get(java.util.Calendar.DAY_OF_YEAR)
+        assertEquals(1, dayDiff)
+    }
+
+    @Test
+    fun testWhatsAppGroupSearchCleaning() {
+        fun stripPrefix(v: String) = v.replaceFirst(Regex("^group\\s*:", RegexOption.IGNORE_CASE), "").trim()
+        fun normalize(v: String) = stripPrefix(v).replace(Regex("\\s+"), " ").lowercase()
+
+        assertEquals("Dilip", stripPrefix("group:Dilip"))
+        assertEquals("Dilip", stripPrefix("Group: Dilip"))
+        assertEquals("dilip", normalize("Group: Dilip"))
+        assertEquals("family group", normalize("group:   Family   Group  "))
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════

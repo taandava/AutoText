@@ -192,6 +192,22 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * Cooperatively suspends polling for accessibility service readiness up to [timeoutMs] before dependent tasks run.
+     * Prevents blocking worker threads in coroutine scopes.
+     */
+    suspend fun awaitServiceReadiness(context: Context, timeoutMs: Long = 5000L): Boolean {
+        if (isServiceOperational()) return true
+        if (hasWriteSecureSettings(context) && !isAccessibilityEnabledInSystem(context)) {
+            enableAccessibilityService(context)
+        }
+        val start = System.currentTimeMillis()
+        while (!isServiceOperational() && (System.currentTimeMillis() - start) < timeoutMs) {
+            kotlinx.coroutines.delay(100L)
+        }
+        return isServiceOperational()
+    }
+
+    /**
      * Verifies if app holds the privileged [android.Manifest.permission.WRITE_SECURE_SETTINGS] permission.
      *
      * @param context Active Android [Context].

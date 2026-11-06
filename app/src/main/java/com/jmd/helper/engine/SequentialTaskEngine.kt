@@ -81,7 +81,7 @@ import kotlin.text.trim
 import kotlin.time.Duration.Companion.milliseconds
 
 /** Upper bound for waiting on a WhatsApp send to complete before the task is retried. */
-private const val WHATSAPP_SEND_TIMEOUT_MS = 25000L
+private const val WHATSAPP_SEND_TIMEOUT_MS = 35000L
 
 /**
  * Singleton sequential task execution pipeline.
@@ -518,9 +518,12 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             }
         }
 
+        val freshAfter = repository.getTaskById(task.id)
+        val isCancelled = freshAfter?.status == TaskStatus.CANCELLED
+
         if (success) {
             TaskSafetyManager.recordSuccess(task.channel)
-        } else {
+        } else if (!isCancelled) {
             TaskSafetyManager.recordFailure(task.channel, appContext)
         }
 
@@ -624,7 +627,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val effectiveMaxRetries = if (task.recurrence == RecurrenceType.REPEAT_SECONDS) 0 else maxRetries
 
         if (!AccessibilityHealthManager.isServiceOperational()) {
-            val ready = AccessibilityHealthManager.waitForServiceReadiness(appContext, 5000L)
+            val ready = AccessibilityHealthManager.awaitServiceReadiness(appContext, 5000L)
             if (!ready) {
                 val err = "Accessibility Service is not operational. Cannot execute WhatsApp task #${task.id}."
                 AppFileLogger.e(appContext, TAG, err)
@@ -706,7 +709,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 PrivacyManager.getInstance(appContext).prepareAccessibilityForTask()
                 AccessibilityHealthManager.ensureServiceAlive(appContext)
                 if (!AccessibilityHealthManager.isServiceOperational()) {
-                    val ready = AccessibilityHealthManager.waitForServiceReadiness(appContext, 3000L)
+                    val ready = AccessibilityHealthManager.awaitServiceReadiness(appContext, 3000L)
                     if (!ready) {
                         AppFileLogger.w(appContext, TAG, "Accessibility Service is not operational for Task #${task.id}. Retrying after delay...")
                         if (attempts <= effectiveMaxRetries) {
@@ -808,6 +811,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     delay(3000.milliseconds)
                 }
             } catch (e: Exception) {
+                if (e is kotlinx.coroutines.CancellationException) throw e
                 Log.e(TAG, "Error executing WhatsApp task #${task.id}", e)
                 AppFileLogger.e(appContext, TAG, "WhatsApp execution exception: ${e.message}", e)
                 if (attempts <= effectiveMaxRetries) delay(2000.milliseconds)
@@ -1329,6 +1333,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
                 isDirectCall
             } catch (e: Exception) {
+                if (e is kotlinx.coroutines.CancellationException) throw e
                 Log.e(TAG, "Failed to place call to $cleanPhone: ${e.message}", e)
                 AppFileLogger.e(appContext, TAG, "Failed to place call to $cleanPhone: ${e.message}", e)
                 repository.insertLog(
@@ -1399,7 +1404,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         if (!AccessibilityHealthManager.isServiceOperational()) {
-            val ready = AccessibilityHealthManager.waitForServiceReadiness(appContext, 5000L)
+            val ready = AccessibilityHealthManager.awaitServiceReadiness(appContext, 5000L)
             if (!ready) {
                 val err = "Accessibility Service is not operational. Cannot execute WhatsApp call task #${task.id}."
                 AppFileLogger.e(appContext, TAG, err)
@@ -1630,6 +1635,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     false
                 }
             } catch (e: Exception) {
+                if (e is kotlinx.coroutines.CancellationException) throw e
                 Log.e(TAG, "Failed to initiate WhatsApp call to $cleanPhone: ${e.message}", e)
                 AppFileLogger.e(appContext, TAG, "Failed to initiate WhatsApp call to $cleanPhone: ${e.message}", e)
                 repository.insertLog(

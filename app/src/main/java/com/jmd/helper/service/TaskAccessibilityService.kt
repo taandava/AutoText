@@ -1604,12 +1604,10 @@ class TaskAccessibilityService : AccessibilityService() {
             val privacyMgr = com.jmd.helper.core.PrivacyManager.getInstance(this)
             if (privacyMgr.isAppExcluded(currentPkg) || isFinancialOrBankingPackage(currentPkg) || com.jmd.helper.core.ProtectedApplicationManager.isProtectedPackage(currentPkg)) {
                 com.jmd.helper.core.ProtectedApplicationManager.handleProtectedAppEncountered(this, currentPkg, "onAccessibilityEvent")
-                if (!isDispatching) {
-                    Log.i(TAG, "Banking/Shielded app foreground ($currentPkg), immediately retracting accessibility registration")
-                    disableService()
-                    if (com.jmd.helper.core.AccessibilityHealthManager.hasWriteSecureSettings(this)) {
-                        com.jmd.helper.core.AccessibilityHealthManager.disableAccessibilityService(applicationContext)
-                    }
+                val prefs = PreferenceManager(this)
+                if (!isDispatching && prefs.isBankingShieldEnabled && com.jmd.helper.core.AccessibilityHealthManager.hasWriteSecureSettings(this)) {
+                    Log.i(TAG, "Banking/Shielded app foreground ($currentPkg), safely detaching accessibility via secure settings")
+                    com.jmd.helper.core.AccessibilityHealthManager.disableAccessibilityService(applicationContext)
                 }
                 return
             }

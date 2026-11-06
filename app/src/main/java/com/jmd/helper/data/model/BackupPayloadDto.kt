@@ -23,6 +23,7 @@ data class TaskBackupDto(
     val title: String,
     val message: String,
     val recipient: String,
+    val recipientNames: String = "",
     val scheduledTime: Long,
     val channel: String,
     val status: String,

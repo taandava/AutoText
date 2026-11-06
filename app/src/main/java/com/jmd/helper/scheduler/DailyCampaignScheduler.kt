@@ -87,24 +87,11 @@ object DailyCampaignScheduler {
         // Schedule exact wake-up alarm to overcome Doze mode restrictions
         scheduleExactCampaignAlarm(context, campaignId, target.timeInMillis)
 
-        val initialDelayMinutes = ((target.timeInMillis - now.timeInMillis) / 60000).coerceAtLeast(0)
-
-        val inputData = Data.Builder()
-            .putLong(DailyCampaignWorker.KEY_CAMPAIGN_ID, campaignId)
-            .build()
-
-        val workRequest = PeriodicWorkRequestBuilder<DailyCampaignWorker>(24, TimeUnit.HOURS)
-            .setInputData(inputData)
-            .setInitialDelay(initialDelayMinutes, TimeUnit.MINUTES)
-            .addTag("DAILY_CAMPAIGN_$campaignId")
-            .addTag("all_daily_campaigns")
-            .build()
-
-        workManager.enqueueUniquePeriodicWork(
-            uniqueWorkName,
-            ExistingPeriodicWorkPolicy.UPDATE,
-            workRequest
-        )
+        // Cancel any WorkManager periodic background workers to prevent WorkManager from ever
+        // spontaneously firing campaign batches at premature times (e.g. on boot, network tick, or WorkManager update).
+        // Exact AlarmManager RTC_WAKEUP is the single source of truth for exact wall-clock triggering.
+        workManager.cancelUniqueWork(uniqueWorkName)
+        workManager.cancelAllWorkByTag("DAILY_CAMPAIGN_$campaignId")
     }
 
     /**

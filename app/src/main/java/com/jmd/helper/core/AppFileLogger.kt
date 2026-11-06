@@ -339,6 +339,7 @@ object AppFileLogger {
      * @param context Active Android [Context].
      * @return Comprehensive export string suitable for sharing or diagnostic reporting.
      */
+    @Synchronized
     fun exportAllLogsSummary(context: Context): String {
         val sb = StringBuilder()
         sb.append("===================================================\n")

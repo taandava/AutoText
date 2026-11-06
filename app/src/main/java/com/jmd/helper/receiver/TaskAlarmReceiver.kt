@@ -76,7 +76,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
          * Sets up all 12 supported task types in the SQLite database and registers alarms.
          *
          * @param context Active Android [Context].
-         * @param recipients Destination recipient numbers (defaults to 9769602020, 9930604542).
+         * @param recipients Destination recipient numbers (defaults to empty list).
          * @param staggerSeconds Staggered offset in seconds between sequential initial trigger times.
          * @param repeatIntervalSeconds Repeat cycle duration in seconds (REPEAT_SECONDS).
          * @param executeFirstImmediately If true, queues the first generated task into SequentialTaskEngine immediately.
@@ -88,8 +88,8 @@ class TaskAlarmReceiver : BroadcastReceiver() {
          */
         fun setupAllTasks(
             context: Context,
-            recipients: List<String> = listOf("9769602020", "9930604542"),
-            message: String = "jai mata di",
+            recipients: List<String> = emptyList(),
+            message: String = "Automated Task Message",
             staggerSeconds: Int = 10,
             repeatIntervalSeconds: Int = 10,
             executeFirstImmediately: Boolean = false,
@@ -132,7 +132,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                     delayBetweenCallsSeconds = delayBetweenCallsSeconds,
                     soundModeSetting = "NORMAL",
                     simulatedCallerName = "Helper Test",
-                    simulatedCallerNumber = recipients.firstOrNull() ?: "9769602020",
+                    simulatedCallerNumber = recipients.firstOrNull() ?: "+919876543210",
                     status = TaskStatus.PENDING
                 )
                 val insertedId = repository.insertTask(task)
@@ -211,9 +211,13 @@ class TaskAlarmReceiver : BroadcastReceiver() {
          */
          fun setupDailyCampaignContacts(
             context: Context,
-            phoneNumbers: List<String> = listOf("9769602020", "9930604542"),
+            phoneNumbers: List<String> = emptyList(),
             triggerImmediately: Boolean = false
         ): Int {
+            if (phoneNumbers.isEmpty()) {
+                Log.w(TAG, "setupDailyCampaignContacts called with empty phoneNumbers list")
+                return 0
+            }
             val repository = AppRepository(context)
             val campaignRepo = com.jmd.helper.data.repo.DailyCampaignRepository(context)
             val contacts = phoneNumbers.mapIndexed { idx, phone ->
@@ -286,7 +290,11 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         if (intent.action == ACTION_SETUP_CAMPAIGN_CONTACTS) {
             val numbersParam = intent.getStringArrayExtra("numbers")?.toList()
                 ?: intent.getStringExtra("numbers")?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
-                ?: listOf("9769602020", "9930604542")
+                ?: emptyList()
+            if (numbersParam.isEmpty()) {
+                Log.w(TAG, "ACTION_SETUP_CAMPAIGN_CONTACTS: No numbers specified, ignoring request.")
+                return
+            }
             val triggerNow = intent.getBooleanExtra("triggerNow", false)
             val count = setupDailyCampaignContacts(context, numbersParam, triggerNow)
             Log.i(TAG, "ACTION_SETUP_CAMPAIGN_CONTACTS: Processed $count contacts, triggerNow=$triggerNow")
@@ -296,10 +304,14 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         if (intent.action == ACTION_SETUP_ALL_TASKS) {
             val recipientsParam = intent.getStringArrayExtra("recipients")?.toList()
                 ?: intent.getStringExtra("recipients")?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
-                ?: listOf("9769602020", "9930604542")
-            val messageParam = intent.getStringExtra("message")?.ifBlank { "jai mata di" }
-                ?: intent.getStringExtra("messageText")?.ifBlank { "jai mata di" }
-                ?: "jai mata di"
+                ?: emptyList()
+            if (recipientsParam.isEmpty()) {
+                Log.w(TAG, "ACTION_SETUP_ALL_TASKS: No recipients specified, ignoring request.")
+                return
+            }
+            val messageParam = intent.getStringExtra("message")?.ifBlank { "Test Automation Message" }
+                ?: intent.getStringExtra("messageText")?.ifBlank { "Test Automation Message" }
+                ?: "Test Automation Message"
             val staggerSec = intent.getIntExtra("staggerSeconds", 10)
             val repeatIntervalSec = intent.getIntExtra("repeatIntervalSeconds", 10)
             val executeImmediately = intent.getBooleanExtra("executeImmediately", false)
@@ -372,7 +384,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             val channel = ChannelType.fromString(channelStr)
             val recipientsParam = intent.getStringArrayExtra("recipients")?.toList()
                 ?: intent.getStringExtra("recipients")?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
-                ?: listOf("9769602020", "9930604542")
+                ?: emptyList()
             val callDurationSec = intent.getIntExtra("callDurationSeconds", 10)
             val includeDialTime = intent.getBooleanExtra("includeDialTimeInCallDuration", true)
             val delayBetweenCalls = intent.getIntExtra("delayBetweenCallsSeconds", 5)

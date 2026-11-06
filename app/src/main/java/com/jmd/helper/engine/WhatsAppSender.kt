@@ -62,11 +62,20 @@ class WhatsAppSender(private val context: Context) {
         val targetPkg = if (isBusiness) "com.whatsapp.w4b" else "com.whatsapp"
 
         val isStatus = (channel == ChannelType.WHATSAPP_STATUS || channel == ChannelType.WHATSAPP_BUSINESS_STATUS)
-        val isGroup = recipientPhone.contains("-") || recipientPhone.length > 15 || !recipientPhone.all { it.isDigit() || it == '+' }
+        val digitsOnly = recipientPhone.filter { it.isDigit() }
+        val isPhone = digitsOnly.length >= 7 && recipientPhone.all { it.isDigit() || it in "+- ()" }
+        val isGroup = recipientPhone.startsWith("group:", ignoreCase = true) || (!isPhone && !isStatus)
 
         return when {
             isStatus -> sendWhatsAppStatusMessage(targetPkg, taskId, mediaUri, shouldRelock, messageText)
-            isGroup -> sendWhatsAppGroupMessage(targetPkg, taskId, recipientPhone, messageText, shouldRelock, isBatchCampaign)
+            isGroup -> {
+                val groupTitle = if (recipientPhone.startsWith("group:", ignoreCase = true)) {
+                    recipientPhone.substringAfter(":").trim()
+                } else {
+                    recipientPhone.trim()
+                }
+                sendWhatsAppGroupMessage(targetPkg, taskId, groupTitle, messageText, shouldRelock, isBatchCampaign)
+            }
             else -> sendWhatsAppDirectChatMessage(targetPkg, taskId, mediaUri, shouldRelock, isBatchCampaign, recipientPhone, messageText)
         }
     }

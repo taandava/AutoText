@@ -23,6 +23,7 @@ import com.jmd.helper.core.showAppToast
 import com.jmd.helper.data.model.DynamicContactItem
 import com.jmd.helper.data.model.WhatsAppGroupItem
 import com.jmd.helper.data.repo.AppRepository
+import com.jmd.helper.whatsapp.AccessibilityNodeUtils.recycleSafely
 
 /**
  * Accessibility-based scanner engine that directly iterates WhatsApp conversation lists,
@@ -432,6 +433,13 @@ class WhatsAppChatScanner(
 
             if (!isHorizontalPager) {
                 if ((id == "android:id/list") || cls.contains("RecyclerView") || cls.contains("ListView")) {
+                    while (q.isNotEmpty()) {
+                        val rem = q.removeFirst()
+                        if (rem != node && rem != root && rem != fallbackScrollable) rem.recycleSafely()
+                    }
+                    if (fallbackScrollable != null && fallbackScrollable != node && fallbackScrollable != root) {
+                        fallbackScrollable.recycleSafely()
+                    }
                     return node
                 }
                 if (node.isScrollable && (fallbackScrollable == null)) {
@@ -441,6 +449,9 @@ class WhatsAppChatScanner(
 
             for (i in 0 until node.childCount) {
                 node.getChild(i)?.let { q.add(it) }
+            }
+            if (node != root && node != fallbackScrollable) {
+                node.recycleSafely()
             }
         }
         return fallbackScrollable
@@ -467,6 +478,9 @@ class WhatsAppChatScanner(
 
             for (i in 0 until node.childCount) {
                 node.getChild(i)?.let { q.add(it) }
+            }
+            if (node != root) {
+                node.recycleSafely()
             }
         }
 

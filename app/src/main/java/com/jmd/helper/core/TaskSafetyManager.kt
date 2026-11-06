@@ -334,8 +334,14 @@ object TaskSafetyManager {
         isInterruptedByHuman.set(false)
         Log.i(TAG, "Emergency stop and circuit breakers have been reset.")
         if (context != null) {
-            AppFileLogger.i(context, TAG, "Emergency stop and circuit breakers reset by user.")
-            context.showAppToast("Task safeguards reset. Normal operation resumed.")
+            try {
+                com.jmd.helper.scheduler.AlarmScheduler(context).rescheduleAllPending()
+                com.jmd.helper.scheduler.DailyCampaignScheduler.scheduleAll(context)
+            } catch (t: Throwable) {
+                Log.e(TAG, "Error rescheduling tasks after emergency stop reset", t)
+            }
+            AppFileLogger.i(context, TAG, "Emergency stop and circuit breakers reset by user. All pending tasks rescheduled.")
+            context.showAppToast("Task safeguards reset. All scheduled tasks re-armed.")
         }
     }
 
