@@ -149,37 +149,49 @@ fun SettingsScreenAssistCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
+            // Primary Action: Test Screen Wake & Unlock
+            GlassButton(
+                text = "Test Screen Wake & Unlock",
+                onClick = {
+                    val currentPin = assistPin.ifBlank { prefs.screenAssistPin }.trim()
+                    if (currentPin.isBlank() && assistType != "SWIPE") {
+                        context.showAppToast("Please enter your screen lock PIN first", isLong = true)
+                        return@GlassButton
+                    }
+                    if (!isScreenAssistEnabled) {
+                        isScreenAssistEnabled = true
+                        prefs.isScreenAssistEnabled = true
+                    }
+                    TaskAccessibilityService.testScreenAssist(context, currentPin)
+                },
+                icon = Icons.Filled.LockOpen,
+                variant = GlassButtonVariant.PRIMARY,
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                GlassButton(
-                    text = "Test Screen Lock",
-                    onClick = {
-                        context.showAppToast("Locking phone...")
-                        TaskAccessibilityService.lockScreenNow()
-                    },
-                    icon = Icons.Filled.Lock,
-                    variant = GlassButtonVariant.SECONDARY,
-                    modifier = Modifier.weight(1f)
-                )
-                GlassButton(
-                    text = "Test Screen Wake & Unlock",
-                    onClick = {
-                        val currentPin = assistPin.ifBlank { prefs.screenAssistPin }
-                        if (!isScreenAssistEnabled) {
-                            isScreenAssistEnabled = true
-                            prefs.isScreenAssistEnabled = true
-                        }
-                        TaskAccessibilityService.testScreenAssist(context, currentPin)
-                    },
-                    icon = Icons.Filled.LockOpen,
-                    variant = GlassButtonVariant.PRIMARY,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+                maxLines = 1
+            )
+
+            Text(
+                text = "Locks phone now, wakes display in 4 seconds, and executes automated keyguard unlock.",
+                fontSize = 11.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Secondary Action: Test Screen Lock Only
+            GlassButton(
+                text = "Test Screen Lock Only",
+                onClick = {
+                    context.showAppToast("Locking phone now...")
+                    TaskAccessibilityService.lockScreenNow()
+                },
+                icon = Icons.Filled.Lock,
+                variant = GlassButtonVariant.SECONDARY,
+                modifier = Modifier.fillMaxWidth()
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 

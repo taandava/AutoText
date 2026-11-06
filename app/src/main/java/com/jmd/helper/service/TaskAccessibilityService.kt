@@ -18,13 +18,17 @@
 package com.jmd.helper.service
 
 import android.accessibilityservice.AccessibilityService
+import android.app.ActivityOptions
 import android.app.AlarmManager
 import android.app.KeyguardManager
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.jmd.helper.R
 import com.jmd.helper.core.TaskSafetyManager
 import com.jmd.helper.data.prefs.PreferenceManager
 import android.media.AudioManager
@@ -959,15 +963,41 @@ class TaskAccessibilityService : AccessibilityService() {
                 }
 
                 // 4. Delay using Duration and launch TaskLauncherActivity
-                delay(3500.milliseconds)
+                delay(3800.milliseconds)
 
                 try {
+                    // Arm screen assist right as the wake sequence begins
+                    armScreenAssist(
+                        pin = effectivePin,
+                        shouldRelockAfterSend = false
+                    )
+
                     val screenWakeLock = pm?.newWakeLock(
                         PowerManager.PARTIAL_WAKE_LOCK,
-                        "Helper:TestUnlockWakeLock"
+                        "Helper:TestScreenWakeLock"
                     )
                     screenWakeLock?.acquire(15000L)
-                    appContext.startActivity(testIntent)
+
+                    val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+                    val fullScreenNotification = NotificationCompat.Builder(appContext, HelperApplication.CHANNEL_TASKS)
+                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setContentTitle("Screen Unlock Test")
+                        .setContentText("Waking screen and assisting lockscreen...")
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setCategory(NotificationCompat.CATEGORY_ALARM)
+                        .setFullScreenIntent(pendingIntent, true)
+                        .setAutoCancel(true)
+                        .build()
+                    notificationManager?.notify(9988, fullScreenNotification)
+
+                    val optionsBundle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                        ActivityOptions.makeBasic().apply {
+                            setPendingIntentBackgroundActivityStartMode(ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS)
+                        }.toBundle()
+                    } else {
+                        null
+                    }
+                    appContext.startActivity(testIntent, optionsBundle)
                 } catch (t: Throwable) {
                     Log.e(TAG, "Error initiating test auto unlock", t)
                 } finally {

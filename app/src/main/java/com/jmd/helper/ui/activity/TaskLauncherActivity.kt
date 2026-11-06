@@ -55,6 +55,19 @@ class TaskLauncherActivity : Activity() {
     private val handler = Handler(Looper.getMainLooper())
     private var wakeLock: PowerManager.WakeLock? = null
 
+    private val dismissCallback = object : KeyguardManager.KeyguardDismissCallback() {
+        override fun onDismissSucceeded() {
+            Log.i(TAG, "Keyguard dismiss succeeded callback received.")
+            cleanFinish()
+        }
+        override fun onDismissCancelled() {
+            Log.w(TAG, "Keyguard dismiss cancelled callback received; allowing accessibility unlock engine to continue.")
+        }
+        override fun onDismissError() {
+            Log.e(TAG, "Keyguard dismiss error callback received; waiting for polling timeout or accessibility unlock.")
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -73,7 +86,10 @@ class TaskLauncherActivity : Activity() {
         // Ensure activity shows over lock screen and turns the screen on (minSdk 26, O_MR1 27)
         setShowWhenLocked(true)
         setTurnScreenOn(true)
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+        )
 
         // Keep window completely transparent so lockscreen bouncer receives direct touches
         window.setBackgroundDrawable(android.graphics.Color.TRANSPARENT.toDrawable())
@@ -98,30 +114,16 @@ class TaskLauncherActivity : Activity() {
         }
         val keyguardManager = getSystemService(KeyguardManager::class.java)
 
-        val dismissCallback = object : KeyguardManager.KeyguardDismissCallback() {
-            override fun onDismissSucceeded() {
-                Log.i(TAG, "Keyguard dismiss succeeded callback received.")
-                cleanFinish()
-            }
-            override fun onDismissCancelled() {
-                Log.w(TAG, "Keyguard dismiss cancelled callback received; allowing accessibility unlock engine to continue.")
-            }
-            override fun onDismissError() {
-                Log.e(TAG, "Keyguard dismiss error callback received; waiting for polling timeout or accessibility unlock.")
-            }
-        }
-
         // Handle Test Screen Unlock mode
         val isTestUnlock = intent.getBooleanExtra(EXTRA_IS_TEST_UNLOCK, false)
         if (isTestUnlock) {
             val passedPin = intent.getStringExtra(EXTRA_PIN) ?: prefs.deviceUnlockPin
             TaskAccessibilityService.isTestUnlockMode = true
-            keyguardManager.requestDismissKeyguard(this, dismissCallback)
-
             TaskAccessibilityService.armScreenAssist(
                 pin = passedPin,
                 shouldRelockAfterSend = false,
             )
+            keyguardManager.requestDismissKeyguard(this, dismissCallback)
             pollKeyguardStatusUntilUnlocked(keyguardManager, 12000L)
             return
         }
@@ -276,6 +278,17 @@ class TaskLauncherActivity : Activity() {
         super.onResume()
         setShowWhenLocked(true)
         setTurnScreenOn(true)
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            val keyguardManager = getSystemService(KeyguardManager::class.java)
+            if (keyguardManager?.isKeyguardLocked == true) {
+                Log.d(TAG, "TaskLauncher gained window focus over keyguard. Requesting keyguard dismissal.")
+                keyguardManager.requestDismissKeyguard(this, dismissCallback)
+            }
+        }
     }
 
     override fun onPause() {

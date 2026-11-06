@@ -664,18 +664,18 @@ class KeyguardAssistEngine(
             val dm = service.resources.displayMetrics
             val width = dm.widthPixels.toFloat()
             val height = dm.heightPixels.toFloat()
-            val startY = height * 0.70f
-            val endY = height * 0.18f
+            val startY = height * 0.88f
+            val endY = height * 0.22f
 
             val builder = GestureDescription.Builder()
             // Alternate between single-finger and two-finger strokes based on attempt count
             if (unlockAttemptCount % 2 != 0) {
-                // Single-finger center swipe up
+                // Single-finger center swipe up (fast flick from bottom chin, clearing fingerprint sensor zone)
                 val singlePath = Path().apply {
                     moveTo(width * 0.50f, startY)
                     lineTo(width * 0.50f, endY)
                 }
-                builder.addStroke(GestureDescription.StrokeDescription(singlePath, 0, 280L))
+                builder.addStroke(GestureDescription.StrokeDescription(singlePath, 0, 180L))
                 Log.d(loggerTag, "Dispatching single-finger swipe up bouncer gesture (attempt $unlockAttemptCount)")
             } else {
                 // Two-finger parallel swipe up
@@ -687,8 +687,8 @@ class KeyguardAssistEngine(
                     moveTo(width * 0.65f, startY)
                     lineTo(width * 0.65f, endY)
                 }
-                builder.addStroke(GestureDescription.StrokeDescription(path1, 0, 320L))
-                builder.addStroke(GestureDescription.StrokeDescription(path2, 0, 320L))
+                builder.addStroke(GestureDescription.StrokeDescription(path1, 0, 200L))
+                builder.addStroke(GestureDescription.StrokeDescription(path2, 0, 200L))
                 Log.d(loggerTag, "Dispatching two-finger swipe up bouncer gesture (attempt $unlockAttemptCount)")
             }
 

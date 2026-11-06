@@ -244,40 +244,50 @@ fun WhatsAppSetupAndScreenAssistView(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     // Test Screen Lock & Auto-Unlock Testing Hub
-                    Row(
+                    GlassButton(
+                        text = "Test Screen Wake & Unlock",
+                        onClick = {
+                            val currentPin = pinCode.ifBlank { prefs.screenAssistPin }.trim()
+                            if (currentPin.isBlank() && prefs.screenAssistType != "SWIPE") {
+                                context.showAppToast("Please enter your screen lock PIN first", isLong = true)
+                                return@GlassButton
+                            }
+                            if (!isScreenAssistEnabled) {
+                                isScreenAssistEnabled = true
+                                prefs.isScreenAssistEnabled = true
+                            }
+                            TaskAccessibilityService.testScreenAssist(context, currentPin)
+                        },
+                        icon = Icons.Default.LockOpen,
+                        variant = GlassButtonVariant.PRIMARY,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        GlassButton(
-                            text = "Test Screen Lock",
-                            onClick = {
-                                scope.launch {
-                                    withContext(Dispatchers.IO) {
-                                        AccessibilityHealthManager.ensureServiceAlive(context)
-                                    }
-                                    context.showAppToast("Locking screen now...")
-                                    TaskAccessibilityService.lockScreenNow()
+                        maxLines = 1
+                    )
+
+                    Text(
+                        text = "Locks phone now, wakes display in 4 seconds, and executes automated keyguard unlock.",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    GlassButton(
+                        text = "Test Screen Lock Only",
+                        onClick = {
+                            scope.launch {
+                                withContext(Dispatchers.IO) {
+                                    AccessibilityHealthManager.ensureServiceAlive(context)
                                 }
-                            },
-                            icon = Icons.Default.Lock,
-                            variant = GlassButtonVariant.SECONDARY,
-                            modifier = Modifier.weight(1f)
-                        )
-                        GlassButton(
-                            text = "Test Screen Assist",
-                            onClick = {
-                                val currentPin = pinCode.ifBlank { prefs.screenAssistPin }
-                                if (!isScreenAssistEnabled) {
-                                    isScreenAssistEnabled = true
-                                    prefs.isScreenAssistEnabled = true
-                                }
-                                TaskAccessibilityService.testScreenAssist(context, currentPin)
-                            },
-                            icon = Icons.Default.LockOpen,
-                            variant = GlassButtonVariant.PRIMARY,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                                context.showAppToast("Locking screen now...")
+                                TaskAccessibilityService.lockScreenNow()
+                            }
+                        },
+                        icon = Icons.Default.Lock,
+                        variant = GlassButtonVariant.SECONDARY,
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -285,7 +295,7 @@ fun WhatsAppSetupAndScreenAssistView(
                         text = "Emergency Stop All Scheduled Tasks",
                         onClick = {
                             TaskAccessibilityService.clearPending()
-                            context.showAppToast("Tasks stopped")
+                            com.jmd.helper.core.TaskSafetyManager.triggerEmergencyStop(context, "User clicked Emergency Stop in Setup")
                         },
                         icon = Icons.Default.StopCircle,
                         variant = GlassButtonVariant.DANGER,

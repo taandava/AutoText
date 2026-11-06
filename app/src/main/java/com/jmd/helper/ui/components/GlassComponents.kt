@@ -83,6 +83,8 @@ fun GlassButton(
     elevation: Dp = 0.dp,
     contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
     emoji: String? = null,
+    maxLines: Int = 1,
+    overflow: TextOverflow = TextOverflow.Ellipsis,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -163,7 +165,9 @@ fun GlassButton(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = contentColor,
-                        maxLines = 1
+                        maxLines = maxLines,
+                        overflow = overflow,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
