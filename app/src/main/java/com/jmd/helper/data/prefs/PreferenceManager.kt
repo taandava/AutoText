@@ -11,7 +11,7 @@
  * - Direct Boot Receivers: [com.jmd.helper.receiver.BootReceiver], [com.jmd.helper.receiver.TaskAlarmReceiver]
  * - UI Screens: `SettingsScreen`, `MainAppHost`
  * - Core Safety: [com.jmd.helper.core.TaskSafetyManager], [com.jmd.helper.core.SmsQuotaManager]
- * - WhatsApp Engines: [com.jmd.helper.whatsapp.KeyguardUnlockEngine]
+ * - WhatsApp Engines: [com.jmd.helper.whatsapp.KeyguardAssistEngine]
  */
 package com.jmd.helper.data.prefs
 
@@ -90,6 +90,9 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_APP_LOCK_ENABLED = "app_lock_enabled"
         private const val KEY_DEFAULT_SIM = "default_sim_slot"
 
+        private const val KEY_SCREEN_ASSIST_ENABLED = "screen_assist_enabled"
+        private const val KEY_SCREEN_ASSIST_TYPE = "screen_assist_type"
+        private const val KEY_SCREEN_ASSIST_PIN = "screen_assist_pin"
         private const val KEY_AUTO_UNLOCK_ENABLED = "auto_unlock_enabled"
         private const val KEY_AUTO_UNLOCK_TYPE = "auto_unlock_type"
         private const val KEY_DEVICE_UNLOCK_PIN = "device_unlock_pin"
@@ -340,93 +343,126 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getInt(KEY_DEFAULT_SIM, 0)
         set(value) = prefs.edit { putInt(KEY_DEFAULT_SIM, value) }
 
-    var isAutoUnlockEnabled: Boolean
-        get() {
-            return try {
-                if (!androidx.core.os.UserManagerCompat.isUserUnlocked(context)) {
-                    dePrefs.getBoolean(KEY_AUTO_UNLOCK_ENABLED, false)
-                } else {
-                    prefs.getBoolean(KEY_AUTO_UNLOCK_ENABLED, false)
-                }
-            } catch (e: Exception) {
-                dePrefs.getBoolean(KEY_AUTO_UNLOCK_ENABLED, false)
-            }
-        }
-        set(value) {
-            prefs.edit { putBoolean(KEY_AUTO_UNLOCK_ENABLED, value) }
-            try {
-                dePrefs.edit { putBoolean(KEY_AUTO_UNLOCK_ENABLED, value) }
-            } catch (e: Exception) {
-                Log.w(TAG, "Failed to update device-protected auto-unlock enabled: ${e.message}")
-            }
-        }
-
-    var autoUnlockType: String
-        get() {
-            return try {
-                if (!androidx.core.os.UserManagerCompat.isUserUnlocked(context)) {
-                    dePrefs.getString(KEY_AUTO_UNLOCK_TYPE, "PIN") ?: "PIN"
-                } else {
-                    prefs.getString(KEY_AUTO_UNLOCK_TYPE, "PIN") ?: "PIN"
-                }
-            } catch (e: Exception) {
-                dePrefs.getString(KEY_AUTO_UNLOCK_TYPE, "PIN") ?: "PIN"
-            }
-        }
-        set(value) {
-            prefs.edit { putString(KEY_AUTO_UNLOCK_TYPE, value) }
-            try {
-                dePrefs.edit { putString(KEY_AUTO_UNLOCK_TYPE, value) }
-            } catch (e: Exception) {
-                Log.w(TAG, "Failed to update device-protected auto-unlock type: ${e.message}")
-            }
-        }
-
-    /**
-     * Policy-compliant alias for screen task assistance enabled state.
-     */
     var isScreenAssistEnabled: Boolean
-        get() = isAutoUnlockEnabled
-        set(value) { isAutoUnlockEnabled = value }
+        get() {
+            return try {
+                val targetPrefs = if (!androidx.core.os.UserManagerCompat.isUserUnlocked(context)) dePrefs else prefs
+                if (targetPrefs.contains(KEY_SCREEN_ASSIST_ENABLED)) {
+                    targetPrefs.getBoolean(KEY_SCREEN_ASSIST_ENABLED, false)
+                } else {
+                    targetPrefs.getBoolean(KEY_AUTO_UNLOCK_ENABLED, false)
+                }
+            } catch (e: Exception) {
+                if (dePrefs.contains(KEY_SCREEN_ASSIST_ENABLED)) {
+                    dePrefs.getBoolean(KEY_SCREEN_ASSIST_ENABLED, false)
+                } else {
+                    dePrefs.getBoolean(KEY_AUTO_UNLOCK_ENABLED, false)
+                }
+            }
+        }
+        set(value) {
+            prefs.edit {
+                putBoolean(KEY_SCREEN_ASSIST_ENABLED, value)
+                putBoolean(KEY_AUTO_UNLOCK_ENABLED, value)
+            }
+            try {
+                dePrefs.edit {
+                    putBoolean(KEY_SCREEN_ASSIST_ENABLED, value)
+                    putBoolean(KEY_AUTO_UNLOCK_ENABLED, value)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to update device-protected screen assist enabled: ${e.message}")
+            }
+        }
 
     /**
-     * Policy-compliant alias for screen task assistance type (PIN, PASSWORD, SWIPE).
+     * Backward-compatible alias for [isScreenAssistEnabled].
      */
+    var isAutoUnlockEnabled: Boolean
+        get() = isScreenAssistEnabled
+        set(value) { isScreenAssistEnabled = value }
+
     var screenAssistType: String
-        get() = autoUnlockType
-        set(value) { autoUnlockType = value }
+        get() {
+            return try {
+                val targetPrefs = if (!androidx.core.os.UserManagerCompat.isUserUnlocked(context)) dePrefs else prefs
+                if (targetPrefs.contains(KEY_SCREEN_ASSIST_TYPE)) {
+                    targetPrefs.getString(KEY_SCREEN_ASSIST_TYPE, "PIN") ?: "PIN"
+                } else {
+                    targetPrefs.getString(KEY_AUTO_UNLOCK_TYPE, "PIN") ?: "PIN"
+                }
+            } catch (e: Exception) {
+                if (dePrefs.contains(KEY_SCREEN_ASSIST_TYPE)) {
+                    dePrefs.getString(KEY_SCREEN_ASSIST_TYPE, "PIN") ?: "PIN"
+                } else {
+                    dePrefs.getString(KEY_AUTO_UNLOCK_TYPE, "PIN") ?: "PIN"
+                }
+            }
+        }
+        set(value) {
+            prefs.edit {
+                putString(KEY_SCREEN_ASSIST_TYPE, value)
+                putString(KEY_AUTO_UNLOCK_TYPE, value)
+            }
+            try {
+                dePrefs.edit {
+                    putString(KEY_SCREEN_ASSIST_TYPE, value)
+                    putString(KEY_AUTO_UNLOCK_TYPE, value)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to update device-protected screen assist type: ${e.message}")
+            }
+        }
 
     /**
-     * Policy-compliant alias for screen task assistance PIN/password credential.
+     * Backward-compatible alias for [screenAssistType].
      */
-    var screenAssistPin: String
-        get() = deviceUnlockPin
-        set(value) { deviceUnlockPin = value }
+    var autoUnlockType: String
+        get() = screenAssistType
+        set(value) { screenAssistType = value }
 
-    var deviceUnlockPin: String
+    var screenAssistPin: String
         get() {
             val raw = try {
-                if (!androidx.core.os.UserManagerCompat.isUserUnlocked(context)) {
-                    dePrefs.getString(KEY_DEVICE_UNLOCK_PIN, "").orEmpty()
+                val targetPrefs = if (!androidx.core.os.UserManagerCompat.isUserUnlocked(context)) dePrefs else prefs
+                if (targetPrefs.contains(KEY_SCREEN_ASSIST_PIN)) {
+                    targetPrefs.getString(KEY_SCREEN_ASSIST_PIN, "").orEmpty()
                 } else {
-                    prefs.getString(KEY_DEVICE_UNLOCK_PIN, "").orEmpty()
+                    targetPrefs.getString(KEY_DEVICE_UNLOCK_PIN, "").orEmpty()
                 }
             } catch (e: Exception) {
-                dePrefs.getString(KEY_DEVICE_UNLOCK_PIN, "").orEmpty()
+                if (dePrefs.contains(KEY_SCREEN_ASSIST_PIN)) {
+                    dePrefs.getString(KEY_SCREEN_ASSIST_PIN, "").orEmpty()
+                } else {
+                    dePrefs.getString(KEY_DEVICE_UNLOCK_PIN, "").orEmpty()
+                }
             }
             return decryptSecret(raw)
         }
         set(value) {
             val enc = encryptSecret(value)
-            prefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, enc) }
+            prefs.edit {
+                putString(KEY_SCREEN_ASSIST_PIN, enc)
+                putString(KEY_DEVICE_UNLOCK_PIN, enc)
+            }
             try {
                 // For Direct Boot storage, store derived-key ciphertext so it is readable pre-unlock
                 val deEnc = encryptSecretWithDerivedKey(value)
-                dePrefs.edit { putString(KEY_DEVICE_UNLOCK_PIN, deEnc) }
+                dePrefs.edit {
+                    putString(KEY_SCREEN_ASSIST_PIN, deEnc)
+                    putString(KEY_DEVICE_UNLOCK_PIN, deEnc)
+                }
             } catch (e: Exception) {
-                android.util.Log.d(TAG, "Direct boot PIN save failed: ${e.message}")
+                android.util.Log.d(TAG, "Direct boot screen assist PIN save failed: ${e.message}")
             }
         }
+
+    /**
+     * Backward-compatible alias for [screenAssistPin].
+     */
+    var deviceUnlockPin: String
+        get() = screenAssistPin
+        set(value) { screenAssistPin = value }
 
     var isAutoLockAfterSendEnabled: Boolean
         get() = prefs.getBoolean(KEY_AUTO_LOCK_AFTER_SEND, false)

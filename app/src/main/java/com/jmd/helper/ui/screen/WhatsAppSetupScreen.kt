@@ -60,7 +60,7 @@ fun WhatsAppSetupAndScreenAssistView(
     prefs: PreferenceManager,
     onBack: () -> Unit,
 ) {
-    var isAutoUnlock by remember { mutableStateOf(prefs.isScreenAssistEnabled) }
+    var isScreenAssistEnabled by remember { mutableStateOf(prefs.isScreenAssistEnabled) }
     var unlockType by remember { mutableStateOf(prefs.screenAssistType) }
     var pinCode by remember { mutableStateOf(prefs.screenAssistPin) }
     var isAutoLockAfterSend by remember { mutableStateOf(prefs.isAutoLockAfterSendEnabled) }
@@ -146,9 +146,9 @@ fun WhatsAppSetupAndScreenAssistView(
                             Text("Wakes screen and assists entry for scheduled tasks", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
                         }
                         Switch(
-                            checked = isAutoUnlock,
+                            checked = isScreenAssistEnabled,
                             onCheckedChange = {
-                                isAutoUnlock = it
+                                isScreenAssistEnabled = it
                                 prefs.isScreenAssistEnabled = it
                             },
                             colors = SwitchDefaults.colors(
@@ -158,7 +158,7 @@ fun WhatsAppSetupAndScreenAssistView(
                         )
                     }
 
-                    if (isAutoUnlock) {
+                    if (isScreenAssistEnabled) {
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Text("Screen Lock Type:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.5.sp)
@@ -265,8 +265,8 @@ fun WhatsAppSetupAndScreenAssistView(
                             text = "Test Screen Assist",
                             onClick = {
                                 val currentPin = pinCode.ifBlank { prefs.screenAssistPin }
-                                if (!isAutoUnlock) {
-                                    isAutoUnlock = true
+                                if (!isScreenAssistEnabled) {
+                                    isScreenAssistEnabled = true
                                     prefs.isScreenAssistEnabled = true
                                 }
                                 TaskAccessibilityService.testScreenAssist(context, currentPin)

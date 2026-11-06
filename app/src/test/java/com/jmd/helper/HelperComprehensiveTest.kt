@@ -1629,25 +1629,23 @@ class HelperComprehensiveTest {
     // ═══════════════════════════════════════════════════════════════════════════════════
 
     @Test
-    @Suppress("DEPRECATION")
     fun testChannelTypeCallSimulationCompatibility() {
         // Primary policy-compliant enum name
         assertEquals("CALL_SIMULATION", ChannelType.CALL_SIMULATION.name)
         assertEquals("Call Simulation", ChannelType.CALL_SIMULATION.displayName)
 
-        // Backward compatibility: FAKE_CALL alias resolves to CALL_SIMULATION
-        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.FAKE_CALL)
+        // Backward compatibility: SIMULATED_CALL alias resolves to CALL_SIMULATION
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.SIMULATED_CALL)
 
         // String parsing compatibility for database records and broadcasts
         assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("CALL_SIMULATION"))
         assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("call_simulation"))
-        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("FAKE_CALL"))
-        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("fake_call"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("SIMULATED_CALL"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("simulated_call"))
         assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("SIMULATION"))
     }
 
     @Test
-    @Suppress("DEPRECATION")
     fun testSimulatedCallerModelProperties() {
         // Default ScheduledTask must use Indian mobile number format
         val defaultTask = ScheduledTask()
@@ -1666,11 +1664,6 @@ class HelperComprehensiveTest {
         assertEquals("Meeting Organizer", task.simulatedCallerName)
         assertEquals("+91 98765 43210", task.simulatedCallerNumber)
         assertEquals("PIXEL", task.simulatedCallStyle)
-
-        // Verify backward compatibility alias accessors
-        assertEquals("Meeting Organizer", task.fakeCallerName)
-        assertEquals("+91 98765 43210", task.fakeCallerNumber)
-        assertEquals("PIXEL", task.fakeCallStyle)
 
         // Verify authorization under ProtectedApplicationManager
         assertTrue(ProtectedApplicationManager.isTaskTargetAuthorized(task))
@@ -2348,13 +2341,11 @@ class HelperComprehensiveTest {
 
     @Test
     fun testChannelTypeFromStringAliases() {
-        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("FAKE_CALL"))
-        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("fake_call"))
         assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("SIMULATED_CALL"))
         assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("simulated_call"))
         assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("CALL_SIMULATION"))
         assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("call_simulation"))
-        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("FAKECALL"))
+        assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("SIMULATION"))
         assertEquals(ChannelType.SMS, ChannelType.fromString("SMS"))
         assertEquals(ChannelType.SMS, ChannelType.fromString("sms"))
         assertEquals(ChannelType.CALL, ChannelType.fromString("CALL"))

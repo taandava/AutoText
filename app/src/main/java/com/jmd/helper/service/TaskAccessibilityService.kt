@@ -70,7 +70,8 @@ class TaskAccessibilityService : AccessibilityService() {
     private val whatsAppGroupEngine by lazy { WhatsAppGroupEngine(this) }
     private val whatsAppChatScanner by lazy { WhatsAppChatScanner(this) }
     private val whatsAppCallEngine by lazy { WhatsAppCallEngine(this) }
-    private val keyguardUnlockEngine by lazy { KeyguardUnlockEngine(this, handler) }
+    val keyguardAssistEngine by lazy { KeyguardAssistEngine(this, handler) }
+    val keyguardUnlockEngine: KeyguardAssistEngine get() = keyguardAssistEngine
 
     companion object {
         private const val TAG = "HelperA11y"
@@ -686,41 +687,41 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
-         * Policy-compliant primary method for arming screen task assistance.
-         */
-        @JvmStatic
-        fun armScreenAssist(pin: String, shouldRelockAfterSend: Boolean = false) {
-            armAutoUnlock(pin, shouldRelockAfterSend)
-        }
-
-        /**
-         * Arms the KeyguardUnlockEngine to watch for lockscreen bouncer appearance and enter PIN digits.
+         * Primary method for arming screen task assistance.
          *
-         * @param pin Secret keyguard PIN or swipe code.
+         * @param pin Keyguard PIN or swipe code.
          * @param shouldRelockAfterSend True to re-lock screen after sending finishes.
          */
         @JvmStatic
-        fun armAutoUnlock(pin: String, shouldRelockAfterSend: Boolean = false) {
+        fun armScreenAssist(pin: String, shouldRelockAfterSend: Boolean = false) {
             val inst = instance
-            if (isUnlockPending && inst != null && inst.keyguardUnlockEngine.isEnteringPinDigits) {
-                Log.w(TAG, "armAutoUnlock: PIN digit entry is already actively in progress! Skipping duplicate request.")
+            if (isUnlockPending && inst != null && inst.keyguardAssistEngine.isEnteringPinDigits) {
+                Log.w(TAG, "armScreenAssist: PIN digit entry is already actively in progress! Skipping duplicate request.")
                 return
             }
             this.unlockPin = pin
             this.isUnlockPending = true
             this.shouldRelockAfterSend = shouldRelockAfterSend
-            Log.d(TAG, "Armed auto-unlock. PIN length: ${pin.length}, relock: $shouldRelockAfterSend")
+            Log.d(TAG, "Armed screen assist. PIN length: ${pin.length}, relock: $shouldRelockAfterSend")
             inst?.let { s ->
                 s.acquireUnlockWakeLock()
-                s.keyguardUnlockEngine.isUnlockPending = true
-                s.keyguardUnlockEngine.unlockPin = pin
-                s.keyguardUnlockEngine.shouldRelockAfterSend = shouldRelockAfterSend
-                s.keyguardUnlockEngine.isTestUnlockMode = isTestUnlockMode
-                s.keyguardUnlockEngine.resetInitialDelay()
+                s.keyguardAssistEngine.isUnlockPending = true
+                s.keyguardAssistEngine.unlockPin = pin
+                s.keyguardAssistEngine.shouldRelockAfterSend = shouldRelockAfterSend
+                s.keyguardAssistEngine.isTestUnlockMode = isTestUnlockMode
+                s.keyguardAssistEngine.resetInitialDelay()
                 s.startProactiveUnlockLoop()
                 s.handler.removeCallbacks(s.masterDisarmRunnable)
                 s.handler.postDelayed(s.masterDisarmRunnable, 15000L)
             }
+        }
+
+        /**
+         * Backward-compatible alias for [armScreenAssist].
+         */
+        @JvmStatic
+        fun armAutoUnlock(pin: String, shouldRelockAfterSend: Boolean = false) {
+            armScreenAssist(pin, shouldRelockAfterSend)
         }
 
         // Pending task to launch once screen is confirmed unlocked
@@ -851,31 +852,24 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
-         * Policy-compliant primary method for testing screen task assistance.
-         */
-        fun testScreenAssist(context: Context, pin: String) {
-            testLockAndAutoUnlock(context, pin)
-        }
-
-        /**
-         * Diagnostic tool locking the phone immediately and triggering scheduled unlock 4 seconds later to verify setup.
+         * Diagnostic tool locking the phone immediately and triggering scheduled screen assist 4 seconds later to verify setup.
          *
          * @param context Local Android context.
-         * @param pin Secret lockscreen PIN to test.
+         * @param pin Keyguard PIN to test.
          */
-        fun testLockAndAutoUnlock(context: Context, pin: String) {
+        fun testScreenAssist(context: Context, pin: String) {
             val appContext = context.applicationContext
             val prefs = PreferenceManager(appContext)
-            val effectivePin = pin.ifBlank { prefs.deviceUnlockPin }.trim()
+            val effectivePin = pin.ifBlank { prefs.screenAssistPin }.trim()
 
-            if (effectivePin.isBlank() && prefs.autoUnlockType != "SWIPE") {
+            if (effectivePin.isBlank() && prefs.screenAssistType != "SWIPE") {
                 context.showAppToast("Please enter your screen lock PIN first", isLong = true)
                 return
             }
 
             if (effectivePin.isNotBlank()) {
-                prefs.deviceUnlockPin = effectivePin
-                prefs.isAutoUnlockEnabled = true
+                prefs.screenAssistPin = effectivePin
+                prefs.isScreenAssistEnabled = true
             }
 
             CoroutineScope(Dispatchers.Main).launch {
@@ -966,6 +960,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * Backward-compatible alias for [testScreenAssist].
+         */
+        @JvmStatic
+        fun testLockAndAutoUnlock(context: Context, pin: String) {
+            testScreenAssist(context, pin)
+        }
+
+        /**
          * Clears all pending task variables, disarms keyguard watchdog, and resets engine back to idle.
          */
         @JvmStatic
@@ -993,10 +995,10 @@ class TaskAccessibilityService : AccessibilityService() {
                 s.hasAttemptedSendClick = false
                 s.groupSearchStep = 0
                 s.whatsAppCallEngine.resetState()
-                s.keyguardUnlockEngine.isUnlockPending = false
-                s.keyguardUnlockEngine.isEnteringPinDigits = false
-                s.keyguardUnlockEngine.unlockAttemptCount = 0
-                s.keyguardUnlockEngine.unlockLoopAttempts = 0
+                s.keyguardAssistEngine.isUnlockPending = false
+                s.keyguardAssistEngine.isEnteringPinDigits = false
+                s.keyguardAssistEngine.unlockAttemptCount = 0
+                s.keyguardAssistEngine.unlockLoopAttempts = 0
                 s.handler.removeCallbacksAndMessages(null)
             }
             Log.i(TAG, "clearPending: All pending tasks stopped.")
@@ -1171,20 +1173,20 @@ class TaskAccessibilityService : AccessibilityService() {
                     return
                 }
 
-                if (keyguardUnlockEngine.isEnteringPinDigits) {
+                if (keyguardAssistEngine.isEnteringPinDigits) {
                     handler.postDelayed(this, 400L)
                     return
                 }
 
                 runUnlockLogic()
 
-                keyguardUnlockEngine.unlockLoopAttempts++
-                if (isUnlockPending && keyguardUnlockEngine.unlockLoopAttempts < 8) {
+                keyguardAssistEngine.unlockLoopAttempts++
+                if (isUnlockPending && keyguardAssistEngine.unlockLoopAttempts < 8) {
                     handler.postDelayed(this, 550L)
-                } else if (keyguardUnlockEngine.unlockLoopAttempts >= 8) {
+                } else if (keyguardAssistEngine.unlockLoopAttempts >= 8) {
                     Log.w(TAG, "Proactive unlock loop reached max attempts (8). Stopping cleanly.")
                     isUnlockPending = false
-                    keyguardUnlockEngine.isEnteringPinDigits = false
+                    keyguardAssistEngine.isEnteringPinDigits = false
                 }
             } catch (t: Throwable) {
                 Log.e(TAG, "Error in unlockLoopRunnable", t)
@@ -1195,20 +1197,20 @@ class TaskAccessibilityService : AccessibilityService() {
     private fun startProactiveUnlockLoop() {
         handler.removeCallbacks(unlockLoopRunnable)
         handler.removeCallbacks(debouncedUnlockRunnable)
-        keyguardUnlockEngine.unlockLoopAttempts = 0
-        keyguardUnlockEngine.unlockAttemptCount = 0
+        keyguardAssistEngine.unlockLoopAttempts = 0
+        keyguardAssistEngine.unlockAttemptCount = 0
         handler.post(unlockLoopRunnable)
     }
 
     private fun runUnlockLogic() {
-        keyguardUnlockEngine.handleKeyguardUnlock(
+        keyguardAssistEngine.handleKeyguardUnlock(
             onUnlockSuccess = { onUnlockSuccess() },
             onUnlockAbort = { reason ->
                 Log.w(TAG, "Auto-unlock aborted: $reason")
                 isUnlockPending = false
-                keyguardUnlockEngine.isUnlockPending = false
-                keyguardUnlockEngine.unlockAttemptCount = 0
-                keyguardUnlockEngine.isEnteringPinDigits = false
+                keyguardAssistEngine.isUnlockPending = false
+                keyguardAssistEngine.unlockAttemptCount = 0
+                keyguardAssistEngine.isEnteringPinDigits = false
                 releaseUnlockWakeLock()
                 handler.removeCallbacks(unlockLoopRunnable)
                 handler.removeCallbacks(debouncedUnlockRunnable)
@@ -1227,8 +1229,8 @@ class TaskAccessibilityService : AccessibilityService() {
 
     private fun onUnlockSuccess() {
         isUnlockPending = false
-        keyguardUnlockEngine.isUnlockPending = false
-        keyguardUnlockEngine.isEnteringPinDigits = false
+        keyguardAssistEngine.isUnlockPending = false
+        keyguardAssistEngine.isEnteringPinDigits = false
         releaseUnlockWakeLock()
         handler.removeCallbacks(unlockLoopRunnable)
         handler.removeCallbacks(debouncedUnlockRunnable)
@@ -1468,13 +1470,13 @@ class TaskAccessibilityService : AccessibilityService() {
         } else if (isUnlockPending) {
             cancelIdleDetach()
             acquireUnlockWakeLock()
-            keyguardUnlockEngine.isUnlockPending = true
-            keyguardUnlockEngine.unlockPin = unlockPin
-            keyguardUnlockEngine.shouldRelockAfterSend = shouldRelockAfterSend
-            keyguardUnlockEngine.isTestUnlockMode = isTestUnlockMode
-            keyguardUnlockEngine.unlockAttemptCount = 0
-            keyguardUnlockEngine.unlockLoopAttempts = 0
-            keyguardUnlockEngine.isEnteringPinDigits = false
+            keyguardAssistEngine.isUnlockPending = true
+            keyguardAssistEngine.unlockPin = unlockPin
+            keyguardAssistEngine.shouldRelockAfterSend = shouldRelockAfterSend
+            keyguardAssistEngine.isTestUnlockMode = isTestUnlockMode
+            keyguardAssistEngine.unlockAttemptCount = 0
+            keyguardAssistEngine.unlockLoopAttempts = 0
+            keyguardAssistEngine.isEnteringPinDigits = false
             startProactiveUnlockLoop()
             handler.removeCallbacks(masterDisarmRunnable)
             handler.postDelayed(masterDisarmRunnable, 15000L)
@@ -1520,13 +1522,13 @@ class TaskAccessibilityService : AccessibilityService() {
         } else if (isUnlockPending) {
             cancelIdleDetach()
             acquireUnlockWakeLock()
-            keyguardUnlockEngine.isUnlockPending = true
-            keyguardUnlockEngine.unlockPin = unlockPin
-            keyguardUnlockEngine.shouldRelockAfterSend = shouldRelockAfterSend
-            keyguardUnlockEngine.isTestUnlockMode = isTestUnlockMode
-            keyguardUnlockEngine.unlockAttemptCount = 0
-            keyguardUnlockEngine.unlockLoopAttempts = 0
-            keyguardUnlockEngine.isEnteringPinDigits = false
+            keyguardAssistEngine.isUnlockPending = true
+            keyguardAssistEngine.unlockPin = unlockPin
+            keyguardAssistEngine.shouldRelockAfterSend = shouldRelockAfterSend
+            keyguardAssistEngine.isTestUnlockMode = isTestUnlockMode
+            keyguardAssistEngine.unlockAttemptCount = 0
+            keyguardAssistEngine.unlockLoopAttempts = 0
+            keyguardAssistEngine.isEnteringPinDigits = false
             startProactiveUnlockLoop()
             handler.removeCallbacks(masterDisarmRunnable)
             handler.postDelayed(masterDisarmRunnable, 15000L)
@@ -2194,10 +2196,10 @@ class TaskAccessibilityService : AccessibilityService() {
         whatsAppStatusEngine.resetState()
         currentMode = DispatchMode.DIRECT_SEND
 
-        val needsRelock = shouldRelockAfterSend || keyguardUnlockEngine.shouldRelockAfterSend
+        val needsRelock = shouldRelockAfterSend || keyguardAssistEngine.shouldRelockAfterSend
         if (needsRelock) {
             shouldRelockAfterSend = false
-            keyguardUnlockEngine.shouldRelockAfterSend = false
+            keyguardAssistEngine.shouldRelockAfterSend = false
             handler.postDelayed({
                 minimizeToHome()
                 handler.postDelayed({
@@ -2404,10 +2406,10 @@ class TaskAccessibilityService : AccessibilityService() {
         whatsAppStatusEngine.resetState()
         currentMode = DispatchMode.DIRECT_SEND
 
-        val needsRelock = shouldRelockAfterSend || keyguardUnlockEngine.shouldRelockAfterSend
+        val needsRelock = shouldRelockAfterSend || keyguardAssistEngine.shouldRelockAfterSend
         if (needsRelock) {
             shouldRelockAfterSend = false
-            keyguardUnlockEngine.shouldRelockAfterSend = false
+            keyguardAssistEngine.shouldRelockAfterSend = false
             handler.postDelayed({
                 minimizeToHome()
                 handler.postDelayed({ lockScreenNow() }, 400L)

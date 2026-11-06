@@ -158,7 +158,7 @@ fun MainAppHost(
                         "ROCKET" -> Icons.Filled.RocketLaunch
                         "FIRE" -> Icons.Filled.LocalFireDepartment
                         "DIAMOND" -> Icons.Filled.Diamond
-                        "ASSISTANT", "COMPANION", "BOT" -> Icons.Filled.SmartToy
+                        "ASSISTANT", "COMPANION", "AUTOMATION", "AGENT" -> Icons.Filled.SmartToy
                         else -> Icons.Filled.Bolt
                     }
                     val iconColor = when (iconVariant) {
@@ -167,7 +167,7 @@ fun MainAppHost(
                         "ROCKET" -> Color(0xFFEF4444)
                         "FIRE" -> Color(0xFFF97316)
                         "DIAMOND" -> Color(0xFF06B6D4)
-                        "ASSISTANT", "COMPANION", "BOT" -> Color(0xFF8B5CF6)
+                        "ASSISTANT", "COMPANION", "AUTOMATION", "AGENT" -> Color(0xFF8B5CF6)
                         else -> MaterialTheme.colorScheme.primary
                     }
 

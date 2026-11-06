@@ -304,8 +304,6 @@ class ModernStackArchitectureTest {
     @Test
     fun `test semantic success tokens and channel simulation backward compatibility`() {
         assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.SIMULATED_CALL)
-        @Suppress("DEPRECATION")
-        assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.FAKE_CALL)
         assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.fromString("CALL_SIMULATION"))
         assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.fromString("SIMULATED_CALL"))
     }

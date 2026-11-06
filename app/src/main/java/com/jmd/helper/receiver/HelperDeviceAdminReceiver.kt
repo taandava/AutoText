@@ -8,7 +8,7 @@
  * after autonomous WhatsApp messaging sessions.
  *
  * Linked With:
- * - Engine: [com.jmd.helper.whatsapp.KeyguardUnlockEngine]
+ * - Engine: [com.jmd.helper.whatsapp.KeyguardAssistEngine]
  * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
  * - UI Screens: `PermissionScreen`
  */

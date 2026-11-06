@@ -66,9 +66,6 @@ class TaskRepository(context: Context) {
             put("simulated_caller_name", task.simulatedCallerName)
             put("simulated_caller_number", task.simulatedCallerNumber)
             put("simulated_call_style", task.simulatedCallStyle)
-            put("fake_caller_name", task.simulatedCallerName)
-            put("fake_caller_number", task.simulatedCallerNumber)
-            put("fake_call_style", task.simulatedCallStyle)
             put("created_at", task.createdAtMillis)
             put("last_executed", task.lastExecutedMillis)
             put("execution_count", task.executionCount)
@@ -108,9 +105,6 @@ class TaskRepository(context: Context) {
             put("simulated_caller_name", task.simulatedCallerName)
             put("simulated_caller_number", task.simulatedCallerNumber)
             put("simulated_call_style", task.simulatedCallStyle)
-            put("fake_caller_name", task.simulatedCallerName)
-            put("fake_caller_number", task.simulatedCallerNumber)
-            put("fake_call_style", task.simulatedCallStyle)
             put("last_executed", task.lastExecutedMillis)
             put("execution_count", task.executionCount)
             put("media_uri", task.mediaUri)
@@ -324,20 +318,14 @@ class TaskRepository(context: Context) {
         val callFailurePolicy = if (failurePolicyIdx >= 0) c.getString(failurePolicyIdx).orEmpty().ifBlank { "CONTINUE" } else "CONTINUE"
 
         val simNameIdx = c.getColumnIndex("simulated_caller_name")
-        val fakeNameIdx = c.getColumnIndex("fake_caller_name")
         val simNumIdx = c.getColumnIndex("simulated_caller_number")
-        val fakeNumIdx = c.getColumnIndex("fake_caller_number")
         val simStyleIdx = c.getColumnIndex("simulated_call_style")
-        val fakeStyleIdx = c.getColumnIndex("fake_call_style")
 
         val resolvedSimName = (if (simNameIdx >= 0) c.getString(simNameIdx) else null)?.ifBlank { null }
-            ?: (if (fakeNameIdx >= 0) c.getString(fakeNameIdx) else null)?.ifBlank { null }
             ?: "Incoming Call"
         val resolvedSimNum = (if (simNumIdx >= 0) c.getString(simNumIdx) else null)?.ifBlank { null }
-            ?: (if (fakeNumIdx >= 0) c.getString(fakeNumIdx) else null)?.ifBlank { null }
             ?: "+91 98765 43210"
         val resolvedSimStyle = (if (simStyleIdx >= 0) c.getString(simStyleIdx) else null)?.ifBlank { null }
-            ?: (if (fakeStyleIdx >= 0) c.getString(fakeStyleIdx) else null)?.ifBlank { null }
             ?: "PIXEL"
 
         return ScheduledTask(

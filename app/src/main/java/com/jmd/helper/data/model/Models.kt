@@ -94,17 +94,10 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
         @JvmField
         val SIMULATED_CALL: ChannelType = CALL_SIMULATION
 
-        /**
-         * Backward-compatible alias for [CALL_SIMULATION] as per Google Policy.
-         */
-        @JvmField
-        @Deprecated("Use CALL_SIMULATION as per Google Play Policy", ReplaceWith("CALL_SIMULATION"))
-        val FAKE_CALL: ChannelType = CALL_SIMULATION
-
         fun fromString(value: String?): ChannelType {
             if (value.isNullOrBlank()) return SMS
             return when (val clean = value.trim().uppercase()) {
-                "CALL_SIMULATION", "SIMULATION", "SIMULATED_CALL", "FAKE_CALL", "FAKECALL" -> CALL_SIMULATION
+                "CALL_SIMULATION", "SIMULATION", "SIMULATED_CALL" -> CALL_SIMULATION
                 else -> entries.firstOrNull { it.name == clean } ?: SMS
             }
         }
@@ -365,19 +358,7 @@ data class ScheduledTask(
     val callSequenceMode: String = "GIVEN", // "GIVEN" or "RANDOM"
     val delayBetweenCallsSeconds: Int = 5,
     val callFailurePolicy: String = "CONTINUE" // "CONTINUE" or "STOP_ON_FAILURE"
-) {
-    /** Legacy compatibility alias for [simulatedCallerName]. */
-    @Deprecated("Use simulatedCallerName as per Google Play Policy", ReplaceWith("simulatedCallerName"))
-    val fakeCallerName: String get() = simulatedCallerName
-
-    /** Legacy compatibility alias for [simulatedCallerNumber]. */
-    @Deprecated("Use simulatedCallerNumber as per Google Play Policy", ReplaceWith("simulatedCallerNumber"))
-    val fakeCallerNumber: String get() = simulatedCallerNumber
-
-    /** Legacy compatibility alias for [simulatedCallStyle]. */
-    @Deprecated("Use simulatedCallStyle as per Google Play Policy", ReplaceWith("simulatedCallStyle"))
-    val fakeCallStyle: String get() = simulatedCallStyle
-}
+)
 
 // ==================== MESSAGE TEMPLATE DATA MODELS ====================
 

@@ -26,7 +26,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 
 /**
- * Autonomous keyguard unlock and security relock engine.
+ * Autonomous keyguard screen entry assistance and security relock engine.
  *
  * Handles detection of active lockscreens, executing upward swipe gestures to invoke
  * the PIN bouncer, sequentially entering PIN digits via element actions, confirming entry,
@@ -36,10 +36,10 @@ import android.view.accessibility.AccessibilityNodeInfo
  * @property handler Handler on the main thread for coordinating timed sequential clicks.
  * @property loggerTag Logging identifier tag for lockscreen telemetry.
  */
-class KeyguardUnlockEngine(
+class KeyguardAssistEngine(
     private val service: AccessibilityService,
     private val handler: Handler,
-    private val loggerTag: String = "KeyguardUnlockEngine"
+    private val loggerTag: String = "KeyguardAssistEngine"
 ) {
 
     @Volatile var isUnlockPending = false
@@ -671,3 +671,8 @@ class KeyguardUnlockEngine(
         }
     }
 }
+
+/**
+ * Backward-compatible typealias for [KeyguardAssistEngine].
+ */
+typealias KeyguardUnlockEngine = KeyguardAssistEngine

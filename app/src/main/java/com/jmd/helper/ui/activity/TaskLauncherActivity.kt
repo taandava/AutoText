@@ -11,7 +11,7 @@
  * Linked With:
  * - Engine: [com.jmd.helper.engine.SequentialTaskEngine]
  * - Dispatcher: [com.jmd.helper.whatsapp.WhatsAppIntentDispatcher]
- * - Keyguard: [com.jmd.helper.whatsapp.KeyguardUnlockEngine]
+ * - Keyguard: [com.jmd.helper.whatsapp.KeyguardAssistEngine]
  * - Service: [com.jmd.helper.service.TaskAccessibilityService]
  */
 package com.jmd.helper.ui.activity

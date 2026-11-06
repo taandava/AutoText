@@ -36,9 +36,9 @@ fun SettingsScreenAssistCard(
     prefs: PreferenceManager,
     modifier: Modifier = Modifier
 ) {
-    var isAutoUnlock by remember { mutableStateOf(prefs.isScreenAssistEnabled) }
-    var unlockType by remember { mutableStateOf(prefs.screenAssistType) }
-    var unlockPin by remember { mutableStateOf(prefs.screenAssistPin) }
+    var isScreenAssistEnabled by remember { mutableStateOf(prefs.isScreenAssistEnabled) }
+    var assistType by remember { mutableStateOf(prefs.screenAssistType) }
+    var assistPin by remember { mutableStateOf(prefs.screenAssistPin) }
     var isAutoLockAfterSend by remember { mutableStateOf(prefs.isAutoLockAfterSendEnabled) }
 
     AppCard(modifier = modifier.fillMaxWidth()) {
@@ -58,9 +58,9 @@ fun SettingsScreenAssistCard(
                 Text("Wakes screen and assists entry when scheduled tasks fire", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
             }
             Switch(
-                checked = isAutoUnlock,
+                checked = isScreenAssistEnabled,
                 onCheckedChange = {
-                    isAutoUnlock = it
+                    isScreenAssistEnabled = it
                     prefs.isScreenAssistEnabled = it
                 },
                 colors = SwitchDefaults.colors(
@@ -70,7 +70,7 @@ fun SettingsScreenAssistCard(
             )
         }
 
-        if (isAutoUnlock) {
+        if (isScreenAssistEnabled) {
             Spacer(modifier = Modifier.height(10.dp))
 
             Text("Screen Lock Type:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -86,10 +86,10 @@ fun SettingsScreenAssistCard(
                     "SWIPE" to "Swipe"
                 ).forEach { (type, label) ->
                     GlassChip(
-                        selected = unlockType == type,
+                        selected = assistType == type,
                         onClick = {
-                            unlockType = type
-                            prefs.autoUnlockType = type
+                            assistType = type
+                            prefs.screenAssistType = type
                         },
                         label = label,
                         activeColor = MaterialTheme.colorScheme.primary,
@@ -98,14 +98,14 @@ fun SettingsScreenAssistCard(
                 }
             }
 
-            if (unlockType == "PIN" || unlockType == "PASSWORD") {
+            if (assistType == "PIN" || assistType == "PASSWORD") {
                 Spacer(modifier = Modifier.height(10.dp))
-                val isPinMode = unlockType == "PIN"
+                val isPinMode = assistType == "PIN"
                 GlassInputField(
-                    value = unlockPin,
+                    value = assistPin,
                     onValueChange = {
-                        unlockPin = if (isPinMode) it.filter { ch -> ch.isDigit() } else it
-                        prefs.deviceUnlockPin = unlockPin
+                        assistPin = if (isPinMode) it.filter { ch -> ch.isDigit() } else it
+                        prefs.screenAssistPin = assistPin
                     },
                     label = if (isPinMode) "Device Number Lock PIN" else "Device Lock Password",
                     placeholder = "Enter your phone's PIN or Password",
@@ -168,12 +168,12 @@ fun SettingsScreenAssistCard(
                 GlassButton(
                     text = "Test Screen Wake & Unlock",
                     onClick = {
-                        val currentPin = unlockPin.ifBlank { prefs.deviceUnlockPin }
-                        if (!isAutoUnlock) {
-                            isAutoUnlock = true
-                            prefs.isAutoUnlockEnabled = true
+                        val currentPin = assistPin.ifBlank { prefs.screenAssistPin }
+                        if (!isScreenAssistEnabled) {
+                            isScreenAssistEnabled = true
+                            prefs.isScreenAssistEnabled = true
                         }
-                        TaskAccessibilityService.testLockAndAutoUnlock(context, currentPin)
+                        TaskAccessibilityService.testScreenAssist(context, currentPin)
                     },
                     icon = Icons.Filled.LockOpen,
                     variant = GlassButtonVariant.PRIMARY,
