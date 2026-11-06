@@ -62,10 +62,48 @@ class WhatsAppSender(private val context: Context) {
         val targetPkg = if (isBusiness) "com.whatsapp.w4b" else "com.whatsapp"
 
         val isStatus = (channel == ChannelType.WHATSAPP_STATUS || channel == ChannelType.WHATSAPP_BUSINESS_STATUS)
+        val isGroup = (channel == ChannelType.WHATSAPP_GROUP || recipientPhone.startsWith("group:", ignoreCase = true))
 
         return when {
             isStatus -> sendWhatsAppStatusMessage(targetPkg, taskId, mediaUri, shouldRelock, messageText)
+            isGroup -> sendWhatsAppGroupMessage(targetPkg, taskId, mediaUri, shouldRelock, isBatchCampaign, recipientPhone, messageText)
             else -> sendWhatsAppDirectChatMessage(targetPkg, taskId, mediaUri, shouldRelock, isBatchCampaign, recipientPhone, messageText)
+        }
+    }
+
+    private fun sendWhatsAppGroupMessage(
+        targetPkg: String,
+        taskId: Long,
+        mediaUri: String,
+        shouldRelock: Boolean,
+        isBatchCampaign: Boolean,
+        recipientGroup: String,
+        messageText: String
+    ): Boolean {
+        return try {
+            val cleanGroupName = recipientGroup.replaceFirst(Regex("^group\\s*:", RegexOption.IGNORE_CASE), "").trim()
+            TaskAccessibilityService.prepareForGroup(
+                taskId = taskId,
+                packageName = targetPkg,
+                groupName = cleanGroupName,
+                messageText = messageText,
+                shouldRelock = shouldRelock,
+                isBatchCampaign = isBatchCampaign,
+                mediaUri = mediaUri
+            )
+            val launchIntent = context.packageManager.getLaunchIntentForPackage(targetPkg)
+            if (launchIntent != null) {
+                launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                context.startActivity(launchIntent)
+                Log.d(tag, "sendWhatsAppGroupMessage: Dispatched launch intent for $targetPkg group search: '$cleanGroupName'")
+                true
+            } else {
+                Log.e(tag, "sendWhatsAppGroupMessage: Launch intent null for $targetPkg")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "sendWhatsAppGroupMessage failed: ${e.message}", e)
+            false
         }
     }
 

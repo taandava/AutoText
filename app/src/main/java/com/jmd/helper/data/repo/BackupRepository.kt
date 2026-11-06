@@ -231,21 +231,21 @@ class BackupRepository(context: Context) {
             var count = 0
 
             db.transaction {
-                for (task in payload.tasks) {
+                for ((_, title, message, recipient, recipientNames, scheduledTime, channel, status, recurrence, recurrenceIntervalMins, mediaUri, callDurationSeconds, simSlot, soundMode) in payload.tasks) {
                     val cv = ContentValues().apply {
-                        put("title", task.title)
-                        put("message_text", task.message)
-                        put("recipients", task.recipient)
-                        put("recipient_names", task.recipientNames)
-                        put("trigger_time", task.scheduledTime)
-                        put("channel", task.channel)
-                        put("status", task.status)
-                        put("recurrence", task.recurrence)
-                        put("custom_interval_minutes", task.recurrenceIntervalMins.toInt())
-                        put("media_uri", task.mediaUri ?: "")
-                        put("call_duration_seconds", task.callDurationSeconds)
-                        put("sim_slot", task.simSlot)
-                        put("sound_mode", task.soundMode ?: "NORMAL")
+                        put("title", title)
+                        put("message_text", message)
+                        put("recipients", recipient)
+                        put("recipient_names", recipientNames)
+                        put("trigger_time", scheduledTime)
+                        put("channel", channel)
+                        put("status", status)
+                        put("recurrence", recurrence)
+                        put("custom_interval_minutes", recurrenceIntervalMins.toInt())
+                        put("media_uri", mediaUri ?: "")
+                        put("call_duration_seconds", callDurationSeconds)
+                        put("sim_slot", simSlot)
+                        put("sound_mode", soundMode ?: "NORMAL")
                     }
                     db.insertWithOnConflict(DatabaseHelper.TABLE_TASKS, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
                     count++
@@ -274,29 +274,29 @@ class BackupRepository(context: Context) {
                     count++
                 }
 
-                for (camp in payload.dailyCampaigns) {
+                for ((id, title, channel, messageTemplate, dailyLimit, simSlot, isActive) in payload.dailyCampaigns) {
                     val cv = ContentValues().apply {
-                        put("id", camp.id)
-                        put("title", camp.title)
-                        put("channel", camp.channel)
-                        put("message_template", camp.messageTemplate)
-                        put("daily_limit", camp.dailyLimit)
-                        put("sim_slot", camp.simSlot)
-                        put("is_active", if (camp.isActive) 1 else 0)
+                        put("id", id)
+                        put("title", title)
+                        put("channel", channel)
+                        put("message_template", messageTemplate)
+                        put("daily_limit", dailyLimit)
+                        put("sim_slot", simSlot)
+                        put("is_active", if (isActive) 1 else 0)
                     }
                     db.insertWithOnConflict(DatabaseHelper.TABLE_DAILY_CAMPAIGN, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
                     count++
                 }
 
-                for (contact in payload.contacts) {
+                for ((_, displayName, phoneNumber, normalizedPhone, _, lastReachedTimestamp, reachCount) in payload.contacts) {
                     val cv = ContentValues().apply {
-                        put("name", contact.displayName)
-                        put("phone", contact.phoneNumber)
-                        put("normalized_number", contact.normalizedPhone.ifBlank { contact.phoneNumber })
+                        put("name", displayName)
+                        put("phone", phoneNumber)
+                        put("normalized_number", normalizedPhone.ifBlank { phoneNumber })
                         put("source", "BACKUP")
                         put("enabled", 1)
-                        put("last_sent_at", contact.lastReachedTimestamp)
-                        put("send_count", contact.reachCount)
+                        put("last_sent_at", lastReachedTimestamp)
+                        put("send_count", reachCount)
                         put("created_at", System.currentTimeMillis())
                     }
                     db.insertWithOnConflict(DatabaseHelper.TABLE_DYNAMIC_POOL, null, cv, SQLiteDatabase.CONFLICT_REPLACE)

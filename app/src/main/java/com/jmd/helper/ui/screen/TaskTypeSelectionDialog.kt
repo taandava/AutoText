@@ -85,6 +85,13 @@ fun TaskTypeSelectionDialog(
             channel = ChannelType.WHATSAPP_BUSINESS,
         ),
         TaskTypeItem(
+            title = "WhatsApp Group",
+            description = "Send WhatsApp group messages or announcements",
+            icon = Icons.Filled.Groups,
+            color = Color(0xFF15803D),
+            channel = ChannelType.WHATSAPP_GROUP,
+        ),
+        TaskTypeItem(
             title = "Status Story",
             description = "Schedule auto-posting text or photo/video stories to Status",
             icon = Icons.Filled.PhotoCamera,

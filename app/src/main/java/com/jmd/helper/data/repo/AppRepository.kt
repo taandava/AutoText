@@ -587,6 +587,13 @@ class AppRepository(private val context: Context) {
     fun getWhatsAppContacts(query: String = "", channel: ChannelType = ChannelType.WHATSAPP, limit: Int = 10000): List<WhatsAppContactItem> =
         whatsAppRepo.getWhatsAppContacts(query, channel, limit)
 
+    // ==================== WHATSAPP GROUPS ====================
+    fun getWhatsAppGroupItems(): List<com.jmd.helper.data.model.WhatsAppGroupItem> = whatsAppRepo.getWhatsAppGroupItems()
+    fun saveWhatsAppGroup(group: com.jmd.helper.data.model.WhatsAppGroupItem): Boolean = whatsAppRepo.saveWhatsAppGroup(group)
+    fun bulkSaveWhatsAppGroupItems(groups: List<com.jmd.helper.data.model.WhatsAppGroupItem>): Int = whatsAppRepo.bulkSaveWhatsAppGroupItems(groups)
+    fun deleteWhatsAppGroup(groupName: String): Boolean = whatsAppRepo.deleteWhatsAppGroup(groupName)
+    fun isValidGroupName(name: String): Boolean = whatsAppRepo.isValidGroupName(name)
+
     // ==================== BACKUP ====================
     fun exportDatabaseToJson(): String = backupRepo.exportDatabaseToJson()
     fun importDatabaseFromJson(jsonStr: String): Result<String> = backupRepo.importDatabaseFromJson(jsonStr)

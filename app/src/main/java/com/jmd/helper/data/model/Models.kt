@@ -77,6 +77,7 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
     SMS("SMS", "📩"),
     WHATSAPP("WhatsApp", "💬"),
     WHATSAPP_BUSINESS("WA Business", "💼"),
+    WHATSAPP_GROUP("WhatsApp Group", "👥"),
     WHATSAPP_STATUS("WA Status", "📸"),
     WHATSAPP_BUSINESS_STATUS("W4B Status", "📸💼"),
     CALL("Phone Call", "📞"),
@@ -97,7 +98,7 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
             if (value.isNullOrBlank()) return SMS
             return when (val clean = value.trim().uppercase()) {
                 "CALL_SIMULATION", "SIMULATION", "SIMULATED_CALL" -> CALL_SIMULATION
-                "WHATSAPP_GROUP" -> WHATSAPP
+                "WHATSAPP_GROUP", "GROUP", "WA_GROUP" -> WHATSAPP_GROUP
                 else -> entries.firstOrNull { it.name == clean } ?: SMS
             }
         }
@@ -134,6 +135,15 @@ data class WhatsAppContactItem(
     val normalizedPhone: String = "",
     val accountType: String = "com.whatsapp",
     val photoUri: String = ""
+)
+
+data class WhatsAppGroupItem(
+    val name: String,
+    val participantCount: String = "",
+    val lastDiscoveredAt: Long = System.currentTimeMillis(),
+    val packageName: String = "com.whatsapp",
+    val photoUri: String = "",
+    val description: String = ""
 )
 
 // ==================== QUICK REPLY RULE DATA MODELS ====================
@@ -365,6 +375,7 @@ data class MessageTemplate(
 
 enum class PickedChatType(val displayName: String) {
     INDIVIDUAL("Individual"),
+    GROUP("Group"),
     BROADCAST("Broadcast List"),
     STATUS("Status"),
     CHANNEL("Channel")

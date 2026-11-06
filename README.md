@@ -44,7 +44,7 @@ com.jmd.helper/
 │   ├── screen/             # Dashboard, Logs, Settings, WhatsAppSetup, ScreenAssistCard
 │   │   └── permission/     # AppPrivilege, PermissionHeroCard, PermissionRowItem, GuidanceCards
 │   └── theme/              # Color, Type, Shape, Theme, AppLayoutGrid & Semantic Palette
-└── whatsapp/               # KeyguardAssistEngine, WhatsAppCallEngine, DirectSend, StatusEngine
+└── whatsapp/               # KeyguardAssistEngine, WhatsAppCallEngine, WhatsAppGroupEngine, DirectSend, StatusEngine
 ```
 
 ---
@@ -76,7 +76,7 @@ com.jmd.helper/
 
 ## Verification & Test Suite
 
-The codebase enforces strict test-driven quality with **125 unit tests** passing with 100% success:
+The codebase enforces strict test-driven quality with **126 unit tests** passing with 100% success:
 
 ```powershell
 # Set JDK 21 environment

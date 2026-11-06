@@ -572,6 +572,20 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         """.trimIndent())
         addColumnIfNotExists(db, TABLE_TASK_DELIVERIES, "occurrence_id", "TEXT NOT NULL DEFAULT ''")
         addColumnIfNotExists(db, TABLE_LOGS, "segments", "INTEGER DEFAULT 1")
+
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_WHATSAPP_GROUPS (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                participant_count TEXT DEFAULT '',
+                last_discovered_at INTEGER DEFAULT 0,
+                package_name TEXT DEFAULT 'com.whatsapp',
+                photo_uri TEXT DEFAULT '',
+                description TEXT DEFAULT ''
+            )
+        """.trimIndent())
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_wa_groups_name ON $TABLE_WHATSAPP_GROUPS(name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_wa_groups_pkg ON $TABLE_WHATSAPP_GROUPS(package_name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         // Backfill legacy logs where segments column defaulted to 1 but details recorded multiple segments/parts
         try {
             db.rawQuery("SELECT id, details, message_snippet FROM $TABLE_LOGS WHERE segments <= 1 AND (details LIKE '%parts:%' OR details LIKE '%segments:%')", null).use { cursor ->

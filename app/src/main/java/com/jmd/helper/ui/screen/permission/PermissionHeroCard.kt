@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.helper.ui.screen.permission
- * Module: UI Permission Center - Hero System Health Card
+ * Module: UI Permission Center - Executive Hero System Health Card
  */
 package com.jmd.helper.ui.screen.permission
 
@@ -12,16 +12,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.HourglassTop
+import androidx.compose.material.icons.filled.PermContactCalendar
 import androidx.compose.material.icons.filled.SecurityUpdateWarning
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Terminal
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +33,7 @@ import com.jmd.helper.core.AccessibilityHealthManager
 import com.jmd.helper.core.showAppToast
 import com.jmd.helper.ui.components.GlassButton
 import com.jmd.helper.ui.components.GlassButtonVariant
+import com.jmd.helper.ui.theme.AppDesignTokens
 import com.jmd.helper.ui.theme.AppLayoutGrid
 import com.jmd.helper.ui.theme.AppSemanticColors
 import kotlinx.coroutines.Dispatchers
@@ -36,8 +41,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Modern Material 3 Hero System Health Card with dynamic luminance contrast,
- * animated progress gauge, and full 8-privilege status chip grid.
+ * Executive System Health Card presenting real-time system privilege readiness,
+ * dynamic completion gauge, 3-pillar architectural summary, and self-healing action controls.
  */
 @Composable
 fun PermissionHeroCard(
@@ -58,6 +63,14 @@ fun PermissionHeroCard(
     val successAccent = AppSemanticColors.success
     val primaryAccent = MaterialTheme.colorScheme.primary
 
+    val corePrivileges = remember { AppPrivilege.entries.filter { it.category == PrivilegeCategory.CORE } }
+    val systemPrivileges = remember { AppPrivilege.entries.filter { it.category == PrivilegeCategory.SYSTEM } }
+    val commPrivileges = remember { AppPrivilege.entries.filter { it.category == PrivilegeCategory.COMMUNICATION } }
+
+    val coreCount = corePrivileges.count { privilegeStates[it] == true }
+    val systemCount = systemPrivileges.count { privilegeStates[it] == true }
+    val commCount = commPrivileges.count { privilegeStates[it] == true }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(AppLayoutGrid.CardCornerRadius),
@@ -75,7 +88,7 @@ fun PermissionHeroCard(
                 .fillMaxWidth()
                 .padding(AppLayoutGrid.SpaceMedium)
         ) {
-            // Header: Title, Description, and Percentage Gauge
+            // Header: Shield Icon, Headline Status & Circular Metric Badge
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -87,7 +100,7 @@ fun PermissionHeroCard(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(44.dp)
+                            .size(46.dp)
                             .background(
                                 color = if (isAllGranted) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
                                 shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius)
@@ -98,7 +111,7 @@ fun PermissionHeroCard(
                             imageVector = if (isAllGranted) Icons.Default.Shield else Icons.Default.SecurityUpdateWarning,
                             contentDescription = null,
                             tint = if (isAllGranted) successAccent else primaryAccent,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(26.dp)
                         )
                     }
 
@@ -106,7 +119,7 @@ fun PermissionHeroCard(
 
                     Column {
                         Text(
-                            text = if (isAllGranted) "System Protected & Ready" else "System Health Check",
+                            text = if (isAllGranted) "All Systems Operational" else "System Health Check",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -114,9 +127,9 @@ fun PermissionHeroCard(
                         Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceMicro))
                         Text(
                             text = if (isAllGranted) {
-                                "All $totalCount privileges authorized & active."
+                                "All $totalCount system privileges active & armed"
                             } else {
-                                "$grantedCount of $totalCount privileges authorized."
+                                "${totalCount - grantedCount} privilege(s) require authorization"
                             },
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -144,7 +157,7 @@ fun PermissionHeroCard(
 
             Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceStandard))
 
-            // Progress Bar
+            // Smooth Animated Progress Bar
             LinearProgressIndicator(
                 progress = { animatedProgress },
                 modifier = Modifier
@@ -155,36 +168,39 @@ fun PermissionHeroCard(
                 trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
             )
 
-            Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceStandard))
+            Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceMedium))
 
-            // Comprehensive 8-Privilege Micro Status Chips Grid
-            Column(
+            // 3-Pillar Executive Architectural Status Row
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceXS)
+                horizontalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceSmall)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    HealthMiniChip(name = "Engine", isGranted = privilegeStates[AppPrivilege.ACCESSIBILITY] == true)
-                    HealthMiniChip(name = "Alarms", isGranted = privilegeStates[AppPrivilege.EXACT_ALARM] == true)
-                    HealthMiniChip(name = "Notifs", isGranted = privilegeStates[AppPrivilege.NOTIFICATION_LISTENER] == true)
-                    HealthMiniChip(name = "Battery", isGranted = privilegeStates[AppPrivilege.BATTERY_SAVER] == true)
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    HealthMiniChip(name = "Overlay", isGranted = privilegeStates[AppPrivilege.OVERLAY] == true)
-                    HealthMiniChip(name = "Admin", isGranted = privilegeStates[AppPrivilege.DEVICE_ADMIN] == true)
-                    HealthMiniChip(name = "Comms", isGranted = privilegeStates[AppPrivilege.COMMUNICATIONS] == true)
-                    HealthMiniChip(name = "Sound", isGranted = privilegeStates[AppPrivilege.NOTIFICATION_POLICY] == true)
-                }
+                CategoryPillarItem(
+                    title = "Core Automation",
+                    count = coreCount,
+                    total = corePrivileges.size,
+                    icon = Icons.Default.Bolt,
+                    modifier = Modifier.weight(1f)
+                )
+                CategoryPillarItem(
+                    title = "System & Power",
+                    count = systemCount,
+                    total = systemPrivileges.size,
+                    icon = Icons.Default.Tune,
+                    modifier = Modifier.weight(1f)
+                )
+                CategoryPillarItem(
+                    title = "Device & Comms",
+                    count = commCount,
+                    total = commPrivileges.size,
+                    icon = Icons.Default.PermContactCalendar,
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceMedium))
 
-            // Quick Actions Row
+            // Action Buttons
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceSmall)
@@ -225,35 +241,57 @@ fun PermissionHeroCard(
     }
 }
 
+/**
+ * Pillar card showing health of an operational subsystem category.
+ */
 @Composable
-private fun HealthMiniChip(name: String, isGranted: Boolean) {
-    val activeColor = AppSemanticColors.success
-    val inactiveColor = MaterialTheme.colorScheme.outline
-    val bg = if (isGranted) AppSemanticColors.successContainer else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+private fun CategoryPillarItem(
+    title: String,
+    count: Int,
+    total: Int,
+    icon: ImageVector,
+    modifier: Modifier = Modifier
+) {
+    val isComplete = count >= total
+    val accent = if (isComplete) AppSemanticColors.success else MaterialTheme.colorScheme.primary
+    val containerBg = if (isComplete) AppSemanticColors.successContainer.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
 
     Surface(
-        shape = RoundedCornerShape(AppLayoutGrid.ChipCornerRadius),
-        color = bg,
-        modifier = Modifier.padding(horizontal = AppLayoutGrid.SpaceMicro)
+        shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius),
+        color = containerBg,
+        border = BorderStroke(
+            AppLayoutGrid.BorderWidthStandard,
+            if (isComplete) AppSemanticColors.successBorder else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+        ),
+        modifier = modifier
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = AppLayoutGrid.SpaceSmall, vertical = AppLayoutGrid.SpaceXS),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = AppLayoutGrid.SpaceSmall, horizontal = AppLayoutGrid.SpaceXS),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .size(6.dp)
-                    .background(
-                        color = if (isGranted) activeColor else inactiveColor,
-                        shape = CircleShape
-                    )
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = accent,
+                modifier = Modifier.size(18.dp)
             )
-            Spacer(modifier = Modifier.width(5.dp))
+            Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceMicro))
             Text(
-                text = name,
-                fontSize = 11.sp,
+                text = title,
+                fontSize = 10.sp,
                 fontWeight = FontWeight.Medium,
-                color = if (isGranted) activeColor else MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "$count/$total Ready",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                color = accent
             )
         }
     }

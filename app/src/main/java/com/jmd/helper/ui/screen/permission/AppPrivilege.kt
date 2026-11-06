@@ -211,3 +211,4 @@ enum class AppPrivilege(
         }
     }
 }
+

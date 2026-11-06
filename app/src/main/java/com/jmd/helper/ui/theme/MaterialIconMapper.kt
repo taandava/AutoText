@@ -33,6 +33,7 @@ object MaterialIconMapper {
         ChannelType.SMS -> Icons.AutoMirrored.Filled.Message
         ChannelType.WHATSAPP -> Icons.AutoMirrored.Filled.Chat
         ChannelType.WHATSAPP_BUSINESS -> Icons.Filled.BusinessCenter
+        ChannelType.WHATSAPP_GROUP -> Icons.Filled.Groups
         ChannelType.WHATSAPP_STATUS -> Icons.Filled.PhotoCamera
         ChannelType.WHATSAPP_BUSINESS_STATUS -> Icons.Filled.Camera
         ChannelType.CALL -> Icons.Filled.Phone
@@ -47,6 +48,7 @@ object MaterialIconMapper {
         ChannelType.SMS -> Color(0xFF2563EB) // Vibrant Blue
         ChannelType.WHATSAPP -> Color(0xFF16A34A) // WhatsApp Green
         ChannelType.WHATSAPP_BUSINESS -> Color(0xFF0D9488) // Business Teal
+        ChannelType.WHATSAPP_GROUP -> Color(0xFF15803D) // Emerald Group
         ChannelType.WHATSAPP_STATUS -> Color(0xFF7C3AED) // Vibrant Purple
         ChannelType.WHATSAPP_BUSINESS_STATUS -> Color(0xFF4F46E5) // Indigo
         ChannelType.CALL -> Color(0xFF10B981) // Green Phone
