@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 package com.jmd.helper.ui.screen.compose
 
 import androidx.compose.foundation.background

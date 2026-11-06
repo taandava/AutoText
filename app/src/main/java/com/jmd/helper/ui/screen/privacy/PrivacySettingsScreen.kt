@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 /**
  * Package: com.jmd.helper.ui.screen.privacy
  * Module: UI Privacy Layer

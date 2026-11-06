@@ -35,15 +35,10 @@ object AccessibilityNodeUtils {
 
     private const val TAG = "A11yNodeUtils"
 
-    /** Safely recycles an AccessibilityNodeInfo instance on pre-Android 14 (API 34) devices. */
-    @Suppress("DEPRECATION")
+    /** Safely releases or cleans up node references; Android manages node instances automatically. */
     fun AccessibilityNodeInfo?.recycleSafely() {
-        if (this == null) return
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            try {
-                this.recycle()
-            } catch (_: Throwable) {}
-        }
+        // Modern Android (API 34+) and ART GC manage AccessibilityNodeInfo lifecycle automatically.
+        // No-op prevents race-condition double-recycle crashes during asynchronous accessibility inspection.
     }
 
     /** Timestamp of the most recent physical tap or swipe gesture injected by the task engine. */

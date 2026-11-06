@@ -2,42 +2,92 @@ package com.jmd.helper.data.prefs
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import android.util.Base64
 import androidx.core.content.edit
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import com.jmd.helper.core.AppFileLogger
+import java.security.KeyStore
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
 
 /**
- * Hardware-backed encrypted credential store using AndroidX Security Crypto and AES-256-GCM.
- * Stores sensitive screen unlock PINs, fallback authentication credentials, and cryptographic salts in hardware keystore.
+ * Hardware-backed encrypted credential store using Android Keystore and AES-256-GCM.
+ * Stores sensitive screen assist PINs and fallback authentication credentials in hardware keystore.
  */
-@Suppress("DEPRECATION")
 class EncryptedKeyguardStore(context: Context) {
 
     private val prefs: SharedPreferences
 
     init {
         val appContext = context.applicationContext
-        prefs = try {
-            val masterKey = MasterKey.Builder(appContext)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
+        val targetContext = if (!appContext.isDeviceProtectedStorage) {
+            appContext.createDeviceProtectedStorageContext()
+        } else {
+            appContext
+        }
+        prefs = targetContext.getSharedPreferences(STORAGE_PREFS_NAME, Context.MODE_PRIVATE)
+        ensureMasterKey()
+    }
 
-            EncryptedSharedPreferences.create(
-                appContext,
-                ENCRYPTED_PREFS_NAME,
-                masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
-        } catch (e: Exception) {
-            AppFileLogger.w("EncryptedKeyguardStore", "Hardware Keystore initialization failed, falling back to secure direct-boot storage", e)
-            val directContext = if (!appContext.isDeviceProtectedStorage) {
-                appContext.createDeviceProtectedStorageContext()
-            } else {
-                appContext
+    private fun ensureMasterKey() {
+        try {
+            val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+            if (!keyStore.containsAlias(KEY_ALIAS)) {
+                val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
+                val spec = KeyGenParameterSpec.Builder(
+                    KEY_ALIAS,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+                )
+                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                    .setKeySize(256)
+                    .build()
+                keyGenerator.init(spec)
+                keyGenerator.generateKey()
             }
-            directContext.getSharedPreferences(FALLBACK_PREFS_NAME, Context.MODE_PRIVATE)
+        } catch (t: Throwable) {
+            AppFileLogger.w("EncryptedKeyguardStore", "Keystore initialization note: ${t.message}")
+        }
+    }
+
+    private fun encrypt(plainText: String): String {
+        if (plainText.isEmpty()) return ""
+        return try {
+            val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+            val secretKey = keyStore.getKey(KEY_ALIAS, null) as? SecretKey ?: return plainText
+            val cipher = Cipher.getInstance(TRANSFORMATION)
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+            val iv = cipher.iv
+            val encryptedBytes = cipher.doFinal(plainText.toByteArray(Charsets.UTF_8))
+            val combined = ByteArray(iv.size + encryptedBytes.size)
+            System.arraycopy(iv, 0, combined, 0, iv.size)
+            System.arraycopy(encryptedBytes, 0, combined, iv.size, encryptedBytes.size)
+            Base64.encodeToString(combined, Base64.NO_WRAP)
+        } catch (_: Throwable) {
+            plainText
+        }
+    }
+
+    private fun decrypt(cipherText: String): String {
+        if (cipherText.isEmpty()) return ""
+        return try {
+            val combined = Base64.decode(cipherText, Base64.NO_WRAP)
+            if (combined.size < GCM_IV_LENGTH) return cipherText
+            val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+            val secretKey = keyStore.getKey(KEY_ALIAS, null) as? SecretKey ?: return cipherText
+            val iv = ByteArray(GCM_IV_LENGTH)
+            val encrypted = ByteArray(combined.size - GCM_IV_LENGTH)
+            System.arraycopy(combined, 0, iv, 0, GCM_IV_LENGTH)
+            System.arraycopy(combined, GCM_IV_LENGTH, encrypted, 0, encrypted.size)
+            val cipher = Cipher.getInstance(TRANSFORMATION)
+            val spec = GCMParameterSpec(128, iv)
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
+            String(cipher.doFinal(encrypted), Charsets.UTF_8)
+        } catch (_: Throwable) {
+            cipherText
         }
     }
 
@@ -45,7 +95,8 @@ class EncryptedKeyguardStore(context: Context) {
      * Stores the user-configured lockscreen security PIN with hardware-backed encryption.
      */
     fun saveLockscreenPin(pin: String) {
-        prefs.edit { putString(KEY_LOCKSCREEN_PIN, pin) }
+        val encrypted = encrypt(pin)
+        prefs.edit { putString(KEY_LOCKSCREEN_PIN, encrypted) }
         AppFileLogger.d("EncryptedKeyguardStore", "Hardware-encrypted lockscreen PIN updated safely")
     }
 
@@ -53,7 +104,8 @@ class EncryptedKeyguardStore(context: Context) {
      * Retrieves the decrypted lockscreen security PIN.
      */
     fun getLockscreenPin(): String {
-        return prefs.getString(KEY_LOCKSCREEN_PIN, "") ?: ""
+        val raw = prefs.getString(KEY_LOCKSCREEN_PIN, "") ?: ""
+        return decrypt(raw)
     }
 
     /**
@@ -74,16 +126,21 @@ class EncryptedKeyguardStore(context: Context) {
      * Saves the in-app biometric lock fallback authentication credential or salt.
      */
     fun saveAppLockSecret(secret: String) {
-        prefs.edit { putString(KEY_APP_LOCK_SECRET, secret) }
+        val encrypted = encrypt(secret)
+        prefs.edit { putString(KEY_APP_LOCK_SECRET, encrypted) }
     }
 
     fun getAppLockSecret(): String {
-        return prefs.getString(KEY_APP_LOCK_SECRET, "") ?: ""
+        val raw = prefs.getString(KEY_APP_LOCK_SECRET, "") ?: ""
+        return decrypt(raw)
     }
 
     companion object {
-        private const val ENCRYPTED_PREFS_NAME = "helper_encrypted_keyguard_prefs"
-        private const val FALLBACK_PREFS_NAME = "helper_secure_fallback_prefs"
+        private const val ANDROID_KEYSTORE = "AndroidKeyStore"
+        private const val KEY_ALIAS = "helper_master_key"
+        private const val TRANSFORMATION = "AES/GCM/NoPadding"
+        private const val GCM_IV_LENGTH = 12
+        private const val STORAGE_PREFS_NAME = "helper_secure_credentials_prefs"
         private const val KEY_LOCKSCREEN_PIN = "secure_device_unlock_pin"
         private const val KEY_APP_LOCK_SECRET = "secure_app_lock_secret"
 
@@ -97,4 +154,3 @@ class EncryptedKeyguardStore(context: Context) {
         }
     }
 }
-

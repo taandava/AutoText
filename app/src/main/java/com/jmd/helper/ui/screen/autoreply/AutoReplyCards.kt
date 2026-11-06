@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 package com.jmd.helper.ui.screen.autoreply
 
 import androidx.compose.material.icons.automirrored.filled.*

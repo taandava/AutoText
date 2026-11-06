@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 package com.jmd.helper.ui.components
 
 import android.app.AlarmManager

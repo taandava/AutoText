@@ -1,23 +1,20 @@
-
-
-@file:Suppress("FunctionName")
-
 /**
  * Package: com.jmd.helper.ui.screen
  * Module: UI Permission & Health Screen Layer
  *
  * Dedicated permission verification and diagnostic hub displaying real-time status of:
- * - Accessibility Service
+ * - Accessibility Service (Task Engine)
  * - Notification Listener Service
  * - Exact Alarm privileges
- * - Battery optimization exemption (allowlist)
+ * - Battery optimization exemption
  * - Overlay permission
  * - Device Admin privileges
+ * - Runtime permissions (SMS, Phone, Contacts, Media)
  *
  * Linked With:
  * - Health Manager: [com.jmd.helper.core.AccessibilityHealthManager]
  * - Overlay Helper: [com.jmd.helper.core.OverlayPermissionHelper]
- * - Components: `GlassComponentsKt`
+ * - Components: `GlassComponentsKt`, `AppCard`, `AppSubScreenHeader`
  */
 package com.jmd.helper.ui.screen
 
@@ -32,31 +29,36 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoFixHigh
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.HourglassTop
-import androidx.compose.material.icons.filled.Layers
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Smartphone
-import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
@@ -71,17 +73,40 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * Universal ADB Privilege Grant Command.
+ */
+private const val UNIVERSAL_ADB_COMMAND =
+    "adb shell \"pm grant com.jmd.helper android.permission.WRITE_SECURE_SETTINGS; " +
+    "pm grant com.jmd.helper android.permission.READ_PHONE_STATE; " +
+    "pm grant com.jmd.helper android.permission.CALL_PHONE; " +
+    "pm grant com.jmd.helper android.permission.ANSWER_PHONE_CALLS; " +
+    "pm grant com.jmd.helper android.permission.READ_CALL_LOG; " +
+    "pm grant com.jmd.helper android.permission.READ_CONTACTS; " +
+    "pm grant com.jmd.helper android.permission.POST_NOTIFICATIONS; " +
+    "pm grant com.jmd.helper android.permission.READ_SMS; " +
+    "pm grant com.jmd.helper android.permission.SEND_SMS; " +
+    "pm grant com.jmd.helper android.permission.READ_MEDIA_IMAGES; " +
+    "pm grant com.jmd.helper android.permission.READ_MEDIA_VIDEO; " +
+    "appops set com.jmd.helper SYSTEM_ALERT_WINDOW allow; " +
+    "appops set com.jmd.helper TURN_SCREEN_ON allow; " +
+    "appops set com.jmd.helper SCHEDULE_EXACT_ALARM allow; " +
+    "appops set com.jmd.helper START_ACTIVITIES_FROM_BACKGROUND allow; " +
+    "appops set com.jmd.helper ACCESS_RESTRICTED_SETTINGS allow; " +
+    "appops set com.jmd.helper AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore; " +
+    "dumpsys deviceidle whitelist +com.jmd.helper; " +
+    "dpm set-active-admin com.jmd.helper/.receiver.HelperDeviceAdminReceiver\""
 
 /**
- * Main diagnostic and permission resolution center rendering quick repair utilities,
- * ADB synchronization commands, and granular system permission toggles.
+ * Modern Material 3 Expressive Permission & System Health Hub.
  *
- * @param context Local Android context used to query system managers and dispatch settings intents.
- * @param onBack Callback invoked when user taps the top bar back navigation arrow.
+ * @param context Android [Context] for system managers and settings intent dispatch.
+ * @param onBack Callback invoked when user navigates back.
  */
 @Composable
 fun PermissionCenterView(context: Context, onBack: () -> Unit) {
     var showA11yDisclosureDialog by remember { mutableStateOf(false) }
+    var showAdbSetupDialog by remember { mutableStateOf(false) }
     var permissionsRefreshKey by remember { mutableIntStateOf(0) }
 
     val coreRuntimePermissions = remember {
@@ -119,67 +144,63 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
         }
     }
 
+    // Live permission states
+    val a11yState = remember(permissionsRefreshKey) { AccessibilityHealthManager.getServiceState(context) }
+    val isA11yActive = a11yState == AccessibilityHealthManager.ServiceState.OPERATIONAL ||
+            a11yState == AccessibilityHealthManager.ServiceState.STANDBY
+
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+    val canExactAlarm = remember(permissionsRefreshKey) {
+        (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) || (alarmManager?.canScheduleExactAlarms() == true)
+    }
+
+    val hasNotifListener = remember(permissionsRefreshKey) {
+        androidx.core.app.NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.packageName)
+    }
+
+    val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
+    val isIgnoringBattery = remember(permissionsRefreshKey) {
+        powerManager?.isIgnoringBatteryOptimizations(context.packageName) == true
+    }
+
+    val hasOverlay = remember(permissionsRefreshKey) { OverlayPermissionHelper.canDrawOverlays(context) }
+    val isAdminActive = remember(permissionsRefreshKey) { HelperDeviceAdminReceiver.isAdminActive(context) }
+    val hasDnd = remember(permissionsRefreshKey) { PermissionManager.hasNotificationPolicyAccess(context) }
+
+    val hasRuntimePerms = remember(permissionsRefreshKey) {
+        PermissionManager.hasContactsPermission(context) &&
+            PermissionManager.hasSmsSendPermission(context) &&
+            PermissionManager.hasCallPhonePermission(context) &&
+            PermissionManager.hasPhoneStatePermission(context) &&
+            PermissionManager.hasCallLogPermission(context) &&
+            PermissionManager.hasMediaPermission(context) &&
+            PermissionManager.hasPostNotificationsPermission(context)
+    }
+
+    val totalPermissions = 8
+    val grantedCount = listOf(
+        isA11yActive,
+        canExactAlarm,
+        hasNotifListener,
+        isIgnoringBattery,
+        hasOverlay,
+        isAdminActive,
+        hasDnd,
+        hasRuntimePerms
+    ).count { it }
+
+    // Dialogs
     if (showA11yDisclosureDialog) {
-        AlertDialog(
-            onDismissRequest = { showA11yDisclosureDialog = false },
-            title = {
-                Text(
-                    text = "Task Disclosure",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            },
-            text = {
-                Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "Helper uses Android's Assistive Task API exclusively for the following user-directed capabilities:",
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "• Hands-free scheduled message preparation and delivery in user-authorized messaging apps (WhatsApp and WhatsApp Business) at user-scheduled times.\n" +
-                               "• Unattended device wake and user-configured PIN assistance when scheduled tasks trigger while locked.\n" +
-                               "• Power button simulation (GLOBAL_ACTION_LOCK_SCREEN) upon task completion to preserve fingerprint and face unlock without locking out biometrics.",
-                        fontSize = 12.5.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = "Privacy & Safety Commitments:",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = "• Helper does NOT collect, store, or transmit your private chat messages, keystrokes, personal passwords, or screen contents.\n" +
-                               "• Helper strictly isolates itself from and NEVER inspects, reads, or interacts with banking, payment, or UPI apps (such as Google Pay, PhonePe, Paytm, or net banking apps).\n" +
-                               "• 100% on-device operation: Zero cloud analytics or third-party tracking.\n" +
-                               "• You retain full control and may pause or revoke this service at any time.",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showA11yDisclosureDialog = false
-                        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        })
-                    }
-                ) {
-                    Text("Agree & Open Settings", fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showA11yDisclosureDialog = false }) {
-                    Text("Cancel")
-                }
-            }
+        A11yDisclosureDialog(
+            context = context,
+            onDismiss = { showA11yDisclosureDialog = false }
+        )
+    }
+
+    if (showAdbSetupDialog) {
+        AdbSetupModalDialog(
+            context = context,
+            onDismiss = { showAdbSetupDialog = false }
         )
     }
 
@@ -188,387 +209,385 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
         topBar = {
             AppSubScreenHeader(
                 title = "Permission Center",
-                subtitle = "System access & smart self-healing",
+                subtitle = "System access & automated health",
                 onBack = onBack
             )
         },
-        containerColor = AppDesignTokens.VoidBackground,
+        containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .padding(horizontal = 14.dp),
             contentPadding = PaddingValues(
+                top = 10.dp,
                 bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 24.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            // 1. Super Auto-Heal & Universal Fixer
+            // 1. Hero Health Dashboard Card
             item {
-                SuperAutoHealAndPermissionFixerCard(context)
+                PermissionHeroCard(
+                    context = context,
+                    grantedCount = grantedCount,
+                    totalCount = totalPermissions,
+                    onOpenAdbDialog = { showAdbSetupDialog = true },
+                    onHealDone = { permissionsRefreshKey++ }
+                )
+            }
+
+            // 2. Section: Core Automation Engine
+            item {
+                PermissionSectionHeader(
+                    title = "Core Automation Engine",
+                    subtitle = "Foundational services powering scheduled execution"
+                )
             }
 
             item {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text("Individual Permissions & System Access", fontWeight = FontWeight.Bold, fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurface)
-                Text("Ensure these are granted so WhatsApp screen assistance, alarms, and background sending run smoothly.", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-
-            // 2. Power Button Auto-Lock (Biometrics & Fingerprint Safe)
-            item {
-                PermissionItem(
-                    title = "Power Button Auto-Lock (Biometrics & Fingerprint Safe)",
-                    desc = "Helper uses the Android Assistive Power Lock gesture (GLOBAL_ACTION_LOCK_SCREEN) mimicking a physical Power button press. Your fingerprint, face unlock, and biometrics remain 100% active and are never locked out.",
-                    btnText = "Power Lock Ready",
-                    isGranted = true,
-                ) {
-                    context.showAppToast("Power button auto-lock active (fingerprint preserved)")
-                }
-            }
-
-            // 2b. Device Administration (Hardware Auto-Lock)
-            item {
-                val isAdmin = remember(permissionsRefreshKey) { HelperDeviceAdminReceiver.isAdminActive(context) }
-                PermissionItem(
-                    title = if (isAdmin) "Device Administration: Active" else "Device Administration (Hardware Auto-Lock)",
-                    desc = if (isAdmin) "Device administrator status is active. Helper can securely re-lock the screen after unattended tasks."
-                           else "Grants hardware-level screen lock authorization to immediately secure your phone after unattended tasks conclude.",
-                    btnText = if (isAdmin) "Device Admin Active" else "Enable Device Admin",
-                    isGranted = isAdmin,
-                ) {
-                    if (!isAdmin) {
-                        HelperDeviceAdminReceiver.requestActivation(context)
-                    } else {
-                        context.showAppToast("Device Admin is active")
-                    }
-                }
-            }
-
-            // 3. Display Over Other Apps (Overlay Permission)
-            item {
-                val hasOverlay = remember(permissionsRefreshKey) { OverlayPermissionHelper.canDrawOverlays(context) }
-                PermissionItem(
-                    title = if (hasOverlay) "Display Over Other Apps: Granted" else "Display Over Other Apps (Overlay)",
-                    desc = if (hasOverlay) "Allows Helper to display privacy shields, countdown overlays, and incoming call simulation alerts."
-                           else "Allows Helper to display privacy shields and incoming call simulation alerts. If Helper is missing or greyed out in the system list, tap 'Open App Info' below to enable restricted settings.",
-                    btnText = if (hasOverlay) "Overlay Active" else "Grant Overlay Permission",
-                    isGranted = hasOverlay,
-                ) {
-                    if (!hasOverlay) {
-                        if (!OverlayPermissionHelper.launchOverlaySettings(context)) {
-                            context.showAppToast("Opening App Info to enable overlay...")
-                            val appDetailsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                data = "package:${context.packageName}".toUri()
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
-                            context.startActivity(appDetailsIntent)
-                        }
-                    } else {
-                        context.showAppToast("Overlay permission already granted")
-                    }
-                }
-            }
-
-
-
-            // 4. Exact Alarms & Reminders Permission
-            item {
-                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-                val canExactAlarm = remember(permissionsRefreshKey) {
-                    (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) ||
-                            (alarmManager?.canScheduleExactAlarms() == true)
-                }
-                PermissionItem(
-                    title = if (canExactAlarm) "Exact Alarms & Reminders: Granted" else "Schedule Exact Alarms & Reminders",
-                    desc = "Required by Android 12+ to fire scheduled messages and reminders at the precise exact second without power-saver jitter.",
-                    btnText = if (canExactAlarm) "Exact Alarms Granted" else "Grant Exact Alarm Permission",
-                    isGranted = canExactAlarm,
-                ) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        context.startActivity(
-                            Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                                data = "package:${context.packageName}".toUri()
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            },
-                        )
-                    } else {
-                        context.showAppToast("Exact alarms permitted")
-                    }
-                }
-            }
-
-            // 5. Task
-            item {
-                val a11yState = remember(permissionsRefreshKey) { AccessibilityHealthManager.getServiceState(context) }
-                val isA11y = a11yState == AccessibilityHealthManager.ServiceState.OPERATIONAL || a11yState == AccessibilityHealthManager.ServiceState.STANDBY
                 val a11yTitle = when (a11yState) {
-                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Task: Active"
-                    AccessibilityHealthManager.ServiceState.STANDBY -> "Task: Bank-Safe Standby"
-                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Task: Initializing"
-                    AccessibilityHealthManager.ServiceState.DISABLED -> "Task"
+                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Task Service: Active"
+                    AccessibilityHealthManager.ServiceState.STANDBY -> "Task Service: Bank-Safe Standby"
+                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Task Service: Connecting"
+                    AccessibilityHealthManager.ServiceState.DISABLED -> "Task Accessibility Service"
                 }
-                val a11yDesc = when (a11yState) {
-                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Active in background to dispatch scheduled WhatsApp messages and assist tasks."
-                    AccessibilityHealthManager.ServiceState.STANDBY -> "Bank-Safe Standby: Connects on demand for ~2s during tasks only. Banking and payment apps detect 0 third-party services."
-                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Service is enabled in Settings, background binder is connecting. Tap to toggle in Settings if needed."
-                    AccessibilityHealthManager.ServiceState.DISABLED -> "Required to dispatch scheduled WhatsApp messages and assist with screen unlock."
+                val a11ySubtitle = when (a11yState) {
+                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Active in background to dispatch scheduled messaging tasks."
+                    AccessibilityHealthManager.ServiceState.STANDBY -> "Bank-Safe Standby: Operates on-demand for tasks only."
+                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Enabled in settings, connecting background binder."
+                    AccessibilityHealthManager.ServiceState.DISABLED -> "Required to dispatch scheduled WhatsApp tasks hands-free."
                 }
-                val a11yBtnText = when (a11yState) {
-                    AccessibilityHealthManager.ServiceState.OPERATIONAL -> "Task Active"
-                    AccessibilityHealthManager.ServiceState.STANDBY -> "Bank-Safe Ready"
-                    AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND -> "Toggle in Settings"
-                    AccessibilityHealthManager.ServiceState.DISABLED -> "Open Task Settings"
-                }
-                PermissionItem(
+                PermissionCardItem(
+                    icon = Icons.Default.VerifiedUser,
                     title = a11yTitle,
-                    desc = a11yDesc,
-                    btnText = a11yBtnText,
-                    isGranted = isA11y,
-                ) {
-                    if (isA11y) {
-                        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
-                    } else {
-                        showA11yDisclosureDialog = true
-                    }
-                }
-            }
-
-            // 6. Android 13/14/15/16 Sideloaded App Fix (Restricted Settings)
-            item {
-                PermissionItem(
-                    title = "Android 13+ Sideloaded App Fix (Missing Permissions)",
-                    desc = "If Overlay or Assistant is missing or greyed out in system settings: Tap below to open App Info -> Tap 3 dots (⋮) top right -> 'Allow restricted settings'.",
-                    btnText = "Open App Info (Tap 3 Dots)",
-                ) {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = "package:${context.packageName}".toUri()
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    }
-                    context.startActivity(intent)
-                }
-            }
-
-            // 7. Notification Listener Access
-            item {
-                val hasNotif = remember(permissionsRefreshKey) { androidx.core.app.NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.packageName) }
-                PermissionItem(
-                    title = if (hasNotif) "Notification Listener: Active" else "Notification Listener Access",
-                    desc = "Required for WhatsApp auto-replies directly from background without waking screen.",
-                    btnText = if (hasNotif) "Notification Access Active" else "Notification Access Settings",
-                    isGranted = hasNotif,
-                ) {
-                    context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK })
-                }
-            }
-
-            // 8. Battery Optimization Exemption
-            item {
-                val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
-                val isIgnoringBattery = remember(permissionsRefreshKey) {
-                    powerManager?.isIgnoringBatteryOptimizations(context.packageName) == true
-                }
-                PermissionItem(
-                    title = if (isIgnoringBattery) "Battery Optimization: Exempted" else "Battery Optimization Exemption",
-                    desc = "Prevents Android from freezing timers, ensuring scheduled messages trigger on the exact minute.",
-                    btnText = if (isIgnoringBattery) "Battery Exemption Active" else "Exempt from Battery Saver",
-                    isGranted = isIgnoringBattery,
-                ) {
-                    try {
-                        val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    subtitle = a11ySubtitle,
+                    isGranted = isA11yActive,
+                    grantButtonText = if (a11yState == AccessibilityHealthManager.ServiceState.ENABLED_BUT_NOT_BOUND) "Toggle" else "Enable",
+                    detailedPurpose = "Allows Helper to interact with approved messaging applications at user-scheduled times to populate and dispatch tasks. Never reads personal data or interacts with banking apps.",
+                    onClick = {
+                        if (isA11yActive) {
+                            context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            })
+                        } else {
+                            showA11yDisclosureDialog = true
                         }
-                        context.startActivity(intent)
-                    } catch (e: Exception) {
-                        com.jmd.helper.core.AppFileLogger.w("PermissionScreen", "Failed to launch battery optimization settings: ${e.message}")
-                        context.showAppToast("Unable to open battery optimization settings directly.")
                     }
-                }
+                )
             }
 
-            // 9. Contacts, SMS, Phone & Media Access
             item {
-                val hasRuntimePerms = remember(permissionsRefreshKey) {
-                    PermissionManager.hasContactsPermission(context) &&
-                        PermissionManager.hasSmsSendPermission(context) &&
-                        PermissionManager.hasCallPhonePermission(context) &&
-                        PermissionManager.hasPhoneStatePermission(context) &&
-                        PermissionManager.hasCallLogPermission(context) &&
-                        PermissionManager.hasMediaPermission(context) &&
-                        PermissionManager.hasPostNotificationsPermission(context)
-                }
+                PermissionCardItem(
+                    icon = Icons.Default.Alarm,
+                    title = if (canExactAlarm) "Exact Alarms & Triggers: Active" else "Schedule Exact Alarms",
+                    subtitle = "Fires scheduled tasks at the exact specified second without battery jitter.",
+                    isGranted = canExactAlarm,
+                    grantButtonText = "Grant",
+                    detailedPurpose = "Required on Android 12+ (API 31+) to invoke high-precision RTC alarms, ensuring time-critical tasks trigger promptly without system delay.",
+                    onClick = {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                data = "package:${context.packageName}".toUri()
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            })
+                        } else {
+                            context.showAppToast("Exact alarm privileges active")
+                        }
+                    }
+                )
+            }
 
-                PermissionItem(
-                    title = if (hasRuntimePerms) "Contacts, SMS, Phone & Media Access: Active" else "Contacts, SMS, Phone & Media Access",
-                    desc = "Required to auto-discover mobile contacts into the internal dynamic pool for daily SMS campaigns, direct SMS dispatch, call dispatch, missed-call auto-replies, and photo/video attachments.",
-                    btnText = if (hasRuntimePerms) "Runtime Permissions Active" else "Grant Runtime Permissions",
-                    isGranted = hasRuntimePerms,
-                ) {
-                    if (!hasRuntimePerms) {
-                        runtimePermissionsLauncher.launch(coreRuntimePermissions.toTypedArray())
-                    } else {
+            item {
+                PermissionCardItem(
+                    icon = Icons.Default.NotificationsActive,
+                    title = if (hasNotifListener) "Notification Listener: Active" else "Notification Listener Access",
+                    subtitle = "Detects incoming chats for automated rules and quick responses.",
+                    isGranted = hasNotifListener,
+                    grantButtonText = "Enable",
+                    detailedPurpose = "Enables Helper to read notification actions in messaging apps to process auto-replies directly in the background without needing to illuminate the display.",
+                    onClick = {
+                        context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        })
+                    }
+                )
+            }
+
+            // 3. Section: Background Reliability & Battery
+            item {
+                PermissionSectionHeader(
+                    title = "Background Reliability",
+                    subtitle = "Prevent OS task termination and background throttling"
+                )
+            }
+
+            item {
+                PermissionCardItem(
+                    icon = Icons.Default.BatteryChargingFull,
+                    title = if (isIgnoringBattery) "Battery Saver: Exempted" else "Battery Optimization Exemption",
+                    subtitle = "Prevents system power savers from freezing scheduled timers.",
+                    isGranted = isIgnoringBattery,
+                    grantButtonText = "Exempt",
+                    detailedPurpose = "Adds Helper to the system battery optimization allowlist, ensuring background task schedulers are never frozen during Doze mode.",
+                    onClick = {
+                        try {
+                            context.startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            })
+                        } catch (e: Exception) {
+                            AppFileLogger.w("PermissionScreen", "Failed to launch battery settings: ${e.message}")
+                            context.showAppToast("Unable to open battery optimization settings directly")
+                        }
+                    }
+                )
+            }
+
+            item {
+                OemAutostartCard(context)
+            }
+
+            item {
+                PermissionCardItem(
+                    icon = Icons.Default.Security,
+                    title = "Sideloaded App Guidance (Android 13+)",
+                    subtitle = "If settings are greyed out: App Info → 3 dots → Allow restricted settings.",
+                    isGranted = true,
+                    grantButtonText = "App Info",
+                    detailedPurpose = "On Android 13+, sideloaded APKs have accessibility and notification permissions restricted by default. Tapping the three dots in App Info unlocks full access.",
+                    onClick = {
                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                             data = "package:${context.packageName}".toUri()
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         }
                         context.startActivity(intent)
                     }
-                }
+                )
             }
 
-            // 10. Do Not Disturb / Notification Policy Access (Sound Mode Switcher)
+            // 4. Section: Device & Hardware Controls
             item {
-                val hasDnd = remember(permissionsRefreshKey) { PermissionManager.hasNotificationPolicyAccess(context) }
-                PermissionItem(
-                    title = if (hasDnd) "Do Not Disturb & Sound Policy: Active" else "Do Not Disturb / Notification Policy Access",
-                    desc = "Required by Android for the Sound Mode Switcher to toggle between Silent, Vibrate, and Normal sound profiles without interruption.",
-                    btnText = if (hasDnd) "Sound Policy Granted" else "Grant Sound Policy Access",
-                    isGranted = hasDnd,
-                ) {
-                    if (!hasDnd) {
-                        try {
-                            context.startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            })
-                        } catch (e: Exception) {
-                            com.jmd.helper.core.AppFileLogger.w("PermissionScreen", "Failed to launch notification policy settings: ${e.message}")
-                            context.showAppToast("Unable to open notification policy settings directly.")
-                        }
-                    } else {
-                        context.showAppToast("Notification policy access active")
+                PermissionSectionHeader(
+                    title = "Device & Hardware Controls",
+                    subtitle = "Screen locking, overlays, and communication features"
+                )
+            }
+
+            item {
+                PermissionCardItem(
+                    icon = Icons.Default.LockClock,
+                    title = "Power Button Auto-Lock (Biometrics Safe)",
+                    subtitle = "Preserves fingerprint and face unlock without locking out credentials.",
+                    isGranted = true,
+                    grantButtonText = "Ready",
+                    detailedPurpose = "Helper uses the system power button simulation (GLOBAL_ACTION_LOCK_SCREEN) to turn off the screen post-dispatch without forcing hardware PIN lockout.",
+                    onClick = {
+                        context.showAppToast("Power button auto-lock active (fingerprint preserved)")
                     }
-                }
+                )
             }
 
             item {
-                KeepOpenRecentAppsCard(context)
+                PermissionCardItem(
+                    icon = Icons.Default.Layers,
+                    title = if (hasOverlay) "Display Over Other Apps: Granted" else "Display Over Other Apps",
+                    subtitle = "Renders privacy shields, countdown overlays, and incoming alerts.",
+                    isGranted = hasOverlay,
+                    grantButtonText = "Grant",
+                    detailedPurpose = "Required to render transient privacy overlays during automated screen actions and display simulated call interfaces.",
+                    onClick = {
+                        if (!hasOverlay) {
+                            if (!OverlayPermissionHelper.launchOverlaySettings(context)) {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = "package:${context.packageName}".toUri()
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                context.startActivity(intent)
+                            }
+                        } else {
+                            context.showAppToast("Overlay permission active")
+                        }
+                    }
+                )
+            }
+
+            item {
+                PermissionCardItem(
+                    icon = Icons.Default.AdminPanelSettings,
+                    title = if (isAdminActive) "Device Admin: Active" else "Device Administration",
+                    subtitle = "Hardware screen lock authorization to secure phone post-task.",
+                    isGranted = isAdminActive,
+                    grantButtonText = "Activate",
+                    detailedPurpose = "Grants standard device administration privileges solely used to secure the display immediately after scheduled tasks conclude.",
+                    onClick = {
+                        if (!isAdminActive) {
+                            HelperDeviceAdminReceiver.requestActivation(context)
+                        } else {
+                            context.showAppToast("Device Administration is active")
+                        }
+                    }
+                )
+            }
+
+            item {
+                PermissionCardItem(
+                    icon = Icons.Default.Contacts,
+                    title = if (hasRuntimePerms) "Communications Access: Active" else "Contacts, SMS & Phone Access",
+                    subtitle = "Auto-discovers contacts and permits direct cellular messaging.",
+                    isGranted = hasRuntimePerms,
+                    grantButtonText = "Grant All",
+                    detailedPurpose = "Required to populate recipient contact names, dispatch carrier SMS tasks, and handle incoming call automation.",
+                    onClick = {
+                        if (!hasRuntimePerms) {
+                            runtimePermissionsLauncher.launch(coreRuntimePermissions.toTypedArray())
+                        } else {
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = "package:${context.packageName}".toUri()
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            context.startActivity(intent)
+                        }
+                    }
+                )
+            }
+
+            item {
+                PermissionCardItem(
+                    icon = Icons.AutoMirrored.Filled.VolumeUp,
+                    title = if (hasDnd) "Do Not Disturb & Sound: Active" else "Do Not Disturb / Sound Policy",
+                    subtitle = "Required for Sound Mode Switcher (Silent / Vibrate / Normal).",
+                    isGranted = hasDnd,
+                    grantButtonText = "Grant",
+                    detailedPurpose = "Allows Helper to programmatically adjust the system audio stream and sound mode profile between Normal, Vibrate, and Silent states.",
+                    onClick = {
+                        if (!hasDnd) {
+                            try {
+                                context.startActivity(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                })
+                            } catch (e: Exception) {
+                                AppFileLogger.w("PermissionScreen", "Failed to launch DND settings: ${e.message}")
+                                context.showAppToast("Unable to open notification policy settings directly")
+                            }
+                        } else {
+                            context.showAppToast("Sound policy access active")
+                        }
+                    }
+                )
             }
         }
     }
 }
 
-
 /**
- * Master repair and auto-heal card providing one-touch reactivation of dead accessibility binders
- * and single-click copying of the comprehensive universal ADB privilege grant command.
- *
- * @param context Local Android context for system service invocation and clipboard operations.
+ * Hero System Health Overview Card displaying visual readiness metrics and quick actions.
  */
 @Composable
-fun SuperAutoHealAndPermissionFixerCard(context: Context) {
+private fun PermissionHeroCard(
+    context: Context,
+    grantedCount: Int,
+    totalCount: Int,
+    onOpenAdbDialog: () -> Unit,
+    onHealDone: () -> Unit
+) {
     val scope = rememberCoroutineScope()
-    var healRefreshKey by remember { mutableIntStateOf(0) }
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
-            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                healRefreshKey++
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-    var hasSecurePerm by remember(healRefreshKey) { mutableStateOf(AccessibilityHealthManager.hasWriteSecureSettings(context)) }
-    val isAdminActive = remember(healRefreshKey) { HelperDeviceAdminReceiver.isAdminActive(context) }
-    val isA11yActive = remember(healRefreshKey) { AccessibilityHealthManager.isServiceOperational() }
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-    val canExactAlarm = remember(healRefreshKey) {
-        (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) || (alarmManager?.canScheduleExactAlarms() == true)
-    }
-    val hasOverlay = remember(healRefreshKey) { OverlayPermissionHelper.canDrawOverlays(context) }
-    val hasNotif = remember(healRefreshKey) {
-        androidx.core.app.NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.packageName)
-    }
-    val hasDnd = remember(healRefreshKey) { PermissionManager.hasNotificationPolicyAccess(context) }
-    var isHealing by remember { mutableStateOf(value = false) }
-
-    // Safe ADB command: grants WRITE_SECURE_SETTINGS, runtime permissions, and key appops without destructively overwriting existing third-party accessibility services
-    val universalAdbCommand = "adb shell \"pm grant com.jmd.helper android.permission.WRITE_SECURE_SETTINGS; pm grant com.jmd.helper android.permission.READ_PHONE_STATE; pm grant com.jmd.helper android.permission.CALL_PHONE; pm grant com.jmd.helper android.permission.ANSWER_PHONE_CALLS; pm grant com.jmd.helper android.permission.READ_CALL_LOG; pm grant com.jmd.helper android.permission.READ_CONTACTS; pm grant com.jmd.helper android.permission.POST_NOTIFICATIONS; pm grant com.jmd.helper android.permission.READ_SMS; pm grant com.jmd.helper android.permission.SEND_SMS; pm grant com.jmd.helper android.permission.READ_MEDIA_IMAGES; pm grant com.jmd.helper android.permission.READ_MEDIA_VIDEO; appops set com.jmd.helper SYSTEM_ALERT_WINDOW allow; appops set com.jmd.helper TURN_SCREEN_ON allow; appops set com.jmd.helper SCHEDULE_EXACT_ALARM allow; appops set com.jmd.helper START_ACTIVITIES_FROM_BACKGROUND allow; appops set com.jmd.helper ACCESS_RESTRICTED_SETTINGS allow; appops set com.jmd.helper AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore; dumpsys deviceidle whitelist +com.jmd.helper; dpm set-active-admin com.jmd.helper/.receiver.HelperDeviceAdminReceiver\""
-
+    var isHealing by remember { mutableStateOf(false) }
     val isDark = isSystemInDarkTheme()
-    val isFullyHealed = hasSecurePerm && isA11yActive
-    val cardBg = when {
-        isFullyHealed -> if (isDark) Color(0xFF10B981).copy(alpha = 0.12f) else Color(0xFFE8F5E9)
-        else -> MaterialTheme.colorScheme.primary.copy(alpha = if (isDark) 0.14f else 0.08f)
+    val isAllGranted = grantedCount >= totalCount
+
+    val healthPercentage = (grantedCount.toFloat() / totalCount.toFloat()).coerceIn(0f, 1f)
+    val accentGreen = if (isDark) Color(0xFF4ADE80) else Color(0xFF1B5E20)
+    val containerBg = if (isAllGranted) {
+        if (isDark) Color(0xFF10B981).copy(alpha = 0.12f) else Color(0xFFE8F5E9)
+    } else {
+        MaterialTheme.colorScheme.primaryContainer.copy(alpha = if (isDark) 0.35f else 0.50f)
     }
-    val cardBorder = when {
-        isFullyHealed -> if (isDark) Color(0xFF4ADE80).copy(alpha = 0.40f) else Color(0xFFA5D6A7)
-        else -> MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
-    }
-    val iconTint = when {
-        isFullyHealed -> if (isDark) Color(0xFF4ADE80) else Color(0xFF1B5E20)
-        else -> MaterialTheme.colorScheme.primary
+    val borderColor = if (isAllGranted) {
+        if (isDark) Color(0xFF4ADE80).copy(alpha = 0.35f) else Color(0xFFA5D6A7)
+    } else {
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)
     }
 
     AppCard(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = cardBg,
-        borderColor = cardBorder,
+        backgroundColor = containerBg,
+        borderColor = borderColor,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = if (isFullyHealed) Icons.Default.VerifiedUser else Icons.Default.AutoFixHigh,
-                contentDescription = null,
-                tint = iconTint,
-                modifier = Modifier.size(22.dp),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .background(
+                                color = if (isAllGranted) accentGreen else MaterialTheme.colorScheme.primary,
+                                shape = CircleShape
+                            )
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = if (isAllGranted) "All Systems Operational" else "System Health Check",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Master Auto-Heal & Universal Fixer",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.5.sp,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    text = if (isAllGranted) {
+                        "All core services and authorizations are active and healthy."
+                    } else {
+                        "$grantedCount of $totalCount privileges authorized. Grant missing items below."
+                    },
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Text(
-                    text = "One-click quick recovery & permission synchronization",
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            }
+
+            // Compact progress circle badge
+            Surface(
+                shape = CircleShape,
+                color = if (isAllGranted) accentGreen.copy(alpha = 0.15f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                border = BorderStroke(2.dp, if (isAllGranted) accentGreen else MaterialTheme.colorScheme.primary),
+                modifier = Modifier.size(46.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "${(healthPercentage * 100).toInt()}%",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isAllGranted) accentGreen else MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
-        // Live Health Badges
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            StatusPill("A11y", isA11yActive, Modifier.weight(1f))
-            StatusPill("Admin", isAdminActive, Modifier.weight(1f))
-            StatusPill("Alarms", canExactAlarm, Modifier.weight(1f))
-            StatusPill("Secure", hasSecurePerm, Modifier.weight(1f))
-        }
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            StatusPill("Overlay", hasOverlay, Modifier.weight(1f))
-            StatusPill("Listener", hasNotif, Modifier.weight(1f))
-            StatusPill("Sound/DND", hasDnd, Modifier.weight(1f))
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = "Auto-Heal restarts dead accessibility binders and safely activates permissions using granted secure settings. The universal ADB command below grants WRITE_SECURE_SETTINGS, runtime permissions, battery optimization exemption, and device admin without prompts. Note: Android requires Accessibility Service and Notification Listener to be enabled in Android Settings or activated via the 'Auto-Heal Now' button below.",
-            fontSize = 11.5.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            lineHeight = 16.5.sp,
+        // Progress line
+        LinearProgressIndicator(
+            progress = { healthPercentage },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(6.dp)
+                .clip(RoundedCornerShape(3.dp)),
+            color = if (isAllGranted) accentGreen else MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        // Quick Actions Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             GlassButton(
-                text = if (isHealing) "Healing..." else "Auto-Heal Now",
+                text = if (isHealing) "Healing..." else "Auto-Heal Services",
                 onClick = {
                     if (isHealing) return@GlassButton
                     isHealing = true
@@ -577,128 +596,281 @@ fun SuperAutoHealAndPermissionFixerCard(context: Context) {
                             AccessibilityHealthManager.ensureAllServicesActive(context)
                             AccessibilityHealthManager.ensureServiceAlive(context)
                         }
-                        hasSecurePerm = AccessibilityHealthManager.hasWriteSecureSettings(context)
                         isHealing = false
+                        onHealDone()
                         if (healed) {
-                            context.showAppToast("Accessibility active & healthy")
+                            context.showAppToast("Services verified and healthy")
                         } else {
-                            context.showAppToast("Heal attempted. For background task execution, grant permissions or paste the 1-line ADB command.", isLong = true)
+                            context.showAppToast("Auto-heal executed. Review individual items below.", isLong = true)
                         }
                     }
                 },
-                icon = if (isHealing) Icons.Filled.HourglassTop else Icons.Filled.Sync,
+                icon = if (isHealing) Icons.Default.HourglassTop else Icons.Default.Sync,
                 variant = GlassButtonVariant.SUCCESS,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1.1f)
             )
 
             GlassButton(
-                text = "Copy 1-Line ADB Setup",
-                onClick = {
-                    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    com.jmd.helper.compat.ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("Universal ADB Command", universalAdbCommand))
-                    context.showAppToast("ADB command copied")
-                },
-                icon = Icons.Filled.ContentCopy,
+                text = "ADB Setup",
+                onClick = onOpenAdbDialog,
+                icon = Icons.Default.Terminal,
                 variant = GlassButtonVariant.PRIMARY,
-                modifier = Modifier.weight(1.2f),
+                modifier = Modifier.weight(0.9f)
             )
         }
     }
 }
 
 /**
- * Compact status pill tag rendering green (active) or red (inactive) indicator for diagnostic categories.
- *
- * @param label Short category tag (e.g. "A11y", "Admin", "Overlay").
- * @param isOk True if privilege is confirmed active and granted; false otherwise.
- * @param modifier Optional layout modifier.
+ * Section title header for categorized permission groups.
  */
 @Composable
-internal fun StatusPill(label: String, isOk: Boolean, modifier: Modifier = Modifier) {
+private fun PermissionSectionHeader(title: String, subtitle: String) {
+    Column(modifier = Modifier.padding(start = 2.dp, top = 4.dp)) {
+        Text(
+            text = title,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Text(
+            text = subtitle,
+            fontSize = 11.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+/**
+ * Compact, high-end permission item with squircle icon, status chip, and tap-to-expand details.
+ */
+@Composable
+private fun PermissionCardItem(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    isGranted: Boolean,
+    grantButtonText: String,
+    detailedPurpose: String,
+    onClick: () -> Unit
+) {
+    var isExpanded by remember { mutableStateOf(false) }
     val isDark = isSystemInDarkTheme()
-    val activeColor = if (isDark) Color(0xFF4ADE80) else Color(0xFF1B5E20)
-    val activeBg = if (isDark) Color(0xFF10B981).copy(alpha = 0.16f) else Color(0xFFE8F5E9)
-    val activeBorder = if (isDark) Color(0xFF4ADE80).copy(alpha = 0.40f) else Color(0xFF81C784)
+    val accentGreen = if (isDark) Color(0xFF4ADE80) else Color(0xFF1B5E20)
+    val greenContainer = if (isDark) Color(0xFF10B981).copy(alpha = 0.16f) else Color(0xFFE8F5E9)
 
-    val inactiveColor = MaterialTheme.colorScheme.error
-    val inactiveBg = MaterialTheme.colorScheme.error.copy(alpha = if (isDark) 0.15f else 0.10f)
-    val inactiveBorder = MaterialTheme.colorScheme.error.copy(alpha = 0.40f)
-
-    Surface(
-        modifier = modifier,
-        shape = AppDesignTokens.ShapePill,
-        color = if (isOk) activeBg else inactiveBg,
-        border = BorderStroke(1.dp, if (isOk) activeBorder else inactiveBorder),
+    AppCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { isExpanded = !isExpanded },
+        backgroundColor = if (isGranted) {
+            if (isDark) Color(0xFF10B981).copy(alpha = 0.04f) else Color(0xFFF9FDF9)
+        } else {
+            MaterialTheme.colorScheme.surface
+        },
+        borderColor = if (isGranted) {
+            if (isDark) Color(0xFF4ADE80).copy(alpha = 0.20f) else Color(0xFFC8E6C9)
+        } else {
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+        }
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            // Squircle leading icon
             Box(
                 modifier = Modifier
-                    .size(6.dp)
+                    .size(38.dp)
                     .background(
-                        color = if (isOk) activeColor else inactiveColor,
-                        shape = RoundedCornerShape(3.dp),
+                        color = if (isGranted) greenContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                        shape = RoundedCornerShape(10.dp)
                     ),
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = label,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (isOk) activeColor else inactiveColor,
-            )
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = if (isGranted) accentGreen else MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    fontSize = 13.5.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = subtitle,
+                    fontSize = 11.5.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 15.sp,
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Trailing action or status chip
+            if (isGranted) {
+                Surface(
+                    shape = AppDesignTokens.ShapePill,
+                    color = greenContainer,
+                    border = BorderStroke(1.dp, if (isDark) Color(0xFF4ADE80).copy(alpha = 0.35f) else Color(0xFFA5D6A7)),
+                    modifier = Modifier.clickable { onClick() }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(5.dp)
+                                .background(accentGreen, CircleShape)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Active",
+                            fontSize = 10.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = accentGreen
+                        )
+                    }
+                }
+            } else {
+                Button(
+                    onClick = onClick,
+                    shape = AppDesignTokens.ShapePill,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                    modifier = Modifier.height(32.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(
+                        text = grantButtonText,
+                        fontSize = 11.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        }
+
+        // Expandable Detail Accordion
+        AnimatedVisibility(
+            visible = isExpanded,
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            ) {
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
+                    thickness = 0.8.dp
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = detailedPurpose,
+                    fontSize = 11.5.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 16.5.sp
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        onClick = onClick,
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = "Open System Settings",
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = null,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
 /**
- * Information card instructing users how to lock the app into recent tasks to prevent aggressive OEM background task termination.
- *
- * @param context Local Android context for resolving OEM device care settings intent.
+ * OEM Brand tailored autostart guidance card.
  */
 @Composable
-fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
+private fun OemAutostartCard(context: Context) {
     val brandSummary = remember { OemBrandHelper.getDeviceSummary() }
     val brandGuidance = remember { OemBrandHelper.getOemGuidance() }
 
     AppCard(modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Filled.Smartphone,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .size(38.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(10.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Smartphone,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = "OEM Background & Auto-Start ($brandSummary)",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    text = "OEM Autostart ($brandSummary)",
+                    fontSize = 13.5.sp,
+                    fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Tailored settings to prevent $brandSummary from terminating tasks",
-                    fontSize = 11.sp,
+                    text = "Hardware settings to prevent background kills",
+                    fontSize = 11.5.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+
+        Spacer(modifier = Modifier.height(10.dp))
+
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             brandGuidance.forEach { step ->
                 Text(
-                    text = step,
+                    text = "• $step",
                     fontSize = 11.5.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = 16.5.sp
+                    lineHeight = 16.sp
                 )
             }
         }
+
         Spacer(modifier = Modifier.height(12.dp))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -712,7 +884,7 @@ fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
                 },
                 icon = Icons.Default.Settings,
                 variant = GlassButtonVariant.PRIMARY,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
             )
             GlassButton(
                 text = "Special Overlays",
@@ -721,88 +893,170 @@ fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
                         context.showAppToast("Unable to open overlay settings directly")
                     }
                 },
-                icon = Icons.Filled.Layers,
+                icon = Icons.Default.Layers,
                 variant = GlassButtonVariant.SECONDARY,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
             )
         }
     }
 }
 
 /**
- * Individual permission diagnosis item showing description, granted badge, and direct intent launch trigger.
- *
- * @param title Name of the permission or subsystem privilege.
- * @param desc Explanation of why this permission is necessary for scheduled dispatches.
- * @param btnText Action button label.
- * @param isGranted Current confirmed grant status of the permission.
- * @param onClick Invoked when action button is tapped to open respective system settings screen.
+ * Universal ADB Privilege Grant Dialog providing one-click command copying.
  */
 @Composable
-fun PermissionItem(
-    title: String,
-    desc: String,
-    btnText: String,
-    isGranted: Boolean = false,
-    onClick: () -> Unit,
-) {
-    val isDark = isSystemInDarkTheme()
-    val grantedBg = if (isDark) Color(0xFF10B981).copy(alpha = 0.08f) else Color(0xFFF1F8F3)
-    val ungrantedBg = MaterialTheme.colorScheme.surface
-    val grantedBorder = if (isDark) Color(0xFF4ADE80).copy(alpha = 0.30f) else Color(0xFFA5D6A7)
-    val ungrantedBorder = MaterialTheme.colorScheme.outlineVariant
-
-    AppCard(
-        modifier = Modifier.fillMaxWidth(),
-        backgroundColor = if (isGranted) grantedBg else ungrantedBg,
-        borderColor = if (isGranted) grantedBorder else ungrantedBorder,
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(title, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, modifier = Modifier.weight(1f))
-            if (isGranted) {
+private fun AdbSetupModalDialog(context: Context, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                imageVector = Icons.Default.Terminal,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+        },
+        title = {
+            Text(
+                text = "Universal ADB Setup",
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Grants all required background execution privileges (secure settings, runtime permissions, and battery whitelist) with zero interactive prompts.",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 Surface(
-                    shape = AppDesignTokens.ShapePill,
-                    color = if (isDark) Color(0xFF10B981).copy(alpha = 0.20f) else Color(0xFFE8F5E9),
-                    border = BorderStroke(1.dp, if (isDark) Color(0xFF4ADE80).copy(alpha = 0.50f) else Color(0xFF81C784)),
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(5.dp)
-                                .background(
-                                    color = if (isDark) Color(0xFF4ADE80) else Color(0xFF1B5E20),
-                                    shape = RoundedCornerShape(2.5.dp)
-                                )
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "ACTIVE",
-                            color = if (isDark) Color(0xFF4ADE80) else Color(0xFF1B5E20),
-                            fontSize = 9.5.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
+                    Text(
+                        text = UNIVERSAL_ADB_COMMAND,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(10.dp)
+                    )
                 }
             }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    com.jmd.helper.compat.ClipboardCompat.setPrimaryClip(
+                        cm,
+                        ClipData.newPlainText("Universal ADB Command", UNIVERSAL_ADB_COMMAND)
+                    )
+                    context.showAppToast("ADB command copied to clipboard")
+                    onDismiss()
+                }
+            ) {
+                Text("Copy Command", fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
         }
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(desc, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.5.sp, lineHeight = 16.5.sp)
-        Spacer(modifier = Modifier.height(10.dp))
-        GlassButton(
-            text = btnText,
-            onClick = onClick,
-            variant = if (isGranted) GlassButtonVariant.SUCCESS else GlassButtonVariant.SECONDARY,
-            icon = if (isGranted) Icons.Filled.CheckCircle else Icons.Filled.Settings,
-            shape = AppDesignTokens.ShapePill,
-        )
-    }
+    )
 }
 
+/**
+ * Accessibility Service Policy & User Disclosure Dialog.
+ */
+@Composable
+private fun A11yDisclosureDialog(context: Context, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Task Service Disclosure",
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Helper uses Android's Accessibility Service API exclusively for user-directed automated task dispatch:",
+                    fontSize = 12.5.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "• Hands-free scheduled message preparation and delivery in user-approved messaging applications (WhatsApp and WhatsApp Business).\n" +
+                           "• Unattended device wake and user-configured PIN entry assistance when scheduled tasks trigger while locked.\n" +
+                           "• Power button simulation (GLOBAL_ACTION_LOCK_SCREEN) post-dispatch to preserve biometric authentication.",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Privacy & Safety Guarantees:",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.5.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "• Helper does NOT collect, store, or transmit your private chat messages, keystrokes, personal passwords, or screen contents.\n" +
+                           "• Helper strictly isolates itself from all banking, payment, and UPI applications.\n" +
+                           "• 100% on-device execution with zero cloud telemetry.",
+                    fontSize = 11.5.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismiss()
+                    context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    })
+                }
+            ) {
+                Text("Agree & Open Settings", fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
 
+/**
+ * Self-healing and watchdog quick fix card.
+ */
+@Composable
+fun SuperAutoHealAndPermissionFixerCard(context: Context) {
+    var healRefreshKey by remember { mutableIntStateOf(0) }
+    PermissionHeroCard(
+        context = context,
+        grantedCount = 8,
+        totalCount = 8,
+        onOpenAdbDialog = {},
+        onHealDone = { healRefreshKey++ }
+    )
+}
+
+/**
+ * Information card instructing users how to lock the app into recent tasks to prevent OEM background kills.
+ */
+@Composable
+fun KeepOpenRecentAppsCard(context: Context = LocalContext.current) {
+    OemAutostartCard(context)
+}

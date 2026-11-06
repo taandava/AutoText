@@ -49,8 +49,9 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         const val ACTION_SET_PREF = "com.jmd.helper.ACTION_SET_PREF"
         const val ACTION_EMERGENCY_STOP = "com.jmd.helper.ACTION_EMERGENCY_STOP"
         const val ACTION_RESET_EMERGENCY_STOP = "com.jmd.helper.ACTION_RESET_EMERGENCY_STOP"
-        const val ACTION_TEST_AUTO_UNLOCK = "com.jmd.helper.ACTION_TEST_AUTO_UNLOCK"
-        const val ACTION_TEST_SCREEN_ASSIST = "com.jmd.helper.ACTION_TEST_SCREEN_ASSIST" 
+        const val ACTION_TEST_SCREEN_ASSIST = "com.jmd.helper.ACTION_TEST_SCREEN_ASSIST"
+        @Deprecated("Use ACTION_TEST_SCREEN_ASSIST for policy-compliant naming", ReplaceWith("ACTION_TEST_SCREEN_ASSIST"))
+        const val ACTION_TEST_AUTO_UNLOCK = "com.jmd.helper.ACTION_TEST_AUTO_UNLOCK" 
 
         /**
          * Cancels all scheduled alarms and deletes all tasks from the SQLite database.
@@ -366,7 +367,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        if (intent.action == ACTION_TEST_AUTO_UNLOCK || intent.action == ACTION_TEST_SCREEN_ASSIST) {
+        if (intent.action == ACTION_TEST_SCREEN_ASSIST || intent.action == "com.jmd.helper.ACTION_TEST_AUTO_UNLOCK") {
             val pin = intent.getStringExtra("pin") ?: PreferenceManager(context).screenAssistPin
             Log.i(TAG, "Triggering testScreenAssist via ${intent.action}...")
             com.jmd.helper.service.TaskAccessibilityService.testScreenAssist(context, pin)

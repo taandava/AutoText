@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 package com.jmd.helper.ui.screen.campaign
 
 import android.content.*

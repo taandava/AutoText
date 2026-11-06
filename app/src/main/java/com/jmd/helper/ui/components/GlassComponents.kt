@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 /**
  * Package: com.jmd.helper.ui.components
  * Module: UI Material 3 Expressive Components Layer

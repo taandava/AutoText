@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 /**
  * Package: com.jmd.helper.ui.theme
  * Module: UI Theme & Design Tokens Layer
