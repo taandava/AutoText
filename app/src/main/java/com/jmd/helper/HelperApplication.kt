@@ -19,6 +19,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
+import androidx.work.Configuration
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +43,12 @@ import com.jmd.helper.service.TaskForegroundService
  * Coordinates system-wide services, registers user-facing notification categories,
  * launches watchdog monitors, and initializes scheduled outreach pipelines.
  */
-class HelperApplication : Application() {
+class HelperApplication : Application(), Configuration.Provider {
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setMinimumLoggingLevel(Log.INFO)
+            .build()
 
     companion object {
         /** Logging tag for diagnostic system traces. */

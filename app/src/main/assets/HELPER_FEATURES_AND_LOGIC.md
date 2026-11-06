@@ -33,19 +33,19 @@ Built with **zero third-party cloud dependencies**, **zero external analytics**,
 ## 1.2 Technical Profile
 - **Application Name:** Helper (App Title: `Helper` or `O-O`)
 - **Package Identifier:** `com.jmd.helper`
-- **Application Version:** `1.1.0` (Version Code `2`)
+- **Application Version:** `1.2.0` (Version Code `3`)
 - **Programming Language:** 100% Idiomatic Kotlin (0% Java)
-- **UI Architecture:** Jetpack Compose with Material 3 Expressive & Colorful Vector Iconography
+- **UI Architecture:** Jetpack Compose with Material 3 Expressive & Semantic Success Color System
 - **Build System:** Gradle 9.8.2 / AGP 9.4.1 / Kotlin 2.4.21
 - **Minimum SDK:** API 27 (Android 8.1 Oreo MR1)
 - **Compile & Target SDK:** API 37 (Android 16+)
 - **Verified Hardware:**
   - Samsung Galaxy A04 (`SM-A045F`, Android 14 API 34, Hardware ID: `R9ZW105MFDR`)
   - Vivo / iQOO I2401 (`I2401`, Android 16 API 36, Hardware ID: `10BF1G0HCD0024R`)
-- **Unit Test Suite:** 122 of 122 Unit Tests Passing (100% Success Rate across HelperComprehensiveTest [111 tests] and ModernStackArchitectureTest [11 tests])
+- **Unit Test Suite:** 125 of 125 Unit Tests Passing (100% Success Rate across HelperComprehensiveTest [111 tests] and ModernStackArchitectureTest [14 tests])
 - **Data Sovereignty:** 100% On-Device Sovereignty. No remote servers, no cloud telemetry, no internet permission.
 - **Persistence:** 16 Relational SQLite Tables + Jetpack Room ORM Entities + Jetpack DataStore Flow Cache
-- **Policy Compliance:** Full compliance with Google Play Store and OEM policies; sanitized terminology ("Task", "Smart Dispatch", "Helper").
+- **Policy Compliance:** Full compliance with Google Play Store and OEM policies; sanitized terminology ("Task", "Smart Dispatch", "Helper", "Simulated Call").
 
 ## 1.3 Foundational Architectural Tenets
 1. **100% On-Device Sovereignty**: All credentials, contacts, scheduled queues, message templates, device unlocking PINs, and execution audit logs are stored strictly within the local SQLite database (`helper.db`) and encrypted direct-boot preferences. No analytics SDKs, cloud tracking databases, external APIs, or telemetry services exist within the codebase.
@@ -88,7 +88,7 @@ Built with **zero third-party cloud dependencies**, **zero external analytics**,
 │                               Core Infrastructure                                      │
 │  ┌──────────────────────────────────────────────────────────────────────────────────┐  │
 │  │                           ProtectedApplicationManager                            │  │
-│  │        Default-Deny Policy • 60+ Banking Apps • Context Check • Stealth Standby  │  │
+│  │        Default-Deny Policy • 60+ Banking Apps • Context Check • Dynamic Standby  │  │
 │  └──────────────────────────────────────────────────────────────────────────────────┘  │
 │  ┌─────────────────────────┐  ┌─────────────────────────┐  ┌────────────────────────┐  │
 │  │    PermissionManager    │  │     OemBrandHelper      │  │    SmsQuotaManager     │  │
@@ -499,7 +499,7 @@ Type-safe Jetpack Room database entities, DAOs, and type converters for compile-
 - **Package:** `com.jmd.helper.data.db.room` • **Lines of Code:** 129
 - **Declared Types:** `@Suppress("ClassName") class AppRoomDatabase_Impl : AppRoomDatabase`
 - **Subsystem Integrations:** Jetpack Room ORM, Reactive Coroutines Flow
-- **Architectural Purpose:** Concrete reflection-free implementation of [AppRoomDatabase] providing high-performance, zero-overhead integration over the local `helper.db` SQLite database (version 8). Implements `createOpenHelper`, `createInvalidationTracker`, and compiled DAO accessors (`TaskDao`, `ExecutionLogDao`, `AutoReplyDao`), bypassing AGP 9.4 Kotlin annotation processor restrictions and completely eliminating runtime reflection lookup delays. Uses `@Suppress("ClassName")` to comply with Kotlin lint while satisfying AndroidX Room's mandatory `_Impl` reflection factory naming convention.
+- **Architectural Purpose:** Concrete reflection-free implementation of [AppRoomDatabase] providing high-performance, zero-overhead integration over the local `helper.db` SQLite database (version 8). Implements `createOpenHelper`, `createInvalidationTracker`, and compiled DAO accessors (`TaskDao`, `ExecutionLogDao`, `AutoReplyDao`), resolving AGP 9.4 Kotlin annotation processor requirements and completely eliminating runtime reflection lookup delays. Uses `@Suppress("ClassName")` to comply with Kotlin lint while satisfying AndroidX Room's mandatory `_Impl` reflection factory naming convention.
 - **Core Functions & APIs (39 total):**
   - `observeAllTasks()` : `Flow<List<TaskEntity>>`
   - `observeTasksByStatus(status: TaskStatus)` : `Flow<List<TaskEntity>>`
@@ -628,7 +628,7 @@ Modern multi-tier preferences combining Jetpack DataStore Preferences for reacti
 - **Package:** `com.jmd.helper.data.prefs` • **Lines of Code:** 99
 - **Declared Types:** `class EncryptedKeyguardStore`
 - **Subsystem Integrations:** Jetpack DataStore, AppFileLogger Telemetry, Hardware Keystore AES-256
-- **Architectural Purpose:** Hardware-backed encrypted credential store using AndroidX Security Crypto and AES-256-GCM. Stores sensitive screen unlock PINs, bypass codes, and cryptographic salts in hardware keystore.
+- **Architectural Purpose:** Hardware-backed encrypted credential store using AndroidX Security Crypto and AES-256-GCM. Stores sensitive screen unlock PINs, fallback authentication credentials, and cryptographic salts in hardware keystore.
 - **Core Functions & APIs (7 total):**
   - `saveLockscreenPin(pin: String)`
   - `getLockscreenPin()` : `String`
@@ -1060,7 +1060,7 @@ Privileged background services including TaskAccessibilityService for UI automat
 
 ### 3.15 Activity Orchestration & Trampolines (`com.jmd.helper.ui.activity`)
 
-Android Activity entry points including MainActivity (Compose host), TaskLauncherActivity (trampoline bypassing background restrictions), CallSimulationActivity (full-screen call simulation), and ReminderAlarmActivity (full-screen audio alarm).
+Android Activity entry points including MainActivity (Compose host), TaskLauncherActivity (transparent bridge activity resolving background start restrictions), CallSimulationActivity (full-screen call simulation), and ReminderAlarmActivity (full-screen audio alarm).
 
 **Total Source Files:** 4
 
@@ -1881,7 +1881,7 @@ Core project-level configuration, Gradle build scripts, AndroidManifest componen
 3. **WhatsApp Notification Auto-Reply**: `TaskNotificationListenerService` reads incoming WhatsApp message notifications, checks keyword match, extracts `RemoteInput`, and dispatches reply without turning on screen.
 
 ## 4.9 Incoming Call Simulation Engine
-1. **Trigger**: Launches full-screen `CallSimulationActivity` bypassing lockscreen.
+1. **Trigger**: Launches full-screen `CallSimulationActivity` displaying directly over keyguard.
 2. **Ringtone Audio Fallback**: Multi-tier audio fallback (`MediaPlayer` with default ringtone $\rightarrow$ `RingtoneManager` fallback).
 3. **Haptic Motor**: Independent vibration loop ensures phone vibrates even if audio is muted.
 4. **Realistic UI**: Custom OEM theme skins resembling real incoming phone calls.
@@ -2084,7 +2084,7 @@ Helper has transitioned from raw emoji icons to **Material 3 vector icons** (`an
 | **Alarms & Reminders** | System Audio / TTS | Exact RTC_WAKEUP + Full-screen alarm UI | Verified (100%) |
 | **Screen Auto-Unlock** | Keyguard | AES-GCM PIN input via accessibility | Verified (100%) |
 | **Power Button Lock** | Device Admin | `GLOBAL_ACTION_LOCK_SCREEN` (Biometric safe) | Verified (100%) |
-| **Banking App Shield** | 60+ UPI Apps | Default-deny + Smart Stealth Standby | Verified (100%) |
+| **Banking App Shield** | 60+ UPI Apps | Default-deny + Smart On-Demand Standby | Verified (100%) |
 | **Backup & Restore** | Offline JSON | SAF FilePicker + Relational import/export | Verified (100%) |
 | **Diagnostics & Logs** | Disk Logger | Rolling 3 MB logs + CSV audit export | Verified (100%) |
 
@@ -2156,7 +2156,7 @@ Helper integrates an enterprise-grade suite of modern AndroidX, Jetpack, and Kot
 - **Location**: `com.jmd.helper.data.prefs.EncryptedKeyguardStore`
 - **Key Capabilities**:
   - Hardware-backed AES-256-GCM encryption powered by Android Hardware Keystore (`MasterKey.DEFAULT_AES256_GCM_SPEC`).
-  - Hardware-isolated storage for device unlock PINs, emergency bypass credentials, and application lock secrets.
+  - Hardware-isolated storage for device unlock PINs, emergency recovery credentials, and application lock secrets.
   - Prevents physical memory extraction or credential harvesting even on rooted hardware or forensic ADB dumps.
 
 ### 12.5 AndroidX Biometric Integration (`androidx.biometric:biometric`)

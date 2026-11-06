@@ -252,6 +252,10 @@
             <meta-data
                 android:name="com.jmd.helper.core.HelperAppInitializer"
                 android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
         </provider>
 
     </application>

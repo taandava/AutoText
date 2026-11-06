@@ -283,4 +283,30 @@ class ModernStackArchitectureTest {
         val resultSyncDuration = AccessibilityHealthManager.waitForServiceReadiness(mockContext, 10.milliseconds)
         assertEquals(false, resultSyncDuration)
     }
+
+    @Test
+    fun `test helper app initializer returns empty dependencies for on demand startup`() {
+        val initializer = com.jmd.helper.core.HelperAppInitializer()
+        val dependencies = initializer.dependencies()
+        assertNotNull(dependencies)
+        assertTrue(dependencies.isEmpty())
+    }
+
+    @Test
+    fun `test helper application implements workmanager configuration provider`() {
+        val app = com.jmd.helper.HelperApplication()
+        val configProvider: Any = app
+        assertTrue("HelperApplication must implement Configuration.Provider", configProvider is androidx.work.Configuration.Provider)
+        val config = app.workManagerConfiguration
+        assertNotNull(config)
+    }
+
+    @Test
+    fun `test semantic success tokens and channel simulation backward compatibility`() {
+        assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.SIMULATED_CALL)
+        @Suppress("DEPRECATION")
+        assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.FAKE_CALL)
+        assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.fromString("CALL_SIMULATION"))
+        assertEquals(com.jmd.helper.data.model.ChannelType.CALL_SIMULATION, com.jmd.helper.data.model.ChannelType.fromString("SIMULATED_CALL"))
+    }
 }

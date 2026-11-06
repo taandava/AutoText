@@ -56,6 +56,10 @@ object OrangeBrandPalette {
     val SupportingBrown = Color(0xFF563316)    // Supporting brand brown
     val PrimaryDarkText = Color(0xFF1F1B17)    // High contrast reading dark
     val SuccessGreen = Color(0xFF2E7D32)       // Material Success Green
+    val SuccessGreenContainer = Color(0xFFE8F5E9) // Light Green Tint Surface
+    val SuccessGreenBorder = Color(0xFFA5D6A7) // Light Green Border
+    val SuccessGreenDark = Color(0xFF4ADE80)   // High-Visibility Emerald Green (Dark)
+    val SuccessGreenDarkContainer = Color(0xFF0F3D24) // Dark Emerald Container
     val ErrorRed = Color(0xFFBA1A1A)           // Material Error Red
 
     // Tonal Scales

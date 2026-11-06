@@ -34,6 +34,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -486,16 +488,31 @@ fun SuperAutoHealAndPermissionFixerCard(context: Context) {
     // Safe ADB command: grants WRITE_SECURE_SETTINGS, runtime permissions, and key appops without destructively overwriting existing third-party accessibility services
     val universalAdbCommand = "adb shell \"pm grant com.jmd.helper android.permission.WRITE_SECURE_SETTINGS; pm grant com.jmd.helper android.permission.READ_PHONE_STATE; pm grant com.jmd.helper android.permission.CALL_PHONE; pm grant com.jmd.helper android.permission.ANSWER_PHONE_CALLS; pm grant com.jmd.helper android.permission.READ_CALL_LOG; pm grant com.jmd.helper android.permission.READ_CONTACTS; pm grant com.jmd.helper android.permission.POST_NOTIFICATIONS; pm grant com.jmd.helper android.permission.READ_SMS; pm grant com.jmd.helper android.permission.SEND_SMS; pm grant com.jmd.helper android.permission.READ_MEDIA_IMAGES; pm grant com.jmd.helper android.permission.READ_MEDIA_VIDEO; appops set com.jmd.helper SYSTEM_ALERT_WINDOW allow; appops set com.jmd.helper TURN_SCREEN_ON allow; appops set com.jmd.helper SCHEDULE_EXACT_ALARM allow; appops set com.jmd.helper START_ACTIVITIES_FROM_BACKGROUND allow; appops set com.jmd.helper ACCESS_RESTRICTED_SETTINGS allow; appops set com.jmd.helper AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore; dumpsys deviceidle whitelist +com.jmd.helper; dpm set-active-admin com.jmd.helper/.receiver.HelperDeviceAdminReceiver\""
 
+    val isDark = isSystemInDarkTheme()
+    val isFullyHealed = hasSecurePerm && isA11yActive
+    val cardBg = when {
+        isFullyHealed -> if (isDark) Color(0xFF10B981).copy(alpha = 0.12f) else Color(0xFFE8F5E9)
+        else -> MaterialTheme.colorScheme.primary.copy(alpha = if (isDark) 0.14f else 0.08f)
+    }
+    val cardBorder = when {
+        isFullyHealed -> if (isDark) Color(0xFF4ADE80).copy(alpha = 0.40f) else Color(0xFFA5D6A7)
+        else -> MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
+    }
+    val iconTint = when {
+        isFullyHealed -> if (isDark) Color(0xFF4ADE80) else Color(0xFF1B5E20)
+        else -> MaterialTheme.colorScheme.primary
+    }
+
     AppCard(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = if (hasSecurePerm && isA11yActive) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.14f),
-        borderColor = if (hasSecurePerm && isA11yActive) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
+        backgroundColor = cardBg,
+        borderColor = cardBorder,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                imageVector = if (hasSecurePerm && isA11yActive) Icons.Default.VerifiedUser else Icons.Default.AutoFixHigh,
+                imageVector = if (isFullyHealed) Icons.Default.VerifiedUser else Icons.Default.AutoFixHigh,
                 contentDescription = null,
-                tint = if (hasSecurePerm && isA11yActive) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary,
+                tint = iconTint,
                 modifier = Modifier.size(22.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -598,11 +615,20 @@ fun SuperAutoHealAndPermissionFixerCard(context: Context) {
  */
 @Composable
 internal fun StatusPill(label: String, isOk: Boolean, modifier: Modifier = Modifier) {
+    val isDark = isSystemInDarkTheme()
+    val activeColor = if (isDark) Color(0xFF4ADE80) else Color(0xFF1B5E20)
+    val activeBg = if (isDark) Color(0xFF10B981).copy(alpha = 0.16f) else Color(0xFFE8F5E9)
+    val activeBorder = if (isDark) Color(0xFF4ADE80).copy(alpha = 0.40f) else Color(0xFF81C784)
+
+    val inactiveColor = MaterialTheme.colorScheme.error
+    val inactiveBg = MaterialTheme.colorScheme.error.copy(alpha = if (isDark) 0.15f else 0.10f)
+    val inactiveBorder = MaterialTheme.colorScheme.error.copy(alpha = 0.40f)
+
     Surface(
         modifier = modifier,
         shape = AppDesignTokens.ShapePill,
-        color = if (isOk) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
-        border = BorderStroke(1.dp, if (isOk) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f) else MaterialTheme.colorScheme.error.copy(alpha = 0.4f)),
+        color = if (isOk) activeBg else inactiveBg,
+        border = BorderStroke(1.dp, if (isOk) activeBorder else inactiveBorder),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
@@ -613,7 +639,7 @@ internal fun StatusPill(label: String, isOk: Boolean, modifier: Modifier = Modif
                 modifier = Modifier
                     .size(6.dp)
                     .background(
-                        color = if (isOk) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+                        color = if (isOk) activeColor else inactiveColor,
                         shape = RoundedCornerShape(3.dp),
                     ),
             )
@@ -621,8 +647,8 @@ internal fun StatusPill(label: String, isOk: Boolean, modifier: Modifier = Modif
             Text(
                 text = label,
                 fontSize = 10.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = if (isOk) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+                fontWeight = FontWeight.Bold,
+                color = if (isOk) activeColor else inactiveColor,
             )
         }
     }
@@ -720,10 +746,16 @@ fun PermissionItem(
     isGranted: Boolean = false,
     onClick: () -> Unit,
 ) {
+    val isDark = isSystemInDarkTheme()
+    val grantedBg = if (isDark) Color(0xFF10B981).copy(alpha = 0.08f) else Color(0xFFF1F8F3)
+    val ungrantedBg = MaterialTheme.colorScheme.surface
+    val grantedBorder = if (isDark) Color(0xFF4ADE80).copy(alpha = 0.30f) else Color(0xFFA5D6A7)
+    val ungrantedBorder = MaterialTheme.colorScheme.outlineVariant
+
     AppCard(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = if (isGranted) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surfaceContainerHigh,
-        borderColor = if (isGranted) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.25f) else MaterialTheme.colorScheme.outlineVariant,
+        backgroundColor = if (isGranted) grantedBg else ungrantedBg,
+        borderColor = if (isGranted) grantedBorder else ungrantedBorder,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -734,21 +766,34 @@ fun PermissionItem(
             if (isGranted) {
                 Surface(
                     shape = AppDesignTokens.ShapePill,
-                    color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.18f),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.45f)),
+                    color = if (isDark) Color(0xFF10B981).copy(alpha = 0.20f) else Color(0xFFE8F5E9),
+                    border = BorderStroke(1.dp, if (isDark) Color(0xFF4ADE80).copy(alpha = 0.50f) else Color(0xFF81C784)),
                 ) {
-                    Text(
-                        text = "ACTIVE",
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontSize = 9.5.sp,
-                        fontWeight = FontWeight.Bold,
+                    Row(
                         modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp),
-                    )
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(5.dp)
+                                .background(
+                                    color = if (isDark) Color(0xFF4ADE80) else Color(0xFF1B5E20),
+                                    shape = RoundedCornerShape(2.5.dp)
+                                )
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "ACTIVE",
+                            color = if (isDark) Color(0xFF4ADE80) else Color(0xFF1B5E20),
+                            fontSize = 9.5.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
             }
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(desc, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.5.sp)
+        Text(desc, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.5.sp, lineHeight = 16.5.sp)
         Spacer(modifier = Modifier.height(10.dp))
         GlassButton(
             text = btnText,

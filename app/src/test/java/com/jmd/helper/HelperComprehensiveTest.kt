@@ -1629,6 +1629,7 @@ class HelperComprehensiveTest {
     // ═══════════════════════════════════════════════════════════════════════════════════
 
     @Test
+    @Suppress("DEPRECATION")
     fun testChannelTypeCallSimulationCompatibility() {
         // Primary policy-compliant enum name
         assertEquals("CALL_SIMULATION", ChannelType.CALL_SIMULATION.name)
@@ -1646,6 +1647,7 @@ class HelperComprehensiveTest {
     }
 
     @Test
+    @Suppress("DEPRECATION")
     fun testSimulatedCallerModelProperties() {
         // Default ScheduledTask must use Indian mobile number format
         val defaultTask = ScheduledTask()

@@ -9,7 +9,7 @@ import com.jmd.helper.core.AppFileLogger
 
 /**
  * Hardware-backed encrypted credential store using AndroidX Security Crypto and AES-256-GCM.
- * Stores sensitive screen unlock PINs, bypass codes, and cryptographic salts in hardware keystore.
+ * Stores sensitive screen unlock PINs, fallback authentication credentials, and cryptographic salts in hardware keystore.
  */
 @Suppress("DEPRECATION")
 class EncryptedKeyguardStore(context: Context) {
@@ -71,7 +71,7 @@ class EncryptedKeyguardStore(context: Context) {
     }
 
     /**
-     * Saves the in-app biometric lock bypass password or salt.
+     * Saves the in-app biometric lock fallback authentication credential or salt.
      */
     fun saveAppLockSecret(secret: String) {
         prefs.edit { putString(KEY_APP_LOCK_SECRET, secret) }

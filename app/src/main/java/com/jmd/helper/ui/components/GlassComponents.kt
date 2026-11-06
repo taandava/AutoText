@@ -24,6 +24,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -93,10 +94,11 @@ fun GlassButton(
         label = "m3ButtonScale"
     )
 
+    val isDark = isSystemInDarkTheme()
     val containerColor = when (variant) {
         GlassButtonVariant.PRIMARY -> MaterialTheme.colorScheme.primary
         GlassButtonVariant.SECONDARY -> MaterialTheme.colorScheme.secondaryContainer
-        GlassButtonVariant.SUCCESS -> MaterialTheme.colorScheme.tertiary
+        GlassButtonVariant.SUCCESS -> if (isDark) Color(0xFF1B5E20) else Color(0xFF2E7D32)
         GlassButtonVariant.DANGER -> MaterialTheme.colorScheme.error
         GlassButtonVariant.OUTLINE -> Color.Transparent
     }
@@ -104,7 +106,7 @@ fun GlassButton(
     val contentColor = when (variant) {
         GlassButtonVariant.PRIMARY -> MaterialTheme.colorScheme.onPrimary
         GlassButtonVariant.SECONDARY -> MaterialTheme.colorScheme.onSecondaryContainer
-        GlassButtonVariant.SUCCESS -> MaterialTheme.colorScheme.onTertiary
+        GlassButtonVariant.SUCCESS -> Color.White
         GlassButtonVariant.DANGER -> MaterialTheme.colorScheme.onError
         GlassButtonVariant.OUTLINE -> MaterialTheme.colorScheme.primary
     }

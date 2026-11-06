@@ -13,7 +13,7 @@
  * - System Sound Mode & DND Switching
  *
  * Each endpoint enforces pre-condition validation, semantic designated element actions,
- * accurate result verification, and room execution logging with zero simulated or fake success.
+ * accurate result verification, and room execution logging with verified real-device execution outcome.
  */
 package com.jmd.helper.api
 
