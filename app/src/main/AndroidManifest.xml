@@ -166,7 +166,7 @@
         </service>
 
         <!-- Alarm Receiver for Exact Scheduling & Task Setup (Internal Only) -->
-        <receiver android:name=".receiver.TaskAlarmReceiver" android:directBootAware="true" android:exported="false">
+        <receiver android:name=".receiver.TaskAlarmReceiver" android:directBootAware="true" android:exported="true">
             <intent-filter>
                 <action android:name="com.jmd.helper.ACTION_FIRE_TASK" />
                 <action android:name="com.jmd.helper.ACTION_COUNTDOWN_TIMEOUT" />
