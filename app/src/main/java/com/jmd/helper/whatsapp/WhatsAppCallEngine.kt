@@ -491,7 +491,7 @@ class WhatsAppCallEngine(
                     continue
                 }
 
-                val isPositiveId = id.endsWith("button1") ||
+                val isPositiveId = (id.endsWith("button1") ||
                         id.endsWith("ok") ||
                         id.endsWith("btn_ok") ||
                         id.endsWith("positive_button") ||
@@ -501,11 +501,11 @@ class WhatsAppCallEngine(
                         id.endsWith("audio_call_item") ||
                         id.endsWith("voice_call_item") ||
                         id.endsWith("permission_allow_foreground_only_button") ||
-                        id.endsWith("permission_allow_button")
+                        id.endsWith("permission_allow_button")) && !id.contains("main_layout")
 
                 if (isPositiveId) {
                     val isActionWord = generalActionWords.any { text.equals(it, ignoreCase = true) || desc.equals(it, ignoreCase = true) }
-                    if (isActionWord || text.isNotBlank() || node.isClickable || desc.isNotBlank()) {
+                    if (isActionWord || (text.isNotBlank() && !text.contains("chat", ignoreCase = true)) || node.isClickable || desc.isNotBlank()) {
                         return if (node.isClickable) node else node.parent ?: node
                     }
                 }
