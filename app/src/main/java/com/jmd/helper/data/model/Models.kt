@@ -78,6 +78,7 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
     WHATSAPP("WhatsApp", "💬"),
     WHATSAPP_BUSINESS("WA Business", "💼"),
     WHATSAPP_GROUP("WhatsApp Group", "👥"),
+    WHATSAPP_BUSINESS_GROUP("WA Business Group", "👥💼"),
     WHATSAPP_STATUS("WA Status", "📸"),
     WHATSAPP_BUSINESS_STATUS("W4B Status", "📸💼"),
     CALL("Phone Call", "📞"),
@@ -99,6 +100,7 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
             return when (val clean = value.trim().uppercase()) {
                 "CALL_SIMULATION", "SIMULATION", "SIMULATED_CALL" -> CALL_SIMULATION
                 "WHATSAPP_GROUP", "GROUP", "WA_GROUP" -> WHATSAPP_GROUP
+                "WHATSAPP_BUSINESS_GROUP", "W4B_GROUP", "WA_BUSINESS_GROUP" -> WHATSAPP_BUSINESS_GROUP
                 else -> entries.firstOrNull { it.name == clean } ?: SMS
             }
         }

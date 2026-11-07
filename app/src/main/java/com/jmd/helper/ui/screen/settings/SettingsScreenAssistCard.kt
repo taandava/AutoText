@@ -7,10 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.StopCircle
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +37,86 @@ fun SettingsScreenAssistCard(
     var assistType by remember { mutableStateOf(prefs.screenAssistType) }
     var assistPin by remember { mutableStateOf(prefs.screenAssistPin) }
     var isAutoLockAfterSend by remember { mutableStateOf(prefs.isAutoLockAfterSendEnabled) }
+    var showPinPromptDialog by remember { mutableStateOf(false) }
+    var promptPinInput by remember { mutableStateOf("") }
+
+    if (showPinPromptDialog) {
+        AlertDialog(
+            onDismissRequest = { showPinPromptDialog = false },
+            title = {
+                Text(
+                    text = "Configure Unlock to Test",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Enter your phone lock PIN to test auto-unlock, or select Swipe if your device has no password.",
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    GlassInputField(
+                        value = promptPinInput,
+                        onValueChange = { promptPinInput = it.filter { ch -> ch.isDigit() } },
+                        label = "Screen Lock PIN",
+                        placeholder = "e.g. 1234",
+                        isPassword = true,
+                        leadingIcon = Icons.Default.Lock,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                        accentColor = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            confirmButton = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    GlassButton(
+                        text = "Use Swipe",
+                        onClick = {
+                            assistType = "SWIPE"
+                            prefs.screenAssistType = "SWIPE"
+                            prefs.isScreenAssistEnabled = true
+                            isScreenAssistEnabled = true
+                            showPinPromptDialog = false
+                            TaskAccessibilityService.testScreenAssist(context, "")
+                        },
+                        variant = GlassButtonVariant.SECONDARY,
+                        modifier = Modifier.weight(1f)
+                    )
+                    GlassButton(
+                        text = "Test PIN",
+                        onClick = {
+                            if (promptPinInput.isNotBlank()) {
+                                assistPin = promptPinInput
+                                assistType = "PIN"
+                                prefs.screenAssistPin = promptPinInput
+                                prefs.screenAssistType = "PIN"
+                                prefs.isScreenAssistEnabled = true
+                                isScreenAssistEnabled = true
+                                showPinPromptDialog = false
+                                TaskAccessibilityService.testScreenAssist(context, promptPinInput)
+                            } else {
+                                context.showAppToast("Enter at least 4 digits")
+                            }
+                        },
+                        variant = GlassButtonVariant.PRIMARY,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPinPromptDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     AppCard(modifier = modifier.fillMaxWidth()) {
         Text("Screen Task Assistance & Auto-Lock", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp)
@@ -161,7 +238,8 @@ fun SettingsScreenAssistCard(
                     }
                     val currentPin = assistPin.ifBlank { prefs.screenAssistPin }.trim()
                     if (currentPin.isBlank() && assistType != "SWIPE") {
-                        context.showAppToast("Enter your screen lock PIN above to test unlock", isLong = true)
+                        promptPinInput = ""
+                        showPinPromptDialog = true
                         return@GlassButton
                     }
                     TaskAccessibilityService.testScreenAssist(context, currentPin)
@@ -189,18 +267,6 @@ fun SettingsScreenAssistCard(
                 },
                 icon = Icons.Filled.Lock,
                 variant = GlassButtonVariant.SECONDARY,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            GlassButton(
-                text = "Emergency Stop All Scheduled Tasks",
-                onClick = {
-                    com.jmd.helper.core.TaskSafetyManager.triggerEmergencyStop(context, "User clicked Emergency Stop in Settings")
-                },
-                icon = Icons.Filled.StopCircle,
-                variant = GlassButtonVariant.DANGER,
                 modifier = Modifier.fillMaxWidth()
             )
         }

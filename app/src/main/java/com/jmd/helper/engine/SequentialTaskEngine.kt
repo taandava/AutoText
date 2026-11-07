@@ -22,7 +22,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import com.jmd.helper.core.TaskSafetyManager
 import android.media.AudioManager
 import android.net.Uri
 import android.os.PowerManager
@@ -33,13 +32,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.jmd.helper.HelperApplication
-import com.jmd.helper.core.AccessibilityHealthManager
-import com.jmd.helper.core.AppFileLogger
-import com.jmd.helper.core.MessageTemplateResolver
-import com.jmd.helper.core.PhoneNumberNormalizer
-import com.jmd.helper.core.PrivacyManager
-import com.jmd.helper.core.SmsQuotaManager
-import com.jmd.helper.core.WhatsAppPackageHelper
+import com.jmd.helper.core.*
 import com.jmd.helper.data.model.*
 import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.data.repo.AppRepository
@@ -85,19 +78,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     private fun startSequentialProcessor() {
         engineScope.launch {
-            val prefs = PreferenceManager(appContext)
             for (taskId in taskChannel) {
                 try {
-                    if (!prefs.isTasksMasterEnabled) {
-                        AppFileLogger.w(appContext, TAG, "Task Scheduler Engine is disabled by master switch. Dropping task #$taskId.")
-                        continue
-                    }
-
-                    if (TaskSafetyManager.isEmergencyStopActive(appContext)) {
-                        AppFileLogger.w(appContext, TAG, "Emergency Stop is active. Dropping queued task #$taskId.")
-                        continue
-                    }
-
                     val task = repository.getTaskById(taskId)
                     if (task == null) {
                         AppFileLogger.w(appContext, TAG, "Task #$taskId no longer exists in DB. Skipping.")
@@ -236,20 +218,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 AlarmScheduler(context).cancelTask(task.id)
                 return
             }
-            val prefs = PreferenceManager(context)
-            if (!prefs.isTasksMasterEnabled) {
-                Log.i(TAG, "Task Scheduler Engine is disabled. Suppressing recurrence for Task #${task.id}.")
-                AlarmScheduler(context).cancelTask(task.id)
-                repository.updateTaskStatus(task.id, if (success) TaskStatus.DONE else TaskStatus.FAILED, now)
-                return
-            }
-            if (TaskSafetyManager.isEmergencyStopActive(context)) {
-                Log.i(TAG, "Emergency Stop is active. Suppressing recurrence for Task #${task.id}.")
-                AlarmScheduler(context).cancelTask(task.id)
-                val targetStatus = if (freshTask.recurrence != RecurrenceType.ONCE) TaskStatus.PENDING else TaskStatus.FAILED
-                repository.updateTaskStatus(task.id, targetStatus, now)
-                return
-            }
 
             val isRecurring = freshTask.recurrence != RecurrenceType.ONCE
             if (isRecurring) {
@@ -372,15 +340,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
      * @return `true` if task completed successfully; `false` on failure.
      */
     suspend fun executeTaskSafely(repository: AppRepository, task: ScheduledTask): Boolean {
-        val prefs = PreferenceManager(appContext)
-        if (!prefs.isTasksMasterEnabled) {
-            AppFileLogger.w(appContext, TAG, "Task Scheduler Engine is disabled by master switch. Refusing execution for Task #${task.id}.")
-            return false
-        }
-        if (TaskSafetyManager.isEmergencyStopActive(appContext)) {
-            AppFileLogger.w(appContext, TAG, "Emergency Stop is active. Refusing execution for Task #${task.id}.")
-            return false
-        }
         val fresh = repository.getTaskById(task.id)
         if (fresh == null || fresh.status == TaskStatus.CANCELLED) {
             AppFileLogger.w(appContext, TAG, "Task #${task.id} is cancelled or deleted in DB. Refusing execution.")
@@ -390,14 +349,14 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         AppFileLogger.action(appContext, TAG, "Starting execution for Task #${task.id} (${task.title}) on [${task.channel.displayName}]")
 
         if (!TaskSafetyManager.canExecute(task.channel)) {
-            AppFileLogger.w(appContext, TAG, "TaskSafetyManager refused execution for ${task.channel.displayName} (circuit breaker tripped or emergency stop active).")
+            AppFileLogger.w(appContext, TAG, "TaskSafetyManager refused execution for ${task.channel.displayName} (circuit breaker tripped).")
             return false
         }
 
         val privacyMgr = com.jmd.helper.core.PrivacyManager.getInstance(appContext)
         val targetPkg = when (task.channel) {
             ChannelType.WHATSAPP, ChannelType.WHATSAPP_GROUP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL -> "com.whatsapp"
-            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "com.whatsapp.w4b"
+            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "com.whatsapp.w4b"
             else -> null
         }
         if (targetPkg != null && privacyMgr.isTaskBlockedForPackage(targetPkg)) {
@@ -439,12 +398,14 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             return false
         }
 
+        val prefs = PreferenceManager(appContext)
         repository.updateTaskStatus(task.id, TaskStatus.RUNNING)
 
         val success = when (task.channel) {
             ChannelType.WHATSAPP,
             ChannelType.WHATSAPP_BUSINESS,
             ChannelType.WHATSAPP_GROUP,
+            ChannelType.WHATSAPP_BUSINESS_GROUP,
             ChannelType.WHATSAPP_STATUS,
             ChannelType.WHATSAPP_BUSINESS_STATUS,
             -> {
@@ -504,7 +465,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         val isUiTaskChannel = when (task.channel) {
-            ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_GROUP,
+            ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_GROUP, ChannelType.WHATSAPP_BUSINESS_GROUP,
             ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_BUSINESS_STATUS,
             ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> true
             else -> false
@@ -625,7 +586,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val requiredPackage = WhatsAppPackageHelper.getPackageForChannel(appContext, task.channel)
         if (requiredPackage == null) {
             val missingPkgName = when (task.channel) {
-                ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "WhatsApp Business (com.whatsapp.w4b)"
+                ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "WhatsApp Business (com.whatsapp.w4b)"
                 else -> "WhatsApp (com.whatsapp)"
             }
             AppFileLogger.w(appContext, TAG, "Cannot execute Task #${task.id}: $missingPkgName is not installed on this device.")
@@ -660,12 +621,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         while ((attempts <= effectiveMaxRetries) && !success) {
             attempts++
             try {
-                val prefs = PreferenceManager(appContext)
-                if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-                    AppFileLogger.w(appContext, TAG, "WhatsApp task execution halted: Master scheduler disabled or emergency stop active.")
-                    return false
-                }
-
                 // Cooperative cancellation check before attempt
                 val currentTaskState = repository.getTaskById(task.id)
                 if ((currentTaskState == null) || (currentTaskState.status == TaskStatus.CANCELLED)) {
@@ -730,12 +685,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         var currentBatchSuccess = true
                         val totalRecipients = task.recipients.size
                         for (i in task.recipients.indices) {
-                            val livePrefs = PreferenceManager(appContext)
-                            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-                                AppFileLogger.w(appContext, TAG, "Task #${task.id} halted during multi-recipient loop: Master scheduler disabled or emergency stop active.")
-                                return false
-                            }
-
                             // In-flight cooperative cancellation check between recipients
                             val taskCheck = repository.getTaskById(task.id)
                             if ((taskCheck == null) || (taskCheck.status == TaskStatus.CANCELLED)) {
@@ -839,12 +788,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val occurrenceId = "${task.triggerTimeMillis}_${task.executionCount}"
 
         for (i in task.recipients.indices) {
-            val livePrefs = PreferenceManager(appContext)
-            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-                AppFileLogger.w(appContext, TAG, "SMS task #${task.id} halted during recipient loop: Master scheduler disabled or emergency stop active.")
-                return false
-            }
-
             // Cooperative cancellation check between SMS recipients
             val currentTaskState = repository.getTaskById(task.id)
             if ((currentTaskState == null) || (currentTaskState.status == TaskStatus.CANCELLED)) {
@@ -969,12 +912,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     }
 
     private suspend fun executeCallTask(repository: AppRepository, task: ScheduledTask): Boolean {
-        val prefs = PreferenceManager(appContext)
-        if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-            AppFileLogger.w(appContext, TAG, "Emergency stop or master switch disabled! Halting phone call task #${task.id}.")
-            return false
-        }
-
         val baseRecipients = task.recipients.filter { it.isNotBlank() }
         if (baseRecipients.isEmpty()) {
             AppFileLogger.e(appContext, TAG, "Task #${task.id}: No recipient phone number provided for call")
@@ -1009,12 +946,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val interCallDelayMs = maxOf(1000L, task.delayBetweenCallsSeconds * 1000L)
 
         for ((index, rawRecipient) in rawRecipients.withIndex()) {
-            val livePrefs = PreferenceManager(appContext)
-            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-                AppFileLogger.w(appContext, TAG, "Phone call sequence halted: Master scheduler disabled or emergency stop active.")
-                return false
-            }
-
             val taskState = repository.getTaskById(task.id)
             if (taskState == null || taskState.status == TaskStatus.CANCELLED) {
                 AppFileLogger.w(appContext, TAG, "Task #${task.id} cancelled during multi-call loop. Halting remaining calls.")
@@ -1176,19 +1107,13 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     }
 
                     // Sliced delay polling checking master pause and early call termination
-                    // Returns true if duration fully elapsed; false if aborted via master switch / emergency stop
+                    // Returns true if duration fully elapsed; false if aborted via master switch / task cancellation
                     val waitForCallDurationWithEarlyCheck: suspend (Long, Long, Boolean) -> Boolean = { totalMs, graceMs, allowEarlyExit ->
                         var elapsed = 0L
                         val step = 250L
                         var completedNormally = true
                         var idleConsecutiveMs = 0L
                         while (elapsed < totalMs) {
-                            val livePrefs = PreferenceManager(appContext)
-                            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-                                AppFileLogger.w(appContext, TAG, "Call duration holding interrupted: Master switch disabled or emergency stop active.")
-                                completedNormally = false
-                                break
-                            }
                             // After grace period, if early exit is allowed (e.g. connected call was hung up by remote party), verify continuous idle state
                             if (allowEarlyExit && elapsed >= graceMs) {
                                 if (!isCellularCallOngoing()) {
@@ -1224,9 +1149,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         var connected = false
 
                         while (dialElapsedMs < dialTimeoutMs) {
-                            val livePrefs = PreferenceManager(appContext)
-                            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) break
-
                             if (com.jmd.helper.compat.TelephonyManagerCompat.isCallConnected(appContext, telephonyManager) ||
                                 (dialElapsedMs >= 3000L && TaskAccessibilityService.isPhoneCallUiActive())) {
                                 connected = true
@@ -1269,7 +1191,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             Log.d(TAG, "Call duration notification error: ${e.message}")
                         }
                     } else {
-                        AppFileLogger.action(appContext, TAG, "Call to $cleanPhone ended naturally or did not trigger auto-hangup (criteriaSatisfied=$durationCriteriaSatisfied).")
+                        AppFileLogger.action(appContext, TAG, "Call to $cleanPhone ended naturally or did not trigger auto-hangup.")
                     }
 
                     // Allow 2 seconds for audio/telephony channel to disconnect cleanly
@@ -1290,8 +1212,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         delay(3000L.milliseconds)
                         elapsedMs += 3000L
                         while (elapsedMs < maxWaitMs) {
-                            val livePrefs = PreferenceManager(appContext)
-                            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) break
                             val state = com.jmd.helper.compat.TelephonyManagerCompat.getCallState(appContext, telephonyManager)
                             if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
                                 sawOffHook = true
@@ -1338,11 +1258,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 var elapsed = 0L
                 val step = 250L
                 while (elapsed < interCallDelayMs) {
-                    val livePrefs = PreferenceManager(appContext)
-                    if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-                        AppFileLogger.w(appContext, TAG, "Inter-call delay cancelled: Master switch disabled or emergency stop active.")
-                        break
-                    }
                     val chunk = minOf(step, interCallDelayMs - elapsed)
                     delay(chunk.milliseconds)
                     elapsed += chunk
@@ -1358,11 +1273,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     }
 
     private suspend fun executeWhatsAppCallTask(repository: AppRepository, task: ScheduledTask): Boolean {
-        val prefs = PreferenceManager(appContext)
-        if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-            AppFileLogger.w(appContext, TAG, "WhatsApp call task aborted: Master switch disabled or emergency stop active.")
-            return false
-        }
         val baseRecipients = task.recipients.filter { it.isNotBlank() }
         if (baseRecipients.isEmpty()) {
             AppFileLogger.e(appContext, TAG, "Task #${task.id}: No recipient phone number provided for WhatsApp call")
@@ -1431,12 +1341,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val shouldRelockPref = PreferenceManager(appContext).isAutoLockAfterSendEnabled
 
         for ((index, rawRecipient) in rawRecipients.withIndex()) {
-            val livePrefs = PreferenceManager(appContext)
-            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-                AppFileLogger.w(appContext, TAG, "Emergency stop or master switch disabled during WhatsApp call sequence. Halting.")
-                return false
-            }
-
             if (TaskSafetyManager.isInterruptedByHuman.get() || !TaskSafetyManager.isDeviceIdle(appContext)) {
                 val msg = "WhatsApp Call Task #${task.id} (${task.title}) interrupted by human interaction. Auto-postponing task to complete when idle."
                 AppFileLogger.action(appContext, TAG, msg)
@@ -1486,12 +1390,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             var completedNormally = true
                             var idleConsecutiveMs = 0L
                             while (elapsed < totalMs) {
-                                val livePrefs = PreferenceManager(appContext)
-                                if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-                                    AppFileLogger.w(appContext, TAG, "WhatsApp call duration holding interrupted: Master switch disabled or emergency stop active.")
-                                    completedNormally = false
-                                    break
-                                }
                                 if (allowEarlyExit && elapsed >= graceMs) {
                                     if (!TaskAccessibilityService.isInWhatsAppCall()) {
                                         idleConsecutiveMs += step
@@ -1524,9 +1422,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             var connected = false
 
                             while (dialElapsedMs < dialTimeoutMs) {
-                                val livePrefs = PreferenceManager(appContext)
-                                if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) break
-
                                 if (TaskAccessibilityService.isWhatsAppCallConnected()) {
                                     connected = true
                                     AppFileLogger.action(appContext, TAG, "WhatsApp VoIP call to $cleanPhone connected! Starting configured ${durationSec}s duration timer...")
@@ -1582,8 +1477,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         delay(3000L.milliseconds)
                         elapsedMs += 3000L
                         while (elapsedMs < maxWaitMs) {
-                            val livePrefs = PreferenceManager(appContext)
-                            if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) break
                             val inCall = TaskAccessibilityService.isInWhatsAppCall()
                             if (inCall) {
                                 sawInCall = true
@@ -1640,11 +1533,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 var elapsed = 0L
                 val step = 250L
                 while (elapsed < interCallDelayMs) {
-                    val livePrefs = PreferenceManager(appContext)
-                    if (!livePrefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(appContext)) {
-                        AppFileLogger.w(appContext, TAG, "WhatsApp inter-call delay cancelled: Master switch disabled or emergency stop active.")
-                        break
-                    }
                     val chunk = minOf(step, interCallDelayMs - elapsed)
                     delay(chunk.milliseconds)
                     elapsed += chunk

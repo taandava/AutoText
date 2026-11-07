@@ -194,6 +194,9 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         super.onOpen(db)
         ensureDynamicPoolTables(db)
         pruneLegacyPoolAndGroupRows(db)
+        // Permanently drop legacy WhatsApp groups table and prune any group leads from pool
+        runCatching { db.execSQL("DROP TABLE IF EXISTS $TABLE_WHATSAPP_GROUPS") }
+        runCatching { db.execSQL("DELETE FROM $TABLE_DYNAMIC_POOL WHERE normalized_number LIKE 'group:%' OR source = 'WA_GROUP'") }
     }
 
     /**
@@ -242,16 +245,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                 )
             """.trimIndent())
 
-            // 3. Deduplicate whatsapp_groups by group name
-            db.execSQL("""
-                DELETE FROM $TABLE_WHATSAPP_GROUPS
-                WHERE id NOT IN (
-                    SELECT MIN(id)
-                    FROM $TABLE_WHATSAPP_GROUPS
-                    GROUP BY LOWER(TRIM(name))
-                )
-            """.trimIndent())
-
             // 4. Deduplicate recipients table by phone_or_email
             db.execSQL("""
                 DELETE FROM $TABLE_RECIPIENTS
@@ -264,7 +257,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
 
             // 5. Ensure UNIQUE indexes exist to permanently prevent future duplicate inserts
             try { db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_pool_unique_norm ON $TABLE_DYNAMIC_POOL(normalized_number)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
-            try { db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_groups_unique_name ON $TABLE_WHATSAPP_GROUPS(name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         }
     }
 
@@ -294,27 +286,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                     "AND source NOT IN ('WA_CHAT', 'WA_BUSINESS', 'WA_GROUP', 'WA_BROADCAST', 'WA_STATUS') " +
                     "AND (normalized_number IS NULL OR LENGTH(TRIM(normalized_number)) < 7) " +
                     "AND (phone IS NULL OR LENGTH(TRIM(phone)) < 7)"
-            )
-        }
-
-        runCatching {
-            db.execSQL(
-                """
-                DELETE FROM $TABLE_WHATSAPP_GROUPS
-                WHERE LOWER(TRIM(name)) LIKE '%status%'
-                   OR LOWER(TRIM(name)) LIKE '%disappears%'
-                   OR LOWER(TRIM(name)) LIKE '%joined using%'
-                   OR LOWER(TRIM(name)) LIKE '%meta ai%'
-                   OR LOWER(TRIM(name)) LIKE '%http%'
-                   OR TRIM(name) LIKE '~%'
-                   OR TRIM(name) IN (
-                       SELECT TRIM(name) FROM $TABLE_DYNAMIC_POOL
-                       WHERE normalized_number NOT LIKE 'group:%'
-                         AND normalized_number NOT LIKE 'broadcast:%'
-                         AND normalized_number NOT LIKE 'chat:%'
-                         AND LENGTH(phone) >= 7
-                   )
-                """.trimIndent()
             )
         }
 
@@ -573,19 +544,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         addColumnIfNotExists(db, TABLE_TASK_DELIVERIES, "occurrence_id", "TEXT NOT NULL DEFAULT ''")
         addColumnIfNotExists(db, TABLE_LOGS, "segments", "INTEGER DEFAULT 1")
 
-        db.execSQL("""
-            CREATE TABLE IF NOT EXISTS $TABLE_WHATSAPP_GROUPS (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL UNIQUE,
-                participant_count TEXT DEFAULT '',
-                last_discovered_at INTEGER DEFAULT 0,
-                package_name TEXT DEFAULT 'com.whatsapp',
-                photo_uri TEXT DEFAULT '',
-                description TEXT DEFAULT ''
-            )
-        """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_wa_groups_name ON $TABLE_WHATSAPP_GROUPS(name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_wa_groups_pkg ON $TABLE_WHATSAPP_GROUPS(package_name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         // Backfill legacy logs where segments column defaulted to 1 but details recorded multiple segments/parts
         try {
             db.rawQuery("SELECT id, details, message_snippet FROM $TABLE_LOGS WHERE segments <= 1 AND (details LIKE '%parts:%' OR details LIKE '%segments:%')", null).use { cursor ->

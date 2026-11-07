@@ -337,8 +337,8 @@ object AccessibilityHealthManager {
         }
         val prefs = PreferenceManager(context)
         val fg = TaskAccessibilityService.currentForegroundPackage
-        if (prefs.isA11yUserPaused || prefs.isDynamicA11yOnDemandEnabled || (fg != null && TaskAccessibilityService.isFinancialOrBankingPackage(fg))) {
-            Log.i(TAG, "autoHealAccessibility: Skipped because dynamic standby or user paused is active (fg=$fg)")
+        if (prefs.isA11yUserPaused || (fg != null && (TaskAccessibilityService.isFinancialOrBankingPackage(fg) || ProtectedApplicationManager.isProtectedPackage(fg)))) {
+            Log.i(TAG, "autoHealAccessibility: Skipped because banking app is foreground or user paused is active (fg=$fg)")
             return false
         }
         return try {
@@ -428,18 +428,14 @@ object AccessibilityHealthManager {
             val a11yCurrent = Settings.Secure.getString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: ""
 
             val prefs = PreferenceManager(context)
-            if (prefs.isDynamicA11yOnDemandEnabled) {
-                // Bank-Safe Dynamic Mode: Keep service detached from ENABLED_ACCESSIBILITY_SERVICES while idle
-                // so that Google Pay, PhonePe, Paytm, and banking apps operate with 0 interference and 0 security blocks.
-                // The service will be dynamically attached on-demand (<50ms) right when a scheduled task or test runs.
-                val expectedShort = ComponentName(context, TaskAccessibilityService::class.java).flattenToString()
-                val expectedFull = "${context.packageName}/${TaskAccessibilityService::class.java.name}"
-                val hasMe = a11yCurrent.contains(expectedShort) || a11yCurrent.contains(expectedFull) ||
-                    (a11yCurrent.contains(context.packageName) && a11yCurrent.contains("TaskAccessibilityService"))
-                if (hasMe) {
-                    disableAccessibilityService(context)
-                    Log.i(TAG, "Bank-Safe Standby: Kept accessibility service detached while idle")
-                }
+            val fg = TaskAccessibilityService.currentForegroundPackage
+            val isBankingInForeground = fg != null && (TaskAccessibilityService.isFinancialOrBankingPackage(fg) || ProtectedApplicationManager.isProtectedPackage(fg))
+
+            if (isBankingInForeground) {
+                // Banking App Shield Active: Immediately detach accessibility service from system settings
+                // so banking and UPI payment apps cannot see or detect it
+                disableAccessibilityService(context)
+                Log.i(TAG, "Banking Shield Always-Active: Retracted accessibility service because banking app ($fg) is active")
             } else if (!prefs.isA11yUserPaused) {
                 val expectedShort = ComponentName(context, TaskAccessibilityService::class.java).flattenToString()
                 val hasMe = a11yCurrent.contains(expectedShort) || a11yCurrent.contains(a11yExpected) ||

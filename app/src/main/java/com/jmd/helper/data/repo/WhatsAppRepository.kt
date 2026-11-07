@@ -293,9 +293,10 @@ class WhatsAppRepository(private val context: Context) {
                 WHERE enabled = 1
                 ORDER BY CASE
                     WHEN source = 'WA_BUSINESS' THEN 0
-                    WHEN source = 'WA_CHAT' THEN 1
-                    WHEN source = 'WA_GROUP' THEN 2
-                    ELSE 3 END, name ASC
+                    WHEN source = 'WA_BUSINESS_GROUP' THEN 1
+                    WHEN source = 'WA_CHAT' THEN 2
+                    WHEN source = 'WA_GROUP' THEN 3
+                    ELSE 4 END, name ASC
                 LIMIT ?
                 """.trimIndent()
             } else {
@@ -307,7 +308,8 @@ class WhatsAppRepository(private val context: Context) {
                     WHEN source = 'WA_CHAT' THEN 0
                     WHEN source = 'WA_GROUP' THEN 1
                     WHEN source = 'WA_BUSINESS' THEN 2
-                    ELSE 3 END, name ASC
+                    WHEN source = 'WA_BUSINESS_GROUP' THEN 3
+                    ELSE 4 END, name ASC
                 LIMIT ?
                 """.trimIndent()
             }
@@ -318,14 +320,14 @@ class WhatsAppRepository(private val context: Context) {
                     val norm = c.getString(2) ?: PhoneNumberNormalizer.normalize(phone)
                     val photo = c.getString(3) ?: ""
                     val source = if (c.columnCount >= 5) c.getString(4).orEmpty() else ""
-                    val isGroup = phone.startsWith("group:") || norm.startsWith("group:")
+                    val isGroup = phone.startsWith("group:", ignoreCase = true) || norm.startsWith("group:", ignoreCase = true) || source.contains("group", ignoreCase = true)
                     val isW4bEntry = source.contains("w4b", ignoreCase = true) || source.contains("business", ignoreCase = true)
 
                     val dedupeKey = if (isGroup) "group:${name.lowercase()}" else norm.ifBlank { phone }
                     if (phone.isNotBlank() && !map.containsKey(dedupeKey)) {
                         if (matchesQuery(name, phone, norm)) {
                             val accType = when {
-                                isGroup -> if (isBusiness) "W4B Group" else "WhatsApp Group"
+                                isGroup -> if (isW4bEntry || isBusiness) "com.whatsapp.w4b" else "com.whatsapp"
                                 isW4bEntry || isBusiness -> "com.whatsapp.w4b"
                                 else -> "com.whatsapp"
                             }
@@ -498,117 +500,16 @@ class WhatsAppRepository(private val context: Context) {
     }
 
     /**
-     * Retrieves all saved WhatsApp groups from the local database.
+     * Clears all saved WhatsApp groups from the local database and drops the table.
      */
-    fun getWhatsAppGroupItems(): List<WhatsAppGroupItem> {
-        val list = mutableListOf<WhatsAppGroupItem>()
-        try {
-            val db = dbHelper.readableDatabase
-            db.rawQuery(
-                "SELECT name, participant_count, last_discovered_at, package_name, photo_uri, description FROM ${DatabaseHelper.TABLE_WHATSAPP_GROUPS} ORDER BY name COLLATE NOCASE ASC",
-                null
-            ).use { c ->
-                val nameIdx = c.getColumnIndex("name")
-                val partIdx = c.getColumnIndex("participant_count")
-                val timeIdx = c.getColumnIndex("last_discovered_at")
-                val pkgIdx = c.getColumnIndex("package_name")
-                val photoIdx = c.getColumnIndex("photo_uri")
-                val descIdx = c.getColumnIndex("description")
-
-                while (c.moveToNext()) {
-                    val name = if (nameIdx >= 0) c.getString(nameIdx).orEmpty() else ""
-                    if (name.isNotBlank()) {
-                        list.add(
-                            WhatsAppGroupItem(
-                                name = name,
-                                participantCount = if (partIdx >= 0) c.getString(partIdx).orEmpty() else "",
-                                lastDiscoveredAt = if (timeIdx >= 0) c.getLong(timeIdx) else 0L,
-                                packageName = if (pkgIdx >= 0) c.getString(pkgIdx).orEmpty().ifBlank { "com.whatsapp" } else "com.whatsapp",
-                                photoUri = if (photoIdx >= 0) c.getString(photoIdx).orEmpty() else "",
-                                description = if (descIdx >= 0) c.getString(descIdx).orEmpty() else ""
-                            )
-                        )
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.w("WhatsAppRepo", "Failed fetching whatsapp groups: ${e.message}")
-        }
-        return list
-    }
-
-    /**
-     * Persists or updates a WhatsApp group item in SQLite.
-     */
-    fun saveWhatsAppGroup(group: WhatsAppGroupItem): Boolean {
-        if (group.name.isBlank()) return false
+    fun deleteAllWhatsAppGroups(): Int {
         return try {
             val db = dbHelper.writableDatabase
-            val cv = ContentValues().apply {
-                put("name", group.name.trim())
-                put("participant_count", group.participantCount)
-                put("last_discovered_at", if (group.lastDiscoveredAt > 0) group.lastDiscoveredAt else System.currentTimeMillis())
-                put("package_name", group.packageName)
-                put("photo_uri", group.photoUri)
-                put("description", group.description)
-            }
-            db.insertWithOnConflict(DatabaseHelper.TABLE_WHATSAPP_GROUPS, null, cv, SQLiteDatabase.CONFLICT_REPLACE) > 0
+            db.execSQL("DROP TABLE IF EXISTS ${DatabaseHelper.TABLE_WHATSAPP_GROUPS}")
+            0
         } catch (e: Exception) {
-            Log.e("WhatsAppRepo", "Failed to save group ${group.name}: ${e.message}")
-            false
+            Log.e("WhatsAppRepo", "Failed dropping groups table: ${e.message}")
+            0
         }
-    }
-
-    /**
-     * Atomically saves a list of harvested WhatsApp groups.
-     */
-    fun bulkSaveWhatsAppGroupItems(groups: List<WhatsAppGroupItem>): Int {
-        if (groups.isEmpty()) return 0
-        var savedCount = 0
-        try {
-            val db = dbHelper.writableDatabase
-            db.transaction {
-                for (group in groups) {
-                    if (group.name.isNotBlank()) {
-                        val cv = ContentValues().apply {
-                            put("name", group.name.trim())
-                            put("participant_count", group.participantCount)
-                            put("last_discovered_at", System.currentTimeMillis())
-                            put("package_name", group.packageName)
-                            put("photo_uri", group.photoUri)
-                            put("description", group.description)
-                        }
-                        insertWithOnConflict(DatabaseHelper.TABLE_WHATSAPP_GROUPS, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
-                        savedCount++
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("WhatsAppRepo", "Failed bulk saving groups: ${e.message}")
-        }
-        return savedCount
-    }
-
-    /**
-     * Deletes a group by its title.
-     */
-    fun deleteWhatsAppGroup(groupName: String): Boolean {
-        return try {
-            val db = dbHelper.writableDatabase
-            db.delete(DatabaseHelper.TABLE_WHATSAPP_GROUPS, "LOWER(TRIM(name)) = LOWER(TRIM(?))", arrayOf(groupName.trim())) > 0
-        } catch (e: Exception) {
-            Log.e("WhatsAppRepo", "Failed deleting group $groupName: ${e.message}")
-            false
-        }
-    }
-
-    /**
-     * Validates whether a candidate string is a plausible group name.
-     */
-    fun isValidGroupName(name: String): Boolean {
-        val trimmed = name.trim().removePrefix("~").trim()
-        if (trimmed.length !in 2..80) return false
-        if (trimmed.all { it.isDigit() || it in "+- ()" }) return false
-        return isValidPickedChatName(trimmed)
     }
 }

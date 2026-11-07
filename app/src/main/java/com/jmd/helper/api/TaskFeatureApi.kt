@@ -36,6 +36,8 @@ import com.jmd.helper.core.PhoneNumberNormalizer
 import com.jmd.helper.core.WhatsAppPackageHelper
 import com.jmd.helper.data.model.ChannelType
 import com.jmd.helper.data.model.ExecutionLog
+import com.jmd.helper.data.model.ScheduledTask
+import com.jmd.helper.data.model.TaskStatus
 import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.data.repo.AppRepository
 import com.jmd.helper.engine.SmsSender
@@ -633,6 +635,56 @@ object TaskFeatureApi {
         )
         logResult(repository, outcome)
         return outcome
+    }
+
+    /**
+     * Executes manual immediate run of a scheduled task via the unified endpoint pipeline.
+     */
+    fun runTaskImmediately(
+        context: Context,
+        repository: AppRepository,
+        task: ScheduledTask
+    ) {
+        repository.updateTaskStatus(task.id, TaskStatus.PENDING)
+        val intent = Intent(context, com.jmd.helper.receiver.TaskAlarmReceiver::class.java).apply {
+            action = com.jmd.helper.scheduler.AlarmScheduler.ACTION_FIRE_TASK
+            putExtra(com.jmd.helper.scheduler.AlarmScheduler.EXTRA_TASK_ID, task.id)
+            putExtra(com.jmd.helper.scheduler.AlarmScheduler.EXTRA_MANUAL_RUN, true)
+        }
+        context.sendBroadcast(intent)
+    }
+
+    /**
+     * Standard toggle endpoint to pause or resume a scheduled task.
+     */
+    fun toggleTaskSchedule(
+        context: Context,
+        repository: AppRepository,
+        task: ScheduledTask,
+        enable: Boolean
+    ) {
+        val newStatus = if (enable) TaskStatus.SCHEDULED else TaskStatus.PAUSED
+        val updated = task.copy(status = newStatus)
+        repository.updateTask(updated)
+        if (enable) {
+            com.jmd.helper.scheduler.AlarmScheduler(context).scheduleTask(updated)
+        } else {
+            com.jmd.helper.scheduler.AlarmScheduler(context).cancelTask(task.id)
+            com.jmd.helper.engine.SequentialTaskEngine.getInstance(context).cancelTask(task.id)
+        }
+    }
+
+    /**
+     * Standard removal endpoint for a scheduled task.
+     */
+    fun deleteTask(
+        context: Context,
+        repository: AppRepository,
+        taskId: Long
+    ) {
+        com.jmd.helper.engine.SequentialTaskEngine.getInstance(context).cancelTask(taskId)
+        com.jmd.helper.scheduler.AlarmScheduler(context).cancelTask(taskId)
+        repository.deleteTask(taskId)
     }
 
     private suspend fun waitForAccessibilityCompletion(timeoutMs: Long): Boolean {

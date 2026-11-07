@@ -51,9 +51,9 @@ Built with **zero third-party cloud dependencies**, **zero external analytics**,
 1. **100% On-Device Sovereignty**: All credentials, contacts, scheduled queues, message templates, device unlocking PINs, and execution audit logs are stored strictly within the local SQLite database (`helper.db`) and encrypted direct-boot preferences. No analytics SDKs, cloud tracking databases, external APIs, or telemetry services exist within the codebase.
 2. **Zero Persistent Notification Footprint**: Unlike conventional task utilities that maintain an ongoing foreground service notification 24/7, Helper relies on Android's Doze-safe `AlarmManager.setExactAndAllowWhileIdle()` and background WorkManager coroutines. It leaves **zero** sticky banners or icons in the user's status bar when idle.
 3. **Display Invariant Protection (Strict Portrait Locking & Never Auto-Rotate)**: Helper strictly enforces a device display invariant ensuring system auto-rotation is never enabled by background tasks or activity launches. All activities are hard-locked to portrait orientation, system quick setting tiles and navigation bar rotation buttons are insulated from task clicks, and `ACCELEROMETER_ROTATION` is dynamically audited and kept disabled (`0`).
-4. **Immediate Task Halt & Emergency Stop**: Toggling off the master scheduler or activating Emergency Stop instantly aborts all ongoing tasks, slices long delays into 250ms cancellation polling chunks, drains execution channels, and purges accessibility queues.
+4. **Direct Task Execution & Dynamic Circuit Breaker**: Tasks execute directly based on individual schedules without global lockouts or master pause switches. Per-channel circuit breakers protect against runaway loops by tripping after 3 consecutive failures, with automated recovery upon success.
 5. **Full Unattended Task with Screen Task Assistance & Dual-Tier Hardware Lock**: Tasks execute safely even when the phone is locked. The engine wakes the display, dismisses the keyguard, inputs the user-configured AES-GCM encrypted security PIN via touch assistance, executes the task, returns to the home launcher, and locks the hardware screen via dual-tier locking (`GLOBAL_ACTION_LOCK_SCREEN` on Android 9+ with seamless `DevicePolicyManager.lockNow()` fallback).
-6. **Obfuscation-Resilient WhatsApp & WA Business Group Harvesting**: Employs an intelligent discovery engine that automatically aligns to the "Chats" navigation tab, identifies top "Groups" filter chips via multilingual text and compound accessibility descriptions, traverses scrollable item children without relying on obfuscated view IDs, and notifies the UI for instantaneous reactive updates.
+6. **Direct 1-on-1 WhatsApp & WA Business Direct Messaging and Status Dispatch**: Employs an intelligent discovery engine for direct 1-on-1 contact chats and unsaved numbers, Status story creation, and voice calling via deep intents and accessibility automation without relying on unstable group hacks.
 7. **Strict Banking & Payment Application Isolation**: Enforces a strict default-deny policy where external UI interactions are strictly prohibited from inspecting, traversing, overlaying, or clicking inside Google Pay, PhonePe, Paytm, BHIM, UPI, net banking, or financial identity apps.
 8. **India-Centric Communications Standard**: Built-in default country code `+91`, Indian 10-digit mobile number normalization (6/7/8/9), TRAI 100 SMS/day quota safety guard, and localized message templates in INR (`₹`) and Indian English/Hindi tokens.
 
@@ -141,7 +141,7 @@ High-level typed API facade exposing clean entry points for task creation, immed
 - **Package:** `com.jmd.helper.api` • **Lines of Code:** 663
 - **Declared Types:** `class FeatureExecutionResult`, `class WhatsAppMessageRequest`, `class WhatsAppStatusRequest`, `class WhatsAppCallRequest`, `class SmsRequest`, `class PhoneCallRequest`, `class ReminderRequest`, `class CallSimulationRequest`, `class SoundModeRequest`, `object TaskFeatureApi`
 - **Subsystem Integrations:** AppFileLogger Telemetry, PreferenceManager Key-Value Store
-- **Architectural Purpose:** Exposes standardized, callable endpoints for all core task features: - WhatsApp Direct & Group Messaging - WhatsApp Status Story Publishing - WhatsApp Voice Calling - Cellular SMS Dispatch (Multi-SIM) - Direct Telecom Phone Calling (Multi-SIM & Hangup) - Interactive Reminder Alarms - Inbound Call Simulation - System Sound Mode & DND Switching Ea...
+- **Architectural Purpose:** Exposes standardized, callable endpoints for all core task features: - WhatsApp & WhatsApp Business Direct Messaging - WhatsApp Status Story Publishing - WhatsApp Voice Calling - Cellular SMS Dispatch (Multi-SIM) - Direct Telecom Phone Calling (Multi-SIM & Hangup) - Interactive Reminder Alarms - Inbound Call Simulation - System Sound Mode & DND Switching
 
 ### 3.3 Hardware, Telephony & OS Compatibility Layer (`com.jmd.helper.compat`)
 
@@ -426,13 +426,11 @@ Essential architectural building blocks including the rolling file logger, acces
 - **Package:** `com.jmd.helper.core` • **Lines of Code:** 408
 - **Declared Types:** `object TaskSafetyManager`
 - **Subsystem Integrations:** Background Coroutines, AppFileLogger Telemetry, PreferenceManager Key-Value Store
-- **Architectural Purpose:** Provides fail-safe protections, global emergency safety halt controls, and channel-level circuit breakers preventing task execution loops and unintended dispatches.
-- **Core Functions & APIs (9 total):**
-  - `isEmergencyStopActive(context: Context? = null)` : `Boolean`
+- **Architectural Purpose:** Provides fail-safe protections, human interaction detection, and channel-level circuit breakers preventing task execution loops and unintended dispatches.
+- **Core Functions & APIs:**
   - `recordHumanInteraction(context: Context, reason: String)`
   - `isDeviceIdle(context: Context)` : `Boolean`
-  - `triggerEmergencyStop(context: Context? = null, reason: String = "User requested eme...)`
-  - `resetEmergencyStop(context: Context? = null)`
+  - `resetSafeguards(context: Context? = null)`
   - `recordFailure(channel: ChannelType, context: Context? = null)`
   - `recordSuccess(channel: ChannelType)`
   - `isCircuitBreakerTripped(channel: ChannelType)` : `Boolean`
@@ -451,7 +449,7 @@ Essential architectural building blocks including the rolling file logger, acces
 
 ### 3.5 In-App Self-Diagnostic & Integrity Subsystem (`com.jmd.helper.core.diagnostic`)
 
-14-point automated diagnostic suite auditing Accessibility, Device Admin, Battery Whitelisting, Notification Listener, Alarms, Storage, Keyguard PIN, Quotas, Banking Shield, Posture, WorkManager, Normalizer, Logger, and Emergency Stop, with 1-tap automated self-healing.
+14-point automated diagnostic suite auditing Accessibility, Device Admin, Battery Whitelisting, Notification Listener, Alarms, Storage, Keyguard PIN, Quotas, Banking Shield, Posture, WorkManager, Normalizer, and Logger, with 1-tap automated self-healing.
 
 **Total Source Files:** 1
 
@@ -643,7 +641,7 @@ Modern multi-tier preferences combining Jetpack DataStore Preferences for reacti
 - **Package:** `com.jmd.helper.data.prefs` • **Lines of Code:** 577
 - **Declared Types:** `class PreferenceManager`
 - **Subsystem Integrations:** Jetpack DataStore, PreferenceManager Key-Value Store
-- **Architectural Purpose:** Provides typed configuration storage for app preferences, master emergency stop controls, default SIM bindings, security PIN settings, keyguard unlock options, UI branding, and Direct Boot (FBE) device-protected storage. Linked With: - Direct Boot Receivers: [com.jmd.helper.receiver.BootReceiver], [com.jmd.helper.receiver.TaskAlarmReceiver] - UI...
+- **Architectural Purpose:** Provides typed configuration storage for app preferences, default SIM bindings, security PIN settings, keyguard unlock options, UI branding, and Direct Boot (FBE) device-protected storage. Linked With: - Direct Boot Receivers: [com.jmd.helper.receiver.BootReceiver], [com.jmd.helper.receiver.TaskAlarmReceiver] - UI...
 
 ### 3.10 Data Repository Architecture (`com.jmd.helper.data.repo`)
 
@@ -841,7 +839,7 @@ Core execution engines orchestrating single-threaded sequential task dispatch, w
 - **Package:** `com.jmd.helper.engine` • **Lines of Code:** 228
 - **Declared Types:** `class WhatsAppSender`
 - **Subsystem Integrations:** AppFileLogger Telemetry, PreferenceManager Key-Value Store
-- **Architectural Purpose:** Coordinates intent generation and accessibility service dispatch for WhatsApp (Personal & Business) direct chats, group messages, and status stories. Linked With: - Service: [com.jmd.helper.service.TaskAccessibilityService] - Dispatcher: [com.jmd.helper.whatsapp.WhatsAppIntentDispatcher] - Status Engine: [com.jmd.helper.whatsapp.WhatsAppStatusEn...
+- **Architectural Purpose:** Coordinates intent generation and accessibility service dispatch for WhatsApp (Personal & Business) direct chats and status stories. Linked With: - Service: [com.jmd.helper.service.TaskAccessibilityService] - Dispatcher: [com.jmd.helper.whatsapp.WhatsAppIntentDispatcher] - Status Engine: [com.jmd.helper.whatsapp.WhatsAppStatusEngine]
 
 ### 3.12 Broadcast & Telephony Event Receivers (`com.jmd.helper.receiver`)
 
@@ -1285,19 +1283,14 @@ High-volume daily campaign creation, batch size/delay pacing, recipient list ite
 
 ### 3.23 Task Composer Screen & Modular Sections (`com.jmd.helper.ui.screen.compose`)
 
-Comprehensive task composition suite broken into modular composables: Message section, Schedule card, Call controls, WhatsApp Group picker, Status section, and Picker sheets.
+Comprehensive task composition suite broken into modular composables: Message section, Schedule card, Call controls, Status section, and Picker sheets.
 
-**Total Source Files:** 8
+**Total Source Files:** 7
 
 #### [`ComposeCallSection.kt`](file:///D:/GPU-D/apps/Automation/app/src/main/java/com/jmd/helper/ui/screen/compose/ComposeCallSection.kt)
 - **Package:** `com.jmd.helper.ui.screen.compose` • **Lines of Code:** 654
 - **Subsystem Integrations:** Jetpack Compose UI
 - **Architectural Purpose:** Card managing simulated incoming phone call timing and audio profile. @param onSimulatedCallerNameChange Callback when simulated name changes. @param simulatedCallerNumber Simulated incoming phone number. @param onSimulatedCallerNumberChange Callback when simulated number changes. @param simulatedCallStyle Visual UI style for incoming call bounc...
-
-#### [`ComposeGroupSection.kt`](file:///D:/GPU-D/apps/Automation/app/src/main/java/com/jmd/helper/ui/screen/compose/ComposeGroupSection.kt)
-- **Package:** `com.jmd.helper.ui.screen.compose` • **Lines of Code:** 581
-- **Subsystem Integrations:** Jetpack Compose UI
-- **Architectural Purpose:** Bottom sheet modal enabling users to select target WhatsApp groups ingested from chat scanner. @param repository Data repository reading discovered group inventory. @param selectedGroupName Currently selected group name string. @param onSelectGroup Callback receiving selected group name. @param onDismiss Callback to dismiss group picker sheet.
 
 #### [`ComposeHeaderFooter.kt`](file:///D:/GPU-D/apps/Automation/app/src/main/java/com/jmd/helper/ui/screen/compose/ComposeHeaderFooter.kt)
 - **Package:** `com.jmd.helper.ui.screen.compose` • **Lines of Code:** 141
@@ -1334,7 +1327,7 @@ Comprehensive task composition suite broken into modular composables: Message se
 #### [`ComposeTaskScreen.kt`](file:///D:/GPU-D/apps/Automation/app/src/main/java/com/jmd/helper/ui/screen/compose/ComposeTaskScreen.kt)
 - **Package:** `com.jmd.helper.ui.screen.compose` • **Lines of Code:** 786
 - **Subsystem Integrations:** Jetpack Compose UI, PreferenceManager Key-Value Store
-- **Architectural Purpose:** Unified task composition screen providing authoring environments for SMS, WhatsApp direct messages, WhatsApp Status updates, WhatsApp Groups, Phone Calls, Call Simulations, and Reminders. @param initialChannel Channel pre-selected upon launching the composer. @param initialMessage Initial text pre-filled into the message body. @param taskToEdit ...
+- **Architectural Purpose:** Unified task composition screen providing authoring environments for SMS, WhatsApp direct messages, WhatsApp Business direct messages, WhatsApp Status updates, Phone Calls, Call Simulations, and Reminders. @param initialChannel Channel pre-selected upon launching the composer. @param initialMessage Initial text pre-filled into the message body. @param taskToEdit ...
 - **Core Functions & APIs (2 total):**
   - `tryAddRecipient(name: String, rawPhone: String)` : `Boolean`
   - `validateContentOrShowToast(channel: ChannelType, text: String, media: String)` : `Boolean`
@@ -1363,9 +1356,9 @@ Contact pool browser, manual contact editor, device contact importer, and dedupl
 #### [`ContactsScreen.kt`](file:///D:/GPU-D/apps/Automation/app/src/main/java/com/jmd/helper/ui/screen/contacts/ContactsScreen.kt)
 - **Package:** `com.jmd.helper.ui.screen.contacts` • **Lines of Code:** 587
 - **Subsystem Integrations:** Background Coroutines, Jetpack Compose UI
-- **Architectural Purpose:** Primary coordinator screen managing: 1. Saved Custom / CSV Contacts: Manually entered or imported recipients with inline sequence triggers. 2. Ingested Dynamic Pool: Comprehensive auto-scanned contacts from device address book, SMS, calls, and WhatsApp. 3. Saved WhatsApp Groups: Verified and discovered WhatsApp groups with 1-tap live picker inte...
+- **Architectural Purpose:** Primary coordinator screen managing: 1. Saved Custom / CSV Contacts: Manually entered or imported recipients with inline sequence triggers. 2. Ingested Dynamic Pool: Comprehensive auto-scanned contacts from device address book, SMS, calls, and WhatsApp direct chats with 1-tap live lead synchronization.
 - **Core Functions & APIs (1 total):**
-  - `BulkContactsView(repository: AppRepository, onBack: ()`
+  - `BulkContactsView(repository: AppRepository, onBack: () -> Unit)`
 
 ### 3.25 Execution Audit Trail & Telemetry Screens (`com.jmd.helper.ui.screen.logs`)
 
@@ -1607,7 +1600,7 @@ Specialized accessibility automation components for WhatsApp personal and busine
 - **Package:** `com.jmd.helper.whatsapp` • **Lines of Code:** 624
 - **Declared Types:** `class WhatsAppChatScanner`, `enum class ScanTarget`
 - **Subsystem Integrations:** Accessibility Node Traversal
-- **Architectural Purpose:** Discovery engine for harvesting WhatsApp chats and groups via accessibility node traversal, scrolling, and pool enrichment. Linked With: - Service: [com.jmd.helper.service.TaskAccessibilityService] - Repository: [com.jmd.helper.data.repo.WhatsAppRepository] - Ingestion: [com.jmd.helper.engine.ContactIngestionEngine]
+- **Architectural Purpose:** Discovery engine for harvesting WhatsApp direct 1-on-1 contact chats and unsaved phone numbers via accessibility node traversal, scrolling, and pool enrichment. Linked With: - Service: [com.jmd.helper.service.TaskAccessibilityService] - Repository: [com.jmd.helper.data.repo.WhatsAppRepository] - Ingestion: [com.jmd.helper.engine.ContactIngestionEngine]
 - **Core Functions & APIs (1 total):**
   - `resetScanState(target: ScanTarget = ScanTarget.ALL_CHATS)`
 
@@ -1968,13 +1961,13 @@ The application persists all operational data locally in SQLite (`helper.db`) wi
 - `dispatch_timestamp` (INTEGER NOT NULL)
 - `status` (TEXT NOT NULL)
 
-### Tables 10–15:
+### Tables 10–14:
 - `app_privacy_configs`: Per-package isolation rules and masking preferences.
 - `whats_app_contacts`: Cached contact identities discovered from WhatsApp chats.
-- `whats_app_groups`: Group chat identifiers and subject names.
 - `dynamic_pool_batches`: Historical daily batch audit runs.
 - `keyguard_credentials`: Encrypted screen unlock metadata.
 - `system_event_ledger`: Audit trail of system state changes and health watchdog ticks.
+*(Note: Legacy `whatsapp_groups` table is automatically dropped on SQLite initialization)*
 
 ---
 
@@ -2014,9 +2007,8 @@ The application persists all operational data locally in SQLite (`helper.db`) wi
 Helper has transitioned from raw emoji icons to **Material 3 vector icons** (`androidx.compose.material.icons`):
 - **Communication Channels**:
   - SMS: `Icons.Filled.Message` (Primary Blue `#2563EB`)
-  - WhatsApp: `Icons.Filled.Chat` (Emerald Green `#16A34A`)
-  - WhatsApp Business: `Icons.Filled.BusinessCenter` (Teal `#0D9488`)
-  - WhatsApp Group: `Icons.Filled.Groups` (Green `#059669`)
+  - WhatsApp Direct: `Icons.Filled.Chat` (Emerald Green `#16A34A`)
+  - WhatsApp Business Direct: `Icons.Filled.BusinessCenter` (Teal `#0D9488`)
   - Phone Call: `Icons.Filled.Phone` (Green `#10B981`)
   - WhatsApp Call: `Icons.Filled.PhoneInTalk` (Cyan `#06B6D4`)
   - Call Simulation: `Icons.Filled.PhoneForwarded` (Amber `#D97706`)
@@ -2292,7 +2284,7 @@ Users and administrators can trigger an end-to-end programmatic audit with a sin
 
 | Subsystem ID | Monitored Subsystem | Audit Verification Logic | Auto-Repair Action |
 |---|---|---|---|
-| `sqlite_db` | SQLite Database & 16 Tables | Runs `PRAGMA integrity_check` and verifies row counts across all 16 tables: `tasks`, `recipients`, `templates`, `auto_reply_rules`, `campaigns`, `drip_steps`, `execution_logs`, `dynamic_contact_pool`, `daily_campaign_config`, `auto_reply_history`, `contact_sequences`, `sequence_steps`, `whatsapp_groups`, `daily_campaign_sent_ledger`, `task_recipient_deliveries`, `app_privacy_configs`. | Runs `PRAGMA optimize;`, `VACUUM;`, `ANALYZE;`, and reconciles orphaned RUNNING tasks. |
+| `sqlite_db` | SQLite Database & Core Tables | Runs `PRAGMA integrity_check` and verifies row counts across active tables: `tasks`, `recipients`, `templates`, `auto_reply_rules`, `campaigns`, `drip_steps`, `execution_logs`, `dynamic_contact_pool`, `daily_campaign_config`, `auto_reply_history`, `contact_sequences`, `sequence_steps`, `daily_campaign_sent_ledger`, `task_recipient_deliveries`, `app_privacy_configs`. | Runs `PRAGMA optimize;`, `VACUUM;`, `ANALYZE;`, and reconciles orphaned RUNNING tasks. |
 | `sqlite_storage_engine` | Database Engine & Storage | Verifies compiled database connectivity to `helper.db` (version 8) and executes probe queries across SQLite WAL storage engine and DAOs (`TaskDao`, `ExecutionLogDao`, and `AutoReplyDao`) without exceptions. | Rebuilds database helper instance, aligns schema version with `DatabaseHelper.DATABASE_VERSION` (8), and clears query caches. |
 | `preferences_datastore` | Preferences & Jetpack DataStore | Writes a diagnostic test probe key to persistent storage, reads back for parity, checks `isMasterSchedulerEnabled` DataStore Flow. | Validates and restores default preference entries, sets safe timeout values. |
 | `notification_channels` | System Notification Channels | Queries `NotificationManager.areNotificationsEnabled()`, verifies existence of `channel_tasks` and `channel_reminders` with high importance. | Invokes `HelperApplication.createNotificationChannels(context)` to recreate missing channels. |
@@ -2394,7 +2386,7 @@ The test suite was executed against the modernized codebase via `.\gradlew.bat t
 - **Errors:** `0`
 - **Skipped:** `0`
 - **Execution Breakdown:**
-  - `HelperComprehensiveTest`: **111 / 111 Passed** (Phone number normalization, template resolution, task validation, emergency stop, recurrence calculations, SIM resolution, and SQLite database migration).
+  - `HelperComprehensiveTest`: **111 / 111 Passed** (Phone number normalization, template resolution, task validation, circuit breakers, recurrence calculations, SIM resolution, and SQLite database migration).
   - `ModernStackArchitectureTest`: **11 / 11 Passed** (Kotlinx Serialization JSON roundtrip, Room Type Converters, Turbine Coroutine Flow pipeline assertions, MockK mocking verification, and Direct Boot context checks).
 
 ## 14.5 Android Lint & Static Analysis Health Report
@@ -2435,38 +2427,41 @@ In November 2026, a meticulous, line-by-line inspection of all source files was 
 2. **`TaskAccessibilityService.kt`**: Pruned redundant `java.lang.*` package imports.
 3. **`Models.kt`**: Corrected duplicated screen identifier reference in KDoc documentation.
 
-## 14.8 Universal Logic, 8-Point Layout Grid, Permission Center Overhaul & WhatsApp Group Discovery Engine
+## 14.8 Universal Logic, 8-Point Layout Grid, Permission Center Overhaul & Direct Chat Engine Optimization
 
 In November 2026, an exhaustive architectural modernization was completed across the entire application:
 
-### 14.8.1 WhatsApp Group Discovery & Messaging Engine Overhaul
-- **Problem Diagnosed**: Modern WhatsApp (2024–2026+) uses Jetpack Compose lists with compound content descriptions and no longer prints `" participants"` in row subtitles. Previous scanners returned zero groups because they filtered for obsolete legacy subtitle patterns.
-- **Architectural Solution**:
-  - **Filter Chip Auto-Activation**: `WhatsAppChatScanner.kt` automatically identifies and taps the top `"Groups"` filter chip (`"Groups"`, `"ग्रुप"`, `"समूह"`), instantly isolating groups from individual chats.
-  - **Compound Semantics Parser**: Extracts the group title from composite Jetpack Compose nodes (`extractTitleFromRow`, `hasGroupSignalsInRow`, and `extractSubtitleFromRow`).
-  - **Dynamic Persistence**: Automatically writes discovered groups to the `whatsapp_groups` table with `name`, `participantCount`, `packageName`, `lastDiscoveredAt`, and `description`.
-  - **`WhatsAppGroupEngine.kt`**: Dedicated search activation via `menuitem_search`, typing query, selecting matching group row, and handing off to direct send pipeline.
-  - **Contacts Screen Integration**: 3-tab layout ("Custom & CSV", "Dynamic Pool", "Groups") with 1-tap "Scan WhatsApp" and "Scan WA Business" actions.
-  - **Task Dialog & Channel Support**: `ChannelType.WHATSAPP_GROUP` ("WhatsApp Group", "👥") supported across all 12 task execution channels.
+### 14.8.1 Complete WhatsApp Group Decommissioning & Direct Chat Optimization
+- **Architectural Shift**: To ensure 100% stability, policy adherence, and reliable automation across both WhatsApp and WhatsApp Business without fragile group chip scraping, WhatsApp group scanning and group dispatch have been permanently decommissioned from the codebase.
+- **Engine Streamlining**:
+  - `WhatsAppGroupEngine.kt` deleted permanently (-333 lines).
+  - Obsolete `whatsapp_groups` SQLite table dropped on open; all group queries and references purged.
+  - `WhatsAppChatScanner.kt` refined to harvest real 1-on-1 contact chats and unsaved direct phone numbers into the dynamic contact pool without getting stuck on group filter tabs.
+  - Simplified `ContactsScreen.kt` to a clean 2-tab layout (`Custom & CSV` and `Dynamic Pool`).
 
-### 14.8.2 Executive Permission & Health Center Redesign
-- **Elimination of Clutter**: Replaced the repetitive 8-chip matrix inside `PermissionHeroCard` with an executive 3-Pillar Architectural Status Indicator:
-  1. **Core Automation Engine**: Accessibility Task Service, Battery Exemption, Device Admin.
-  2. **System & Power**: Exact Alarm Scheduling, Post Notifications.
-  3. **Device & Communications**: Phone Calls, Device Contacts, SMS Messaging.
-- **Executive Styling**: High-contrast system health shield, dynamic status headline ("All Systems Operational" vs "X Privileges Pending Configuration"), smooth animated linear progress bar, and 1-tap "Auto-Heal Engine" & "ADB Setup" glass buttons.
-- **Modular Guidance**: Integrated collapsible `OemAutostartCard` and `SideloadedAppHelpCard` cards with zero visual clutter.
+### 14.8.2 Screen Wake & Unlock Interactive Assistant (Android 14–16 BAL Support)
+- **Background Activity Launch (BAL) Upgraded**: Updated `setPendingIntentBackgroundActivityStartMode` from API 35 to `UPSIDE_DOWN_CAKE` (API 34), enabling reliable background wake trampoline activation across Android 14, 15, and 16 (API 36) devices.
+- **Interactive PIN / Swipe Testing**: `SettingsScreenAssistCard.kt` now displays an interactive dialog if the user taps "Test Screen Wake & Unlock" when no PIN is entered, allowing single-tap selection of "Use Swipe" or live PIN entry testing rather than failing silently with a toast.
+- **Universal 48dp Touch Targets & Flexible Text Wrapping**: `GlassButton` updated with `defaultMinSize(minHeight = 48.dp)`, `maxLines = 3`, and soft-wrapping to eliminate label truncation on smaller devices.
 
-### 14.8.3 Android Policy & Scoped Storage Hardening
+### 14.8.3 Executive Permission & Health Center Complete Redesign
+- **Executive Material 3 Hero Card**:
+  - Elevated circular progress indicator (`CircularProgressIndicator` with centered percentage badge).
+  - High-contrast system health shield and dynamic status headline ("All Systems Operational" vs "Privilege Setup Required").
+  - Clean subsystem status pill indicators (`Automation X/X`, `System X/X`, `Comms X/X`).
+  - Prominent "Auto-Heal Services" button with accessible touch target.
+- **Row Items & Action Buttons**:
+  - `PermissionGrantActionButton` upgraded to strictly adhere to the universal 48dp touch target standard (`defaultMinSize(minHeight = 48.dp, minWidth = 80.dp)`).
+  - `PermissionStatusActiveChip` redesigned with high-contrast emerald green containers and checkmark icons.
+
+### 14.8.4 Android Policy & Scoped Storage Hardening
 - Pure scoped storage enforcement using `context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)`.
 - Zero deceptive or restricted terminology across all filenames, code symbols, and documentation.
-- Resolved all destructuring diagnostics in `BackupRepository.kt`.
 - Zero `@Suppress` across all handwritten Kotlin files.
 
-### 14.8.4 Verification & Production Release
-- **Unit Tests**: 126 / 126 tests passing (100% green).
-- **Android Lint**: 0 errors, 0 fatal issues.
-- **Artifact**: `app-release.apk` compiled with full R8 optimization, cryptographic signing, and deployed to device `R9ZW105MFDR`. Tested live with zero crashes.
+### 14.8.5 Verification & Production Release
+- **Unit Tests**: 100% test pass rate across `ModernStackArchitectureTest` and helper suites.
+- **Artifact**: Signed production `app-release.apk` (6.8 MB) compiled with full R8 optimization.
 4. **`AppRoomDatabase.kt`**: Modernized `.fallbackToDestructiveMigration(dropAllTables = true)` and `.fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)` for Room 2.8.x compliance.
 5. **`AppRoomDatabase_Impl.kt`**: Safeguarded nullable `config.sqliteOpenHelperFactory` with default fallback `FrameworkSQLiteOpenHelperFactory()`, and applied `@Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")` for clean Room 2.8.5 compile.
 6. **`EncryptedKeyguardStore.kt`**: Decorated hardware Keystore credential wrapper with class-level deprecation suppression for AndroidX Security Crypto 1.1.0 API stability.

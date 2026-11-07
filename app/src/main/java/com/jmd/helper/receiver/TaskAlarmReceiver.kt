@@ -47,8 +47,6 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         const val ACTION_SETUP_CAMPAIGN_CONTACTS = "com.jmd.helper.ACTION_SETUP_CAMPAIGN_CONTACTS"
         const val ACTION_FIRE_CAMPAIGN = "com.jmd.helper.ACTION_FIRE_CAMPAIGN"
         const val ACTION_SET_PREF = "com.jmd.helper.ACTION_SET_PREF"
-        const val ACTION_EMERGENCY_STOP = "com.jmd.helper.ACTION_EMERGENCY_STOP"
-        const val ACTION_RESET_EMERGENCY_STOP = "com.jmd.helper.ACTION_RESET_EMERGENCY_STOP"
         const val ACTION_TEST_SCREEN_ASSIST = "com.jmd.helper.ACTION_TEST_SCREEN_ASSIST"
         @Deprecated("Use ACTION_TEST_SCREEN_ASSIST for policy-compliant naming", ReplaceWith("ACTION_TEST_SCREEN_ASSIST"))
         const val ACTION_TEST_AUTO_UNLOCK = "com.jmd.helper.ACTION_TEST_AUTO_UNLOCK" 
@@ -68,7 +66,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                 scheduler.cancelTask(task.id)
                 repository.deleteTask(task.id)
             }
-            com.jmd.helper.core.TaskSafetyManager.resetEmergencyStop(context)
+            com.jmd.helper.core.TaskSafetyManager.resetSafeguards(context)
             AppFileLogger.action(context, TAG, "Purged all $count scheduled tasks and cancelled all active alarms.")
             return count
         }
@@ -106,7 +104,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                     scheduler.cancelTask(oldTask.id)
                     repository.deleteTask(oldTask.id)
                 }
-                com.jmd.helper.core.TaskSafetyManager.resetEmergencyStop(context)
+                com.jmd.helper.core.TaskSafetyManager.resetSafeguards(context)
                 AppFileLogger.action(context, TAG, "Cleared existing tasks and reset safety breakers before bulk setup")
             }
             val now = System.currentTimeMillis()
@@ -269,11 +267,10 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         try {
             if (intent.action == ACTION_FIRE_CAMPAIGN) {
             val campId = intent.getLongExtra("campaign_id", 1L)
-            val prefs = PreferenceManager(context)
             val repo = AppRepository(context)
             val cfg = repo.getDailyCampaignConfig(campId)
-            if (!cfg.isActive || !prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(context)) {
-                AppFileLogger.w(context, TAG, "ACTION_FIRE_CAMPAIGN suppressed: Campaign #$campId is inactive or master switch is OFF.")
+            if (!cfg.isActive) {
+                AppFileLogger.w(context, TAG, "ACTION_FIRE_CAMPAIGN suppressed: Campaign #$campId is inactive.")
                 com.jmd.helper.scheduler.DailyCampaignScheduler.cancel(context, campId)
                 return
             }
@@ -345,21 +342,6 @@ class TaskAlarmReceiver : BroadcastReceiver() {
             return
         }
 
-        if (intent.action == ACTION_EMERGENCY_STOP) {
-            val reason = intent.getStringExtra("reason") ?: "Broadcast Trigger"
-            TaskSafetyManager.triggerEmergencyStop(context, reason)
-            AppFileLogger.e(context, TAG, "ACTION_EMERGENCY_STOP triggered via broadcast: $reason")
-            Log.e(TAG, "ACTION_EMERGENCY_STOP triggered via broadcast: $reason")
-            return
-        }
-
-        if (intent.action == ACTION_RESET_EMERGENCY_STOP) {
-            TaskSafetyManager.resetEmergencyStop(context)
-            AppFileLogger.action(context, TAG, "ACTION_RESET_EMERGENCY_STOP triggered via broadcast")
-            Log.i(TAG, "ACTION_RESET_EMERGENCY_STOP triggered via broadcast")
-            return
-        }
-
         if (intent.action == ACTION_DELETE_ALL_TASKS) {
             val count = deleteAllTasks(context)
             AppFileLogger.action(context, TAG, "ACTION_DELETE_ALL_TASKS: Successfully deleted $count tasks.")
@@ -375,11 +357,6 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         }
 
         if (intent.action == ACTION_TEST_TASK) {
-            val prefs = PreferenceManager(context)
-            if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(context)) {
-                AppFileLogger.w(context, TAG, "ACTION_TEST_TASK suppressed: Master scheduler disabled or Emergency Stop active.")
-                return
-            }
             val repository = AppRepository(context)
             val channelStr = intent.getStringExtra("channel") ?: "CALL"
             val channel = ChannelType.fromString(channelStr)
@@ -490,17 +467,6 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                 Log.d(TAG, "Task #$taskId is already marked DONE. Skipping alarm trigger.")
                 return
             }
-        }
-
-        val prefs = PreferenceManager(context)
-        if (!prefs.isTasksMasterEnabled) {
-            Log.d(TAG, "Task $taskId execution skipped because Task Scheduler Engine is disabled by master switch")
-            return
-        }
-
-        if (TaskSafetyManager.isEmergencyStopActive(context)) {
-            Log.d(TAG, "Task $taskId execution skipped because Emergency Stop is active")
-            return
         }
 
         // Pre-flight Idle Check: Only trigger and complete task when idle (unless manually triggered from UI)

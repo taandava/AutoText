@@ -167,16 +167,10 @@ class WhatsAppGroupEngine(
             val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
             val text = node.text?.toString()?.lowercase().orEmpty()
 
-            val isSearchMatch = desc.contains("search") || desc.contains("खोज") || text.contains("search")
-            if (isSearchMatch) {
-                var target: AccessibilityNodeInfo? = node
-                var depth = 0
-                while (target != null && depth < 4) {
-                    if (target.isClickable) return target
-                    target = target.parent
-                    depth++
-                }
-                return node
+            if ((desc == "search" || desc.startsWith("search") || text == "search") &&
+                (node.isClickable || node.parent?.isClickable == true)
+            ) {
+                return if (node.isClickable) node else node.parent
             }
 
             for (i in 0 until node.childCount) {
@@ -196,10 +190,8 @@ class WhatsAppGroupEngine(
 
             val isSearch = id.contains("search") || id.contains("query")
             val isEditable = node.isEditable || cls.contains("EditText", ignoreCase = true)
-            val bounds = android.graphics.Rect()
-            node.getBoundsInScreen(bounds)
 
-            if (node.isVisibleToUser && isEditable && (isSearch || bounds.top in 0..600)) {
+            if (node.isVisibleToUser && isEditable && isSearch) {
                 return node
             }
             for (i in 0 until node.childCount) {

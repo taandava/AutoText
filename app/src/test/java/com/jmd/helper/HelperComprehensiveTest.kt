@@ -20,7 +20,7 @@ class HelperComprehensiveTest {
 
     @Before
     fun setUp() {
-        TaskSafetyManager.resetEmergencyStop(null)
+        TaskSafetyManager.resetSafeguards(null)
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════
@@ -94,12 +94,14 @@ class HelperComprehensiveTest {
     }
 
     @Test
-    fun testEmergencyStopResetState() {
-        TaskSafetyManager.triggerEmergencyStop(null, "Test Emergency Stop")
-        assertTrue(TaskSafetyManager.isEmergencyStopActive.get())
+    fun testSafeguardsResetState() {
+        TaskSafetyManager.recordFailure(ChannelType.SMS, null)
+        TaskSafetyManager.recordFailure(ChannelType.SMS, null)
+        TaskSafetyManager.recordFailure(ChannelType.SMS, null)
+        assertTrue(TaskSafetyManager.isCircuitBreakerTripped(ChannelType.SMS))
 
-        TaskSafetyManager.resetEmergencyStop(null)
-        assertFalse(TaskSafetyManager.isEmergencyStopActive.get())
+        TaskSafetyManager.resetSafeguards(null)
+        assertFalse(TaskSafetyManager.isCircuitBreakerTripped(ChannelType.SMS))
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════
@@ -145,18 +147,18 @@ class HelperComprehensiveTest {
     // ═══════════════════════════════════════════════════════════════════════════════════
 
     @Test
-    fun testEmergencyStopKillSwitch() {
-        assertFalse(TaskSafetyManager.isEmergencyStopActive.get())
+    fun testChannelCircuitBreakerExecutionCheck() {
         assertTrue(TaskSafetyManager.canExecute(ChannelType.WHATSAPP))
 
-        TaskSafetyManager.isEmergencyStopActive.set(true)
-        assertTrue(TaskSafetyManager.isEmergencyStopActive.get())
+        TaskSafetyManager.recordFailure(ChannelType.WHATSAPP, null)
+        TaskSafetyManager.recordFailure(ChannelType.WHATSAPP, null)
+        TaskSafetyManager.recordFailure(ChannelType.WHATSAPP, null)
+        assertTrue(TaskSafetyManager.isCircuitBreakerTripped(ChannelType.WHATSAPP))
         assertFalse(TaskSafetyManager.canExecute(ChannelType.WHATSAPP))
-        assertFalse(TaskSafetyManager.canExecute(ChannelType.CALL))
-        assertFalse(TaskSafetyManager.canExecute(ChannelType.SMS))
+        assertTrue(TaskSafetyManager.canExecute(ChannelType.SMS))
 
-        TaskSafetyManager.resetEmergencyStop(null)
-        assertFalse(TaskSafetyManager.isEmergencyStopActive.get())
+        TaskSafetyManager.resetSafeguards(null)
+        assertFalse(TaskSafetyManager.isCircuitBreakerTripped(ChannelType.WHATSAPP))
         assertTrue(TaskSafetyManager.canExecute(ChannelType.WHATSAPP))
     }
 
@@ -854,7 +856,7 @@ class HelperComprehensiveTest {
         }
 
         // Verify count of all task types
-        assertEquals(12, tasks.size)
+        assertEquals(13, tasks.size)
 
         // Verify each channel type is uniquely present
         val presentChannels = tasks.map { it.channel }.toSet()
@@ -1111,7 +1113,7 @@ class HelperComprehensiveTest {
     @Test
     fun testAllChannelsValidationAcceptsTextPayload() {
         val channels = com.jmd.helper.data.model.ChannelType.entries
-        assertEquals(12, channels.size)
+        assertEquals(13, channels.size)
 
         for (channel in channels) {
             val result = com.jmd.helper.core.TaskContentValidator.validateContent(
@@ -1873,13 +1875,14 @@ class HelperComprehensiveTest {
     @Test
     fun testAllChannelsCompleteness() {
         val allChannels = ChannelType.entries
-        assertEquals("Expected exactly 12 channels", 12, allChannels.size)
+        assertEquals("Expected exactly 13 channels", 13, allChannels.size)
 
         val expectedChannels = setOf(
             ChannelType.SMS,
             ChannelType.WHATSAPP,
             ChannelType.WHATSAPP_BUSINESS,
             ChannelType.WHATSAPP_GROUP,
+            ChannelType.WHATSAPP_BUSINESS_GROUP,
             ChannelType.WHATSAPP_STATUS,
             ChannelType.WHATSAPP_BUSINESS_STATUS,
             ChannelType.CALL,
@@ -2102,11 +2105,12 @@ class HelperComprehensiveTest {
     @Test
     fun testAllChannelTypesCoverage() {
         val allChannels = ChannelType.entries
-        assertEquals("There should be exactly 12 channel types", 12, allChannels.size)
+        assertEquals("There should be exactly 13 channel types", 13, allChannels.size)
         assertTrue(allChannels.contains(ChannelType.SMS))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_GROUP))
+        assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS_GROUP))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_STATUS))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS_STATUS))
         assertTrue(allChannels.contains(ChannelType.CALL))
@@ -2394,10 +2398,7 @@ class HelperComprehensiveTest {
     }
 
     @Test
-    fun testEmergencyStopSuppressionAndStatusInvariant() {
-        TaskSafetyManager.triggerEmergencyStop(null, "Test Emergency Stop")
-        assertTrue(TaskSafetyManager.isEmergencyStopActive(null))
-
+    fun testTaskStatusReconciliationInvariant() {
         val recurringTask = ScheduledTask(
             id = 201L,
             status = TaskStatus.RUNNING,
@@ -2414,9 +2415,6 @@ class HelperComprehensiveTest {
 
         assertEquals(TaskStatus.PENDING, targetRecurring)
         assertEquals(TaskStatus.FAILED, targetOnce)
-
-        TaskSafetyManager.resetEmergencyStop(null)
-        assertFalse(TaskSafetyManager.isEmergencyStopActive(null))
     }
 
     // ═══════════════════════════════════════════════════════════════════════════════════
@@ -2483,5 +2481,51 @@ class HelperComprehensiveTest {
         assertFalse("Truecaller is not a safe system overlay", com.jmd.helper.core.OemBrandHelper.isSafeSystemOverlay("com.truecaller"))
         assertFalse("Messenger is not a safe system overlay", com.jmd.helper.core.OemBrandHelper.isSafeSystemOverlay("com.facebook.orca"))
         assertFalse("Empty package name should return false", com.jmd.helper.core.OemBrandHelper.isSafeSystemOverlay(""))
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 25. UNIVERSAL CONSTRAINTS & OPERATION RESULT TESTS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testUniversalConstraintsRecipientValidation() {
+        val valid = com.jmd.helper.core.UniversalConstraintValidator.validateRecipient("+919876543210")
+        assertTrue(valid.isSuccess)
+        assertEquals("+919876543210", valid.getOrNull())
+
+        val blank = com.jmd.helper.core.UniversalConstraintValidator.validateRecipient("   ")
+        assertTrue(blank.isFailure)
+
+        val tooShort = com.jmd.helper.core.UniversalConstraintValidator.validateRecipient("x")
+        assertTrue(tooShort.isFailure)
+    }
+
+    @Test
+    fun testUniversalConstraintsMessageValidation() {
+        val valid = com.jmd.helper.core.UniversalConstraintValidator.validateMessageContent("Hello world")
+        assertTrue(valid.isSuccess)
+
+        val empty = com.jmd.helper.core.UniversalConstraintValidator.validateMessageContent("  ", allowEmpty = false)
+        assertTrue(empty.isFailure)
+
+        val allowedEmpty = com.jmd.helper.core.UniversalConstraintValidator.validateMessageContent("  ", allowEmpty = true)
+        assertTrue(allowedEmpty.isSuccess)
+    }
+
+    @Test
+    fun testUniversalConstraintsIntervalValidation() {
+        val valid = com.jmd.helper.core.UniversalConstraintValidator.validateInterval(30, 0, 3600)
+        assertTrue(valid.isSuccess)
+
+        val negative = com.jmd.helper.core.UniversalConstraintValidator.validateInterval(-5, 0, 3600)
+        assertTrue(negative.isFailure)
+    }
+
+    @Test
+    fun testUniversalConstraintsSimSlotValidation() {
+        assertTrue(com.jmd.helper.core.UniversalConstraintValidator.validateSimSlot(0).isSuccess)
+        assertTrue(com.jmd.helper.core.UniversalConstraintValidator.validateSimSlot(1).isSuccess)
+        assertTrue(com.jmd.helper.core.UniversalConstraintValidator.validateSimSlot(-1).isSuccess)
+        assertTrue(com.jmd.helper.core.UniversalConstraintValidator.validateSimSlot(10).isFailure)
     }
 }

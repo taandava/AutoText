@@ -18,6 +18,9 @@ import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.data.repo.PrivacyRepository
 import com.jmd.helper.service.TaskAccessibilityService
 import java.util.concurrent.ConcurrentHashMap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 /**
  * Central singleton orchestrating privacy rules and app visibility restrictions across Helper.
@@ -406,18 +409,18 @@ class PrivacyManager private constructor(private val appContext: Context) {
      * If dynamic on-demand mode is active, ensures accessibility service is turned on right before
      * executing an task task.
      */
-    fun prepareAccessibilityForTask(): Boolean {
-        if (!prefs.isDynamicA11yOnDemandEnabled) return true
+    suspend fun prepareAccessibilityForTask(): Boolean = withContext(Dispatchers.IO) {
+        if (!prefs.isDynamicA11yOnDemandEnabled) return@withContext true
         if (!AccessibilityHealthManager.hasWriteSecureSettings(appContext)) {
             // Cannot dynamically attach without WRITE_SECURE_SETTINGS; verify if user has service running manually
-            return TaskAccessibilityService.getInstance() != null
+            return@withContext TaskAccessibilityService.getInstance() != null
         }
-        return try {
+        return@withContext try {
             val enabled = AccessibilityHealthManager.enableAccessibilityService(appContext)
-            if (!enabled) return false
+            if (!enabled) return@withContext false
             var waitMs = 0
             while (TaskAccessibilityService.getInstance() == null && waitMs < 4000) {
-                Thread.sleep(100)
+                delay(100)
                 waitMs += 100
             }
             val ready = TaskAccessibilityService.getInstance() != null

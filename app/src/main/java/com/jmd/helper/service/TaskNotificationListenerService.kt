@@ -102,8 +102,6 @@ class TaskNotificationListenerService : NotificationListenerService() {
             try {
                 val prefs = PreferenceManager(applicationContext)
                 if (!prefs.isAutoReplyMasterEnabled) return@launch
-                if (!prefs.isTasksMasterEnabled) return@launch
-                if (com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) return@launch
 
                 val repository = AppRepository(applicationContext)
                 val enabledRules = repository.getEnabledAutoReplyRules(channel)

@@ -51,9 +51,7 @@ class AppDataStore(context: Context) {
         }
 
     // Flows
-    val isMasterSchedulerEnabled: Flow<Boolean> = safePreferences.map { preferences ->
-        preferences[PreferencesKeys.MASTER_SCHEDULER_ENABLED] ?: true
-    }
+    val isMasterSchedulerEnabled: Flow<Boolean> = kotlinx.coroutines.flow.flowOf(true)
 
     val isDarkThemeEnabled: Flow<Boolean> = safePreferences.map { preferences ->
         preferences[PreferencesKeys.DARK_THEME_ENABLED] ?: true
@@ -85,9 +83,7 @@ class AppDataStore(context: Context) {
 
     // Suspend Update Functions
     suspend fun setMasterSchedulerEnabled(enabled: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.MASTER_SCHEDULER_ENABLED] = enabled
-        }
+        // Master switch permanently removed - tasks always active
     }
 
     suspend fun setDarkThemeEnabled(enabled: Boolean) {

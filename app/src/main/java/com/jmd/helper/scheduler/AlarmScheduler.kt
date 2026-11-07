@@ -70,17 +70,6 @@ class AlarmScheduler(private val context: Context) {
             AlarmScheduler(context).cancelTask(task.id, task)
             return
         }
-        val prefs = PreferenceManager(context)
-        if (!prefs.isTasksMasterEnabled) {
-            Log.w(TAG, "Refusing to schedule Task #${task.id}: Task Scheduler Master Switch is OFF")
-            AlarmScheduler(context).cancelTask(task.id, task)
-            return
-        }
-        if (TaskSafetyManager.isEmergencyStopActive(context)) {
-            Log.w(TAG, "Refusing to schedule Task #${task.id}: Emergency Stop is ACTIVE")
-            AlarmScheduler(context).cancelTask(task.id, task)
-            return
-        }
 
         val now = System.currentTimeMillis()
         if (task.recurrence == RecurrenceType.ONCE && task.triggerTimeMillis < now - 60_000L) {
@@ -217,12 +206,6 @@ class AlarmScheduler(private val context: Context) {
      * Invoked after device boot, timezone alterations, or app upgrades.
      */
     fun rescheduleAllPending() {
-        val prefs = PreferenceManager(context)
-        if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(context)) {
-            Log.d(TAG, "Master task scheduler is paused or emergency stop is active. Suppressing rescheduleAllPending.")
-            cancelAll()
-            return
-        }
         val repository = AppRepository(context)
         repository.recoverInterruptedRunningTasks()
         val pendingTasks = repository.getPendingTasks()

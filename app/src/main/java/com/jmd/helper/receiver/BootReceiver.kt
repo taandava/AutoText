@@ -104,10 +104,6 @@ class BootReceiver : BroadcastReceiver() {
             AppFileLogger.action(deContext, TAG, "Direct Boot ($action) detected. CE storage locked. Checking auto-unlock PIN...")
 
             val prefs = PreferenceManager(deContext)
-            if (!prefs.isTasksMasterEnabled || com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(deContext)) {
-                Log.d(TAG, "Direct boot: Master task scheduler is paused or emergency stop active. Suppressing auto unlock.")
-                return
-            }
             if (prefs.isScreenAssistEnabled && prefs.screenAssistPin.isNotBlank()) {
                 val pin = prefs.screenAssistPin
                 Log.i(TAG, "Screen assist PIN configured. Waking screen for post-reboot PIN entry...")
@@ -118,17 +114,9 @@ class BootReceiver : BroadcastReceiver() {
                 AccessibilityWatchdogScheduler.scheduleHeartbeat(deContext)
             }
         } else if (isFullBoot) {
-            Log.d(TAG, "Full boot or upgrade detected ($action), checking master scheduler state...")
             val prefs = PreferenceManager(context)
-            if (!prefs.isTasksMasterEnabled || com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(context)) {
-                Log.d(TAG, "Master task scheduler is paused or emergency stop active. Suppressing boot reschedule.")
-                AppFileLogger.action(context, TAG, "Device boot ($action): Master task scheduler is paused. Canceling all background schedules.")
-                AlarmScheduler(context).cancelAll()
-                DailyCampaignScheduler.cancelAllCampaigns(context)
-                return
-            }
             AppFileLogger.action(context, TAG, "Device boot/package replace ($action) detected. Rescheduling active alarms and campaigns.")
-            if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
+            if (!prefs.isA11yUserPaused) {
                 AccessibilityHealthManager.ensureAllServicesActive(context)
             }
             AccessibilityHealthManager.enforceAutoRotateInvariant(context)

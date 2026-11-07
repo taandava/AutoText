@@ -320,10 +320,6 @@ class PhoneCallReceiver : BroadcastReceiver() {
             Log.d(TAG, "Skipping call auto-reply: Auto-Reply Responder is disabled by master switch")
             return
         }
-        if (TaskSafetyManager.isEmergencyStopActive(context)) {
-            Log.d(TAG, "Skipping call reply: Emergency Stop is active")
-            return
-        }
 
         if (!PhoneNumberNormalizer.isMobileNumber(callerNumber)) {
             Log.i(TAG, "Skipped Auto-Reply: $callerNumber is not a valid mobile number (landline, shortcode, or toll-free)")

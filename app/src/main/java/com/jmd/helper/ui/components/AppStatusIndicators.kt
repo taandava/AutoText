@@ -60,29 +60,25 @@ object SystemIndicatorResolver {
 
         val isComponentEnabled = AccessibilityHealthManager.isServiceComponentEnabled(context)
         val hasWriteSecure = AccessibilityHealthManager.hasWriteSecureSettings(context)
-        val isDynamicStandby = prefs.isDynamicA11yOnDemandEnabled && hasWriteSecure
         val isA11yRunning = AccessibilityHealthManager.isServiceOperational()
         val isA11ySettingOn = AccessibilityHealthManager.isAccessibilitySettingEnabled(context)
         val isA11yHealthy = when {
             !isComponentEnabled -> false
             prefs.isA11yUserPaused -> false
-            isDynamicStandby -> true
             else -> isA11yRunning || isA11ySettingOn
         }
 
         val a11yName = when {
             !isComponentEnabled -> "Helper Assistant (Disabled in System)"
             prefs.isA11yUserPaused -> "Helper Assistant (Paused for Payments)"
-            isDynamicStandby && !isA11yRunning -> "Helper Scheduled Assistant (Bank-Safe Standby)"
-            isA11yRunning -> "Helper Scheduled Assistant (Active)"
+            isA11yRunning -> "Helper Scheduled Assistant (Active • Bank-Safe)"
             else -> "Helper Scheduled Assistant"
         }
 
         val a11yDesc = when {
             !isComponentEnabled -> "The assistant service component was disabled by the system. Tap to re-enable in system settings."
             prefs.isA11yUserPaused -> "Assistant is temporarily paused so banking and payment apps process transactions without interference. Tap to resume."
-            isDynamicStandby && !isA11yRunning -> "Bank-Safe Standby: Kept inactive while idle so payment and banking apps run with zero warnings. Directly connects only during scheduled dispatches."
-            isA11yRunning -> "Active in background for scheduled message delivery. Isolated from banking and payment apps."
+            isA11yRunning -> "Active in background for scheduled message delivery. Isolated from banking and payment apps with auto-hide."
             else -> "Enables hands-free message sending and lockscreen assistance. Tap to enable."
         }
 
@@ -90,8 +86,6 @@ object SystemIndicatorResolver {
             androidx.core.app.NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.packageName)
 
         val isDeviceAdminActive = HelperDeviceAdminReceiver.isAdminActive(context)
-
-        val isSchedulerActive = prefs.isTasksMasterEnabled && !TaskSafetyManager.isEmergencyStopActive(context)
 
         val isBankingShieldActive = prefs.isBankingShieldEnabled
 
@@ -138,8 +132,6 @@ object SystemIndicatorResolver {
                 icon = Icons.Default.AccessibilityNew,
                 isActive = isA11yHealthy,
                 actionLabel = when {
-                    isDynamicStandby && isA11yRunning -> "Safe Detach"
-                    isDynamicStandby -> "Test Connection"
                     prefs.isA11yUserPaused && hasWriteSecure -> "Resume Assistant"
                     prefs.isA11yUserPaused -> "Enable in Settings"
                     isA11yRunning -> "Pause for Banking Apps"
@@ -147,15 +139,7 @@ object SystemIndicatorResolver {
                     else -> "Enable in Settings"
                 },
                 onAction = { ctx ->
-                    if (isDynamicStandby) {
-                        if (isA11yRunning) {
-                            AccessibilityHealthManager.disableAccessibilityService(ctx)
-                            ctx.showAppToast("Safe Standby: Assistant detached for banking safety.")
-                        } else {
-                            AccessibilityHealthManager.enableAccessibilityService(ctx)
-                            ctx.showAppToast("Connected! Helper Assistant is ready.")
-                        }
-                    } else if (isA11yRunning) {
+                    if (isA11yRunning) {
                         prefs.isA11yUserPaused = true
                         TaskAccessibilityService.disableServiceIfActive()
                         if (hasWriteSecure) {
@@ -224,13 +208,22 @@ object SystemIndicatorResolver {
             SystemIndicator(
                 id = "task_scheduler",
                 name = "Scheduled Dispatcher",
-                description = "The master service coordinating scheduled messages, repeating sequences, and daily campaigns. Turns red if master toggle is paused or emergency stop is active.",
+                description = "The background service coordinating scheduled messages, repeating sequences, and daily campaigns.",
                 icon = Icons.Default.Schedule,
-                isActive = isSchedulerActive,
-                actionLabel = if (!isSchedulerActive) "Resume Dispatcher" else null,
+                isActive = isExactAlarmActive,
+                actionLabel = if (!isExactAlarmActive) "Enable Alarms" else null,
                 onAction = { ctx ->
-                    TaskSafetyManager.resetEmergencyStop(ctx)
-                    prefs.isTasksMasterEnabled = true
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        try {
+                            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                data = "package:${ctx.packageName}".toUri()
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            ctx.startActivity(intent)
+                        } catch (e: Exception) {
+                            android.util.Log.e("AppStatusIndicators", "Failed opening exact alarm settings", e)
+                        }
+                    }
                 }
             ),
             SystemIndicator(

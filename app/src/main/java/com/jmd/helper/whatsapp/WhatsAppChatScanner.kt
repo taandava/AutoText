@@ -2,13 +2,8 @@
  * Package: com.jmd.helper.whatsapp
  * Module: WhatsApp Task & Tree Traversal
  *
- * Discovery engine for harvesting WhatsApp chats and groups via accessibility
- * node traversal, native filter tab detection, scrolling, and pool enrichment.
- *
- * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Repository: [com.jmd.helper.data.repo.AppRepository]
- * - Ingestion: [com.jmd.helper.engine.ContactIngestionEngine]
+ * Discovery engine for harvesting WhatsApp direct chats via accessibility
+ * node traversal, scrolling, and pool enrichment.
  */
 package com.jmd.helper.whatsapp
 
@@ -20,14 +15,13 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.jmd.helper.core.PhoneNumberNormalizer
 import com.jmd.helper.core.showAppToast
 import com.jmd.helper.data.model.DynamicContactItem
-import com.jmd.helper.data.model.WhatsAppGroupItem
 import com.jmd.helper.data.repo.AppRepository
 import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.whatsapp.AccessibilityNodeUtils.recycleSafely
 
 /**
  * Accessibility-based scanner engine that directly iterates WhatsApp and WhatsApp Business
- * conversation lists, discovers contacts and groups, and saves them into the local dynamic pool.
+ * conversation lists, discovers individual contacts and chats, and saves them into the local dynamic pool.
  */
 class WhatsAppChatScanner(
     private val service: AccessibilityService,
@@ -36,24 +30,20 @@ class WhatsAppChatScanner(
 
     /** Target filtering scope for scanner discovery. */
     enum class ScanTarget {
-        ALL_CHATS,
-        GROUPS_ONLY
+        ALL_CHATS
     }
 
     private enum class DeepScanPhase {
         ENSURE_CHATS_TAB,
-        ENSURE_FILTER_TAB,
         HARVEST_ROWS,
         SCROLL_DOWN,
         COMPLETE
     }
 
     var scanTarget: ScanTarget = ScanTarget.ALL_CHATS
+    private var activePkg: String = "com.whatsapp"
     private var currentPhase = DeepScanPhase.ENSURE_CHATS_TAB
-    private val discoveredGroups = linkedMapOf<String, WhatsAppGroupItem>()
     private val discoveredChats = linkedMapOf<String, DynamicContactItem>()
-    private var isGroupsTabActivated = false
-    private var tabSearchAttempts = 0
     private var bottomTabCheckAttempts = 0
     private var stepAttempts = 0
     private var scrollCycles = 0
@@ -63,15 +53,12 @@ class WhatsAppChatScanner(
     private val maxStagnantCycles = 3
 
     /**
-     * Clears discovery cache and resets traversal state for a fresh chat/group scanning pass.
+     * Clears discovery cache and resets traversal state for a fresh chat scanning pass.
      */
     fun resetScanState(target: ScanTarget = ScanTarget.ALL_CHATS) {
         scanTarget = target
         currentPhase = DeepScanPhase.ENSURE_CHATS_TAB
-        discoveredGroups.clear()
         discoveredChats.clear()
-        isGroupsTabActivated = false
-        tabSearchAttempts = 0
         bottomTabCheckAttempts = 0
         stepAttempts = 0
         scrollCycles = 0
@@ -81,7 +68,7 @@ class WhatsAppChatScanner(
     }
 
     /**
-     * Drives accessibility node inspection across recent conversation lists, harvesting contact and group entities.
+     * Drives accessibility node inspection across recent conversation lists, harvesting contact entities.
      *
      * @param root Accessibility tree root.
      * @param pkg Target WhatsApp package identifier.
@@ -97,6 +84,7 @@ class WhatsAppChatScanner(
         onFinish: () -> Unit,
     ) {
         try {
+            activePkg = pkg
             val curPkg = root.packageName?.toString().orEmpty()
             val isTargetPkg = curPkg.contains(pkg, ignoreCase = true) || pkg.contains(curPkg, ignoreCase = true) ||
                 ((pkg.contains("whatsapp") || pkg.contains("w4b")) && (curPkg.contains("whatsapp") || curPkg.contains("w4b")))
@@ -119,14 +107,14 @@ class WhatsAppChatScanner(
                         val isSelected = chatsTab.isSelected || chatsTab.contentDescription?.contains("selected", true) == true
                         if (isSelected) {
                             Log.i(loggerTag, "Chats bottom tab is already active")
-                            currentPhase = if (scanTarget == ScanTarget.GROUPS_ONLY) DeepScanPhase.ENSURE_FILTER_TAB else DeepScanPhase.HARVEST_ROWS
+                            currentPhase = DeepScanPhase.HARVEST_ROWS
                             onRetry(250L)
                             return
                         } else {
                             val clicked = AccessibilityNodeUtils.clickElement(chatsTab, service)
                             Log.i(loggerTag, "Clicked Chats bottom tab: result=$clicked")
                             if (clicked) {
-                                currentPhase = if (scanTarget == ScanTarget.GROUPS_ONLY) DeepScanPhase.ENSURE_FILTER_TAB else DeepScanPhase.HARVEST_ROWS
+                                currentPhase = DeepScanPhase.HARVEST_ROWS
                                 onRetry(450L)
                                 return
                             }
@@ -135,40 +123,6 @@ class WhatsAppChatScanner(
 
                     if (bottomTabCheckAttempts >= 2) {
                         Log.d(loggerTag, "Chats bottom tab not found or already on conversation list, moving forward")
-                        currentPhase = if (scanTarget == ScanTarget.GROUPS_ONLY) DeepScanPhase.ENSURE_FILTER_TAB else DeepScanPhase.HARVEST_ROWS
-                        onRetry(200L)
-                    } else {
-                        onRetry(300L)
-                    }
-                }
-
-                DeepScanPhase.ENSURE_FILTER_TAB -> {
-                    tabSearchAttempts++
-                    val groupsChip = findGroupsFilterTab(root)
-                    if (groupsChip != null) {
-                        val desc = groupsChip.contentDescription?.toString().orEmpty()
-                        val isSelected = groupsChip.isSelected ||
-                            (desc.contains("selected", ignoreCase = true) && !desc.contains("unselected", ignoreCase = true))
-                        if (isSelected) {
-                            isGroupsTabActivated = true
-                            Log.i(loggerTag, "Native Groups filter chip is already selected")
-                            currentPhase = DeepScanPhase.HARVEST_ROWS
-                            onRetry(250L)
-                            return
-                        } else {
-                            val clicked = AccessibilityNodeUtils.clickElement(groupsChip, service)
-                            Log.i(loggerTag, "Clicked native Groups filter chip: result=$clicked")
-                            if (clicked) {
-                                isGroupsTabActivated = true
-                                currentPhase = DeepScanPhase.HARVEST_ROWS
-                                onRetry(450L) // Allow WhatsApp list to re-filter
-                                return
-                            }
-                        }
-                    }
-
-                    if (tabSearchAttempts >= 3) {
-                        Log.d(loggerTag, "Native Groups filter chip not found or not clickable, proceeding with row heuristics")
                         currentPhase = DeepScanPhase.HARVEST_ROWS
                         onRetry(200L)
                     } else {
@@ -179,107 +133,56 @@ class WhatsAppChatScanner(
                 DeepScanPhase.HARVEST_ROWS -> {
                     val rowContainers = findAllRowContainers(root)
                     val isBiz = pkg.contains("w4b", ignoreCase = true)
-                    val baseSrc = if (scanTarget == ScanTarget.GROUPS_ONLY) "WA_GROUP" else (if (isBiz) "WA_BUSINESS" else "WA_CHAT")
+                    val baseSrc = if (isBiz) "WA_BUSINESS" else "WA_CHAT"
 
                     for (row in rowContainers) {
                         val title = extractTitleFromRow(row) ?: continue
                         val cleanTitle = title.trim().removePrefix("~").trim()
                         if (cleanTitle.isBlank() || !repo.isValidPickedChatName(cleanTitle)) continue
 
-                        val phoneDigits = cleanTitle.filter { it.isDigit() }
-                        val isPhone = phoneDigits.length >= 7
-                        val isBroadcast = cleanTitle.contains("broadcast", ignoreCase = true) || cleanTitle.contains("recipients", ignoreCase = true)
-                        val isStatus = cleanTitle.equals("status", ignoreCase = true) || cleanTitle.equals("my status", ignoreCase = true)
+                        val digits = cleanTitle.filter { it.isDigit() }
+                        val letters = cleanTitle.filter { it.isLetter() }
+                        val isPhone = digits.length >= 7 && letters.isEmpty()
 
-                        if (isStatus) continue
+                        if (isPhone) {
+                            val norm = PhoneNumberNormalizer.normalize(cleanTitle)
+                            val contactInfo = repo.findContactByPhone(cleanTitle)
+                            val resolvedName = contactInfo?.first?.ifBlank { cleanTitle } ?: cleanTitle
+                            val resolvedPhoto = contactInfo?.second?.ifBlank { repo.findPhotoForContactName(resolvedName) } ?: repo.findPhotoForContactName(resolvedName)
 
-                        if (scanTarget == ScanTarget.GROUPS_ONLY) {
-                            // Verify group nature: either native Groups tab was activated, or row shows group signals
-                            val isGroup = isGroupsTabActivated || hasGroupSignalsInRow(row) || cleanTitle.contains("group", ignoreCase = true)
-                            if (isGroup && !isPhone && !isBroadcast) {
-                                if (!discoveredGroups.containsKey(cleanTitle)) {
-                                    discoveredGroups[cleanTitle] = WhatsAppGroupItem(
-                                        name = cleanTitle,
-                                        participantCount = extractSubtitleFromRow(row),
-                                        lastDiscoveredAt = System.currentTimeMillis(),
-                                        packageName = pkg,
-                                        photoUri = "",
-                                        description = ""
-                                    )
-                                    Log.i(loggerTag, "Harvested WhatsApp group: '$cleanTitle' ($pkg)")
-                                }
-                                val normGroup = "group:$cleanTitle"
-                                if (!discoveredChats.containsKey(normGroup)) {
-                                    discoveredChats[normGroup] = DynamicContactItem(
-                                        name = cleanTitle,
-                                        phone = normGroup,
-                                        normalizedNumber = normGroup,
-                                        source = "WA_GROUP",
-                                        photoUri = ""
-                                    )
-                                }
+                            if (!discoveredChats.containsKey(norm)) {
+                                discoveredChats[norm] = DynamicContactItem(
+                                    name = resolvedName,
+                                    phone = cleanTitle,
+                                    normalizedNumber = norm,
+                                    source = baseSrc,
+                                    photoUri = resolvedPhoto,
+                                )
+                                Log.i(loggerTag, "Harvested unsaved phone chat: '$resolvedName' -> $cleanTitle ($baseSrc)")
                             }
                         } else {
-                            if (isPhone) {
-                                // Unsaved phone number chat
-                                val norm = PhoneNumberNormalizer.normalize(cleanTitle)
-                                val contactInfo = repo.findContactByPhone(cleanTitle)
-                                val resolvedName = contactInfo?.first?.ifBlank { cleanTitle } ?: cleanTitle
-                                val resolvedPhoto = contactInfo?.second?.ifBlank { repo.findPhotoForContactName(resolvedName) } ?: repo.findPhotoForContactName(resolvedName)
+                            val isBroadcast = cleanTitle.contains("broadcast", ignoreCase = true) || cleanTitle.contains("recipients", ignoreCase = true)
+                            if (!isBroadcast) {
+                                val phoneFromBook = repo.findPhoneForContactName(cleanTitle)
+                                val norm = if (!phoneFromBook.isNullOrBlank()) PhoneNumberNormalizer.normalize(phoneFromBook) else PhoneNumberNormalizer.normalize(cleanTitle)
+                                val photo = repo.findPhotoForContactName(cleanTitle)
+                                val phoneToUse = phoneFromBook ?: cleanTitle
 
                                 if (!discoveredChats.containsKey(norm)) {
                                     discoveredChats[norm] = DynamicContactItem(
-                                        name = resolvedName,
-                                        phone = cleanTitle,
+                                        name = cleanTitle,
+                                        phone = phoneToUse,
                                         normalizedNumber = norm,
                                         source = baseSrc,
-                                        photoUri = resolvedPhoto,
+                                        photoUri = photo,
                                     )
-                                    Log.i(loggerTag, "Harvested unsaved phone chat: '$resolvedName' -> $cleanTitle ($baseSrc)")
-                                }
-                            } else {
-                                // Contact name or group in ALL_CHATS mode
-                                val isGroup = isGroupsTabActivated || hasGroupSignalsInRow(row)
-                                if (isGroup) {
-                                    if (!discoveredGroups.containsKey(cleanTitle)) {
-                                        discoveredGroups[cleanTitle] = WhatsAppGroupItem(
-                                            name = cleanTitle,
-                                            participantCount = extractSubtitleFromRow(row),
-                                            lastDiscoveredAt = System.currentTimeMillis(),
-                                            packageName = pkg
-                                        )
-                                    }
-                                    val normGroup = "group:$cleanTitle"
-                                    if (!discoveredChats.containsKey(normGroup)) {
-                                        discoveredChats[normGroup] = DynamicContactItem(
-                                            name = cleanTitle,
-                                            phone = normGroup,
-                                            normalizedNumber = normGroup,
-                                            source = "WA_GROUP"
-                                        )
-                                    }
-                                } else if (!isBroadcast) {
-                                    val phoneFromBook = repo.findPhoneForContactName(cleanTitle)
-                                    val norm = if (!phoneFromBook.isNullOrBlank()) PhoneNumberNormalizer.normalize(phoneFromBook) else PhoneNumberNormalizer.normalize(cleanTitle)
-                                    val photo = repo.findPhotoForContactName(cleanTitle)
-                                    val phoneToUse = phoneFromBook ?: cleanTitle
-
-                                    if (!discoveredChats.containsKey(norm)) {
-                                        discoveredChats[norm] = DynamicContactItem(
-                                            name = cleanTitle,
-                                            phone = phoneToUse,
-                                            normalizedNumber = norm,
-                                            source = baseSrc,
-                                            photoUri = photo,
-                                        )
-                                        Log.i(loggerTag, "Harvested contact chat: '$cleanTitle' -> $phoneToUse ($baseSrc)")
-                                    }
+                                    Log.i(loggerTag, "Harvested contact chat: '$cleanTitle' -> $phoneToUse ($baseSrc)")
                                 }
                             }
                         }
                     }
 
-                    val totalDiscovered = if (scanTarget == ScanTarget.GROUPS_ONLY) discoveredGroups.size else discoveredChats.size
+                    val totalDiscovered = discoveredChats.size
                     if (totalDiscovered > lastDiscoveredCount) {
                         consecutiveStagnantCycles = 0
                         lastDiscoveredCount = totalDiscovered
@@ -290,7 +193,7 @@ class WhatsAppChatScanner(
                         stepAttempts = 0
                         onRetry(350L)
                     } else {
-                        Log.i(loggerTag, "Harvest complete. Groups: ${discoveredGroups.size}, chats: ${discoveredChats.size}, cycles: $scrollCycles")
+                        Log.i(loggerTag, "Harvest complete. Chats: ${discoveredChats.size}, cycles: $scrollCycles")
                         finishAndSave(onFinish)
                     }
                 }
@@ -308,7 +211,7 @@ class WhatsAppChatScanner(
                         Log.i(loggerTag, "Scrolled chat list via vertical swipe gesture: result=$scrolled")
                     }
 
-                    val totalDiscovered = if (scanTarget == ScanTarget.GROUPS_ONLY) discoveredGroups.size else discoveredChats.size
+                    val totalDiscovered = discoveredChats.size
                     if (totalDiscovered == lastDiscoveredCount) {
                         consecutiveStagnantCycles++
                         Log.d(loggerTag, "No new items in cycle $scrollCycles (stagnant=$consecutiveStagnantCycles/$maxStagnantCycles)")
@@ -340,21 +243,15 @@ class WhatsAppChatScanner(
 
     private fun finishAndSave(onFinish: () -> Unit) {
         val repo = AppRepository(service)
-        if (discoveredGroups.isNotEmpty()) {
-            val count = repo.bulkSaveWhatsAppGroupItems(discoveredGroups.values.toList())
-            Log.i(loggerTag, "finishAndSave: Persisted $count WhatsApp groups to database")
-        }
+        repo.deleteAllWhatsAppGroups()
+
         val savedChats = if (discoveredChats.isNotEmpty()) {
             val count = repo.upsertDynamicPoolBatch(discoveredChats.values.toList())
-            Log.i(loggerTag, "finishAndSave: Ingested $count chats/groups into dynamic pool")
+            Log.i(loggerTag, "finishAndSave: Ingested $count chats into dynamic pool")
             count
         } else 0
 
-        val msg = if (scanTarget == ScanTarget.GROUPS_ONLY) {
-            "Harvested ${discoveredGroups.size} WhatsApp groups"
-        } else {
-            "Synced $savedChats WhatsApp conversations"
-        }
+        val msg = "Synced $savedChats WhatsApp conversations"
         service.showAppToast(msg, isLong = true)
 
         TaskAccessibilityService.notifyScanCompleted()
@@ -403,97 +300,6 @@ class WhatsAppChatScanner(
             }
         }
         return null
-    }
-
-    /**
-     * Searches the top filter bar for WhatsApp's native 'Groups' filter chip / tab with multilingual support.
-     */
-    private fun findGroupsFilterTab(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
-        val q = ArrayDeque<AccessibilityNodeInfo>()
-        q.add(root)
-        while (q.isNotEmpty()) {
-            val node = q.removeFirst()
-            val text = node.text?.toString()?.trim().orEmpty()
-            val desc = node.contentDescription?.toString()?.trim().orEmpty()
-            val id = node.viewIdResourceName?.lowercase().orEmpty()
-
-            val bounds = Rect()
-            node.getBoundsInScreen(bounds)
-            val isTopRegion = bounds.top in 0..700
-
-            val isGroupLabel = isTopRegion && (
-                text.equals("Groups", ignoreCase = true) ||
-                text.equals("ग्रुप", ignoreCase = true) ||
-                text.equals("समूह", ignoreCase = true) ||
-                text.equals("Group", ignoreCase = true) ||
-                desc.equals("Groups", ignoreCase = true) ||
-                desc.startsWith("Groups,", ignoreCase = true) ||
-                desc.contains("Groups, ", ignoreCase = true) ||
-                desc.contains("Filter by Groups", ignoreCase = true) ||
-                desc.contains("Groups filter", ignoreCase = true) ||
-                id.contains("filter_chip_groups") ||
-                id.contains("groups_chip")
-            )
-
-            if (isGroupLabel) {
-                var target: AccessibilityNodeInfo? = node
-                var depth = 0
-                while (target != null && depth < 4) {
-                    if (target.isClickable) return target
-                    target = target.parent
-                    depth++
-                }
-                return node
-            }
-
-            for (i in 0 until node.childCount) {
-                node.getChild(i)?.let { q.add(it) }
-            }
-        }
-        return null
-    }
-
-    /**
-     * Evaluates whether a conversation row exhibits group characteristics.
-     */
-    private fun hasGroupSignalsInRow(row: AccessibilityNodeInfo): Boolean {
-        val q = ArrayDeque<AccessibilityNodeInfo>()
-        q.add(row)
-        while (q.isNotEmpty()) {
-            val n = q.removeFirst()
-            val desc = n.contentDescription?.toString()?.lowercase().orEmpty()
-            val txt = n.text?.toString()?.trim().orEmpty()
-            val id = n.viewIdResourceName?.lowercase().orEmpty()
-
-            if (desc.contains("group icon") || desc.contains("group profile") || desc.contains("group photo") ||
-                desc.startsWith("group ") || desc.contains(" group") || id.contains("group") || desc.contains("community")
-            ) {
-                return true
-            }
-
-            // In group chats, message snippet often starts with "Sender: Message" or lists participant updates
-            if (txt.contains(":") && !txt.startsWith("http", ignoreCase = true)) {
-                val prefix = txt.substringBefore(":").trim().removePrefix("~").trim()
-                if (prefix.isNotBlank() && prefix.length in 1..30 && !prefix.contains("\n")) {
-                    return true
-                }
-            }
-
-            if (txt.contains("added", ignoreCase = true) ||
-                txt.contains("created group", ignoreCase = true) ||
-                txt.contains("left", ignoreCase = true) ||
-                txt.contains("joined", ignoreCase = true) ||
-                txt.contains("changed the group", ignoreCase = true) ||
-                txt.contains("admin", ignoreCase = true)
-            ) {
-                return true
-            }
-
-            for (i in 0 until n.childCount) {
-                n.getChild(i)?.let { q.add(it) }
-            }
-        }
-        return false
     }
 
     private fun findScrollableList(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
@@ -620,7 +426,7 @@ class WhatsAppChatScanner(
                 if (txt.isNotBlank()) return txt
             }
 
-            // Extract from avatar content descriptions (e.g. "Profile picture of GroupName")
+            // Extract from avatar content descriptions (e.g. "Profile picture of ContactName")
             if (desc.startsWith("Profile picture of ", ignoreCase = true)) {
                 val candidate = desc.substring(19).trim().removePrefix("~").trim()
                 if (candidate.isNotBlank()) return candidate
@@ -643,7 +449,6 @@ class WhatsAppChatScanner(
             }
         }
 
-        // WhatsApp accessibility row description: "Group Name, 3 unread messages, 10:45 AM"
         val rowDesc = row.contentDescription?.toString()?.trim().orEmpty()
         if (rowDesc.isNotBlank()) {
             val firstPart = rowDesc.substringBefore(",").trim().removePrefix("~").trim()

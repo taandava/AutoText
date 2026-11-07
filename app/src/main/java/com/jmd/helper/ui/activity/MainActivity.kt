@@ -126,7 +126,7 @@ class MainActivity : ComponentActivity() {
         // Ensure accessibility and notification services are silently auto-healed in background
         lifecycleScope.launch(Dispatchers.IO) {
             val prefs = PreferenceManager(applicationContext)
-            if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
+            if (!prefs.isA11yUserPaused) {
                 AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
             }
         }

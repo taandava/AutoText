@@ -14,6 +14,8 @@ import androidx.core.net.toUri
 /**
  * Helper utility for inspecting and requesting [Settings.ACTION_MANAGE_OVERLAY_PERMISSION].
  */
+typealias OverlayPermissionUtils = OverlayPermissionHelper
+
 object OverlayPermissionHelper {
 
     /**

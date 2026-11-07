@@ -204,11 +204,8 @@ object SystemSelfTestManager {
 
         // 3. Reschedule All Pending Task Alarms
         try {
-            val prefs = PreferenceManager(appContext)
-            if (prefs.isTasksMasterEnabled) {
-                AlarmScheduler(appContext).rescheduleAllPending()
-                AppFileLogger.i(appContext, TAG, "Auto-Fix: All pending task alarms rescheduled")
-            }
+            AlarmScheduler(appContext).rescheduleAllPending()
+            AppFileLogger.i(appContext, TAG, "Auto-Fix: All pending task alarms rescheduled")
         } catch (e: Exception) {
             AppFileLogger.e(appContext, TAG, "Auto-Fix alarm reschedule error: ${e.message}", e)
         }
@@ -398,19 +395,13 @@ object SystemSelfTestManager {
             val probeRead = prefs.sharedPreferences.getString(testProbeKey, null)
             prefs.sharedPreferences.edit(commit = true) { remove(testProbeKey) }
 
-            val dataStore = AppDataStore.getInstance(context)
-            val isMasterEnabledFlow = dataStore.isMasterSchedulerEnabled.first()
-
-            val isMasterPref = prefs.isTasksMasterEnabled
-            val isEmergencyStop = prefs.isEmergencyStopActive
-
             DiagnosticResultItem(
                 id = "preferences_datastore",
                 title = "Preferences & Jetpack DataStore",
                 category = "Configuration",
                 level = DiagnosticLevel.PASS,
-                summary = "Preferences read/write operational, DataStore Flow active ($isMasterEnabledFlow)",
-                details = "Master Scheduler: $isMasterPref, Emergency Stop: $isEmergencyStop, SIM Slot: ${prefs.defaultSimSlot}, Theme: ${prefs.appThemeMode}."
+                summary = "Preferences read/write operational, direct execution active",
+                details = "Probe Verified: ${probeRead == "ok"}, SIM Slot: ${prefs.defaultSimSlot}, Theme: ${prefs.appThemeMode}."
             )
         } catch (e: CancellationException) {
             throw e

@@ -2,8 +2,8 @@
  * Package: com.jmd.helper.core
  * Module: Core Task Utilities
  *
- * Provides fail-safe protections, global emergency safety halt controls, and channel-level
- * circuit breakers preventing task execution loops and unintended dispatches.
+ * Provides fail-safe protections and channel-level circuit breakers preventing
+ * task execution loops and unintended dispatches.
  */
 package com.jmd.helper.core
 
@@ -29,38 +29,13 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 
 /**
- * Global task safety manager, emergency stop control, and circuit breaker.
- * Ensures the device never gets locked into a task loop, rapid relaunch cycle,
- * or unresponsive state.
- *
- * Implements strict Human Interaction & Idle State Protection:
- * - Postpones all upcoming tasks when human user interaction is detected directly.
- * - Only triggers and completes scheduled tasks when the device is confirmed idle.
- * - Instantly disarms and auto-postpones active tasks if interrupted by human touch or navigation.
+ * Global task safety manager and circuit breaker.
  */
+typealias SafetyManager = TaskSafetyManager
+
 object TaskSafetyManager {
 
     private const val TAG = "AutoSafetyManager"
-
-    /** Global AtomicBoolean representing whether an emergency stop is currently armed. */
-    val isEmergencyStopActive = AtomicBoolean(false)
-
-    /**
-     * Checks if emergency stop is armed, reconciling in-memory state with persisted preferences.
-     */
-    fun isEmergencyStopActive(context: Context? = null): Boolean {
-        if (isEmergencyStopActive.get()) return true
-        if (context != null) {
-            try {
-                val persisted = PreferenceManager(context).isEmergencyStopActive
-                if (persisted) {
-                    isEmergencyStopActive.set(true)
-                    return true
-                }
-            } catch (e: Exception) { Log.d(TAG, "Failed reading emergency stop state: ${e.message}") }
-        }
-        return false
-    }
 
     /** Consecutive failure counters tracked per communication channel name. */
     private val failureCounts = ConcurrentHashMap<String, AtomicInteger>()
@@ -252,95 +227,25 @@ object TaskSafetyManager {
     }
 
     /**
-     * Arms the global emergency stop control, canceling active task queues,
-     * resetting picker listeners, tripping circuit breakers, and minimizing to launcher home.
-     *
-     * @param context Active Android [Context].
-     * @param reason Human-readable rationale for emergency stop event.
-     */
-    fun triggerEmergencyStop(context: Context? = null, reason: String = "User requested emergency stop") {
-        isEmergencyStopActive.set(true)
-        if (context != null) {
-            try {
-                PreferenceManager(context).isEmergencyStopActive = true
-            } catch (e: Exception) { Log.w(TAG, "Failed writing emergency stop state: ${e.message}") }
-            Log.e(TAG, "EMERGENCY STOP TRIGGERED: $reason")
-            AppFileLogger.e(context, TAG, "EMERGENCY STOP TRIGGERED: $reason")
-
-            try {
-                // 1. Immediately abort active engine tasks and drain queue
-                try {
-                    com.jmd.helper.engine.SequentialTaskEngine.getInstance(context).cancelAll()
-                } catch (e: Throwable) {
-                    Log.e(TAG, "Error cancelling SequentialTaskEngine", e)
-                }
-
-                // 2. Cancel all daily campaign WorkManager jobs and exact alarms
-                try {
-                    com.jmd.helper.scheduler.DailyCampaignScheduler.cancelAllCampaigns(context)
-                } catch (e: Throwable) {
-                    Log.e(TAG, "Error cancelling DailyCampaignScheduler", e)
-                }
-
-                // 3. Cancel all pending AlarmManager alarms for individual tasks
-                try {
-                    com.jmd.helper.scheduler.AlarmScheduler(context).cancelAll()
-                } catch (e: Throwable) {
-                    Log.e(TAG, "Error cancelling AlarmScheduler", e)
-                }
-
-                // 4. Immediately disarm all pending accessibility task
-                TaskAccessibilityService.clearPending()
-
-                // 5. Clear any pending chat picker callbacks
-                TaskAccessibilityService.onManualChatPicked = null
-                TaskAccessibilityService.onManualChatInfoPicked = null
-
-                // 6. Trip all circuit breakers defensively
-                val now = System.currentTimeMillis()
-                ChannelType.entries.forEach { channel ->
-                    circuitBreakerTripped[channel.name] = true
-                    tripTimestamps[channel.name] = now
-                }
-
-                // 7. Return to home launcher cleanly
-                TaskAccessibilityService.minimizeToHome(context)
-
-                context.showAppToast("🚨 EMERGENCY STOP: All tasks halted immediately!", isLong = true)
-            } catch (t: Throwable) {
-                Log.e(TAG, "Error executing emergency stop cleanup", t)
-            }
-        } else {
-            Log.e(TAG, "EMERGENCY STOP TRIGGERED (in-memory): $reason")
-        }
-    }
-
-    /**
-     * Resets the emergency stop control and clears all channel circuit breakers, restoring normal operation.
+     * Resets all channel circuit breakers and interaction state, restoring normal operation.
      *
      * @param context Active Android [Context] (optional, used for logging and user feedback).
      */
-    fun resetEmergencyStop(context: Context? = null) {
-        isEmergencyStopActive.set(false)
-        if (context != null) {
-            try {
-                PreferenceManager(context).isEmergencyStopActive = false
-            } catch (e: Exception) { Log.w(TAG, "Failed clearing emergency stop state: ${e.message}") }
-        }
+    fun resetSafeguards(context: Context? = null) {
         failureCounts.clear()
         circuitBreakerTripped.clear()
         tripTimestamps.clear()
         lastHumanInteractionTimestamp.set(0L)
         isInterruptedByHuman.set(false)
-        Log.i(TAG, "Emergency stop and circuit breakers have been reset.")
+        Log.i(TAG, "Circuit breakers and safety state have been reset.")
         if (context != null) {
             try {
                 com.jmd.helper.scheduler.AlarmScheduler(context).rescheduleAllPending()
                 com.jmd.helper.scheduler.DailyCampaignScheduler.scheduleAll(context)
             } catch (t: Throwable) {
-                Log.e(TAG, "Error rescheduling tasks after emergency stop reset", t)
+                Log.e(TAG, "Error rescheduling tasks after safeguards reset", t)
             }
-            AppFileLogger.i(context, TAG, "Emergency stop and circuit breakers reset by user. All pending tasks rescheduled.")
+            AppFileLogger.i(context, TAG, "Safety circuit breakers reset by user. All pending tasks rescheduled.")
             context.showAppToast("Task safeguards reset. All scheduled tasks re-armed.")
         }
     }
@@ -404,11 +309,9 @@ object TaskSafetyManager {
      * Pre-flight gatekeeper verifying whether a channel is eligible to execute.
      *
      * @param channel Target [ChannelType].
-     * @return True if safe to proceed, false if emergency stop is active or circuit breaker is tripped.
+     * @return True if safe to proceed, false if circuit breaker is tripped.
      */
     fun canExecute(channel: ChannelType): Boolean {
-        if (isEmergencyStopActive.get()) return false
-        if (isCircuitBreakerTripped(channel)) return false
-        return true
+        return !isCircuitBreakerTripped(channel)
     }
 }

@@ -86,10 +86,11 @@ fun TaskTypeSelectionDialog(
         ),
         TaskTypeItem(
             title = "WhatsApp Group",
-            description = "Send WhatsApp group messages or announcements",
+            description = "Send message to a WhatsApp or WhatsApp Business group chat",
             icon = Icons.Filled.Groups,
             color = Color(0xFF15803D),
-            channel = ChannelType.WHATSAPP_GROUP,
+            channel = null,
+            isGroup = true,
         ),
         TaskTypeItem(
             title = "Status Story",
@@ -199,6 +200,7 @@ fun TaskTypeSelectionDialog(
                             Text(
                                 text = when (selectedSubFlow) {
                                     "STATUS" -> "Choose Status Platform"
+                                    "GROUP" -> "Choose WhatsApp Group App"
                                     "SEQUENCE" -> "Choose Sequence Channel"
                                     "WA_CALL" -> "Choose WhatsApp Calling App"
                                     else -> "Choose Task Type"
@@ -210,6 +212,7 @@ fun TaskTypeSelectionDialog(
                             Text(
                                 text = when (selectedSubFlow) {
                                     "STATUS" -> "Select which app to post your Status story to"
+                                    "GROUP" -> "Select WhatsApp or WhatsApp Business for this group message"
                                     "SEQUENCE" -> "Select messaging channel for this multi-step sequence"
                                     "WA_CALL" -> "Select WhatsApp or WhatsApp Business for this voice call"
                                     else -> "Select what action you want to schedule"
@@ -326,6 +329,35 @@ fun TaskTypeSelectionDialog(
                             )
                         }
                     }
+                    "GROUP" -> {
+                        // Sub-selection: WhatsApp Group vs WhatsApp Business Group
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            DialogOptionTile(
+                                title = "WhatsApp Group",
+                                description = "Send message to a group via personal WhatsApp Messenger",
+                                badge = "Personal",
+                                icon = Icons.Filled.Groups,
+                                color = Color(0xFF16A34A),
+                                onClick = {
+                                    onSelectChannel(ChannelType.WHATSAPP_GROUP)
+                                }
+                            )
+
+                            DialogOptionTile(
+                                title = "WhatsApp Business Group",
+                                description = "Send message to a client/team group via WhatsApp Business (W4B)",
+                                badge = "Business",
+                                icon = Icons.Filled.Groups,
+                                color = Color(0xFF0D9488),
+                                onClick = {
+                                    onSelectChannel(ChannelType.WHATSAPP_BUSINESS_GROUP)
+                                }
+                            )
+                        }
+                    }
                     else -> {
                         // Main Task Type List
                         LazyColumn(
@@ -351,6 +383,9 @@ fun TaskTypeSelectionDialog(
                                                 }
                                                 item.isWaCall -> {
                                                     selectedSubFlow = "WA_CALL"
+                                                }
+                                                item.isGroup -> {
+                                                    selectedSubFlow = "GROUP"
                                                 }
                                                 item.isDailyCampaign -> {
                                                     onSelectDailyCampaign()

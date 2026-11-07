@@ -58,10 +58,11 @@ object WhatsAppIntentDispatcher {
         isBatch: Boolean,
         mediaUri: String = ""
     ) {
-        val isGroup = channel == ChannelType.WHATSAPP_GROUP || recipient.startsWith("group:", ignoreCase = true)
+        val isGroup = channel == ChannelType.WHATSAPP_GROUP || channel == ChannelType.WHATSAPP_BUSINESS_GROUP || recipient.startsWith("group:", ignoreCase = true)
         val targetPkg = when (channel) {
-            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS -> "com.whatsapp.w4b"
+            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.WHATSAPP_BUSINESS_STATUS -> "com.whatsapp.w4b"
             ChannelType.WHATSAPP_STATUS -> if (recipient.contains("w4b", ignoreCase = true) || recipient.contains("business", ignoreCase = true)) "com.whatsapp.w4b" else (WhatsAppPackageHelper.getInstalledWhatsAppPackage(context) ?: "com.whatsapp")
+            ChannelType.WHATSAPP_GROUP -> if (recipient.contains("w4b", ignoreCase = true) || recipient.contains("business", ignoreCase = true)) "com.whatsapp.w4b" else (WhatsAppPackageHelper.getInstalledWhatsAppPackage(context) ?: "com.whatsapp")
             else -> WhatsAppPackageHelper.getInstalledWhatsAppPackage(context) ?: "com.whatsapp"
         }
 

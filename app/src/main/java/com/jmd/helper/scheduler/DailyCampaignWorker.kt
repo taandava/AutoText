@@ -92,16 +92,6 @@ class DailyCampaignWorker(
             return Result.success()
         }
 
-        if (!prefs.isTasksMasterEnabled) {
-            AppFileLogger.i(applicationContext, TAG, "Task Scheduler Master Switch is OFF. Skipping campaign #$campaignId.")
-            return Result.success()
-        }
-
-        if (com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) {
-            AppFileLogger.i(applicationContext, TAG, "Emergency Stop is ACTIVE. Skipping campaign #$campaignId.")
-            return Result.success()
-        }
-
         if (!isManual) {
             val nowCal = java.util.Calendar.getInstance()
             val targetCal = java.util.Calendar.getInstance().apply {
@@ -277,16 +267,6 @@ class DailyCampaignWorker(
                 TaskAccessibilityService.clearPending()
                 return Result.success()
             }
-            if (!prefs.isTasksMasterEnabled) {
-                AppFileLogger.w(applicationContext, TAG, "Task Scheduler Master Switch was disabled mid-batch! Halting campaign #${config.id}.")
-                TaskAccessibilityService.clearPending()
-                return Result.success()
-            }
-            if (com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) {
-                AppFileLogger.w(applicationContext, TAG, "Emergency Stop was triggered mid-batch! Halting campaign #${config.id}.")
-                TaskAccessibilityService.clearPending()
-                return Result.success()
-            }
             if (isStopped) {
                 AppFileLogger.w(applicationContext, TAG, "DailyCampaignWorker was stopped by system. Halting immediately.")
                 TaskAccessibilityService.clearPending()
@@ -349,7 +329,7 @@ class DailyCampaignWorker(
                             val maxWaitMs = 16000L
                             var waitedMs = 0L
                             while (TaskAccessibilityService.lastSendResult == TaskAccessibilityService.RESULT_PENDING && waitedMs < maxWaitMs) {
-                                if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive || !prefs.isTasksMasterEnabled || com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) {
+                                if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive) {
                                     TaskAccessibilityService.clearPending()
                                     return Result.success()
                                 }
@@ -578,8 +558,8 @@ class DailyCampaignWorker(
                 var elapsed = 0L
                 val step = 250L
                 while (elapsed < intervalMs) {
-                    if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive || !prefs.isTasksMasterEnabled || com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) {
-                        AppFileLogger.w(applicationContext, TAG, "Daily Campaign #${config.id} interval delay aborted: Campaign paused or master switch disabled.")
+                    if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive) {
+                        AppFileLogger.w(applicationContext, TAG, "Daily Campaign #${config.id} interval delay aborted: Campaign paused.")
                         TaskAccessibilityService.clearPending()
                         return Result.success()
                     }
@@ -611,7 +591,7 @@ class DailyCampaignWorker(
 
         val finalConfig = repo.getDailyCampaignConfig(config.id)
         if (successCount == 0 && failCount > 0) {
-            if (!finalConfig.isActive || !prefs.isTasksMasterEnabled || com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(applicationContext)) {
+            if (!finalConfig.isActive) {
                 AppFileLogger.w(applicationContext, TAG, "Daily campaign #${config.id} had failures, but campaign is inactive or stopped. Will NOT retry.")
                 return Result.success()
             }

@@ -20,22 +20,16 @@ import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
 import androidx.work.Configuration
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-
 import com.jmd.helper.core.AccessibilityHealthManager
-import com.jmd.helper.core.TaskSafetyManager
-import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.core.AppFileLogger
+import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.data.repo.AppRepository
 import com.jmd.helper.receiver.TaskAlarmReceiver
 import com.jmd.helper.scheduler.AccessibilityWatchdogScheduler
 import com.jmd.helper.scheduler.AlarmScheduler
 import com.jmd.helper.scheduler.DailyCampaignScheduler
 import com.jmd.helper.service.TaskForegroundService
+import kotlinx.coroutines.*
 
 /**
  * Root Application class for the Helper Android task suite.
@@ -139,12 +133,6 @@ class HelperApplication : Application(), Configuration.Provider {
         // 1a. Ensure accessibility service component is active in PackageManager
         AccessibilityHealthManager.ensureServiceComponentEnabled(this)
 
-        // Sync persisted emergency stop state
-        val initialPrefs = PreferenceManager(this)
-        if (initialPrefs.isEmergencyStopActive) {
-            TaskSafetyManager.isEmergencyStopActive.set(true)
-        }
-
         // 2. Offload database queries, contact hygiene, and alarm reschedulings to structured background coroutine
         val initExceptionHandler = CoroutineExceptionHandler { _, throwable ->
             Log.e(TAG, "Unhandled exception during background initialization coroutine", throwable)
@@ -153,27 +141,21 @@ class HelperApplication : Application(), Configuration.Provider {
 
         applicationScope.launch(initExceptionHandler) {
             try {
+                val prefs = PreferenceManager(this@HelperApplication)
                 // Reconcile and recover any tasks left stranded in RUNNING status from a previous process termination
                 AppRepository(this@HelperApplication).recoverInterruptedRunningTasks()
 
                 // Re-arm all active and pending task alarms across SMS, WhatsApp, Calls, and Reminders
-                val prefs = PreferenceManager(this@HelperApplication)
-                if (!prefs.isTasksMasterEnabled || TaskSafetyManager.isEmergencyStopActive(this@HelperApplication)) {
-                    Log.i(TAG, "Master task scheduler is paused or emergency stop active. Suppressing background schedule initialization.")
-                    AlarmScheduler(this@HelperApplication).cancelAll()
-                    DailyCampaignScheduler.cancelAllCampaigns(this@HelperApplication)
-                } else {
-                    AlarmScheduler(this@HelperApplication).rescheduleAllPending()
+                AlarmScheduler(this@HelperApplication).rescheduleAllPending()
 
-                    // Arm daily campaign schedulers for scheduled outreach cycles
-                    DailyCampaignScheduler.scheduleAll(this@HelperApplication)
-                }
+                // Arm daily campaign schedulers for scheduled outreach cycles
+                DailyCampaignScheduler.scheduleAll(this@HelperApplication)
 
                 // Start silent exact AlarmManager heartbeat for accessibility watchdog monitoring
                 AccessibilityWatchdogScheduler.scheduleHeartbeat(this@HelperApplication)
 
                 // Proactively verify and request binding for Accessibility and NotificationListener services
-                if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
+                if (!prefs.isA11yUserPaused) {
                     AccessibilityHealthManager.ensureAllServicesActive(this@HelperApplication)
                 }
                 AccessibilityHealthManager.enforceAutoRotateInvariant(this@HelperApplication)

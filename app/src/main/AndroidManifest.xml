@@ -177,8 +177,6 @@
                 <action android:name="com.jmd.helper.ACTION_FIRE_CAMPAIGN" />
                 <action android:name="com.jmd.helper.ACTION_SETUP_CAMPAIGN_CONTACTS" />
                 <action android:name="com.jmd.helper.ACTION_SET_PREF" />
-                <action android:name="com.jmd.helper.ACTION_EMERGENCY_STOP" />
-                <action android:name="com.jmd.helper.ACTION_RESET_EMERGENCY_STOP" />
                 <action android:name="com.jmd.helper.ACTION_TEST_SCREEN_ASSIST" />
             </intent-filter>
         </receiver>

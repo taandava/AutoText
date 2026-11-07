@@ -373,6 +373,7 @@ object ProtectedApplicationManager {
             ChannelType.WHATSAPP_STATUS,
             ChannelType.WHATSAPP_CALL -> true
             ChannelType.WHATSAPP_BUSINESS,
+            ChannelType.WHATSAPP_BUSINESS_GROUP,
             ChannelType.WHATSAPP_BUSINESS_STATUS,
             ChannelType.WHATSAPP_BUSINESS_CALL -> true
         }
@@ -395,10 +396,10 @@ object ProtectedApplicationManager {
         // 1. Immediately clear pending accessibility task and watchdog callbacks
         TaskAccessibilityService.clearPending()
 
-        // 2. If dynamic on-demand mode is enabled, immediately unbind and detach the accessibility service
-        val prefs = PreferenceManager(context)
-        if (prefs.isDynamicA11yOnDemandEnabled && AccessibilityHealthManager.hasWriteSecureSettings(context)) {
-            Log.i(TAG, "Dynamic mode active: Retracting accessibility service to ensure 0% detection in banking app.")
+        // 2. Always immediately unbind and retract accessibility service if WRITE_SECURE_SETTINGS is granted,
+        // so that banking apps never see the service active in system settings or AccessibilityManager.
+        if (AccessibilityHealthManager.hasWriteSecureSettings(context)) {
+            Log.i(TAG, "Banking Shield Always-Active: Retracting accessibility service to ensure 0% visibility/detection in banking app.")
             AccessibilityHealthManager.disableAccessibilityService(context)
         }
     }

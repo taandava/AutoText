@@ -45,13 +45,13 @@ fun PermissionSectionHeader(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                fontSize = 14.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = subtitle,
-                fontSize = 12.sp,
+                fontSize = 12.5.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -63,7 +63,7 @@ fun PermissionSectionHeader(
         ) {
             Text(
                 text = "$grantedCount/$totalCount Ready",
-                fontSize = 11.sp,
+                fontSize = 11.5.sp,
                 fontWeight = FontWeight.Bold,
                 color = badgeColor,
                 modifier = Modifier.padding(horizontal = AppLayoutGrid.SpaceSmall, vertical = AppLayoutGrid.SpaceXS)
@@ -83,19 +83,19 @@ fun PermissionStatusActiveChip() {
         border = BorderStroke(AppLayoutGrid.BorderWidthStandard, AppSemanticColors.successBorder)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
                 tint = AppSemanticColors.success,
-                modifier = Modifier.size(14.dp)
+                modifier = Modifier.size(15.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = "Active",
-                fontSize = 11.5.sp,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = AppSemanticColors.success
             )
@@ -105,6 +105,7 @@ fun PermissionStatusActiveChip() {
 
 /**
  * Action button prompting the user to grant or configure an ungranted permission.
+ * Strictly adheres to 48dp minimum accessible touch target.
  */
 @Composable
 fun PermissionGrantActionButton(
@@ -117,16 +118,16 @@ fun PermissionGrantActionButton(
         color = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
         tonalElevation = 2.dp,
-        modifier = Modifier.defaultMinSize(minHeight = 36.dp)
+        modifier = Modifier.defaultMinSize(minHeight = 48.dp, minWidth = 80.dp)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
                 text = text,
-                fontSize = 12.sp,
+                fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimary,
                 maxLines = 1

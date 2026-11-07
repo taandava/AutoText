@@ -64,7 +64,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * Implements strict security invariants:
  * - Never modifies device auto-rotate or unrelated display settings.
  * - Safely recovers from lockouts, dialog traps, or blocked numbers.
- * - Supports emergency stop via [TaskSafetyManager].
+ * - Supports automated task safety controls via [TaskSafetyManager].
  */
 class TaskAccessibilityService : AccessibilityService() {
 
@@ -358,10 +358,6 @@ class TaskAccessibilityService : AccessibilityService() {
                 context.showAppToast("$appLabel is not installed")
                 return
             }
-            if (TaskSafetyManager.isEmergencyStopActive(context)) {
-                context.showAppToast("Emergency stop is active. Reset safeguards in Settings first.")
-                return
-            }
 
             val appContext = context.applicationContext
             CoroutineScope(Dispatchers.Main).launch {
@@ -486,10 +482,6 @@ class TaskAccessibilityService : AccessibilityService() {
                 context.showAppToast("$appLabel is not installed")
                 return
             }
-            if (TaskSafetyManager.isEmergencyStopActive(context)) {
-                context.showAppToast("Emergency stop is active. Reset safeguards in Settings first.")
-                return
-            }
 
             val appContext = context.applicationContext
             CoroutineScope(Dispatchers.Main).launch {
@@ -574,7 +566,7 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
-         * Arms task engine for searching and sending a message to a WhatsApp group.
+         * Arms task engine for searching and sending a message to a WhatsApp or WhatsApp Business group.
          *
          * @param taskId Unique task ID.
          * @param packageName Target WhatsApp package (com.whatsapp or com.whatsapp.w4b).
@@ -814,9 +806,6 @@ class TaskAccessibilityService : AccessibilityService() {
                 val ctx: Context = inst ?: runCatching { HelperApplication.instance }.getOrNull() ?: return false
                 if (inst == null && AccessibilityHealthManager.hasWriteSecureSettings(ctx)) {
                     AccessibilityHealthManager.enableAccessibilityService(ctx)
-                    if (Looper.myLooper() != Looper.getMainLooper()) {
-                        runCatching { Thread.sleep(250) }
-                    }
                     inst = instance
                 }
                 if (inst != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -1006,9 +995,14 @@ class TaskAccessibilityService : AccessibilityService() {
                         .build()
                     notificationManager?.notify(9988, fullScreenNotification)
 
-                    val optionsBundle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                    val optionsBundle = if (Build.VERSION.SDK_INT >= 36) { // Build.VERSION_CODES.BAKLAVA
                         ActivityOptions.makeBasic().apply {
-                            setPendingIntentBackgroundActivityStartMode(ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS)
+                            pendingIntentBackgroundActivityStartMode = ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS
+                        }.toBundle()
+                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        ActivityOptions.makeBasic().apply {
+                            // On API 34-35, 1 corresponds to MODE_BACKGROUND_ACTIVITY_START_ALLOWED
+                            pendingIntentBackgroundActivityStartMode = 1
                         }.toBundle()
                     } else {
                         null
@@ -1665,13 +1659,12 @@ class TaskAccessibilityService : AccessibilityService() {
                 currentForegroundPackage = currentPkg
             }
 
-            // Privacy & Banking Shield Guard: Completely isolate accessibility from excluded & banking apps
-            // Never inspect, read, or process events from financial or excluded applications
+            // Privacy & Banking Shield Guard: Always active. Completely isolate accessibility from excluded & banking apps.
+            // Never inspect, read, or process events from financial or excluded applications.
             val privacyMgr = com.jmd.helper.core.PrivacyManager.getInstance(this)
             if (privacyMgr.isAppExcluded(currentPkg) || isFinancialOrBankingPackage(currentPkg) || com.jmd.helper.core.ProtectedApplicationManager.isProtectedPackage(currentPkg)) {
                 com.jmd.helper.core.ProtectedApplicationManager.handleProtectedAppEncountered(this, currentPkg, "onAccessibilityEvent")
-                val prefs = PreferenceManager(this)
-                if (!isDispatching && prefs.isBankingShieldEnabled && com.jmd.helper.core.AccessibilityHealthManager.hasWriteSecureSettings(this)) {
+                if (!isDispatching && com.jmd.helper.core.AccessibilityHealthManager.hasWriteSecureSettings(this)) {
                     Log.i(TAG, "Banking/Shielded app foreground ($currentPkg), safely detaching accessibility via secure settings")
                     com.jmd.helper.core.AccessibilityHealthManager.disableAccessibilityService(applicationContext)
                 }
@@ -1743,20 +1736,6 @@ class TaskAccessibilityService : AccessibilityService() {
                 if (pm?.isInteractive == true && km?.isKeyguardLocked == false && isGenuineUserTouch) {
                     TaskSafetyManager.recordHumanInteraction(this, "Physical touch in $currentPkg")
                 }
-            }
-
-            // 0. Global Task Emergency Stop
-            val prefs = PreferenceManager(this)
-            val isEmergencyStop = TaskSafetyManager.isEmergencyStopActive(this)
-            if (isEmergencyStop || !prefs.isTasksMasterEnabled) {
-                if (isDispatching) {
-                    Log.w(TAG, "Master switch disabled or emergency stop active! Halting task dispatch immediately.")
-                    setDispatchingState(false)
-                    isUnlockPending = false
-                    clearPending()
-                    handler.removeCallbacksAndMessages(null)
-                }
-                return
             }
 
             // 1. Handle Keyguard auto-unlock
@@ -1832,16 +1811,16 @@ class TaskAccessibilityService : AccessibilityService() {
                                 ))
                             }
                             PickedChatType.GROUP -> {
-                                repo.saveWhatsAppGroup(
-                                    WhatsAppGroupItem(
+                                val isBiz = currentPkg.contains("w4b", ignoreCase = true)
+                                val src = if (isBiz) "WA_BUSINESS_GROUP" else "WA_GROUP"
+                                repo.upsertDynamicPoolBatch(listOf(
+                                    DynamicContactItem(
                                         name = chatInfo.title,
-                                        participantCount = "",
-                                        lastDiscoveredAt = System.currentTimeMillis(),
-                                        packageName = currentPkg,
-                                        photoUri = "",
-                                        description = chatInfo.subtitle
+                                        phone = "group:${chatInfo.title}",
+                                        normalizedNumber = "group:${chatInfo.title.lowercase()}",
+                                        source = src
                                     )
-                                )
+                                ))
                             }
                             PickedChatType.BROADCAST, PickedChatType.CHANNEL, PickedChatType.STATUS -> {
                                 // Handled via callback

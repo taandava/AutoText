@@ -70,8 +70,88 @@ fun WhatsAppSetupAndScreenAssistView(
 
     var testPhone by remember { mutableStateOf("") }
     var testMessage by remember { mutableStateOf("") }
+    var showPinPromptDialog by remember { mutableStateOf(false) }
+    var promptPinInput by remember { mutableStateOf("") }
 
     val scope = rememberCoroutineScope()
+
+    if (showPinPromptDialog) {
+        AlertDialog(
+            onDismissRequest = { showPinPromptDialog = false },
+            title = {
+                Text(
+                    text = "Configure Unlock to Test",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Enter your phone lock PIN to test auto-unlock, or select Swipe if your device has no password.",
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    GlassInputField(
+                        value = promptPinInput,
+                        onValueChange = { promptPinInput = it.filter { ch -> ch.isDigit() } },
+                        label = "Screen Lock PIN",
+                        placeholder = "e.g. 1234",
+                        isPassword = true,
+                        leadingIcon = Icons.Default.Lock,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                        accentColor = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            confirmButton = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    GlassButton(
+                        text = "Use Swipe",
+                        onClick = {
+                            unlockType = "SWIPE"
+                            prefs.screenAssistType = "SWIPE"
+                            prefs.isScreenAssistEnabled = true
+                            isScreenAssistEnabled = true
+                            showPinPromptDialog = false
+                            TaskAccessibilityService.testScreenAssist(context, "")
+                        },
+                        variant = GlassButtonVariant.SECONDARY,
+                        modifier = Modifier.weight(1f)
+                    )
+                    GlassButton(
+                        text = "Test PIN",
+                        onClick = {
+                            if (promptPinInput.isNotBlank()) {
+                                pinCode = promptPinInput
+                                unlockType = "PIN"
+                                prefs.screenAssistPin = promptPinInput
+                                prefs.screenAssistType = "PIN"
+                                prefs.isScreenAssistEnabled = true
+                                isScreenAssistEnabled = true
+                                showPinPromptDialog = false
+                                TaskAccessibilityService.testScreenAssist(context, promptPinInput)
+                            } else {
+                                context.showAppToast("Enter at least 4 digits")
+                            }
+                        },
+                        variant = GlassButtonVariant.PRIMARY,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPinPromptDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -106,12 +186,12 @@ fun WhatsAppSetupAndScreenAssistView(
 
             // 2B. Self-Healing & Never-Stop Watchdog Card
             item {
-                AutoHealWatchdogCard(context)
+                AutoHealWatchdogCard(context = context)
             }
 
             // 2C. OEM Background Execution & Autostart Card
             item {
-                OemAutostartCard(context)
+                OemAutostartCard(context = context)
             }
 
             // 3. Screen Auto-Unlock & Auto-Lock Settings Enterprise Card
@@ -253,7 +333,8 @@ fun WhatsAppSetupAndScreenAssistView(
                             }
                             val currentPin = pinCode.ifBlank { prefs.screenAssistPin }.trim()
                             if (currentPin.isBlank() && prefs.screenAssistType != "SWIPE") {
-                                context.showAppToast("Enter your screen lock PIN above to test unlock", isLong = true)
+                                promptPinInput = pinCode
+                                showPinPromptDialog = true
                                 return@GlassButton
                             }
                             TaskAccessibilityService.testScreenAssist(context, currentPin)
@@ -285,19 +366,6 @@ fun WhatsAppSetupAndScreenAssistView(
                         },
                         icon = Icons.Default.Lock,
                         variant = GlassButtonVariant.SECONDARY,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    GlassButton(
-                        text = "Emergency Stop All Scheduled Tasks",
-                        onClick = {
-                            TaskAccessibilityService.clearPending()
-                            com.jmd.helper.core.TaskSafetyManager.triggerEmergencyStop(context, "User clicked Emergency Stop in Setup")
-                        },
-                        icon = Icons.Default.StopCircle,
-                        variant = GlassButtonVariant.DANGER,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -365,44 +433,34 @@ fun WhatsAppSetupAndScreenAssistView(
  */
 @Composable
 fun WhatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
-    val hasWriteSecure = AccessibilityHealthManager.hasWriteSecureSettings(context)
-    val isDynamicStandby = prefs.isDynamicA11yOnDemandEnabled && hasWriteSecure
     val isOperational = AccessibilityHealthManager.isServiceOperational()
-    val isA11yReady = isOperational || isDynamicStandby
 
     AppCard(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = if (isA11yReady) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
-        borderColor = if (isA11yReady) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f) else MaterialTheme.colorScheme.error.copy(alpha = 0.35f)
+        backgroundColor = if (isOperational) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
+        borderColor = if (isOperational) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f) else MaterialTheme.colorScheme.error.copy(alpha = 0.35f)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = if (isA11yReady) Icons.Default.CheckCircle else Icons.Default.Warning,
+                imageVector = if (isOperational) Icons.Default.CheckCircle else Icons.Default.Warning,
                 contentDescription = null,
-                tint = if (isA11yReady) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+                tint = if (isOperational) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
-                    text = when {
-                        isOperational -> "Helper Assistant: Connected"
-                        isDynamicStandby -> "Helper Assistant: Bank-Safe Standby"
-                        else -> "Helper Assistant: Setup Required"
-                    },
+                    text = if (isOperational) "Helper Assistant: Connected (Bank-Shield Active)" else "Helper Assistant: Setup Required",
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
-                    color = if (isA11yReady) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error
+                    color = if (isOperational) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error
                 )
                 Text(
-                    text = when {
-                        isOperational -> "Active in background. Ready to dispatch scheduled messages with screen assistance."
-                        isDynamicStandby -> "Active & Ready. Safely detached while idle so banking and payment apps work with 0 warnings. Auto-connects in 0.05s on task!"
-                        else -> "Enable Helper Assistant in Settings > Accessibility > Installed apps."
-                    },
+                    text = if (isOperational) "Active in background. Banking and payment apps are strictly isolated."
+                           else "Enable Helper Assistant in Settings > Accessibility > Installed apps.",
                     fontSize = 11.5.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -412,35 +470,16 @@ fun WhatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
         Spacer(modifier = Modifier.height(12.dp))
 
         GlassButton(
-            text = when {
-                isOperational -> "Open Accessibility Settings"
-                isDynamicStandby -> "Test Assistant Connection"
-                else -> "Turn ON in Accessibility Settings"
-            },
+            text = if (isOperational) "Open Accessibility Settings" else "Turn ON in Accessibility Settings",
             onClick = {
-                if (isDynamicStandby) {
-                    if (isOperational) {
-                        AccessibilityHealthManager.disableAccessibilityService(context)
-                        context.showAppToast("Safe Standby: Assistant detached for banking safety.")
-                    } else {
-                        AccessibilityHealthManager.enableAccessibilityService(context)
-                        context.showAppToast("Connected! Assistant operational. Auto-detaching in 5s to keep banking safe.")
-                        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                            if (prefs.isDynamicA11yOnDemandEnabled && !TaskAccessibilityService.isCurrentlyDispatching()) {
-                                AccessibilityHealthManager.disableAccessibilityService(context)
-                            }
-                        }, 5000L)
+                context.startActivity(
+                    Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
-                } else {
-                    context.startActivity(
-                        Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        }
-                    )
-                }
+                )
             },
             icon = Icons.Default.AccessibilityNew,
-            variant = if (isA11yReady) GlassButtonVariant.SUCCESS else GlassButtonVariant.DANGER,
+            variant = if (isOperational) GlassButtonVariant.SUCCESS else GlassButtonVariant.DANGER,
             modifier = Modifier.fillMaxWidth()
         )
     }

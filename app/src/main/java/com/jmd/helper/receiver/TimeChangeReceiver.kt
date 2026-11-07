@@ -29,13 +29,6 @@ class TimeChangeReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action ?: return
         if (action == Intent.ACTION_TIME_CHANGED || action == Intent.ACTION_TIMEZONE_CHANGED) {
-            val prefs = com.jmd.helper.data.prefs.PreferenceManager(context)
-            if (!prefs.isTasksMasterEnabled || com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(context)) {
-                Log.d("TimeChangeReceiver", "Master task scheduler is paused or emergency stop active. Suppressing reschedule.")
-                AlarmScheduler(context).cancelAll()
-                com.jmd.helper.scheduler.DailyCampaignScheduler.cancelAllCampaigns(context)
-                return
-            }
             Log.d("TimeChangeReceiver", "Time change detected ($action), rescheduling alarms...")
             AppFileLogger.action(context, "TimeChangeReceiver", "System time/timezone changed ($action). Rescheduling alarms.")
             AlarmScheduler(context).rescheduleAllPending()

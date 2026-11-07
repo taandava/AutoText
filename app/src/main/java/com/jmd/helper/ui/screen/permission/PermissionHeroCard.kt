@@ -12,20 +12,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.HourglassTop
-import androidx.compose.material.icons.filled.PermContactCalendar
 import androidx.compose.material.icons.filled.SecurityUpdateWarning
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Terminal
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,8 +38,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Executive System Health Card presenting real-time system privilege readiness,
- * dynamic completion gauge, 3-pillar architectural summary, and self-healing action controls.
+ * Executive Material 3 Hero Card presenting real-time system privilege readiness,
+ * animated circular health gauge, subsystem status pill indicators, and self-healing controls.
  */
 @Composable
 fun PermissionHeroCard(
@@ -88,7 +85,7 @@ fun PermissionHeroCard(
                 .fillMaxWidth()
                 .padding(AppLayoutGrid.SpaceMedium)
         ) {
-            // Header: Shield Icon, Headline Status & Circular Metric Badge
+            // Header Row: Status icon + title + circular gauge
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -100,7 +97,7 @@ fun PermissionHeroCard(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(46.dp)
+                            .size(52.dp)
                             .background(
                                 color = if (isAllGranted) AppSemanticColors.successContainer else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
                                 shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius)
@@ -111,7 +108,7 @@ fun PermissionHeroCard(
                             imageVector = if (isAllGranted) Icons.Default.Shield else Icons.Default.SecurityUpdateWarning,
                             contentDescription = null,
                             tint = if (isAllGranted) successAccent else primaryAccent,
-                            modifier = Modifier.size(26.dp)
+                            modifier = Modifier.size(28.dp)
                         )
                     }
 
@@ -119,8 +116,8 @@ fun PermissionHeroCard(
 
                     Column {
                         Text(
-                            text = if (isAllGranted) "All Systems Operational" else "System Health Check",
-                            fontSize = 15.sp,
+                            text = if (isAllGranted) "All Systems Operational" else "Privilege Setup Required",
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -131,82 +128,71 @@ fun PermissionHeroCard(
                             } else {
                                 "${totalCount - grantedCount} privilege(s) require authorization"
                             },
-                            fontSize = 12.sp,
+                            fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
 
-                // Progress Percentage Circular Badge
-                Surface(
-                    shape = CircleShape,
-                    color = if (isAllGranted) AppSemanticColors.successContainer else primaryAccent.copy(alpha = 0.12f),
-                    border = BorderStroke(1.5.dp, if (isAllGranted) successAccent else primaryAccent),
-                    modifier = Modifier.size(46.dp)
+                Spacer(modifier = Modifier.width(AppLayoutGrid.SpaceSmall))
+
+                // Elevated Circular Health Gauge
+                Box(
+                    modifier = Modifier.size(56.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "${(healthPercentage * 100).toInt()}%",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = if (isAllGranted) successAccent else primaryAccent
-                        )
-                    }
+                    CircularProgressIndicator(
+                        progress = { animatedProgress },
+                        modifier = Modifier.fillMaxSize(),
+                        color = if (isAllGranted) successAccent else primaryAccent,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        strokeWidth = 4.5.dp
+                    )
+                    Text(
+                        text = "${(healthPercentage * 100).toInt()}%",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = if (isAllGranted) successAccent else primaryAccent
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceStandard))
-
-            // Smooth Animated Progress Bar
-            LinearProgressIndicator(
-                progress = { animatedProgress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(6.dp)
-                    .clip(RoundedCornerShape(3.dp)),
-                color = if (isAllGranted) successAccent else primaryAccent,
-                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
-            )
-
             Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceMedium))
 
-            // 3-Pillar Executive Architectural Status Row
+            // Subsystem Health Status Chips Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceSmall)
             ) {
-                CategoryPillarItem(
-                    title = "Core Automation",
+                SubsystemStatusChip(
+                    title = "Automation",
                     count = coreCount,
                     total = corePrivileges.size,
-                    icon = Icons.Default.Bolt,
                     modifier = Modifier.weight(1f)
                 )
-                CategoryPillarItem(
-                    title = "System & Power",
+                SubsystemStatusChip(
+                    title = "System",
                     count = systemCount,
                     total = systemPrivileges.size,
-                    icon = Icons.Default.Tune,
                     modifier = Modifier.weight(1f)
                 )
-                CategoryPillarItem(
-                    title = "Device & Comms",
+                SubsystemStatusChip(
+                    title = "Comms",
                     count = commCount,
                     total = commPrivileges.size,
-                    icon = Icons.Default.PermContactCalendar,
                     modifier = Modifier.weight(1f)
                 )
             }
 
             Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceMedium))
 
-            // Action Buttons
+            // Action Buttons with guaranteed 48dp touch targets
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceSmall)
             ) {
                 GlassButton(
-                    text = if (isHealing) "Healing..." else "Auto-Heal Engine",
+                    text = if (isHealing) "Healing..." else "Auto-Heal Services",
                     onClick = {
                         if (isHealing) return@GlassButton
                         isHealing = true
@@ -226,15 +212,15 @@ fun PermissionHeroCard(
                     },
                     icon = if (isHealing) Icons.Default.HourglassTop else Icons.Default.Sync,
                     variant = GlassButtonVariant.SUCCESS,
-                    modifier = Modifier.weight(1.1f)
+                    modifier = Modifier.weight(1.15f)
                 )
 
                 GlassButton(
                     text = "ADB Setup",
                     onClick = onOpenAdbDialog,
                     icon = Icons.Default.Terminal,
-                    variant = GlassButtonVariant.PRIMARY,
-                    modifier = Modifier.weight(0.9f)
+                    variant = GlassButtonVariant.SECONDARY,
+                    modifier = Modifier.weight(0.85f)
                 )
             }
         }
@@ -242,58 +228,48 @@ fun PermissionHeroCard(
 }
 
 /**
- * Pillar card showing health of an operational subsystem category.
+ * At-a-glance status chip representing a privilege subsystem.
  */
 @Composable
-private fun CategoryPillarItem(
+private fun SubsystemStatusChip(
     title: String,
     count: Int,
     total: Int,
-    icon: ImageVector,
     modifier: Modifier = Modifier
 ) {
     val isComplete = count >= total
-    val accent = if (isComplete) AppSemanticColors.success else MaterialTheme.colorScheme.primary
-    val containerBg = if (isComplete) AppSemanticColors.successContainer.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+    val accent = if (isComplete) AppSemanticColors.success else MaterialTheme.colorScheme.onSurfaceVariant
+    val containerBg = if (isComplete) AppSemanticColors.successContainer.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
 
     Surface(
-        shape = RoundedCornerShape(AppLayoutGrid.SquircleCornerRadius),
+        shape = AppDesignTokens.ShapePill,
         color = containerBg,
         border = BorderStroke(
             AppLayoutGrid.BorderWidthStandard,
-            if (isComplete) AppSemanticColors.successBorder else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+            if (isComplete) AppSemanticColors.successBorder else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
         ),
-        modifier = modifier
+        modifier = modifier.defaultMinSize(minHeight = 36.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = AppLayoutGrid.SpaceSmall, horizontal = AppLayoutGrid.SpaceXS),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Row(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = accent,
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(modifier = Modifier.height(AppLayoutGrid.SpaceMicro))
+            if (isComplete) {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    tint = accent,
+                    modifier = Modifier.size(13.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+            }
             Text(
-                text = title,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
-                lineHeight = 12.sp,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = "$count/$total Ready",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                color = accent
+                text = "$title $count/$total",
+                fontSize = 11.5.sp,
+                fontWeight = if (isComplete) FontWeight.Bold else FontWeight.Medium,
+                color = accent,
+                maxLines = 1
             )
         }
     }

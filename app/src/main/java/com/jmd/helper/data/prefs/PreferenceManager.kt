@@ -4,7 +4,7 @@
  * Package: com.jmd.helper.data.prefs
  * Module: Preferences Layer
  *
- * Provides typed configuration storage for app preferences, master emergency stop controls, default SIM bindings,
+ * Provides typed configuration storage for app preferences, default SIM bindings,
  * security PIN settings, keyguard unlock options, UI branding, and Direct Boot (FBE) device-protected storage.
  *
  * Linked With:
@@ -124,24 +124,19 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_SUPPRESS_NOTIFS_OVER_EXCLUDED = "privacy_suppress_notifs_over_excluded"
         private const val KEY_BLOCK_OVERLAYS_OVER_EXCLUDED = "privacy_block_overlays_over_excluded"
         private const val KEY_SMS_QUOTA_LIMIT_ENABLED = "sms_quota_limit_enabled"
-        private const val KEY_EMERGENCY_STOP_ACTIVE = "emergency_stop_active"
         private const val KEY_PREVENT_SYSTEM_AUTO_ROTATE = "prevent_system_auto_rotate"
 
         private const val KEYSTORE_PROVIDER = "AndroidKeyStore"
         private const val KEYSTORE_ALIAS = "Helper_Hardware_Key"
     }
 
-    var isEmergencyStopActive: Boolean
-        get() = prefs.getBoolean(KEY_EMERGENCY_STOP_ACTIVE, false)
-        set(value) = prefs.edit { putBoolean(KEY_EMERGENCY_STOP_ACTIVE, value) }
-
     var isPreventSystemAutoRotateEnabled: Boolean
         get() = prefs.getBoolean(KEY_PREVENT_SYSTEM_AUTO_ROTATE, true)
         set(value) = prefs.edit { putBoolean(KEY_PREVENT_SYSTEM_AUTO_ROTATE, value) }
 
     var isTasksMasterEnabled: Boolean
-        get() = prefs.getBoolean(KEY_TASKS_MASTER_ENABLED, true)
-        set(value) = prefs.edit { putBoolean(KEY_TASKS_MASTER_ENABLED, value) }
+        get() = true
+        set(_) {}
 
     var isAutoReplyMasterEnabled: Boolean
         get() = prefs.getBoolean(KEY_AUTOREPLY_MASTER_ENABLED, true)

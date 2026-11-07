@@ -17,7 +17,9 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.jmd.helper.core.AccessibilityHealthManager
+import com.jmd.helper.core.ProtectedApplicationManager
 import com.jmd.helper.data.prefs.PreferenceManager
+import com.jmd.helper.service.TaskAccessibilityService
 
 /**
  * Dual-redundant background worker evaluating accessibility and notification listener service
@@ -37,10 +39,12 @@ class AccessibilityWatchdogWorker(
         return try {
             // Uninterrupted background task: keep accessibility and notification services active
             val prefs = PreferenceManager(applicationContext)
-            if (!prefs.isDynamicA11yOnDemandEnabled && !prefs.isBankingShieldEnabled && !prefs.isA11yUserPaused) {
+            val fg = TaskAccessibilityService.currentForegroundPackage
+            val isBanking = fg != null && (TaskAccessibilityService.isFinancialOrBankingPackage(fg) || ProtectedApplicationManager.isProtectedPackage(fg))
+            if (!prefs.isA11yUserPaused && !isBanking) {
                 AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
             } else {
-                Log.d(TAG, "Watchdog skipping auto-heal: standby shield active")
+                Log.d(TAG, "Watchdog skipping auto-heal: banking app or user paused active")
             }
             AccessibilityHealthManager.healNotificationListener(applicationContext)
             AccessibilityHealthManager.recordHeartbeat()

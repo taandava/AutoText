@@ -19,7 +19,9 @@ import android.content.Intent
 import android.os.PowerManager
 import android.util.Log
 import com.jmd.helper.core.AccessibilityHealthManager
+import com.jmd.helper.core.ProtectedApplicationManager
 import com.jmd.helper.scheduler.AccessibilityWatchdogScheduler
+import com.jmd.helper.service.TaskAccessibilityService
 
 /**
  * Watchdog broadcast receiver monitoring accessibility service health and auto-recovery.
@@ -42,15 +44,15 @@ class AccessibilityWatchdogReceiver : BroadcastReceiver() {
             val now = System.currentTimeMillis()
             val heartbeatStale = (now - AccessibilityHealthManager.lastHeartbeatTime) > 30 * 60 * 1000L
             val prefs = com.jmd.helper.data.prefs.PreferenceManager(context)
-            val isBankingShield = prefs.isBankingShieldEnabled
+            val fg = TaskAccessibilityService.currentForegroundPackage
+            val isBanking = fg != null && (TaskAccessibilityService.isFinancialOrBankingPackage(fg) || ProtectedApplicationManager.isProtectedPackage(fg))
             val isA11yDead = !AccessibilityHealthManager.isServiceRunning() || heartbeatStale
 
-            val isDynamicA11y = prefs.isDynamicA11yOnDemandEnabled
-            if (isA11yDead && !isBankingShield && !isDynamicA11y) {
+            if (isA11yDead && !prefs.isA11yUserPaused && !isBanking) {
                 Log.d(TAG, "Watchdog heartbeat tick: A11y dead or stale (stale=$heartbeatStale). Reviving services...")
                 AccessibilityHealthManager.ensureAllServicesActive(context)
-            } else if (isBankingShield || isDynamicA11y) {
-                Log.d(TAG, "Watchdog heartbeat tick: Dynamic a11y or banking shield active; skipping auto-heal.")
+            } else if (isBanking) {
+                Log.d(TAG, "Watchdog heartbeat tick: Banking app active in foreground ($fg); keeping a11y detached.")
             }
             AccessibilityHealthManager.healNotificationListener(context)
             AccessibilityHealthManager.recordHeartbeat()

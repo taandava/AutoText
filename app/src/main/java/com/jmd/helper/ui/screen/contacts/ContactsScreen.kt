@@ -5,7 +5,6 @@
  * Primary coordinator screen managing:
  * 1. Saved Custom / CSV Contacts: Manually entered or imported recipients with inline sequence triggers.
  * 2. Ingested Dynamic Pool: Comprehensive auto-scanned contacts from device address book, SMS, calls, and WhatsApp.
- * 3. Saved WhatsApp Groups: Verified and discovered WhatsApp groups with 1-tap live picker integration.
  */
 package com.jmd.helper.ui.screen.contacts
 
@@ -45,13 +44,11 @@ import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.screen.sequence.ContactSequenceStudio
 import com.jmd.helper.ui.theme.AppDesignTokens
-import com.jmd.helper.whatsapp.WhatsAppChatScanner
 
 /**
  * Top-level contacts management screen presenting segmented views for:
  * 1. Saved Custom / CSV Contacts: Manually entered or imported recipients with inline sequence triggers.
  * 2. Ingested Dynamic Pool: Comprehensive auto-scanned contacts from device address book, SMS, calls, and WhatsApp.
- * 3. Saved WhatsApp Groups: Verified and discovered WhatsApp groups with 1-tap live picker integration.
  *
  * @param repository Application data repository.
  * @param onBack Callback invoked to exit contacts management.
@@ -77,10 +74,6 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
     val poolContacts = remember(poolSearch, poolRefreshTrigger) {
         repository.getDynamicPool(limit = 1000, searchQuery = poolSearch)
     }
-
-    var groupsRefreshTrigger by remember { mutableIntStateOf(0) }
-    val scanTimestamp by TaskAccessibilityService.scanCompletedEvent.collectAsState()
-    val waGroups = remember(groupsRefreshTrigger, scanTimestamp) { repository.getWhatsAppGroupItems() }
 
     if (sequenceTargetContactPhone.isNotBlank()) {
         ContactSequenceStudio(
@@ -294,8 +287,7 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                     GlassSegmentedControl(
                         items = listOf(
                             "Custom & CSV (${recipients.size})",
-                            "Dynamic Pool (${poolStats.totalCount})",
-                            "Groups (${waGroups.size})"
+                            "Dynamic Pool (${poolStats.totalCount})"
                         ),
                         selectedIndex = selectedTab,
                         onItemSelected = { selectedTab = it },
@@ -460,161 +452,6 @@ fun BulkContactsView(repository: AppRepository, onBack: () -> Unit) {
                                                 repository.deleteDynamicContact(c.id)
                                                 poolRefreshTrigger++
                                                 context.showAppToast("Contact removed from pool")
-                                            },
-                                            modifier = Modifier.size(28.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Delete,
-                                                contentDescription = "Delete",
-                                                tint = MaterialTheme.colorScheme.error,
-                                                modifier = Modifier.size(18.dp)
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // TAB 2: WhatsApp Groups
-                if (selectedTab == 2) {
-                    item {
-                        AppCard(modifier = Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(Icons.Filled.Groups, contentDescription = null, tint = Color(0xFF16A34A), modifier = Modifier.size(20.dp))
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            "WhatsApp Group Pool (${waGroups.size})",
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 14.sp,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    GlassButton(
-                                        text = "Scan WhatsApp",
-                                        onClick = {
-                                            TaskAccessibilityService.startWhatsAppChatScan(
-                                                context = context,
-                                                targetPackage = "com.whatsapp",
-                                                scanTarget = com.jmd.helper.whatsapp.WhatsAppChatScanner.ScanTarget.GROUPS_ONLY
-                                            )
-                                        },
-                                        icon = Icons.Filled.Groups,
-                                        variant = GlassButtonVariant.SUCCESS,
-                                        modifier = Modifier.weight(1f)
-                                    )
-
-                                    GlassButton(
-                                        text = "Scan WA Business",
-                                        onClick = {
-                                            TaskAccessibilityService.startWhatsAppChatScan(
-                                                context = context,
-                                                targetPackage = "com.whatsapp.w4b",
-                                                scanTarget = com.jmd.helper.whatsapp.WhatsAppChatScanner.ScanTarget.GROUPS_ONLY
-                                            )
-                                        },
-                                        icon = Icons.Filled.BusinessCenter,
-                                        variant = GlassButtonVariant.PRIMARY,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    if (waGroups.isEmpty()) {
-                        item {
-                            AppEmptyState(
-                                icon = Icons.Filled.Groups,
-                                title = "No WhatsApp Groups Scanned",
-                                description = "Tap 'Scan WhatsApp' or 'Scan WA Business' above to automatically discover and import your WhatsApp groups.",
-                                actionText = "Scan WhatsApp",
-                                onActionClick = {
-                                    TaskAccessibilityService.startWhatsAppChatScan(
-                                        context = context,
-                                        targetPackage = "com.whatsapp",
-                                        scanTarget = com.jmd.helper.whatsapp.WhatsAppChatScanner.ScanTarget.GROUPS_ONLY
-                                    )
-                                }
-                            )
-                        }
-                    } else {
-                        items(waGroups.size) { idx ->
-                            val grp = waGroups[idx]
-                            AppCard(modifier = Modifier.fillMaxWidth()) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Row(
-                                        modifier = Modifier.weight(1f),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(38.dp)
-                                                .background(
-                                                    color = Color(0xFF16A34A).copy(alpha = 0.15f),
-                                                    shape = CircleShape
-                                                ),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Filled.Groups,
-                                                contentDescription = null,
-                                                tint = Color(0xFF16A34A),
-                                                modifier = Modifier.size(20.dp)
-                                            )
-                                        }
-                                        Spacer(modifier = Modifier.width(10.dp))
-                                        Column {
-                                            Text(
-                                                text = grp.name,
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 14.sp,
-                                                color = MaterialTheme.colorScheme.onSurface,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                            if (grp.participantCount.isNotBlank()) {
-                                                Text(
-                                                    text = grp.participantCount,
-                                                    fontSize = 11.sp,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                    maxLines = 1
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        AppBadge(
-                                            text = if (grp.packageName.contains("w4b")) "WA Business" else "WhatsApp",
-                                            color = if (grp.packageName.contains("w4b")) Color(0xFF0D9488) else Color(0xFF16A34A),
-                                            showDot = false
-                                        )
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        IconButton(
-                                            onClick = {
-                                                repository.deleteWhatsAppGroup(grp.name)
-                                                groupsRefreshTrigger++
-                                                context.showAppToast("Group removed")
                                             },
                                             modifier = Modifier.size(28.dp)
                                         ) {

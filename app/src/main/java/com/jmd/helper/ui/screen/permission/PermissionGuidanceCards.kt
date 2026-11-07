@@ -44,8 +44,8 @@ import kotlinx.coroutines.withContext
  */
 @Composable
 fun OemAutostartCard(
-    context: Context = LocalContext.current,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    context: Context = LocalContext.current
 ) {
     val brandSummary = remember { OemBrandHelper.getDeviceSummary() }
     val brandGuidance = remember { OemBrandHelper.getOemGuidance() }
@@ -174,8 +174,8 @@ fun OemAutostartCard(
  */
 @Composable
 fun SideloadedAppHelpCard(
-    context: Context = LocalContext.current,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    context: Context = LocalContext.current
 ) {
     AppGroupCard(modifier = modifier.fillMaxWidth()) {
         AppGroupRow(
@@ -213,8 +213,8 @@ fun SideloadedAppHelpCard(
  */
 @Composable
 fun AutoHealWatchdogCard(
-    context: Context = LocalContext.current,
     modifier: Modifier = Modifier,
+    context: Context = LocalContext.current,
     onHealDone: () -> Unit = {}
 ) {
     var isHealing by remember { mutableStateOf(false) }

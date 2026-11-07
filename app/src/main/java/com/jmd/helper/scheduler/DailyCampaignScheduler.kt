@@ -65,7 +65,7 @@ object DailyCampaignScheduler {
         val workManager = WorkManager.getInstance(context)
         val uniqueWorkName = getPeriodicWorkName(campaignId)
 
-        if (!config.isActive || !prefs.isTasksMasterEnabled || com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(context)) {
+        if (!config.isActive) {
             cancel(context, campaignId)
             return
         }
@@ -119,14 +119,6 @@ object DailyCampaignScheduler {
         val prefs = com.jmd.helper.data.prefs.PreferenceManager(context)
         if (!config.isActive) {
             AppFileLogger.w(context, "DailyCampaignScheduler", "triggerNow aborted: Campaign #$campaignId is inactive.")
-            return
-        }
-        if (!prefs.isTasksMasterEnabled) {
-            AppFileLogger.w(context, "DailyCampaignScheduler", "triggerNow aborted: Task Scheduler Engine is paused.")
-            return
-        }
-        if (com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive(context)) {
-            AppFileLogger.w(context, "DailyCampaignScheduler", "triggerNow aborted: Emergency Stop active.")
             return
         }
 

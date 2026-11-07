@@ -243,27 +243,6 @@ fun MainAppHost(
                                     }
                                 )
 
-                                // Icon-Only Emergency Stop Button
-                                Surface(
-                                    shape = RoundedCornerShape(8.dp),
-                                    color = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier
-                                        .size(26.dp)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .clickable {
-                                            com.jmd.helper.core.TaskSafetyManager.triggerEmergencyStop(context)
-                                        }
-                                ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            imageVector = Icons.Default.Stop,
-                                            contentDescription = "Emergency Stop",
-                                            tint = MaterialTheme.colorScheme.onError,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                    }
-                                }
-
                                 // Icon-Only New Task Button (Only on Tasks tab)
                                 if (currentTab == 0) {
                                     Surface(
@@ -360,58 +339,6 @@ fun MainAppHost(
                     .fillMaxSize()
                     .padding(top = padding.calculateTopPadding(), bottom = padding.calculateBottomPadding())
             ) {
-                var emergencyStopActive by remember {
-                    mutableStateOf(com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive.get())
-                }
-                LaunchedEffect(Unit) {
-                    while (true) {
-                        emergencyStopActive = com.jmd.helper.core.TaskSafetyManager.isEmergencyStopActive.get()
-                        delay(1000L.milliseconds)
-                    }
-                }
-                if (emergencyStopActive) {
-                    Surface(
-                        color = MaterialTheme.colorScheme.errorContainer,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 14.dp, vertical = 6.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Filled.StopCircle,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onErrorContainer,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    "EMERGENCY STOP ACTIVE — Tasks paused",
-                                    color = MaterialTheme.colorScheme.onErrorContainer,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            Button(
-                                onClick = {
-                                    com.jmd.helper.core.TaskSafetyManager.resetEmergencyStop(context)
-                                    val prefs = com.jmd.helper.data.prefs.PreferenceManager(context)
-                                    prefs.isTasksMasterEnabled = true
-                                    emergencyStopActive = false
-                                },
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                                modifier = Modifier.heightIn(min = 36.dp),
-                                shape = RoundedCornerShape(8.dp)
-                            ) {
-                                Text("RESUME", fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                    }
-                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

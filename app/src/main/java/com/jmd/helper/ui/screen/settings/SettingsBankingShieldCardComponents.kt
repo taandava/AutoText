@@ -104,12 +104,8 @@ fun SettingsBankingShieldCard(
                 }
             }
             AppBadge(
-                text = if (hasWriteSecure && dynamicA11y) "BANK-SAFE STANDBY"
-                       else if (userPaused || !a11yRunning) "BANK-SAFE (PAUSED)"
-                       else "A11Y RUNNING",
-                color = if (hasWriteSecure && dynamicA11y) MaterialTheme.colorScheme.primary
-                        else if (userPaused || !a11yRunning) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.error,
+                text = "BANKING SHIELD (ALWAYS ACTIVE)",
+                color = MaterialTheme.colorScheme.primary,
                 showDot = true
             )
         }

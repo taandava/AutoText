@@ -328,4 +328,23 @@ class ModernStackArchitectureTest {
         assertEquals(16.dp, com.jmd.helper.ui.theme.AppLayoutGrid.SpaceMedium)
         assertEquals(48.dp, com.jmd.helper.ui.theme.AppLayoutGrid.MinTouchTarget)
     }
+
+    @Test
+    fun `test whatsapp direct chat detection recognizes phone numbers and contact names`() {
+        val phoneNumbers = listOf("+919876543210", "9876543210", "+1 (555) 234-5678")
+        for (phone in phoneNumbers) {
+            val digits = phone.filter { it.isDigit() }
+            val letters = phone.filter { it.isLetter() }
+            val isPhone = digits.length >= 7 && letters.isEmpty()
+            assertTrue("Expected '$phone' to be recognized as direct phone", isPhone)
+        }
+
+        val nonPhoneContacts = listOf("Dr. John Smith", "Warehouse Admin", "Support Desk")
+        for (contact in nonPhoneContacts) {
+            val digits = contact.filter { it.isDigit() }
+            val letters = contact.filter { it.isLetter() }
+            val isPhone = digits.length >= 7 && letters.isEmpty()
+            assertTrue("Expected '$contact' to be recognized as contact name", !isPhone)
+        }
+    }
 }

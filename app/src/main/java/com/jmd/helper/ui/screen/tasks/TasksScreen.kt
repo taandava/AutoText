@@ -72,7 +72,6 @@ fun TasksListScreen(
     val context = LocalContext.current
     val repository = remember { AppRepository(context) }
     val prefs = remember { PreferenceManager(context) }
-    var isTasksMasterEnabled by remember { mutableStateOf(prefs.isTasksMasterEnabled) }
     var tasks by remember { mutableStateOf(emptyList<ScheduledTask>()) }
     var sequences by remember { mutableStateOf(emptyList<ContactSequence>()) }
     var mainCategoryTab by remember(initialCategoryTab) { mutableIntStateOf(initialCategoryTab) } // 0 = Single Tasks, 1 = Contact Sequences
@@ -176,69 +175,6 @@ fun TasksListScreen(
             )
 
             if (mainCategoryTab == 0) {
-                // Top Master Task Scheduler Engine Banner
-                AppCardElevated(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = AppDesignTokens.ShapeMedium
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Alarm,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(22.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(
-                                    "Scheduled Dispatcher",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    if (isTasksMasterEnabled) "Active • Scheduled delivery enabled"
-                                    else "Scheduled Dispatcher Paused",
-                                    fontSize = 12.5.sp,
-                                    color = if (isTasksMasterEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-
-                        Switch(
-                            checked = isTasksMasterEnabled,
-                            onCheckedChange = { active ->
-                                isTasksMasterEnabled = active
-                                prefs.isTasksMasterEnabled = active
-                                if (active) {
-                                    com.jmd.helper.core.TaskSafetyManager.resetEmergencyStop(context)
-                                    AlarmScheduler(context).rescheduleAllPending()
-                                    com.jmd.helper.scheduler.DailyCampaignScheduler.scheduleAll(context)
-                                    context.showAppToast("Task Scheduler active: Rescheduled pending tasks and campaigns")
-                                } else {
-                                    AlarmScheduler(context).cancelAll()
-                                    com.jmd.helper.engine.SequentialTaskEngine.getInstance(context).cancelAll()
-                                    com.jmd.helper.scheduler.DailyCampaignScheduler.cancelAllCampaigns(context)
-                                    com.jmd.helper.service.TaskAccessibilityService.clearPending()
-                                    context.showAppToast("Task Scheduler paused: All tasks and campaigns halted")
-                                }
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-                                checkedTrackColor = MaterialTheme.colorScheme.primary,
-                                uncheckedThumbColor = MaterialTheme.colorScheme.outline,
-                                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                            )
-                        )
-                    }
-                }
-
-
                 val pendingTasksCount = remember(tasks) { tasks.count { it.status.isPendingOrScheduled || it.status == TaskStatus.PENDING_CONFIRMATION || it.status.isRunning } }
                 val doneTasksCount = remember(tasks) { tasks.count { it.status.isSuccessOrDone } }
                 val failedTasksCount = remember(tasks) { tasks.count { it.status == TaskStatus.FAILED } }
@@ -277,34 +213,18 @@ fun TasksListScreen(
                             TaskCard(
                                 task = task,
                                 onRunNow = {
-                                    repository.updateTaskStatus(task.id, TaskStatus.PENDING)
-                                    val intent = Intent(context, TaskAlarmReceiver::class.java).apply {
-                                        action = AlarmScheduler.ACTION_FIRE_TASK
-                                        putExtra(AlarmScheduler.EXTRA_TASK_ID, task.id)
-                                        putExtra(AlarmScheduler.EXTRA_MANUAL_RUN, true)
-                                    }
-                                    context.sendBroadcast(intent)
+                                    com.jmd.helper.api.TaskFeatureApi.runTaskImmediately(context, repository, task)
                                     tasks = repository.getAllTasks()
                                 },
                                 onToggle = { isChecked: Boolean ->
-                                    val newStatus = if (isChecked) TaskStatus.SCHEDULED else TaskStatus.PAUSED
-                                    val updated = task.copy(status = newStatus)
-                                    repository.updateTask(updated)
-                                    if (isChecked) {
-                                        AlarmScheduler(context).scheduleTask(updated)
-                                    } else {
-                                        AlarmScheduler(context).cancelTask(task.id)
-                                        com.jmd.helper.engine.SequentialTaskEngine.getInstance(context).cancelTask(task.id)
-                                    }
+                                    com.jmd.helper.api.TaskFeatureApi.toggleTaskSchedule(context, repository, task, isChecked)
                                     tasks = repository.getAllTasks()
                                 },
                                 onEdit = {
                                     onEditTask(task)
                                 },
                                 onDelete = {
-                                    com.jmd.helper.engine.SequentialTaskEngine.getInstance(context).cancelTask(task.id)
-                                    AlarmScheduler(context).cancelTask(task.id)
-                                    repository.deleteTask(task.id)
+                                    com.jmd.helper.api.TaskFeatureApi.deleteTask(context, repository, task.id)
                                     tasks = repository.getAllTasks()
                                 }
                             )

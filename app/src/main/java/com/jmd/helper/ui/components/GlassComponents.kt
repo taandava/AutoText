@@ -69,7 +69,7 @@ enum class GlassButtonVariant {
 }
 
 /**
- * Reusable Material 3 Expressive Button with responsive ripple and compact vertical footprint.
+ * Reusable Material 3 Expressive Button with responsive ripple, full text wrapping, and 48dp touch target.
  */
 @Composable
 fun GlassButton(
@@ -82,11 +82,11 @@ fun GlassButton(
     isLoading: Boolean = false,
     shape: RoundedCornerShape = AppDesignTokens.ShapeSmall,
     elevation: Dp = 0.dp,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
+    contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
     emoji: String? = null,
     fontSize: TextUnit = 13.sp,
-    maxLines: Int = 2,
-    overflow: TextOverflow = TextOverflow.Ellipsis,
+    maxLines: Int = 3,
+    overflow: TextOverflow = TextOverflow.Clip,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -121,6 +121,7 @@ fun GlassButton(
 
     Surface(
         modifier = modifier
+            .defaultMinSize(minHeight = 48.dp)
             .scale(scale)
             .then(borderModifier)
             .clip(shape)
@@ -141,7 +142,7 @@ fun GlassButton(
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(16.dp),
+                    modifier = Modifier.size(18.dp),
                     strokeWidth = 2.dp,
                     color = contentColor
                 )
@@ -158,7 +159,7 @@ fun GlassButton(
                             imageVector = icon,
                             contentDescription = null,
                             tint = contentColor,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                     }
@@ -168,9 +169,9 @@ fun GlassButton(
                         fontWeight = FontWeight.Bold,
                         color = contentColor,
                         maxLines = maxLines,
+                        softWrap = true,
                         overflow = overflow,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(1f, fill = false)
+                        textAlign = TextAlign.Center
                     )
                 }
             }
