@@ -474,20 +474,6 @@ class WhatsAppDirectSendEngine(
                 }
             }
 
-            for (candidate in matchingCandidates) {
-                var target: AccessibilityNodeInfo? = candidate
-                var depth = 0
-                while (target != null && depth < 6) {
-                    if (target.isClickable) {
-                        Log.i(loggerTag, "Clicking matching contact picker item for '$pendingRecipient'")
-                        return AccessibilityNodeUtils.clickElement(target, service)
-                    }
-                    target = target.parent
-                    depth++
-                }
-                return AccessibilityNodeUtils.clickElement(candidate, service)
-            }
-
             if (searchInputNode != null) {
                 val currentSearch = searchInputNode.text?.toString().orEmpty()
                 if (!currentSearch.contains(cleanRecipient) && !cleanRecipient.contains(currentSearch)) {
@@ -504,6 +490,20 @@ class WhatsAppDirectSendEngine(
                 val clicked = AccessibilityNodeUtils.clickElement(searchButtonNode, service)
                 Log.i(loggerTag, "Clicked ContactPicker search button to find '$pendingRecipient' (result=$clicked)")
                 return clicked
+            }
+
+            for (candidate in matchingCandidates) {
+                var target: AccessibilityNodeInfo? = candidate
+                var depth = 0
+                while (target != null && depth < 6) {
+                    if (target.isClickable) {
+                        Log.i(loggerTag, "Clicking matching contact picker item for '$pendingRecipient'")
+                        return AccessibilityNodeUtils.clickElement(target, service)
+                    }
+                    target = target.parent
+                    depth++
+                }
+                return AccessibilityNodeUtils.clickElement(candidate, service)
             }
         } catch (e: Exception) {
             Log.e(loggerTag, "Error in tryResolveContactPicker: ${e.message}")
