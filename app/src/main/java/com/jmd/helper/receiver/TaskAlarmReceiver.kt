@@ -334,10 +334,25 @@ class TaskAlarmReceiver : BroadcastReceiver() {
 
         if (intent.action == ACTION_SET_PREF || intent.action == "com.jmd.helper.ACTION_SET_PREF") {
             val key = intent.getStringExtra("key")
-            if (key == "autoLock") {
-                val value = intent.getBooleanExtra("value", true)
-                PreferenceManager(context).isAutoLockAfterSendEnabled = value
-                AppFileLogger.action(context, TAG, "ACTION_SET_PREF: isAutoLockAfterSendEnabled=$value")
+            val prefs = PreferenceManager(context)
+            when (key) {
+                "autoLock" -> {
+                    val value = intent.getBooleanExtra("value", true)
+                    prefs.isAutoLockAfterSendEnabled = value
+                    AppFileLogger.action(context, TAG, "ACTION_SET_PREF: isAutoLockAfterSendEnabled=$value")
+                }
+                "screenAssistPin" -> {
+                    val pin = intent.getStringExtra("value") ?: ""
+                    prefs.screenAssistPin = pin
+                    prefs.isScreenAssistEnabled = pin.isNotBlank()
+                    prefs.screenAssistType = "PIN"
+                    AppFileLogger.action(context, TAG, "ACTION_SET_PREF: screenAssistPin set (len=${pin.length}, enabled=${prefs.isScreenAssistEnabled})")
+                }
+                "screenAssistEnabled" -> {
+                    val value = intent.getBooleanExtra("value", true)
+                    prefs.isScreenAssistEnabled = value
+                    AppFileLogger.action(context, TAG, "ACTION_SET_PREF: isScreenAssistEnabled=$value")
+                }
             }
             return
         }
