@@ -1,0 +1,1132 @@
+=== SYSTEM IDLE & SAFETY STATE ===
+isDeviceIdle = true
+lastHumanInteractionTimestamp = 0 (1794059377s ago)
+currentTimestamp = 1794059377880
+
+=== SCHEDULED TASKS IN DATABASE (Total: 0) ===
+
+=== EXECUTION LOGS (Total: 52) ===
+[1794059345005] [taskId=24] [Phone Call] [9930604542] status=SUCCESS details= snippet=Placed call to 9930604542 (2/2, simSlot=0, duration=10s, dialTimeIncluded=true)
+[1794059327940] [taskId=24] [Phone Call] [9769602020] status=SUCCESS details= snippet=Placed call to 9769602020 (1/2, simSlot=0, duration=10s, dialTimeIncluded=true)
+[1794059320605] [taskId=23] [WhatsApp Business Status] [STATUS] status=SUCCESS details=Send action and composer-cleared UI transition verified; WhatsApp delivery receipt is not independently confirmed. snippet=Live
+[1794059305647] [taskId=22] [WhatsApp Status] [STATUS] status=SUCCESS details=Send action and composer-cleared UI transition verified; WhatsApp delivery receipt is not independently confirmed. snippet=Live
+[1794059292096] [taskId=17] [SMS] [9930604542] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794059291593] [taskId=17] [SMS] [9769602020] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794059289729] [taskId=18] [WhatsApp] [9930604542] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794059289417] [taskId=18] [WhatsApp] [919930604542] status=FAILED details=Task timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage. snippet=Live
+[1794059265519] [taskId=18] [WhatsApp] [919769602020] status=SUCCESS details=Send action and composer-cleared UI transition verified; WhatsApp delivery receipt is not independently confirmed. snippet=Live
+[1794059257019] [taskId=21] [WA Business Group] [9769602020] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794059257019] [taskId=21] [WA Business Group] [9930604542] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794059249376] [taskId=20] [WhatsApp Group] [9769602020] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794059249376] [taskId=20] [WhatsApp Group] [9930604542] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794059241722] [taskId=19] [WA Business] [9930604542] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794059241459] [taskId=19] [WhatsApp Business] [919930604542] status=FAILED details=Task timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage. snippet=Live
+[1794059223828] [taskId=19] [WhatsApp Business] [919769602020] status=SUCCESS details=Send action and composer-cleared UI transition verified; WhatsApp delivery receipt is not independently confirmed. snippet=Live
+[1794059213378] [taskId=17] [SMS] [9930604542] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794059212919] [taskId=17] [SMS] [9769602020] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794059211041] [taskId=18] [WhatsApp] [9930604542] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794059210752] [taskId=18] [WhatsApp] [919930604542] status=FAILED details=Task timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage. snippet=Live
+[1794059192428] [taskId=18] [WhatsApp] [919769602020] status=SUCCESS details=Send action and composer-cleared UI transition verified; WhatsApp delivery receipt is not independently confirmed. snippet=Live
+[1794059175813] [taskId=17] [SMS] [9930604542] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794059175275] [taskId=17] [SMS] [9769602020] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794059138283] [taskId=16] [WhatsApp Business] [919769602020] status=SUCCESS details=Send action and composer-cleared UI transition verified; WhatsApp delivery receipt is not independently confirmed. snippet=Live test WhatsApp Business message
+[1794059074555] [taskId=15] [WhatsApp] [919769602020] status=SUCCESS details=Send action and composer-cleared UI transition verified; WhatsApp delivery receipt is not independently confirmed. snippet=Live test WhatsApp message
+[1794058672815] [taskId=14] [SMS] [9769602020] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Test SMS from Vivo
+[1794058075246] [taskId=12] [Reminder] [Local Device Alarm] status=SUCCESS details=Launched fullscreen ReminderAlarmActivity with TTS and registered system clock alarm. snippet=Alarm: Task 12 • Reminder
+[1794058072567] [taskId=1] [SMS] [9930604542] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794058072071] [taskId=1] [SMS] [9769602020] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794058071283] [taskId=2] [WhatsApp] [9930604542] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794058071281] [taskId=2] [WhatsApp] [9769602020] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794058070833] [taskId=2] [WhatsApp] [919930604542] status=FAILED details=Task timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage. snippet=Live
+[1794058056343] [taskId=2] [WhatsApp] [919769602020] status=FAILED details=Task timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage. snippet=Live
+[1794058040288] [taskId=6] [WA Status] [STATUS] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794058039935] [taskId=6] [WhatsApp Status] [STATUS] status=FAILED details=Task timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage. snippet=Live
+[1794058023436] [taskId=5] [WA Business Group] [9769602020] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794058023436] [taskId=5] [WA Business Group] [9930604542] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794058021114] [taskId=4] [WhatsApp Group] [9769602020] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794058021114] [taskId=4] [WhatsApp Group] [9930604542] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794058018775] [taskId=3] [WA Business] [9930604542] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794058018774] [taskId=3] [WA Business] [9769602020] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794057983301] [taskId=3] [WhatsApp Business] [919769602020] status=FAILED details=Task timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage. snippet=Live
+[1794057966729] [taskId=1] [SMS] [9930604542] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794057966250] [taskId=1] [SMS] [9769602020] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794057963777] [taskId=2] [WhatsApp] [9930604542] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794057963775] [taskId=2] [WhatsApp] [9769602020] status=FAILED details=WhatsApp dispatch timed out after 1 attempt(s) or Accessibility Service not active. snippet=Live
+[1794057963314] [taskId=2] [WhatsApp] [919930604542] status=FAILED details=Task timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage. snippet=Live
+[1794057948854] [taskId=2] [WhatsApp] [919769602020] status=FAILED details=Task timed out or could not verify the requested UI transition. See app accessibility logs for the failing stage. snippet=Live
+[1794057932267] [taskId=1] [SMS] [9930604542] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794057931759] [taskId=1] [SMS] [9769602020] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794057922613] [taskId=1] [SMS] [9930604542] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+[1794057921814] [taskId=1] [SMS] [9769602020] status=SUCCESS details=Dispatched to cellular modem via SIM slot 0, parts: 1 snippet=Live
+
+=== SYSTEM TRACE LOGS TAIL ===
+[2026-11-06 08:30:46.658] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Group for Task #5. Initiating screen wake & keyguard unlock...
+[2026-11-06 08:30:47.701] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #5, Channel: WHATSAPP_GROUP
+[2026-11-06 08:30:47.716] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:30:57.029] [ACTION] [HelperA11y] Prepared WhatsApp send (WHATSAPP_SEARCH_GROUP) to group:Dilip for task #5
+[2026-11-06 08:30:57.047] [ACTION] [WhatsAppSender] Directly launched WhatsApp for group search: group:Dilip
+[2026-11-06 08:30:57.749] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:31:11.364] [WARN] [HelperA11y] Dispatch timeout reached sending to group:Dilip
+[2026-11-06 08:31:11.569] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to group:Dilip (Attempt 2)
+[2026-11-06 08:31:11.575] [ACTION] [AlarmScheduler] Scheduled Task #5 (WA Group to Dilip) for trigger at 1793934301991
+[2026-11-06 08:31:11.575] [ACTION] [SequentialTaskEngine] Task #5 (WA Group to Dilip): Recurrence [Repeat (Minutes), interval=6m] rescheduled for trigger timestamp: 1793934301991 (execution count: 5)
+[2026-11-06 08:31:11.576] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'WA Group to Dilip' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:31:11.979] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-06 08:31:12.175] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:38:52.435] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=5
+[2026-11-06 08:38:52.436] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #5 (WA Group to Dilip) [WA Group] -> SequentialTaskEngine
+[2026-11-06 08:38:52.436] [ACTION] [SequentialTaskEngine] Enqueued Task #5 into Channel pipeline.
+[2026-11-06 08:38:52.437] [ACTION] [SequentialTaskEngine] Starting execution for Task #5 (WA Group to Dilip) on [WA Group]
+[2026-11-06 08:38:52.438] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Group for Task #5. Initiating screen wake & keyguard unlock...
+[2026-11-06 08:38:53.481] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #5, Channel: WHATSAPP_GROUP
+[2026-11-06 08:38:53.502] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:39:02.787] [ACTION] [HelperA11y] Prepared WhatsApp send (WHATSAPP_SEARCH_GROUP) to group:Dilip for task #5
+[2026-11-06 08:39:02.800] [ACTION] [WhatsAppSender] Directly launched WhatsApp for group search: group:Dilip
+[2026-11-06 08:39:03.501] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:39:17.146] [WARN] [HelperA11y] Dispatch timeout reached sending to group:Dilip
+[2026-11-06 08:39:17.318] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to group:Dilip (Attempt 1)
+[2026-11-06 08:39:17.321] [ACTION] [SequentialTaskEngine] Retrying WhatsApp task #5 in 3 seconds (Attempt 1 of 1)...
+[2026-11-06 08:39:17.952] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:39:20.323] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Group for Task #5. Initiating screen wake & keyguard unlock...
+[2026-11-06 08:39:21.303] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #5, Channel: WHATSAPP_GROUP
+[2026-11-06 08:39:21.320] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:39:30.682] [ACTION] [HelperA11y] Prepared WhatsApp send (WHATSAPP_SEARCH_GROUP) to group:Dilip for task #5
+[2026-11-06 08:39:30.694] [ACTION] [WhatsAppSender] Directly launched WhatsApp for group search: group:Dilip
+[2026-11-06 08:39:31.462] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:39:45.057] [WARN] [HelperA11y] Dispatch timeout reached sending to group:Dilip
+[2026-11-06 08:39:45.206] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to group:Dilip (Attempt 2)
+[2026-11-06 08:39:45.218] [ACTION] [AlarmScheduler] Scheduled Task #5 (WA Group to Dilip) for trigger at 1793934661991
+[2026-11-06 08:39:45.218] [ACTION] [SequentialTaskEngine] Task #5 (WA Group to Dilip): Recurrence [Repeat (Minutes), interval=6m] rescheduled for trigger timestamp: 1793934661991 (execution count: 6)
+[2026-11-06 08:39:45.219] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'WA Group to Dilip' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:39:45.623] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-06 08:39:45.624] [ERROR] [AutoSafetyManager] Circuit breaker TRIPPED for WA Group! Pausing retries for 60s to protect device stability.
+[2026-11-06 08:39:45.867] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:43:50.308] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=5
+[2026-11-06 08:43:50.312] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #5 (WA Group to Dilip) [WA Group] -> SequentialTaskEngine
+[2026-11-06 08:43:50.312] [ACTION] [SequentialTaskEngine] Enqueued Task #5 into Channel pipeline.
+[2026-11-06 08:43:50.316] [ACTION] [SequentialTaskEngine] Starting execution for Task #5 (WA Group to Dilip) on [WA Group]
+[2026-11-06 08:43:50.321] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Group for Task #5. Initiating screen wake & keyguard unlock...
+[2026-11-06 08:43:51.265] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #5, Channel: WHATSAPP_GROUP
+[2026-11-06 08:43:51.283] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:44:00.685] [ACTION] [HelperA11y] Prepared WhatsApp send (WHATSAPP_SEARCH_GROUP) to group:Dilip for task #5
+[2026-11-06 08:44:00.701] [ACTION] [WhatsAppSender] Directly launched WhatsApp for group search: group:Dilip
+[2026-11-06 08:44:01.402] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:44:10.378] [WARN] [HelperA11y] Dispatch timeout reached sending to group:Dilip
+[2026-11-06 08:44:10.717] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to group:Dilip (Attempt 1)
+[2026-11-06 08:44:10.719] [ACTION] [SequentialTaskEngine] Retrying WhatsApp task #5 in 3 seconds (Attempt 1 of 1)...
+[2026-11-06 08:44:11.182] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:44:14.023] [ACTION] [HelperA11y] Prepared WhatsApp send (WHATSAPP_SEARCH_GROUP) to group:Dilip for task #5
+[2026-11-06 08:44:14.036] [ACTION] [WhatsAppSender] Directly launched WhatsApp for group search: group:Dilip
+[2026-11-06 08:44:25.255] [ACTION] [WADirectSendEngine] Executed send action on designated Send button (a11yClick=true, bounds=Rect(1261, 3002 - 1411, 3152)); waiting for composer verification.
+[2026-11-06 08:44:26.138] [ACTION] [WADirectSendEngine] WhatsApp composer is empty after the send click; UI submission confirmed.
+[2026-11-06 08:44:26.138] [ACTION] [HelperA11y] Successfully delivered WhatsApp Group to group:Dilip for task #5
+[2026-11-06 08:44:26.553] [ACTION] [AlarmScheduler] Scheduled Task #5 (WA Group to Dilip) for trigger at 1793935021991
+[2026-11-06 08:44:26.553] [ACTION] [SequentialTaskEngine] Task #5 (WA Group to Dilip): Recurrence [Repeat (Minutes), interval=6m] rescheduled for trigger timestamp: 1793935021991 (execution count: 7)
+[2026-11-06 08:44:26.553] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'WA Group to Dilip' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:44:26.956] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:44:27.242] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:44:27.357] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'WA Group to Dilip' (screenInteractive=false, Biometrics Safe)
+[2026-11-06 08:44:35.913] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=2
+[2026-11-06 08:44:35.915] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #2 (W4B Status to WhatsApp Business Status) [W4B Status] -> SequentialTaskEngine
+[2026-11-06 08:44:35.915] [ACTION] [SequentialTaskEngine] Enqueued Task #2 into Channel pipeline.
+[2026-11-06 08:44:35.916] [ACTION] [SequentialTaskEngine] Starting execution for Task #2 (W4B Status to WhatsApp Business Status) on [W4B Status]
+[2026-11-06 08:44:36.222] [ACTION] [HelperA11y] Prepared WhatsApp send (WHATSAPP_STATUS) to STATUS for task #2
+[2026-11-06 08:44:36.281] [ACTION] [WhatsAppSender] Directly launched ACTION_SEND with media: content://com.jmd.helper.fileprovider/internal_files/media_attachments/media_1793905915285.jpg
+[2026-11-06 08:44:37.208] [ACTION] [WAStatusEngine] WhatsApp Share Picker detected
+[2026-11-06 08:44:37.877] [ACTION] [WAStatusEngine] WhatsApp Share Picker detected
+[2026-11-06 08:44:42.111] [ACTION] [WAStatusEngine] Found Status Send button (com.whatsapp.w4b:id/send)! Publishing status via element click...
+[2026-11-06 08:44:43.669] [ACTION] [WAStatusEngine] Status composer closed and WhatsApp Updates screen is visible after Send.
+[2026-11-06 08:44:43.669] [ACTION] [HelperA11y] Successfully delivered WhatsApp Business Status to STATUS for task #2
+[2026-11-06 08:44:43.799] [ACTION] [AlarmScheduler] Scheduled Task #2 (W4B Status to WhatsApp Business Status) for trigger at 1793935235906
+[2026-11-06 08:44:43.799] [ACTION] [SequentialTaskEngine] Task #2 (W4B Status to WhatsApp Business Status): Recurrence [Repeat (Minutes), interval=6m] rescheduled for trigger timestamp: 1793935235906 (execution count: 9)
+[2026-11-06 08:44:43.799] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'W4B Status to WhatsApp Business Status' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:44:44.201] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:44:44.602] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'W4B Status to WhatsApp Business Status' (screenInteractive=false, Biometrics Safe)
+[2026-11-06 08:44:44.772] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:44:53.954] [INFO] [AppLifecycleObserver] ProcessLifecycleOwner observer registered
+[2026-11-06 08:44:53.957] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:44:57.936] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:45:23.708] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:45:36.936] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #5
+[2026-11-06 08:45:36.941] [ACTION] [AlarmScheduler] Cancelled alarm for Task #5
+[2026-11-06 08:45:36.942] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #5
+[2026-11-06 08:45:36.943] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #5
+[2026-11-06 08:45:39.974] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:47:21.002] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:47:21.021] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=3
+[2026-11-06 08:47:21.021] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #3 (WhatsApp Call to Dilip Gupta Gd) [WhatsApp Call] -> SequentialTaskEngine
+[2026-11-06 08:47:21.021] [ACTION] [SequentialTaskEngine] Enqueued Task #3 into Channel pipeline.
+[2026-11-06 08:47:21.022] [ACTION] [SequentialTaskEngine] Starting execution for Task #3 (WhatsApp Call to Dilip Gupta Gd) on [WhatsApp Call]
+[2026-11-06 08:47:21.024] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WhatsApp Call for Task #3. Initiating screen wake & keyguard unlock...
+[2026-11-06 08:47:21.087] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: false, Task: #3, Channel: WHATSAPP_CALL
+[2026-11-06 08:47:21.582] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing WhatsApp Call for Task #3.
+[2026-11-06 08:47:21.583] [ACTION] [HelperA11y] Prepared WhatsApp voice call to 919500910092 for task #3
+[2026-11-06 08:47:22.320] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:47:30.701] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:47:34.571] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #2
+[2026-11-06 08:47:34.576] [ACTION] [AlarmScheduler] Cancelled alarm for Task #2
+[2026-11-06 08:47:34.576] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #2
+[2026-11-06 08:47:34.576] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #2
+[2026-11-06 08:47:35.208] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #4
+[2026-11-06 08:47:35.211] [ACTION] [AlarmScheduler] Cancelled alarm for Task #4
+[2026-11-06 08:47:35.212] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #4
+[2026-11-06 08:47:35.213] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #4
+[2026-11-06 08:47:36.107] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #3
+[2026-11-06 08:47:36.107] [WARN] [SequentialTaskEngine] Task #3 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-06 08:47:36.109] [ERROR] [SequentialTaskEngine] Failed to initiate WhatsApp call to 919500910092: Task #3 cancelled by user
+java.util.concurrent.CancellationException: Task #3 cancelled by user
+	at va3.b(SourceFile:76)
+	at fq3.invoke(SourceFile:25)
+	at pz.A0(SourceFile:15)
+	at pz.r(SourceFile:364)
+	at dd2.e(SourceFile:180)
+	at dd2.e(SourceFile:157)
+	at dd2.e(SourceFile:157)
+	at dd2.e(SourceFile:157)
+	at uc1.b(SourceFile:33)
+	at iy.c(SourceFile:127)
+	at z8.F(SourceFile:96)
+	at z8.h(SourceFile:396)
+	at z8.dispatchTouchEvent(SourceFile:77)
+	at android.view.ViewGroup.dispatchTransformedTouchEventInternal(ViewGroup.java:3210)
+	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3151)
+	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2868)
+	at android.view.ViewGroup.dispatchTransformedTouchEventInternal(ViewGroup.java:3210)
+	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3151)
+	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2868)
+	at android.view.ViewGroup.dispatchTransformedTouchEventInternal(ViewGroup.java:3210)
+	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3151)
+	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2868)
+	at android.view.ViewGroup.dispatchTransformedTouchEventInternal(ViewGroup.java:3210)
+	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3151)
+	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2868)
+	at com.android.internal.policy.DecorView.superDispatchTouchEvent(DecorView.java:641)
+	at com.android.internal.policy.PhoneWindow.superDispatchTouchEvent(PhoneWindow.java:2136)
+	at android.app.Activity.dispatchTouchEvent(Activity.java:4888)
+	at com.android.internal.policy.DecorView.dispatchTouchEvent(DecorView.java:590)
+	at android.view.View.dispatchPointerEvent(View.java:17284)
+	at android.view.ViewRootImpl$ViewPostImeInputStage.processPointerEvent(ViewRootImpl.java:9639)
+	at android.view.ViewRootImpl$ViewPostImeInputStage.onProcess(ViewRootImpl.java:9249)
+	at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:8595)
+	at android.view.ViewRootImpl$InputStage.onDeliverToNext(ViewRootImpl.java:8662)
+	at android.view.ViewRootImpl$InputStage.forward(ViewRootImpl.java:8623)
+	at android.view.ViewRootImpl$AsyncInputStage.forward(ViewRootImpl.java:8797)
+	at android.view.ViewRootImpl$InputStage.apply(ViewRootImpl.java:8631)
+	at android.view.ViewRootImpl$AsyncInputStage.apply(ViewRootImpl.java:8854)
+	at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:8599)
+	at android.view.ViewRootImpl$InputStage.onDeliverToNext(ViewRootImpl.java:8662)
+	at android.view.ViewRootImpl$InputStage.forward(ViewRootImpl.java:8623)
+	at android.view.ViewRootImpl$InputStage.apply(ViewRootImpl.java:8631)
+	at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:8599)
+	at android.view.ViewRootImpl.deliverInputEvent(ViewRootImpl.java:12281)
+	at android.view.ViewRootImpl.doProcessInputEvents(ViewRootImpl.java:12232)
+	at android.view.ViewRootImpl.enqueueInputEvent(ViewRootImpl.java:12188)
+	at android.view.ViewRootImpl.processRawInputEvent(ViewRootImpl.java:12679)
+	at android.view.ViewRootImpl$WindowInputEventReceiver.onInputEvent(ViewRootImpl.java:12408)
+	at android.view.InputEventReceiver.dispatchInputEvent(InputEventReceiver.java:321)
+	at android.os.MessageQueue.nativePollOnce(Native Method)
+	at android.os.MessageQueue.nextLegacy(MessageQueue.java:917)
+	at android.os.MessageQueue.next(MessageQueue.java:1029)
+	at android.os.Looper.loopOnce(Looper.java:209)
+	at android.os.Looper.loop(Looper.java:361)
+	at android.app.ActivityThread.main(ActivityThread.java:10333)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:675)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1002)
+[2026-11-06 08:47:36.110] [ACTION] [AlarmScheduler] Cancelled alarm for Task #3
+[2026-11-06 08:47:36.110] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #3
+[2026-11-06 08:47:36.110] [WARN] [SequentialTaskEngine] Task #3 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-06 08:47:36.111] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #3
+[2026-11-06 08:47:36.111] [WARN] [SequentialTaskEngine] Task #3 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-06 08:47:36.112] [ACTION] [AlarmScheduler] Scheduled Task #3 (WhatsApp Call to Dilip Gupta Gd) for trigger at 1793935396168
+[2026-11-06 08:47:36.112] [ACTION] [SequentialTaskEngine] Task #3 (WhatsApp Call to Dilip Gupta Gd): Recurrence [Repeat (Minutes), interval=6m] rescheduled for trigger timestamp: 1793935396168 (execution count: 9)
+[2026-11-06 08:47:36.112] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'WhatsApp Call to Dilip Gupta Gd' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:47:36.851] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:47:37.847] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:47:55.993] [ACTION] [AlarmScheduler] Scheduled Task #6 (Phone Call to +919500910065) for trigger at 1793935363262
+[2026-11-06 08:48:39.644] [ACTION] [AlarmScheduler] Scheduled Task #7 (WhatsApp Call to Dilip Gupta Gd) for trigger at 1793935380076
+[2026-11-06 08:48:55.803] [ACTION] [AlarmScheduler] Scheduled Task #8 (WA Business Call to +919167298798) for trigger at 1793935424769
+[2026-11-06 08:48:59.579] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:53:51.419] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=6
+[2026-11-06 08:53:51.420] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #6 (Phone Call to +919500910065) [Phone Call] -> SequentialTaskEngine
+[2026-11-06 08:53:51.420] [ACTION] [SequentialTaskEngine] Enqueued Task #6 into Channel pipeline.
+[2026-11-06 08:53:51.422] [ACTION] [SequentialTaskEngine] Starting execution for Task #6 (Phone Call to +919500910065) on [Phone Call]
+[2026-11-06 08:53:51.422] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=7
+[2026-11-06 08:53:51.422] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #7 (WhatsApp Call to Dilip Gupta Gd) [WhatsApp Call] -> SequentialTaskEngine
+[2026-11-06 08:53:51.422] [ACTION] [SequentialTaskEngine] Enqueued Task #7 into Channel pipeline.
+[2026-11-06 08:53:51.423] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=3
+[2026-11-06 08:53:51.423] [WARN] [TaskAlarmReceiver] Task #3 not found in database
+[2026-11-06 08:53:51.424] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing Phone Call for Task #6. Initiating screen wake & keyguard unlock...
+[2026-11-06 08:53:51.427] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=8
+[2026-11-06 08:53:51.428] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #8 (WA Business Call to +919167298798) [WA Business Call] -> SequentialTaskEngine
+[2026-11-06 08:53:51.428] [ACTION] [SequentialTaskEngine] Enqueued Task #8 into Channel pipeline.
+[2026-11-06 08:53:52.808] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #6, Channel: CALL
+[2026-11-06 08:53:52.829] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:53:57.974] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing Phone Call for Task #6.
+[2026-11-06 08:53:58.001] [ACTION] [SequentialTaskEngine] Placed direct telecom call to +919500910065 via SIM 0
+[2026-11-06 08:53:58.001] [ACTION] [SequentialTaskEngine] Task #6: Placed call to +919500910065 (1/1, simSlot=0, duration=5s, dialTimeIncluded=true)
+[2026-11-06 08:53:58.002] [ACTION] [SequentialTaskEngine] Call duration limit of 5s (including dialing time) holding for +919500910065...
+[2026-11-06 08:53:58.766] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:54:03.010] [ACTION] [SequentialTaskEngine] Configured call duration (5s) elapsed for +919500910065. Hanging up call now...
+[2026-11-06 08:54:03.014] [ACTION] [HelperA11y] Terminated active phone call via TelecomManager.endCall()
+[2026-11-06 08:54:03.015] [ACTION] [SequentialTaskEngine] Hangup request for +919500910065: result=true
+[2026-11-06 08:54:03.151] [ACTION] [PhoneCallReceiver] Evaluating call transition from state OFFHOOK to IDLE (ringing=false, answered=false)
+[2026-11-06 08:54:03.151] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:54:05.021] [ACTION] [AlarmScheduler] Scheduled Task #6 (Phone Call to +919500910065) for trigger at 1793935723262
+[2026-11-06 08:54:05.021] [ACTION] [SequentialTaskEngine] Task #6 (Phone Call to +919500910065): Recurrence [Repeat (Minutes), interval=6m] rescheduled for trigger timestamp: 1793935723262 (execution count: 1)
+[2026-11-06 08:54:05.021] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Phone Call to +919500910065' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:54:05.423] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:54:05.734] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:54:05.824] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Phone Call to +919500910065' (screenInteractive=false, Biometrics Safe)
+[2026-11-06 08:54:05.824] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Phone Call to +919500910065' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:54:06.226] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-06 08:54:06.226] [ACTION] [SequentialTaskEngine] Starting execution for Task #7 (WhatsApp Call to Dilip Gupta Gd) on [WhatsApp Call]
+[2026-11-06 08:54:06.227] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WhatsApp Call for Task #7. Initiating screen wake & keyguard unlock...
+[2026-11-06 08:54:06.853] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #7, Channel: WHATSAPP_CALL
+[2026-11-06 08:54:06.869] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:54:07.259] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing WhatsApp Call for Task #7.
+[2026-11-06 08:54:07.259] [ACTION] [HelperA11y] Prepared WhatsApp voice call to 919500910092 for task #7
+[2026-11-06 08:54:08.014] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:54:08.792] [ACTION] [WACallEngine] Clicking Voice Call button in WhatsApp header for 919500910092
+[2026-11-06 08:54:09.477] [ACTION] [WACallEngine] Confirming designated WhatsApp call dialog/dropdown button 'Voice call' for 919500910092
+[2026-11-06 08:54:10.557] [ACTION] [WACallEngine] WhatsApp VoIP Call connected/placed to 919500910092
+[2026-11-06 08:54:10.557] [ACTION] [HelperA11y] Successfully placed WhatsApp Call to 919500910092 for task #7
+[2026-11-06 08:54:10.778] [ACTION] [SequentialTaskEngine] WhatsApp voice call #1 initiated successfully to 919500910092
+[2026-11-06 08:54:10.778] [ACTION] [SequentialTaskEngine] Holding WhatsApp voice call for configured duration of 5s (including dialing time)...
+[2026-11-06 08:54:15.810] [ACTION] [WACallEngine] Terminating active WhatsApp VoIP call via End Call button
+[2026-11-06 08:54:15.816] [ACTION] [HelperA11y] Terminated active WhatsApp VoIP call for com.whatsapp
+[2026-11-06 08:54:15.817] [ACTION] [SequentialTaskEngine] Auto-hangup WhatsApp VoIP call after 5s: result=true
+[2026-11-06 08:54:16.827] [ACTION] [AlarmScheduler] Scheduled Task #7 (WhatsApp Call to Dilip Gupta Gd) for trigger at 1793935740076
+[2026-11-06 08:54:16.828] [ACTION] [SequentialTaskEngine] Task #7 (WhatsApp Call to Dilip Gupta Gd): Recurrence [Repeat (Minutes), interval=6m] rescheduled for trigger timestamp: 1793935740076 (execution count: 1)
+[2026-11-06 08:54:16.828] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'WhatsApp Call to Dilip Gupta Gd' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:54:17.230] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:54:17.631] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'WhatsApp Call to Dilip Gupta Gd' (screenInteractive=false, Biometrics Safe)
+[2026-11-06 08:54:17.632] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'WhatsApp Call to Dilip Gupta Gd' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:54:18.033] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-06 08:54:18.034] [ACTION] [SequentialTaskEngine] Starting execution for Task #8 (WA Business Call to +919167298798) on [WA Business Call]
+[2026-11-06 08:54:18.035] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Business Call for Task #8. Initiating screen wake & keyguard unlock...
+[2026-11-06 08:54:19.141] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #8, Channel: WHATSAPP_BUSINESS_CALL
+[2026-11-06 08:54:19.160] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:54:28.082] [ACTION] [HelperA11y] Prepared WhatsApp voice call to 919167298798 for task #8
+[2026-11-06 08:54:28.811] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 08:54:38.396] [ACTION] [WACallEngine] Clicking Voice Call button in WhatsApp header for 919167298798
+[2026-11-06 08:54:38.880] [ACTION] [WACallEngine] Confirming designated WhatsApp call dialog/dropdown button 'Voice call' for 919167298798
+[2026-11-06 08:54:39.823] [ACTION] [WACallEngine] Confirming designated WhatsApp call dialog/dropdown button 'com.whatsapp.w4b:id/main_layout' for 919167298798
+[2026-11-06 08:54:40.339] [ACTION] [WACallEngine] Confirming designated WhatsApp call dialog/dropdown button 'Call' for 919167298798
+[2026-11-06 08:54:41.022] [ACTION] [WACallEngine] WhatsApp VoIP Call connected/placed to 919167298798
+[2026-11-06 08:54:41.023] [ACTION] [HelperA11y] Successfully placed WhatsApp Business Call to 919167298798 for task #8
+[2026-11-06 08:54:41.129] [ACTION] [SequentialTaskEngine] WhatsApp voice call #1 initiated successfully to 919167298798
+[2026-11-06 08:54:41.130] [ACTION] [SequentialTaskEngine] Holding WhatsApp voice call for configured duration of 5s (including dialing time)...
+[2026-11-06 08:54:46.151] [ACTION] [WACallEngine] Terminating active WhatsApp VoIP call via End Call button
+[2026-11-06 08:54:46.155] [ACTION] [HelperA11y] Terminated active WhatsApp VoIP call for com.whatsapp.w4b
+[2026-11-06 08:54:46.155] [ACTION] [SequentialTaskEngine] Auto-hangup WhatsApp VoIP call after 5s: result=true
+[2026-11-06 08:54:47.160] [ACTION] [AlarmScheduler] Scheduled Task #8 (WA Business Call to +919167298798) for trigger at 1793935784769
+[2026-11-06 08:54:47.161] [ACTION] [SequentialTaskEngine] Task #8 (WA Business Call to +919167298798): Recurrence [Repeat (Minutes), interval=6m] rescheduled for trigger timestamp: 1793935784769 (execution count: 1)
+[2026-11-06 08:54:47.161] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'WA Business Call to +919167298798' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:54:47.563] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-06 08:54:47.964] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'WA Business Call to +919167298798' (screenInteractive=false, Biometrics Safe)
+[2026-11-06 08:54:47.964] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'WA Business Call to +919167298798' (Power button simulation, Fingerprint safe)...
+[2026-11-06 08:54:48.365] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-06 08:54:50.067] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-06 08:54:52.552] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #6
+[2026-11-06 08:54:52.553] [ACTION] [AlarmScheduler] Cancelled alarm for Task #6
+[2026-11-06 08:54:52.553] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #6
+[2026-11-06 08:54:52.554] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #6
+[2026-11-06 08:54:55.028] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #8
+[2026-11-06 08:54:55.029] [ACTION] [AlarmScheduler] Cancelled alarm for Task #8
+[2026-11-06 08:54:55.029] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #8
+[2026-11-06 08:54:55.030] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #8
+[2026-11-06 08:54:55.515] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #7
+[2026-11-06 08:54:55.517] [ACTION] [AlarmScheduler] Cancelled alarm for Task #7
+[2026-11-06 08:54:55.518] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #7
+[2026-11-06 08:54:55.518] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #7
+[2026-11-06 08:54:56.960] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-06 09:00:00.021] [ACTION] [TaskAlarmReceiver] ACTION_FIRE_CAMPAIGN received for Campaign #1. Triggering batch execution.
+[2026-11-06 09:00:00.025] [ACTION] [DailyCampaignScheduler] Armed exact alarm for Daily Campaign #1 at Sat Nov 07 09:00:00 GMT+05:30 2026
+[2026-11-06 09:00:00.054] [INFO] [DailyCampaignWorker] Starting DailyCampaignWorker for id=1 (Daily SMS Campaign), manual=true, active=true
+[2026-11-06 09:00:00.056] [INFO] [DailyCampaignWorker] Daily limit of 80 reached today for campaign 'Daily SMS Campaign' (80 already sent today). Pausing batch.
+[2026-11-07 18:53:31.347] [INFO] [HelperAppInitializer] AndroidX Startup Initializer executing early system bootstrap
+[2026-11-07 18:53:31.395] [INFO] [AppLifecycleObserver] ProcessLifecycleOwner observer registered
+[2026-11-07 18:53:31.417] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 18:53:31.418] [ACTION] [AlarmScheduler] Rescheduled 0 pending tasks across system event
+[2026-11-07 18:53:31.421] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #1
+[2026-11-07 18:53:31.421] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #2
+[2026-11-07 18:53:31.421] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #3
+[2026-11-07 18:53:35.846] [WARN] [HelperA11y] Helper Accessibility Service Unbound by OS
+[2026-11-07 18:53:36.468] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 18:53:43.769] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 18:53:47.120] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 18:53:49.935] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 18:54:24.082] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 18:54:24.708] [WARN] [HelperA11y] Helper Accessibility Service Unbound by OS
+[2026-11-07 18:54:47.853] [ACTION] [SmsReceiver] Incoming SMS from JK-****-S (158 chars)
+[2026-11-07 18:55:10.094] [ACTION] [AlarmScheduler] Rescheduled 0 pending tasks across system event
+[2026-11-07 18:55:10.098] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #1
+[2026-11-07 18:55:10.098] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #2
+[2026-11-07 18:55:10.099] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #3
+[2026-11-07 18:55:10.099] [INFO] [AutoSafetyManager] Safety circuit breakers reset by user. All pending tasks rescheduled.
+[2026-11-07 18:55:10.102] [ACTION] [TaskAlarmReceiver] Purged all 0 scheduled tasks and cancelled all active alarms.
+[2026-11-07 18:55:10.102] [ACTION] [TaskAlarmReceiver] ACTION_DELETE_ALL_TASKS: Successfully deleted 0 tasks.
+[2026-11-07 18:55:11.190] [ACTION] [TaskAlarmReceiver] ACTION_SET_PREF: isAutoLockAfterSendEnabled=true
+[2026-11-07 18:55:11.328] [ACTION] [AlarmScheduler] Scheduled Task #1 (Task 1 • SMS) for trigger at 1794057921326
+[2026-11-07 18:55:11.329] [ACTION] [TaskAlarmReceiver] Setup task #1 channel=SMS trigger=+10s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.329] [ACTION] [AlarmScheduler] Scheduled Task #2 (Task 2 • WhatsApp) for trigger at 1794057931326
+[2026-11-07 18:55:11.330] [ACTION] [TaskAlarmReceiver] Setup task #2 channel=WhatsApp trigger=+20s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.330] [ACTION] [AlarmScheduler] Scheduled Task #3 (Task 3 • WA Business) for trigger at 1794057941326
+[2026-11-07 18:55:11.330] [ACTION] [TaskAlarmReceiver] Setup task #3 channel=WA Business trigger=+30s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.331] [ACTION] [AlarmScheduler] Scheduled Task #4 (Task 4 • WhatsApp Group) for trigger at 1794057951326
+[2026-11-07 18:55:11.331] [ACTION] [TaskAlarmReceiver] Setup task #4 channel=WhatsApp Group trigger=+40s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.336] [ACTION] [AlarmScheduler] Scheduled Task #5 (Task 5 • WA Business Group) for trigger at 1794057961326
+[2026-11-07 18:55:11.336] [ACTION] [TaskAlarmReceiver] Setup task #5 channel=WA Business Group trigger=+50s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.337] [ACTION] [AlarmScheduler] Scheduled Task #6 (Task 6 • WA Status) for trigger at 1794057971326
+[2026-11-07 18:55:11.337] [ACTION] [TaskAlarmReceiver] Setup task #6 channel=WA Status trigger=+60s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.338] [ACTION] [AlarmScheduler] Scheduled Task #7 (Task 7 • W4B Status) for trigger at 1794057981326
+[2026-11-07 18:55:11.338] [ACTION] [TaskAlarmReceiver] Setup task #7 channel=W4B Status trigger=+70s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.339] [ACTION] [AlarmScheduler] Scheduled Task #8 (Task 8 • Phone Call) for trigger at 1794057991326
+[2026-11-07 18:55:11.339] [ACTION] [TaskAlarmReceiver] Setup task #8 channel=Phone Call trigger=+80s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.339] [ACTION] [AlarmScheduler] Scheduled Task #9 (Task 9 • WhatsApp Call) for trigger at 1794058001326
+[2026-11-07 18:55:11.340] [ACTION] [TaskAlarmReceiver] Setup task #9 channel=WhatsApp Call trigger=+90s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.340] [ACTION] [AlarmScheduler] Scheduled Task #10 (Task 10 • WA Business Call) for trigger at 1794058011326
+[2026-11-07 18:55:11.341] [ACTION] [TaskAlarmReceiver] Setup task #10 channel=WA Business Call trigger=+100s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.342] [ACTION] [AlarmScheduler] Scheduled Task #11 (Task 11 • Call Simulation) for trigger at 1794058021326
+[2026-11-07 18:55:11.342] [ACTION] [TaskAlarmReceiver] Setup task #11 channel=Call Simulation trigger=+110s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.342] [ACTION] [AlarmScheduler] Scheduled System Alarm Clock for Task #12 (Task 12 • Reminder) at 1794058031326
+[2026-11-07 18:55:11.379] [ACTION] [AlarmScheduler] Registered System Clock App alarm for Task #12 (Helper #12: Task 12 • Reminder) at 18:57
+[2026-11-07 18:55:11.379] [ACTION] [TaskAlarmReceiver] Setup task #12 channel=Reminder trigger=+120s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.705] [ACTION] [AlarmScheduler] Scheduled Task #13 (Task 13 • Sound Mode) for trigger at 1794058041326
+[2026-11-07 18:55:11.705] [ACTION] [TaskAlarmReceiver] Setup task #13 channel=Sound Mode trigger=+130s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 18:55:11.705] [ACTION] [TaskAlarmReceiver] ACTION_SETUP_ALL_TASKS: successfully created 13 tasks (IDs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
+[2026-11-07 18:55:21.328] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=1
+[2026-11-07 18:55:21.329] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #1 (Task 1 • SMS) [SMS] -> SequentialTaskEngine
+[2026-11-07 18:55:21.329] [ACTION] [SequentialTaskEngine] Enqueued Task #1 into Channel pipeline.
+[2026-11-07 18:55:21.330] [ACTION] [SequentialTaskEngine] Starting execution for Task #1 (Task 1 • SMS) on [SMS]
+[2026-11-07 18:55:22.715] [ACTION] [AlarmScheduler] Scheduled Task #1 (Task 1 • SMS) for trigger at 1794057931326
+[2026-11-07 18:55:22.716] [ACTION] [SequentialTaskEngine] Task #1 (Task 1 • SMS): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794057931326 (execution count: 1)
+[2026-11-07 18:55:22.716] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:55:23.135] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:55:23.137] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:55:23.555] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:55:31.328] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=1
+[2026-11-07 18:55:31.329] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #1 (Task 1 • SMS) [SMS] -> SequentialTaskEngine
+[2026-11-07 18:55:31.329] [ACTION] [SequentialTaskEngine] Enqueued Task #1 into Channel pipeline.
+[2026-11-07 18:55:31.330] [ACTION] [SequentialTaskEngine] Starting execution for Task #1 (Task 1 • SMS) on [SMS]
+[2026-11-07 18:55:31.330] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=2
+[2026-11-07 18:55:31.330] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #2 (Task 2 • WhatsApp) [WhatsApp] -> SequentialTaskEngine
+[2026-11-07 18:55:31.330] [ACTION] [SequentialTaskEngine] Enqueued Task #2 into Channel pipeline.
+[2026-11-07 18:55:32.373] [ACTION] [AlarmScheduler] Scheduled Task #1 (Task 1 • SMS) for trigger at 1794057941326
+[2026-11-07 18:55:32.374] [ACTION] [SequentialTaskEngine] Task #1 (Task 1 • SMS): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794057941326 (execution count: 2)
+[2026-11-07 18:55:32.374] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:55:32.775] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:55:32.775] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:55:33.176] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:55:33.177] [ACTION] [SequentialTaskEngine] Starting execution for Task #2 (Task 2 • WhatsApp) on [WhatsApp]
+[2026-11-07 18:55:33.179] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WhatsApp for Task #2. Initiating screen wake & keyguard unlock...
+[2026-11-07 18:55:33.196] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #2, Channel: WHATSAPP
+[2026-11-07 18:55:33.198] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 18:55:34.695] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919769602020 for task #2
+[2026-11-07 18:55:34.716] [ACTION] [WhatsAppSender] Directly launched com.whatsapp via whatsapp:// for 919769602020
+[2026-11-07 18:55:35.415] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 18:55:41.327] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=1
+[2026-11-07 18:55:41.327] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #1 (Task 1 • SMS) [SMS] -> SequentialTaskEngine
+[2026-11-07 18:55:41.328] [ACTION] [SequentialTaskEngine] Enqueued Task #1 into Channel pipeline.
+[2026-11-07 18:55:41.328] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=3
+[2026-11-07 18:55:41.328] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #3 (Task 3 • WA Business) [WA Business] -> SequentialTaskEngine
+[2026-11-07 18:55:41.328] [ACTION] [SequentialTaskEngine] Enqueued Task #3 into Channel pipeline.
+[2026-11-07 18:55:48.853] [WARN] [HelperA11y] Dispatch timeout reached sending to 919769602020
+[2026-11-07 18:55:49.236] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9769602020 (Attempt 1)
+[2026-11-07 18:55:49.237] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919930604542 for task #2
+[2026-11-07 18:55:49.264] [ACTION] [WhatsAppSender] Directly launched com.whatsapp via whatsapp:// for 919930604542
+[2026-11-07 18:55:51.329] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=4
+[2026-11-07 18:55:51.330] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #4 (Task 4 • WhatsApp Group) [WhatsApp Group] -> SequentialTaskEngine
+[2026-11-07 18:55:51.330] [ACTION] [SequentialTaskEngine] Enqueued Task #4 into Channel pipeline.
+[2026-11-07 18:56:01.330] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=5
+[2026-11-07 18:56:01.332] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #5 (Task 5 • WA Business Group) [WA Business Group] -> SequentialTaskEngine
+[2026-11-07 18:56:01.332] [ACTION] [SequentialTaskEngine] Enqueued Task #5 into Channel pipeline.
+[2026-11-07 18:56:03.313] [WARN] [HelperA11y] Dispatch timeout reached sending to 919930604542
+[2026-11-07 18:56:03.774] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9930604542 (Attempt 1)
+[2026-11-07 18:56:03.783] [ACTION] [AlarmScheduler] Scheduled Task #2 (Task 2 • WhatsApp) for trigger at 1794057971326
+[2026-11-07 18:56:03.783] [ACTION] [SequentialTaskEngine] Task #2 (Task 2 • WhatsApp): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794057971326 (execution count: 1)
+[2026-11-07 18:56:03.784] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 2 • WhatsApp' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:56:04.116] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 18:56:04.185] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:56:04.186] [ACTION] [SequentialTaskEngine] Starting execution for Task #1 (Task 1 • SMS) on [SMS]
+[2026-11-07 18:56:06.830] [ACTION] [AlarmScheduler] Scheduled Task #1 (Task 1 • SMS) for trigger at 1794057971326
+[2026-11-07 18:56:06.831] [ACTION] [SequentialTaskEngine] Task #1 (Task 1 • SMS): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794057971326 (execution count: 3)
+[2026-11-07 18:56:06.831] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:56:07.232] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:56:07.232] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:56:07.633] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:56:07.634] [ACTION] [SequentialTaskEngine] Starting execution for Task #3 (Task 3 • WA Business) on [WA Business]
+[2026-11-07 18:56:07.635] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Business for Task #3. Initiating screen wake & keyguard unlock...
+[2026-11-07 18:56:07.650] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #3, Channel: WHATSAPP_BUSINESS
+[2026-11-07 18:56:07.652] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 18:56:09.148] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919769602020 for task #3
+[2026-11-07 18:56:09.166] [ACTION] [WhatsAppSender] Directly launched com.whatsapp.w4b via whatsapp:// for 919769602020
+[2026-11-07 18:56:09.866] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 18:56:11.327] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=6
+[2026-11-07 18:56:11.328] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #6 (Task 6 • WA Status) [WA Status] -> SequentialTaskEngine
+[2026-11-07 18:56:11.328] [ACTION] [SequentialTaskEngine] Enqueued Task #6 into Channel pipeline.
+[2026-11-07 18:56:11.329] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=2
+[2026-11-07 18:56:11.329] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #2 (Task 2 • WhatsApp) [WhatsApp] -> SequentialTaskEngine
+[2026-11-07 18:56:11.329] [ACTION] [SequentialTaskEngine] Enqueued Task #2 into Channel pipeline.
+[2026-11-07 18:56:11.832] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=1
+[2026-11-07 18:56:11.832] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #1 (Task 1 • SMS) [SMS] -> SequentialTaskEngine
+[2026-11-07 18:56:11.832] [ACTION] [SequentialTaskEngine] Enqueued Task #1 into Channel pipeline.
+[2026-11-07 18:56:21.328] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=7
+[2026-11-07 18:56:21.329] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #7 (Task 7 • W4B Status) [W4B Status] -> SequentialTaskEngine
+[2026-11-07 18:56:21.329] [ACTION] [SequentialTaskEngine] Enqueued Task #7 into Channel pipeline.
+[2026-11-07 18:56:23.301] [WARN] [HelperA11y] Dispatch timeout reached sending to 919769602020
+[2026-11-07 18:56:23.679] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9769602020 (Attempt 1)
+[2026-11-07 18:56:23.681] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919930604542 for task #3
+[2026-11-07 18:56:23.693] [ACTION] [WhatsAppSender] Directly launched com.whatsapp.w4b via whatsapp:// for 919930604542
+[2026-11-07 18:56:31.328] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=8
+[2026-11-07 18:56:31.328] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #8 (Task 8 • Phone Call) [Phone Call] -> SequentialTaskEngine
+[2026-11-07 18:56:31.329] [ACTION] [SequentialTaskEngine] Enqueued Task #8 into Channel pipeline.
+[2026-11-07 18:56:41.330] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=9
+[2026-11-07 18:56:41.332] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #9 (Task 9 • WhatsApp Call) [WhatsApp Call] -> SequentialTaskEngine
+[2026-11-07 18:56:41.333] [ACTION] [SequentialTaskEngine] Enqueued Task #9 into Channel pipeline.
+[2026-11-07 18:56:51.332] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=10
+[2026-11-07 18:56:51.334] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #10 (Task 10 • WA Business Call) [WA Business Call] -> SequentialTaskEngine
+[2026-11-07 18:56:51.334] [ACTION] [SequentialTaskEngine] Enqueued Task #10 into Channel pipeline.
+[2026-11-07 18:56:58.772] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9930604542 (Attempt 1)
+[2026-11-07 18:56:58.782] [ACTION] [AlarmScheduler] Scheduled Task #3 (Task 3 • WA Business) for trigger at 1794058021326
+[2026-11-07 18:56:58.782] [ACTION] [SequentialTaskEngine] Task #3 (Task 3 • WA Business): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794058021326 (execution count: 1)
+[2026-11-07 18:56:58.783] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 3 • WA Business' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:56:59.185] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 18:56:59.586] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 3 • WA Business' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 18:56:59.587] [ACTION] [SequentialTaskEngine] Starting execution for Task #4 (Task 4 • WhatsApp Group) on [WhatsApp Group]
+[2026-11-07 18:56:59.588] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WhatsApp Group for Task #4. Initiating screen wake & keyguard unlock...
+[2026-11-07 18:56:59.603] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #4, Channel: WHATSAPP_GROUP
+[2026-11-07 18:56:59.606] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 18:57:00.802] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 18:57:01.113] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9769602020 (Attempt 1)
+[2026-11-07 18:57:01.114] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9930604542 (Attempt 1)
+[2026-11-07 18:57:01.116] [ACTION] [AlarmScheduler] Scheduled Task #4 (Task 4 • WhatsApp Group) for trigger at 1794058021326
+[2026-11-07 18:57:01.116] [ACTION] [SequentialTaskEngine] Task #4 (Task 4 • WhatsApp Group): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794058021326 (execution count: 1)
+[2026-11-07 18:57:01.116] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 4 • WhatsApp Group' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:57:01.327] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=11
+[2026-11-07 18:57:01.328] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #11 (Task 11 • Call Simulation) [Call Simulation] -> SequentialTaskEngine
+[2026-11-07 18:57:01.328] [ACTION] [SequentialTaskEngine] Enqueued Task #11 into Channel pipeline.
+[2026-11-07 18:57:01.518] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 18:57:01.921] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 4 • WhatsApp Group' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 18:57:01.922] [ACTION] [SequentialTaskEngine] Starting execution for Task #5 (Task 5 • WA Business Group) on [WA Business Group]
+[2026-11-07 18:57:01.923] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Business Group for Task #5. Initiating screen wake & keyguard unlock...
+[2026-11-07 18:57:01.941] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #5, Channel: WHATSAPP_BUSINESS_GROUP
+[2026-11-07 18:57:01.943] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 18:57:03.435] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9769602020 (Attempt 1)
+[2026-11-07 18:57:03.436] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9930604542 (Attempt 1)
+[2026-11-07 18:57:03.440] [ACTION] [AlarmScheduler] Scheduled Task #5 (Task 5 • WA Business Group) for trigger at 1794058031326
+[2026-11-07 18:57:03.440] [ACTION] [SequentialTaskEngine] Task #5 (Task 5 • WA Business Group): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794058031326 (execution count: 1)
+[2026-11-07 18:57:03.440] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 5 • WA Business Group' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:57:03.780] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=3
+[2026-11-07 18:57:03.781] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #3 (Task 3 • WA Business) [WA Business] -> SequentialTaskEngine
+[2026-11-07 18:57:03.781] [ACTION] [SequentialTaskEngine] Enqueued Task #3 into Channel pipeline.
+[2026-11-07 18:57:03.843] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 18:57:04.244] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 5 • WA Business Group' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 18:57:04.245] [ACTION] [SequentialTaskEngine] Starting execution for Task #6 (Task 6 • WA Status) on [WA Status]
+[2026-11-07 18:57:04.246] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Status for Task #6. Initiating screen wake & keyguard unlock...
+[2026-11-07 18:57:04.262] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #6, Channel: WHATSAPP_STATUS
+[2026-11-07 18:57:05.758] [ACTION] [HelperA11y] Prepared WhatsApp send (WHATSAPP_STATUS) to STATUS for task #6
+[2026-11-07 18:57:05.769] [ACTION] [WhatsAppSender] Launched WhatsApp home for text-status composer navigation
+[2026-11-07 18:57:06.116] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=4
+[2026-11-07 18:57:06.117] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #4 (Task 4 • WhatsApp Group) [WhatsApp Group] -> SequentialTaskEngine
+[2026-11-07 18:57:06.117] [ACTION] [SequentialTaskEngine] Enqueued Task #4 into Channel pipeline.
+[2026-11-07 18:57:06.469] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 18:57:11.327] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=12
+[2026-11-07 18:57:11.328] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #12 (Task 12 • Reminder) [Reminder] -> SequentialTaskEngine
+[2026-11-07 18:57:11.328] [ACTION] [SequentialTaskEngine] Enqueued Task #12 into Channel pipeline.
+[2026-11-07 18:57:11.331] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=5
+[2026-11-07 18:57:11.332] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #5 (Task 5 • WA Business Group) [WA Business Group] -> SequentialTaskEngine
+[2026-11-07 18:57:11.332] [ACTION] [SequentialTaskEngine] Enqueued Task #5 into Channel pipeline.
+[2026-11-07 18:57:19.934] [WARN] [HelperA11y] Dispatch timeout reached sending to STATUS
+[2026-11-07 18:57:20.290] [ACTION] [AlarmScheduler] Scheduled Task #6 (Task 6 • WA Status) for trigger at 1794058041326
+[2026-11-07 18:57:20.291] [ACTION] [SequentialTaskEngine] Task #6 (Task 6 • WA Status): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794058041326 (execution count: 1)
+[2026-11-07 18:57:20.291] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 6 • WA Status' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:57:20.693] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:57:20.694] [ACTION] [SequentialTaskEngine] Starting execution for Task #2 (Task 2 • WhatsApp) on [WhatsApp]
+[2026-11-07 18:57:20.694] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WhatsApp for Task #2. Initiating screen wake & keyguard unlock...
+[2026-11-07 18:57:20.707] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #2, Channel: WHATSAPP
+[2026-11-07 18:57:20.712] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 18:57:20.744] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 18:57:21.328] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=13
+[2026-11-07 18:57:21.329] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #13 (Task 13 • Sound Mode) [Sound Mode] -> SequentialTaskEngine
+[2026-11-07 18:57:21.329] [ACTION] [SequentialTaskEngine] Enqueued Task #13 into Channel pipeline.
+[2026-11-07 18:57:22.212] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919769602020 for task #2
+[2026-11-07 18:57:22.226] [ACTION] [WhatsAppSender] Directly launched com.whatsapp via whatsapp:// for 919769602020
+[2026-11-07 18:57:22.927] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 18:57:25.291] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=6
+[2026-11-07 18:57:25.292] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #6 (Task 6 • WA Status) [WA Status] -> SequentialTaskEngine
+[2026-11-07 18:57:25.292] [ACTION] [SequentialTaskEngine] Enqueued Task #6 into Channel pipeline.
+[2026-11-07 18:57:36.342] [WARN] [HelperA11y] Dispatch timeout reached sending to 919769602020
+[2026-11-07 18:57:36.737] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9769602020 (Attempt 1)
+[2026-11-07 18:57:36.740] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919930604542 for task #2
+[2026-11-07 18:57:36.769] [ACTION] [WhatsAppSender] Directly launched com.whatsapp via whatsapp:// for 919930604542
+[2026-11-07 18:57:50.832] [WARN] [HelperA11y] Dispatch timeout reached sending to 919930604542
+[2026-11-07 18:57:51.280] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9930604542 (Attempt 1)
+[2026-11-07 18:57:51.284] [ACTION] [AlarmScheduler] Scheduled Task #2 (Task 2 • WhatsApp) for trigger at 1794058071326
+[2026-11-07 18:57:51.284] [ACTION] [SequentialTaskEngine] Task #2 (Task 2 • WhatsApp): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794058071326 (execution count: 2)
+[2026-11-07 18:57:51.284] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 2 • WhatsApp' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:57:51.635] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 18:57:51.685] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:57:51.686] [ACTION] [SequentialTaskEngine] Starting execution for Task #1 (Task 1 • SMS) on [SMS]
+[2026-11-07 18:57:52.674] [ACTION] [AlarmScheduler] Scheduled Task #1 (Task 1 • SMS) for trigger at 1794058081326
+[2026-11-07 18:57:52.674] [ACTION] [SequentialTaskEngine] Task #1 (Task 1 • SMS): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794058081326 (execution count: 4)
+[2026-11-07 18:57:52.674] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:57:53.075] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:57:53.076] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:57:53.478] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 18:57:53.479] [ACTION] [SequentialTaskEngine] Starting execution for Task #7 (Task 7 • W4B Status) on [W4B Status]
+[2026-11-07 18:57:53.480] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing W4B Status for Task #7. Initiating screen wake & keyguard unlock...
+[2026-11-07 18:57:53.496] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #7, Channel: WHATSAPP_BUSINESS_STATUS
+[2026-11-07 18:57:53.500] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 18:57:54.996] [ACTION] [HelperA11y] Prepared WhatsApp send (WHATSAPP_STATUS) to STATUS for task #7
+[2026-11-07 18:57:55.013] [ACTION] [WhatsAppSender] Launched WhatsApp home for text-status composer navigation
+[2026-11-07 18:57:55.191] [ACTION] [AlarmScheduler] Cancelled alarm for Task #7
+[2026-11-07 18:57:55.191] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #7
+[2026-11-07 18:57:55.192] [WARN] [SequentialTaskEngine] Task #7 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-07 18:57:55.192] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 7 • W4B Status' (Power button simulation, Fingerprint safe)...
+[2026-11-07 18:57:55.192] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #7
+[2026-11-07 18:57:55.193] [WARN] [SequentialTaskEngine] Task #7 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-07 18:57:55.193] [ACTION] [SequentialTaskEngine] Starting execution for Task #8 (Task 8 • Phone Call) on [Phone Call]
+[2026-11-07 18:57:55.193] [ACTION] [AlarmScheduler] Cancelled alarm for Task #8
+[2026-11-07 18:57:55.193] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #8
+[2026-11-07 18:57:55.194] [WARN] [SequentialTaskEngine] Task #8 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-07 18:57:55.194] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #8
+[2026-11-07 18:57:55.194] [WARN] [SequentialTaskEngine] Task #8 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-07 18:57:55.194] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing Phone Call for Task #8. Initiating screen wake & keyguard unlock...
+[2026-11-07 18:57:55.195] [ACTION] [AlarmScheduler] Cancelled alarm for Task #9
+[2026-11-07 18:57:55.195] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #9
+[2026-11-07 18:57:55.195] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #9
+[2026-11-07 18:57:55.196] [ACTION] [AlarmScheduler] Cancelled alarm for Task #10
+[2026-11-07 18:57:55.196] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #10
+[2026-11-07 18:57:55.196] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #10
+[2026-11-07 18:57:55.197] [ACTION] [AlarmScheduler] Cancelled alarm for Task #3
+[2026-11-07 18:57:55.197] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #3
+[2026-11-07 18:57:55.198] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #3
+[2026-11-07 18:57:55.198] [ACTION] [AlarmScheduler] Cancelled alarm for Task #4
+[2026-11-07 18:57:55.198] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #4
+[2026-11-07 18:57:55.199] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #4
+[2026-11-07 18:57:55.199] [ACTION] [AlarmScheduler] Cancelled alarm for Task #11
+[2026-11-07 18:57:55.199] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #11
+[2026-11-07 18:57:55.200] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #11
+[2026-11-07 18:57:55.200] [ACTION] [AlarmScheduler] Cancelled alarm for Task #5
+[2026-11-07 18:57:55.200] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #5
+[2026-11-07 18:57:55.201] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #5
+[2026-11-07 18:57:55.209] [WARN] [SequentialTaskEngine] Task #9 no longer exists in DB. Skipping.
+[2026-11-07 18:57:55.212] [WARN] [SequentialTaskEngine] Task #10 no longer exists in DB. Skipping.
+[2026-11-07 18:57:55.212] [WARN] [SequentialTaskEngine] Task #11 no longer exists in DB. Skipping.
+[2026-11-07 18:57:55.214] [ACTION] [AlarmScheduler] Dismissed System Clock alarm for Task #12 (label: Helper #12: Task 12 • Reminder)
+[2026-11-07 18:57:55.214] [WARN] [SequentialTaskEngine] Task #3 no longer exists in DB. Skipping.
+[2026-11-07 18:57:55.214] [WARN] [SequentialTaskEngine] Task #4 no longer exists in DB. Skipping.
+[2026-11-07 18:57:55.216] [ACTION] [SequentialTaskEngine] Starting execution for Task #12 (Task 12 • Reminder) on [Reminder]
+[2026-11-07 18:57:55.216] [ACTION] [AlarmScheduler] Cancelled alarm for Task #12
+[2026-11-07 18:57:55.216] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #12
+[2026-11-07 18:57:55.216] [WARN] [SequentialTaskEngine] Task #12 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-07 18:57:55.225] [ACTION] [AlarmScheduler] Dismissed System Clock alarm for Task #12 (label: Helper #12: Task 12 • Reminder)
+[2026-11-07 18:57:55.226] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #12
+[2026-11-07 18:57:55.226] [WARN] [SequentialTaskEngine] Task #12 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-07 18:57:55.227] [ACTION] [AlarmScheduler] Cancelled alarm for Task #6
+[2026-11-07 18:57:55.227] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #6
+[2026-11-07 18:57:55.228] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #6
+[2026-11-07 18:57:55.228] [ACTION] [AlarmScheduler] Cancelled alarm for Task #13
+[2026-11-07 18:57:55.228] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #13
+[2026-11-07 18:57:55.228] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #13
+[2026-11-07 18:57:55.229] [ACTION] [AlarmScheduler] Cancelled alarm for Task #2
+[2026-11-07 18:57:55.229] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #2
+[2026-11-07 18:57:55.229] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #2
+[2026-11-07 18:57:55.229] [ACTION] [AlarmScheduler] Cancelled alarm for Task #1
+[2026-11-07 18:57:55.229] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #1
+[2026-11-07 18:57:55.229] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #1
+[2026-11-07 18:57:55.230] [ACTION] [AlarmScheduler] Rescheduled 0 pending tasks across system event
+[2026-11-07 18:57:55.230] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #1
+[2026-11-07 18:57:55.230] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #2
+[2026-11-07 18:57:55.230] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #3
+[2026-11-07 18:57:55.230] [INFO] [AutoSafetyManager] Safety circuit breakers reset by user. All pending tasks rescheduled.
+[2026-11-07 18:57:55.239] [ACTION] [TaskAlarmReceiver] Purged all 13 scheduled tasks and cancelled all active alarms.
+[2026-11-07 18:57:55.239] [ACTION] [TaskAlarmReceiver] ACTION_DELETE_ALL_TASKS: Successfully deleted 13 tasks.
+[2026-11-07 18:57:55.245] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #8, Channel: CALL
+[2026-11-07 18:57:55.246] [ACTION] [AlarmScheduler] Registered System Clock App alarm for Task #12 (Helper #12: Task 12 • Reminder) at 18:58
+[2026-11-07 18:57:55.246] [ACTION] [SequentialTaskEngine] Task #12: Launched ReminderAlarmActivity (Helper #12: Task 12 • Reminder)
+[2026-11-07 18:57:55.253] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #12
+[2026-11-07 18:57:55.254] [WARN] [SequentialTaskEngine] Task #12 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-07 18:57:55.254] [WARN] [SequentialTaskEngine] Task #5 no longer exists in DB. Skipping.
+[2026-11-07 18:57:55.254] [WARN] [SequentialTaskEngine] Task #13 no longer exists in DB. Skipping.
+[2026-11-07 18:57:55.254] [WARN] [SequentialTaskEngine] Task #6 no longer exists in DB. Skipping.
+[2026-11-07 18:57:55.963] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 18:58:21.339] [ACTION] [PhoneCallReceiver] Evaluating call transition from state OFFHOOK to IDLE (ringing=true, answered=true)
+[2026-11-07 19:06:21.182] [INFO] [HelperAppInitializer] AndroidX Startup Initializer executing early system bootstrap
+[2026-11-07 19:06:21.195] [ACTION] [BootReceiver] Device boot/package replace (android.intent.action.MY_PACKAGE_REPLACED) detected. Rescheduling active alarms and campaigns.
+[2026-11-07 19:06:21.221] [ACTION] [AlarmScheduler] Rescheduled 0 pending tasks across system event
+[2026-11-07 19:06:21.222] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #1
+[2026-11-07 19:06:21.222] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #2
+[2026-11-07 19:06:21.223] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #3
+[2026-11-07 19:06:21.319] [ACTION] [AlarmScheduler] Rescheduled 0 pending tasks across system event
+[2026-11-07 19:06:21.319] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #1
+[2026-11-07 19:06:21.320] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #2
+[2026-11-07 19:06:21.320] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #3
+[2026-11-07 19:07:11.175] [ACTION] [TaskAlarmReceiver] ACTION_SET_PREF: screenAssistPin set (len=4, enabled=true)
+[2026-11-07 19:07:24.602] [ACTION] [TaskAlarmReceiver] ACTION_SET_PREF: isAutoLockAfterSendEnabled=true
+[2026-11-07 19:07:51.726] [ACTION] [TaskAlarmReceiver] Inserted ACTION_TEST_TASK #14 channel=SMS recipients=[9769602020] duration=10s
+[2026-11-07 19:07:51.727] [ACTION] [SequentialTaskEngine] Enqueued Task #14 into Channel pipeline.
+[2026-11-07 19:07:51.729] [ACTION] [SequentialTaskEngine] Starting execution for Task #14 (Live Test [SMS]) on [SMS]
+[2026-11-07 19:07:52.918] [ACTION] [SequentialTaskEngine] Task #14 (Live Test [SMS]) marked as DONE
+[2026-11-07 19:07:52.918] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Live Test [SMS]' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:07:53.319] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 19:07:53.320] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Live Test [SMS]' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:07:53.720] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 19:07:54.188] [ACTION] [SmsReceiver] Incoming SMS from JL-****-S (493 chars)
+[2026-11-07 19:09:04.422] [INFO] [HelperA11y] Screen locked cleanly via DevicePolicyManager.lockNow()
+[2026-11-07 19:14:10.331] [INFO] [AppLifecycleObserver] ProcessLifecycleOwner observer registered
+[2026-11-07 19:14:10.337] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:14:18.255] [WARN] [HelperA11y] Helper Accessibility Service Unbound by OS
+[2026-11-07 19:14:32.572] [ACTION] [TaskAlarmReceiver] Inserted ACTION_TEST_TASK #15 channel=WhatsApp recipients=[9769602020] duration=10s
+[2026-11-07 19:14:32.573] [ACTION] [SequentialTaskEngine] Enqueued Task #15 into Channel pipeline.
+[2026-11-07 19:14:32.573] [ACTION] [SequentialTaskEngine] Starting execution for Task #15 (Live Test [WhatsApp]) on [WhatsApp]
+[2026-11-07 19:14:32.880] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919769602020 for task #15
+[2026-11-07 19:14:32.897] [ACTION] [WhatsAppSender] Directly launched com.whatsapp via whatsapp:// for 919769602020
+[2026-11-07 19:14:33.622] [ACTION] [WADirectSendEngine] Executed send action on designated Send button (a11yClick=true, bounds=Rect(2687, 2988 - 2849, 3150)); waiting for composer verification.
+[2026-11-07 19:14:33.624] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 19:14:34.555] [ACTION] [WADirectSendEngine] WhatsApp composer is empty after the send click; UI submission confirmed.
+[2026-11-07 19:14:34.556] [ACTION] [HelperA11y] Successfully delivered WhatsApp to 919769602020 for task #15
+[2026-11-07 19:14:34.901] [ACTION] [SequentialTaskEngine] Task #15 (Live Test [WhatsApp]) marked as DONE
+[2026-11-07 19:14:34.902] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Live Test [WhatsApp]' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:14:35.305] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:14:35.661] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:14:35.706] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Live Test [WhatsApp]' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 19:15:33.720] [ACTION] [TaskAlarmReceiver] Inserted ACTION_TEST_TASK #16 channel=WA Business recipients=[9769602020] duration=10s
+[2026-11-07 19:15:33.720] [ACTION] [SequentialTaskEngine] Enqueued Task #16 into Channel pipeline.
+[2026-11-07 19:15:33.722] [ACTION] [SequentialTaskEngine] Starting execution for Task #16 (Live Test [WA Business]) on [WA Business]
+[2026-11-07 19:15:33.724] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Business for Task #16. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:15:34.722] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #16, Channel: WHATSAPP_BUSINESS
+[2026-11-07 19:15:34.738] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:15:35.267] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing WA Business for Task #16.
+[2026-11-07 19:15:35.569] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919769602020 for task #16
+[2026-11-07 19:15:35.586] [ACTION] [WhatsAppSender] Directly launched com.whatsapp.w4b via whatsapp:// for 919769602020
+[2026-11-07 19:15:36.241] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 19:15:37.494] [ACTION] [WADirectSendEngine] Executed send action on designated Send button (a11yClick=true, bounds=Rect(1247, 2988 - 1409, 3150)); waiting for composer verification.
+[2026-11-07 19:15:38.283] [ACTION] [WADirectSendEngine] WhatsApp composer is empty after the send click; UI submission confirmed.
+[2026-11-07 19:15:38.284] [ACTION] [HelperA11y] Successfully delivered WhatsApp Business to 919769602020 for task #16
+[2026-11-07 19:15:38.593] [ACTION] [SequentialTaskEngine] Task #16 (Live Test [WA Business]) marked as DONE
+[2026-11-07 19:15:38.594] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Live Test [WA Business]' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:15:38.998] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:15:39.388] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:15:39.399] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Live Test [WA Business]' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 19:16:02.463] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #14
+[2026-11-07 19:16:02.464] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #14
+[2026-11-07 19:16:02.464] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #15
+[2026-11-07 19:16:02.465] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #15
+[2026-11-07 19:16:02.465] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #16
+[2026-11-07 19:16:02.465] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #16
+[2026-11-07 19:16:02.466] [ACTION] [AlarmScheduler] Rescheduled 0 pending tasks across system event
+[2026-11-07 19:16:02.466] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #1
+[2026-11-07 19:16:02.466] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #2
+[2026-11-07 19:16:02.466] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #3
+[2026-11-07 19:16:02.467] [INFO] [AutoSafetyManager] Safety circuit breakers reset by user. All pending tasks rescheduled.
+[2026-11-07 19:16:02.468] [ACTION] [TaskAlarmReceiver] Purged all 3 scheduled tasks and cancelled all active alarms.
+[2026-11-07 19:16:02.468] [ACTION] [TaskAlarmReceiver] ACTION_DELETE_ALL_TASKS: Successfully deleted 3 tasks.
+[2026-11-07 19:16:03.521] [ACTION] [TaskAlarmReceiver] ACTION_SET_PREF: isAutoLockAfterSendEnabled=true
+[2026-11-07 19:16:03.580] [ACTION] [TaskAlarmReceiver] ACTION_SET_PREF: screenAssistPin set (len=4, enabled=true)
+[2026-11-07 19:16:03.626] [ACTION] [AlarmScheduler] Scheduled Task #17 (Task 1 • SMS) for trigger at 1794059173625
+[2026-11-07 19:16:03.626] [ACTION] [TaskAlarmReceiver] Setup task #17 channel=SMS trigger=+10s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.627] [ACTION] [AlarmScheduler] Scheduled Task #18 (Task 2 • WhatsApp) for trigger at 1794059183625
+[2026-11-07 19:16:03.627] [ACTION] [TaskAlarmReceiver] Setup task #18 channel=WhatsApp trigger=+20s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.627] [ACTION] [AlarmScheduler] Scheduled Task #19 (Task 3 • WA Business) for trigger at 1794059193625
+[2026-11-07 19:16:03.628] [ACTION] [TaskAlarmReceiver] Setup task #19 channel=WA Business trigger=+30s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.628] [ACTION] [AlarmScheduler] Scheduled Task #20 (Task 4 • WhatsApp Group) for trigger at 1794059203625
+[2026-11-07 19:16:03.628] [ACTION] [TaskAlarmReceiver] Setup task #20 channel=WhatsApp Group trigger=+40s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.629] [ACTION] [AlarmScheduler] Scheduled Task #21 (Task 5 • WA Business Group) for trigger at 1794059213625
+[2026-11-07 19:16:03.629] [ACTION] [TaskAlarmReceiver] Setup task #21 channel=WA Business Group trigger=+50s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.629] [ACTION] [AlarmScheduler] Scheduled Task #22 (Task 6 • WA Status) for trigger at 1794059223625
+[2026-11-07 19:16:03.629] [ACTION] [TaskAlarmReceiver] Setup task #22 channel=WA Status trigger=+60s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.630] [ACTION] [AlarmScheduler] Scheduled Task #23 (Task 7 • W4B Status) for trigger at 1794059233625
+[2026-11-07 19:16:03.630] [ACTION] [TaskAlarmReceiver] Setup task #23 channel=W4B Status trigger=+70s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.630] [ACTION] [AlarmScheduler] Scheduled Task #24 (Task 8 • Phone Call) for trigger at 1794059243625
+[2026-11-07 19:16:03.630] [ACTION] [TaskAlarmReceiver] Setup task #24 channel=Phone Call trigger=+80s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.631] [ACTION] [AlarmScheduler] Scheduled Task #25 (Task 9 • WhatsApp Call) for trigger at 1794059253625
+[2026-11-07 19:16:03.631] [ACTION] [TaskAlarmReceiver] Setup task #25 channel=WhatsApp Call trigger=+90s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.631] [ACTION] [AlarmScheduler] Scheduled Task #26 (Task 10 • WA Business Call) for trigger at 1794059263625
+[2026-11-07 19:16:03.631] [ACTION] [TaskAlarmReceiver] Setup task #26 channel=WA Business Call trigger=+100s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.632] [ACTION] [AlarmScheduler] Scheduled Task #27 (Task 11 • Call Simulation) for trigger at 1794059273625
+[2026-11-07 19:16:03.632] [ACTION] [TaskAlarmReceiver] Setup task #27 channel=Call Simulation trigger=+110s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.632] [ACTION] [AlarmScheduler] Scheduled System Alarm Clock for Task #28 (Task 12 • Reminder) at 1794059283625
+[2026-11-07 19:16:03.644] [ACTION] [AlarmScheduler] Registered System Clock App alarm for Task #28 (Helper #28: Task 12 • Reminder) at 19:18
+[2026-11-07 19:16:03.644] [ACTION] [TaskAlarmReceiver] Setup task #28 channel=Reminder trigger=+120s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.645] [ACTION] [AlarmScheduler] Scheduled Task #29 (Task 13 • Sound Mode) for trigger at 1794059293625
+[2026-11-07 19:16:03.645] [ACTION] [TaskAlarmReceiver] Setup task #29 channel=Sound Mode trigger=+130s repeat=10s callDuration=10s dialTime=true
+[2026-11-07 19:16:03.645] [ACTION] [TaskAlarmReceiver] ACTION_SETUP_ALL_TASKS: successfully created 13 tasks (IDs: [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29])
+[2026-11-07 19:16:13.632] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=17
+[2026-11-07 19:16:13.635] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #17 (Task 1 • SMS) [SMS] -> SequentialTaskEngine
+[2026-11-07 19:16:13.636] [ACTION] [SequentialTaskEngine] Enqueued Task #17 into Channel pipeline.
+[2026-11-07 19:16:13.638] [ACTION] [SequentialTaskEngine] Starting execution for Task #17 (Task 1 • SMS) on [SMS]
+[2026-11-07 19:16:15.922] [ACTION] [AlarmScheduler] Scheduled Task #17 (Task 1 • SMS) for trigger at 1794059183625
+[2026-11-07 19:16:15.923] [ACTION] [SequentialTaskEngine] Task #17 (Task 1 • SMS): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059183625 (execution count: 1)
+[2026-11-07 19:16:15.923] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:16:16.329] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 19:16:16.329] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:16:16.731] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 19:16:23.628] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=18
+[2026-11-07 19:16:23.629] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #18 (Task 2 • WhatsApp) [WhatsApp] -> SequentialTaskEngine
+[2026-11-07 19:16:23.629] [ACTION] [SequentialTaskEngine] Enqueued Task #18 into Channel pipeline.
+[2026-11-07 19:16:23.630] [ACTION] [SequentialTaskEngine] Starting execution for Task #18 (Task 2 • WhatsApp) on [WhatsApp]
+[2026-11-07 19:16:23.632] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=17
+[2026-11-07 19:16:23.633] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #17 (Task 1 • SMS) [SMS] -> SequentialTaskEngine
+[2026-11-07 19:16:23.633] [ACTION] [SequentialTaskEngine] Enqueued Task #17 into Channel pipeline.
+[2026-11-07 19:16:23.634] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WhatsApp for Task #18. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:16:24.552] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #18, Channel: WHATSAPP
+[2026-11-07 19:16:24.570] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:16:30.177] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing WhatsApp for Task #18.
+[2026-11-07 19:16:30.473] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 19:16:30.486] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919769602020 for task #18
+[2026-11-07 19:16:30.496] [ACTION] [WhatsAppSender] Directly launched com.whatsapp via whatsapp:// for 919769602020
+[2026-11-07 19:16:31.519] [ACTION] [WADirectSendEngine] Executed send action on designated Send button (a11yClick=true, bounds=Rect(1247, 2988 - 1409, 3150)); waiting for composer verification.
+[2026-11-07 19:16:32.428] [ACTION] [WADirectSendEngine] WhatsApp composer is empty after the send click; UI submission confirmed.
+[2026-11-07 19:16:32.428] [ACTION] [HelperA11y] Successfully delivered WhatsApp to 919769602020 for task #18
+[2026-11-07 19:16:32.500] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919930604542 for task #18
+[2026-11-07 19:16:32.509] [ACTION] [WhatsAppSender] Directly launched com.whatsapp via whatsapp:// for 919930604542
+[2026-11-07 19:16:34.707] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=19
+[2026-11-07 19:16:34.708] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #19 (Task 3 • WA Business) [WA Business] -> SequentialTaskEngine
+[2026-11-07 19:16:34.709] [ACTION] [SequentialTaskEngine] Enqueued Task #19 into Channel pipeline.
+[2026-11-07 19:16:43.628] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=20
+[2026-11-07 19:16:43.630] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #20 (Task 4 • WhatsApp Group) [WhatsApp Group] -> SequentialTaskEngine
+[2026-11-07 19:16:43.630] [ACTION] [SequentialTaskEngine] Enqueued Task #20 into Channel pipeline.
+[2026-11-07 19:16:50.751] [WARN] [HelperA11y] Dispatch timeout reached sending to 919930604542
+[2026-11-07 19:16:51.038] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9930604542 (Attempt 1)
+[2026-11-07 19:16:51.047] [ACTION] [AlarmScheduler] Scheduled Task #18 (Task 2 • WhatsApp) for trigger at 1794059213625
+[2026-11-07 19:16:51.048] [ACTION] [SequentialTaskEngine] Task #18 (Task 2 • WhatsApp): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059213625 (execution count: 1)
+[2026-11-07 19:16:51.048] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 2 • WhatsApp' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:16:51.452] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:16:51.556] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:16:51.853] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 2 • WhatsApp' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 19:16:51.854] [ACTION] [SequentialTaskEngine] Starting execution for Task #17 (Task 1 • SMS) on [SMS]
+[2026-11-07 19:16:53.483] [ACTION] [AlarmScheduler] Scheduled Task #17 (Task 1 • SMS) for trigger at 1794059213625
+[2026-11-07 19:16:53.484] [ACTION] [SequentialTaskEngine] Task #17 (Task 1 • SMS): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059213625 (execution count: 2)
+[2026-11-07 19:16:53.484] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:16:53.626] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=21
+[2026-11-07 19:16:53.626] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #21 (Task 5 • WA Business Group) [WA Business Group] -> SequentialTaskEngine
+[2026-11-07 19:16:53.627] [ACTION] [SequentialTaskEngine] Enqueued Task #21 into Channel pipeline.
+[2026-11-07 19:16:53.887] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 19:16:53.888] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:16:54.291] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 19:16:54.293] [ACTION] [SequentialTaskEngine] Starting execution for Task #19 (Task 3 • WA Business) on [WA Business]
+[2026-11-07 19:16:54.296] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Business for Task #19. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:16:55.159] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #19, Channel: WHATSAPP_BUSINESS
+[2026-11-07 19:16:55.179] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:16:57.390] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=18
+[2026-11-07 19:16:57.391] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #18 (Task 2 • WhatsApp) [WhatsApp] -> SequentialTaskEngine
+[2026-11-07 19:16:57.391] [ACTION] [SequentialTaskEngine] Enqueued Task #18 into Channel pipeline.
+[2026-11-07 19:16:59.261] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=17
+[2026-11-07 19:16:59.261] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #17 (Task 1 • SMS) [SMS] -> SequentialTaskEngine
+[2026-11-07 19:16:59.261] [ACTION] [SequentialTaskEngine] Enqueued Task #17 into Channel pipeline.
+[2026-11-07 19:17:00.841] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing WA Business for Task #19.
+[2026-11-07 19:17:01.144] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919769602020 for task #19
+[2026-11-07 19:17:01.158] [ACTION] [WhatsAppSender] Directly launched com.whatsapp.w4b via whatsapp:// for 919769602020
+[2026-11-07 19:17:01.694] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 19:17:03.057] [ACTION] [WADirectSendEngine] Executed send action on designated Send button (a11yClick=true, bounds=Rect(1247, 2988 - 1409, 3150)); waiting for composer verification.
+[2026-11-07 19:17:03.627] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=22
+[2026-11-07 19:17:03.628] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #22 (Task 6 • WA Status) [WA Status] -> SequentialTaskEngine
+[2026-11-07 19:17:03.628] [ACTION] [SequentialTaskEngine] Enqueued Task #22 into Channel pipeline.
+[2026-11-07 19:17:03.827] [ACTION] [WADirectSendEngine] WhatsApp composer is empty after the send click; UI submission confirmed.
+[2026-11-07 19:17:03.828] [ACTION] [HelperA11y] Successfully delivered WhatsApp Business to 919769602020 for task #19
+[2026-11-07 19:17:04.168] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919930604542 for task #19
+[2026-11-07 19:17:04.186] [ACTION] [WhatsAppSender] Directly launched com.whatsapp.w4b via whatsapp:// for 919930604542
+[2026-11-07 19:17:13.630] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=23
+[2026-11-07 19:17:13.632] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #23 (Task 7 • W4B Status) [W4B Status] -> SequentialTaskEngine
+[2026-11-07 19:17:13.633] [ACTION] [SequentialTaskEngine] Enqueued Task #23 into Channel pipeline.
+[2026-11-07 19:17:21.458] [WARN] [HelperA11y] Dispatch timeout reached sending to 919930604542
+[2026-11-07 19:17:21.720] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9930604542 (Attempt 1)
+[2026-11-07 19:17:21.726] [ACTION] [AlarmScheduler] Scheduled Task #19 (Task 3 • WA Business) for trigger at 1794059243625
+[2026-11-07 19:17:21.726] [ACTION] [SequentialTaskEngine] Task #19 (Task 3 • WA Business): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059243625 (execution count: 1)
+[2026-11-07 19:17:21.727] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 3 • WA Business' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:17:22.130] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:17:22.261] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:17:22.531] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 3 • WA Business' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 19:17:22.532] [ACTION] [SequentialTaskEngine] Starting execution for Task #20 (Task 4 • WhatsApp Group) on [WhatsApp Group]
+[2026-11-07 19:17:22.532] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WhatsApp Group for Task #20. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:17:23.555] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #20, Channel: WHATSAPP_GROUP
+[2026-11-07 19:17:23.574] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:17:23.847] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=24
+[2026-11-07 19:17:23.848] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #24 (Task 8 • Phone Call) [Phone Call] -> SequentialTaskEngine
+[2026-11-07 19:17:23.848] [ACTION] [SequentialTaskEngine] Enqueued Task #24 into Channel pipeline.
+[2026-11-07 19:17:27.342] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=19
+[2026-11-07 19:17:27.342] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #19 (Task 3 • WA Business) [WA Business] -> SequentialTaskEngine
+[2026-11-07 19:17:27.343] [ACTION] [SequentialTaskEngine] Enqueued Task #19 into Channel pipeline.
+[2026-11-07 19:17:29.072] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing WhatsApp Group for Task #20.
+[2026-11-07 19:17:29.374] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9769602020 (Attempt 1)
+[2026-11-07 19:17:29.375] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9930604542 (Attempt 1)
+[2026-11-07 19:17:29.378] [ACTION] [AlarmScheduler] Scheduled Task #20 (Task 4 • WhatsApp Group) for trigger at 1794059253625
+[2026-11-07 19:17:29.378] [ACTION] [SequentialTaskEngine] Task #20 (Task 4 • WhatsApp Group): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059253625 (execution count: 1)
+[2026-11-07 19:17:29.378] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 4 • WhatsApp Group' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:17:29.434] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 19:17:29.781] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:17:30.182] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 4 • WhatsApp Group' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 19:17:30.183] [ACTION] [SequentialTaskEngine] Starting execution for Task #21 (Task 5 • WA Business Group) on [WA Business Group]
+[2026-11-07 19:17:30.183] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Business Group for Task #21. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:17:31.067] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #21, Channel: WHATSAPP_BUSINESS_GROUP
+[2026-11-07 19:17:31.082] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:17:34.826] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=25
+[2026-11-07 19:17:34.826] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #25 (Task 9 • WhatsApp Call) [WhatsApp Call] -> SequentialTaskEngine
+[2026-11-07 19:17:34.826] [ACTION] [SequentialTaskEngine] Enqueued Task #25 into Channel pipeline.
+[2026-11-07 19:17:34.924] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=20
+[2026-11-07 19:17:34.925] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #20 (Task 4 • WhatsApp Group) [WhatsApp Group] -> SequentialTaskEngine
+[2026-11-07 19:17:34.925] [ACTION] [SequentialTaskEngine] Enqueued Task #20 into Channel pipeline.
+[2026-11-07 19:17:36.717] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing WA Business Group for Task #21.
+[2026-11-07 19:17:36.997] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 19:17:37.018] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9769602020 (Attempt 1)
+[2026-11-07 19:17:37.019] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9930604542 (Attempt 1)
+[2026-11-07 19:17:37.021] [ACTION] [AlarmScheduler] Scheduled Task #21 (Task 5 • WA Business Group) for trigger at 1794059263625
+[2026-11-07 19:17:37.021] [ACTION] [SequentialTaskEngine] Task #21 (Task 5 • WA Business Group): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059263625 (execution count: 1)
+[2026-11-07 19:17:37.021] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 5 • WA Business Group' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:17:37.423] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:17:37.824] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 5 • WA Business Group' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 19:17:37.825] [ACTION] [SequentialTaskEngine] Starting execution for Task #18 (Task 2 • WhatsApp) on [WhatsApp]
+[2026-11-07 19:17:37.825] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WhatsApp for Task #18. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:17:38.644] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #18, Channel: WHATSAPP
+[2026-11-07 19:17:38.657] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:17:43.359] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing WhatsApp for Task #18.
+[2026-11-07 19:17:43.626] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=21
+[2026-11-07 19:17:43.627] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #21 (Task 5 • WA Business Group) [WA Business Group] -> SequentialTaskEngine
+[2026-11-07 19:17:43.627] [ACTION] [SequentialTaskEngine] Enqueued Task #21 into Channel pipeline.
+[2026-11-07 19:17:43.628] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=26
+[2026-11-07 19:17:43.628] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #26 (Task 10 • WA Business Call) [WA Business Call] -> SequentialTaskEngine
+[2026-11-07 19:17:43.628] [ACTION] [SequentialTaskEngine] Enqueued Task #26 into Channel pipeline.
+[2026-11-07 19:17:43.660] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919769602020 for task #18
+[2026-11-07 19:17:43.670] [ACTION] [WhatsAppSender] Directly launched com.whatsapp via whatsapp:// for 919769602020
+[2026-11-07 19:17:44.177] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 19:17:44.731] [ACTION] [WADirectSendEngine] Executed send action on designated Send button (a11yClick=true, bounds=Rect(1247, 2988 - 1409, 3150)); waiting for composer verification.
+[2026-11-07 19:17:45.519] [ACTION] [WADirectSendEngine] WhatsApp composer is empty after the send click; UI submission confirmed.
+[2026-11-07 19:17:45.519] [ACTION] [HelperA11y] Successfully delivered WhatsApp to 919769602020 for task #18
+[2026-11-07 19:17:45.684] [ACTION] [HelperA11y] Prepared WhatsApp send (DIRECT_SEND) to 919930604542 for task #18
+[2026-11-07 19:17:45.700] [ACTION] [WhatsAppSender] Directly launched com.whatsapp via whatsapp:// for 919930604542
+[2026-11-07 19:17:53.666] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=27
+[2026-11-07 19:17:53.667] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #27 (Task 11 • Call Simulation) [Call Simulation] -> SequentialTaskEngine
+[2026-11-07 19:17:53.667] [ACTION] [SequentialTaskEngine] Enqueued Task #27 into Channel pipeline.
+[2026-11-07 19:18:04.980] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=28
+[2026-11-07 19:18:04.981] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #28 (Task 12 • Reminder) [Reminder] -> SequentialTaskEngine
+[2026-11-07 19:18:04.981] [ACTION] [SequentialTaskEngine] Enqueued Task #28 into Channel pipeline.
+[2026-11-07 19:18:09.416] [WARN] [HelperA11y] Dispatch timeout reached sending to 919930604542
+[2026-11-07 19:18:09.727] [WARN] [SequentialTaskEngine] Failed sending WhatsApp message to 9930604542 (Attempt 1)
+[2026-11-07 19:18:09.736] [ACTION] [AlarmScheduler] Scheduled Task #18 (Task 2 • WhatsApp) for trigger at 1794059293625
+[2026-11-07 19:18:09.736] [ACTION] [SequentialTaskEngine] Task #18 (Task 2 • WhatsApp): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059293625 (execution count: 2)
+[2026-11-07 19:18:09.736] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 2 • WhatsApp' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:18:10.138] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:18:10.235] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:18:10.539] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 2 • WhatsApp' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 19:18:10.541] [ACTION] [SequentialTaskEngine] Starting execution for Task #17 (Task 1 • SMS) on [SMS]
+[2026-11-07 19:18:12.204] [ACTION] [AlarmScheduler] Scheduled Task #17 (Task 1 • SMS) for trigger at 1794059293625
+[2026-11-07 19:18:12.204] [ACTION] [SequentialTaskEngine] Task #17 (Task 1 • SMS): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059293625 (execution count: 3)
+[2026-11-07 19:18:12.205] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:18:12.608] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 19:18:12.610] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 1 • SMS' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:18:13.013] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 19:18:13.015] [ACTION] [SequentialTaskEngine] Starting execution for Task #22 (Task 6 • WA Status) on [WA Status]
+[2026-11-07 19:18:13.017] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Status for Task #22. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:18:14.037] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #22, Channel: WHATSAPP_STATUS
+[2026-11-07 19:18:14.054] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:18:14.065] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=29
+[2026-11-07 19:18:14.068] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #29 (Task 13 • Sound Mode) [Sound Mode] -> SequentialTaskEngine
+[2026-11-07 19:18:14.068] [ACTION] [SequentialTaskEngine] Enqueued Task #29 into Channel pipeline.
+[2026-11-07 19:18:14.965] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=18
+[2026-11-07 19:18:14.966] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #18 (Task 2 • WhatsApp) [WhatsApp] -> SequentialTaskEngine
+[2026-11-07 19:18:14.966] [ACTION] [SequentialTaskEngine] Enqueued Task #18 into Channel pipeline.
+[2026-11-07 19:18:17.647] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=17
+[2026-11-07 19:18:17.648] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #17 (Task 1 • SMS) [SMS] -> SequentialTaskEngine
+[2026-11-07 19:18:17.648] [ACTION] [SequentialTaskEngine] Enqueued Task #17 into Channel pipeline.
+[2026-11-07 19:18:19.072] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing WA Status for Task #22.
+[2026-11-07 19:18:19.375] [ACTION] [HelperA11y] Prepared WhatsApp send (WHATSAPP_STATUS) to STATUS for task #22
+[2026-11-07 19:18:19.385] [ACTION] [WhatsAppSender] Launched WhatsApp home for text-status composer navigation
+[2026-11-07 19:18:19.915] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 19:18:21.052] [ACTION] [WAStatusEngine] Tapping Updates tab element in bottom nav...
+[2026-11-07 19:18:23.617] [ACTION] [WAStatusEngine] Setting/verifying exact status text in composer...
+[2026-11-07 19:18:24.297] [ACTION] [WAStatusEngine] Found Status Send button (com.whatsapp:id/send)! Publishing status via element click...
+[2026-11-07 19:18:25.647] [ACTION] [WAStatusEngine] Status composer dismissed after Send click. Status story successfully dispatched.
+[2026-11-07 19:18:25.648] [ACTION] [HelperA11y] Successfully delivered WhatsApp Status to STATUS for task #22
+[2026-11-07 19:18:25.906] [ACTION] [AlarmScheduler] Scheduled Task #22 (Task 6 • WA Status) for trigger at 1794059313625
+[2026-11-07 19:18:25.907] [ACTION] [SequentialTaskEngine] Task #22 (Task 6 • WA Status): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059313625 (execution count: 1)
+[2026-11-07 19:18:25.907] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 6 • WA Status' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:18:26.309] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:18:26.712] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 6 • WA Status' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 19:18:26.714] [ACTION] [SequentialTaskEngine] Starting execution for Task #23 (Task 7 • W4B Status) on [W4B Status]
+[2026-11-07 19:18:26.714] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing W4B Status for Task #23. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:18:28.420] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #23, Channel: WHATSAPP_BUSINESS_STATUS
+[2026-11-07 19:18:28.434] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:18:28.439] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:18:33.026] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 19:18:33.629] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=22
+[2026-11-07 19:18:33.630] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #22 (Task 6 • WA Status) [WA Status] -> SequentialTaskEngine
+[2026-11-07 19:18:33.630] [ACTION] [SequentialTaskEngine] Enqueued Task #22 into Channel pipeline.
+[2026-11-07 19:18:35.254] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing W4B Status for Task #23.
+[2026-11-07 19:18:35.555] [ACTION] [HelperA11y] Prepared WhatsApp send (WHATSAPP_STATUS) to STATUS for task #23
+[2026-11-07 19:18:35.566] [ACTION] [WhatsAppSender] Launched WhatsApp home for text-status composer navigation
+[2026-11-07 19:18:36.743] [ACTION] [WAStatusEngine] Tapping Updates tab element in bottom nav...
+[2026-11-07 19:18:39.477] [ACTION] [WAStatusEngine] Setting/verifying exact status text in composer...
+[2026-11-07 19:18:40.045] [ACTION] [WAStatusEngine] Found Status Send button (com.whatsapp.w4b:id/send)! Publishing status via element click...
+[2026-11-07 19:18:40.605] [ACTION] [WAStatusEngine] Status composer dismissed after Send click. Status story successfully dispatched.
+[2026-11-07 19:18:40.605] [ACTION] [HelperA11y] Successfully delivered WhatsApp Business Status to STATUS for task #23
+[2026-11-07 19:18:41.084] [ACTION] [AlarmScheduler] Scheduled Task #23 (Task 7 • W4B Status) for trigger at 1794059323625
+[2026-11-07 19:18:41.084] [ACTION] [SequentialTaskEngine] Task #23 (Task 7 • W4B Status): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059323625 (execution count: 1)
+[2026-11-07 19:18:41.084] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 7 • W4B Status' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:18:41.487] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:18:41.708] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:18:41.888] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 7 • W4B Status' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 19:18:41.889] [ACTION] [SequentialTaskEngine] Starting execution for Task #24 (Task 8 • Phone Call) on [Phone Call]
+[2026-11-07 19:18:41.890] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing Phone Call for Task #24. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:18:43.337] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #24, Channel: CALL
+[2026-11-07 19:18:43.353] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:18:46.273] [ACTION] [TaskAlarmReceiver] TaskAlarmReceiver received action=com.jmd.helper.ACTION_FIRE_TASK, taskId=23
+[2026-11-07 19:18:46.274] [ACTION] [TaskAlarmReceiver] Alarm triggered for Task #23 (Task 7 • W4B Status) [W4B Status] -> SequentialTaskEngine
+[2026-11-07 19:18:46.274] [ACTION] [SequentialTaskEngine] Enqueued Task #23 into Channel pipeline.
+[2026-11-07 19:18:47.921] [ACTION] [SequentialTaskEngine] Device unlocked successfully before executing Phone Call for Task #24.
+[2026-11-07 19:18:47.940] [ACTION] [SequentialTaskEngine] Placed direct telecom call to 9769602020 via SIM 0
+[2026-11-07 19:18:47.940] [ACTION] [SequentialTaskEngine] Task #24: Placed call to 9769602020 (1/2, simSlot=0, duration=10s, dialTimeIncluded=true)
+[2026-11-07 19:18:47.940] [ACTION] [SequentialTaskEngine] Call duration limit of 10s (including dialing time) holding for 9769602020...
+[2026-11-07 19:18:48.328] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+[2026-11-07 19:18:57.964] [ACTION] [SequentialTaskEngine] Configured call duration (10s) elapsed for 9769602020. Hanging up call now...
+[2026-11-07 19:18:57.974] [ACTION] [HelperA11y] Terminated active phone call via TelecomManager.endCall()
+[2026-11-07 19:18:57.975] [ACTION] [SequentialTaskEngine] Hangup request for 9769602020: result=true
+[2026-11-07 19:18:58.145] [ACTION] [PhoneCallReceiver] Evaluating call transition from state OFFHOOK to IDLE (ringing=false, answered=false)
+[2026-11-07 19:18:59.981] [ACTION] [SequentialTaskEngine] Applying configured inter-call delay of 5s before dialing next recipient...
+[2026-11-07 19:19:05.004] [ACTION] [SequentialTaskEngine] Placed direct telecom call to 9930604542 via SIM 0
+[2026-11-07 19:19:05.005] [ACTION] [SequentialTaskEngine] Task #24: Placed call to 9930604542 (2/2, simSlot=0, duration=10s, dialTimeIncluded=true)
+[2026-11-07 19:19:05.005] [ACTION] [SequentialTaskEngine] Call duration limit of 10s (including dialing time) holding for 9930604542...
+[2026-11-07 19:19:15.015] [ACTION] [SequentialTaskEngine] Configured call duration (10s) elapsed for 9930604542. Hanging up call now...
+[2026-11-07 19:19:15.018] [ACTION] [HelperA11y] Terminated active phone call via TelecomManager.endCall()
+[2026-11-07 19:19:15.018] [ACTION] [SequentialTaskEngine] Hangup request for 9930604542: result=true
+[2026-11-07 19:19:15.140] [ACTION] [PhoneCallReceiver] Evaluating call transition from state OFFHOOK to IDLE (ringing=false, answered=false)
+[2026-11-07 19:19:17.022] [ACTION] [AlarmScheduler] Scheduled Task #24 (Task 8 • Phone Call) for trigger at 1794059363625
+[2026-11-07 19:19:17.023] [ACTION] [SequentialTaskEngine] Task #24 (Task 8 • Phone Call): Recurrence [Repeat (Seconds), interval=10s] rescheduled for trigger timestamp: 1794059363625 (execution count: 1)
+[2026-11-07 19:19:17.023] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 8 • Phone Call' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:19:17.424] [INFO] [HelperA11y] Screen locked cleanly via GLOBAL_ACTION_LOCK_SCREEN (Power Button simulation, Fingerprint safe)
+[2026-11-07 19:19:17.825] [ACTION] [SequentialTaskEngine] Device auto-lock postcondition succeeded for 'Task 8 • Phone Call' (screenInteractive=false, Biometrics Safe)
+[2026-11-07 19:19:17.826] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 8 • Phone Call' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:19:18.227] [ACTION] [SequentialTaskEngine] Screen is already off; auto-lock postcondition satisfied.
+[2026-11-07 19:19:18.228] [ACTION] [SequentialTaskEngine] Starting execution for Task #19 (Task 3 • WA Business) on [WA Business]
+[2026-11-07 19:19:18.228] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WA Business for Task #19. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:19:18.919] [ACTION] [AutoLauncherAct] Wake-only trampoline invoked. Locked: true, Task: #19, Channel: WHATSAPP_BUSINESS
+[2026-11-07 19:19:18.935] [DEBUG] [AppLifecycleObserver] Helper transitioned to FOREGROUND
+[2026-11-07 19:19:22.686] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #19
+[2026-11-07 19:19:22.686] [WARN] [SequentialTaskEngine] Task #19 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-07 19:19:22.687] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 3 • WA Business' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:19:22.687] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #19
+[2026-11-07 19:19:22.688] [ACTION] [SequentialTaskEngine] Starting execution for Task #25 (Task 9 • WhatsApp Call) on [WhatsApp Call]
+[2026-11-07 19:19:22.688] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #20
+[2026-11-07 19:19:22.688] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #20
+[2026-11-07 19:19:22.689] [ACTION] [SequentialTaskEngine] Device is locked/screen off before executing WhatsApp Call for Task #25. Initiating screen wake & keyguard unlock...
+[2026-11-07 19:19:22.689] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #25
+[2026-11-07 19:19:22.689] [WARN] [SequentialTaskEngine] Task #25 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-07 19:19:22.690] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #25
+[2026-11-07 19:19:22.690] [WARN] [SequentialTaskEngine] Task #25 is currently active in engine. Cancelling coroutine job immediately!
+[2026-11-07 19:19:22.690] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #21
+[2026-11-07 19:19:22.690] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #21
+[2026-11-07 19:19:22.691] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #26
+[2026-11-07 19:19:22.691] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #26
+[2026-11-07 19:19:22.691] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #27
+[2026-11-07 19:19:22.691] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #27
+[2026-11-07 19:19:22.701] [ACTION] [AlarmScheduler] Dismissed System Clock alarm for Task #28 (label: Helper #28: Task 12 • Reminder)
+[2026-11-07 19:19:22.701] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #28
+[2026-11-07 19:19:22.704] [ACTION] [AlarmScheduler] Dismissed System Clock alarm for Task #28 (label: Helper #28: Task 12 • Reminder)
+[2026-11-07 19:19:22.705] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #28
+[2026-11-07 19:19:22.705] [ACTION] [AlarmScheduler] Cancelled alarm for Task #17
+[2026-11-07 19:19:22.705] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #17
+[2026-11-07 19:19:22.705] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #17
+[2026-11-07 19:19:22.705] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #18
+[2026-11-07 19:19:22.705] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #18
+[2026-11-07 19:19:22.705] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #29
+[2026-11-07 19:19:22.706] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #29
+[2026-11-07 19:19:22.706] [ACTION] [AlarmScheduler] Cancelled alarm for Task #22
+[2026-11-07 19:19:22.706] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #22
+[2026-11-07 19:19:22.706] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #22
+[2026-11-07 19:19:22.706] [ACTION] [AlarmScheduler] Cancelled alarm for Task #23
+[2026-11-07 19:19:22.706] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #23
+[2026-11-07 19:19:22.706] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #23
+[2026-11-07 19:19:22.707] [ACTION] [AlarmScheduler] Cancelled alarm for Task #24
+[2026-11-07 19:19:22.707] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #24
+[2026-11-07 19:19:22.707] [ACTION] [SequentialTaskEngine] cancelTask requested for Task #24
+[2026-11-07 19:19:22.707] [ACTION] [AlarmScheduler] Rescheduled 0 pending tasks across system event
+[2026-11-07 19:19:22.707] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #1
+[2026-11-07 19:19:22.708] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #2
+[2026-11-07 19:19:22.708] [ACTION] [DailyCampaignScheduler] Cancelled all periodic and immediate work and alarms for Campaign #3
+[2026-11-07 19:19:22.708] [INFO] [AutoSafetyManager] Safety circuit breakers reset by user. All pending tasks rescheduled.
+[2026-11-07 19:19:22.708] [ACTION] [TaskAlarmReceiver] Purged all 13 scheduled tasks and cancelled all active alarms.
+[2026-11-07 19:19:22.708] [ACTION] [TaskAlarmReceiver] ACTION_DELETE_ALL_TASKS: Successfully deleted 13 tasks.
+[2026-11-07 19:19:22.711] [ACTION] [SequentialTaskEngine] Executing device auto-lock postcondition for 'Task 9 • WhatsApp Call' (Power button simulation, Fingerprint safe)...
+[2026-11-07 19:19:22.714] [WARN] [SequentialTaskEngine] Task #20 no longer exists in DB. Skipping.
+[2026-11-07 19:19:22.714] [WARN] [SequentialTaskEngine] Task #21 no longer exists in DB. Skipping.
+[2026-11-07 19:19:22.714] [WARN] [SequentialTaskEngine] Task #26 no longer exists in DB. Skipping.
+[2026-11-07 19:19:22.714] [WARN] [SequentialTaskEngine] Task #27 no longer exists in DB. Skipping.
+[2026-11-07 19:19:22.714] [WARN] [SequentialTaskEngine] Task #28 no longer exists in DB. Skipping.
+[2026-11-07 19:19:22.714] [WARN] [SequentialTaskEngine] Task #29 no longer exists in DB. Skipping.
+[2026-11-07 19:19:22.714] [WARN] [SequentialTaskEngine] Task #18 no longer exists in DB. Skipping.
+[2026-11-07 19:19:22.714] [WARN] [SequentialTaskEngine] Task #17 no longer exists in DB. Skipping.
+[2026-11-07 19:19:22.714] [WARN] [SequentialTaskEngine] Task #22 no longer exists in DB. Skipping.
+[2026-11-07 19:19:22.714] [WARN] [SequentialTaskEngine] Task #23 no longer exists in DB. Skipping.
+[2026-11-07 19:19:34.136] [DEBUG] [AppLifecycleObserver] Helper transitioned to BACKGROUND
+
+=== ERROR LOGS TAIL ===
+[2026-11-06 02:45:40.451] [AutoSafetyManager] Circuit breaker TRIPPED for W4B Status! Pausing retries for 60s to protect device stability.
+[2026-11-06 02:47:50.802] [AutoSafetyManager] Circuit breaker TRIPPED for WhatsApp Call! Pausing retries for 60s to protect device stability.
+[2026-11-06 02:50:12.513] [AutoSafetyManager] Circuit breaker TRIPPED for WA Business Call! Pausing retries for 60s to protect device stability.
+[2026-11-06 05:46:01.275] [AutoSafetyManager] Circuit breaker TRIPPED for W4B Status! Pausing retries for 60s to protect device stability.
+[2026-11-06 05:48:03.322] [AutoSafetyManager] Circuit breaker TRIPPED for WhatsApp Call! Pausing retries for 60s to protect device stability.
+[2026-11-06 05:49:30.070] [AutoSafetyManager] Circuit breaker TRIPPED for WA Business Call! Pausing retries for 60s to protect device stability.
+[2026-11-06 08:18:43.623] [AutoSafetyManager] Circuit breaker TRIPPED for WA Group! Pausing retries for 60s to protect device stability.
+[2026-11-06 08:39:45.624] [AutoSafetyManager] Circuit breaker TRIPPED for WA Group! Pausing retries for 60s to protect device stability.
+[2026-11-06 08:47:36.109] [SequentialTaskEngine] Failed to initiate WhatsApp call to 919500910092: Task #3 cancelled by user
+java.util.concurrent.CancellationException: Task #3 cancelled by user
+	at va3.b(SourceFile:76)
+	at fq3.invoke(SourceFile:25)
+	at pz.A0(SourceFile:15)
+	at pz.r(SourceFile:364)
+	at dd2.e(SourceFile:180)
+	at dd2.e(SourceFile:157)
+	at dd2.e(SourceFile:157)
+	at dd2.e(SourceFile:157)
+	at uc1.b(SourceFile:33)
+	at iy.c(SourceFile:127)
+	at z8.F(SourceFile:96)
+	at z8.h(SourceFile:396)
+	at z8.dispatchTouchEvent(SourceFile:77)
+	at android.view.ViewGroup.dispatchTransformedTouchEventInternal(ViewGroup.java:3210)
+	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3151)
+	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2868)
+	at android.view.ViewGroup.dispatchTransformedTouchEventInternal(ViewGroup.java:3210)
+	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3151)
+	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2868)
+	at android.view.ViewGroup.dispatchTransformedTouchEventInternal(ViewGroup.java:3210)
+	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3151)
+	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2868)
+	at android.view.ViewGroup.dispatchTransformedTouchEventInternal(ViewGroup.java:3210)
+	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3151)
+	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2868)
+	at com.android.internal.policy.DecorView.superDispatchTouchEvent(DecorView.java:641)
+	at com.android.internal.policy.PhoneWindow.superDispatchTouchEvent(PhoneWindow.java:2136)
+	at android.app.Activity.dispatchTouchEvent(Activity.java:4888)
+	at com.android.internal.policy.DecorView.dispatchTouchEvent(DecorView.java:590)
+	at android.view.View.dispatchPointerEvent(View.java:17284)
+	at android.view.ViewRootImpl$ViewPostImeInputStage.processPointerEvent(ViewRootImpl.java:9639)
+	at android.view.ViewRootImpl$ViewPostImeInputStage.onProcess(ViewRootImpl.java:9249)
+	at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:8595)
+	at android.view.ViewRootImpl$InputStage.onDeliverToNext(ViewRootImpl.java:8662)
+	at android.view.ViewRootImpl$InputStage.forward(ViewRootImpl.java:8623)
+	at android.view.ViewRootImpl$AsyncInputStage.forward(ViewRootImpl.java:8797)
+	at android.view.ViewRootImpl$InputStage.apply(ViewRootImpl.java:8631)
+	at android.view.ViewRootImpl$AsyncInputStage.apply(ViewRootImpl.java:8854)
+	at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:8599)
+	at android.view.ViewRootImpl$InputStage.onDeliverToNext(ViewRootImpl.java:8662)
+	at android.view.ViewRootImpl$InputStage.forward(ViewRootImpl.java:8623)
+	at android.view.ViewRootImpl$InputStage.apply(ViewRootImpl.java:8631)
+	at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:8599)
+	at android.view.ViewRootImpl.deliverInputEvent(ViewRootImpl.java:12281)
+	at android.view.ViewRootImpl.doProcessInputEvents(ViewRootImpl.java:12232)
+	at android.view.ViewRootImpl.enqueueInputEvent(ViewRootImpl.java:12188)
+	at android.view.ViewRootImpl.processRawInputEvent(ViewRootImpl.java:12679)
+	at android.view.ViewRootImpl$WindowInputEventReceiver.onInputEvent(ViewRootImpl.java:12408)
+	at android.view.InputEventReceiver.dispatchInputEvent(InputEventReceiver.java:321)
+	at android.os.MessageQueue.nativePollOnce(Native Method)
+	at android.os.MessageQueue.nextLegacy(MessageQueue.java:917)
+	at android.os.MessageQueue.next(MessageQueue.java:1029)
+	at android.os.Looper.loopOnce(Looper.java:209)
+	at android.os.Looper.loop(Looper.java:361)
+	at android.app.ActivityThread.main(ActivityThread.java:10333)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:675)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1002)
