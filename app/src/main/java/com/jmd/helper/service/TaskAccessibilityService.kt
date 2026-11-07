@@ -1001,8 +1001,7 @@ class TaskAccessibilityService : AccessibilityService() {
                         }.toBundle()
                     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                         ActivityOptions.makeBasic().apply {
-                            // On API 34-35, 1 corresponds to MODE_BACKGROUND_ACTIVITY_START_ALLOWED
-                            pendingIntentBackgroundActivityStartMode = 1
+                            pendingIntentBackgroundActivityStartMode = ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
                         }.toBundle()
                     } else {
                         null
