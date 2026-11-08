@@ -28,7 +28,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.jmd.helper.R
 import com.jmd.helper.core.TaskSafetyManager
 import com.jmd.helper.data.prefs.PreferenceManager
 import android.media.AudioManager
@@ -262,6 +261,12 @@ class TaskAccessibilityService : AccessibilityService() {
          */
         fun getActiveTaskId(): Long = pendingTaskId
 
+        /**
+         * Returns true if an automated dispatch, unlock, or scan operation is actively executing.
+         */
+        @JvmStatic
+        fun isDispatchingActive(): Boolean = isDispatching || isUnlockPending || isTestUnlockMode || (pendingTaskId != 0L)
+
         // Send result tracking (used by batch campaigns and scheduled tasks)
         const val RESULT_NONE = -1
         const val RESULT_PENDING = 0
@@ -349,7 +354,11 @@ class TaskAccessibilityService : AccessibilityService() {
         ) {
             val targetPkg = targetPackage ?: (if (channel != null) WhatsAppPackageHelper.getPackageForChannel(context, channel) else null)
                 ?: WhatsAppPackageHelper.getInstalledWhatsAppPackage(context)
-            val isBusiness = (targetPkg == WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS) || (channel == ChannelType.WHATSAPP_BUSINESS)
+            val isBusiness = (targetPkg == WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS) ||
+                (channel == ChannelType.WHATSAPP_BUSINESS) ||
+                (channel == ChannelType.WHATSAPP_BUSINESS_GROUP) ||
+                (channel == ChannelType.WHATSAPP_BUSINESS_CALL) ||
+                (channel == ChannelType.WHATSAPP_BUSINESS_STATUS)
             val appLabel = if (isBusiness) "WhatsApp Business" else "WhatsApp"
 
             if (targetPkg == null) {
@@ -471,7 +480,11 @@ class TaskAccessibilityService : AccessibilityService() {
             pendingReturnToApp = returnToApp
             val targetPkg = targetPackage ?: (if (channel != null) WhatsAppPackageHelper.getPackageForChannel(context, channel) else null)
                 ?: WhatsAppPackageHelper.getInstalledWhatsAppPackage(context)
-            val isBusiness = targetPkg == WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS || channel == ChannelType.WHATSAPP_BUSINESS
+            val isBusiness = targetPkg == WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS ||
+                channel == ChannelType.WHATSAPP_BUSINESS ||
+                channel == ChannelType.WHATSAPP_BUSINESS_GROUP ||
+                channel == ChannelType.WHATSAPP_BUSINESS_CALL ||
+                channel == ChannelType.WHATSAPP_BUSINESS_STATUS
             val appLabel = if (isBusiness) "WhatsApp Business" else "WhatsApp"
 
             if (targetPkg == null) {
@@ -541,6 +554,24 @@ class TaskAccessibilityService : AccessibilityService() {
                     currentMode = DispatchMode.DIRECT_SEND
                 }
             }
+        }
+
+        /**
+         * Initiates dedicated WhatsApp or WhatsApp Business group discovery.
+         */
+        fun startWhatsAppGroupScan(
+            context: Context,
+            targetPackage: String? = null,
+            channel: ChannelType? = null,
+            returnToApp: Boolean = true
+        ) {
+            startWhatsAppChatScan(
+                context = context,
+                targetPackage = targetPackage,
+                channel = channel,
+                scanTarget = ScanTarget.GROUPS_ONLY,
+                returnToApp = returnToApp
+            )
         }
 
         /**
@@ -985,7 +1016,7 @@ class TaskAccessibilityService : AccessibilityService() {
 
                     val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                     val fullScreenNotification = NotificationCompat.Builder(appContext, HelperApplication.CHANNEL_TASKS)
-                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setSmallIcon(android.R.drawable.ic_lock_idle_lock)
                         .setContentTitle("Screen Unlock Test")
                         .setContentText("Waking screen and assisting lockscreen...")
                         .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -995,13 +1026,13 @@ class TaskAccessibilityService : AccessibilityService() {
                         .build()
                     notificationManager?.notify(9988, fullScreenNotification)
 
-                    val optionsBundle = if (Build.VERSION.SDK_INT >= 36) { // Build.VERSION_CODES.BAKLAVA
+                    val optionsBundle = if (Build.VERSION.SDK_INT >= 35) { // Android 15+ (Vanilla Ice Cream / Baklava)
                         ActivityOptions.makeBasic().apply {
                             pendingIntentBackgroundActivityStartMode = ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOW_ALWAYS
                         }.toBundle()
                     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                         ActivityOptions.makeBasic().apply {
-                            pendingIntentBackgroundActivityStartMode = ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
+                            pendingIntentBackgroundActivityStartMode = 1
                         }.toBundle()
                     } else {
                         null

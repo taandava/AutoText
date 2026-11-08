@@ -116,6 +116,7 @@ fun ComposeBottomBar(
                 onClick = onCancel,
                 variant = GlassButtonVariant.SECONDARY,
                 icon = Icons.Filled.Close,
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
                 modifier = Modifier.weight(1f)
             )
 
@@ -125,7 +126,8 @@ fun ComposeBottomBar(
                     onClick = onDelete,
                     variant = GlassButtonVariant.DANGER,
                     icon = Icons.Filled.DeleteOutline,
-                    modifier = Modifier.weight(1.1f)
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
+                    modifier = Modifier.weight(1f)
                 )
             }
 
@@ -134,7 +136,8 @@ fun ComposeBottomBar(
                 onClick = onSave,
                 variant = GlassButtonVariant.PRIMARY,
                 icon = if (isEditing) Icons.Filled.Check else Icons.Filled.Schedule,
-                modifier = Modifier.weight(1.8f)
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
+                modifier = Modifier.weight(if (isEditing && onDelete != null) 1.5f else 2f)
             )
         }
     }

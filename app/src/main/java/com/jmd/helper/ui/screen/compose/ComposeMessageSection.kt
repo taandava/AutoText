@@ -68,7 +68,11 @@ fun ComposeRecipientsAndMessageCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge
     ) {
-        // Recipients Header & Quick Pickers
+        val isWa = selectedChannel == ChannelType.WHATSAPP || selectedChannel == ChannelType.WHATSAPP_BUSINESS ||
+            selectedChannel == ChannelType.WHATSAPP_GROUP || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
+        val isBusiness = selectedChannel == ChannelType.WHATSAPP_BUSINESS || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
+
+        // Recipients Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -77,80 +81,96 @@ fun ComposeRecipientsAndMessageCard(
             Text(
                 "Recipients",
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 12.5.sp,
+                fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                if (selectedChannel == ChannelType.WHATSAPP || selectedChannel == ChannelType.WHATSAPP_BUSINESS) {
-                    val localCtx = LocalContext.current
-                    val isBusiness = selectedChannel == ChannelType.WHATSAPP_BUSINESS
-                    val targetPkg = if (isBusiness) WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS else WhatsAppPackageHelper.PACKAGE_WHATSAPP
-                    val labelPick = if (isBusiness) "Pick in W4B" else "Pick in WA"
-                    val labelContacts = if (isBusiness) "W4B Contacts" else "WA Contacts"
-                    GlassButton(
-                        text = labelPick,
-                        onClick = {
-                            TaskAccessibilityService.startManualChatPicker(localCtx, targetPackage = targetPkg, channel = selectedChannel) { chatInfo ->
-                                when (chatInfo.type) {
-                                    PickedChatType.STATUS -> {
-                                        localCtx.showAppToast("Status updates cannot be added as recipients")
+            if (selectedRecipients.isNotEmpty()) {
+                Text(
+                    "Clear All (${selectedRecipients.size})",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable { onClearAllRecipients() }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Quick Pickers Flow
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (isWa) {
+                val localCtx = LocalContext.current
+                val targetPkg = if (isBusiness) WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS else WhatsAppPackageHelper.PACKAGE_WHATSAPP
+                val labelPick = if (isBusiness) "Pick in W4B" else "Pick in WA"
+                val labelContacts = if (isBusiness) "W4B Contacts" else "WA Contacts"
+                GlassButton(
+                    text = labelPick,
+                    onClick = {
+                        TaskAccessibilityService.startManualChatPicker(localCtx, targetPackage = targetPkg, channel = selectedChannel) { chatInfo ->
+                            when (chatInfo.type) {
+                                PickedChatType.STATUS -> {
+                                    localCtx.showAppToast("Status updates cannot be added as recipients")
+                                }
+                                PickedChatType.CHANNEL -> {
+                                    localCtx.showAppToast("Channels cannot receive direct messages")
+                                }
+                                PickedChatType.BROADCAST -> {
+                                    onAddDirectRecipient?.invoke(chatInfo.title, "broadcast:${chatInfo.title}") ?: run {
+                                        onAddManualRecipient()
                                     }
-                                    PickedChatType.CHANNEL -> {
-                                        localCtx.showAppToast("Channels cannot receive direct messages")
+                                }
+                                PickedChatType.GROUP -> {
+                                    onAddDirectRecipient?.invoke(chatInfo.title, "group:${chatInfo.title}") ?: run {
+                                        onAddManualRecipient()
                                     }
-                                    PickedChatType.BROADCAST -> {
-                                        onAddDirectRecipient?.invoke(chatInfo.title, "broadcast:${chatInfo.title}") ?: run {
-                                            onAddManualRecipient()
-                                        }
-                                    }
-                                    PickedChatType.GROUP -> {
-                                        onAddDirectRecipient?.invoke(chatInfo.title, "group:${chatInfo.title}") ?: run {
-                                            onAddManualRecipient()
-                                        }
-                                    }
-                                    PickedChatType.INDIVIDUAL -> {
-                                        val clean = chatInfo.title
-                                        val repo = AppRepository(localCtx)
-                                        val phoneFromRepo = repo.findPhoneForContactName(clean)
-                                        val resolvedPhone = chatInfo.phoneOrId ?: phoneFromRepo ?: clean
-                                        onAddDirectRecipient?.invoke(clean, resolvedPhone) ?: run {
-                                            onAddManualRecipient()
-                                        }
+                                }
+                                PickedChatType.INDIVIDUAL -> {
+                                    val clean = chatInfo.title
+                                    val repo = AppRepository(localCtx)
+                                    val phoneFromRepo = repo.findPhoneForContactName(clean)
+                                    val resolvedPhone = chatInfo.phoneOrId ?: phoneFromRepo ?: clean
+                                    onAddDirectRecipient?.invoke(clean, resolvedPhone) ?: run {
+                                        onAddManualRecipient()
                                     }
                                 }
                             }
-                        },
-                        variant = GlassButtonVariant.PRIMARY,
-                        icon = Icons.Default.Add,
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 5.dp),
-                        shape = AppDesignTokens.ShapePill
-                    )
-                    GlassButton(
-                        text = labelContacts,
-                        onClick = onOpenWhatsAppContacts,
-                        variant = GlassButtonVariant.SECONDARY,
-                        icon = Icons.AutoMirrored.Filled.Send,
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 5.dp),
-                        shape = AppDesignTokens.ShapePill
-                    )
-                }
-                GlassButton(
-                    text = "From Pool",
-                    onClick = onOpenPoolPicker,
-                    variant = GlassButtonVariant.SECONDARY,
-                    icon = Icons.Default.Group,
-                    contentPadding = PaddingValues(horizontal = 9.dp, vertical = 5.dp),
+                        }
+                    },
+                    variant = GlassButtonVariant.PRIMARY,
+                    icon = Icons.Default.Add,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                     shape = AppDesignTokens.ShapePill
                 )
                 GlassButton(
-                    text = "Contacts",
-                    onClick = onOpenContactsPicker,
+                    text = labelContacts,
+                    onClick = onOpenWhatsAppContacts,
                     variant = GlassButtonVariant.SECONDARY,
-                    icon = Icons.Default.Contacts,
-                    contentPadding = PaddingValues(horizontal = 9.dp, vertical = 5.dp),
+                    icon = Icons.AutoMirrored.Filled.Send,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                     shape = AppDesignTokens.ShapePill
                 )
             }
+            GlassButton(
+                text = "From Pool",
+                onClick = onOpenPoolPicker,
+                variant = GlassButtonVariant.SECONDARY,
+                icon = Icons.Default.Group,
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                shape = AppDesignTokens.ShapePill
+            )
+            GlassButton(
+                text = "Device Contacts",
+                onClick = onOpenContactsPicker,
+                variant = GlassButtonVariant.SECONDARY,
+                icon = Icons.Default.Contacts,
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                shape = AppDesignTokens.ShapePill
+            )
         }
 
         // Duplicate Warning Banner
@@ -330,8 +350,8 @@ fun ComposeRecipientsAndMessageCard(
         }
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Media Attachment Selector for WhatsApp & WA Business
-        if (selectedChannel == ChannelType.WHATSAPP || selectedChannel == ChannelType.WHATSAPP_BUSINESS) {
+        // Media Attachment Selector for WhatsApp, WA Business & Groups
+        if (isWa) {
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),

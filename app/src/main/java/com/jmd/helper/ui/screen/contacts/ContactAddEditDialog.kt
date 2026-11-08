@@ -6,16 +6,16 @@
  * Handles validation and persistence into [AppRepository].
  */
 package com.jmd.helper.ui.screen.contacts
-import androidx.compose.material3.MaterialTheme
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -90,33 +90,45 @@ fun AddEditContactView(
                 }
             }
 
-            GlassButton(
-                text = if (editingRecipient != null) "Update Contact" else "Save Contact",
-                icon = Icons.Default.Check,
-                onClick = {
-                    if (contactPhone.isNotBlank()) {
-                        val nameToSave = contactName.trim().ifBlank { contactPhone.trim() }
-                        val wasEditing = editingRecipient != null
-                        if (editingRecipient != null) {
-                            repository.updateRecipient(
-                                editingRecipient.copy(
-                                    name = nameToSave,
-                                    phoneOrEmail = contactPhone.trim()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                GlassButton(
+                    text = "Cancel",
+                    icon = Icons.Default.Close,
+                    onClick = onBack,
+                    variant = GlassButtonVariant.SECONDARY,
+                    modifier = Modifier.weight(1f)
+                )
+                GlassButton(
+                    text = if (editingRecipient != null) "Update" else "Save",
+                    icon = Icons.Default.Check,
+                    onClick = {
+                        if (contactPhone.isNotBlank()) {
+                            val nameToSave = contactName.trim().ifBlank { contactPhone.trim() }
+                            val wasEditing = editingRecipient != null
+                            if (editingRecipient != null) {
+                                repository.updateRecipient(
+                                    editingRecipient.copy(
+                                        name = nameToSave,
+                                        phoneOrEmail = contactPhone.trim()
+                                    )
                                 )
-                            )
-                        } else {
-                            repository.insertRecipient(
-                                RecipientItem(name = nameToSave, phoneOrEmail = contactPhone.trim())
-                            )
+                            } else {
+                                repository.insertRecipient(
+                                    RecipientItem(name = nameToSave, phoneOrEmail = contactPhone.trim())
+                                )
+                            }
+                            context.showAppToast(if (wasEditing) "Contact updated!" else "Contact added!")
+                            onSaved()
                         }
-                        context.showAppToast(if (wasEditing) "Contact updated!" else "Contact added!")
-                        onSaved()
-                    }
-                },
-                enabled = contactPhone.isNotBlank(),
-                variant = GlassButtonVariant.PRIMARY,
-                modifier = Modifier.fillMaxWidth()
-            )
+                    },
+                    enabled = contactPhone.isNotBlank(),
+                    variant = GlassButtonVariant.PRIMARY,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }

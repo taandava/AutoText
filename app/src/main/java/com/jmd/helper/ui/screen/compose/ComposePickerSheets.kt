@@ -405,12 +405,17 @@ fun WhatsAppContactsPickerSheet(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val isBusiness = selectedChannel == ChannelType.WHATSAPP_BUSINESS || selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL
+    val isBusiness = selectedChannel == ChannelType.WHATSAPP_BUSINESS ||
+        selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP ||
+        selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL ||
+        selectedChannel == ChannelType.WHATSAPP_BUSINESS_STATUS
     val isCalling = selectedChannel == ChannelType.CALL || selectedChannel == ChannelType.WHATSAPP_CALL || selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL
     val targetPkg = if (isBusiness) "com.whatsapp.w4b" else "com.whatsapp"
     val sheetTitle = when {
         selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL -> "Select WA Business Call Contacts"
         selectedChannel == ChannelType.WHATSAPP_CALL -> "Select WhatsApp Call Contacts"
+        selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP -> "Select WA Business Groups"
+        selectedChannel == ChannelType.WHATSAPP_GROUP -> "Select WhatsApp Groups"
         isBusiness -> "Select WA Business Contacts"
         else -> "Select WhatsApp Contacts"
     }
@@ -494,101 +499,39 @@ fun WhatsAppContactsPickerSheet(
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                     .statusBarsPadding()
-                    .padding(horizontal = 14.dp, vertical = 10.dp)
+                    .padding(horizontal = 14.dp, vertical = 12.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f, fill = false)) {
-                        IconButton(
-                            onClick = onDismiss,
-                            modifier = Modifier.size(28.dp)
-                        ) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text(
-                                sheetTitle,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                "${waContacts.size} verified $appLabel accounts & chats",
-                                fontSize = 11.5.sp,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.size(32.dp)
                     ) {
-                        GlassButton(
-                            text = if (isScanning) "Scanning..." else scanLabel,
-                            onClick = {
-                                if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                                    try {
-                                        permissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
-                                    } catch (e: Exception) {
-                                        Log.w("ComposeTaskScreen", "Permission launch failed: ${e.message}")
-                                    }
-                                }
-                                if (!isScanning) {
-                                    isScanning = true
-                                    scope.launch(Dispatchers.IO) {
-                                        try {
-                                            val scanner = ContactIngestionEngine(context, repository)
-                                            val summary = scanner.scanAndIngestAll()
-                                            val refreshed = repository.getWhatsAppContacts(query = waSearch, channel = selectedChannel, limit = 10000)
-                                            withContext(Dispatchers.Main) {
-                                                waContacts = refreshed
-                                                isScanning = false
-                                                context.showAppToast("Synced ${summary.newAdded} $appLabel contacts & chats", isLong = true)
-                                            }
-                                        } catch (t: Throwable) {
-                                            Log.e("WhatsAppContacts", "Error during contacts scan", t)
-                                            withContext(Dispatchers.Main) {
-                                                isScanning = false
-                                                context.showAppToast("Scan error: ${t.localizedMessage ?: "Unknown"}")
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            variant = GlassButtonVariant.SECONDARY,
-                            icon = Icons.Default.Sync,
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 5.dp),
-                            shape = AppDesignTokens.ShapePill
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp)
                         )
-                        GlassButton(
-                            text = harvestLabel,
-                            onClick = {
-                                TaskAccessibilityService.startWhatsAppChatScan(
-                                    context,
-                                    targetPackage = targetPkg,
-                                    channel = selectedChannel,
-                                    scanTarget = WhatsAppChatScanner.ScanTarget.ALL_CHATS
-                                )
-                                onDismiss()
-                            },
-                            variant = GlassButtonVariant.SECONDARY,
-                            icon = Icons.AutoMirrored.Filled.Send,
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 5.dp),
-                            shape = AppDesignTokens.ShapePill
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            sheetTitle,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            "${waContacts.size} verified $appLabel accounts & chats",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -632,11 +575,89 @@ fun WhatsAppContactsPickerSheet(
                 .padding(padding)
                 .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
+            // Action buttons row for Sync Contacts, Harvest Chats, and Harvest Groups
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                GlassButton(
+                    text = if (isScanning) "Syncing..." else scanLabel,
+                    onClick = {
+                        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                            try {
+                                permissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+                            } catch (e: Exception) {
+                                Log.w("ComposeTaskScreen", "Permission launch failed: ${e.message}")
+                            }
+                        }
+                        if (!isScanning) {
+                            isScanning = true
+                            scope.launch(Dispatchers.IO) {
+                                try {
+                                    val scanner = ContactIngestionEngine(context, repository)
+                                    val summary = scanner.scanAndIngestAll()
+                                    val refreshed = repository.getWhatsAppContacts(query = waSearch, channel = selectedChannel, limit = 10000)
+                                    withContext(Dispatchers.Main) {
+                                        waContacts = refreshed
+                                        isScanning = false
+                                        context.showAppToast("Synced ${summary.newAdded} $appLabel contacts & chats", isLong = true)
+                                    }
+                                } catch (t: Throwable) {
+                                    Log.e("WhatsAppContacts", "Error during contacts scan", t)
+                                    withContext(Dispatchers.Main) {
+                                        isScanning = false
+                                        context.showAppToast("Scan error: ${t.localizedMessage ?: "Unknown"}")
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    variant = GlassButtonVariant.SECONDARY,
+                    icon = Icons.Default.Sync,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    shape = AppDesignTokens.ShapePill
+                )
+                GlassButton(
+                    text = harvestLabel,
+                    onClick = {
+                        TaskAccessibilityService.startWhatsAppChatScan(
+                            context,
+                            targetPackage = targetPkg,
+                            channel = selectedChannel,
+                            scanTarget = WhatsAppChatScanner.ScanTarget.ALL_CHATS
+                        )
+                        onDismiss()
+                    },
+                    variant = GlassButtonVariant.SECONDARY,
+                    icon = Icons.AutoMirrored.Filled.Send,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    shape = AppDesignTokens.ShapePill
+                )
+                GlassButton(
+                    text = if (isBusiness) "Harvest Groups (W4B)" else "Harvest Groups (WA)",
+                    onClick = {
+                        TaskAccessibilityService.startWhatsAppGroupScan(
+                            context,
+                            targetPackage = targetPkg,
+                            channel = selectedChannel
+                        )
+                        onDismiss()
+                    },
+                    variant = GlassButtonVariant.PRIMARY,
+                    icon = Icons.Default.Groups,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    shape = AppDesignTokens.ShapePill
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             GlassInputField(
                 value = waSearch,
                 onValueChange = { waSearch = it },
-                label = "Search $appLabel Contacts",
-                placeholder = "Type name or phone number...",
+                label = "Search $appLabel Contacts & Groups",
+                placeholder = "Type name, phone, or group...",
                 leadingIcon = Icons.Default.Search,
                 accentColor = MaterialTheme.colorScheme.tertiary
             )

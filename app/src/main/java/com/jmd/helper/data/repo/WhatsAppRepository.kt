@@ -47,7 +47,7 @@ class WhatsAppRepository(private val context: Context) {
      */
     fun isValidPickedChatName(name: String): Boolean {
         val trimmed = name.trim().removePrefix("~").trim()
-        if (trimmed.length !in 1..80) return false
+        if (trimmed.length !in 1..150) return false
         if (trimmed.contains("\n") || trimmed.contains("\r")) return false
 
         val lower = trimmed.lowercase()
@@ -60,7 +60,13 @@ class WhatsAppRepository(private val context: Context) {
             "last seen", "swipe down to reveal", "swipe down", "select all",
             "starred messages", "linked devices", "clear call log", "mute notifications",
             "yesterday", "today", "status", "my status", "channels", "communities",
-            "new group", "new community", "new broadcast"
+            "new group", "new community", "new broadcast",
+            "hidden updates", "find channels to follow", "explore more", "create channel",
+            "inbox filters", "radio group", "add status", "recent updates", "view updates",
+            "muted updates", "recent searches", "clear all", "all filter", "groups filter",
+            "unread filter", "favorites filter", "new customer filter", "new order filter",
+            "ask meta ai or search", "search group chats", "search chats",
+            "manage groups", "manage group"
         )
         return !blockedExactOrPrefix.any { lower == it || lower.startsWith("$it ") || lower.startsWith("$it…") || lower.startsWith("$it...") }
     }
@@ -175,6 +181,55 @@ class WhatsAppRepository(private val context: Context) {
         return null
     }
 
+    /**
+     * Checks whether a contact has a verified numeric cellular phone number (excluding group/chat virtual identifiers).
+     * Performs strict exact name matching only to avoid false positives on groups sharing substrings with contacts.
+     */
+    fun hasCellularPhoneContact(name: String): Boolean {
+        val cleanName = name.trim().removePrefix("~").trim()
+        if (cleanName.isBlank()) return false
+
+        // 1. Check exact match in custom recipients
+        try {
+            val db = dbHelper.readableDatabase
+            db.rawQuery(
+                "SELECT phone_or_email FROM ${DatabaseHelper.TABLE_RECIPIENTS} WHERE LOWER(TRIM(name)) = LOWER(TRIM(?)) AND phone_or_email != '' LIMIT 1",
+                arrayOf(cleanName)
+            ).use { c ->
+                if (c.moveToNext()) {
+                    val p = c.getString(0).orEmpty().trim()
+                    val digits = p.filter { it.isDigit() }
+                    if (digits.length >= 7 && !p.startsWith("group:", ignoreCase = true) && !p.startsWith("chat:", ignoreCase = true)) {
+                        return true
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        // 2. Check strict exact match in device ContactsContract
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            try {
+                context.contentResolver.query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+                    "LOWER(TRIM(${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME})) = LOWER(TRIM(?)) OR LOWER(TRIM(${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME_PRIMARY})) = LOWER(TRIM(?))",
+                    arrayOf(cleanName, cleanName),
+                    null
+                )?.use { c ->
+                    if (c.moveToNext()) {
+                        val p = c.getString(0).orEmpty().trim()
+                        val digits = p.filter { it.isDigit() }
+                        if (digits.length >= 7) {
+                            return true
+                        }
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+
+        return false
+    }
+
     fun findPhotoForContactName(name: String): String {
         val cleanName = name.trim().removePrefix("~").trim()
         if (cleanName.isBlank()) return ""
@@ -277,7 +332,8 @@ class WhatsAppRepository(private val context: Context) {
     ): List<WhatsAppContactItem> {
         val map = LinkedHashMap<String, WhatsAppContactItem>()
         val queryLower = query.trim().lowercase()
-        val isBusiness = channel == ChannelType.WHATSAPP_BUSINESS
+        val isGroupChannel = channel == ChannelType.WHATSAPP_GROUP || channel == ChannelType.WHATSAPP_BUSINESS_GROUP
+        val isBusiness = channel == ChannelType.WHATSAPP_BUSINESS || channel == ChannelType.WHATSAPP_BUSINESS_GROUP
 
         // Helper to check match
         fun matchesQuery(name: String, phone: String, norm: String): Boolean =
@@ -286,31 +342,54 @@ class WhatsAppRepository(private val context: Context) {
         // 1. Query TABLE_DYNAMIC_POOL (Main Pool) with channel prioritization
         try {
             val db = dbHelper.readableDatabase
-            val poolSql = if (isBusiness) {
-                """
-                SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
-                FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
-                WHERE enabled = 1
-                ORDER BY CASE
-                    WHEN source = 'WA_BUSINESS' THEN 0
-                    WHEN source = 'WA_BUSINESS_GROUP' THEN 1
-                    WHEN source = 'WA_CHAT' THEN 2
-                    WHEN source = 'WA_GROUP' THEN 3
-                    ELSE 4 END, name ASC
-                LIMIT ?
+            val poolSql = when {
+                isGroupChannel && isBusiness -> """
+                    SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
+                    FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
+                    WHERE enabled = 1
+                    ORDER BY CASE
+                        WHEN source = 'WA_BUSINESS_GROUP' THEN 0
+                        WHEN source = 'WA_GROUP' THEN 1
+                        WHEN source = 'WA_BUSINESS' THEN 2
+                        WHEN source = 'WA_CHAT' THEN 3
+                        ELSE 4 END, name ASC
+                    LIMIT ?
                 """.trimIndent()
-            } else {
-                """
-                SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
-                FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
-                WHERE enabled = 1
-                ORDER BY CASE
-                    WHEN source = 'WA_CHAT' THEN 0
-                    WHEN source = 'WA_GROUP' THEN 1
-                    WHEN source = 'WA_BUSINESS' THEN 2
-                    WHEN source = 'WA_BUSINESS_GROUP' THEN 3
-                    ELSE 4 END, name ASC
-                LIMIT ?
+                isGroupChannel -> """
+                    SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
+                    FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
+                    WHERE enabled = 1
+                    ORDER BY CASE
+                        WHEN source = 'WA_GROUP' THEN 0
+                        WHEN source = 'WA_BUSINESS_GROUP' THEN 1
+                        WHEN source = 'WA_CHAT' THEN 2
+                        WHEN source = 'WA_BUSINESS' THEN 3
+                        ELSE 4 END, name ASC
+                    LIMIT ?
+                """.trimIndent()
+                isBusiness -> """
+                    SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
+                    FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
+                    WHERE enabled = 1
+                    ORDER BY CASE
+                        WHEN source = 'WA_BUSINESS' THEN 0
+                        WHEN source = 'WA_BUSINESS_GROUP' THEN 1
+                        WHEN source = 'WA_CHAT' THEN 2
+                        WHEN source = 'WA_GROUP' THEN 3
+                        ELSE 4 END, name ASC
+                    LIMIT ?
+                """.trimIndent()
+                else -> """
+                    SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
+                    FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
+                    WHERE enabled = 1
+                    ORDER BY CASE
+                        WHEN source = 'WA_CHAT' THEN 0
+                        WHEN source = 'WA_GROUP' THEN 1
+                        WHEN source = 'WA_BUSINESS' THEN 2
+                        WHEN source = 'WA_BUSINESS_GROUP' THEN 3
+                        ELSE 4 END, name ASC
+                    LIMIT ?
                 """.trimIndent()
             }
             db.rawQuery(poolSql, arrayOf(limit.toString())).use { c ->
@@ -500,15 +579,50 @@ class WhatsAppRepository(private val context: Context) {
     }
 
     /**
-     * Clears all saved WhatsApp groups from the local database and drops the table.
+     * Clears saved WhatsApp groups for a specific source (WA_GROUP or WA_BUSINESS_GROUP),
+     * or all groups if source is omitted.
      */
-    fun deleteAllWhatsAppGroups(): Int {
+    fun deleteAllWhatsAppGroups(source: String? = null): Int {
         return try {
             val db = dbHelper.writableDatabase
-            db.execSQL("DROP TABLE IF EXISTS ${DatabaseHelper.TABLE_WHATSAPP_GROUPS}")
-            0
+            if (source.isNullOrBlank()) {
+                db.delete(
+                    DatabaseHelper.TABLE_DYNAMIC_POOL,
+                    "source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%'",
+                    null
+                )
+            } else {
+                db.delete(
+                    DatabaseHelper.TABLE_DYNAMIC_POOL,
+                    "source = ? OR (source = ? AND phone LIKE 'group:%')",
+                    arrayOf(source, source)
+                )
+            }
         } catch (e: Exception) {
-            Log.e("WhatsAppRepo", "Failed dropping groups table: ${e.message}")
+            Log.e("WhatsAppRepo", "Failed clearing groups: ${e.message}")
+            0
+        }
+    }
+
+    /**
+     * Purges corrupted or misclassified groups from the dynamic pool (e.g. system footers or contacts mislabeled as groups).
+     */
+    fun purgeCorruptedGroupsFromPool(): Int {
+        return try {
+            val db = dbHelper.writableDatabase
+            val count = db.delete(
+                DatabaseHelper.TABLE_DYNAMIC_POOL,
+                "(source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%') AND (" +
+                    "LOWER(name) IN ('hidden updates', 'find channels to follow', 'explore more', 'create channel', 'inbox filters', 'radio group', 'add status', 'recent updates', 'recent searches', 'clear all', 'ask meta ai or search', 'search group chats', 'search chats', 'manage groups', 'manage group') " +
+                    "OR phone IN ('group:Hidden updates', 'group:Find channels to follow', 'group:Explore more', 'group:Create channel', 'group:Inbox filters', 'group:Recent updates', 'group:Add status', 'group:Manage Groups', 'group:Manage groups') " +
+                    "OR normalized_number IN ('group:hidden updates', 'group:find channels to follow', 'group:explore more', 'group:create channel', 'group:inbox filters', 'group:recent updates', 'group:add status', 'group:manage groups')" +
+                ")",
+                null
+            )
+            Log.i("WhatsAppRepo", "Purged $count corrupted group entries from dynamic pool")
+            count
+        } catch (e: Exception) {
+            Log.w("WhatsAppRepo", "purgeCorruptedGroupsFromPool failed: ${e.message}")
             0
         }
     }

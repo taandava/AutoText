@@ -41,10 +41,18 @@ class AccessibilityWatchdogWorker(
             val prefs = PreferenceManager(applicationContext)
             val fg = TaskAccessibilityService.currentForegroundPackage
             val isBanking = fg != null && (TaskAccessibilityService.isFinancialOrBankingPackage(fg) || ProtectedApplicationManager.isProtectedPackage(fg))
-            if (!prefs.isA11yUserPaused && !isBanking) {
-                AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
+            val shouldReviveA11y = if (prefs.isDynamicA11yOnDemandEnabled) {
+                TaskAccessibilityService.isDispatchingActive()
             } else {
-                Log.d(TAG, "Watchdog skipping auto-heal: banking app or user paused active")
+                true
+            }
+            if (!prefs.isA11yUserPaused && !isBanking && shouldReviveA11y) {
+                AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
+            } else if (prefs.isDynamicA11yOnDemandEnabled && !TaskAccessibilityService.isDispatchingActive() && AccessibilityHealthManager.isAccessibilityEnabledInSystem(applicationContext)) {
+                AccessibilityHealthManager.disableAccessibilityService(applicationContext)
+                Log.d(TAG, "Watchdog: Detached idle on-demand accessibility service")
+            } else {
+                Log.d(TAG, "Watchdog skipping auto-heal: banking app, idle on-demand, or user paused active")
             }
             AccessibilityHealthManager.healNotificationListener(applicationContext)
             AccessibilityHealthManager.recordHeartbeat()

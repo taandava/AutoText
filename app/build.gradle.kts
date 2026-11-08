@@ -76,6 +76,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    tasks.withType<JavaCompile>().configureEach {
+        enabled = false
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true

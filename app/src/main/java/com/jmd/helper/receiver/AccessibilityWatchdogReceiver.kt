@@ -47,12 +47,20 @@ class AccessibilityWatchdogReceiver : BroadcastReceiver() {
             val fg = TaskAccessibilityService.currentForegroundPackage
             val isBanking = fg != null && (TaskAccessibilityService.isFinancialOrBankingPackage(fg) || ProtectedApplicationManager.isProtectedPackage(fg))
             val isA11yDead = !AccessibilityHealthManager.isServiceRunning() || heartbeatStale
+            val shouldReviveA11y = if (prefs.isDynamicA11yOnDemandEnabled) {
+                TaskAccessibilityService.isDispatchingActive() && isA11yDead
+            } else {
+                isA11yDead
+            }
 
-            if (isA11yDead && !prefs.isA11yUserPaused && !isBanking) {
-                Log.d(TAG, "Watchdog heartbeat tick: A11y dead or stale (stale=$heartbeatStale). Reviving services...")
+            if (shouldReviveA11y && !prefs.isA11yUserPaused && !isBanking) {
+                Log.d(TAG, "Watchdog heartbeat tick: A11y dead or stale while dispatching. Reviving services...")
                 AccessibilityHealthManager.ensureAllServicesActive(context)
-            } else if (isBanking) {
-                Log.d(TAG, "Watchdog heartbeat tick: Banking app active in foreground ($fg); keeping a11y detached.")
+            } else if (isBanking || (prefs.isDynamicA11yOnDemandEnabled && !TaskAccessibilityService.isDispatchingActive())) {
+                if (prefs.isDynamicA11yOnDemandEnabled && !TaskAccessibilityService.isDispatchingActive() && AccessibilityHealthManager.isAccessibilityEnabledInSystem(context)) {
+                    AccessibilityHealthManager.disableAccessibilityService(context)
+                }
+                Log.d(TAG, "Watchdog heartbeat tick: On-demand idle or banking active; keeping a11y detached.")
             }
             AccessibilityHealthManager.healNotificationListener(context)
             AccessibilityHealthManager.recordHeartbeat()

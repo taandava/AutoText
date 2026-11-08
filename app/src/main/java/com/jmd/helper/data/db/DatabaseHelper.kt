@@ -194,9 +194,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         super.onOpen(db)
         ensureDynamicPoolTables(db)
         pruneLegacyPoolAndGroupRows(db)
-        // Permanently drop legacy WhatsApp groups table and prune any group leads from pool
-        runCatching { db.execSQL("DROP TABLE IF EXISTS $TABLE_WHATSAPP_GROUPS") }
-        runCatching { db.execSQL("DELETE FROM $TABLE_DYNAMIC_POOL WHERE normalized_number LIKE 'group:%' OR source = 'WA_GROUP'") }
     }
 
     /**
@@ -283,7 +280,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             db.execSQL(
                 "DELETE FROM $TABLE_DYNAMIC_POOL " +
                     "WHERE phone NOT LIKE 'group:%' AND phone NOT LIKE 'chat:%' AND phone NOT LIKE 'broadcast:%' " +
-                    "AND source NOT IN ('WA_CHAT', 'WA_BUSINESS', 'WA_GROUP', 'WA_BROADCAST', 'WA_STATUS') " +
+                    "AND source NOT IN ('WA_CHAT', 'WA_BUSINESS', 'WA_GROUP', 'WA_BUSINESS_GROUP', 'WA_BROADCAST', 'WA_STATUS') " +
                     "AND (normalized_number IS NULL OR LENGTH(TRIM(normalized_number)) < 7) " +
                     "AND (phone IS NULL OR LENGTH(TRIM(phone)) < 7)"
             )

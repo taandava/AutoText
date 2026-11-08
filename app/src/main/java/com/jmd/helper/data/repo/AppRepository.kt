@@ -582,13 +582,15 @@ class AppRepository(private val context: Context) {
     // ==================== WHATSAPP CONTACTS ====================
     fun isValidPickedChatName(name: String): Boolean = whatsAppRepo.isValidPickedChatName(name)
     fun findPhoneForContactName(name: String): String? = whatsAppRepo.findPhoneForContactName(name)
+    fun hasCellularPhoneContact(name: String): Boolean = whatsAppRepo.hasCellularPhoneContact(name)
     fun findPhotoForContactName(name: String): String = whatsAppRepo.findPhotoForContactName(name)
     fun findContactByPhone(phone: String): Pair<String, String>? = whatsAppRepo.findContactByPhone(phone)
     fun getWhatsAppContacts(query: String = "", channel: ChannelType = ChannelType.WHATSAPP, limit: Int = 10000): List<WhatsAppContactItem> =
         whatsAppRepo.getWhatsAppContacts(query, channel, limit)
 
     // ==================== WHATSAPP DATA CLEANUP ====================
-    fun deleteAllWhatsAppGroups(): Int = whatsAppRepo.deleteAllWhatsAppGroups()
+    fun deleteAllWhatsAppGroups(source: String? = null): Int = whatsAppRepo.deleteAllWhatsAppGroups(source)
+    fun purgeCorruptedGroupsFromPool(): Int = whatsAppRepo.purgeCorruptedGroupsFromPool()
 
     // ==================== BACKUP ====================
     fun exportDatabaseToJson(): String = backupRepo.exportDatabaseToJson()

@@ -311,48 +311,47 @@ fun ComposePhoneCallCard(
         Spacer(modifier = Modifier.height(10.dp))
 
         // Quick Picker Buttons
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                if (isWaCalling && onOpenWhatsAppContacts != null) {
-                    GlassButton(
-                        text = if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) "W4B Contacts" else "WA Contacts",
-                        onClick = onOpenWhatsAppContacts,
-                        variant = GlassButtonVariant.PRIMARY,
-                        icon = Icons.AutoMirrored.Filled.Chat,
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
-                        shape = AppDesignTokens.ShapePill
-                    )
-                }
-                if (isWaCalling && onOpenWhatsAppPicker != null) {
-                    GlassButton(
-                        text = if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) "Pick in W4B" else "Pick in WA",
-                        onClick = onOpenWhatsAppPicker,
-                        variant = GlassButtonVariant.PRIMARY,
-                        icon = Icons.Default.Add,
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
-                        shape = AppDesignTokens.ShapePill
-                    )
-                }
+            if (isWaCalling && onOpenWhatsAppPicker != null) {
                 GlassButton(
-                    text = "From Pool",
-                    onClick = onOpenPoolPicker,
-                    variant = GlassButtonVariant.SECONDARY,
-                    icon = Icons.Default.Group,
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
-                    shape = AppDesignTokens.ShapePill
-                )
-                GlassButton(
-                    text = "Contacts",
-                    onClick = onOpenContactsPicker,
+                    text = if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) "Pick in W4B" else "Pick in WA",
+                    onClick = onOpenWhatsAppPicker,
                     variant = GlassButtonVariant.PRIMARY,
-                    icon = Icons.Default.Contacts,
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
+                    icon = Icons.Default.Add,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                     shape = AppDesignTokens.ShapePill
                 )
             }
+            if (isWaCalling && onOpenWhatsAppContacts != null) {
+                GlassButton(
+                    text = if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) "W4B Contacts" else "WA Contacts",
+                    onClick = onOpenWhatsAppContacts,
+                    variant = GlassButtonVariant.SECONDARY,
+                    icon = Icons.AutoMirrored.Filled.Chat,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    shape = AppDesignTokens.ShapePill
+                )
+            }
+            GlassButton(
+                text = "From Pool",
+                onClick = onOpenPoolPicker,
+                variant = GlassButtonVariant.SECONDARY,
+                icon = Icons.Default.Group,
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                shape = AppDesignTokens.ShapePill
+            )
+            GlassButton(
+                text = "Device Contacts",
+                onClick = onOpenContactsPicker,
+                variant = GlassButtonVariant.PRIMARY,
+                icon = Icons.Default.Contacts,
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                shape = AppDesignTokens.ShapePill
+            )
         }
 
         // Duplicate Warning Banner

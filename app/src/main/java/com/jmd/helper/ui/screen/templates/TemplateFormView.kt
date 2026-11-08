@@ -143,35 +143,47 @@ fun TemplateFormView(
                 }
             }
 
-            GlassButton(
-                text = if (editingTemplate != null) "Update Template" else "Save Template",
-                onClick = {
-                    if (formTitle.isNotBlank() && formContent.isNotBlank()) {
-                        if (editingTemplate != null) {
-                            repository.updateTemplate(
-                                editingTemplate.copy(
-                                    title = formTitle.trim(),
-                                    category = formCategory.trim(),
-                                    content = formContent.trim()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                GlassButton(
+                    text = "Cancel",
+                    onClick = onBack,
+                    variant = GlassButtonVariant.SECONDARY,
+                    modifier = Modifier.weight(1f)
+                )
+                GlassButton(
+                    text = if (editingTemplate != null) "Update Template" else "Save Template",
+                    onClick = {
+                        if (formTitle.isNotBlank() && formContent.isNotBlank()) {
+                            if (editingTemplate != null) {
+                                repository.updateTemplate(
+                                    editingTemplate.copy(
+                                        title = formTitle.trim(),
+                                        category = formCategory.trim(),
+                                        content = formContent.trim()
+                                    )
                                 )
-                            )
-                        } else {
-                            repository.insertTemplate(
-                                MessageTemplate(
-                                    title = formTitle.trim(),
-                                    category = formCategory.trim(),
-                                    content = formContent.trim()
+                            } else {
+                                repository.insertTemplate(
+                                    MessageTemplate(
+                                        title = formTitle.trim(),
+                                        category = formCategory.trim(),
+                                        content = formContent.trim()
+                                    )
                                 )
-                            )
+                            }
+                            onSaved()
                         }
-                        onSaved()
-                    }
-                },
-                icon = Icons.Filled.Save,
-                variant = GlassButtonVariant.PRIMARY,
-                enabled = formTitle.isNotBlank() && formContent.isNotBlank(),
-                modifier = Modifier.fillMaxWidth()
-            )
+                    },
+                    icon = Icons.Filled.Save,
+                    variant = GlassButtonVariant.PRIMARY,
+                    enabled = formTitle.isNotBlank() && formContent.isNotBlank(),
+                    modifier = Modifier.weight(1.5f)
+                )
+            }
         }
     }
 }

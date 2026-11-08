@@ -583,7 +583,7 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit { putBoolean(KEY_SMART_A11Y_SCOPING, value) }
 
     var isDynamicA11yOnDemandEnabled: Boolean
-        get() = prefs.getBoolean(KEY_DYNAMIC_A11Y_ON_DEMAND, false)
+        get() = prefs.getBoolean(KEY_DYNAMIC_A11Y_ON_DEMAND, true)
         set(value) = prefs.edit { putBoolean(KEY_DYNAMIC_A11Y_ON_DEMAND, value) }
 
     var isA11yUserPaused: Boolean
