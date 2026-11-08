@@ -346,25 +346,21 @@ class WhatsAppRepository(private val context: Context) {
                 isGroupChannel && isBusiness -> """
                     SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
                     FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
-                    WHERE enabled = 1
+                    WHERE enabled = 1 AND (source IN ('WA_BUSINESS_GROUP', 'WA_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%')
                     ORDER BY CASE
                         WHEN source = 'WA_BUSINESS_GROUP' THEN 0
                         WHEN source = 'WA_GROUP' THEN 1
-                        WHEN source = 'WA_BUSINESS' THEN 2
-                        WHEN source = 'WA_CHAT' THEN 3
-                        ELSE 4 END, name ASC
+                        ELSE 2 END, name ASC
                     LIMIT ?
                 """.trimIndent()
                 isGroupChannel -> """
                     SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
                     FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
-                    WHERE enabled = 1
+                    WHERE enabled = 1 AND (source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%')
                     ORDER BY CASE
                         WHEN source = 'WA_GROUP' THEN 0
                         WHEN source = 'WA_BUSINESS_GROUP' THEN 1
-                        WHEN source = 'WA_CHAT' THEN 2
-                        WHEN source = 'WA_BUSINESS' THEN 3
-                        ELSE 4 END, name ASC
+                        ELSE 2 END, name ASC
                     LIMIT ?
                 """.trimIndent()
                 isBusiness -> """
@@ -426,7 +422,7 @@ class WhatsAppRepository(private val context: Context) {
         }
 
         // 2. Query ContactsContract.Data for WhatsApp sync profiles if supported
-        if (map.size < limit && ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+        if (!isGroupChannel && map.size < limit && ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             try {
                 val resolver = context.contentResolver
                 val profileMime = if (isBusiness) "vnd.android.cursor.item/vnd.com.whatsapp.w4b.profile" else "vnd.android.cursor.item/vnd.com.whatsapp.profile"
@@ -495,7 +491,7 @@ class WhatsAppRepository(private val context: Context) {
         }
 
         // 4. Fill with General Contacts (ContactsContract.CommonDataKinds.Phone) if still below limit
-        if (map.size < limit && ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+        if (!isGroupChannel && map.size < limit && ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             try {
                 val resolver = context.contentResolver
                 val selection = if (queryLower.isNotBlank()) {
@@ -613,9 +609,9 @@ class WhatsAppRepository(private val context: Context) {
             val count = db.delete(
                 DatabaseHelper.TABLE_DYNAMIC_POOL,
                 "(source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%') AND (" +
-                    "LOWER(name) IN ('hidden updates', 'find channels to follow', 'explore more', 'create channel', 'inbox filters', 'radio group', 'add status', 'recent updates', 'recent searches', 'clear all', 'ask meta ai or search', 'search group chats', 'search chats', 'manage groups', 'manage group') " +
-                    "OR phone IN ('group:Hidden updates', 'group:Find channels to follow', 'group:Explore more', 'group:Create channel', 'group:Inbox filters', 'group:Recent updates', 'group:Add status', 'group:Manage Groups', 'group:Manage groups') " +
-                    "OR normalized_number IN ('group:hidden updates', 'group:find channels to follow', 'group:explore more', 'group:create channel', 'group:inbox filters', 'group:recent updates', 'group:add status', 'group:manage groups')" +
+                    "LOWER(name) IN ('hidden updates', 'find channels to follow', 'explore more', 'create channel', 'inbox filters', 'radio group', 'add status', 'recent updates', 'recent searches', 'clear all', 'ask meta ai or search', 'search group chats', 'search chats', 'manage groups', 'manage group', 'new group', 'new community', 'archived', 'starred messages', 'disappearing messages', 'chats', 'updates', 'communities', 'calls', 'tools', 'all filter', 'groups filter', 'unread filter', 'favorites filter') " +
+                    "OR phone IN ('group:Hidden updates', 'group:Find channels to follow', 'group:Explore more', 'group:Create channel', 'group:Inbox filters', 'group:Recent updates', 'group:Add status', 'group:Manage Groups', 'group:Manage groups', 'group:New group', 'group:Archived') " +
+                    "OR normalized_number IN ('group:hidden updates', 'group:find channels to follow', 'group:explore more', 'group:create channel', 'group:inbox filters', 'group:recent updates', 'group:add status', 'group:manage groups', 'group:new group', 'group:archived')" +
                 ")",
                 null
             )

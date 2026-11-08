@@ -185,7 +185,10 @@ fun CallSimulationScreen(
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     // Decline Button
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.clickable { onDecline() }
+                    ) {
                         IconButton(
                             onClick = onDecline,
                             modifier = Modifier
@@ -206,7 +209,13 @@ fun CallSimulationScreen(
                     }
 
                     // Answer Button
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.clickable {
+                            isCallActive = true
+                            onAnswer()
+                        }
+                    ) {
                         IconButton(
                             onClick = {
                                 isCallActive = true

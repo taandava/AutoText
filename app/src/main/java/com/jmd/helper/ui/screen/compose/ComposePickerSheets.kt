@@ -436,13 +436,15 @@ fun WhatsAppContactsPickerSheet(
         }
     }
 
+    val isGroupChannel = selectedChannel == ChannelType.WHATSAPP_GROUP || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
+
     LaunchedEffect(waSearch, refreshTrigger) {
         withContext(Dispatchers.IO) {
             val allContacts = repository.getWhatsAppContacts(query = waSearch, channel = selectedChannel, limit = 10000)
-            val filteredContacts = if (isCalling) {
-                allContacts.filter { !it.phone.startsWith("group:") && !it.normalizedPhone.startsWith("group:") }
-            } else {
-                allContacts
+            val filteredContacts = when {
+                isCalling -> allContacts.filter { !it.phone.startsWith("group:") && !it.normalizedPhone.startsWith("group:") }
+                isGroupChannel -> allContacts.filter { it.phone.startsWith("group:") || it.normalizedPhone.startsWith("group:") || it.accountType.contains("group", ignoreCase = true) }
+                else -> allContacts
             }
             withContext(Dispatchers.Main) {
                 waContacts = filteredContacts
@@ -457,6 +459,9 @@ fun WhatsAppContactsPickerSheet(
     }
 
     fun isContactSelected(phone: String): Boolean {
+        if (phone.startsWith("group:", ignoreCase = true)) {
+            return selectedRecipientsMap.containsKey(phone) || selectedRecipientsMap.keys.any { it.equals(phone, ignoreCase = true) }
+        }
         return selectedRecipientsMap.containsKey(phone) || selectedRecipientsMap.keys.any { isSamePhoneNumber(it, phone) }
     }
 
@@ -466,8 +471,13 @@ fun WhatsAppContactsPickerSheet(
             return
         }
         if (isCurrentlySelected) {
-            val matchingKeys = selectedRecipientsMap.keys.filter { isSamePhoneNumber(it, phone) }
-            matchingKeys.forEach { selectedRecipientsMap.remove(it) }
+            if (phone.startsWith("group:", ignoreCase = true)) {
+                val matchingKeys = selectedRecipientsMap.keys.filter { it.equals(phone, ignoreCase = true) }
+                matchingKeys.forEach { selectedRecipientsMap.remove(it) }
+            } else {
+                val matchingKeys = selectedRecipientsMap.keys.filter { isSamePhoneNumber(it, phone) }
+                matchingKeys.forEach { selectedRecipientsMap.remove(it) }
+            }
         } else {
             selectedRecipientsMap[phone] = SelectedRecipient(name = name.ifBlank { phone }, phone = phone)
         }
@@ -475,8 +485,12 @@ fun WhatsAppContactsPickerSheet(
 
     val commitAction = {
         val selectedList = selectedRecipientsMap.values.toList().distinctBy { 
-            val d = it.phone.filter { ch -> ch.isDigit() }
-            if (d.length >= 10) d.takeLast(10) else it.phone
+            if (it.phone.startsWith("group:", ignoreCase = true)) {
+                it.phone.lowercase()
+            } else {
+                val d = it.phone.filter { ch -> ch.isDigit() }
+                if (d.length >= 10) d.takeLast(10) else it.phone
+            }
         }
         if (onCommitRecipients != null) {
             onCommitRecipients(selectedList)
@@ -719,9 +733,9 @@ fun WhatsAppContactsPickerSheet(
                 if (waContacts.isEmpty()) {
                     item {
                         AppEmptyState(
-                            icon = Icons.AutoMirrored.Filled.Send,
-                            title = "No $appLabel Contacts Found",
-                            description = if (waSearch.isNotBlank()) "No contacts matching '$waSearch'" else "No contacts with $appLabel account detected on device. Tap '$scanLabel' to scan contacts or '$harvestLabel' to scan open chats."
+                            icon = if (isGroupChannel) Icons.Default.Groups else Icons.AutoMirrored.Filled.Send,
+                            title = if (isGroupChannel) "No $appLabel Groups Found" else "No $appLabel Contacts Found",
+                            description = if (waSearch.isNotBlank()) "No results matching '$waSearch'" else if (isGroupChannel) "No WhatsApp groups harvested yet. Tap '$harvestLabel' above to scan and harvest your groups directly from WhatsApp." else "No contacts with $appLabel account detected on device. Tap '$scanLabel' to scan contacts or '$harvestLabel' to scan open chats."
                         )
                     }
                 } else {

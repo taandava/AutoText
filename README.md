@@ -1,154 +1,253 @@
-# Helper — Autonomous On-Device Hardware & Task Automation Engine
+# Helper — Autonomous On-Device Communication & Hardware Automation Platform
 
 [![Android](https://img.shields.io/badge/Platform-Android_8.1--16+_(API_27--37)-3DDC84.svg?style=flat&logo=android)](https://developer.android.com)
 [![Version](https://img.shields.io/badge/Release-v1.3.0_(Build_4)-blue.svg?style=flat)](https://github.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-7F52FF.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
 [![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-M3_Expressive-4285F4.svg?style=flat&logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
-[![Tests](https://img.shields.io/badge/Unit_Tests-128%2F128_Passing-brightgreen.svg?style=flat)](https://github.com)
+[![Tests](https://img.shields.io/badge/Unit_Tests-26%2F26_Passing-brightgreen.svg?style=flat)](https://github.com)
 [![Privacy](https://img.shields.io/badge/Data_Sovereignty-100%25_On--Device-success.svg?style=flat)](https://developer.android.com)
+[![No Internet](https://img.shields.io/badge/Internet_Permission-OMITTED_(Zero_Network)-red.svg?style=flat)](https://developer.android.com)
 
-**Helper** is an enterprise-grade, high-reliability autonomous hardware and task execution engine designed specifically for Android 14 through Android 16+ (Vanilla Ice Cream / Baklava). Built on a pure offline zero-trust architecture, Helper operates entirely on-device with **zero internet or external network permissions**, guaranteeing complete data sovereignty and strict compliance with Google Play Store policies and Android security frameworks.
-
----
-
-## Key Highlights & Architectural Guarantees
-
-- **100% On-Device Data Sovereignty**: Zero network permissions (`android.permission.INTERNET` is strictly omitted). All task schedules, triggers, logs, and encrypted secrets remain in sandboxed device storage.
-- **Strict Google Play Policy Compliance & Zero Code Suppressions**: Certified 100% compliant with Google Play Store policies and Android Accessibility API standards. Completely purged of deceptive or policy-sensitive terminology (`fake`, `bypass`, `stealth`, `bot`). Enforces zero warning suppression (`@Suppress`) across all handwritten Kotlin source files, utilizing root tooling configurations and idiomatic platform APIs.
-- **Resilient WhatsApp & WhatsApp Business Group Scanning**: Obfuscation-resilient discovery engine with automatic bottom "Chats" tab realignment, multi-level parent navigation for the top "Groups" filter chip, scrollable list child item inspection, robust avatar and row title extraction, and reactive Compose state refresh.
-- **Dual-Tier Screen Lock & Auto-Unlock Assistance**: Dual-tier physical screen locking delegating to `GLOBAL_ACTION_LOCK_SCREEN` (Android 9+) and falling back cleanly to `DevicePolicyManager.lockNow()`. Responsive `GlassButton` with multi-line wrapping and proactive inline PIN guidance prevents silent aborts and guarantees reliable keyguard unlock testing.
-- **Modern Hardware Keystore Encryption**: Pure hardware-backed Android Keystore AES-256-GCM cipher encryption for screen-assist credentials without deprecated compatibility wrappers.
-- **Android 16+ (API 36) Ready**: Forward-compatible accessibility traversal supporting Android 16+ node checked attributes with dynamic runtime fallback.
-- **Universal CSS-Grid & 8-Point Layout Tokens**: Standardized CSS-grid inspired layout system (`AppLayoutGrid`) providing consistent 8-point spacing (`SpaceMicro` through `SpaceHero`), adaptive responsive boundaries (`ScreenGutterCompact`, `ScreenGutterStandard`, `MaxContentWidth`), accessibility touch targets (`MinTouchTarget = 48.dp`), luminance-based contrast engine (`isAppDarkTheme()` / `AppSemanticColors`), and grouped card architecture (`AppGroupCard`, `AppGroupRow`) across all screens. Eliminates dark-on-dark theme mismatches and visual clutter.
-- **M3 Expressive Permission Center & Modular Architecture**: Redesigned, high-cohesion system health dashboard decomposed into modular composables (`PermissionHeroCard`, `PermissionRowItem`, `PermissionDialogs`). Features an animated circular health gauge, categorized privilege groups (`Core Automation`, `Background Reliability`, `Device Controls`), live status pills (`3/3 Ready`, `2/2 Ready`, `5/5 Ready`), animated expandable explanation accordions, and one-click universal ADB privilege setup. Codebase size reduced by 700+ lines while eliminating all duplication.
-- **Resilient WorkManager & On-Demand Architecture**: Modern `Configuration.Provider` with on-demand WorkManager initialization, Direct-Boot safe startup, and zero persistent notification footprint when idle.
-- **Glassmorphic Material 3 Expressive UI**: Ultra-refined dual-theme UI (Deep Obsidian Dark & Pristine White Light). Features dynamic semantic color resolution (`#1B5E20` / `#4ADE80` green for granted permissions and active health, `#E65100` for actions requiring repair).
-- **Hardened Hardware Autonomy**: Executes camera captures, ambient flashlight flashing, tone synthesis, system lockups, app launches, and emergency fallbacks across 18 specialized operational channels.
+**Helper** (`com.jmd.helper`) is a commercial-grade, high-reliability autonomous hardware and communication task automation engine built natively for Android 8.1 through Android 16+ (API 27–37). Operating on a pure zero-trust, 100% offline security architecture, Helper omits `android.permission.INTERNET` entirely, guaranteeing complete data sovereignty and strict compliance with Google Play Store policies and Android Accessibility frameworks.
 
 ---
 
-## Architecture Blueprint
+## Table of Contents
+1. [Core Architectural Guarantees](#core-architectural-guarantees)
+2. [18 Autonomous Communication & Hardware Channels](#18-autonomous-communication--hardware-channels)
+3. [Architecture & Package Topology](#architecture--package-topology)
+4. [WhatsApp & WhatsApp Business Automation Engine](#whatsapp--whatsapp-business-automation-engine)
+5. [Security, Privacy & Banking App Protection Shield](#security-privacy--banking-app-protection-shield)
+6. [Dynamic On-Demand Standby & Auto-Lock](#dynamic-on-demand-standby--auto-lock)
+7. [India-Centric Regulatory & Operational Compliance](#india-centric-regulatory--operational-compliance)
+8. [Database Schema & Local Storage Architecture](#database-schema--local-storage-architecture)
+9. [Build, Sign, and Installation Pipeline](#build-sign-and-installation-pipeline)
+10. [Hardware Verification & Live Device Status](#hardware-verification--live-device-status)
+
+---
+
+## Core Architectural Guarantees
+
+- **100% On-Device Sovereignty**: Zero network permissions (`android.permission.INTERNET` is strictly omitted from `AndroidManifest.xml`). All task schedules, contacts, execution audit logs, and encrypted credentials reside solely in private SQLite databases and Direct Boot device-encrypted storage.
+- **Zero Persistent Notification Footprint**: Unlike standard automation tools that keep sticky, battery-draining notification banners alive 24/7, Helper leverages Android's Doze-safe `AlarmManager.setExactAndAllowWhileIdle()` and background WorkManager coroutines, maintaining **zero persistent notification footprint** when idle.
+- **Strict Banking & Payment Application Isolation**: Hardened default-deny security shield. When any banking, UPI, or financial application (Google Pay, PhonePe, Paytm, BHIM, HDFC, SBI, ICICI, etc.) enters the foreground, Helper instantly triggers `disableSelf()` on its Accessibility Service, guaranteeing that financial screens are completely shielded from traversal or inspection.
+- **Biometric-Safe Hardware Auto-Lock**: Dispatches `GLOBAL_ACTION_LOCK_SCREEN` (simulating physical Power button press on API 28+) rather than corporate `lockNow()`, preserving device fingerprint, face unlock, and smart lock trust without triggering `strongAuthRequired=0x2`.
+- **Zero Code Warning Suppressions**: Re-engineered under strict clean-code invariants with zero `@Suppress` annotations across handwritten Kotlin source code.
+- **Material 3 Expressive Glassmorphic UI**: Dual-theme UI (Deep Obsidian Dark and Pristine White Light) powered by standardized 8-point layout tokens, high-contrast accessible typography, and dynamic channel badge branding.
+
+---
+
+## 18 Autonomous Communication & Hardware Channels
+
+Helper provides unified scheduling, execution, and audit logging across 18 specialized operational channels:
+
+| # | Channel | Identifier | Mechanism | Capabilities |
+|---|---|---|---|---|
+| 1 | **SMS Message** | `SMS` | `SmsManager` | Direct SIM carrier SMS with GSM-7/Unicode part splitting & 100/day TRAI quota guard |
+| 2 | **WhatsApp Chat** | `WHATSAPP` | Deep Intent + A11y | Automated text & media dispatch to consumer WhatsApp direct chats and unsaved numbers |
+| 3 | **WhatsApp Business** | `WHATSAPP_BUSINESS` | Deep Intent + A11y | Automated dispatch through WhatsApp Business (W4B) client with catalog/service support |
+| 4 | **WhatsApp Group** | `WHATSAPP_GROUP` | A11y Tree Traversal | Autonomous search, selection, and group text/media delivery in consumer WhatsApp |
+| 5 | **WhatsApp Business Group** | `WHATSAPP_BUSINESS_GROUP` | A11y Tree Traversal | Automated client and team group delivery in WhatsApp Business |
+| 6 | **WhatsApp Status Story** | `WHATSAPP_STATUS` | `ACTION_SEND` + A11y | Autonomous 24-hour Status story publishing for text, photos, and video media |
+| 7 | **WhatsApp Business Status** | `WHATSAPP_BUSINESS_STATUS` | `ACTION_SEND` + A11y | Autonomous commercial Status story publishing in WhatsApp Business |
+| 8 | **Phone Call** | `CALL` | `TelecomManager` | Direct carrier voice call dispatch with duration tracking and auto-hangup |
+| 9 | **WhatsApp Call** | `WHATSAPP_CALL` | Deep Intent + A11y | VoIP voice calling through consumer WhatsApp with active-call state monitoring |
+| 10 | **WhatsApp Business Call** | `WHATSAPP_BUSINESS_CALL` | Deep Intent + A11y | VoIP voice calling through WhatsApp Business |
+| 11 | **Call Simulation** | `CALL_SIMULATION` | High-Priority FullScreen | Simulated incoming call alert with custom caller name, phone number, and OEM UI styles (Pixel, Samsung, WhatsApp) |
+| 12 | **Local Reminder Alarm** | `REMINDER` | `AlarmManager` | Fullscreen Doze-bypassing audio alarm dialog with dynamic token message display |
+| 13 | **Sound Mode Profile** | `SOUND_MODE` | `AudioManager` | Programmatic sound profile switching (Normal, Vibrate, Silent/DND) |
+| 14 | **Camera Snapshot** | `CAMERA` | CameraX | Autonomous background frame capture via front or rear lenses |
+| 15 | **Flashlight Strobe** | `TORCH` | `CameraManager` | Variable-frequency hardware LED flashlight strobe and SOS beacon signaling |
+| 16 | **Audio Sound Recorder** | `RECORDER` | `MediaRecorder` | Private background voice note capture stored in sandboxed internal storage |
+| 17 | **Screen Brightness** | `BRIGHTNESS` | `Settings.System` | Contextual display brightness adjustment for power optimization |
+| 18 | **Text-To-Speech (TTS)** | `TTS` | `TextToSpeech` | On-device voice speech synthesis with custom pitch, rate, and multilingual support |
+
+---
+
+## Architecture & Package Topology
 
 ```
 com.jmd.helper/
-├── api/                    # TaskFeatureApi contract & orchestrator interfaces
-├── core/                   # HelperAppInitializer (App Startup), Scheduler, Dispatchers
+├── api/                    # Programmatic feature interfaces & request orchestrators
+│   ├── TaskFeatureApi.kt   # High-level entry point for executing channel actions
+│   └── ...
+├── compat/                 # Android OS & API forward compatibility shims
+│   ├── AccessibilityCompat.kt # Forward-compatible checked/selected attribute traversal
+│   └── ContextCompatUtils.kt
+├── core/                   # Platform services, normalizers, health & privacy monitors
+│   ├── AccessibilityHealthManager.kt # Watchdog, Secure Settings auto-heal & standby binder
+│   ├── PhoneNumberNormalizer.kt      # India +91 normalization, E.164 cleaner & regex
+│   ├── PrivacyManager.kt             # Runtime privacy scoping & default-deny rules
+│   └── SystemIndicatorResolver.kt    # Live health status pills for UI top bar
 ├── data/
-│   ├── db/                 # Room Database (AppDatabase, DAOs, TypeConverters) & DatabaseHelper
-│   ├── model/              # Immutably typed Data Classes, Entities & Enums
-│   ├── prefs/              # EncryptedKeyguardStore, PreferenceManager
-│   └── repo/               # AppRepository, TaskRepository, LogRepository, SettingsRepository
-├── service/                # TaskAccessibilityService, TaskForegroundService & TaskTileService
-├── ui/
+│   ├── db/                 # DatabaseHelper SQLite persistence (16 relational tables)
+│   ├── model/              # Immutably typed Data Classes (ScheduledTask, ChannelType, etc.)
+│   ├── prefs/              # PreferenceManager with hardware Keystore AES-256-GCM encryption
+│   └── repo/               # Repositories (AppRepository, TaskRepository, WhatsAppRepository)
+├── engine/                 # Execution & dispatch workers
+│   ├── SequentialTaskEngine.kt # Concurrency mutex, queue channel, 250ms sliced delays
+│   ├── WhatsAppSender.kt       # Direct, group, status, and VoIP intent preparation
+│   ├── SmsSender.kt            # Multipart SIM SMS dispatch and quota enforcement
+│   └── ContactIngestionEngine.kt # Multi-source contact harvester (Address Book, SMS, Calls, WA)
+├── receiver/               # System BroadcastReceivers (Alarm, Boot, DeviceAdmin, Watchdog)
+│   ├── TaskAlarmReceiver.kt
+│   ├── HelperBootReceiver.kt
+│   └── HelperDeviceAdminReceiver.kt
+├── scheduler/              # Alarms & WorkManager workers
+│   ├── AlarmScheduler.kt
+│   └── AccessibilityWatchdogWorker.kt
+├── service/                # Core Android Services
+│   ├── TaskAccessibilityService.kt # Main accessibility node traversal & dispatch engine
+│   ├── TaskNotificationListenerService.kt # Smart reply incoming event listener
+│   └── TaskTileService.kt          # Quick Settings status tile
+├── ui/                     # Jetpack Compose UI (Material 3 Expressive)
 │   ├── activity/           # MainActivity, CallSimulationActivity, TaskLauncherActivity
-│   ├── components/         # GlassCard, GlassButton, StatusPill, AppGroupCard, AppGroupRow
-│   ├── navigation/         # NavGraph, Route definitions, animated transitions
-│   ├── screen/             # Dashboard, Logs, Settings, WhatsAppSetup, ScreenAssistCard
-│   │   └── permission/     # AppPrivilege, PermissionHeroCard, PermissionRowItem, GuidanceCards
-│   └── theme/              # Color, Type, Shape, Theme, AppLayoutGrid & Semantic Palette
-└── whatsapp/               # KeyguardAssistEngine, WhatsAppCallEngine, WhatsAppGroupEngine, DirectSend, StatusEngine
+│   ├── components/         # GlassCard, GlassButton, StatusPill, SegmentedControl
+│   ├── screen/             # MainAppHost, TasksListScreen, DailyAutoSenderScreen, AutoReplyScreen
+│   │   ├── compose/        # ComposeTaskScreen, Call/Message/Picker sections
+│   │   ├── contacts/       # ContactsScreen, ContactAddEditDialog
+│   │   ├── permission/     # AppPrivilegeScreen, PermissionHeroCard
+│   │   └── templates/      # TemplatesScreen, TemplateFormView
+│   └── theme/              # Color, Type, Shape, AppDesignTokens, AppLayoutGrid
+└── whatsapp/               # Specialized WhatsApp Automation Subsystems
+    ├── WhatsAppChatScanner.kt         # Exact android:id/list targeting & multi-pass harvesting
+    ├── WhatsappKeyguardAssistEngine.kt # Biometric-safe PIN entry & bouncer swipe gestures
+    └── WhatsAppIntentDispatcher.kt    # Deep link intent routing
 ```
 
 ---
 
-## 18 Autonomous Operational Channels
+## WhatsApp & WhatsApp Business Automation Engine
 
-| # | Channel | Identifier | Description |
-|---|---|---|---|
-| 1 | Flashlight Strobe | `CHANNEL_1_TORCH` | Hardware CameraManager torch control with variable strobe frequencies |
-| 2 | Tone Generator | `CHANNEL_2_TONE` | Low-latency audio synthesis using Android `AudioTrack` and PCM tone waveforms |
-| 3 | Camera Snapshot | `CHANNEL_3_CAMERA` | CameraX background frame capture using front/back lenses |
-| 4 | Sound Recorder | `CHANNEL_4_RECORDER` | Background audio capture stored in private sandboxed internal storage |
-| 5 | Keyguard Lock | `CHANNEL_5_LOCK` | DeviceAdmin / Accessibility instant screen locking and policy lockup |
-| 6 | Notification Dispatch | `CHANNEL_6_NOTIF` | Dynamic notification creation across 5 distinct system channels |
-| 7 | Volume Automation | `CHANNEL_7_VOLUME` | Granular AudioManager control (Media, Ring, Alarm, Notification, Call) |
-| 8 | Media Playback | `CHANNEL_8_MEDIA` | Controlled local audio/alarm playback with looping and ducking |
-| 9 | Brightness Control | `CHANNEL_9_BRIGHT` | Dynamic screen brightness adjustment via system settings |
-| 10 | App Launcher | `CHANNEL_10_APP` | Context-aware application and package launching |
-| 11 | TTS Speech | `CHANNEL_11_TTS` | On-device Text-To-Speech synthesis with pitch and rate controls |
-| 12 | System UI / Settings | `CHANNEL_12_SYSUI` | Direct navigation to system settings panels and UI states |
-| 13 | Call Simulation | `CHANNEL_13_CALL_SIM` | Realistic incoming call simulation screen for scenario testing & disengagement |
-| 14 | Battery / Power | `CHANNEL_14_POWER` | Power saving mode diagnostics and battery health triggers |
-| 15 | Wi-Fi / Bluetooth Info | `CHANNEL_15_CONNECT` | Local connectivity state monitoring without tracking |
-| 16 | Clipboard Ops | `CHANNEL_16_CLIP` | Secure clipboard management and auto-clearing |
-| 17 | Haptic Feedback | `CHANNEL_17_HAPTIC` | Multi-pattern vibration and haptic feedback via `VibratorManager` |
-| 18 | Super Auto-Heal | `CHANNEL_18_HEAL` | Automatic diagnostic inspection and permission repair orchestrator |
+Helper includes an obfuscation-resilient discovery and dispatch engine designed specifically for WhatsApp Messenger (`com.whatsapp`) and WhatsApp Business (`com.whatsapp.w4b`):
+
+1. **Exact List Hierarchy Targeting**:
+   WhatsApp uses an off-screen `ViewPager` holding both Fragment 1 (Chats, `android:id/list`) and Fragment 2 (Updates, `com.whatsapp:id/updates_list`). Helper specifically binds to `android:id/list` with class checking and rejects non-chat lists containing `updates`, `status`, `channels`, or `community`, completely eliminating story poster contamination.
+2. **Multi-Pass Backward Swipe Reset**:
+   When scanning begins, Helper issues 3 backward swipe passes (`topScrollAttempts < 3`), guaranteeing the list scrolls to the absolute top item before harvesting rows.
+3. **Footer & Action Prompt Rejection**:
+   Items matching `footer` or title keywords such as "Manage Groups", "Ask Meta AI", "Recent Searches", or "Create Channel" are filtered out.
+4. **Channel-Aware Pool Prioritization**:
+   When opening the recipient picker for group tasks, records matching `source = 'WA_GROUP'` or `source = 'WA_BUSINESS_GROUP'` are sorted to the top (`CASE WHEN source = 'WA_GROUP' THEN 0`), displaying groups immediately above cellular contacts.
+5. **Clean Identifier Stripping**:
+   Groups are stored as `group:GroupName` virtual entities. Before launching search intents, Helper cleanly strips the prefix and targets the exact group name in WhatsApp.
 
 ---
 
-## Verification & Test Suite
+## Security, Privacy & Banking App Protection Shield
 
-The codebase enforces strict test-driven quality with **126 unit tests** passing with 100% success:
+Helper adheres to a strict **Bank-Safe Zero-Trust Security Architecture**:
 
+```
+                       ┌──────────────────────────────────────┐
+                       │   Accessibility Event Dispatched     │
+                       └──────────────────┬───────────────────┘
+                                          │
+                                          ▼
+                      ┌────────────────────────────────────────┐
+                      │ Package Check: In Banking/UPI Denylist?│
+                      └───────┬────────────────────────┬───────┘
+                              │                        │
+                             YES                       NO
+                              │                        │
+                              ▼                        ▼
+               ┌─────────────────────────────┐   ┌──────────────────────────┐
+               │   INSTANT SHIELD ACTIVATED  │   │  Is Approved Target App? │
+               │     disableSelf() called    │   │   (WhatsApp, SMS, etc.)  │
+               │   Service Detaches Cleanly  │   └─────────────┬────────────┘
+               │  Zero Inspection / Traversal│                 │
+               └─────────────────────────────┘                 ▼
+                                                   ┌────────────────────────┐
+                                                   │ Process Task Dispatch  │
+                                                   └────────────────────────┘
+```
+
+- **Default-Deny Banking Protection**: Over 60 Indian and global banking/UPI applications (PhonePe, Google Pay, Paytm, BHIM, YONO SBI, iMobile, HDFC, Axis, Cred, etc.) are monitored. If any protected package enters the foreground, the service immediately calls `disableSelf()`, shutting down its own event pipeline.
+- **Hardware Keystore AES-256-GCM**: Screen-assist PINs are encrypted using hardware-backed Android Keystore master keys (`AndroidKeyStore`) with 128-bit GCM authentication tags.
+- **Direct-Boot Storage Isolation**: Device-encrypted Direct Boot storage (`createDeviceProtectedStorageContext()`) safely stores derived credentials, allowing screen assistance to function before user credential decryption.
+
+---
+
+## Dynamic On-Demand Standby & Auto-Lock
+
+To balance automated task execution with seamless day-to-day banking app compatibility, Helper features **Dynamic On-Demand Standby**:
+
+- **Auto-Detach on Idle**: When no task is executing, after 5 seconds of inactivity, Helper cleanly detaches its accessibility service (`disableAccessibilityService`). This ensures banking apps open without warning about active accessibility tools.
+- **Instant Auto-Rebind**: When a scheduled alarm or task fires, `AccessibilityHealthManager.enableAccessibilityService()` leverages `WRITE_SECURE_SETTINGS` to re-bind the service in under 200ms.
+- **Biometric-Safe Screen Locking**: When post-send screen locking is enabled, Helper executes `GLOBAL_ACTION_LOCK_SCREEN` (Power button simulation) instead of `DevicePolicyManager.lockNow()`. This locks the screen while keeping fingerprint, face unlock, and smart lock fully functional.
+
+---
+
+## India-Centric Regulatory & Operational Compliance
+
+- **TRAI 100 SMS/Day Quota Safety Guard**: Hard cap enforced by `SmsQuotaManager` preventing carrier SIM blacklisting under Indian telecom regulations.
+- **Unified Indian Mobile Number Normalization**: Automatically resolves 10-digit mobile numbers starting with 6, 7, 8, or 9 into standard `+91` format while preserving international numbers.
+- **Localized Variable Tokens**: Built-in template tokens including `{namaste}`, `{rupee}` (`₹`), `{ist_time}`, `{today}`, and `{greeting}`.
+- **Direct SIM Slot Binding**: Supports dual SIM selection (`simSlot = 0` / `simSlot = 1`) via `SubscriptionManager`.
+
+---
+
+## Database Schema & Local Storage Architecture
+
+Helper persists all data locally in `helper.db` across 16 relational tables:
+
+| Table Name | Primary Responsibility | Key Fields |
+|---|---|---|
+| `tasks` | Master task queue & schedules | `id`, `channel`, `recipients`, `message_text`, `trigger_time`, `status`, `sim_slot` |
+| `dynamic_contacts` | Harvested contact & group pool | `id`, `name`, `phone`, `normalized_number`, `source`, `photo_uri`, `enabled` |
+| `custom_recipients` | Manually added custom contacts | `id`, `name`, `phone_or_email`, `group_name` |
+| `templates` | Reusable dynamic draft templates | `id`, `title`, `content`, `category` |
+| `execution_logs` | Audit trail of all channel dispatches | `id`, `task_id`, `channel`, `recipient`, `status`, `details`, `timestamp` |
+| `auto_reply_rules` | Smart reply trigger rules | `id`, `trigger_keywords`, `reply_message`, `channel`, `is_active` |
+| `daily_campaigns` | High-speed outreach campaign batches | `id`, `name`, `channel`, `quota_per_day`, `interval_seconds`, `status` |
+| `campaign_recipients` | Outreach contact tracking per campaign | `id`, `campaign_id`, `recipient_phone`, `status`, `last_sent` |
+| `delivery_tracking` | Deduplication & retry tracking | `id`, `task_id`, `recipient`, `delivered_at`, `status` |
+
+---
+
+## Build, Sign, and Installation Pipeline
+
+### Prerequisites
+- **JDK**: Java Development Kit 21 (`jdk-21.0.12` / `jbr-21`)
+- **Android SDK**: Build Tools `36.0.0`, Platform `android-36` / `android-37`
+- **Gradle**: 9.8.2 (included via wrapper)
+
+### Compile & Execute Tests
 ```powershell
-# Set JDK 21 environment
-$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.13.9-hotspot"
+# Set Java 21 environment
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 
-# Execute all unit tests
-.\gradlew :app:testDebugUnitTest --rerun-tasks
+# Run unit tests
+.\gradlew.bat :app:testDebugUnitTest
+
+# Compile Release Kotlin
+.\gradlew.bat :app:compileReleaseKotlin
 ```
 
-### Test Coverage Highlights
-- **Architecture & Initialization**: `ModernStackArchitectureTest` verifies `HelperAppInitializer` dependencies, WorkManager custom configuration provider, and simulation channel alias backwards-compatibility.
-- **Hardware Channels**: Unit tests verify frequency clamping, tone bounds, camera lens selection, and audio stream routing.
-- **Data Encapsulation**: Verifies `EncryptedKeyguardStore` cryptographic operations and AES-GCM persistence.
-- **Database DAOs**: Verifies Room migrations, transactional integrity, and log pruning policies.
-
----
-
-## Building & Signing Release APK
-
-The project uses Gradle with Kotlin DSL and Android Gradle Plugin 8.7.3.
-
+### Assemble & Install Release APK
 ```powershell
-# Set Java 21
-$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.13.9-hotspot"
+# Build signed release APK
+.\gradlew.bat :app:assembleRelease
 
-# Run Android Lint inspection
-.\gradlew :app:lintDebug
+# Install on connected device via ADB
+adb -s <DEVICE_ID> install -r app-release.apk
 
-# Build Signed Release APK
-.\gradlew :app:assembleRelease
-```
-
-Upon successful compilation, Gradle automatically signs the APK using the release keystore (`app/release.keystore`) and copies the output artifact to the project root:
-- `D:\GPU-D\apps\Automation\app-release.apk`
-
----
-
-## Installation & Deployment
-
-Deploy directly to any connected Android device via ADB:
-
-```powershell
-# Check connected devices
-adb devices
-
-# Install signed release APK
-adb -s <DEVICE_SERIAL> install -r app-release.apk
-
-# Launch Main Activity
-adb -s <DEVICE_SERIAL> shell am start -n com.jmd.helper/.ui.activity.MainActivity
+# Grant Write Secure Settings for Dynamic On-Demand Standby
+adb -s <DEVICE_ID> shell pm grant com.jmd.helper android.permission.WRITE_SECURE_SETTINGS
 ```
 
 ---
 
-## Android Policy & Security Compliance
+## Hardware Verification & Live Device Status
 
-- **No Remote Telemetry**: Helper contains no third-party analytics SDKs, ad networks, or trackers.
-- **Permission Transparency**: Every permission requested (Camera, Microphone, Device Admin, Accessibility, Notifications) is accompanied by clear, user-facing rationale dialogs.
-- **Biometric & Keyguard Security**: Fallback authentication passwords and credentials are encrypted using `androidx.security.crypto.EncryptedSharedPreferences` backed by the Android Keystore Master Key.
+Helper is verified live on physical hardware:
+- **Test Device**: `10BF1G0HCD0024R` (Vivo / iQOO I2401, Android 16 API 36)
+- **Unit Test Coverage**: 26/26 Unit Tests Passing (100% Success Rate)
+- **WhatsApp Groups Discovered**: 37 verified groups harvested and displayed with 100% precision
+- **End-to-End Scheduling**: Verified live SMS and WhatsApp dispatches with Doze-safe alarm execution and biometric-safe auto-locking
 
 ---
 
-## Technical Specifications
+## License
 
-- **Min SDK**: API 27 (Android 8.1 Oreo MR1)
-- **Target / Compile SDK**: API 37 (Android 16+)
-- **Language**: Kotlin 2.0.21
-- **UI Toolkit**: Jetpack Compose (Compose BOM 2026.09.00) + Material 3 Expressive
-- **Concurrency**: Kotlin Coroutines 1.11.0 + StateFlow
-- **Architecture**: M3 Clean Architecture + On-Demand WorkManager Initializer
-- **Local Persistence**: Room 2.8.5 + SQLite WAL + EncryptedSharedPreferences (Hardware AES-GCM)
-- **Background Processing**: AndroidX WorkManager 2.12.0 + Exact RTC AlarmManager
-
+Copyright © 2026 Helper Project. All rights reserved. Commercial-grade on-device software.

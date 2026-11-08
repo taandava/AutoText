@@ -585,23 +585,29 @@ class WhatsAppChatScanner(
     }
 
     private fun extractTitleFromRow(row: AccessibilityNodeInfo): String? {
-        // 1. Primary: Direct lookup for conversations_row_contact_name
+        // 1. Primary: Direct lookup for known title/contact name resource IDs
         val q = ArrayDeque<AccessibilityNodeInfo>()
         q.add(row)
         while (q.isNotEmpty()) {
             val node = q.removeFirst()
             val id = node.viewIdResourceName?.lowercase().orEmpty()
             val txt = node.text?.toString()?.trim().orEmpty()
+            val desc = node.contentDescription?.toString()?.trim().orEmpty()
 
-            if (id.endsWith("conversations_row_contact_name") ||
+            val isTitleId = id.endsWith("conversations_row_contact_name") ||
+                id.endsWith("conversation_contact_name") ||
+                id.endsWith("conversations_row_title") ||
+                id.endsWith("conversation_title") ||
                 id.endsWith("chat_title") ||
                 id.endsWith("contactpicker_row_name") ||
-                id.endsWith("conversation_contact_name") ||
-                id.endsWith("chat_name")
-            ) {
-                val clean = txt.removePrefix("~").trim()
-                if (clean.isNotBlank() && !isIgnoredTitle(clean)) {
-                    return clean
+                id.endsWith("chat_name") ||
+                id.endsWith("group_name") ||
+                id.endsWith("group_title")
+
+            if (isTitleId) {
+                val candidate = (if (txt.isNotBlank()) txt else desc).removePrefix("~").trim()
+                if (candidate.isNotBlank() && !isIgnoredTitle(candidate)) {
+                    return candidate
                 }
             }
 
@@ -618,7 +624,7 @@ class WhatsAppChatScanner(
             val id = node.viewIdResourceName?.lowercase().orEmpty()
             val desc = node.contentDescription?.toString()?.trim().orEmpty()
 
-            if (id.endsWith("contact_photo") || id.endsWith("avatar") || id.endsWith("photo")) {
+            if (id.endsWith("contact_photo") || id.endsWith("avatar") || id.endsWith("photo") || id.endsWith("icon")) {
                 val candidate = extractNameFromAvatarDesc(desc)
                 if (!candidate.isNullOrBlank() && !isIgnoredTitle(candidate)) {
                     return candidate
@@ -630,12 +636,21 @@ class WhatsAppChatScanner(
             }
         }
 
-        // 3. Tertiary: Fallback inspection of text candidates (excluding messages, times, dividers)
+        // 3. Tertiary: Geometric analysis of text candidates in row
+        // Contact / Group titles are ALWAYS located in the upper vertical half of the conversation row
+        // and left of the time/date column. Message snippets are located in the lower vertical half.
+        val rowBounds = Rect()
+        row.getBoundsInScreen(rowBounds)
+        val rowCenterY = if (rowBounds.height() > 0) rowBounds.centerY() else 0
+        val rowRightThreshold = if (rowBounds.width() > 0) rowBounds.left + (rowBounds.width() * 0.78f).toInt() else Int.MAX_VALUE
+
         q.clear()
         q.add(row)
-        val candidates = mutableListOf<String>()
+        val topHalfCandidates = mutableListOf<Pair<String, Int>>() // Pair(text, topCoordinate)
+        val fallbackCandidates = mutableListOf<String>()
         val timeRegex = Regex("""(?i)^\d{1,2}:\d{2}(\s?[ap]m)?$|^yesterday$|^today$|^\d{1,2}/\d{1,2}/\d{2,4}$""")
 
+        val childBounds = Rect()
         while (q.isNotEmpty()) {
             val node = q.removeFirst()
             val id = node.viewIdResourceName?.lowercase().orEmpty()
@@ -650,7 +665,12 @@ class WhatsAppChatScanner(
             if (!isMsgOrTime && txt.isNotBlank()) {
                 val clean = txt.removePrefix("~").trim()
                 if (clean.length in 2..150 && !timeRegex.matches(clean) && !isIgnoredTitle(clean)) {
-                    candidates.add(clean)
+                    node.getBoundsInScreen(childBounds)
+                    if (rowCenterY > 0 && childBounds.centerY() <= rowCenterY && childBounds.left < rowRightThreshold) {
+                        topHalfCandidates.add(clean to childBounds.top)
+                    } else {
+                        fallbackCandidates.add(clean)
+                    }
                 }
             }
 
@@ -659,14 +679,23 @@ class WhatsAppChatScanner(
             }
         }
 
-        return candidates.firstOrNull()
+        val sortedTop = topHalfCandidates.sortedBy { it.second }.map { it.first }
+        if (sortedTop.isNotEmpty()) {
+            return sortedTop.first()
+        }
+
+        return fallbackCandidates.firstOrNull()
     }
 
     private fun extractNameFromAvatarDesc(desc: String): String? {
         val trimmed = desc.trim()
         if (trimmed.isBlank()) return null
 
-        for (suffix in listOf(" picture", " Picture", " photo", " Photo")) {
+        for (suffix in listOf(
+            " picture", " Picture", " photo", " Photo",
+            " group icon", " Group icon", " group photo", " Group photo",
+            " group picture", " Group picture", " icon", " Icon"
+        )) {
             if (trimmed.endsWith(suffix, ignoreCase = true)) {
                 return trimmed.substring(0, trimmed.length - suffix.length).trim().removePrefix("~").trim()
             }
@@ -679,18 +708,29 @@ class WhatsAppChatScanner(
             val before = trimmed.substringBefore(" photo, ", "").trim().removePrefix("~").trim()
             if (before.isNotBlank()) return before
         }
+        if (trimmed.contains(" icon, ", ignoreCase = true)) {
+            val before = trimmed.substringBefore(" icon, ", "").trim().removePrefix("~").trim()
+            if (before.isNotBlank()) return before
+        }
         if (trimmed.contains("'s status", ignoreCase = true)) {
             val before = trimmed.substringBefore("'s status", "").trim().removePrefix("~").trim()
             if (before.isNotBlank()) return before
         }
-        if (trimmed.startsWith("Profile picture of ", ignoreCase = true)) {
-            return trimmed.substring(19).trim().removePrefix("~").trim()
-        }
-        if (trimmed.startsWith("Profile photo of ", ignoreCase = true)) {
-            return trimmed.substring(17).trim().removePrefix("~").trim()
-        }
-        if (trimmed.startsWith("Profile photo, ", ignoreCase = true)) {
-            return trimmed.substring(15).trim().removePrefix("~").trim()
+        for (prefix in listOf(
+            "Profile picture of ",
+            "Profile photo of ",
+            "Profile photo, ",
+            "Group icon of ",
+            "Group photo of ",
+            "Group picture of ",
+            "Double tap to view profile photo of ",
+            "Double tap to view group icon of ",
+            "Double tap to view group photo of ",
+            "Double tap to view photo of "
+        )) {
+            if (trimmed.startsWith(prefix, ignoreCase = true)) {
+                return trimmed.substring(prefix.length).trim().removePrefix("~").trim()
+            }
         }
         return null
     }
@@ -705,7 +745,9 @@ class WhatsAppChatScanner(
             "hidden updates", "find channels to follow", "explore more", "create channel",
             "recent updates", "add status", "muted updates", "view updates", "channels",
             "ask meta ai or search", "search group chats", "search chats", "search…", "search",
-            "manage groups", "manage group"
+            "manage groups", "manage group", "recent searches", "clear all", "new group",
+            "new community", "archived", "starred messages", "disappearing messages",
+            "chats", "updates", "communities", "calls", "tools", "filter"
         )
         return blocked.any { lower == it || lower.startsWith("$it ") || lower.startsWith("$it…") || lower.startsWith("$it...") }
     }
@@ -735,8 +777,11 @@ class WhatsAppChatScanner(
             val node = q.removeFirst()
             val id = node.viewIdResourceName?.lowercase().orEmpty()
             val text = node.text?.toString()?.trim().orEmpty()
-            if (id.endsWith("msg_from_tv") || id.endsWith("msg_from_status") || id.endsWith("sender_name")) {
-                if (text.isNotBlank()) return true
+            // Strictly check author view IDs (do NOT check msg_from_status which is the delivery status tick!)
+            if (id.endsWith("msg_from_tv") || id.endsWith("sender_name") || id.endsWith("message_sender")) {
+                if (text.isNotBlank() && !text.equals("You:", ignoreCase = true) && !text.equals("You", ignoreCase = true)) {
+                    return true
+                }
             }
             for (i in 0 until node.childCount) {
                 node.getChild(i)?.let { q.add(it) }
@@ -855,12 +900,20 @@ class WhatsAppChatScanner(
                 Log.i(loggerTag, "isGroupRow('$cleanTitle'): true (subtitle contains group event)")
                 return true
             }
-            val colonIdx = sub.indexOf(':')
-            if (colonIdx in 1..35) {
-                val prefix = sub.substring(0, colonIdx).trim()
-                if (!prefix.equals("You", ignoreCase = true) && !prefix.equals("आप", ignoreCase = true)) {
-                    Log.i(loggerTag, "isGroupRow('$cleanTitle'): true (subtitle has colon author '$prefix')")
-                    return true
+
+            // Exclude URLs and protocol strings from colon-based author checks
+            if (!sub.contains("://")) {
+                val colonIdx = sub.indexOf(':')
+                if (colonIdx in 2..30) {
+                    val prefix = sub.substring(0, colonIdx).trim()
+                    val lowerPrefix = prefix.lowercase()
+                    val nonAuthorPrefixes = setOf(
+                        "you", "आप", "re", "fw", "fwd", "note", "date", "time", "order", "otp", "call", "ref", "http", "https"
+                    )
+                    if (lowerPrefix !in nonAuthorPrefixes && prefix.any { it.isLetter() }) {
+                        Log.i(loggerTag, "isGroupRow('$cleanTitle'): true (subtitle has colon author '$prefix')")
+                        return true
+                    }
                 }
             }
         }

@@ -569,7 +569,7 @@ class TaskAccessibilityService : AccessibilityService() {
                 context = context,
                 targetPackage = targetPackage,
                 channel = channel,
-                scanTarget = ScanTarget.GROUPS_ONLY,
+                scanTarget = WhatsAppChatScanner.ScanTarget.GROUPS_ONLY,
                 returnToApp = returnToApp
             )
         }
@@ -716,7 +716,12 @@ class TaskAccessibilityService : AccessibilityService() {
             shouldRelock: Boolean = false,
             isBatchCampaign: Boolean = false
         ) {
-            if (currentMode != DispatchMode.WHATSAPP_STATUS) {
+            if (currentMode != DispatchMode.WHATSAPP_STATUS &&
+                currentMode != DispatchMode.WHATSAPP_SEARCH_GROUP &&
+                currentMode != DispatchMode.WHATSAPP_VOICE_CALL &&
+                currentMode != DispatchMode.WHATSAPP_SCAN_CHATS &&
+                currentMode != DispatchMode.MANUAL_PICK_CHAT
+            ) {
                 currentMode = DispatchMode.DIRECT_SEND
             }
             pendingOperationMode = currentMode

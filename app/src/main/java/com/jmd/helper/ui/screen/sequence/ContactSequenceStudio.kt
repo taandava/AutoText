@@ -232,51 +232,6 @@ fun ContactSequenceStudio(
         showWhatsAppContactsPicker = false
     }
 
-    if (showPoolPicker) {
-        val currentList = if (contactPhone.isNotBlank()) listOf(SelectedRecipient(contactName.ifBlank { contactPhone }, contactPhone)) else emptyList()
-        ContactPoolPickerSheet(
-            repository = repository,
-            selectedRecipients = currentList,
-            onAddRecipient = { name, phone ->
-                contactName = name
-                contactPhone = phone
-                showPoolPicker = false
-                true
-            },
-            onCommitRecipients = { list ->
-                list.lastOrNull()?.let {
-                    contactName = it.name
-                    contactPhone = it.phone
-                }
-                showPoolPicker = false
-            },
-            onDismiss = { showPoolPicker = false }
-        )
-    }
-
-    if (showWhatsAppContactsPicker) {
-        val currentList = if (contactPhone.isNotBlank()) listOf(SelectedRecipient(contactName.ifBlank { contactPhone }, contactPhone)) else emptyList()
-        WhatsAppContactsPickerSheet(
-            repository = repository,
-            selectedRecipients = currentList,
-            selectedChannel = sequenceChannel,
-            onAddRecipient = { name, phone ->
-                contactName = name
-                contactPhone = phone
-                showWhatsAppContactsPicker = false
-                true
-            },
-            onCommitRecipients = { list ->
-                list.lastOrNull()?.let {
-                    contactName = it.name
-                    contactPhone = it.phone
-                }
-                showWhatsAppContactsPicker = false
-            },
-            onDismiss = { showWhatsAppContactsPicker = false }
-        )
-    }
-
     if (showChannelSelectorDialog) {
         Dialog(
             onDismissRequest = { showChannelSelectorDialog = false },
@@ -380,7 +335,8 @@ fun ContactSequenceStudio(
         }
     }
 
-    Scaffold(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             AppSubScreenHeader(
@@ -720,6 +676,52 @@ fun ContactSequenceStudio(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
+        }
+    }
+
+    if (showPoolPicker) {
+            val currentList = if (contactPhone.isNotBlank()) listOf(SelectedRecipient(contactName.ifBlank { contactPhone }, contactPhone)) else emptyList()
+            ContactPoolPickerSheet(
+                repository = repository,
+                selectedRecipients = currentList,
+                onAddRecipient = { name, phone ->
+                    contactName = name
+                    contactPhone = phone
+                    showPoolPicker = false
+                    true
+                },
+                onCommitRecipients = { list ->
+                    list.lastOrNull()?.let {
+                        contactName = it.name
+                        contactPhone = it.phone
+                    }
+                    showPoolPicker = false
+                },
+                onDismiss = { showPoolPicker = false }
+            )
+        }
+
+        if (showWhatsAppContactsPicker) {
+            val currentList = if (contactPhone.isNotBlank()) listOf(SelectedRecipient(contactName.ifBlank { contactPhone }, contactPhone)) else emptyList()
+            WhatsAppContactsPickerSheet(
+                repository = repository,
+                selectedRecipients = currentList,
+                selectedChannel = sequenceChannel,
+                onAddRecipient = { name, phone ->
+                    contactName = name
+                    contactPhone = phone
+                    showWhatsAppContactsPicker = false
+                    true
+                },
+                onCommitRecipients = { list ->
+                    list.lastOrNull()?.let {
+                        contactName = it.name
+                        contactPhone = it.phone
+                    }
+                    showWhatsAppContactsPicker = false
+                },
+                onDismiss = { showWhatsAppContactsPicker = false }
+            )
         }
     }
 }

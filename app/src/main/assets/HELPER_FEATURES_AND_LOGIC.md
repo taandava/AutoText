@@ -52,8 +52,8 @@ Built with **zero third-party cloud dependencies**, **zero external analytics**,
 2. **Zero Persistent Notification Footprint**: Unlike conventional task utilities that maintain an ongoing foreground service notification 24/7, Helper relies on Android's Doze-safe `AlarmManager.setExactAndAllowWhileIdle()` and background WorkManager coroutines. It leaves **zero** sticky banners or icons in the user's status bar when idle.
 3. **Display Invariant Protection (Strict Portrait Locking & Never Auto-Rotate)**: Helper strictly enforces a device display invariant ensuring system auto-rotation is never enabled by background tasks or activity launches. All activities are hard-locked to portrait orientation, system quick setting tiles and navigation bar rotation buttons are insulated from task clicks, and `ACCELEROMETER_ROTATION` is dynamically audited and kept disabled (`0`).
 4. **Direct Task Execution & Dynamic Circuit Breaker**: Tasks execute directly based on individual schedules without global lockouts or master pause switches. Per-channel circuit breakers protect against runaway loops by tripping after 3 consecutive failures, with automated recovery upon success.
-5. **Full Unattended Task with Screen Task Assistance & Dual-Tier Hardware Lock**: Tasks execute safely even when the phone is locked. The engine wakes the display, dismisses the keyguard, inputs the user-configured AES-GCM encrypted security PIN via touch assistance, executes the task, returns to the home launcher, and locks the hardware screen via dual-tier locking (`GLOBAL_ACTION_LOCK_SCREEN` on Android 9+ with seamless `DevicePolicyManager.lockNow()` fallback).
-6. **Direct 1-on-1 WhatsApp & WA Business Direct Messaging and Status Dispatch**: Employs an intelligent discovery engine for direct 1-on-1 contact chats and unsaved numbers, Status story creation, and voice calling via deep intents and accessibility automation without relying on unstable group hacks.
+5. **Full Unattended Task with Screen Task Assistance & Biometric-Safe Hardware Lock**: Tasks execute safely even when the phone is locked. The engine wakes the display, dismisses the keyguard, inputs the user-configured AES-GCM encrypted security PIN via touch assistance, executes the task, returns to the home launcher, and locks the hardware screen via biometric-preserving `GLOBAL_ACTION_LOCK_SCREEN` (Power button simulation on API 28+). Fingerprint and Face Unlock credentials remain 100% active, preventing the device from being forced into `strongAuthRequired` mode.
+6. **Multi-Channel WhatsApp & WA Business Direct, Group & Status Dispatch**: Employs an intelligent discovery and dispatch engine for direct 1-on-1 contact chats, harvested WhatsApp groups (via dedicated top Groups filter navigation and geometric title resolution), Status story creation, and voice calling via deep intents and accessibility automation.
 7. **Strict Banking & Payment Application Isolation**: Enforces a strict default-deny policy where external UI interactions are strictly prohibited from inspecting, traversing, overlaying, or clicking inside Google Pay, PhonePe, Paytm, BHIM, UPI, net banking, or financial identity apps.
 8. **India-Centric Communications Standard**: Built-in default country code `+91`, Indian 10-digit mobile number normalization (6/7/8/9), TRAI 100 SMS/day quota safety guard, and localized message templates in INR (`₹`) and Indian English/Hindi tokens.
 
@@ -1828,6 +1828,28 @@ Core project-level configuration, Gradle build scripts, AndroidManifest componen
    - Clicks send button via `ACTION_CLICK`.
 5. **Physical Gesture Fallback**: If node click is ignored by custom ROM or modified WhatsApp client, calculates on-screen button bounds and performs a physical screen tap via `dispatchGesture()`.
 6. **Postcondition**: Verifies send completion, returns to home screen (`GLOBAL_ACTION_HOME`), and triggers hardware power lock (`GLOBAL_ACTION_LOCK_SCREEN`).
+
+## 4.2.1 WhatsApp Group Discovery & Harvesting Engine (`WhatsAppChatScanner.kt`)
+1. **Target Filtering Scope**: Supports `ScanTarget.ALL_CHATS`, `ScanTarget.GROUPS_ONLY`, and `ScanTarget.DIRECT_CHATS_ONLY`. When harvesting groups, the engine automatically navigates to WhatsApp's top Groups filter chip to isolate group conversations from 1-on-1 chats.
+2. **Backward Scroll to Top**: Executes a 3-pass backward swipe prior to harvesting to ensure scanning commences from the very top of the conversation list (`android:id/list`), eliminating missed pinned or recent groups.
+3. **High-Precision Group Discrimination**:
+   - Rejects non-group elements (system filter bars, "Manage Groups", "Create Channel", "Explore more", "Hidden updates", status items, unread dividers).
+   - Validates message author views (`msg_from_tv`, `sender_name`), explicitly excluding delivery checkmark icons (`msg_from_status`).
+   - Normalizes subtitle colons by filtering out web protocols (`http://`, `https://`) and non-author prefixes (`Re:`, `Fwd:`, `Note:`, `OTP:`).
+   - Cross-checks device address book contacts; contacts with verified cellular telephone numbers are never misclassified as groups.
+4. **Geometric Title Extraction & Avatar Parsing**:
+   - Checks primary conversation title resource IDs (`conversations_row_contact_name`, `conversation_title`, `group_name`).
+   - Analyzes avatar content descriptions (`"Group icon of "`, `" group icon"`, `"Group photo of "`, `"Double tap to view group icon of "`).
+   - Applies geometric bounding-box analysis: extracts title candidates situated strictly within the upper vertical half of the row (`bounds.centerY() <= rowBounds.centerY()`) and left of the date/time column, completely isolating titles from bottom message snippets.
+5. **Persistence**: Saves harvested groups to `dynamic_contact_pool` tagged with source `WA_GROUP` or `WA_BUSINESS_GROUP`, virtual phone `group:[GroupName]`, and normalized number `group:[groupname]`.
+
+## 4.2.2 WhatsApp Group Message Dispatch Engine (`WhatsAppGroupEngine.kt`)
+1. **Target Normalization**: Automatically strips `group:` prefix from the recipient string and sanitizes whitespace.
+2. **Search & Direct Selection**:
+   - Inspects visible conversation items for an immediate exact title match.
+   - If not immediately visible, activates WhatsApp's search bar, injects the group title, and selects the matching search result row.
+3. **Context Verification**: Verifies the opened conversation header (`conversation_contact_name`, `group_title`) matches the requested group before executing message typing.
+4. **Handoff to Direct Send**: Once the group chat is confirmed open, hands off execution to `WhatsAppDirectSendEngine` to type text or attach media, dispatch the message, return to the launcher, and re-arm the biometric-safe screen lock.
 
 ## 4.3 WhatsApp VoIP Voice Call Engine
 1. **Placement**: Launches WhatsApp voice call deep link: `android.intent.action.VIEW` with `vnd.android.cursor.item/vnd.com.whatsapp.voip.call`.

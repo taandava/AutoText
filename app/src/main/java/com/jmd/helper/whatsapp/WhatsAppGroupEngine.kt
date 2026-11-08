@@ -152,7 +152,10 @@ class WhatsAppGroupEngine(
         pkg: String,
         windows: List<AccessibilityWindowInfo>?
     ): AccessibilityNodeInfo? {
-        val searchIds = listOf("menuitem_search", "search_tool_bar", "search_holder", "search_button")
+        val searchIds = listOf(
+            "menuitem_search", "search_tool_bar", "search_holder", "search_button",
+            "search_bar", "search_src_text", "search_icon", "search_text"
+        )
         for (id in searchIds) {
             val nodes = AccessibilityNodeUtils.findNodesByViewId(root, pkg, id, windows)
             nodes.firstOrNull { it.isVisibleToUser && (it.isClickable || it.parent?.isClickable == true) }?.let {
@@ -167,9 +170,11 @@ class WhatsAppGroupEngine(
             val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
             val text = node.text?.toString()?.lowercase().orEmpty()
 
-            if ((desc == "search" || desc.startsWith("search") || text == "search") &&
-                (node.isClickable || node.parent?.isClickable == true)
-            ) {
+            val isSearchMatch = desc == "search" || desc.startsWith("search") || desc.contains("ask meta ai or search") ||
+                text == "search" || text.startsWith("search") || text.contains("ask meta ai or search") ||
+                desc.contains("खोजें") || text.contains("खोजें")
+
+            if (isSearchMatch && (node.isClickable || node.parent?.isClickable == true)) {
                 return if (node.isClickable) node else node.parent
             }
 
@@ -187,8 +192,10 @@ class WhatsAppGroupEngine(
             val node = queue.removeFirst()
             val id = node.viewIdResourceName?.lowercase().orEmpty()
             val cls = node.className?.toString().orEmpty()
+            val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
+            val text = node.text?.toString()?.lowercase().orEmpty()
 
-            val isSearch = id.contains("search") || id.contains("query")
+            val isSearch = id.contains("search") || id.contains("query") || desc.contains("search") || text.contains("search")
             val isEditable = node.isEditable || cls.contains("EditText", ignoreCase = true)
 
             if (node.isVisibleToUser && isEditable && isSearch) {
