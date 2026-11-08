@@ -433,7 +433,33 @@ fun WhatsAppSetupAndScreenAssistView(
  */
 @Composable
 fun WhatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
-    val isOperational = AccessibilityHealthManager.isServiceOperational()
+    val isRunning = AccessibilityHealthManager.isServiceOperational()
+    val isSettingOn = AccessibilityHealthManager.isAccessibilitySettingEnabled(context)
+    val hasWriteSecure = AccessibilityHealthManager.hasWriteSecureSettings(context)
+    val isDynamicStandby = hasWriteSecure && prefs.isDynamicA11yOnDemandEnabled
+
+    var statusState by remember {
+        mutableStateOf(
+            Triple(
+                isRunning || isSettingOn || isDynamicStandby,
+                isRunning,
+                isDynamicStandby
+            )
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            val r = AccessibilityHealthManager.isServiceOperational()
+            val s = AccessibilityHealthManager.isAccessibilitySettingEnabled(context)
+            val ws = AccessibilityHealthManager.hasWriteSecureSettings(context)
+            val ds = ws && prefs.isDynamicA11yOnDemandEnabled
+            statusState = Triple(r || s || ds, r, ds)
+            delay(1500L)
+        }
+    }
+
+    val (isOperational, isCurrentlyRunning, isStandby) = statusState
 
     AppCard(
         modifier = Modifier.fillMaxWidth(),
@@ -453,14 +479,23 @@ fun WhatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
             Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
-                    text = if (isOperational) "Helper Assistant: Connected (Bank-Shield Active)" else "Helper Assistant: Setup Required",
+                    text = when {
+                        isCurrentlyRunning -> "Helper Assistant: Connected (Bank-Shield Active)"
+                        isStandby -> "Helper Assistant: Dynamic Standby (Bank-Safe)"
+                        isOperational -> "Helper Assistant: Enabled in System"
+                        else -> "Helper Assistant: Setup Required"
+                    },
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
                     color = if (isOperational) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error
                 )
                 Text(
-                    text = if (isOperational) "Active in background. Banking and payment apps are strictly isolated."
-                           else "Enable Helper Assistant in Settings > Accessibility > Installed apps.",
+                    text = when {
+                        isCurrentlyRunning -> "Active in background. Banking and payment apps are strictly isolated."
+                        isStandby -> "Connects on demand when tasks run. 100% banking and payment app compatibility."
+                        isOperational -> "Accessibility enabled. Ready for scheduled message delivery."
+                        else -> "Enable Helper Assistant in Settings > Accessibility > Installed apps."
+                    },
                     fontSize = 11.5.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

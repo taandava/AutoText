@@ -408,12 +408,24 @@ fun ComposeTaskScreen(
             }
             finalRecipients = listOf("Self")
             finalRecipientNames = listOf(title.ifBlank { "Local Device Alarm" })
-        } else if (finalPhoneList.isEmpty() && selectedChannel !in listOf(ChannelType.CALL_SIMULATION, ChannelType.REMINDER, ChannelType.SOUND_MODE)) {
+        } else if (selectedChannel == ChannelType.CALL_SIMULATION) {
+            finalRecipients = listOf(simulatedCallerNumber.ifBlank { "Incoming Call" })
+            finalRecipientNames = listOf(simulatedCallerName.ifBlank { "Simulated Caller" })
+        } else if (selectedChannel == ChannelType.SOUND_MODE) {
+            finalRecipients = listOf("System")
+            finalRecipientNames = listOf(soundModeSetting.ifBlank { "Sound Profile" })
+        } else if (finalPhoneList.isEmpty()) {
             context.showAppToast("Select a recipient", isLong = true)
             return@saveTaskAction
         } else {
             // Centralized content validation (text or media) for messaging channels
-            if (selectedChannel in listOf(ChannelType.SMS, ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS)) {
+            if (selectedChannel in listOf(
+                    ChannelType.SMS,
+                    ChannelType.WHATSAPP,
+                    ChannelType.WHATSAPP_BUSINESS,
+                    ChannelType.WHATSAPP_GROUP,
+                    ChannelType.WHATSAPP_BUSINESS_GROUP
+                )) {
                 if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
             }
             finalRecipients = finalPhoneList

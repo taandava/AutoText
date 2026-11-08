@@ -837,6 +837,14 @@ class TaskAccessibilityService : AccessibilityService() {
                 val ctx: Context = inst ?: runCatching { HelperApplication.instance }.getOrNull() ?: return false
                 if (inst == null && AccessibilityHealthManager.hasWriteSecureSettings(ctx)) {
                     AccessibilityHealthManager.enableAccessibilityService(ctx)
+                    val start = System.currentTimeMillis()
+                    while (instance == null && (System.currentTimeMillis() - start) < 600L) {
+                        try {
+                            Thread.sleep(50L)
+                        } catch (_: InterruptedException) {
+                            break
+                        }
+                    }
                     inst = instance
                 }
                 if (inst != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
