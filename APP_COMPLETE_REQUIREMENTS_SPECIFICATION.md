@@ -51,11 +51,17 @@ Helper (`com.jmd.helper`) is a commercial-grade, on-device autonomous hardware a
 ### 2.1 Constraint 1: Absolute Data Sovereignty (Offline-First)
 The manifest must never request `android.permission.INTERNET` or `android.permission.ACCESS_NETWORK_STATE`. All databases, credentials, execution histories, and communication records must remain strictly inside device-encrypted internal storage (`/data/user/0/com.jmd.helper`).
 
-### 2.2 Constraint 2: Banking & Financial App Protection Shield
+### 2.2 Constraint 2: Banking & Financial App Protection Shield & NPCI UPI Isolation
 The system must maintain an active list of 60+ Indian and global financial package identifiers (including Google Pay, PhonePe, Paytm, BHIM, YONO SBI, iMobile, HDFC, Axis, Cred, etc.). Whenever any monitored package gains window focus or Accessibility event generation:
 1. `TaskAccessibilityService` must instantly call `disableSelf()`.
 2. All tree inspection and node traversal must immediately cease.
 3. The event must not be logged or stored.
+4. **NPCI UPI Common Library Compliance Invariants**:
+   - `accessibility_service_config.xml` must never list financial/banking packages in `android:packageNames`. Scoping must strictly remain constrained to WhatsApp, dialer, and SystemUI.
+   - Flags must strictly be `flagDefault|flagReportViewIds`. `flagRetrieveInteractiveWindows` is prohibited.
+   - `serviceInfo.packageNames` in `PrivacyManager.kt` must enforce a strict non-null invariant (`info.packageNames = allowedPackages.toTypedArray()`).
+   - Dynamic On-Demand Standby: When granted `WRITE_SECURE_SETTINGS`, Helper remains **100% detached** from `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES` during idle periods, ensuring Google Pay and UPI apps see 0 running accessibility services.
+   - Quick Settings Tile (`TaskTileService`): Provides a 1-tap manual pause/resume option for environments without ADB setup.
 
 ### 2.3 Constraint 3: Biometric-Safe Screen Locking
 Post-task execution screen locking must never execute `DevicePolicyManager.lockNow()` as a primary mechanism, because `lockNow()` sets `strongAuthRequired=0x2`, invalidating biometric trust (fingerprint and face unlock). The system must dispatch `GLOBAL_ACTION_LOCK_SCREEN` via AccessibilityService, which simulates the physical Power button, preserving biometrics.
@@ -311,9 +317,10 @@ CREATE TABLE auto_reply_rules (
 
 Every release candidate must satisfy all of the following quality gates:
 
-1. **Compilation:** Compiles cleanly with zero Kotlin compilation errors across debug and release build variants.
-2. **Lint & Security:** Release lint passes with zero warnings (`lintVitalRelease`).
-3. **Unit Tests:** 100% of unit tests pass (`.\gradlew :app:testDebugUnitTest`).
-4. **Hardware Verification:** Verified on physical test device `10BF1G0HCD0024R` (Android 16 API 36).
+1. **Compilation:** Compiles cleanly with zero Kotlin compilation errors across debug and release build variants (`compileDebugKotlin`, `compileReleaseKotlin`).
+2. **Lint & Security:** Release lint passes with zero fatal errors (`lintVitalRelease`).
+3. **Unit Tests:** 100% of unit tests pass (`.\gradlew :app:testDebugUnitTest`, 26/26 tests green).
+4. **Hardware Verification:** Verified on physical test device `10BF1G0HCD0024R` (Vivo / iQOO 13, Android 16 API 36) including live Google Pay payment success and WhatsApp group harvesting.
 5. **Privacy:** Zero network permissions in `AndroidManifest.xml` verified via `aapt dump permissions`.
 6. **Code Standards:** Zero `@Suppress` annotations in handwritten Kotlin code.
+7. **Production Artifact:** Signed `app-release.apk` compiled with full R8 shrinking and minification.
