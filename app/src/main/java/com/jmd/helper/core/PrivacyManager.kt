@@ -384,21 +384,22 @@ class PrivacyManager private constructor(private val appContext: Context) {
         val service = TaskAccessibilityService.getInstance() ?: return
         try {
             val info = service.serviceInfo ?: return
-            if (prefs.isSmartAccessibilityScopingEnabled) {
-                val allowedPackages = BASE_TASK_TARGET_PACKAGES.toMutableSet()
-                allowedPackages.add(appContext.packageName)
+            val allowedPackages = BASE_TASK_TARGET_PACKAGES.toMutableSet()
+            allowedPackages.add(appContext.packageName)
 
+            if (prefs.isSmartAccessibilityScopingEnabled) {
                 // Remove any packages explicitly marked as excluded
                 for ((pkg, config) in configCache) {
                     if (config.isExcluded) {
                         allowedPackages.remove(pkg)
                     }
                 }
-                info.packageNames = allowedPackages.toTypedArray()
-                Log.d(TAG, "Accessibility service scoped to ${allowedPackages.size} packages: $allowedPackages")
-            } else {
-                info.packageNames = null
             }
+            // Strict Invariant: info.packageNames MUST NEVER be null.
+            // When packageNames is null, Android routes ALL app events (including banking & UPI) to the service,
+            // which causes Google Pay, PhonePe, and NPCI security modules to block payment flows.
+            info.packageNames = allowedPackages.toTypedArray()
+            Log.d(TAG, "Accessibility service scoped to ${allowedPackages.size} packages: $allowedPackages")
             service.serviceInfo = info
         } catch (e: Exception) {
             Log.e(TAG, "Error updating accessibility service scoping", e)

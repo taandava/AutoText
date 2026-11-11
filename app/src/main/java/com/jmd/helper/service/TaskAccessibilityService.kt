@@ -1553,7 +1553,6 @@ class TaskAccessibilityService : AccessibilityService() {
         try {
             val info = serviceInfo ?: android.accessibilityservice.AccessibilityServiceInfo()
             info.flags = info.flags or
-                android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
             info.eventTypes = ACTIVE_DISPATCH_EVENT_MASK
@@ -1607,7 +1606,6 @@ class TaskAccessibilityService : AccessibilityService() {
         try {
             val info = serviceInfo ?: android.accessibilityservice.AccessibilityServiceInfo()
             info.flags = info.flags or
-                android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
                 android.accessibilityservice.AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS
             info.eventTypes = ACTIVE_DISPATCH_EVENT_MASK

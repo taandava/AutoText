@@ -1757,7 +1757,7 @@ Static Android resources defining adaptive launcher icons, accessibility service
 
 #### [`app/src/main/res/xml/accessibility_service_config.xml`](file:///D:/GPU-D/apps/Automation/app/src/main/res/xml/accessibility_service_config.xml)
 - **Category:** `xml` • **Type:** `.xml`
-- **Purpose:** Android AccessibilityService capability metadata. Declares `canRetrieveWindowContent="true"`, `accessibilityFeedbackType="feedbackGeneric"`, and `accessibilityFlags="flagDefault|flagReportViewIds|flagRetrieveInteractiveWindows"`.
+- **Purpose:** Android AccessibilityService capability metadata. Declares `canRetrieveWindowContent="true"`, `accessibilityFeedbackType="feedbackGeneric"`, and `accessibilityFlags="flagDefault|flagReportViewIds"`. Scoped strictly to target packages (WhatsApp, Dialer, SystemUI) with zero financial application exposure.
 
 #### [`app/src/main/res/xml/backup_rules.xml`](file:///D:/GPU-D/apps/Automation/app/src/main/res/xml/backup_rules.xml)
 - **Category:** `xml` • **Type:** `.xml`
