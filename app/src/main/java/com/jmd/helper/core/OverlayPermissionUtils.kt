@@ -1,9 +1,18 @@
 /**
  * Package: com.jmd.helper.core
- * Module: Core Task Utilities
+ * Module: Core Security, Invariants & Privacy
  *
+ * What it is:
+ * Architecture definition and implementation for [OverlayPermissionUtils].
+ *
+ * What it does:
  * Provides system overlay window permission verification and system settings intent routing.
+ *
+ * Linked With:
+ * - Core Security & Utilities: [androidx.core.net.toUri]
+ * - Android Framework & Jetpack: [android.provider.Settings]
  */
+
 package com.jmd.helper.core
 
 import android.content.Context
@@ -15,12 +24,28 @@ import androidx.core.net.toUri
  * Helper utility for inspecting and requesting [Settings.ACTION_MANAGE_OVERLAY_PERMISSION].
  */
 typealias OverlayPermissionUtils = OverlayPermissionHelper
+/**
+ * What it is:
+ * Component definition for [OverlayPermissionHelper].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for OverlayPermissionHelper.
+ *
+ * Linked with:
+ * - Component: [OverlayPermissionUtils]
+ */
 
 object OverlayPermissionHelper {
 
     /**
+     * What it is:
      * Determines whether the app has permission to draw on top of other applications.
      *
+     * What it does:
+     * Executes [canDrawOverlays] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [OverlayPermissionUtils], [canDrawOverlays]
      * @param context Active Android [Context].
      * @return True if granted, false otherwise.
      */
@@ -29,8 +54,14 @@ object OverlayPermissionHelper {
     }
 
     /**
+     * What it is:
      * Constructs an explicit intent directing the user to the system overlay settings screen for this app.
      *
+     * What it does:
+     * Executes [getManageOverlayIntent] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [OverlayPermissionUtils], [getManageOverlayIntent]
      * @param context Active Android [Context].
      * @return Prepared [Intent] with NEW_TASK flags.
      */
@@ -44,9 +75,14 @@ object OverlayPermissionHelper {
     }
 
     /**
+     * What it is:
      * Constructs a generic intent directing the user to the system-wide overlay apps list.
+     *
+     * What it does:
      * Useful as a fallback when an OEM settings application does not support direct package URIs.
      *
+     * Linked with:
+     * - Architecture: [OverlayPermissionUtils], [getManageOverlayGenericIntent]
      * @return Prepared generic [Intent] with NEW_TASK flags.
      */
     fun getManageOverlayGenericIntent(): Intent {
@@ -56,12 +92,14 @@ object OverlayPermissionHelper {
     }
 
     /**
+     * What it is:
      * Safely launches the system overlay settings screen with multi-tiered fallback handling.
-     * 1. Attempts direct app-specific overlay toggle via `package:<packageName>`.
-     * 2. Attempts OEM-specific floating window / overlay manager screens (Xiaomi, Vivo, Oppo, Honor).
-     * 3. Falls back to generic system overlay list if package-specific route is not supported by OEM ROM.
-     * 4. Falls back to application details settings if overlay action is completely unavailable.
      *
+     * What it does:
+     * 1. Attempts direct app-specific overlay toggle via `package:<packageName>`. 2. Attempts OEM-specific floating window / overlay manager screens (Xiaomi, Vivo, Oppo, Honor). 3. Falls back to generic system overlay list if package-specific route is not supported by OEM ROM. 4. Falls back to application details settings if overlay action is completely unavailable.
+     *
+     * Linked with:
+     * - Architecture: [OverlayPermissionUtils], [launchOverlaySettings]
      * @param context Active Android [Context].
      * @return True if an intent was successfully dispatched; false otherwise.
      */

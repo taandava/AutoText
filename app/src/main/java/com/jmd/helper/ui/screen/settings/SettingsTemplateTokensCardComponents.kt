@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SettingsTemplateTokensCardComponents].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SettingsTemplateTokensCardComponents.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Core Security & Utilities: [com.jmd.helper.core.MessageTemplateResolver], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [androidx.compose.animation.AnimatedVisibility], [androidx.compose.foundation.background], [androidx.compose.foundation.border], [androidx.compose.foundation.clickable]
+ */
+
 package com.jmd.helper.ui.screen.settings
 
 import androidx.compose.animation.AnimatedVisibility
@@ -25,8 +41,14 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
- * Settings configuration card for template dynamic variables, date/time formats,
- * contextual greetings, and currency tokens.
+ * What it is:
+ * Settings configuration card for template dynamic variables, date/time formats, contextual greetings, and currency tokens.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [SettingsTemplateTokensCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsTemplateTokensCardComponents], [SettingsTemplateTokensCard]
  */
 @Composable
 fun SettingsTemplateTokensCard(
@@ -487,4 +509,3 @@ fun SettingsTemplateTokensCard(
         }
     }
 }
-

@@ -1,15 +1,19 @@
 /**
  * Package: com.jmd.helper.scheduler
- * Module: Schedulers Layer
+ * Module: Schedulers & Background Workers
  *
- * Schedules recurring exact-while-idle alarms with Android AlarmManager to periodically
- * evaluate the binder health of [com.jmd.helper.service.TaskAccessibilityService].
+ * What it is:
+ * Architecture definition and implementation for [AccessibilityWatchdogScheduler].
+ *
+ * What it does:
+ * Schedules recurring exact-while-idle alarms with Android AlarmManager to periodically evaluate the binder health of [com.jmd.helper.service.TaskAccessibilityService].
  *
  * Linked With:
- * - Receiver: [com.jmd.helper.receiver.AccessibilityWatchdogReceiver]
- * - Health Manager: [com.jmd.helper.core.AccessibilityHealthManager]
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
+ * - Schedulers & Receivers: [android.app.AlarmManager], [com.jmd.helper.receiver.AccessibilityWatchdogReceiver]
+ * - Core Security & Utilities: [android.util.Log], [androidx.work.WorkManager], [java.util.concurrent.TimeUnit]
+ * - Android Framework & Jetpack: [android.app.PendingIntent], [android.os.Build], [androidx.work.ExistingPeriodicWorkPolicy], [androidx.work.PeriodicWorkRequestBuilder]
  */
+
 package com.jmd.helper.scheduler
 
 import android.app.AlarmManager
@@ -25,10 +29,14 @@ import com.jmd.helper.receiver.AccessibilityWatchdogReceiver
 import java.util.concurrent.TimeUnit
 
 /**
+ * What it is:
  * Watchdog alarm scheduler ensuring recurring checks every 15 minutes.
- * Integrates dual-layer redundancy:
- * 1. High-frequency exact AlarmManager RTC_WAKEUP alarms.
- * 2. Persistent periodic WorkManager tasks surviving battery optimization and deep sleep.
+ *
+ * What it does:
+ * Integrates dual-layer redundancy: 1. High-frequency exact AlarmManager RTC_WAKEUP alarms. 2. Persistent periodic WorkManager tasks surviving battery optimization and deep sleep.
+ *
+ * Linked with:
+ * - Architecture: [AccessibilityWatchdogScheduler], [AccessibilityWatchdogScheduler]
  */
 object AccessibilityWatchdogScheduler {
 
@@ -38,9 +46,14 @@ object AccessibilityWatchdogScheduler {
     private const val INTERVAL_MILLIS = 15 * 60 * 1000L
 
     /**
-     * Schedules the next watchdog heartbeat alarm using exact-while-idle alarms,
-     * and ensures the background WorkManager watchdog worker is enqueued.
+     * What it is:
+     * Schedules the next watchdog heartbeat alarm using exact-while-idle alarms, and ensures the background WorkManager watchdog worker is enqueued.
      *
+     * What it does:
+     * Executes [scheduleHeartbeat] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityWatchdogScheduler], [scheduleHeartbeat]
      * @param context Active Android [Context].
      */
     fun scheduleHeartbeat(context: Context) {
@@ -80,9 +93,14 @@ object AccessibilityWatchdogScheduler {
     }
 
     /**
-     * Enqueues a persistent periodic [AccessibilityWatchdogWorker] to guarantee heartbeat
-     * execution every 15 minutes even under aggressive OEM power saving policies.
+     * What it is:
+     * Enqueues a persistent periodic [AccessibilityWatchdogWorker] to guarantee heartbeat execution every 15 minutes even under aggressive OEM power saving policies.
      *
+     * What it does:
+     * Executes [enqueueWorkManagerWatchdog] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityWatchdogScheduler], [enqueueWorkManagerWatchdog]
      * @param context Active Android [Context].
      */
     fun enqueueWorkManagerWatchdog(context: Context) {

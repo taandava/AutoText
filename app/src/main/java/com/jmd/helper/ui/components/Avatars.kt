@@ -1,16 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.ui.components
- * Module: UI Avatar Layer
+ * Module: Application Core Subsystem
  *
- * Contact avatars with initials generation, color hashing, LruCache photo caching,
- * and badge overlays for WhatsApp, SMS, and Call channel indicators.
+ * What it is:
+ * Architecture definition and implementation for [Avatars].
+ *
+ * What it does:
+ * Contact avatars with initials generation, color hashing, LruCache photo caching, and badge overlays for WhatsApp, SMS, and Call channel indicators.
  *
  * Linked With:
- * - Theme: `ThemeKt`, [com.jmd.helper.ui.theme.AppDesignTokens]
- * - Screens: `ContactsScreen`, `TasksScreen`
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.*]
+ * - Core Security & Utilities: [android.util.LruCache], [androidx.core.net.toUri]
+ * - Android Framework & Jetpack: [android.graphics.BitmapFactory], [androidx.compose.foundation.shape.CircleShape], [kotlinx.coroutines.CancellationException], [kotlinx.coroutines.Dispatchers]
  */
+
 package com.jmd.helper.ui.components
 
 import android.graphics.BitmapFactory
@@ -45,17 +48,27 @@ import kotlin.math.abs
 // ==================== AVATARS & USER GRAPHICS COMPONENTS ====================
 
 /**
+ * What it is:
  * Memory-efficient LRU cache storing decoded contact photo bitmaps.
  *
- * Implements an in-memory ceiling of 500 bitmaps with synchronized read/write access
- * to eliminate repeated disk I/O and ContentResolver querying during fast scrolling.
+ * What it does:
+ * Implements an in-memory ceiling of 500 bitmaps with synchronized read/write access to eliminate repeated disk I/O and ContentResolver querying during fast scrolling.
+ *
+ * Linked with:
+ * - Architecture: [Avatars], [AvatarBitmapCache]
  */
 object AvatarBitmapCache {
     private val cache = object : LruCache<String, ImageBitmap>(500) {}
 
     /**
+     * What it is:
      * Retrieves a cached [ImageBitmap] by its content URI string.
      *
+     * What it does:
+     * Executes [get] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [Avatars], [get]
      * @param uri Device photo content URI string.
      * @return Cached bitmap or null if not yet loaded.
      */
@@ -65,8 +78,14 @@ object AvatarBitmapCache {
     }
 
     /**
+     * What it is:
      * Stores a decoded [ImageBitmap] into the cache.
      *
+     * What it does:
+     * Executes [put] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [Avatars], [put]
      * @param uri Device photo content URI string.
      * @param bitmap Decoded Compose [ImageBitmap] instance.
      */
@@ -77,14 +96,14 @@ object AvatarBitmapCache {
 }
 
 /**
- * Material 3 glassmorphic contact avatar rendering either a cached contact photo or a
- * deterministic hash-based linear gradient with two-letter initials.
+ * What it is:
+ * Material 3 glassmorphic contact avatar rendering either a cached contact photo or a deterministic hash-based linear gradient with two-letter initials.
  *
+ * What it does:
  * Features:
- * - Deterministic Linear Gradients: Generates harmonious two-color gradient based on name hash.
- * - Non-blocking Image Loading: Reads ContentResolver stream on IO dispatcher with sub-sampling.
- * - Optional Channel Badge: Overlays channel-specific icon (WhatsApp, SMS, Call) in bottom-right corner.
  *
+ * Linked with:
+ * - Architecture: [Avatars], [M3Avatar]
  * @param name Contact display name used for initials derivation and color hashing.
  * @param modifier Compose [Modifier] for positioning and layout.
  * @param photoUri Device content URI string referencing the contact's thumbnail or photo.
@@ -213,8 +232,14 @@ fun M3Avatar(
 }
 
 /**
+ * What it is:
  * Convenience wrapper Composable for [M3Avatar] standardizing contact representation across list views and headers.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [ContactAvatar] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [Avatars], [ContactAvatar]
  * @param name Contact display name.
  * @param modifier Layout [Modifier].
  * @param photoUri Photo URI string if available.

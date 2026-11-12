@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper.data.db.room
+ * Module: Persistence & Database Layer
+ *
+ * What it is:
+ * Architecture definition and implementation for [AppRoomDatabase].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for AppRoomDatabase.
+ *
+ * Linked With:
+ * - Repositories: [androidx.room.Database], [androidx.room.RoomDatabase]
+ * - Core Security & Utilities: [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [androidx.room.Room], [androidx.room.TypeConverters]
+ */
+
 package com.jmd.helper.data.db.room
 
 import android.content.Context
@@ -20,12 +36,32 @@ import com.jmd.helper.core.AppFileLogger
     version = com.jmd.helper.data.db.DatabaseHelper.DATABASE_VERSION,
     exportSchema = false
 )
+/**
+ * What it is:
+ * Component definition for [AppRoomDatabase].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for AppRoomDatabase.
+ *
+ * Linked with:
+ * - Component: [AppRoomDatabase]
+ */
 @TypeConverters(RoomTypeConverters::class)
 abstract class AppRoomDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao
     abstract fun executionLogDao(): ExecutionLogDao
     abstract fun autoReplyDao(): AutoReplyDao
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [AppRoomDatabase].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [AppRoomDatabase]
+     */
 
     companion object {
         private const val DATABASE_NAME = "helper.db"
@@ -50,4 +86,3 @@ abstract class AppRoomDatabase : RoomDatabase() {
         }
     }
 }
-

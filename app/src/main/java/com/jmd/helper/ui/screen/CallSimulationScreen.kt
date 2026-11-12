@@ -1,15 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.ui.screen
- * Module: UI Incoming Call Simulation Fullscreen Screen Layer
+ * Module: Application Core Subsystem
  *
- * Incoming simulated phone call user interface rendering caller photo/avatar, contact name,
- * and animated accept/decline action triggers.
+ * What it is:
+ * Architecture definition and implementation for [CallSimulationScreen].
+ *
+ * What it does:
+ * Incoming simulated phone call user interface rendering caller photo/avatar, contact name, and animated accept/decline action triggers.
  *
  * Linked With:
- * - Activity: [com.jmd.helper.ui.activity.CallSimulationActivity]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.*]
+ * - Core Security & Utilities: [java.util.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.shape.CircleShape], [androidx.compose.material.icons.Icons]
  */
+
 package com.jmd.helper.ui.screen
 
 import androidx.compose.foundation.*
@@ -34,9 +38,14 @@ import kotlin.time.Duration.Companion.seconds
 import com.jmd.helper.ui.theme.*
 
 /**
- * Incoming phone call simulation screen rendering caller identity, animated answer/decline
- * controls, active call timer, and in-call options (Mute, Keypad, Speaker).
+ * What it is:
+ * Incoming phone call simulation screen rendering caller identity, animated answer/decline controls, active call timer, and in-call options (Mute, Keypad, Speaker).
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [CallSimulationScreen] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [CallSimulationScreen], [CallSimulationScreen]
  * @param name Custom caller display name (e.g. "Work / Boss").
  * @param number Simulated phone number string.
  * @param style Visual skin style (e.g. "PIXEL", "SAMSUNG", "IOS").
@@ -262,7 +271,14 @@ fun CallSimulationScreen(
 }
 
 /**
+ * What it is:
  * Backward-compatible alias for [CallSimulationScreen].
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [SimulatedCallScreen] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [CallSimulationScreen], [SimulatedCallScreen]
  */
 @Composable
 fun SimulatedCallScreen(
@@ -274,4 +290,3 @@ fun SimulatedCallScreen(
 ) {
     CallSimulationScreen(name, number, style, onAnswer, onDecline)
 }
-

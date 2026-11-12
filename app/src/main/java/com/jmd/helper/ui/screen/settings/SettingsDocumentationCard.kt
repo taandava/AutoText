@@ -1,3 +1,18 @@
+/**
+ * Package: com.jmd.helper.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SettingsDocumentationCard].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SettingsDocumentationCard.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.text.font.FontWeight], [androidx.compose.ui.unit.dp]
+ * - Android Framework & Jetpack: [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.filled.MenuBook], [androidx.compose.material.icons.filled.Share], [androidx.compose.material3.Icon]
+ */
+
 package com.jmd.helper.ui.screen.settings
 
 import androidx.compose.material.icons.automirrored.filled.*
@@ -22,8 +37,14 @@ import com.jmd.helper.ui.screen.readDocumentationAsset
 import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
+ * What it is:
  * Card linking to the complete technical specifications and architectural documentation asset.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [SettingsDocumentationCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsDocumentationCard], [SettingsDocumentationCard]
  * @param context Android context for launching chooser share intents.
  * @param onOpenDocumentation Callback invoked to view bundled documentation screen.
  * @param modifier Optional layout modifier.

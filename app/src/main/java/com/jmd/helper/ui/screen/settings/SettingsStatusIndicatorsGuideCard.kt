@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SettingsStatusIndicatorsGuideCard].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SettingsStatusIndicatorsGuideCard.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.text.font.FontWeight]
+ * - Core Security & Utilities: [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.background], [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape]
+ */
+
 package com.jmd.helper.ui.screen.settings
 
 import android.content.Context
@@ -21,8 +37,14 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
- * Enterprise settings status guide presenting all header indicator icons,
- * their detailed operational descriptions, and real-time health statuses.
+ * What it is:
+ * Enterprise settings status guide presenting all header indicator icons, their detailed operational descriptions, and real-time health statuses.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [SettingsStatusIndicatorsGuideCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsStatusIndicatorsGuideCard], [SettingsStatusIndicatorsGuideCard]
  */
 @Composable
 fun SettingsStatusIndicatorsGuideCard(

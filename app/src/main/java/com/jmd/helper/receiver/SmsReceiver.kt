@@ -1,18 +1,21 @@
-
-
 /**
  * Package: com.jmd.helper.receiver
- * Module: Broadcast Receivers Layer
+ * Module: Broadcast Receivers Subsystem
  *
- * Catches incoming cellular SMS messages via [Telephony.Sms.Intents.SMS_RECEIVED_ACTION],
- * inspects message body patterns against configured AutoReply rules, and dispatches responses.
+ * What it is:
+ * Architecture definition and implementation for [SmsReceiver].
+ *
+ * What it does:
+ * Catches incoming cellular SMS messages via [Telephony.Sms.Intents.SMS_RECEIVED_ACTION], inspects message body patterns against configured AutoReply rules, and dispatches responses.
  *
  * Linked With:
- * - Senders: [com.jmd.helper.engine.SmsSender]
- * - Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.AutoReplyRepository]
- * - Quotas: [com.jmd.helper.core.SmsQuotaManager]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.AutoReplyRule], [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.ExecutionLog]
+ * - Services & Engines: [com.jmd.helper.engine.SmsSender]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.AppFileLogger], [com.jmd.helper.core.MessageTemplateResolver], [com.jmd.helper.core.PhoneNumberNormalizer]
+ * - Android Framework & Jetpack: [android.content.BroadcastReceiver], [android.provider.Telephony], [kotlinx.coroutines.CoroutineScope], [kotlinx.coroutines.Dispatchers]
  */
+
 package com.jmd.helper.receiver
 
 import android.content.BroadcastReceiver
@@ -38,13 +41,40 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 /**
+ * What it is:
  * Incoming SMS broadcast receiver executing intelligent auto-reply rules.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [SmsReceiver].
+ *
+ * Linked with:
+ * - Architecture: [SmsReceiver], [SmsReceiver]
  */
 class SmsReceiver : BroadcastReceiver() {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [SmsReceiver].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [SmsReceiver]
+     */
 
     companion object {
         private const val TAG = "SmsReceiver"
     }
+    /**
+     * What it is:
+     * Execution routine for [onReceive].
+     *
+     * What it does:
+     * Coordinates onReceive operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SmsReceiver]
+     */
 
     override fun onReceive(context: Context, intent: Intent) {
         try {
@@ -79,6 +109,16 @@ class SmsReceiver : BroadcastReceiver() {
             Log.e(TAG, "Unexpected error in SmsReceiver onReceive", t)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [processSmsAsync].
+     *
+     * What it does:
+     * Coordinates processSmsAsync operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SmsReceiver]
+     */
 
     private fun processSmsAsync(context: Context, senderPhone: String, messageBody: String) {
         val repository = AppRepository(context)
@@ -155,6 +195,16 @@ class SmsReceiver : BroadcastReceiver() {
             Log.d(TAG, "Skipping SMS auto-reply: $senderPhone is not a mobile number (shortcode/alphanumeric header)")
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [matchesRule].
+     *
+     * What it does:
+     * Coordinates matchesRule operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SmsReceiver]
+     */
 
     private fun matchesRule(rule: AutoReplyRule, messageText: String): Boolean {
         val cal = Calendar.getInstance()

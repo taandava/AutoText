@@ -1,10 +1,20 @@
 /**
  * Package: com.jmd.helper.core
- * Module: Core Task Utilities
+ * Module: Core Security, Invariants & Privacy
  *
- * Provides watchdog monitoring, connection heartbeat tracking, privileged service healing,
- * and manufacturer-specific battery optimization management.
+ * What it is:
+ * Architecture definition and implementation for [AccessibilityHealthManager].
+ *
+ * What it does:
+ * Provides watchdog monitoring, connection heartbeat tracking, privileged service healing, and manufacturer-specific battery optimization management.
+ *
+ * Linked With:
+ * - Schedulers & Receivers: [com.jmd.helper.receiver.HelperDeviceAdminReceiver]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService], [com.jmd.helper.service.TaskNotificationListenerService]
+ * - Core Security & Utilities: [android.content.pm.PackageManager], [android.util.Log], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [android.content.ComponentName], [android.provider.Settings], [kotlinx.coroutines.CoroutineScope], [kotlinx.coroutines.Dispatchers]
  */
+
 package com.jmd.helper.core
 
 import android.content.ComponentName
@@ -27,9 +37,14 @@ import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.service.TaskNotificationListenerService
 
 /**
+ * What it is:
  * Service lifecycle supervisor and watchdog manager for Android Accessibility and Notification listeners.
  *
+ * What it does:
  * Enforces critical system invariant: **NEVER alters device display auto-rotate settings or unrelated OS configurations.**
+ *
+ * Linked with:
+ * - Architecture: [AccessibilityHealthManager], [AccessibilityHealthManager]
  */
 object AccessibilityHealthManager {
 
@@ -40,16 +55,28 @@ object AccessibilityHealthManager {
     var lastHeartbeatTime: Long = System.currentTimeMillis()
 
     /**
+     * What it is:
      * Records a heartbeat pulse from the active accessibility service to verify live IPC connection.
+     *
+     * What it does:
+     * Executes [recordHeartbeat] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [recordHeartbeat]
      */
     fun recordHeartbeat() {
         lastHeartbeatTime = System.currentTimeMillis()
     }
 
     /**
+     * What it is:
      * Enforces the system invariant that auto-rotate is never enabled by Helper.
-     * When [PreferenceManager.isPreventSystemAutoRotateEnabled] is true, checks [Settings.System.ACCELEROMETER_ROTATION]
-     * and forces it to 0 (portrait locked) if enabled.
+     *
+     * What it does:
+     * When [PreferenceManager.isPreventSystemAutoRotateEnabled] is true, checks [Settings.System.ACCELEROMETER_ROTATION] and forces it to 0 (portrait locked) if enabled.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [enforceAutoRotateInvariant]
      */
     fun enforceAutoRotateInvariant(context: Context) {
         val prefs = PreferenceManager(context.applicationContext)
@@ -72,8 +99,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Inspects system secure settings to verify whether this app's accessibility service is enabled.
      *
+     * What it does:
+     * Executes [isAccessibilityEnabledInSystem] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [isAccessibilityEnabledInSystem]
      * @param context Active Android [Context].
      * @return True if registered in Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES.
      */
@@ -92,6 +125,16 @@ object AccessibilityHealthManager {
             false
         }
     }
+    /**
+     * What it is:
+     * Component definition for [ServiceState].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for ServiceState.
+     *
+     * Linked with:
+     * - Component: [AccessibilityHealthManager]
+     */
 
     enum class ServiceState {
         OPERATIONAL,
@@ -101,7 +144,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Inspects whether the Accessibility Service component is enabled in the PackageManager.
+     *
+     * What it does:
+     * Executes [isServiceComponentEnabled] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [isServiceComponentEnabled]
      */
     fun isServiceComponentEnabled(context: Context): Boolean {
         return try {
@@ -115,8 +165,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Ensures the Accessibility Service component is explicitly enabled in the PackageManager.
+     *
+     * What it does:
      * Prevents OEM security scanners or previous disable commands from making the service invisible in Settings.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [ensureServiceComponentEnabled]
      */
     fun ensureServiceComponentEnabled(context: Context) {
         try {
@@ -137,9 +193,14 @@ object AccessibilityHealthManager {
     }
 
     /**
-     * Evaluates the comprehensive lifecycle state of the Accessibility Service,
-     * cleanly differentiating between Android Settings configuration, PackageManager component state,
-     * and real-time binder liveliness.
+     * What it is:
+     * Evaluates the comprehensive lifecycle state of the Accessibility Service, cleanly differentiating between Android Settings configuration, PackageManager component state, and real-time binder liveliness.
+     *
+     * What it does:
+     * Executes [getServiceState] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [getServiceState]
      */
     fun getServiceState(context: Context): ServiceState {
         if (!isServiceComponentEnabled(context)) {
@@ -160,8 +221,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Inspects whether the accessibility service instance binder is actively connected and running in memory.
      *
+     * What it does:
+     * Executes [isServiceRunning] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [isServiceRunning]
      * @return True if live service instance is non-null and running.
      */
     fun isServiceRunning(): Boolean {
@@ -169,24 +236,52 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Verifies that the service is connected and ready to process UI actions.
+     *
+     * What it does:
+     * Executes [isServiceOperational] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [isServiceOperational]
      */
     fun isServiceOperational(): Boolean {
         return TaskAccessibilityService.isServiceRunning && TaskAccessibilityService.getInstance() != null
     }
 
     /**
+     * What it is:
      * Alias for [isServiceOperational].
+     *
+     * What it does:
+     * Executes [isServiceConnected] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [isServiceConnected]
      */
     fun isServiceConnected(): Boolean = isServiceOperational()
 
     /**
+     * What it is:
      * Checks if the Accessibility Service is enabled in system settings.
+     *
+     * What it does:
+     * Executes [isAccessibilitySettingEnabled] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [isAccessibilitySettingEnabled]
      */
     fun isAccessibilitySettingEnabled(context: Context): Boolean = isAccessibilityEnabledInSystem(context)
 
     /**
+     * What it is:
      * Polls for accessibility service readiness up to [timeout] before dependent tasks run.
+     *
+     * What it does:
+     * Executes [waitForServiceReadiness] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [waitForServiceReadiness]
      */
     fun waitForServiceReadiness(
         context: Context,
@@ -194,8 +289,14 @@ object AccessibilityHealthManager {
     ): Boolean = waitForServiceReadiness(context, timeout.inWholeMilliseconds)
 
     /**
+     * What it is:
      * Polls for accessibility service readiness up to [timeoutMs] before dependent tasks run.
+     *
+     * What it does:
      * Legacy overload accepting milliseconds.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [waitForServiceReadiness]
      */
     fun waitForServiceReadiness(context: Context, timeoutMs: Long): Boolean {
         if (isServiceOperational()) return true
@@ -210,8 +311,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Cooperatively suspends polling for accessibility service readiness up to [timeout] before dependent tasks run.
+     *
+     * What it does:
      * Prevents blocking worker threads in coroutine scopes.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [awaitServiceReadiness]
      */
     suspend fun awaitServiceReadiness(
         context: Context,
@@ -219,8 +326,14 @@ object AccessibilityHealthManager {
     ): Boolean = awaitServiceReadiness(context, timeout.inWholeMilliseconds)
 
     /**
+     * What it is:
      * Cooperatively suspends polling for accessibility service readiness up to [timeoutMs] before dependent tasks run.
+     *
+     * What it does:
      * Legacy overload accepting milliseconds.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [awaitServiceReadiness]
      */
     suspend fun awaitServiceReadiness(context: Context, timeoutMs: Long): Boolean {
         if (isServiceOperational()) return true
@@ -235,8 +348,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Verifies if app holds the privileged [android.Manifest.permission.WRITE_SECURE_SETTINGS] permission.
      *
+     * What it does:
+     * Executes [hasWriteSecureSettings] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [hasWriteSecureSettings]
      * @param context Active Android [Context].
      * @return True if granted via ADB or system image.
      */
@@ -250,8 +369,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Completely disables the accessibility service and removes it from system settings if privileged.
+     *
+     * What it does:
      * Activates Banking App Shield to ensure complete financial application isolation and prevent accessibility conflicts with banking and payment apps.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [disableAccessibilityService]
      */
     fun disableAccessibilityService(context: Context): Boolean {
         try {
@@ -286,7 +411,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Connects the accessibility service on-demand via Secure Settings.
+     *
+     * What it does:
+     * Executes [enableAccessibilityService] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [enableAccessibilityService]
      */
     fun enableAccessibilityService(context: Context): Boolean {
         try {
@@ -322,11 +454,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Recycles the accessibility service registration via Secure Settings to heal dropped binders.
      *
-     * Strictly avoids writing invalid dummy component names and never touches system auto-rotate settings.
-     * Skips healing if Banking Shield is enabled.
+     * What it does:
+     * Strictly avoids writing invalid dummy component names and never touches system auto-rotate settings. Skips healing if Banking Shield is enabled.
      *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [autoHealAccessibility]
      * @param context Active Android [Context].
      * @return True if successfully re-registered in secure settings.
      */
@@ -377,9 +512,14 @@ object AccessibilityHealthManager {
     }
 
     /**
-     * Verifies and ensures all background services (Accessibility, Notification Listener, Device Admin)
-     * are active and healthy using standard Android APIs.
+     * What it is:
+     * Verifies and ensures all background services (Accessibility, Notification Listener, Device Admin) are active and healthy using standard Android APIs.
      *
+     * What it does:
+     * Executes [autoApproveAllPermissions] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [autoApproveAllPermissions]
      * @param context Active Android [Context].
      * @return True if services are confirmed active.
      */
@@ -389,8 +529,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Verifies service liveliness and directly triggers healing if binder dropped.
      *
+     * What it does:
+     * Executes [ensureServiceAlive] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [ensureServiceAlive]
      * @param context Active Android [Context].
      * @return True if service is alive and connected.
      */
@@ -418,8 +564,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Ensures required services are enabled, healthy, and bound, maintaining bank-safe standby isolation.
      *
+     * What it does:
+     * Executes [ensureAllServicesActive] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [ensureAllServicesActive]
      * @param context Active Android [Context].
      * @return True if secure write succeeded and services are bound.
      */
@@ -491,8 +643,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Requests the framework to rebind [TaskNotificationListenerService].
      *
+     * What it does:
+     * Executes [healNotificationListener] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [healNotificationListener]
      * @param context Active Android [Context].
      */
     fun healNotificationListener(context: Context) {
@@ -507,10 +665,14 @@ object AccessibilityHealthManager {
     }
 
     /**
+     * What it is:
      * Dispatches intent to launch OEM-specific background management, autostart, or battery settings.
-     * Delegates to [OemBrandHelper] covering Vivo, Oppo, Samsung, Xiaomi, Motorola, Nokia, OnePlus, Realme,
-     * Huawei, Honor, Transsion, and Asus.
      *
+     * What it does:
+     * Delegates to [OemBrandHelper] covering Vivo, Oppo, Samsung, Xiaomi, Motorola, Nokia, OnePlus, Realme, Huawei, Honor, Transsion, and Asus.
+     *
+     * Linked with:
+     * - Architecture: [AccessibilityHealthManager], [openOemBackgroundSettings]
      * @param context Active Android [Context].
      */
     fun openOemBackgroundSettings(context: Context) {

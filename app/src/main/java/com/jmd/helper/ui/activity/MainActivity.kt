@@ -1,18 +1,21 @@
-
-
 /**
  * Package: com.jmd.helper.ui.activity
- * Module: UI Application Entry Point
+ * Module: Application Core Subsystem
  *
- * Primary Android Activity hosting Jetpack Compose UI, handling runtime permission requests,
- * deep links, incoming SEND intent shares, dynamic app icon aliases, and theme state.
+ * What it is:
+ * Architecture definition and implementation for [MainActivity].
+ *
+ * What it does:
+ * Primary Android Activity hosting Jetpack Compose UI, handling runtime permission requests, deep links, incoming SEND intent shares, dynamic app icon aliases, and theme state.
  *
  * Linked With:
- * - Host: `MainAppHost`
- * - Preferences: [com.jmd.helper.data.prefs.PreferenceManager]
- * - Application: [com.jmd.helper.HelperApplication]
- * - Theme: `ThemeKt`
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Services & Engines: [com.jmd.helper.engine.ContactIngestionEngine]
+ * - UI Screens & Components: [androidx.activity.ComponentActivity], [androidx.activity.compose.setContent], [androidx.activity.enableEdgeToEdge], [androidx.activity.result.contract.ActivityResultContracts]
+ * - Core Security & Utilities: [android.content.pm.PackageManager], [android.util.Log], [androidx.core.content.ContextCompat], [com.jmd.helper.core.AccessibilityHealthManager]
+ * - Android Framework & Jetpack: [android.Manifest], [android.os.Build], [android.os.Bundle], [androidx.lifecycle.lifecycleScope]
  */
+
 package com.jmd.helper.ui.activity
 
 import android.Manifest
@@ -46,7 +49,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
+ * What it is:
  * Root compose activity hosting the primary navigation hierarchy.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [MainActivity].
+ *
+ * Linked with:
+ * - Architecture: [MainActivity], [MainActivity]
  */
 class MainActivity : ComponentActivity() {
 
@@ -60,8 +70,14 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
-     * Initializes edge-to-edge window insets, parses incoming share intents, validates runtime permissions,
-     * triggers background contact discovery, and mounts Compose hierarchy.
+     * What it is:
+     * Initializes edge-to-edge window insets, parses incoming share intents, validates runtime permissions, triggers background contact discovery, and mounts Compose hierarchy.
+     *
+     * What it does:
+     * Executes [onCreate] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [MainActivity], [onCreate]
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -96,7 +112,14 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
+     * What it is:
      * Captures incoming intents delivered while activity is running in single-task or top mode.
+     *
+     * What it does:
+     * Executes [onNewIntent] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [MainActivity], [onNewIntent]
      */
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -105,7 +128,14 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
+     * What it is:
      * Parses plain text payload received via external ACTION_SEND intents.
+     *
+     * What it does:
+     * Executes [handleIncomingIntent] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [MainActivity], [handleIncomingIntent]
      */
     private fun handleIncomingIntent(intent: Intent?) {
         if (intent == null) return
@@ -118,7 +148,14 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
+     * What it is:
      * Re-verifies accessibility and notification listener service health upon returning to foreground.
+     *
+     * What it does:
+     * Executes [onResume] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [MainActivity], [onResume]
      */
     override fun onResume() {
         super.onResume()
@@ -135,7 +172,14 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
+     * What it is:
      * Scans device address book, call logs, and SMS threads into local SQLite contact pool if throttle elapsed.
+     *
+     * What it does:
+     * Executes [triggerBackgroundContactIngestion] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [MainActivity], [triggerBackgroundContactIngestion]
      */
     private fun triggerBackgroundContactIngestion() {
         if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
@@ -169,7 +213,14 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
+     * What it is:
      * Evaluates dangerous runtime permissions and requests any ungranted items.
+     *
+     * What it does:
+     * Executes [checkAndRequestPermissions] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [MainActivity], [checkAndRequestPermissions]
      */
     private fun checkAndRequestPermissions() {
         val permissionsToRequest = mutableListOf(
@@ -196,5 +247,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-

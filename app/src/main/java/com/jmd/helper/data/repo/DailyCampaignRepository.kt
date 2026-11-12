@@ -1,18 +1,20 @@
-
-
 /**
  * Package: com.jmd.helper.data.repo
- * Module: Data Access Layer
+ * Module: Application Core Subsystem
  *
- * Governs dynamic contact pool filtering, daily quota pacing, campaign ledger recording,
- * and unique cycle deduplication for high-volume scheduled outreach.
+ * What it is:
+ * Architecture definition and implementation for [DailyCampaignRepository].
+ *
+ * What it does:
+ * Governs dynamic contact pool filtering, daily quota pacing, campaign ledger recording, and unique cycle deduplication for high-volume scheduled outreach.
  *
  * Linked With:
- * - Database: [com.jmd.helper.data.db.DatabaseHelper]
- * - Models: [com.jmd.helper.data.model.DynamicContactItem], [com.jmd.helper.data.model.DynamicPoolStats]
- * - Scheduler: [com.jmd.helper.scheduler.DailyCampaignScheduler], [com.jmd.helper.scheduler.DailyCampaignWorker]
- * - UI Screens: `DailyCampaignScreen`
+ * - Repositories: [android.database.sqlite.SQLiteDatabase], [com.jmd.helper.data.db.DatabaseHelper]
+ * - Models & Entities: [com.jmd.helper.data.model.DynamicContactItem], [com.jmd.helper.data.model.DynamicPoolStats]
+ * - Core Security & Utilities: [android.util.Log], [java.util.*]
+ * - Android Framework & Jetpack: [android.database.Cursor]
  */
+
 package com.jmd.helper.data.repo
 
 import android.content.*
@@ -25,7 +27,14 @@ import com.jmd.helper.data.model.DynamicPoolStats
 import java.util.*
 
 /**
+ * What it is:
  * Repository managing [DynamicContactItem] pools and daily campaign dispatches across SMS and WhatsApp channels.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [DailyCampaignRepository].
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignRepository], [DailyCampaignRepository]
  */
 class DailyCampaignRepository(appContext: Context) {
 
@@ -33,9 +42,14 @@ class DailyCampaignRepository(appContext: Context) {
     private val tag = "DailyCampaignRepo"
 
     /**
-     * Retrieves eligible pending contacts from dynamic pool for campaign execution,
-     * excluding contacts previously dispatched in this campaign and filtering by channel type.
+     * What it is:
+     * Retrieves eligible pending contacts from dynamic pool for campaign execution, excluding contacts previously dispatched in this campaign and filtering by channel type.
      *
+     * What it does:
+     * Executes [getPendingPoolContactsForCampaign] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignRepository], [getPendingPoolContactsForCampaign]
      * @param campaignId Identifier of the active daily campaign.
      * @param isWhatsApp True if querying for WhatsApp/W4B delivery, false for SMS.
      * @param limit Maximum contacts to fetch for this batch.
@@ -92,8 +106,14 @@ class DailyCampaignRepository(appContext: Context) {
     }
 
     /**
+     * What it is:
      * Records a successful campaign delivery in the sent ledger and updates the contact's send counts.
      *
+     * What it does:
+     * Executes [markCampaignContactSuccess] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignRepository], [markCampaignContactSuccess]
      * @param campaignId Campaign identifier.
      * @param contact Target recipient.
      * @param channel Delivery channel name.
@@ -123,8 +143,14 @@ class DailyCampaignRepository(appContext: Context) {
     }
 
     /**
+     * What it is:
      * Records a dispatched but unconfirmed carrier dispatch in the campaign sent ledger.
      *
+     * What it does:
+     * Executes [markCampaignContactDispatched] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignRepository], [markCampaignContactDispatched]
      * @param campaignId Campaign identifier.
      * @param contact Target recipient.
      * @param channel Delivery channel name.
@@ -151,8 +177,14 @@ class DailyCampaignRepository(appContext: Context) {
     }
 
     /**
+     * What it is:
      * Fetches recently sent contacts for a campaign to display in the sent ledger feed.
      *
+     * What it does:
+     * Executes [getSentContactsForCampaign] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignRepository], [getSentContactsForCampaign]
      * @param campaignId Target campaign ID.
      * @param limit Maximum rows to return.
      * @return List of dispatched [DynamicContactItem] models.
@@ -179,6 +211,16 @@ class DailyCampaignRepository(appContext: Context) {
         }
         return list
     }
+    /**
+     * What it is:
+     * Execution routine for [resetCampaignLedger].
+     *
+     * What it does:
+     * Coordinates resetCampaignLedger operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignRepository]
+     */
 
     fun resetCampaignLedger(campaignId: Long) {
         try {
@@ -190,8 +232,14 @@ class DailyCampaignRepository(appContext: Context) {
     }
 
     /**
+     * What it is:
      * Removes a contact from the campaign's sent ledger so they become eligible for re-dispatch.
      *
+     * What it does:
+     * Executes [requeueContactForCampaign] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignRepository], [requeueContactForCampaign]
      * @param campaignId Campaign identifier.
      * @param contactId Unique ID of the contact to requeue.
      */
@@ -205,8 +253,14 @@ class DailyCampaignRepository(appContext: Context) {
     }
 
     /**
+     * What it is:
      * Calculates campaign pool metrics including total eligible pool count, sent count, and remaining unsent count.
      *
+     * What it does:
+     * Executes [getCampaignStats] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignRepository], [getCampaignStats]
      * @param campaignId Target campaign ID.
      * @return [DynamicPoolStats] summary.
      */
@@ -237,8 +291,14 @@ class DailyCampaignRepository(appContext: Context) {
     }
 
     /**
+     * What it is:
      * Counts the total number of contacts reached by a campaign during the current calendar day.
      *
+     * What it does:
+     * Executes [getSentCountForCampaignToday] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignRepository], [getSentCountForCampaignToday]
      * @param campaignId Target campaign ID.
      * @return Count of successfully dispatched recipients today.
      */
@@ -264,6 +324,16 @@ class DailyCampaignRepository(appContext: Context) {
         }
         return count
     }
+    /**
+     * What it is:
+     * Execution routine for [getSentSegmentsForCampaignToday].
+     *
+     * What it does:
+     * Coordinates getSentSegmentsForCampaignToday operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignRepository]
+     */
 
     fun getSentSegmentsForCampaignToday(campaignId: Long): Int {
         var segments = 0
@@ -287,6 +357,16 @@ class DailyCampaignRepository(appContext: Context) {
         }
         return segments
     }
+    /**
+     * What it is:
+     * Execution routine for [getPendingPoolContactsBatch].
+     *
+     * What it does:
+     * Coordinates getPendingPoolContactsBatch operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignRepository]
+     */
 
     fun getPendingPoolContactsBatch(whatsApp: Boolean = false, limit: Int = 100): List<DynamicContactItem> {
         val list = mutableListOf<DynamicContactItem>()
@@ -316,6 +396,16 @@ class DailyCampaignRepository(appContext: Context) {
         }
         return list
     }
+    /**
+     * What it is:
+     * Execution routine for [markContactSuccess].
+     *
+     * What it does:
+     * Coordinates markContactSuccess operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignRepository]
+     */
 
     fun markContactSuccess(id: Long, whatsApp: Boolean = false) {
         try {
@@ -334,6 +424,16 @@ class DailyCampaignRepository(appContext: Context) {
             Log.e(tag, "Error marking contact success", e)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [markContactPendingRetry].
+     *
+     * What it does:
+     * Coordinates markContactPendingRetry operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignRepository]
+     */
 
     fun markContactPendingRetry(id: Long, whatsApp: Boolean = false, status: String = "QUEUED") {
         try {
@@ -347,6 +447,16 @@ class DailyCampaignRepository(appContext: Context) {
             Log.e(tag, "Error marking contact pending retry", e)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [markContactInvalid].
+     *
+     * What it does:
+     * Coordinates markContactInvalid operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignRepository]
+     */
 
     fun markContactInvalid(id: Long, whatsApp: Boolean = false) {
         try {
@@ -363,6 +473,16 @@ class DailyCampaignRepository(appContext: Context) {
             Log.e(tag, "Error marking contact invalid", e)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [getPoolStats].
+     *
+     * What it does:
+     * Coordinates getPoolStats operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignRepository]
+     */
 
     fun getPoolStats(whatsApp: Boolean = false): Pair<Int, Int> {
         var total = 0
@@ -384,6 +504,16 @@ class DailyCampaignRepository(appContext: Context) {
         }
         return Pair(contacted, total)
     }
+    /**
+     * What it is:
+     * Execution routine for [cursorToDynamicContactItem].
+     *
+     * What it does:
+     * Coordinates cursorToDynamicContactItem operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignRepository]
+     */
 
     private fun cursorToDynamicContactItem(c: Cursor): DynamicContactItem {
         return DynamicContactItem(

@@ -1,15 +1,19 @@
 /**
  * Package: com.jmd.helper.scheduler
- * Module: Schedulers Layer
+ * Module: Schedulers & Background Workers
  *
- * Background WorkManager [CoroutineWorker] executing resilient watchdog monitoring of
- * [com.jmd.helper.service.TaskAccessibilityService] and [com.jmd.helper.service.TaskNotificationListenerService].
+ * What it is:
+ * Architecture definition and implementation for [AccessibilityWatchdogWorker].
+ *
+ * What it does:
+ * Background WorkManager [CoroutineWorker] executing resilient watchdog monitoring of [com.jmd.helper.service.TaskAccessibilityService] and [com.jmd.helper.service.TaskNotificationListenerService].
  *
  * Linked With:
- * - Scheduler: [com.jmd.helper.scheduler.AccessibilityWatchdogScheduler]
- * - Health Manager: [com.jmd.helper.core.AccessibilityHealthManager]
- * - Receiver: [com.jmd.helper.receiver.AccessibilityWatchdogReceiver]
+ * - Schedulers & Receivers: [androidx.work.CoroutineWorker], [androidx.work.WorkerParameters]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.ProtectedApplicationManager], [com.jmd.helper.data.prefs.PreferenceManager]
  */
+
 package com.jmd.helper.scheduler
 
 import android.content.Context
@@ -22,18 +26,44 @@ import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.service.TaskAccessibilityService
 
 /**
- * Dual-redundant background worker evaluating accessibility and notification listener service
- * health every 15 minutes to survive aggressive OEM process terminations and Doze mode.
+ * What it is:
+ * Dual-redundant background worker evaluating accessibility and notification listener service health every 15 minutes to survive aggressive OEM process terminations and Doze mode.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AccessibilityWatchdogWorker].
+ *
+ * Linked with:
+ * - Architecture: [AccessibilityWatchdogWorker], [AccessibilityWatchdogWorker]
  */
 class AccessibilityWatchdogWorker(
     appContext: Context,
     params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [AccessibilityWatchdogWorker].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [AccessibilityWatchdogWorker]
+     */
 
     companion object {
         private const val TAG = "A11yWatchdogWorker"
         const val UNIQUE_WORK_NAME = "HelperA11yWatchdogWork"
     }
+    /**
+     * What it is:
+     * Execution routine for [doWork].
+     *
+     * What it does:
+     * Coordinates doWork operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AccessibilityWatchdogWorker]
+     */
 
     override suspend fun doWork(): Result {
         return try {

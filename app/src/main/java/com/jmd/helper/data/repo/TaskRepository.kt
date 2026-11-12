@@ -1,20 +1,21 @@
-
-
 /**
  * Package: com.jmd.helper.data.repo
- * Module: Data Access Layer
+ * Module: Application Core Subsystem
  *
- * Provides thread-safe CRUD operations, JSON array serialization of multi-recipient contacts,
- * execution status transitions, and delivery deduplication for scheduled tasks.
+ * What it is:
+ * Architecture definition and implementation for [TaskRepository].
+ *
+ * What it does:
+ * Provides thread-safe CRUD operations, JSON array serialization of multi-recipient contacts, execution status transitions, and delivery deduplication for scheduled tasks.
  *
  * Linked With:
- * - Database: [com.jmd.helper.data.db.DatabaseHelper]
- * - Models: [com.jmd.helper.data.model.ScheduledTask], [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.TaskStatus]
- * - Normalizer: [com.jmd.helper.core.PhoneNumberNormalizer]
- * - Schedulers: [com.jmd.helper.scheduler.AlarmScheduler]
- * - Execution Engine: [com.jmd.helper.engine.SequentialTaskEngine]
- * - UI Screens: `TasksScreen`, `ComposeTaskScreen`
+ * - Repositories: [android.database.sqlite.SQLiteDatabase], [com.jmd.helper.data.db.DatabaseHelper]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.RecurrenceType], [com.jmd.helper.data.model.ScheduledTask], [com.jmd.helper.data.model.TaskStatus]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.AlarmScheduler]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.PhoneNumberNormalizer]
+ * - Android Framework & Jetpack: [android.content.ContentValues], [android.database.Cursor]
  */
+
 package com.jmd.helper.data.repo
 
 import android.content.ContentValues
@@ -31,7 +32,14 @@ import com.jmd.helper.data.model.TaskStatus
 import com.jmd.helper.scheduler.AlarmScheduler
 
 /**
+ * What it is:
  * Repository governing persistence of [ScheduledTask] entities and recipient delivery records.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [TaskRepository].
+ *
+ * Linked with:
+ * - Architecture: [TaskRepository], [TaskRepository]
  */
 class TaskRepository(context: Context) {
 
@@ -39,8 +47,14 @@ class TaskRepository(context: Context) {
     private val dbHelper = DatabaseHelper.getInstance(context)
 
     /**
+     * What it is:
      * Inserts a new scheduled task or replaces an existing task record.
      *
+     * What it does:
+     * Executes [insertTask] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskRepository], [insertTask]
      * @param task The [ScheduledTask] entity to persist.
      * @return Generated or confirmed task row ID.
      */
@@ -81,8 +95,14 @@ class TaskRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Updates an existing task's parameters in storage.
      *
+     * What it does:
+     * Executes [updateTask] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskRepository], [updateTask]
      * @param task Modified [ScheduledTask] instance.
      * @return `true` if update succeeded.
      */
@@ -118,8 +138,14 @@ class TaskRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Transitions task status (PENDING, RUNNING, DONE, FAILED, CANCELLED) and updates lastExecuted timestamp.
      *
+     * What it does:
+     * Executes [updateTaskStatus] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskRepository], [updateTaskStatus]
      * @param id The task ID.
      * @param status New [TaskStatus].
      * @param lastExecuted Timestamp in milliseconds.
@@ -136,10 +162,14 @@ class TaskRepository(context: Context) {
     }
 
     /**
-     * Recovers and reconciles any tasks left stranded in [TaskStatus.RUNNING] state due to
-     * unexpected application process termination, crash, or device reboot.
+     * What it is:
+     * Recovers and reconciles any tasks left stranded in [TaskStatus.RUNNING] state due to unexpected application process termination, crash, or device reboot.
+     *
+     * What it does:
      * Transitions recurring tasks back to [TaskStatus.PENDING] and single-run tasks to [TaskStatus.FAILED].
      *
+     * Linked with:
+     * - Architecture: [TaskRepository], [recoverInterruptedRunningTasks]
      * @return Number of orphaned running tasks successfully recovered.
      */
     fun recoverInterruptedRunningTasks(): Int {
@@ -159,9 +189,14 @@ class TaskRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Postpones a scheduled task by a given duration in milliseconds.
+     *
+     * What it does:
      * Updates trigger_time to now + postponeMillis and ensures status is PENDING.
      *
+     * Linked with:
+     * - Architecture: [TaskRepository], [postponeTask]
      * @param id The task ID.
      * @param postponeMillis Duration in milliseconds to postpone execution.
      * @return True if update succeeded.
@@ -178,8 +213,14 @@ class TaskRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Postpones all currently pending tasks whose trigger time is due or imminent.
      *
+     * What it does:
+     * Executes [postponeUpcomingTasks] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskRepository], [postponeUpcomingTasks]
      * @param postponeMillis Duration in milliseconds to push trigger times forward.
      * @return List of updated [ScheduledTask] objects.
      */
@@ -207,10 +248,14 @@ class TaskRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Deletes a scheduled task by ID.
-     * Directly cancels all pending AlarmManager alarms and, if the task is a
-     * reminder, dismisses that specific alarm from Android's system clock app.
      *
+     * What it does:
+     * Directly cancels all pending AlarmManager alarms and, if the task is a reminder, dismisses that specific alarm from Android's system clock app.
+     *
+     * Linked with:
+     * - Architecture: [TaskRepository], [deleteTask]
      * @param id The task ID.
      * @return `true` if deletion affected rows.
      */
@@ -224,8 +269,14 @@ class TaskRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Queries a task by ID.
      *
+     * What it does:
+     * Executes [getTaskById] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskRepository], [getTaskById]
      * @param id Task identifier.
      * @return [ScheduledTask] if found, or `null`.
      */
@@ -241,8 +292,14 @@ class TaskRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Retrieves all scheduled tasks ordered by trigger time ascending.
      *
+     * What it does:
+     * Executes [getAllTasks] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskRepository], [getAllTasks]
      * @return List of [ScheduledTask] objects.
      */
     fun getAllTasks(): List<ScheduledTask> {
@@ -256,6 +313,16 @@ class TaskRepository(context: Context) {
         }
         return tasks
     }
+    /**
+     * What it is:
+     * Execution routine for [getPendingTasks].
+     *
+     * What it does:
+     * Coordinates getPendingTasks operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskRepository]
+     */
 
     fun getPendingTasks(): List<ScheduledTask> {
         val db = dbHelper.readableDatabase
@@ -268,6 +335,16 @@ class TaskRepository(context: Context) {
         }
         return tasks
     }
+    /**
+     * What it is:
+     * Execution routine for [getTasksByStatus].
+     *
+     * What it does:
+     * Coordinates getTasksByStatus operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskRepository]
+     */
 
     fun getTasksByStatus(status: TaskStatus): List<ScheduledTask> {
         val db = dbHelper.readableDatabase
@@ -280,6 +357,16 @@ class TaskRepository(context: Context) {
         }
         return tasks
     }
+    /**
+     * What it is:
+     * Execution routine for [cursorToTask].
+     *
+     * What it does:
+     * Coordinates cursorToTask operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskRepository]
+     */
 
     private fun cursorToTask(c: Cursor): ScheduledTask {
         val recs = c.getString(c.getColumnIndexOrThrow("recipients"))
@@ -357,6 +444,16 @@ class TaskRepository(context: Context) {
             callFailurePolicy = callFailurePolicy
         )
     }
+    /**
+     * What it is:
+     * Execution routine for [isRecipientDeliveredForTask].
+     *
+     * What it does:
+     * Coordinates isRecipientDeliveredForTask operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskRepository]
+     */
 
     fun isRecipientDeliveredForTask(taskId: Long, recipient: String, occurrenceId: String = ""): Boolean {
         if (taskId <= 0L || recipient.isBlank()) return false
@@ -379,6 +476,16 @@ class TaskRepository(context: Context) {
             false
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [recordRecipientDelivery].
+     *
+     * What it does:
+     * Coordinates recordRecipientDelivery operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskRepository]
+     */
 
     fun recordRecipientDelivery(taskId: Long, recipient: String, channel: String, status: String = "SUCCESS", occurrenceId: String = ""): Boolean {
         if (taskId <= 0L || recipient.isBlank()) return false
@@ -400,6 +507,16 @@ class TaskRepository(context: Context) {
             false
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [clearDeliveriesForTask].
+     *
+     * What it does:
+     * Coordinates clearDeliveriesForTask operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskRepository]
+     */
 
     fun clearDeliveriesForTask(taskId: Long): Int {
         if (taskId <= 0L) return 0

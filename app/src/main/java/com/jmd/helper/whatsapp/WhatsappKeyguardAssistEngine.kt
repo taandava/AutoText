@@ -1,18 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.whatsapp
- * Module: WhatsApp Task Subsystem
+ * Module: WhatsApp Automation Subsystem
  *
- * Provides autonomous lockscreen unlocking (swipe gestures, accessibility PIN entry, coordinate tapping)
- * and security relocking post-task via [android.app.admin.DevicePolicyManager].
+ * What it is:
+ * Architecture definition and implementation for [WhatsappKeyguardAssistEngine].
+ *
+ * What it does:
+ * Provides autonomous lockscreen unlocking (swipe gestures, accessibility PIN entry, coordinate tapping) and security relocking post-task via [android.app.admin.DevicePolicyManager].
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Receiver: [com.jmd.helper.receiver.HelperDeviceAdminReceiver]
- * - Preferences: [com.jmd.helper.data.prefs.PreferenceManager]
- * - Engines: [com.jmd.helper.engine.SequentialTaskEngine], [com.jmd.helper.engine.WhatsAppSender]
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService], [android.accessibilityservice.GestureDescription]
+ * - Core Security & Utilities: [android.app.KeyguardManager], [android.util.Log]
+ * - Android Framework & Jetpack: [android.graphics.Path], [android.os.Build], [android.os.Handler], [android.view.accessibility.AccessibilityNodeInfo]
  */
+
 package com.jmd.helper.whatsapp
 
 import android.accessibilityservice.AccessibilityService
@@ -26,12 +27,14 @@ import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 
 /**
+ * What it is:
  * Autonomous keyguard screen entry assistance and security relock engine.
  *
- * Handles detection of active lockscreens, executing upward swipe gestures to invoke
- * the PIN bouncer, sequentially entering PIN digits via element actions, confirming entry,
- * and halting upon error detection (e.g. cooldown timers or wrong PIN warnings).
+ * What it does:
+ * Handles detection of active lockscreens, executing upward swipe gestures to invoke the PIN bouncer, sequentially entering PIN digits via element actions, confirming entry, and halting upon error detection (e.g. cooldown timers or wrong PIN warnings).
  *
+ * Linked with:
+ * - Architecture: [WhatsappKeyguardAssistEngine], [KeyguardAssistEngine]
  * @property service The active [AccessibilityService] used for gesture dispatch and element interaction.
  * @property handler Handler on the main thread for coordinating timed sequential clicks.
  * @property loggerTag Logging identifier tag for lockscreen telemetry.
@@ -83,6 +86,16 @@ class KeyguardAssistEngine(
 
     private var lastSwipeTime = 0L
     private var lastUnlockActionTime = 0L
+    /**
+     * What it is:
+     * Execution routine for [resetInitialDelay].
+     *
+     * What it does:
+     * Coordinates resetInitialDelay operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     fun resetInitialDelay() {
         assistAttemptCount = 0
@@ -92,12 +105,14 @@ class KeyguardAssistEngine(
     }
 
     /**
+     * What it is:
      * Orchestrates the keyguard unlock evaluation loop.
      *
-     * Evaluates lock state via [KeyguardManager], checks for lockout errors or cooldowns,
-     * performs upward swipes to reveal the bouncer if necessary, and dispatches numeric
-     * PIN entry or text input.
+     * What it does:
+     * Evaluates lock state via [KeyguardManager], checks for lockout errors or cooldowns, performs upward swipes to reveal the bouncer if necessary, and dispatches numeric PIN entry or text input.
      *
+     * Linked with:
+     * - Architecture: [WhatsappKeyguardAssistEngine], [handleKeyguardUnlock]
      * @param onUnlockSuccess Callback invoked once the keyguard is verified unlocked.
      * @param onUnlockAbort Callback invoked with an error reason if unlock fails or cooldown is detected.
      */
@@ -264,12 +279,29 @@ class KeyguardAssistEngine(
     }
 
     /**
+     * What it is:
      * Primary policy-compliant alias for [handleKeyguardUnlock].
+     *
+     * What it does:
+     * Executes [handleKeyguardScreenAssist] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappKeyguardAssistEngine], [handleKeyguardScreenAssist]
      */
     fun handleKeyguardScreenAssist(
         onSuccess: () -> Unit,
         onAbort: (reason: String) -> Unit
     ) = handleKeyguardUnlock(onSuccess, onAbort)
+    /**
+     * What it is:
+     * Execution routine for [enterKeypadDigitsAndSubmit].
+     *
+     * What it does:
+     * Coordinates enterKeypadDigitsAndSubmit operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun enterKeypadDigitsAndSubmit(
         pin: String,
@@ -421,6 +453,16 @@ class KeyguardAssistEngine(
 
         tapNextDigit(0)
     }
+    /**
+     * What it is:
+     * Execution routine for [findKeypadContainer].
+     *
+     * What it does:
+     * Coordinates findKeypadContainer operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun findKeypadContainer(roots: List<AccessibilityNodeInfo>): android.graphics.Rect? {
         val containerIds = listOf(
@@ -441,6 +483,16 @@ class KeyguardAssistEngine(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [findKeypadDigitNode].
+     *
+     * What it does:
+     * Coordinates findKeypadDigitNode operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun findKeypadDigitNode(root: AccessibilityNodeInfo, digit: Char): AccessibilityNodeInfo? {
         val dm = service.resources.displayMetrics
@@ -495,6 +547,16 @@ class KeyguardAssistEngine(
 
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [isDeleteOrBackspaceNode].
+     *
+     * What it does:
+     * Coordinates isDeleteOrBackspaceNode operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun isDeleteOrBackspaceNode(node: AccessibilityNodeInfo): Boolean {
         val id = node.viewIdResourceName?.lowercase().orEmpty()
@@ -504,6 +566,16 @@ class KeyguardAssistEngine(
                desc.contains("delete") || desc.contains("backspace") || desc.contains("clear") ||
                text.contains("delete") || text.contains("clear") || text == "⌫" || text == "del"
     }
+    /**
+     * What it is:
+     * Execution routine for [findKeypadEnterNode].
+     *
+     * What it does:
+     * Coordinates findKeypadEnterNode operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun findKeypadEnterNode(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val dm = service.resources.displayMetrics
@@ -554,8 +626,14 @@ class KeyguardAssistEngine(
     }
 
     /**
+     * What it is:
      * Locates and clicks the "Enter", "OK", or checkmark button on the lockscreen PIN keypad.
      *
+     * What it does:
+     * Executes [clickKeypadEnter] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappKeyguardAssistEngine], [clickKeypadEnter]
      * @param root The root [AccessibilityNodeInfo] representing the keyguard bouncer hierarchy.
      * @return `true` if an Enter/Confirm button was found and clicked successfully; `false` otherwise.
      */
@@ -571,6 +649,16 @@ class KeyguardAssistEngine(
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [dispatchPhysicalTap].
+     *
+     * What it does:
+     * Coordinates dispatchPhysicalTap operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun dispatchPhysicalTap(x: Float, y: Float, durationMs: Long = 50L): Boolean {
         return try {
@@ -584,6 +672,16 @@ class KeyguardAssistEngine(
             false
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [findPinInputField].
+     *
+     * What it does:
+     * Coordinates findPinInputField operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun findPinInputField(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val inputIds = listOf(
@@ -601,6 +699,16 @@ class KeyguardAssistEngine(
             return root.findFirstDescendant { it.className?.toString()?.contains("EditText", ignoreCase = true) == true }
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [hasKeypadDigits].
+     *
+     * What it does:
+     * Coordinates hasKeypadDigits operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun hasKeypadDigits(root: AccessibilityNodeInfo): Boolean {
         var foundCount = 0
@@ -609,6 +717,16 @@ class KeyguardAssistEngine(
         }
         return foundCount >= 2
     }
+    /**
+     * What it is:
+     * Execution routine for [tryClickSwitchToNumberLock].
+     *
+     * What it does:
+     * Coordinates tryClickSwitchToNumberLock operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun tryClickSwitchToNumberLock(root: AccessibilityNodeInfo): Boolean {
         val switchKeywords = listOf("use pin", "enter pin", "switch to pin", "use password", "enter password", "switch to password")
@@ -622,6 +740,16 @@ class KeyguardAssistEngine(
         val textNode = AccessibilityNodeUtils.findNodeByTextOrDesc(root, switchKeywords)
         return textNode != null && AccessibilityNodeUtils.clickElement(textNode, service)
     }
+    /**
+     * What it is:
+     * Execution routine for [isBiometricPromptVisible].
+     *
+     * What it does:
+     * Coordinates isBiometricPromptVisible operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun isBiometricPromptVisible(roots: List<AccessibilityNodeInfo>): Boolean {
         val keywords = listOf(
@@ -643,6 +771,16 @@ class KeyguardAssistEngine(
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [isLockscreenErrorOrCooldownPresent].
+     *
+     * What it does:
+     * Coordinates isLockscreenErrorOrCooldownPresent operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun isLockscreenErrorOrCooldownPresent(roots: List<AccessibilityNodeInfo>): String? {
         val dangerKeywords = listOf(
@@ -657,6 +795,16 @@ class KeyguardAssistEngine(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [swipeUpToRevealBouncer].
+     *
+     * What it does:
+     * Coordinates swipeUpToRevealBouncer operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsappKeyguardAssistEngine]
+     */
 
     private fun swipeUpToRevealBouncer(onComplete: () -> Unit) {
         try {

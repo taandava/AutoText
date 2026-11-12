@@ -1,16 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.ui.screen
- * Module: UI More / Navigation Screen Layer
+ * Module: Application Core Subsystem
  *
- * Hub screen navigating to secondary features: Settings, Documentation, Call Simulation,
- * Templates, Auto-Reply, and System Diagnostics.
+ * What it is:
+ * Architecture definition and implementation for [MoreScreen].
+ *
+ * What it does:
+ * Hub screen navigating to secondary features: Settings, Documentation, Call Simulation, Templates, Auto-Reply, and System Diagnostics.
  *
  * Linked With:
- * - Host: `MainAppHost`
- * - Components: `GlassComponentsKt`
+ * - Repositories: [com.jmd.helper.data.repo.*]
+ * - UI Screens & Components: [androidx.activity.compose.BackHandler], [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.shape.RoundedCornerShape], [androidx.compose.material.icons.Icons]
  */
+
 package com.jmd.helper.ui.screen
 
 import androidx.activity.compose.BackHandler
@@ -42,9 +45,14 @@ import com.jmd.helper.ui.screen.settings.SystemLogViewerView
 import com.jmd.helper.ui.theme.*
 
 /**
- * Hub navigation screen providing access to tools, diagnostic ledgers, settings,
- * message templates, in-app documentation, and secondary configuration views.
+ * What it is:
+ * Hub navigation screen providing access to tools, diagnostic ledgers, settings, message templates, in-app documentation, and secondary configuration views.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [MoreScreenView] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [MoreScreen], [MoreScreenView]
  * @param initialSubSection Child sub-section route to navigate to immediately on render.
  * @param onSubSectionStateChanged Callback signaling whether a child sub-section is active (hiding bottom navigation if true).
  * @param onThemeChanged Callback invoked when user alters theme palette preference.
@@ -61,6 +69,16 @@ fun MoreScreenView(
 
     var selectedSubSection by remember(initialSubSection) { mutableStateOf(initialSubSection) }
     var previousSubSection by remember { mutableStateOf("MENU") }
+    /**
+     * What it is:
+     * Execution routine for [navigateToSubSection].
+     *
+     * What it does:
+     * Coordinates navigateToSubSection operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [MoreScreen]
+     */
 
     fun navigateToSubSection(target: String) {
         selectedSubSection = target
@@ -296,6 +314,16 @@ fun MoreScreenView(
 }
 
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [MenuItemCard].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for MenuItemCard.
+ *
+ * Linked with:
+ * - Component: [MoreScreen]
+ */
 @Composable
 fun MenuItemCard(
     title: String,

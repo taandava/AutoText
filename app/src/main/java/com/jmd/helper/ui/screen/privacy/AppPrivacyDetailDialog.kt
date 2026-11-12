@@ -1,9 +1,19 @@
 /**
  * Package: com.jmd.helper.ui.screen.privacy
- * Module: UI Privacy Layer
+ * Module: Application Core Subsystem
  *
+ * What it is:
+ * Architecture definition and implementation for [AppPrivacyDetailDialog].
+ *
+ * What it does:
  * Provides a dialog sheet to inspect and customize granular privacy controls for an individual application.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.AppInfoItem], [com.jmd.helper.data.model.AppPrivacyConfig]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.text.font.FontWeight], [androidx.compose.ui.text.style.TextOverflow]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.rememberScrollState], [androidx.compose.foundation.shape.RoundedCornerShape], [androidx.compose.foundation.verticalScroll]
  */
+
 package com.jmd.helper.ui.screen.privacy
 
 import androidx.compose.foundation.layout.*
@@ -26,6 +36,16 @@ import com.jmd.helper.ui.components.AppBadge
 import com.jmd.helper.ui.components.GlassButton
 import com.jmd.helper.ui.components.GlassButtonVariant
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [AppPrivacyDetailDialog].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for AppPrivacyDetailDialog.
+ *
+ * Linked with:
+ * - Component: [AppPrivacyDetailDialog]
+ */
 @Composable
 fun AppPrivacyDetailDialog(
     appInfo: AppInfoItem,
@@ -225,6 +245,16 @@ fun AppPrivacyDetailDialog(
     }
 }
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [PrivacyControlToggle].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for PrivacyControlToggle.
+ *
+ * Linked with:
+ * - Component: [AppPrivacyDetailDialog]
+ */
 @Composable
 private fun PrivacyControlToggle(
     title: String,
@@ -263,4 +293,3 @@ private fun PrivacyControlToggle(
         )
     }
 }
-

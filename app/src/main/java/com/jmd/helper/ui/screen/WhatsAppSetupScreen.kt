@@ -1,18 +1,21 @@
-
-
 /**
  * Package: com.jmd.helper.ui.screen
- * Module: UI WhatsApp Task Onboarding Layer
+ * Module: Application Core Subsystem
  *
- * Guided setup wizard for WhatsApp and WhatsApp Business dispatch.
- * Steps through Accessibility service enablement, battery optimization disablement,
- * test ping message verification, lockscreen PIN setup, and permission status checks.
+ * What it is:
+ * Architecture definition and implementation for [WhatsAppSetupScreen].
+ *
+ * What it does:
+ * Guided setup wizard for WhatsApp and WhatsApp Business dispatch. Steps through Accessibility service enablement, battery optimization disablement, test ping message verification, lockscreen PIN setup, and permission status checks.
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Health: [com.jmd.helper.core.AccessibilityHealthManager]
- * - Components: `GlassComponentsKt`
+ * - Models & Entities: [com.jmd.helper.data.model.*]
+ * - Services & Engines: [com.jmd.helper.engine.*], [com.jmd.helper.service.*]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.text.font.FontWeight], [androidx.compose.ui.text.input.KeyboardType]
+ * - Core Security & Utilities: [androidx.core.net.toUri], [com.jmd.helper.core.*]
+ * - Android Framework & Jetpack: [android.provider.Settings], [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.text.KeyboardOptions], [androidx.compose.material.icons.Icons]
  */
+
 package com.jmd.helper.ui.screen
 
 import android.content.*
@@ -47,11 +50,14 @@ import com.jmd.helper.ui.theme.*
 
 
 /**
+ * What it is:
  * Guided onboarding and troubleshooting view for WhatsApp tasks.
  *
- * Configures accessibility services, device lockscreen screen assistance PINs, post-dispatch
- * auto-relock policies, battery optimization allowlists, and live end-to-end ping verification.
+ * What it does:
+ * Configures accessibility services, device lockscreen screen assistance PINs, post-dispatch auto-relock policies, battery optimization allowlists, and live end-to-end ping verification.
  *
+ * Linked with:
+ * - Architecture: [WhatsAppSetupScreen], [WhatsAppSetupAndScreenAssistView]
  * @param context Active Android [Context].
  * @param prefs Storage manager for user preferences.
  * @param onBack Callback invoked to exit setup view.
@@ -426,8 +432,14 @@ fun WhatsAppSetupAndScreenAssistView(
 // ============================================================================
 
 /**
+ * What it is:
  * Diagnostic card presenting current Accessibility service status with direct action intent.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [WhatsAppA11yStatusCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppSetupScreen], [WhatsAppA11yStatusCard]
  * @param context Active Android [Context].
  * @param prefs Application [PreferenceManager].
  */
@@ -522,10 +534,14 @@ fun WhatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
 
 
 /**
+ * What it is:
  * Guidance card for Android 13+ sideloaded restricted settings resolution.
  *
+ * What it does:
  * Directs users on how to allow restricted settings in App Info before enabling Accessibility.
  *
+ * Linked with:
+ * - Architecture: [WhatsAppSetupScreen], [WhatsAppRestrictedSettingsCard]
  * @param context Active Android [Context].
  */
 @Composable
@@ -577,8 +593,14 @@ fun WhatsAppRestrictedSettingsCard(context: Context) {
 
 
 /**
+ * What it is:
  * Battery optimization guidance card helping users exempt Helper from background process freezing.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [WhatsAppBatteryOptimizationCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppSetupScreen], [WhatsAppBatteryOptimizationCard]
  * @param context Active Android [Context].
  */
 @Composable
@@ -620,8 +642,14 @@ fun WhatsAppBatteryOptimizationCard(context: Context) {
 
 
 /**
+ * What it is:
  * Interactive end-to-end testing card enabling instant test dispatch to any phone number.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [WhatsAppLiveTestCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppSetupScreen], [WhatsAppLiveTestCard]
  * @param context Active Android [Context].
  * @param testPhone Destination phone number input.
  * @param onTestPhoneChange Callback invoked as test phone number changes.
@@ -710,5 +738,3 @@ fun WhatsAppLiveTestCard(
         )
     }
 }
-
-

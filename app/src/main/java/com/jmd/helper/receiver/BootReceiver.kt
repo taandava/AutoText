@@ -1,19 +1,21 @@
-
-
 /**
  * Package: com.jmd.helper.receiver
- * Module: Broadcast Receivers Layer
+ * Module: Broadcast Receivers Subsystem
  *
- * Catches [Intent.ACTION_BOOT_COMPLETED], [Intent.ACTION_LOCKED_BOOT_COMPLETED], and [Intent.ACTION_MY_PACKAGE_REPLACED]
- * events to reschedule pending alarms, reinitialize accessibility watchdogs, and resume daily campaign cadences.
+ * What it is:
+ * Architecture definition and implementation for [BootReceiver].
+ *
+ * What it does:
+ * Catches [Intent.ACTION_BOOT_COMPLETED], [Intent.ACTION_LOCKED_BOOT_COMPLETED], and [Intent.ACTION_MY_PACKAGE_REPLACED] events to reschedule pending alarms, reinitialize accessibility watchdogs, and resume daily campaign cadences. [com.jmd.helper.scheduler.DailyCampaignScheduler]
  *
  * Linked With:
- * - Direct Boot: Operates in encrypted Direct Boot mode before user credentials are typed.
- * - Schedulers: [com.jmd.helper.scheduler.AlarmScheduler], [com.jmd.helper.scheduler.AccessibilityWatchdogScheduler],
- *   [com.jmd.helper.scheduler.DailyCampaignScheduler]
- * - Preferences: [com.jmd.helper.data.prefs.PreferenceManager]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.AccessibilityWatchdogScheduler], [com.jmd.helper.scheduler.AlarmScheduler], [com.jmd.helper.scheduler.DailyCampaignScheduler]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - UI Screens & Components: [com.jmd.helper.ui.activity.TaskLauncherActivity]
+ * - Core Security & Utilities: [android.os.PowerManager], [android.util.Log], [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [android.content.BroadcastReceiver], [android.os.Handler], [android.os.Looper]
  */
+
 package com.jmd.helper.receiver
 
 import android.content.BroadcastReceiver
@@ -33,9 +35,26 @@ import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.ui.activity.TaskLauncherActivity
 
 /**
+ * What it is:
  * Device restart and package update broadcast receiver restoring all task background schedules.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [BootReceiver].
+ *
+ * Linked with:
+ * - Architecture: [BootReceiver], [BootReceiver]
  */
 class BootReceiver : BroadcastReceiver() {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [BootReceiver].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [BootReceiver]
+     */
     companion object {
         private const val TAG = "BootReceiver"
 
@@ -82,12 +101,14 @@ class BootReceiver : BroadcastReceiver() {
     }
 
     /**
+     * What it is:
      * Handles system boot and package update broadcasts.
      *
-     * Branches execution between:
-     * 1. Direct Boot (FBE locked context): Uses device-protected storage to evaluate auto-unlock credentials.
-     * 2. Full Boot / Package Upgrade: Re-arms all scheduled task alarms, daily campaigns, and accessibility watchdogs.
+     * What it does:
+     * Branches execution between: 1. Direct Boot (FBE locked context): Uses device-protected storage to evaluate auto-unlock credentials. 2. Full Boot / Package Upgrade: Re-arms all scheduled task alarms, daily campaigns, and accessibility watchdogs.
      *
+     * Linked with:
+     * - Architecture: [BootReceiver], [onReceive]
      * @param context Active Android [Context].
      * @param intent Broadcast [Intent] received from Android OS.
      */

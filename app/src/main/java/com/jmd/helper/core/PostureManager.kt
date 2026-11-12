@@ -1,3 +1,17 @@
+/**
+ * Package: com.jmd.helper.core
+ * Module: Core Security, Invariants & Privacy
+ *
+ * What it is:
+ * Architecture definition and implementation for [PostureManager].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for PostureManager.
+ *
+ * Linked With:
+ * - Android Framework & Jetpack: [android.app.Activity], [androidx.window.layout.FoldingFeature], [androidx.window.layout.WindowInfoTracker], [androidx.window.layout.WindowLayoutInfo]
+ */
+
 package com.jmd.helper.core
 
 import android.app.Activity
@@ -8,8 +22,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
+ * What it is:
  * Foldable and multi-window posture detector powered by AndroidX Window Manager.
+ *
+ * What it does:
  * Detects Samsung Galaxy Z Fold / Z Flip postures (Tabletop, Book, Flat) for responsive UI layouts.
+ *
+ * Linked with:
+ * - Architecture: [PostureManager], [AppPostureManager]
  */
 class AppPostureManager(private val activity: Activity) {
 
@@ -45,4 +65,3 @@ class AppPostureManager(private val activity: Activity) {
         foldingFeature?.isSeparating ?: false
     }
 }
-

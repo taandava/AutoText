@@ -1,10 +1,21 @@
 /**
  * Package: com.jmd.helper.ui.screen.privacy
- * Module: UI Privacy Layer
+ * Module: Application Core Subsystem
  *
- * Full-screen interface providing comprehensive privacy preferences, application-specific
- * exclusions, accessibility target scoping, content masking, and installed application selector.
+ * What it is:
+ * Architecture definition and implementation for [PrivacySettingsScreen].
+ *
+ * What it does:
+ * Full-screen interface providing comprehensive privacy preferences, application-specific exclusions, accessibility target scoping, content masking, and installed application selector.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.AppInfoItem], [com.jmd.helper.data.model.AppPrivacyConfig]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.asImageBitmap]
+ * - Core Security & Utilities: [androidx.core.graphics.createBitmap], [com.jmd.helper.compat.PackageManagerCompat], [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.PrivacyManager]
+ * - Android Framework & Jetpack: [android.content.pm.ApplicationInfo], [android.graphics.Bitmap], [android.graphics.Canvas], [android.graphics.drawable.BitmapDrawable]
  */
+
 package com.jmd.helper.ui.screen.privacy
 
 import android.content.Context
@@ -47,6 +58,16 @@ import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.ui.components.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+/**
+ * What it is:
+ * Component definition for [AppListFilter].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for AppListFilter.
+ *
+ * Linked with:
+ * - Component: [PrivacySettingsScreen]
+ */
 
 private enum class AppListFilter {
     ALL,
@@ -54,6 +75,16 @@ private enum class AppListFilter {
     FINANCIAL
 }
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [PrivacySettingsScreen].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for PrivacySettingsScreen.
+ *
+ * Linked with:
+ * - Component: [PrivacySettingsScreen]
+ */
 @Composable
 fun PrivacySettingsScreen(
     context: Context,
@@ -614,6 +645,16 @@ fun PrivacySettingsScreen(
     }
 }
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [AppRowItem].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for AppRowItem.
+ *
+ * Linked with:
+ * - Component: [PrivacySettingsScreen]
+ */
 @Composable
 private fun AppRowItem(
     context: Context,
@@ -714,6 +755,16 @@ private fun AppRowItem(
         }
     }
 }
+/**
+ * What it is:
+ * Execution routine for [drawableToBitmap].
+ *
+ * What it does:
+ * Coordinates drawableToBitmap operations conforming to application constraints.
+ *
+ * Linked with:
+ * - Component: [PrivacySettingsScreen]
+ */
 
 private fun drawableToBitmap(drawable: Drawable): Bitmap {
     if (drawable is BitmapDrawable && drawable.bitmap != null) {

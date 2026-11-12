@@ -1,10 +1,18 @@
 /**
  * Package: com.jmd.helper.core
- * Module: Core Task Utilities
+ * Module: Core Security, Invariants & Privacy
  *
- * Provides pre-flight media URI accessibility inspection, MIME resolution,
- * and channel-specific payload validation (SMS text-only vs WhatsApp multimedia).
+ * What it is:
+ * Architecture definition and implementation for [ContentValidator].
+ *
+ * What it does:
+ * Provides pre-flight media URI accessibility inspection, MIME resolution, and channel-specific payload validation (SMS text-only vs WhatsApp multimedia).
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType]
+ * - Core Security & Utilities: [androidx.core.net.toUri]
  */
+
 package com.jmd.helper.core
 
 import android.content.Context
@@ -13,54 +21,137 @@ import com.jmd.helper.data.model.ChannelType
 import java.io.File
 
 /**
+ * What it is:
  * Result abstraction for attachment accessibility and format validation.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AttachmentValidationResult].
+ *
+ * Linked with:
+ * - Architecture: [ContentValidator], [AttachmentValidationResult]
  */
 sealed class AttachmentValidationResult {
-    /** Indicates no media URI was supplied. */
+    /**
+     * What it is:
+     * Component definition for [Empty].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for Empty.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [Empty]
+     */
     object Empty : AttachmentValidationResult()
 
     /**
+     * What it is:
      * Indicates attachment was verified as accessible and compatible.
      *
+     * What it does:
+     * Encapsulates state, business contracts, and operations for [Valid].
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [Valid]
      * @property mimeType Resolved MIME type string (e.g. "image/jpeg", "video/mp4").
      * @property isVideo True if media represents a video file; false for images.
      */
     data class Valid(val mimeType: String, val isVideo: Boolean) : AttachmentValidationResult()
 
     /**
+     * What it is:
      * Indicates attachment access failed or file format is unsupported.
      *
+     * What it does:
+     * Encapsulates state, business contracts, and operations for [Invalid].
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [Invalid]
      * @property reason Human-readable diagnostic explanation.
      */
     data class Invalid(val reason: String) : AttachmentValidationResult()
 }
 
 /**
+ * What it is:
  * Result abstraction for complete task payload validation across channels.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [ContentValidationResult].
+ *
+ * Linked with:
+ * - Architecture: [ContentValidator], [ContentValidationResult]
  */
 sealed class ContentValidationResult {
-    /** Plain text message payload accepted without media. */
+    /**
+     * What it is:
+     * Component definition for [AcceptTextOnly].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for AcceptTextOnly.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [AcceptTextOnly]
+     */
     object AcceptTextOnly : ContentValidationResult()
 
-    /** Media-only payload accepted without caption (valid for WhatsApp/W4B photo/video statuses and chats). */
+    /**
+     * What it is:
+     * Component definition for [AcceptMediaOnly].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for AcceptMediaOnly.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [AcceptMediaOnly]
+     */
     data class AcceptMediaOnly(val mimeType: String, val isVideo: Boolean) : ContentValidationResult()
 
-    /** Media payload with associated text caption accepted. */
+    /**
+     * What it is:
+     * Component definition for [AcceptMediaWithCaption].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for AcceptMediaWithCaption.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [AcceptMediaWithCaption]
+     */
     data class AcceptMediaWithCaption(val mimeType: String, val isVideo: Boolean, val caption: String) : ContentValidationResult()
 
-    /** Payload rejected due to missing requirements or inaccessible attachments. */
+    /**
+     * What it is:
+     * Component definition for [Reject].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for Reject.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [Reject]
+     */
     data class Reject(val reason: String) : ContentValidationResult()
 }
 
 /**
+ * What it is:
  * Centralized validator ensuring tasks have valid text, accessible media URIs, and valid channel rules.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [TaskContentValidator].
+ *
+ * Linked with:
+ * - Architecture: [ContentValidator], [TaskContentValidator]
  */
 object TaskContentValidator {
 
     /**
-     * Validates that an attachment URI is readable via ContentResolver or File System,
-     * resolving its MIME type and image/video classification.
+     * What it is:
+     * Validates that an attachment URI is readable via ContentResolver or File System, resolving its MIME type and image/video classification.
      *
+     * What it does:
+     * Executes [validateAttachmentAccess] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [validateAttachmentAccess]
      * @param context Active Android [Context] (nullable for test environments).
      * @param uriString URI string (content:// or file://) to inspect.
      * @return [AttachmentValidationResult] detailing accessibility and MIME attributes.
@@ -149,8 +240,14 @@ object TaskContentValidator {
     }
 
     /**
+     * What it is:
      * Validates combined message text and attachment URI according to channel constraints.
      *
+     * What it does:
+     * Executes [validateContent] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [validateContent]
      * @param context Active Android [Context].
      * @param channel Target communication [ChannelType].
      * @param messageText Draft message text.

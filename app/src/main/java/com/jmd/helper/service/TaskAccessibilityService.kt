@@ -1,20 +1,23 @@
-
-
 /**
  * Package: com.jmd.helper.service
- * Module: Task Accessibility Service
+ * Module: Background Services & Quick Tiles
  *
- * Background accessibility service delivering physical UI interaction, window inspection,
- * dynamic popup dismissal, text population, and send button clicks across WhatsApp Messenger and WhatsApp Business.
+ * What it is:
+ * Architecture definition and implementation for [TaskAccessibilityService].
+ *
+ * What it does:
+ * Background accessibility service delivering physical UI interaction, window inspection, dynamic popup dismissal, text population, and send button clicks across WhatsApp Messenger and WhatsApp Business. [com.jmd.helper.whatsapp.WhatsAppGroupEngine], [com.jmd.helper.whatsapp.PopupShield], [com.jmd.helper.whatsapp.VoiceNoteProtectionGuard], [com.jmd.helper.whatsapp.KeyguardUnlockEngine]
  *
  * Linked With:
- * - Engine: [com.jmd.helper.engine.WhatsAppSender], [com.jmd.helper.engine.SequentialTaskEngine]
- * - Sub-Engines: [com.jmd.helper.whatsapp.WhatsAppDirectSendEngine], [com.jmd.helper.whatsapp.WhatsAppStatusEngine],
- *   [com.jmd.helper.whatsapp.WhatsAppGroupEngine], [com.jmd.helper.whatsapp.PopupShield],
- *   [com.jmd.helper.whatsapp.VoiceNoteProtectionGuard], [com.jmd.helper.whatsapp.KeyguardUnlockEngine]
- * - Health: [com.jmd.helper.core.AccessibilityHealthManager]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.*]
+ * - Schedulers & Receivers: [android.app.AlarmManager]
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService], [com.jmd.helper.whatsapp.*], [com.jmd.helper.whatsapp.KeyguardAssistEngine]
+ * - UI Screens & Components: [com.jmd.helper.ui.activity.TaskLauncherActivity]
+ * - Core Security & Utilities: [android.app.KeyguardManager], [android.app.NotificationManager], [android.content.pm.PackageManager], [androidx.core.app.NotificationCompat]
+ * - Android Framework & Jetpack: [android.app.ActivityOptions], [android.app.PendingIntent], [android.net.Uri], [android.provider.Settings]
  */
+
 package com.jmd.helper.service
 
 import android.accessibilityservice.AccessibilityService
@@ -58,12 +61,14 @@ import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
+ * What it is:
  * Android Accessibility Service executing WhatsApp task workflows.
  *
+ * What it does:
  * Implements strict security invariants:
- * - Never modifies device auto-rotate or unrelated display settings.
- * - Safely recovers from lockouts, dialog traps, or blocked numbers.
- * - Supports automated task safety controls via [TaskSafetyManager].
+ *
+ * Linked with:
+ * - Architecture: [TaskAccessibilityService], [TaskAccessibilityService]
  */
 class TaskAccessibilityService : AccessibilityService() {
 
@@ -76,6 +81,16 @@ class TaskAccessibilityService : AccessibilityService() {
     private val whatsAppCallEngine by lazy { WhatsAppCallEngine(this) }
     val keyguardAssistEngine: KeyguardAssistEngine by lazy { KeyguardAssistEngine(this, handler) }
     val keyguardUnlockEngine: KeyguardAssistEngine get() = keyguardAssistEngine
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [TaskAccessibilityService].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     companion object {
         private const val TAG = "HelperA11y"
@@ -1181,7 +1196,14 @@ class TaskAccessibilityService : AccessibilityService() {
     }
 
     /**
+     * What it is:
      * Programmatically disables this accessibility service directly on API 24+ (Android 7.0+).
+     *
+     * What it does:
+     * Executes [disableService] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskAccessibilityService], [disableService]
      */
     fun disableService(): Boolean {
         return try {
@@ -1209,11 +1231,31 @@ class TaskAccessibilityService : AccessibilityService() {
             Log.w(TAG, "idleDetachRunnable error: ${e.message}")
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [scheduleIdleDetach].
+     *
+     * What it does:
+     * Coordinates scheduleIdleDetach operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     fun scheduleIdleDetach(delayMs: Long = 4000L) {
         handler.removeCallbacks(idleDetachRunnable)
         handler.postDelayed(idleDetachRunnable, delayMs)
     }
+    /**
+     * What it is:
+     * Execution routine for [cancelIdleDetach].
+     *
+     * What it does:
+     * Coordinates cancelIdleDetach operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     fun cancelIdleDetach() {
         handler.removeCallbacks(idleDetachRunnable)
@@ -1221,6 +1263,16 @@ class TaskAccessibilityService : AccessibilityService() {
 
     private var hasAttemptedSendClick = false
     private var unlockWakeLock: PowerManager.WakeLock? = null
+    /**
+     * What it is:
+     * Execution routine for [acquireUnlockWakeLock].
+     *
+     * What it does:
+     * Coordinates acquireUnlockWakeLock operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun acquireUnlockWakeLock() {
         try {
@@ -1238,6 +1290,16 @@ class TaskAccessibilityService : AccessibilityService() {
             Log.w(TAG, "acquireUnlockWakeLock error: ${t.message}")
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [releaseUnlockWakeLock].
+     *
+     * What it does:
+     * Coordinates releaseUnlockWakeLock operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun releaseUnlockWakeLock() {
         try {
@@ -1293,6 +1355,16 @@ class TaskAccessibilityService : AccessibilityService() {
             }
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [startProactiveUnlockLoop].
+     *
+     * What it does:
+     * Coordinates startProactiveUnlockLoop operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun startProactiveUnlockLoop() {
         handler.removeCallbacks(unlockLoopRunnable)
@@ -1301,6 +1373,16 @@ class TaskAccessibilityService : AccessibilityService() {
         keyguardAssistEngine.unlockAttemptCount = 0
         handler.post(unlockLoopRunnable)
     }
+    /**
+     * What it is:
+     * Execution routine for [runUnlockLogic].
+     *
+     * What it does:
+     * Coordinates runUnlockLogic operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun runUnlockLogic() {
         keyguardAssistEngine.handleKeyguardUnlock(
@@ -1326,6 +1408,16 @@ class TaskAccessibilityService : AccessibilityService() {
             }
         )
     }
+    /**
+     * What it is:
+     * Execution routine for [onUnlockSuccess].
+     *
+     * What it does:
+     * Coordinates onUnlockSuccess operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun onUnlockSuccess() {
         isUnlockPending = false
@@ -1547,6 +1639,16 @@ class TaskAccessibilityService : AccessibilityService() {
             }
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [onServiceConnected].
+     *
+     * What it does:
+     * Coordinates onServiceConnected operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -1589,6 +1691,16 @@ class TaskAccessibilityService : AccessibilityService() {
             }
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [onUnbind].
+     *
+     * What it does:
+     * Coordinates onUnbind operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     override fun onUnbind(intent: Intent?): Boolean {
         isServiceRunning = false
@@ -1598,6 +1710,16 @@ class TaskAccessibilityService : AccessibilityService() {
         // Returning true is critical so Android framework invokes onRebind when reconnecting
         return true
     }
+    /**
+     * What it is:
+     * Execution routine for [onRebind].
+     *
+     * What it does:
+     * Coordinates onRebind operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     override fun onRebind(intent: Intent?) {
         super.onRebind(intent)
@@ -1635,6 +1757,16 @@ class TaskAccessibilityService : AccessibilityService() {
             handler.postDelayed(masterDisarmRunnable, 15000L)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [onDestroy].
+     *
+     * What it does:
+     * Coordinates onDestroy operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     override fun onDestroy() {
         super.onDestroy()
@@ -1646,8 +1778,14 @@ class TaskAccessibilityService : AccessibilityService() {
     }
 
     /**
+     * What it is:
      * Helper to dispatch WhatsApp launch intent directly from the accessibility service context.
      *
+     * What it does:
+     * Executes [launchWhatsAppFromService] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskAccessibilityService], [launchWhatsAppFromService]
      * @param taskId Unique task ID.
      * @param channel Target channel.
      * @param recipient Target recipient phone or group.
@@ -1678,8 +1816,14 @@ class TaskAccessibilityService : AccessibilityService() {
     }
 
     /**
+     * What it is:
      * Primary accessibility event handler processing window changes, user interactions, and popups across targeted packages.
      *
+     * What it does:
+     * Executes [onAccessibilityEvent] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskAccessibilityService], [onAccessibilityEvent]
      * @param event The accessibility event dispatched by Android framework.
      */
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -1914,6 +2058,16 @@ class TaskAccessibilityService : AccessibilityService() {
             Log.e(TAG, "Unhandled exception in onAccessibilityEvent", t)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [extractChatNameFromNode].
+     *
+     * What it does:
+     * Coordinates extractChatNameFromNode operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun extractChatNameFromNode(node: AccessibilityNodeInfo): String {
         val repo = AppRepository(applicationContext)
@@ -1930,6 +2084,16 @@ class TaskAccessibilityService : AccessibilityService() {
         }
         return ""
     }
+    /**
+     * What it is:
+     * Execution routine for [searchChatNameInSubtree].
+     *
+     * What it does:
+     * Coordinates searchChatNameInSubtree operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun searchChatNameInSubtree(root: AccessibilityNodeInfo, repo: AppRepository): String {
         val q = java.util.ArrayDeque<AccessibilityNodeInfo>()
@@ -2000,6 +2164,16 @@ class TaskAccessibilityService : AccessibilityService() {
 
         return fallbackCandidates.firstOrNull().orEmpty()
     }
+    /**
+     * What it is:
+     * Execution routine for [isInsideActiveConversation].
+     *
+     * What it does:
+     * Coordinates isInsideActiveConversation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun isInsideActiveConversation(root: AccessibilityNodeInfo): Boolean {
         val q = java.util.ArrayDeque<AccessibilityNodeInfo>()
@@ -2021,6 +2195,16 @@ class TaskAccessibilityService : AccessibilityService() {
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [extractHeaderTitle].
+     *
+     * What it does:
+     * Coordinates extractHeaderTitle operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun extractHeaderTitle(root: AccessibilityNodeInfo): String {
         val repo = AppRepository(applicationContext)
@@ -2078,6 +2262,16 @@ class TaskAccessibilityService : AccessibilityService() {
 
         return headerCandidates.firstOrNull().orEmpty()
     }
+    /**
+     * What it is:
+     * Execution routine for [analyzePickedChat].
+     *
+     * What it does:
+     * Coordinates analyzePickedChat operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun analyzePickedChat(
         sourceNode: AccessibilityNodeInfo?,
@@ -2256,6 +2450,16 @@ class TaskAccessibilityService : AccessibilityService() {
             subtitle = convSubtitle
         )
     }
+    /**
+     * What it is:
+     * Execution routine for [finishSendSuccess].
+     *
+     * What it does:
+     * Coordinates finishSendSuccess operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun finishSendSuccess(pkg: String) {
         lastSendResult = RESULT_SUCCESS
@@ -2302,6 +2506,16 @@ class TaskAccessibilityService : AccessibilityService() {
             }, 500L)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [finishCallSuccess].
+     *
+     * What it does:
+     * Coordinates finishCallSuccess operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun finishCallSuccess(pkg: String) {
         lastSendResult = RESULT_SUCCESS
@@ -2324,6 +2538,16 @@ class TaskAccessibilityService : AccessibilityService() {
         whatsAppCallEngine.resetState()
         currentMode = DispatchMode.DIRECT_SEND
     }
+    /**
+     * What it is:
+     * Execution routine for [requestEndWhatsAppCall].
+     *
+     * What it does:
+     * Coordinates requestEndWhatsAppCall operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     fun requestEndWhatsAppCall(pkg: String): Boolean {
         val ended = whatsAppCallEngine.endCurrentCall(rootInActiveWindow, windows)
@@ -2338,7 +2562,14 @@ class TaskAccessibilityService : AccessibilityService() {
     }
 
     /**
+     * What it is:
      * Programmatically terminates an active cellular phone call via accessibility click or TelecomManager.
+     *
+     * What it does:
+     * Executes [requestEndPhoneCall] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskAccessibilityService], [requestEndPhoneCall]
      */
     fun requestEndPhoneCall(): Boolean {
         val tm = getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
@@ -2373,6 +2604,16 @@ class TaskAccessibilityService : AccessibilityService() {
 
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [attemptClickEndButton].
+     *
+     * What it does:
+     * Coordinates attemptClickEndButton operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun attemptClickEndButton(): Boolean {
         val targetRoots = AccessibilityNodeUtils.getTargetRoots(this, windows)
@@ -2393,6 +2634,16 @@ class TaskAccessibilityService : AccessibilityService() {
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [findInCallEndButton].
+     *
+     * What it does:
+     * Coordinates findInCallEndButton operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun findInCallEndButton(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val queue = ArrayDeque<AccessibilityNodeInfo>()
@@ -2436,7 +2687,14 @@ class TaskAccessibilityService : AccessibilityService() {
     }
 
     /**
+     * What it is:
      * Places a direct phone call from accessibility service context following keyguard auto-unlock.
+     *
+     * What it does:
+     * Executes [launchPhoneCallFromService] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskAccessibilityService], [launchPhoneCallFromService]
      */
     fun launchPhoneCallFromService(recipient: String) {
         try {
@@ -2463,6 +2721,16 @@ class TaskAccessibilityService : AccessibilityService() {
             Log.e(TAG, "launchPhoneCallFromService failed: ${e.message}", e)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [handleSendTimeout].
+     *
+     * What it does:
+     * Coordinates handleSendTimeout operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     private fun handleSendTimeout(pkg: String) {
         lastSendResult = RESULT_TIMEOUT
@@ -2506,6 +2774,16 @@ class TaskAccessibilityService : AccessibilityService() {
             handler.postDelayed({ minimizeToHome() }, 400L)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [onInterrupt].
+     *
+     * What it does:
+     * Coordinates onInterrupt operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskAccessibilityService]
+     */
 
     override fun onInterrupt() {
         Log.w(TAG, "Accessibility Service Interrupted")

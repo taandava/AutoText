@@ -1,17 +1,20 @@
-
-
 /**
  * Package: com.jmd.helper.scheduler
- * Module: Schedulers Layer
+ * Module: Schedulers & Background Workers
  *
- * Enqueues and coordinates WorkManager periodic background workers and immediate one-time
- * batch executions for daily outreach campaigns.
+ * What it is:
+ * Architecture definition and implementation for [DailyCampaignScheduler].
+ *
+ * What it does:
+ * Enqueues and coordinates WorkManager periodic background workers and immediate one-time batch executions for daily outreach campaigns.
  *
  * Linked With:
- * - Worker: [com.jmd.helper.scheduler.DailyCampaignWorker]
- * - Repository: [com.jmd.helper.data.repo.DailyCampaignRepository]
- * - UI Screens: `DailyCampaignScreen`
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Schedulers & Receivers: [android.app.AlarmManager], [com.jmd.helper.receiver.TaskAlarmReceiver]
+ * - Core Security & Utilities: [androidx.work.WorkManager], [android.util.Log], [com.jmd.helper.core.AppFileLogger], [java.util.Date]
+ * - Android Framework & Jetpack: [androidx.work.Data], [androidx.work.ExistingPeriodicWorkPolicy], [androidx.work.ExistingWorkPolicy], [androidx.work.OneTimeWorkRequestBuilder]
  */
+
 package com.jmd.helper.scheduler
 
 import android.content.Context
@@ -36,25 +39,63 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 /**
+ * What it is:
  * WorkManager scheduler governing daily scheduled campaign execution cycles.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [DailyCampaignScheduler].
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignScheduler], [DailyCampaignScheduler]
  */
 object DailyCampaignScheduler {
+    /**
+     * What it is:
+     * Execution routine for [getPeriodicWorkName].
+     *
+     * What it does:
+     * Coordinates getPeriodicWorkName operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignScheduler]
+     */
 
     private fun getPeriodicWorkName(campaignId: Long) = "helper_daily_campaign_work_$campaignId"
+    /**
+     * What it is:
+     * Execution routine for [getImmediateWorkName].
+     *
+     * What it does:
+     * Coordinates getImmediateWorkName operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignScheduler]
+     */
     private fun getImmediateWorkName(campaignId: Long) = "helper_daily_campaign_immediate_$campaignId"
 
     /**
+     * What it is:
      * Convenience alias for [scheduleOrUpdate].
      *
+     * What it does:
+     * Executes [schedule] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignScheduler], [schedule]
      * @param context Active Android [Context].
      * @param campaignId Unique database identifier of the target campaign configuration.
      */
     fun schedule(context: Context, campaignId: Long = 1) = scheduleOrUpdate(context, campaignId)
 
     /**
-     * Computes the initial delay until the configured trigger hour/minute and schedules or updates
-     * a 24-hour [PeriodicWorkRequestBuilder] in [WorkManager]. If the campaign is inactive, cancels work.
+     * What it is:
+     * Computes the initial delay until the configured trigger hour/minute and schedules or updates a 24-hour [PeriodicWorkRequestBuilder] in [WorkManager].
      *
+     * What it does:
+     * If the campaign is inactive, cancels work.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignScheduler], [scheduleOrUpdate]
      * @param context Active Android [Context].
      * @param campaignId Unique campaign configuration ID to schedule or update.
      */
@@ -95,8 +136,14 @@ object DailyCampaignScheduler {
     }
 
     /**
+     * What it is:
      * Iterates through all saved campaign configurations in the database and arms/updates each schedule.
      *
+     * What it does:
+     * Executes [scheduleAll] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignScheduler], [scheduleAll]
      * @param context Active Android [Context].
      */
     fun scheduleAll(context: Context) {
@@ -108,8 +155,14 @@ object DailyCampaignScheduler {
     }
 
     /**
+     * What it is:
      * Dispatches an immediate [OneTimeWorkRequestBuilder] via [WorkManager] overriding the scheduled delay for immediate execution.
      *
+     * What it does:
+     * Executes [triggerNow] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignScheduler], [triggerNow]
      * @param context Active Android [Context].
      * @param campaignId Target campaign identifier to trigger immediately.
      */
@@ -141,8 +194,14 @@ object DailyCampaignScheduler {
     }
 
     /**
+     * What it is:
      * Cancels the periodic background WorkManager task for the specified campaign.
      *
+     * What it does:
+     * Executes [cancel] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignScheduler], [cancel]
      * @param context Active Android [Context].
      * @param campaignId Unique campaign configuration ID to cancel.
      */
@@ -159,7 +218,14 @@ object DailyCampaignScheduler {
     }
 
     /**
+     * What it is:
      * Cancels all scheduled background work and alarms for all campaigns in the database.
+     *
+     * What it does:
+     * Executes [cancelAllCampaigns] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignScheduler], [cancelAllCampaigns]
      */
     fun cancelAllCampaigns(context: Context) {
         val repo = AppRepository(context)
@@ -170,6 +236,16 @@ object DailyCampaignScheduler {
         WorkManager.getInstance(context).cancelAllWorkByTag("all_daily_campaigns")
         AppFileLogger.action(context, "DailyCampaignScheduler", "Cancelled all daily campaign workers and alarms")
     }
+    /**
+     * What it is:
+     * Execution routine for [scheduleExactCampaignAlarm].
+     *
+     * What it does:
+     * Coordinates scheduleExactCampaignAlarm operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignScheduler]
+     */
 
     private fun scheduleExactCampaignAlarm(context: Context, campaignId: Long, triggerMillis: Long) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
@@ -199,6 +275,16 @@ object DailyCampaignScheduler {
             Log.e("DailyCampaignScheduler", "Failed to set exact campaign alarm: ${e.message}", e)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [cancelExactCampaignAlarm].
+     *
+     * What it does:
+     * Coordinates cancelExactCampaignAlarm operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignScheduler]
+     */
 
     private fun cancelExactCampaignAlarm(context: Context, campaignId: Long) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return

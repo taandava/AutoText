@@ -1,22 +1,18 @@
 /**
  * Package: com.jmd.helper.core
- * Module: OEM Brand Architecture & Deep System Integration
+ * Module: Core Security, Invariants & Privacy
  *
- * Provides comprehensive, unified device manufacturer detection, autostart intents,
- * OEM-specific battery optimization settings, floating window/overlay routing,
- * safe system overlay filtering, and brand-tailored user guidance across:
- * - Oppo & Realme (ColorOS / Realme UI / OPlus)
- * - Vivo & iQOO (Funtouch OS / OriginOS)
- * - Samsung (One UI)
- * - Xiaomi, Redmi & POCO (MIUI / HyperOS)
- * - Motorola & Lenovo (MyUX / Hello UI)
- * - Nokia & HMD Global (Pure Android / Evenwell)
- * - OnePlus (OxygenOS / ColorOS)
- * - Huawei & Honor (EMUI / MagicOS)
- * - Transsion: Tecno, Infinix, itel (HiOS / XOS / itelOS)
- * - Asus & ROG (ZenUI / ROG UI)
- * - Google Pixel, Sony Xperia, Nothing Phone, and Generic AOSP
+ * What it is:
+ * Architecture definition and implementation for [OemBrandHelper].
+ *
+ * What it does:
+ * Provides comprehensive, unified device manufacturer detection, autostart intents, OEM-specific battery optimization settings, floating window/overlay routing, safe system overlay filtering, and brand-tailored user guidance across:
+ *
+ * Linked With:
+ * - Core Security & Utilities: [androidx.core.net.toUri]
+ * - Android Framework & Jetpack: [android.content.ComponentName], [android.os.Build], [android.provider.Settings]
  */
+
 package com.jmd.helper.core
 
 import android.content.ComponentName
@@ -27,7 +23,14 @@ import android.provider.Settings
 import androidx.core.net.toUri
 
 /**
+ * What it is:
  * Enumeration representing all major Android device manufacturers.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [OemBrand].
+ *
+ * Linked with:
+ * - Architecture: [OemBrandHelper], [OemBrand]
  */
 enum class OemBrand(val displayName: String) {
     SAMSUNG("Samsung (One UI)"),
@@ -49,7 +52,14 @@ enum class OemBrand(val displayName: String) {
 }
 
 /**
+ * What it is:
  * Master OEM helper for brand-aware intent routing, overlays, keyguards, and user guidance.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [OemBrandHelper].
+ *
+ * Linked with:
+ * - Architecture: [OemBrandHelper], [OemBrandHelper]
  */
 object OemBrandHelper {
 
@@ -66,7 +76,14 @@ object OemBrandHelper {
     val currentBrand: OemBrand by lazy { detectBrand() }
 
     /**
+     * What it is:
      * Resolves the [OemBrand] enum matching the active hardware and software properties.
+     *
+     * What it does:
+     * Executes [detectBrand] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [OemBrandHelper], [detectBrand]
      */
     private fun detectBrand(): OemBrand {
         return when {
@@ -93,22 +110,149 @@ object OemBrandHelper {
             else -> OemBrand.GENERIC
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [isSamsung].
+     *
+     * What it does:
+     * Coordinates isSamsung operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
 
     fun isSamsung(): Boolean = currentBrand == OemBrand.SAMSUNG
+    /**
+     * What it is:
+     * Execution routine for [isXiaomi].
+     *
+     * What it does:
+     * Coordinates isXiaomi operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isXiaomi(): Boolean = currentBrand == OemBrand.XIAOMI
+    /**
+     * What it is:
+     * Execution routine for [isOppo].
+     *
+     * What it does:
+     * Coordinates isOppo operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isOppo(): Boolean = currentBrand == OemBrand.OPPO
+    /**
+     * What it is:
+     * Execution routine for [isVivo].
+     *
+     * What it does:
+     * Coordinates isVivo operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isVivo(): Boolean = currentBrand == OemBrand.VIVO
+    /**
+     * What it is:
+     * Execution routine for [isOnePlus].
+     *
+     * What it does:
+     * Coordinates isOnePlus operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isOnePlus(): Boolean = currentBrand == OemBrand.ONEPLUS
+    /**
+     * What it is:
+     * Execution routine for [isRealme].
+     *
+     * What it does:
+     * Coordinates isRealme operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isRealme(): Boolean = currentBrand == OemBrand.REALME
+    /**
+     * What it is:
+     * Execution routine for [isMotorola].
+     *
+     * What it does:
+     * Coordinates isMotorola operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isMotorola(): Boolean = currentBrand == OemBrand.MOTOROLA
+    /**
+     * What it is:
+     * Execution routine for [isNokia].
+     *
+     * What it does:
+     * Coordinates isNokia operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isNokia(): Boolean = currentBrand == OemBrand.NOKIA
+    /**
+     * What it is:
+     * Execution routine for [isHuawei].
+     *
+     * What it does:
+     * Coordinates isHuawei operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isHuawei(): Boolean = currentBrand == OemBrand.HUAWEI
+    /**
+     * What it is:
+     * Execution routine for [isHonor].
+     *
+     * What it does:
+     * Coordinates isHonor operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isHonor(): Boolean = currentBrand == OemBrand.HONOR
+    /**
+     * What it is:
+     * Execution routine for [isTranssion].
+     *
+     * What it does:
+     * Coordinates isTranssion operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isTranssion(): Boolean = currentBrand == OemBrand.TRANSSION
+    /**
+     * What it is:
+     * Execution routine for [isAsus].
+     *
+     * What it does:
+     * Coordinates isAsus operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [OemBrandHelper]
+     */
     fun isAsus(): Boolean = currentBrand == OemBrand.ASUS
 
     /**
-     * Human-readable device identity for UI diagnostic cards (e.g. "Vivo V2401 — Funtouch OS / OriginOS").
+     * What it is:
+     * Human-readable device identity for UI diagnostic cards (e.g.
+     *
+     * What it does:
+     * "Vivo V2401 — Funtouch OS / OriginOS").
+     *
+     * Linked with:
+     * - Architecture: [OemBrandHelper], [getDeviceSummary]
      */
     fun getDeviceSummary(): String {
         val brandName = when (currentBrand) {
@@ -134,8 +278,14 @@ object OemBrandHelper {
     }
 
     /**
+     * What it is:
      * Returns prioritized OEM-specific autostart and background management intents.
+     *
+     * What it does:
      * Tries brand-tailored manager activities first, followed by AOSP fallbacks.
+     *
+     * Linked with:
+     * - Architecture: [OemBrandHelper], [getAutostartIntents]
      */
     fun getAutostartIntents(context: Context): List<Intent> {
         val intents = mutableListOf<Intent>()
@@ -290,7 +440,14 @@ object OemBrandHelper {
     }
 
     /**
+     * What it is:
      * Launches the best matching OEM autostart or battery setting screen.
+     *
+     * What it does:
+     * Executes [openOemBackgroundSettings] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [OemBrandHelper], [openOemBackgroundSettings]
      */
     fun openOemBackgroundSettings(context: Context): Boolean {
         for (intent in getAutostartIntents(context)) {
@@ -306,9 +463,14 @@ object OemBrandHelper {
     }
 
     /**
+     * What it is:
      * Resolves OEM-specific floating window or special overlay permission screens.
-     * Several OEMs (e.g. Xiaomi, Vivo, Oppo) require an explicit secondary toggle
-     * beyond standard [Settings.canDrawOverlays] for background popup display.
+     *
+     * What it does:
+     * Several OEMs (e.g. Xiaomi, Vivo, Oppo) require an explicit secondary toggle beyond standard [Settings.canDrawOverlays] for background popup display.
+     *
+     * Linked with:
+     * - Architecture: [OemBrandHelper], [getSpecialOverlayIntents]
      */
     fun getSpecialOverlayIntents(context: Context): List<Intent> {
         val intents = mutableListOf<Intent>()
@@ -356,8 +518,14 @@ object OemBrandHelper {
     }
 
     /**
-     * Checks whether a visible window belongs to a known OEM system navigation element,
-     * sidebar, or floating assistant that must NOT be treated as a blocking third-party popup.
+     * What it is:
+     * Checks whether a visible window belongs to a known OEM system navigation element, sidebar, or floating assistant that must NOT be treated as a blocking third-party popup.
+     *
+     * What it does:
+     * Executes [isSafeSystemOverlay] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [OemBrandHelper], [isSafeSystemOverlay]
      */
     fun isSafeSystemOverlay(packageName: String): Boolean {
         if (packageName.isBlank()) return false
@@ -424,8 +592,14 @@ object OemBrandHelper {
     }
 
     /**
-     * Step-by-step user instructions customized to the detected device brand for keeping
-     * Helper alive in the background and granting autostart privileges.
+     * What it is:
+     * Step-by-step user instructions customized to the detected device brand for keeping Helper alive in the background and granting autostart privileges.
+     *
+     * What it does:
+     * Executes [getOemGuidance] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [OemBrandHelper], [getOemGuidance]
      */
     fun getOemGuidance(): List<String> {
         return when (currentBrand) {
@@ -493,8 +667,14 @@ object OemBrandHelper {
     }
 
     /**
+     * What it is:
      * Populates brand-specific and standard telephony extras into [bundle] for multi-SIM calling.
      *
+     * What it does:
+     * Executes [populateTelecomSimExtras] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [OemBrandHelper], [populateTelecomSimExtras]
      * @param bundle Target Intent or Telecom extras bundle.
      * @param targetPhysicalSlot Physical SIM slot index (0 for SIM 1, 1 for SIM 2).
      * @param subId Cellular subscription identifier (if available from SubscriptionManager).

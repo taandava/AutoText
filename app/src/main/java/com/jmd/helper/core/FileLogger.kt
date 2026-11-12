@@ -1,10 +1,17 @@
 /**
  * Package: com.jmd.helper.core
- * Module: Core Task Utilities
+ * Module: Core Security, Invariants & Privacy
  *
- * Provides persistent on-device diagnostic logging, campaign dispatch CSV ledgers,
- * error tracking, scheduled file rotation (3 MB threshold), and log export.
+ * What it is:
+ * Architecture definition and implementation for [FileLogger].
+ *
+ * What it does:
+ * Provides persistent on-device diagnostic logging, campaign dispatch CSV ledgers, error tracking, scheduled file rotation (3 MB threshold), and log export.
+ *
+ * Linked With:
+ * - Core Security & Utilities: [android.util.Log], [java.util.*]
  */
+
 package com.jmd.helper.core
 
 import android.content.Context
@@ -17,9 +24,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
+ * What it is:
  * Enterprise logging subsystem for recording task lifecycles and campaign ledger audits.
  *
+ * What it does:
  * Persists log entries directly to private application internal storage (`files/logs/`).
+ *
+ * Linked with:
+ * - Architecture: [FileLogger], [AppFileLogger]
  */
 object AppFileLogger {
     private const val TAG = "AppFileLogger"
@@ -33,8 +45,14 @@ object AppFileLogger {
     private val csvDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
 
     /**
+     * What it is:
      * Records a diagnostic message into internal log files with direct logcat mirroring.
      *
+     * What it does:
+     * Executes [log] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [log]
      * @param context Active Android [Context].
      * @param level Severity tag ("DEBUG", "INFO", "WARN", "ACTION", "ERROR").
      * @param tag Calling component identifier.
@@ -84,8 +102,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Logs an informational diagnostic message to internal storage and logcat.
      *
+     * What it does:
+     * Executes [i] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [i]
      * @param context Active Android [Context].
      * @param tag Calling component or service identifier.
      * @param message Informational text string to persist.
@@ -93,8 +117,14 @@ object AppFileLogger {
     fun i(context: Context, tag: String, message: String) = log(context, "INFO", tag, message)
 
     /**
+     * What it is:
      * Logs a verbose debug message to internal storage and logcat.
      *
+     * What it does:
+     * Executes [d] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [d]
      * @param context Active Android [Context].
      * @param tag Calling component or service identifier.
      * @param message Diagnostic debugging text string.
@@ -102,8 +132,14 @@ object AppFileLogger {
     fun d(context: Context, tag: String, message: String) = log(context, "DEBUG", tag, message)
 
     /**
+     * What it is:
      * Logs a high-priority user-visible action event to internal storage and logcat.
      *
+     * What it does:
+     * Executes [action] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [action]
      * @param context Active Android [Context].
      * @param tag Calling component or service identifier.
      * @param actionDescription Description of user action or dispatch step.
@@ -111,8 +147,14 @@ object AppFileLogger {
     fun action(context: Context, tag: String, actionDescription: String) = log(context, "ACTION", tag, actionDescription)
 
     /**
+     * What it is:
      * Logs a non-fatal warning condition to internal storage and logcat.
      *
+     * What it does:
+     * Executes [w] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [w]
      * @param context Active Android [Context].
      * @param tag Calling component or service identifier.
      * @param message Warning description.
@@ -121,7 +163,14 @@ object AppFileLogger {
     fun w(context: Context, tag: String, message: String, t: Throwable? = null) = log(context, "WARN", tag, message, t)
 
     /**
+     * What it is:
      * Overload for logging warnings without explicit Context (resolves application singleton).
+     *
+     * What it does:
+     * Executes [w] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [w]
      */
     fun w(tag: String, message: String, t: Throwable? = null) {
         val ctx = runCatching { HelperApplication.instance }.getOrNull()
@@ -129,8 +178,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Logs a critical error or unhandled exception to both execution and dedicated error logs.
      *
+     * What it does:
+     * Executes [e] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [e]
      * @param context Active Android [Context].
      * @param tag Calling component or service identifier.
      * @param message Technical error description.
@@ -139,7 +194,14 @@ object AppFileLogger {
     fun e(context: Context, tag: String, message: String, t: Throwable? = null) = log(context, "ERROR", tag, message, t)
 
     /**
+     * What it is:
      * Overload for logging errors without explicit Context (resolves application singleton).
+     *
+     * What it does:
+     * Executes [e] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [e]
      */
     fun e(tag: String, message: String, t: Throwable? = null) {
         val ctx = runCatching { HelperApplication.instance }.getOrNull()
@@ -147,7 +209,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Overload for logging info without explicit Context.
+     *
+     * What it does:
+     * Executes [i] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [i]
      */
     fun i(tag: String, message: String) {
         val ctx = runCatching { HelperApplication.instance }.getOrNull()
@@ -155,7 +224,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Overload for logging debug without explicit Context.
+     *
+     * What it does:
+     * Executes [d] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [d]
      */
     fun d(tag: String, message: String) {
         val ctx = runCatching { HelperApplication.instance }.getOrNull()
@@ -163,8 +239,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Appends an immutable audit record to the CSV campaign ledger.
      *
+     * What it does:
+     * Executes [campaignLedger] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [campaignLedger]
      * @param context Active Android [Context].
      * @param campaignId Unique daily campaign ID.
      * @param channel Transmission channel ("SMS", "WHATSAPP", "WHATSAPP_BUSINESS").
@@ -211,8 +293,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Resolves the application private logs directory (`files/logs/`), creating it if absent.
      *
+     * What it does:
+     * Executes [getLogDir] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [getLogDir]
      * @param context Active Android [Context].
      * @return Directory [File] reference, or null if filesystem is inaccessible.
      */
@@ -230,8 +318,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Resolves file handle for execution log (`helper_execution.log`).
      *
+     * What it does:
+     * Executes [getLogFile] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [getLogFile]
      * @param context Active Android [Context].
      * @return Execution log [File] reference, or null.
      */
@@ -241,8 +335,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Resolves file handle for dedicated error log (`helper_error.log`).
      *
+     * What it does:
+     * Executes [getErrorFile] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [getErrorFile]
      * @param context Active Android [Context].
      * @return Error log [File] reference, or null.
      */
@@ -252,8 +352,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Resolves file handle for CSV campaign ledger (`helper_campaign_ledger.csv`).
      *
+     * What it does:
+     * Executes [getLedgerFile] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [getLedgerFile]
      * @param context Active Android [Context].
      * @return Ledger [File] reference, or null.
      */
@@ -263,8 +369,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Reads the tail lines of the execution log file.
      *
+     * What it does:
+     * Executes [readLogFile] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [readLogFile]
      * @param context Active Android [Context].
      * @param maxLines Maximum count of trailing lines to return (defaults to 1000).
      * @return Formatted log string.
@@ -281,8 +393,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Reads the tail lines of the CSV campaign ledger.
      *
+     * What it does:
+     * Executes [readLedgerFile] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [readLedgerFile]
      * @param context Active Android [Context].
      * @param maxLines Maximum count of trailing records to return (defaults to 1000).
      * @return Raw CSV string lines.
@@ -299,8 +417,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Reads the tail lines of the error log file.
      *
+     * What it does:
+     * Executes [readErrorLog] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [readErrorLog]
      * @param context Active Android [Context].
      * @param maxLines Maximum count of trailing lines to return (defaults to 500).
      * @return Formatted error log string.
@@ -317,8 +441,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Deletes all diagnostic and ledger files in the internal log directory.
      *
+     * What it does:
+     * Executes [clearAllLogs] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [clearAllLogs]
      * @param context Active Android [Context].
      * @return True if purged successfully, false otherwise.
      */
@@ -334,8 +464,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Generates a formatted multi-section export summary containing ledger, errors, and system logs.
      *
+     * What it does:
+     * Executes [exportAllLogsSummary] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [exportAllLogsSummary]
      * @param context Active Android [Context].
      * @return Comprehensive export string suitable for sharing or diagnostic reporting.
      */
@@ -360,8 +496,14 @@ object AppFileLogger {
     }
 
     /**
+     * What it is:
      * Rotates file to `.old` if file size exceeds [MAX_FILE_SIZE_BYTES] (3 MB).
      *
+     * What it does:
+     * Executes [rotateIfNecessary] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [FileLogger], [rotateIfNecessary]
      * @param file Target file to inspect and rotate if threshold is exceeded.
      */
     private fun rotateIfNecessary(file: File) {

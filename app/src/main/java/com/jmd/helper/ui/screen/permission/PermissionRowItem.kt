@@ -1,7 +1,18 @@
 /**
  * Package: com.jmd.helper.ui.screen.permission
- * Module: UI Permission Center - Reusable Row & Header Components
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [PermissionRowItem].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for PermissionRowItem.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.graphics.vector.ImageVector], [androidx.compose.ui.text.font.FontWeight]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.BorderStroke], [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.filled.Check], [androidx.compose.runtime.Composable]
  */
+
 package com.jmd.helper.ui.screen.permission
 
 import androidx.compose.foundation.BorderStroke
@@ -22,7 +33,14 @@ import com.jmd.helper.ui.theme.AppLayoutGrid
 import com.jmd.helper.ui.theme.AppSemanticColors
 
 /**
+ * What it is:
  * Categorized section title header with status counter badge.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [PermissionSectionHeader] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [PermissionRowItem], [PermissionSectionHeader]
  */
 @Composable
 fun PermissionSectionHeader(
@@ -73,7 +91,14 @@ fun PermissionSectionHeader(
 }
 
 /**
+ * What it is:
  * Active status pill badge indicating a granted permission.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [PermissionStatusActiveChip] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [PermissionRowItem], [PermissionStatusActiveChip]
  */
 @Composable
 fun PermissionStatusActiveChip() {
@@ -104,8 +129,14 @@ fun PermissionStatusActiveChip() {
 }
 
 /**
+ * What it is:
  * Action button prompting the user to grant or configure an ungranted permission.
+ *
+ * What it does:
  * Strictly adheres to 48dp minimum accessible touch target.
+ *
+ * Linked with:
+ * - Architecture: [PermissionRowItem], [PermissionGrantActionButton]
  */
 @Composable
 fun PermissionGrantActionButton(
@@ -135,4 +166,3 @@ fun PermissionGrantActionButton(
         }
     }
 }
-

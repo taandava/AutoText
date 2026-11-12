@@ -1,16 +1,20 @@
-
-
 /**
  * Package: com.jmd.helper.data.repo
- * Module: Data Repositories Layer
+ * Module: Application Core Subsystem
  *
- * Provides transactional backup export and restore mechanisms to convert all application SQLite tables
- * to and from structured JSON format for user export/import.
+ * What it is:
+ * Architecture definition and implementation for [BackupRepository].
+ *
+ * What it does:
+ * Provides transactional backup export and restore mechanisms to convert all application SQLite tables to and from structured JSON format for user export/import.
  *
  * Linked With:
- * - Database: [com.jmd.helper.data.db.DatabaseHelper]
- * - UI Screens: `SettingsScreen`
+ * - Repositories: [android.database.sqlite.SQLiteDatabase], [com.jmd.helper.data.db.DatabaseHelper]
+ * - Models & Entities: [com.jmd.helper.data.model.AutoReplyBackupDto], [com.jmd.helper.data.model.BackupPayloadDto], [com.jmd.helper.data.model.CampaignBackupDto], [com.jmd.helper.data.model.ContactBackupDto]
+ * - Core Security & Utilities: [android.util.Log], [androidx.core.database.sqlite.transaction], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [android.content.ContentValues], [kotlinx.serialization.encodeToString], [kotlinx.serialization.json.Json]
  */
+
 package com.jmd.helper.data.repo
 
 import android.content.ContentValues
@@ -33,9 +37,14 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
+ * What it is:
  * Repository executing database export and atomic table restoration via JSON serialization.
+ *
+ * What it does:
  * Supports both high-speed Kotlinx Serialization typed payloads and schema-agnostic raw table dumps.
  *
+ * Linked with:
+ * - Architecture: [BackupRepository], [BackupRepository]
  * @param context Application context.
  */
 class BackupRepository(context: Context) {
@@ -49,7 +58,14 @@ class BackupRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Exports key domain entities using reflection-free, typed Kotlinx Serialization.
+     *
+     * What it does:
+     * Executes [exportStructuredBackupToJson] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [BackupRepository], [exportStructuredBackupToJson]
      */
     fun exportStructuredBackupToJson(): String {
         val db = dbHelper.readableDatabase
@@ -222,7 +238,14 @@ class BackupRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Imports structured backup using Kotlinx Serialization.
+     *
+     * What it does:
+     * Executes [importStructuredBackupFromJson] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [BackupRepository], [importStructuredBackupFromJson]
      */
     fun importStructuredBackupFromJson(jsonStr: String): Result<String> {
         return try {
@@ -312,8 +335,14 @@ class BackupRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Serializes all application SQLite tables into a formatted JSON string for export.
      *
+     * What it does:
+     * Executes [exportDatabaseToJson] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [BackupRepository], [exportDatabaseToJson]
      * @return Formatted multi-table JSON document.
      */
     fun exportDatabaseToJson(): String {
@@ -362,9 +391,14 @@ class BackupRepository(context: Context) {
     }
 
     /**
-     * Atomically restores database state by reading serialized JSON rows and inserting
-     * records across all registered application tables within a single transaction.
+     * What it is:
+     * Atomically restores database state by reading serialized JSON rows and inserting records across all registered application tables within a single transaction.
      *
+     * What it does:
+     * Executes [importDatabaseFromJson] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [BackupRepository], [importDatabaseFromJson]
      * @param jsonStr Raw JSON backup content.
      * @return [Result] encapsulating success message with restored count or error exception.
      */
@@ -430,9 +464,14 @@ class BackupRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Directly saves a timestamped JSON backup file to the specified target directory.
+     *
+     * What it does:
      * Uses Scoped Storage and app-specific directories for offline data sovereignty.
      *
+     * Linked with:
+     * - Architecture: [BackupRepository], [exportDatabaseToLocalDirectory]
      * @param directory Target directory (e.g. app-specific documents directory).
      * @return [Result] containing the written [File] or failure exception.
      */
@@ -453,8 +492,14 @@ class BackupRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Scans and returns existing JSON backup files in the specified directory, sorted newest first.
      *
+     * What it does:
+     * Executes [listLocalBackups] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [BackupRepository], [listLocalBackups]
      * @param directory Target backup directory to inspect.
      * @return List of backup files.
      */

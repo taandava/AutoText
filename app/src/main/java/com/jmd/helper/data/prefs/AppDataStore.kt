@@ -1,3 +1,18 @@
+/**
+ * Package: com.jmd.helper.data.prefs
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [AppDataStore].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for AppDataStore.
+ *
+ * Linked With:
+ * - Core Security & Utilities: [androidx.datastore.core.DataStore], [androidx.datastore.preferences.core.Preferences], [androidx.datastore.preferences.core.booleanPreferencesKey], [androidx.datastore.preferences.core.edit]
+ * - Android Framework & Jetpack: [androidx.datastore.preferences.preferencesDataStore], [kotlinx.coroutines.flow.Flow], [kotlinx.coroutines.flow.catch], [kotlinx.coroutines.flow.map]
+ */
+
 package com.jmd.helper.data.prefs
 
 import android.content.Context
@@ -19,15 +34,30 @@ import java.io.IOException
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "helper_datastore_prefs")
 
 /**
+ * What it is:
  * Modern Jetpack DataStore preferences implementation.
- * Asynchronous, fully transactional, and coroutine-native key-value persistence.
- * Prevents main thread disk I/O and ANRs during high-frequency automation loops.
+ *
+ * What it does:
+ * Asynchronous, fully transactional, and coroutine-native key-value persistence. Prevents main thread disk I/O and ANRs during high-frequency automation loops.
+ *
+ * Linked with:
+ * - Architecture: [AppDataStore], [AppDataStore]
  */
 class AppDataStore(context: Context) {
 
     private val dataStore: DataStore<Preferences> = context.applicationContext.dataStore
 
     // Keys
+    /**
+     * What it is:
+     * Component definition for [PreferencesKeys].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for PreferencesKeys.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
     object PreferencesKeys {
         val MASTER_SCHEDULER_ENABLED = booleanPreferencesKey("master_scheduler_enabled")
         val DARK_THEME_ENABLED = booleanPreferencesKey("dark_theme_enabled")
@@ -82,57 +112,157 @@ class AppDataStore(context: Context) {
     }
 
     // Suspend Update Functions
+    /**
+     * What it is:
+     * Execution routine for [setMasterSchedulerEnabled].
+     *
+     * What it does:
+     * Coordinates setMasterSchedulerEnabled operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
     suspend fun setMasterSchedulerEnabled(enabled: Boolean) {
         // Master switch permanently removed - tasks always active
     }
+    /**
+     * What it is:
+     * Execution routine for [setDarkThemeEnabled].
+     *
+     * What it does:
+     * Coordinates setDarkThemeEnabled operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
 
     suspend fun setDarkThemeEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.DARK_THEME_ENABLED] = enabled
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [setAppLockEnabled].
+     *
+     * What it does:
+     * Coordinates setAppLockEnabled operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
 
     suspend fun setAppLockEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.APP_LOCK_ENABLED] = enabled
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [setSmsSimSlot].
+     *
+     * What it does:
+     * Coordinates setSmsSimSlot operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
 
     suspend fun setSmsSimSlot(slot: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SMS_SIM_SLOT] = slot
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [setCallSimSlot].
+     *
+     * What it does:
+     * Coordinates setCallSimSlot operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
 
     suspend fun setCallSimSlot(slot: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.CALL_SIM_SLOT] = slot
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [setSmsDailyLimit].
+     *
+     * What it does:
+     * Coordinates setSmsDailyLimit operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
 
     suspend fun setSmsDailyLimit(limit: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SMS_DAILY_LIMIT] = limit
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [setDynamicReachDailyLimit].
+     *
+     * What it does:
+     * Coordinates setDynamicReachDailyLimit operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
 
     suspend fun setDynamicReachDailyLimit(limit: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.DYNAMIC_REACH_DAILY_LIMIT] = limit
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [setLastMaintenanceTimestamp].
+     *
+     * What it does:
+     * Coordinates setLastMaintenanceTimestamp operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
 
     suspend fun setLastMaintenanceTimestamp(timestamp: Long) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.LAST_MAINTENANCE_TIMESTAMP] = timestamp
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [setDefaultCountryCode].
+     *
+     * What it does:
+     * Coordinates setDefaultCountryCode operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
 
     suspend fun setDefaultCountryCode(code: String) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.DEFAULT_COUNTRY_CODE] = code
         }
     }
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [AppDataStore].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [AppDataStore]
+     */
 
     companion object {
         @Volatile
@@ -145,4 +275,3 @@ class AppDataStore(context: Context) {
         }
     }
 }
-

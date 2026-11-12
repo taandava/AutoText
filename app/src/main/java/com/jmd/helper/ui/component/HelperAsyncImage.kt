@@ -1,3 +1,18 @@
+/**
+ * Package: com.jmd.helper.ui.component
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [HelperAsyncImage].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for HelperAsyncImage.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.background], [androidx.compose.foundation.layout.Box], [androidx.compose.foundation.layout.size], [androidx.compose.foundation.shape.RoundedCornerShape]
+ */
+
 package com.jmd.helper.ui.component
 
 import androidx.compose.foundation.background
@@ -21,8 +36,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
 /**
+ * What it is:
  * Memory-safe, cached asynchronous image composable powered by Coil for Jetpack Compose.
+ *
+ * What it does:
  * Provides smooth crossfade animations and graceful fallback states for local file URIs and thumbnails.
+ *
+ * Linked with:
+ * - Architecture: [HelperAsyncImage], [HelperAsyncImage]
  */
 @Composable
 fun HelperAsyncImage(
@@ -65,4 +86,3 @@ fun HelperAsyncImage(
             .clip(shape)
     )
 }
-

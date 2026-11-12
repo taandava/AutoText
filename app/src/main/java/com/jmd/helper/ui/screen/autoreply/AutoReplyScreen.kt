@@ -1,3 +1,21 @@
+/**
+ * Package: com.jmd.helper.ui.screen.autoreply
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [AutoReplyScreen].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for AutoReplyScreen.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.*]
+ * - Models & Entities: [com.jmd.helper.data.model.*], [com.jmd.helper.ui.model.*]
+ * - UI Screens & Components: [androidx.activity.compose.BackHandler], [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip]
+ * - Core Security & Utilities: [com.jmd.helper.core.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.lazy.items], [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.text.KeyboardOptions]
+ */
+
 package com.jmd.helper.ui.screen.autoreply
 
 import androidx.activity.compose.BackHandler
@@ -33,9 +51,14 @@ import com.jmd.helper.ui.model.*
 import com.jmd.helper.ui.theme.*
 
 /**
- * Main scheduled reply rules configuration screen providing master toggles,
- * call/message trigger rule list, anti-spam rate limiting, and rule editors.
+ * What it is:
+ * Main scheduled reply rules configuration screen providing master toggles, call/message trigger rule list, anti-spam rate limiting, and rule editors.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [AutoReplyScreen] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [AutoReplyScreen], [AutoReplyScreen]
  * @param onEditingStateChanged Callback invoked when modal sheet or dialog opens/closes to hide bottom navigation.
  */
 @Composable
@@ -241,4 +264,3 @@ fun AutoReplyScreen(
         )
     }
 }
-

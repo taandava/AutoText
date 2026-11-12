@@ -1,16 +1,19 @@
 /**
  * Package: com.jmd.helper.ui.screen
- * Module: UI Task Type Selection Layer
+ * Module: Application Core Subsystem
  *
- * Modal task picker displaying clear, categorized task types:
- * SMS, WhatsApp, WhatsApp Business, WhatsApp Status (sub-flow for Personal vs Business W4B),
- * Phone Calls, WhatsApp Voice Calls, Call Simulations, Contact Sequences, Daily Campaigns, Alarms, and Sound Modes.
+ * What it is:
+ * Architecture definition and implementation for [TaskTypeSelectionDialog].
+ *
+ * What it does:
+ * Modal task picker displaying clear, categorized task types: SMS, WhatsApp, WhatsApp Business, WhatsApp Status (sub-flow for Personal vs Business W4B), Phone Calls, WhatsApp Voice Calls, Call Simulations, Contact Sequences, Daily Campaigns, Alarms, and Sound Modes. `MainAppHost`
  *
  * Linked With:
- * - Screens: `TasksScreen`, `DailyCampaignScreen`,
- *   `MainAppHost`
- * - Models: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.ui.model.TaskTypeItem]
+ * - Models & Entities: [com.jmd.helper.data.model.*], [com.jmd.helper.ui.model.*]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.shape.CircleShape], [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.automirrored.filled.ArrowBack]
  */
+
 package com.jmd.helper.ui.screen
 
 import androidx.compose.material.icons.automirrored.filled.*
@@ -38,15 +41,14 @@ import com.jmd.helper.ui.model.*
 import com.jmd.helper.ui.theme.*
 
 /**
+ * What it is:
  * Modal selection dialog providing categorized creation options for all supported task types.
  *
+ * What it does:
  * Supported Dispatch Pathways:
- * - Direct Messaging: SMS via SIM, WhatsApp Chat, WhatsApp Business Chat, WhatsApp Group dispatch.
- * - Calling Tasks: Cellular Phone Calls, WhatsApp VoIP Voice Calls, Incoming Call simulation.
- * - Media Updates: Personal WhatsApp Status, WhatsApp Business Status updates with captions.
- * - Advanced Outreach: Multi-step Contact Sequences, Unique Contact Daily Campaigns.
- * - Device Controls: Timed Alarms and Scheduled Device Sound Mode toggles.
  *
+ * Linked with:
+ * - Architecture: [TaskTypeSelectionDialog], [TaskTypeSelectionDialog]
  * @param onDismiss Invoked when user taps outside or cancels selection.
  * @param onSelectChannel Callback receiving selected single-shot [ChannelType].
  * @param onSelectSequence Callback invoked when creating a multi-step sequence for a channel.
@@ -395,6 +397,16 @@ fun TaskTypeSelectionDialog(
     }
 }
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [DialogOptionTile].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for DialogOptionTile.
+ *
+ * Linked with:
+ * - Component: [TaskTypeSelectionDialog]
+ */
 @Composable
 private fun DialogOptionTile(
     title: String,
@@ -478,4 +490,3 @@ private fun DialogOptionTile(
         }
     }
 }
-

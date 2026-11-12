@@ -1,15 +1,28 @@
 /**
  * Package: com.jmd.helper.data.model
- * Module: Privacy & App Visibility Layer
+ * Module: Application Core Subsystem
  *
- * Defines data models and immutable configuration contracts for per-application privacy,
- * system visibility controls, content masking, and accessibility scoping.
+ * What it is:
+ * Architecture definition and implementation for [PrivacyModels].
+ *
+ * What it does:
+ * Defines data models and immutable configuration contracts for per-application privacy, system visibility controls, content masking, and accessibility scoping.
+ *
+ * Linked With:
+ * - Architecture: Standard application component linkages
  */
+
 package com.jmd.helper.data.model
 
 /**
+ * What it is:
  * Granular privacy and interaction configuration assigned to an individual application package.
  *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AppPrivacyConfig].
+ *
+ * Linked with:
+ * - Architecture: [PrivacyModels], [AppPrivacyConfig]
  * @property packageName Unique Android package name (e.g., "com.saraswatbank.gomobile", "com.phonepe.app").
  * @property appName Human-readable application label.
  * @property isExcluded Master flag indicating whether Helper isolates from this application.
@@ -37,8 +50,14 @@ data class AppPrivacyConfig(
 )
 
 /**
+ * What it is:
  * UI representation of an installed application on the device for selection and privacy configuration.
  *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AppInfoItem].
+ *
+ * Linked with:
+ * - Architecture: [PrivacyModels], [AppInfoItem]
  * @property packageName Unique application package identifier.
  * @property appName Localized application name.
  * @property isSystemApp True if the package is installed in the system partition.
@@ -56,8 +75,14 @@ data class AppInfoItem(
 )
 
 /**
+ * What it is:
  * Global operational preferences controlling application-wide privacy, visibility, and system integration.
  *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [GlobalPrivacySettings].
+ *
+ * Linked with:
+ * - Architecture: [PrivacyModels], [GlobalPrivacySettings]
  * @property isPrivacyModeEnabled Master safety toggle for all privacy restrictions.
  * @property autoExcludeBankingApps Directly includes known banking and UPI applications in privacy shielding.
  * @property maskNotificationsOnLockScreen Replaces sensitive message text on lockscreen notifications with generic status text.
@@ -79,4 +104,3 @@ data class GlobalPrivacySettings(
     val suppressNotifsOverExcluded: Boolean = true,
     val blockOverlaysOverExcluded: Boolean = true
 )
-

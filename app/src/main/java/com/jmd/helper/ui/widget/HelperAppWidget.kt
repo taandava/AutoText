@@ -1,3 +1,18 @@
+/**
+ * Package: com.jmd.helper.ui.widget
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [HelperAppWidget].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for HelperAppWidget.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.graphics.Color], [androidx.compose.ui.unit.dp], [androidx.compose.ui.unit.sp], [com.jmd.helper.ui.activity.MainActivity]
+ * - Android Framework & Jetpack: [androidx.glance.GlanceId], [androidx.glance.GlanceModifier], [androidx.glance.GlanceTheme], [androidx.glance.action.actionStartActivity]
+ */
+
 package com.jmd.helper.ui.widget
 
 import android.content.Context
@@ -31,10 +46,26 @@ import androidx.glance.unit.ColorProvider
 import com.jmd.helper.ui.activity.MainActivity
 
 /**
+ * What it is:
  * Modern Jetpack Glance Home Screen Widget for Helper.
+ *
+ * What it does:
  * Renders on-device automation status and provides 1-tap fast access to scheduled tasks.
+ *
+ * Linked with:
+ * - Architecture: [HelperAppWidget], [HelperAppWidget]
  */
 class HelperAppWidget : GlanceAppWidget() {
+    /**
+     * What it is:
+     * Execution routine for [provideGlance].
+     *
+     * What it does:
+     * Coordinates provideGlance operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperAppWidget]
+     */
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
@@ -105,9 +136,15 @@ class HelperAppWidget : GlanceAppWidget() {
 }
 
 /**
+ * What it is:
  * BroadcastReceiver hosting the GlanceAppWidget lifecycle.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [HelperAppWidgetReceiver].
+ *
+ * Linked with:
+ * - Architecture: [HelperAppWidget], [HelperAppWidgetReceiver]
  */
 class HelperAppWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = HelperAppWidget()
 }
-

@@ -1,16 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.ui.components
- * Module: UI Inline Pickers Layer
+ * Module: Application Core Subsystem
  *
- * Inline non-intrusive Date & Time pickers (AppDateTimePicker, appSegmentedTimePicker),
- * search inputs, and filter chips preventing disruptive modal popups.
+ * What it is:
+ * Architecture definition and implementation for [Pickers].
+ *
+ * What it does:
+ * Inline non-intrusive Date & Time pickers (AppDateTimePicker, appSegmentedTimePicker), search inputs, and filter chips preventing disruptive modal popups.
  *
  * Linked With:
- * - Theme: `ThemeKt`, [com.jmd.helper.ui.theme.AppDesignTokens]
- * - Screens: `ComposeTaskScreen`, `DailyCampaignScreen`
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.focus.onFocusChanged]
+ * - Core Security & Utilities: [androidx.compose.animation.core.*], [com.jmd.helper.core.showAppTimePicker], [java.util.*]
+ * - Android Framework & Jetpack: [androidx.compose.animation.animateColorAsState], [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.text.BasicTextField], [androidx.compose.foundation.text.KeyboardActions]
  */
+
 package com.jmd.helper.ui.components
 
 import androidx.compose.animation.animateColorAsState
@@ -48,12 +51,14 @@ import java.util.*
 
 
 /**
+ * What it is:
  * Inline glassmorphic Date and Time picker presenting segmented interactive selectors.
  *
- * Allows users to configure dispatch timestamps with instant visual feedback without
- * disruptive fullscreen dialogs. Supports Quick Day selectors (Today, Tomorrow, Pick Date),
- * interactive Hour/Minute segment steppers, AM/PM toggle, and quick interval chips (+1h, +2h, Tonight).
+ * What it does:
+ * Allows users to configure dispatch timestamps with instant visual feedback without disruptive fullscreen dialogs. Supports Quick Day selectors (Today, Tomorrow, Pick Date), interactive Hour/Minute segment steppers, AM/PM toggle, and quick interval chips (+1h, +2h, Tonight).
  *
+ * Linked with:
+ * - Architecture: [Pickers], [AppDateTimePicker]
  * @param timestampMillis Currently selected trigger epoch millisecond timestamp.
  * @param onTimestampChanged Callback invoked whenever user alters date, hour, minute, or AM/PM state.
  * @param modifier Compose [Modifier] for container layout and sizing.
@@ -80,6 +85,16 @@ fun AppDateTimePicker(
     var day by remember(timestampMillis) { mutableIntStateOf(cal[Calendar.DAY_OF_MONTH]) }
     var hour by remember(timestampMillis) { mutableIntStateOf(cal.get(Calendar.HOUR_OF_DAY)) }
     var minute by remember(timestampMillis) { mutableIntStateOf(cal.get(Calendar.MINUTE)) }
+    /**
+     * What it is:
+     * Execution routine for [updateTimestamp].
+     *
+     * What it does:
+     * Coordinates updateTimestamp operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [Pickers]
+     */
 
     fun updateTimestamp(newYear: Int = year, newMonth: Int = month, newDay: Int = day, newHour: Int = hour, newMinute: Int = minute) {
         val c = Calendar.getInstance().apply {
@@ -251,9 +266,14 @@ fun AppDateTimePicker(
 
 
 /**
- * Reusable frosted glass text input field supporting animated focus states, password masking,
- * error presentation, custom icons, and optional clear buttons.
+ * What it is:
+ * Reusable frosted glass text input field supporting animated focus states, password masking, error presentation, custom icons, and optional clear buttons.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [GlassInputField] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [Pickers], [GlassInputField]
  * @param value Current string value of the input.
  * @param onValueChange Callback receiving modified string content.
  * @param modifier Layout [Modifier].
@@ -581,8 +601,14 @@ fun <T> GlassDropdownField(
 }
 
 /**
+ * What it is:
  * Compact pill-shaped glassmorphic search input field.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [GlassSearchField] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [Pickers], [GlassSearchField]
  * @param value Current search query text.
  * @param onValueChange Callback invoked as search query changes.
  * @param modifier Layout [Modifier].

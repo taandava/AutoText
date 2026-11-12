@@ -1,3 +1,20 @@
+/**
+ * Package: com.jmd.helper.ui.screen.campaign
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [DailyCampaignListItemComponents].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for DailyCampaignListItemComponents.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.*]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Core Security & Utilities: [java.util.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape], [androidx.compose.material.icons.Icons]
+ */
+
 package com.jmd.helper.ui.screen.campaign
 
 import androidx.compose.foundation.*
@@ -23,6 +40,16 @@ import com.jmd.helper.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [DailyContactPoolHeaderCard].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for DailyContactPoolHeaderCard.
+ *
+ * Linked with:
+ * - Component: [DailyCampaignListItemComponents]
+ */
 @Composable
 fun DailyContactPoolHeaderCard(
     stats: DynamicPoolStats,
@@ -141,8 +168,14 @@ fun DailyContactPoolHeaderCard(
 
 
 /**
+ * What it is:
  * Header card for dispatched contacts audit ledger with cycle resetting and query search.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [DailySentLedgerHeaderCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignListItemComponents], [DailySentLedgerHeaderCard]
  * @param isWhatsApp True if displaying WhatsApp dispatch records; false for SMS.
  * @param sentCount Number of contacts dispatched so far in the active cycle.
  * @param searchQuery Current search string filter.
@@ -258,8 +291,14 @@ fun DailySentLedgerHeaderCard(
 
 
 /**
+ * What it is:
  * Dynamic contact pool entry item card with source attribution badge, phone number, and enable toggle.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [ContactItemCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignListItemComponents], [ContactItemCard]
  * @param contact Data model representing the discovered phone number and metadata.
  * @param isWhatsApp True if evaluating WhatsApp cycle state.
  * @param onToggle Callback triggered when active inclusion switch is toggled.
@@ -376,8 +415,14 @@ fun ContactItemCard(
 }
 
 /**
+ * What it is:
  * Historical audit card rendering execution timestamp, status badge, and requeue action for dispatched contacts.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [LedgerItemCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignListItemComponents], [LedgerItemCard]
  * @param contact Data model representing dispatched contact item.
  * @param isWhatsApp True if evaluating WhatsApp delivery history; false for SMS.
  * @param onRequeue Callback triggered to return this contact back to the pending queue.
@@ -481,5 +526,3 @@ fun LedgerItemCard(
 // ============================================================================
 // MAIN DASHBOARD HOME SCREEN
 // ============================================================================
-
-

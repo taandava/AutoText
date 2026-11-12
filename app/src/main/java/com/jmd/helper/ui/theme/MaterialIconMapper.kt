@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper.ui.theme
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [MaterialIconMapper].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for MaterialIconMapper.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.TaskStatus]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.background], [androidx.compose.foundation.border], [androidx.compose.foundation.layout.Box], [androidx.compose.foundation.layout.size]
+ */
+
 package com.jmd.helper.ui.theme
 
 import androidx.compose.foundation.background
@@ -25,9 +41,26 @@ import com.jmd.helper.data.model.ChannelType
 import com.jmd.helper.data.model.TaskStatus
 
 /**
+ * What it is:
  * Maps communication channels and task statuses to expressive, colorful Material 3 vector icons.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [MaterialIconMapper].
+ *
+ * Linked with:
+ * - Architecture: [MaterialIconMapper], [MaterialIconMapper]
  */
 object MaterialIconMapper {
+    /**
+     * What it is:
+     * Execution routine for [channelIcon].
+     *
+     * What it does:
+     * Coordinates channelIcon operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [MaterialIconMapper]
+     */
 
     fun channelIcon(channel: ChannelType): ImageVector = when (channel) {
         ChannelType.SMS -> Icons.AutoMirrored.Filled.Message
@@ -43,6 +76,16 @@ object MaterialIconMapper {
         ChannelType.CALL_SIMULATION -> Icons.AutoMirrored.Filled.PhoneForwarded
         ChannelType.REMINDER -> Icons.Filled.Alarm
     }
+    /**
+     * What it is:
+     * Execution routine for [channelColor].
+     *
+     * What it does:
+     * Coordinates channelColor operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [MaterialIconMapper]
+     */
 
     fun channelColor(channel: ChannelType): Color = when (channel) {
         ChannelType.SMS -> Color(0xFF2563EB) // Vibrant Blue
@@ -58,6 +101,16 @@ object MaterialIconMapper {
         ChannelType.CALL_SIMULATION -> Color(0xFFD97706) // Amber Simulation
         ChannelType.REMINDER -> Color(0xFFE11D48) // Rose Alarm
     }
+    /**
+     * What it is:
+     * Execution routine for [statusIcon].
+     *
+     * What it does:
+     * Coordinates statusIcon operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [MaterialIconMapper]
+     */
 
     fun statusIcon(status: TaskStatus): ImageVector = when (status) {
         TaskStatus.DRAFT -> Icons.Filled.EditNote
@@ -70,6 +123,16 @@ object MaterialIconMapper {
         TaskStatus.PAUSED, TaskStatus.CANCELLED -> Icons.Filled.PauseCircle
         TaskStatus.PENDING_CONFIRMATION -> Icons.Filled.HourglassTop
     }
+    /**
+     * What it is:
+     * Execution routine for [statusColor].
+     *
+     * What it does:
+     * Coordinates statusColor operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [MaterialIconMapper]
+     */
 
     fun statusColor(status: TaskStatus): Color = when (status) {
         TaskStatus.DRAFT -> Color(0xFF6B7280) // Gray
@@ -85,7 +148,14 @@ object MaterialIconMapper {
 }
 
 /**
+ * What it is:
  * Renders a colorful Material 3 icon badge with tonal background container.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [MaterialIconBadge] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [MaterialIconMapper], [MaterialIconBadge]
  */
 @Composable
 fun MaterialIconBadge(
@@ -111,4 +181,3 @@ fun MaterialIconBadge(
         )
     }
 }
-

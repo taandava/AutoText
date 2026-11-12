@@ -1,7 +1,19 @@
 /**
  * Package: com.jmd.helper.ui.screen.permission
- * Module: UI Permission Center - Modal Dialogs & Policy Disclosures
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [PermissionDialogs].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for PermissionDialogs.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Modifier], [androidx.compose.ui.text.font.FontFamily], [androidx.compose.ui.text.font.FontWeight], [androidx.compose.ui.unit.dp]
+ * - Core Security & Utilities: [android.content.ClipboardManager], [com.jmd.helper.compat.ClipboardCompat], [com.jmd.helper.core.showAppToast]
+ * - Android Framework & Jetpack: [android.content.ClipData], [android.provider.Settings], [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.rememberScrollState]
  */
+
 package com.jmd.helper.ui.screen.permission
 
 import android.content.ClipData
@@ -52,7 +64,14 @@ const val UNIVERSAL_ADB_COMMAND =
     "dpm set-active-admin com.jmd.helper/.receiver.HelperDeviceAdminReceiver\""
 
 /**
+ * What it is:
  * Universal ADB Privilege Setup Dialog providing one-click command copying.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [AdbSetupModalDialog] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [PermissionDialogs], [AdbSetupModalDialog]
  */
 @Composable
 fun AdbSetupModalDialog(context: Context, onDismiss: () -> Unit) {
@@ -122,7 +141,14 @@ fun AdbSetupModalDialog(context: Context, onDismiss: () -> Unit) {
 }
 
 /**
+ * What it is:
  * Accessibility Service Policy & User Disclosure Dialog strictly adhering to Google Play policies.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [A11yDisclosureDialog] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [PermissionDialogs], [A11yDisclosureDialog]
  */
 @Composable
 fun A11yDisclosureDialog(context: Context, onDismiss: () -> Unit) {
@@ -187,4 +213,3 @@ fun A11yDisclosureDialog(context: Context, onDismiss: () -> Unit) {
         }
     )
 }
-

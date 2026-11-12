@@ -1,3 +1,21 @@
+/**
+ * Package: com.jmd.helper.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SettingsBackupRestoreCardComponents].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SettingsBackupRestoreCardComponents.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.AlarmScheduler], [com.jmd.helper.scheduler.DailyCampaignScheduler]
+ * - UI Screens & Components: [androidx.activity.compose.ManagedActivityResultLauncher], [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.text.font.FontWeight]
+ * - Core Security & Utilities: [com.jmd.helper.core.showAppToast], [java.util.*]
+ * - Android Framework & Jetpack: [android.net.Uri], [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.filled.Backup], [androidx.compose.material.icons.filled.Check]
+ */
+
 package com.jmd.helper.ui.screen.settings
 
 import android.content.*
@@ -34,8 +52,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
+ * What it is:
  * Data persistence and migration card providing JSON export and import capabilities.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [SettingsBackupRestoreCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsBackupRestoreCardComponents], [SettingsBackupRestoreCard]
  * @param context Android context for launching system storage pickers.
  * @param repository Application data repository providing database backup serialization.
  * @param exportFileLauncher Activity result launcher for creating a destination backup JSON document.

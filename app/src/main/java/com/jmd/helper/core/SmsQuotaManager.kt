@@ -1,10 +1,18 @@
 /**
  * Package: com.jmd.helper.core
- * Module: Core Task Utilities
+ * Module: Core Security, Invariants & Privacy
  *
- * Provides cellular SMS quota tracking, TRAI/carrier daily limit enforcement (100 SMS/day safeguard),
- * multi-part PDU segment calculation, provider reconciliation, and in-flight reservation management.
+ * What it is:
+ * Architecture definition and implementation for [SmsQuotaManager].
+ *
+ * What it does:
+ * Provides cellular SMS quota tracking, TRAI/carrier daily limit enforcement (100 SMS/day safeguard), multi-part PDU segment calculation, provider reconciliation, and in-flight reservation management.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Core Security & Utilities: [androidx.core.net.toUri], [android.util.Log], [com.jmd.helper.data.prefs.PreferenceManager], [java.util.Calendar]
  */
+
 package com.jmd.helper.core
 
 import android.content.Context
@@ -16,10 +24,14 @@ import java.util.Calendar
 import kotlin.math.abs
 
 /**
+ * What it is:
  * Enterprise manager governing cellular SMS quota consumption.
  *
- * Integrates internal execution logs with device-wide `content://sms/sent` records
- * to track both scheduled and user-sent SMS segments against carrier thresholds.
+ * What it does:
+ * Integrates internal execution logs with device-wide `content://sms/sent` records to track both scheduled and user-sent SMS segments against carrier thresholds.
+ *
+ * Linked with:
+ * - Architecture: [SmsQuotaManager], [SmsQuotaManager]
  */
 object SmsQuotaManager {
     private const val TAG = "SmsQuotaManager"
@@ -28,8 +40,14 @@ object SmsQuotaManager {
     const val INDIA_DAILY_SMS_LIMIT = 100
 
     /**
+     * What it is:
      * Snapshot model of current SMS quota consumption.
      *
+     * What it does:
+     * Encapsulates state, business contracts, and operations for [QuotaStatus].
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [QuotaStatus]
      * @property totalSentToday Total SMS segments dispatched today across device.
      * @property limit Configured daily maximum SMS threshold.
      * @property remaining Unused SMS quota balance available today.
@@ -45,8 +63,14 @@ object SmsQuotaManager {
     )
 
     /**
+     * What it is:
      * Computes epoch millisecond timestamp representing midnight (00:00:00.000) of the current day.
      *
+     * What it does:
+     * Executes [getStartOfTodayMillis] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [getStartOfTodayMillis]
      * @return Milliseconds timestamp at start of today.
      */
     fun getStartOfTodayMillis(): Long {
@@ -59,9 +83,14 @@ object SmsQuotaManager {
     }
 
     /**
-     * Calculates the number of 160-character (GSM 7-bit) or 70-character (UCS-2 Unicode) segments
-     * required to transmit the given text message payload.
+     * What it is:
+     * Calculates the number of 160-character (GSM 7-bit) or 70-character (UCS-2 Unicode) segments required to transmit the given text message payload.
      *
+     * What it does:
+     * Executes [calculateSmsSegments] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [calculateSmsSegments]
      * @param messageText Draft message string.
      * @param context Active Android [Context] for SmsManager calculation.
      * @return Number of PDU segments (minimum 1).
@@ -83,9 +112,14 @@ object SmsQuotaManager {
     }
 
     /**
-     * Reconciles total SMS segments sent today across both the application's internal database
-     * and external messages recorded in system `content://sms/sent` content provider.
+     * What it is:
+     * Reconciles total SMS segments sent today across both the application's internal database and external messages recorded in system `content://sms/sent` content provider.
      *
+     * What it does:
+     * Executes [getTotalSmsSentToday] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [getTotalSmsSentToday]
      * @param context Active Android [Context].
      * @return Total integer segments dispatched today across the device.
      */
@@ -168,18 +202,51 @@ object SmsQuotaManager {
         return total
     }
 
-    /** Short alias returning remaining SMS quota balance. */
+    /**
+     * What it is:
+     * Execution routine for [quota].
+     *
+     * What it does:
+     * Coordinates quota operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [quota]
+     */
     fun quota(context: Context): Int = getRemainingSmsQuota(context)
 
-    /** Short alias calculating required SMS segments for a text string. */
+    /**
+     * What it is:
+     * Execution routine for [segments].
+     *
+     * What it does:
+     * Coordinates segments operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [segments]
+     */
     fun segments(text: String): Int = calculateSmsSegments(text)
 
-    /** Short alias returning complete [QuotaStatus]. */
+    /**
+     * What it is:
+     * Execution routine for [status].
+     *
+     * What it does:
+     * Coordinates status operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [status]
+     */
     fun status(context: Context): QuotaStatus = getQuotaStatus(context)
 
     /**
+     * What it is:
      * Checks if cellular SMS regulatory quota enforcement is actively enabled.
+     *
+     * What it does:
      * When false, enables unlimited personal carrier plan dispatch.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [isQuotaEnforcementEnabled]
      */
     fun isQuotaEnforcementEnabled(context: Context): Boolean {
         return try {
@@ -191,8 +258,14 @@ object SmsQuotaManager {
     }
 
     /**
+     * What it is:
      * Resolves configured daily limit from shared preferences, falling back to 100.
      *
+     * What it does:
+     * Executes [getQuotaLimit] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [getQuotaLimit]
      * @param context Active Android [Context].
      * @return Daily limit integer.
      */
@@ -207,8 +280,14 @@ object SmsQuotaManager {
     }
 
     /**
+     * What it is:
      * Calculates unused SMS quota remaining for today.
      *
+     * What it does:
+     * Executes [getRemainingSmsQuota] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [getRemainingSmsQuota]
      * @param context Active Android [Context].
      * @return Remaining quota integer (clamped to 0).
      */
@@ -220,8 +299,14 @@ object SmsQuotaManager {
     }
 
     /**
+     * What it is:
      * Obtains a detailed [QuotaStatus] descriptor.
      *
+     * What it does:
+     * Executes [getQuotaStatus] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [getQuotaStatus]
      * @param context Active Android [Context].
      * @return [QuotaStatus] detailing sent counts, limit, remaining balance, and warnings.
      */
@@ -261,6 +346,16 @@ object SmsQuotaManager {
     @Volatile
     private var lastQuotaDayStart: Long = getStartOfTodayMillis()
 
+    /**
+     * What it is:
+     * Execution routine for [checkDateRollover].
+     *
+     * What it does:
+     * Coordinates checkDateRollover operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SmsQuotaManager]
+     */
     @Synchronized
     private fun checkDateRollover() {
         val currentDayStart = getStartOfTodayMillis()
@@ -271,9 +366,14 @@ object SmsQuotaManager {
     }
 
     /**
+     * What it is:
      * Atomically reserves a block of SMS segments for an in-flight dispatch pipeline.
+     *
+     * What it does:
      * Prevents race conditions during high-volume batch triggers.
      *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [reserveSmsQuota]
      * @param context Active Android [Context].
      * @param partsCount Number of segments to hold.
      * @return Pair of (True if reservation granted, diagnostic message).
@@ -299,8 +399,14 @@ object SmsQuotaManager {
     }
 
     /**
+     * What it is:
      * Releases an in-flight quota reservation if dispatch was aborted or failed before carrier handoff.
      *
+     * What it does:
+     * Executes [releaseSmsQuotaReservation] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [releaseSmsQuotaReservation]
      * @param partsCount Segments to return to available balance.
      */
     @Synchronized
@@ -310,8 +416,14 @@ object SmsQuotaManager {
     }
 
     /**
+     * What it is:
      * Commits an in-flight reservation upon successful carrier submission.
      *
+     * What it does:
+     * Executes [commitSmsQuotaReservation] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [commitSmsQuotaReservation]
      * @param partsCount Segments committed.
      */
     @Synchronized
@@ -321,8 +433,14 @@ object SmsQuotaManager {
     }
 
     /**
+     * What it is:
      * Quick verification check determining whether a message can be dispatched without exceeding quota.
      *
+     * What it does:
+     * Executes [canDispatchSms] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsQuotaManager], [canDispatchSms]
      * @param context Active Android [Context].
      * @param messageText Text payload to evaluate.
      * @return Pair of (Boolean eligibility, status message).

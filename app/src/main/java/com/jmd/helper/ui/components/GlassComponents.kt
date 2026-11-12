@@ -1,16 +1,19 @@
 /**
  * Package: com.jmd.helper.ui.components
- * Module: UI Material 3 Expressive Components Layer
+ * Module: Application Core Subsystem
  *
+ * What it is:
+ * Architecture definition and implementation for [GlassComponents].
+ *
+ * What it does:
  * Core reusable UI design building blocks adhering to Material 3 Expressive Orange specifications:
- * - Compact buttons, cards, filter chips, badges, segmented controls, and toggle rows.
- * - Zero obsolete glass shaders, glowing borders, or heavy decorative shadows.
- * - Full-width layout support with compact spacing and accessible 48dp touch targets.
  *
  * Linked With:
- * - Theme: `ThemeKt`, [com.jmd.helper.ui.theme.AppDesignTokens]
- * - Screens: Used across all Compose screens in [com.jmd.helper.ui.screen]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.draw.scale]
+ * - Core Security & Utilities: [androidx.compose.animation.core.animateFloatAsState], [androidx.compose.animation.core.tween]
+ * - Android Framework & Jetpack: [androidx.compose.animation.animateColorAsState], [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.background], [androidx.compose.foundation.border]
  */
+
 package com.jmd.helper.ui.components
 
 import androidx.compose.animation.animateColorAsState
@@ -53,7 +56,14 @@ import com.jmd.helper.ui.theme.Material3DesignTokens
 // ============================================================================
 
 /**
+ * What it is:
  * Style variants for the [GlassButton] component.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [GlassButtonVariant].
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [GlassButtonVariant]
  */
 enum class GlassButtonVariant {
     /** Primary theme button with high contrast brand orange fill. */
@@ -69,7 +79,14 @@ enum class GlassButtonVariant {
 }
 
 /**
+ * What it is:
  * Reusable Material 3 Expressive Button with responsive ripple, full text wrapping, and 48dp touch target.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [GlassButton] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [GlassButton]
  */
 @Composable
 fun GlassButton(
@@ -180,7 +197,14 @@ fun GlassButton(
 }
 
 /**
+ * What it is:
  * Compact status indicator badge using Material 3 tonal color container.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [AppBadge] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [AppBadge]
  */
 @Composable
 fun AppBadge(
@@ -236,7 +260,14 @@ fun AppBadge(
 }
 
 /**
+ * What it is:
  * Segmented control switch with Material 3 Expressive pill indicator.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [GlassSegmentedControl] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [GlassSegmentedControl]
  */
 @Composable
 fun GlassSegmentedControl(
@@ -298,7 +329,14 @@ fun GlassSegmentedControl(
 }
 
 /**
+ * What it is:
  * Material 3 Filter Chip with compact dimensions and animated selection feedback.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [GlassChip] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [GlassChip]
  */
 @Composable
 fun GlassChip(
@@ -368,7 +406,14 @@ fun GlassChip(
 }
 
 /**
+ * What it is:
  * Standard settings and preference toggle row with icon, title, subtitle, and compact M3 switch.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [GlassToggleRow] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [GlassToggleRow]
  */
 @Composable
 fun GlassToggleRow(
@@ -442,7 +487,14 @@ fun GlassToggleRow(
 }
 
 /**
+ * What it is:
  * Compact custom animated switch toggle.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [CompactSwitch] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [CompactSwitch]
  */
 @Composable
 fun CompactSwitch(
@@ -469,7 +521,14 @@ fun CompactSwitch(
 // ============================================================================
 
 /**
+ * What it is:
  * Standard full-width Material 3 card container using tonal surface tokens.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [AppCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [AppCard]
  */
 @Composable
 fun AppCard(
@@ -542,7 +601,14 @@ fun AppCard(
 }
 
 /**
+ * What it is:
  * Elevated card container featuring a prominent accent top border.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [AppCardElevated] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [AppCardElevated]
  */
 @Composable
 fun AppCardElevated(
@@ -614,7 +680,14 @@ fun AppCardElevated(
 }
 
 /**
+ * What it is:
  * Metric summary card displaying numerical counters, category titles, and status hints.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [AppStatCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [AppStatCard]
  */
 @Composable
 fun AppStatCard(
@@ -674,7 +747,14 @@ fun AppStatCard(
 }
 
 /**
+ * What it is:
  * Centered empty state placeholder with icon/emoji, title, and clear action button.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [AppEmptyState] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [AppEmptyState]
  */
 @Composable
 fun AppEmptyState(
@@ -743,7 +823,14 @@ fun AppEmptyState(
 }
 
 /**
+ * What it is:
  * Modal dialog container card wrapping elevated surfaces.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [AppDialogCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [AppDialogCard]
  */
 @Composable
 fun AppDialogCard(
@@ -759,9 +846,14 @@ fun AppDialogCard(
 }
 
 /**
+ * What it is:
  * Universal sleek top bar for secondary and sub-screens.
- * Provides edge-to-edge statusBarsPadding, compact height (~46dp content),
- * bold title, optional subtitle, back navigation, and customizable actions.
+ *
+ * What it does:
+ * Provides edge-to-edge statusBarsPadding, compact height (~46dp content), bold title, optional subtitle, back navigation, and customizable actions.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [AppSubScreenHeader]
  */
 @Composable
 fun AppSubScreenHeader(
@@ -824,8 +916,14 @@ fun AppSubScreenHeader(
 }
 
 /**
+ * What it is:
  * Modern Material 3 Expressive Grouped Card Container.
+ *
+ * What it does:
  * Designed to cleanly encapsulate grouped settings and permission rows with unified borders and background.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [AppGroupCard]
  */
 @Composable
 fun AppGroupCard(
@@ -852,7 +950,14 @@ fun AppGroupCard(
 }
 
 /**
+ * What it is:
  * Clean hairline divider between items in an [AppGroupCard].
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [AppGroupDivider] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [AppGroupDivider]
  */
 @Composable
 fun AppGroupDivider(
@@ -870,8 +975,14 @@ fun AppGroupDivider(
 }
 
 /**
+ * What it is:
  * Universal interactive row inside an [AppGroupCard].
+ *
+ * What it does:
  * Features leading squircle icon, title, subtitle, trailing action/status control, and expandable rationale accordion.
+ *
+ * Linked with:
+ * - Architecture: [GlassComponents], [AppGroupRow]
  */
 @Composable
 fun AppGroupRow(
@@ -1022,4 +1133,3 @@ fun AppGroupRow(
         }
     }
 }
-

@@ -1,3 +1,21 @@
+/**
+ * Package: com.jmd.helper.ui.components
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [AppStatusIndicators].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for AppStatusIndicators.
+ *
+ * Linked With:
+ * - Schedulers & Receivers: [android.app.AlarmManager], [com.jmd.helper.receiver.HelperDeviceAdminReceiver]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService], [com.jmd.helper.service.TaskNotificationListenerService]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Core Security & Utilities: [android.os.PowerManager], [androidx.core.net.toUri], [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.OverlayPermissionHelper]
+ * - Android Framework & Jetpack: [android.os.Build], [android.provider.Settings], [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.background]
+ */
+
 package com.jmd.helper.ui.components
 
 import android.app.AlarmManager
@@ -41,6 +59,16 @@ import com.jmd.helper.service.TaskNotificationListenerService
  */
 val IndicatorActiveGreen = Color(0xFF00E676)
 val IndicatorInactiveRed = Color(0xFFFF5252)
+/**
+ * What it is:
+ * Component definition for [SystemIndicator].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for SystemIndicator.
+ *
+ * Linked with:
+ * - Component: [AppStatusIndicators]
+ */
 
 data class SystemIndicator(
     val id: String,
@@ -51,8 +79,28 @@ data class SystemIndicator(
     val actionLabel: String? = null,
     val onAction: ((Context) -> Unit)? = null
 )
+/**
+ * What it is:
+ * Component definition for [SystemIndicatorResolver].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for SystemIndicatorResolver.
+ *
+ * Linked with:
+ * - Component: [AppStatusIndicators]
+ */
 
 object SystemIndicatorResolver {
+    /**
+     * What it is:
+     * Execution routine for [resolveAll].
+     *
+     * What it does:
+     * Coordinates resolveAll operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppStatusIndicators]
+     */
 
     fun resolveAll(context: Context, prefs: PreferenceManager): List<SystemIndicator> {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
@@ -261,8 +309,14 @@ object SystemIndicatorResolver {
 }
 
 /**
+ * What it is:
  * Compact top-header status bar showing indicators strictly as icons.
+ *
+ * What it does:
  * Active = Green (#00E676), Inactive/Disabled = Red (#FF5252).
+ *
+ * Linked with:
+ * - Architecture: [AppStatusIndicators], [AppHeaderStatusIndicators]
  */
 @Composable
 fun AppHeaderStatusIndicators(

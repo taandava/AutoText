@@ -1,24 +1,19 @@
 /**
  * Package: com.jmd.helper.ui.screen
- * Module: UI Permission & Health Screen Layer
+ * Module: Application Core Subsystem
  *
+ * What it is:
+ * Architecture definition and implementation for [PermissionScreen].
+ *
+ * What it does:
  * Material 3 Expressive System Health Hub presenting real-time privilege states:
- * - Accessibility Service (Task Engine)
- * - Exact Alarm privileges
- * - Notification Listener Service
- * - Battery optimization exemption
- * - Overlay permission
- * - Device Admin privileges
- * - Runtime permissions (SMS, Phone, Contacts, Media, Notifications)
- * - Sound & DND Policy Access
  *
  * Linked With:
- * - Health Manager: [com.jmd.helper.core.AccessibilityHealthManager]
- * - Overlay Helper: [com.jmd.helper.core.OverlayPermissionHelper]
- * - Components: [com.jmd.helper.ui.components.AppGroupCard], [com.jmd.helper.ui.components.AppGroupRow], [com.jmd.helper.ui.components.AppGroupDivider]
- * - Design System: [com.jmd.helper.ui.theme.AppSemanticColors], [com.jmd.helper.ui.theme.AppLayoutGrid]
- * - Modular Subsystem: [com.jmd.helper.ui.screen.permission.*]
+ * - UI Screens & Components: [androidx.activity.compose.rememberLauncherForActivityResult], [androidx.activity.result.contract.ActivityResultContracts], [androidx.compose.ui.Modifier], [com.jmd.helper.ui.components.AppGroupCard]
+ * - Core Security & Utilities: [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.PermissionManager]
+ * - Android Framework & Jetpack: [android.Manifest], [android.os.Build], [androidx.compose.foundation.lazy.LazyColumn]
  */
+
 package com.jmd.helper.ui.screen
 
 import android.Manifest
@@ -42,8 +37,14 @@ import com.jmd.helper.ui.theme.AppLayoutGrid
 import com.jmd.helper.ui.theme.AppSemanticColors
 
 /**
+ * What it is:
  * Material 3 Expressive System Health & Permission Center.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [PermissionCenterView] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [PermissionScreen], [PermissionCenterView]
  * @param context Android [Context] for system managers and settings intent dispatch.
  * @param onBack Callback invoked when user navigates back.
  */

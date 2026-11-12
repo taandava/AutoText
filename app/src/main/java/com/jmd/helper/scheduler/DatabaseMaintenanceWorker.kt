@@ -1,3 +1,20 @@
+/**
+ * Package: com.jmd.helper.scheduler
+ * Module: Schedulers & Background Workers
+ *
+ * What it is:
+ * Architecture definition and implementation for [DatabaseMaintenanceWorker].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for DatabaseMaintenanceWorker.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.db.DatabaseHelper]
+ * - Schedulers & Receivers: [androidx.work.CoroutineWorker], [androidx.work.WorkerParameters]
+ * - Core Security & Utilities: [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [kotlinx.coroutines.Dispatchers], [kotlinx.coroutines.withContext]
+ */
+
 package com.jmd.helper.scheduler
 
 import android.content.Context
@@ -10,16 +27,29 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * Background WorkManager worker performing periodic system hygiene and maintenance:
- * 1. Pruning execution logs older than 30 days.
- * 2. Self-healing orphaned tasks stuck in RUNNING state.
- * 3. Reclaiming SQLite disk space via VACUUM and updating optimizer statistics via ANALYZE.
- * 4. Updating maintenance telemetry in AppDataStore.
+ * What it is:
+ * Background WorkManager worker performing periodic system hygiene and maintenance: 1.
+ *
+ * What it does:
+ * Pruning execution logs older than 30 days. 2. Self-healing orphaned tasks stuck in RUNNING state. 3. Reclaiming SQLite disk space via VACUUM and updating optimizer statistics via ANALYZE. 4. Updating maintenance telemetry in AppDataStore.
+ *
+ * Linked with:
+ * - Architecture: [DatabaseMaintenanceWorker], [DatabaseMaintenanceWorker]
  */
 class DatabaseMaintenanceWorker(
     appContext: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(appContext, workerParams) {
+    /**
+     * What it is:
+     * Execution routine for [doWork].
+     *
+     * What it does:
+     * Coordinates doWork operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DatabaseMaintenanceWorker]
+     */
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
@@ -63,9 +93,18 @@ class DatabaseMaintenanceWorker(
             Result.retry()
         }
     }
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [DatabaseMaintenanceWorker].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [DatabaseMaintenanceWorker]
+     */
 
     companion object {
         const val WORK_NAME = "helper_database_maintenance_work"
     }
 }
-

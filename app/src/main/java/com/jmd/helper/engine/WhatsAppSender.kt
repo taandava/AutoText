@@ -1,18 +1,20 @@
 /**
  * Package: com.jmd.helper.engine
- * Module: Task Engine
+ * Module: Task Execution & Dispatch Engines
  *
- * Coordinates intent generation and accessibility service dispatch for WhatsApp
- * (Personal & Business) direct chats, group messages, and status stories.
+ * What it is:
+ * Architecture definition and implementation for [WhatsAppSender].
+ *
+ * What it does:
+ * Coordinates intent generation and accessibility service dispatch for WhatsApp (Personal & Business) direct chats, group messages, and status stories.
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Dispatcher: [com.jmd.helper.whatsapp.WhatsAppIntentDispatcher]
- * - Status Engine: [com.jmd.helper.whatsapp.WhatsAppStatusEngine]
- * - Direct Engine: [com.jmd.helper.whatsapp.WhatsAppDirectSendEngine]
- * - Package Helper: [com.jmd.helper.core.WhatsAppPackageHelper]
- * - Engine: [com.jmd.helper.engine.SequentialTaskEngine]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - Core Security & Utilities: [androidx.core.net.toUri], [android.util.Log], [com.jmd.helper.core.AppFileLogger], [com.jmd.helper.core.PhoneNumberNormalizer]
+ * - Android Framework & Jetpack: [android.content.ClipData]
  */
+
 package com.jmd.helper.engine
 
 import android.content.ClipData
@@ -28,18 +30,28 @@ import com.jmd.helper.data.model.ChannelType
 import com.jmd.helper.data.prefs.PreferenceManager
 
 /**
+ * What it is:
  * Dispatch engine for WhatsApp messaging, media sharing, and status publishing.
  *
- * Interfaces with [TaskAccessibilityService] to execute scheduled taps, node inputs,
- * and send button clicks across consumer WhatsApp and WhatsApp Business editions.
+ * What it does:
+ * Interfaces with [TaskAccessibilityService] to execute scheduled taps, node inputs, and send button clicks across consumer WhatsApp and WhatsApp Business editions.
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppSender], [WhatsAppSender]
  */
 class WhatsAppSender(private val context: Context) {
 
     private val tag = "WhatsAppSender"
 
     /**
+     * What it is:
      * Dispatches an scheduled WhatsApp task across appropriate sub-flow (Status, Group, or Direct Chat).
      *
+     * What it does:
+     * Executes [send] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppSender], [send]
      * @param taskId Unique identifier of the scheduled task.
      * @param channel The target [ChannelType].
      * @param recipientPhone Destination phone number, JID, or group name.
@@ -72,7 +84,14 @@ class WhatsAppSender(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Configures accessibility service and launches intent to locate and message a WhatsApp group.
+     *
+     * What it does:
+     * Executes [sendWhatsAppGroupMessage] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppSender], [sendWhatsAppGroupMessage]
      */
     private fun sendWhatsAppGroupMessage(
         targetPkg: String,
@@ -112,7 +131,14 @@ class WhatsAppSender(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Configures accessibility service and launches intent to publish a text or media Status story.
+     *
+     * What it does:
+     * Executes [sendWhatsAppStatusMessage] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppSender], [sendWhatsAppStatusMessage]
      */
     private fun sendWhatsAppStatusMessage(
         targetPkg: String,
@@ -146,7 +172,14 @@ class WhatsAppSender(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Configures accessibility service and launches deep-link intent (`whatsapp://send?phone=...`) for a direct conversation.
+     *
+     * What it does:
+     * Executes [sendWhatsAppDirectChatMessage] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppSender], [sendWhatsAppDirectChatMessage]
      */
     private fun sendWhatsAppDirectChatMessage(
         targetPkg: String,
@@ -205,7 +238,14 @@ class WhatsAppSender(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Dispatches native [Intent.ACTION_SEND] with URI permissions for media attachment sharing.
+     *
+     * What it does:
+     * Executes [launchActionSend] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppSender], [launchActionSend]
      */
     private fun launchActionSend(targetPkg: String, mediaUri: String, messageText: String): Boolean {
         try {

@@ -1,13 +1,20 @@
 /**
  * Package: com.jmd.helper.ui.screen.tasks
- * Module: UI Tasks Management Screen Layer
+ * Module: Application Core Subsystem
  *
+ * What it is:
+ * Architecture definition and implementation for [TasksScreen].
+ *
+ * What it does:
  * Primary coordinator screen managing:
- * - Single Tasks list with real-time search and status filtering (All, Active, Sent, Failed).
- * - Master task scheduler engine toggle.
- * - Banking app shield status indicator.
- * - Task actions: Immediate Run Now, pause/resume, edit, delete.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.ScheduledTask], [com.jmd.helper.data.model.TaskStatus]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.platform.LocalContext], [androidx.compose.ui.unit.dp]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.background], [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.lazy.items], [androidx.compose.material.icons.Icons]
  */
+
 package com.jmd.helper.ui.screen.tasks
 
 import androidx.compose.foundation.background
@@ -37,8 +44,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
+ * What it is:
  * Primary task dashboard presenting scheduled tasks with search, filtering, and creation controls.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [TasksListScreen] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [TasksScreen], [TasksListScreen]
  * @param onNavigateToCompose Route callback to create a new task for a channel.
  * @param onEditTask Route callback to open existing task in the task composer.
  * @param onNavigateToDailyCampaign Route callback to navigate to daily campaigns.

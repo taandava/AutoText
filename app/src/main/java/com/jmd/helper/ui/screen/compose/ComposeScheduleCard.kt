@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper.ui.screen.compose
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [ComposeScheduleCard].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for ComposeScheduleCard.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.RecurrenceType], [com.jmd.helper.data.model.RepeatUnit]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.background], [androidx.compose.foundation.border], [androidx.compose.foundation.clickable], [androidx.compose.foundation.shape.RoundedCornerShape]
+ */
+
 package com.jmd.helper.ui.screen.compose
 
 import androidx.compose.foundation.background
@@ -29,7 +45,14 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
+ * What it is:
  * Card managing schedule date, time, repetition, and carrier SIM selection.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [ComposeScheduleOptionsCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposeScheduleCard], [ComposeScheduleOptionsCard]
  * @param onSimSlotChanged Callback when selected SIM slot is updated.
  * @param selectedDaysOfWeek Days of week selected for weekly repetition schedule.
  * @param onSelectedDaysOfWeekChanged Callback when selected days of week are toggled.

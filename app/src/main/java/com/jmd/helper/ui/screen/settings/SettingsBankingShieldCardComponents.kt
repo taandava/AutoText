@@ -1,3 +1,21 @@
+/**
+ * Package: com.jmd.helper.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SettingsBankingShieldCardComponents].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SettingsBankingShieldCardComponents.
+ *
+ * Linked With:
+ * - Schedulers & Receivers: [com.jmd.helper.receiver.TaskAlarmReceiver]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.text.font.FontFamily]
+ * - Core Security & Utilities: [android.content.ClipboardManager], [androidx.core.net.toUri], [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.showAppToast]
+ * - Android Framework & Jetpack: [android.content.ClipData], [android.provider.Settings], [androidx.compose.foundation.background], [androidx.compose.foundation.border]
+ */
+
 package com.jmd.helper.ui.screen.settings
 
 import android.content.ClipData
@@ -42,10 +60,14 @@ import com.jmd.helper.ui.components.GlassButton
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
+ * What it is:
  * Controller for Banking Shield Guard and uninterrupted background execution.
  *
- * Ensures all tasks (Calls, SMS, WhatsApp, Alarms) run uninterrupted 24/7
- * while strictly isolating from and never inspecting banking, payment, or UPI applications.
+ * What it does:
+ * Ensures all tasks (Calls, SMS, WhatsApp, Alarms) run uninterrupted 24/7 while strictly isolating from and never inspecting banking, payment, or UPI applications.
+ *
+ * Linked with:
+ * - Architecture: [SettingsBankingShieldCardComponents], [SettingsBankingShieldCard]
  */
 @Composable
 fun SettingsBankingShieldCard(

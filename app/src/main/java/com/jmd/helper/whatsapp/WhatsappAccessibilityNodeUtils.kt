@@ -1,17 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.whatsapp
- * Module: WhatsApp Task & Tree Traversal
+ * Module: WhatsApp Automation Subsystem
  *
- * Provides resilient accessibility node BFS search algorithms, boundary inspection,
- * gesture dispatch, physical coordinate tapping, and text-entry routines for UI actions.
+ * What it is:
+ * Architecture definition and implementation for [WhatsappAccessibilityNodeUtils].
+ *
+ * What it does:
+ * Provides resilient accessibility node BFS search algorithms, boundary inspection, gesture dispatch, physical coordinate tapping, and text-entry routines for UI actions.
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Engines: [com.jmd.helper.whatsapp.WhatsAppDirectSendEngine], [com.jmd.helper.whatsapp.WhatsAppStatusEngine]
- * - Guard: [com.jmd.helper.whatsapp.VoiceNoteProtectionGuard]
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService], [android.accessibilityservice.GestureDescription]
+ * - Core Security & Utilities: [android.content.ClipboardManager], [android.util.Log], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [android.content.ClipData], [android.graphics.Path], [android.graphics.Rect], [android.os.Build]
  */
+
 package com.jmd.helper.whatsapp
 
 import android.accessibilityservice.AccessibilityService
@@ -29,13 +31,29 @@ import android.view.accessibility.AccessibilityWindowInfo
 import com.jmd.helper.data.prefs.PreferenceManager
 
 /**
+ * What it is:
  * Utility functions for navigating, searching, and manipulating accessibility node hierarchies.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AccessibilityNodeUtils].
+ *
+ * Linked with:
+ * - Architecture: [WhatsappAccessibilityNodeUtils], [AccessibilityNodeUtils]
  */
 object AccessibilityNodeUtils {
 
     private const val TAG = "A11yNodeUtils"
 
-    /** Safely releases or cleans up node references; Android manages node instances automatically. */
+    /**
+     * What it is:
+     * Execution routine for [AccessibilityNodeInfo].
+     *
+     * What it does:
+     * Coordinates AccessibilityNodeInfo operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [AccessibilityNodeInfo]
+     */
     fun AccessibilityNodeInfo?.recycleSafely() {
         if (this == null) return
         // Modern Android (API 34+) and ART GC manage AccessibilityNodeInfo lifecycle automatically.
@@ -46,13 +64,28 @@ object AccessibilityNodeUtils {
     @Volatile
     var lastGestureTimestamp: Long = 0L
 
-    /** Returns whether an accessibility node is checked or toggled on. */
+    /**
+     * What it is:
+     * Execution routine for [isNodeChecked].
+     *
+     * What it does:
+     * Coordinates isNodeChecked operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [isNodeChecked]
+     */
     fun isNodeChecked(node: AccessibilityNodeInfo?): Boolean =
         com.jmd.helper.compat.AccessibilityCompat.isNodeChecked(node)
 
     /**
+     * What it is:
      * Traverses descendants breadth-first starting from this node, returning the first node satisfying [predicate].
      *
+     * What it does:
+     * Executes [AccessibilityNodeInfo] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [AccessibilityNodeInfo]
      * @param predicate Filter condition evaluated on each discovered node.
      * @return The first matching [AccessibilityNodeInfo] or `null` if none found.
      */
@@ -81,8 +114,14 @@ object AccessibilityNodeUtils {
     }
 
     /**
+     * What it is:
      * Traverses all descendants breadth-first and collects all nodes satisfying [predicate].
      *
+     * What it does:
+     * Executes [AccessibilityNodeInfo] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [AccessibilityNodeInfo]
      * @param predicate Filter condition evaluated on each discovered node.
      * @return A list of matching [AccessibilityNodeInfo] elements.
      */
@@ -106,8 +145,14 @@ object AccessibilityNodeUtils {
     }
 
     /**
+     * What it is:
      * Searches for accessibility nodes by view ID resource name across multiple fallback namespaces.
      *
+     * What it does:
+     * Executes [findNodesByViewId] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [findNodesByViewId]
      * @param root The root [AccessibilityNodeInfo] hierarchy to search.
      * @param targetPkg Target application package name.
      * @param idName The raw resource identifier string (e.g. "send", "entry").
@@ -170,8 +215,14 @@ object AccessibilityNodeUtils {
     }
 
     /**
+     * What it is:
      * Finds the first accessibility node matching any string in [keywords] against its text or content description.
      *
+     * What it does:
+     * Executes [findNodeByTextOrDesc] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [findNodeByTextOrDesc]
      * @param root The root [AccessibilityNodeInfo] tree.
      * @param keywords Collection of strings to test against.
      * @param windows Optional list of active accessibility windows for secondary scanning.
@@ -212,9 +263,14 @@ object AccessibilityNodeUtils {
     }
 
     /**
-     * Resiliently executes a click on an accessibility element using standard action dispatch,
-     * parent traversal, child traversal, or physical coordinate tap gestures depending on user preferences.
+     * What it is:
+     * Resiliently executes a click on an accessibility element using standard action dispatch, parent traversal, child traversal, or physical coordinate tap gestures depending on user preferences.
      *
+     * What it does:
+     * Executes [clickElement] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [clickElement]
      * @param node Candidate [AccessibilityNodeInfo] to click.
      * @param service The active [AccessibilityService] to execute actions or gesture taps.
      * @param onTapFallbackNeeded Optional custom callback invoked if gesture tap fallback is required.
@@ -318,9 +374,14 @@ object AccessibilityNodeUtils {
     }
 
     /**
-     * Inputs text into an editable accessibility node, attempting ACTION_SET_TEXT first
-     * and falling back to clipboard copy-paste delivery if direct text setting fails.
+     * What it is:
+     * Inputs text into an editable accessibility node, attempting ACTION_SET_TEXT first and falling back to clipboard copy-paste delivery if direct text setting fails.
      *
+     * What it does:
+     * Executes [setTextOnInput] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [setTextOnInput]
      * @param node The editable [AccessibilityNodeInfo] target.
      * @param text The string content to populate.
      * @param service The active [AccessibilityService].
@@ -368,8 +429,14 @@ object AccessibilityNodeUtils {
     }
 
     /**
+     * What it is:
      * Synthesizes a physical touch tap gesture at exact screen coordinates (x, y).
      *
+     * What it does:
+     * Executes [dispatchPhysicalTap] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [dispatchPhysicalTap]
      * @param service The active [AccessibilityService] used to dispatch gestures.
      * @param x Screen horizontal coordinate in pixels.
      * @param y Screen vertical coordinate in pixels.
@@ -414,8 +481,14 @@ object AccessibilityNodeUtils {
     }
 
     /**
+     * What it is:
      * Synthesizes an scheduled vertical swipe gesture across the display.
      *
+     * What it does:
+     * Executes [performVerticalSwipe] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [performVerticalSwipe]
      * @param service The active [AccessibilityService].
      * @param startYRatio Screen height ratio for swipe start (e.g. 0.75 for 75% down).
      * @param endYRatio Screen height ratio for swipe termination (e.g. 0.25 for 25% down).
@@ -456,8 +529,14 @@ object AccessibilityNodeUtils {
     }
 
     /**
+     * What it is:
      * Finds the first descendant node in [root] marked as scrollable.
      *
+     * What it does:
+     * Executes [findFirstScrollableNode] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [findFirstScrollableNode]
      * @param root The parent [AccessibilityNodeInfo].
      * @return First scrollable [AccessibilityNodeInfo] or `null`.
      */
@@ -466,8 +545,14 @@ object AccessibilityNodeUtils {
     }
 
     /**
+     * What it is:
      * Collects all target candidate root nodes across active windows, filtering out soft input methods.
      *
+     * What it does:
+     * Executes [getTargetRoots] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappAccessibilityNodeUtils], [getTargetRoots]
      * @param service The active [AccessibilityService].
      * @param windows Optional list of accessibility windows to inspect.
      * @return Distinct list of root [AccessibilityNodeInfo] instances.

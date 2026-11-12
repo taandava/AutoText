@@ -1,3 +1,18 @@
+/**
+ * Package: com.jmd.helper.ui.screen.compose
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [ComposeStatusSection].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for ComposeStatusSection.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.text.style.TextOverflow]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.shape.RoundedCornerShape], [androidx.compose.material.icons.Icons]
+ */
+
 package com.jmd.helper.ui.screen.compose
 
 import android.content.*
@@ -22,7 +37,14 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.*
 
 /**
+ * What it is:
+ * Jetpack Compose UI component for [WhatsAppStatusComposerCard].
  *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for WhatsAppStatusComposerCard.
+ *
+ * Linked with:
+ * - Architecture: [ComposeStatusSection], [WhatsAppStatusComposerCard]
  * @param mediaUri Local URI of image or video for status update.
  * @param onMediaUriChange Callback when attached media is changed or removed.
  * @param messageText Text caption or body of text status.
@@ -333,8 +355,14 @@ fun WhatsAppStatusComposerCard(
 }
 
 /**
+ * What it is:
  * Specialized composer card for scheduling WhatsApp Business Status stories.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [WhatsAppBusinessStatusComposerCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposeStatusSection], [WhatsAppBusinessStatusComposerCard]
  * @param mediaUri Local URI of image or video for status update.
  * @param onMediaUriChange Callback when attached media is changed or removed.
  * @param messageText Text caption or body of text status.

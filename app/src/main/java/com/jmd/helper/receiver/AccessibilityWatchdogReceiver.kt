@@ -1,16 +1,20 @@
-
-
 /**
  * Package: com.jmd.helper.receiver
- * Module: Broadcast Receivers Layer
+ * Module: Broadcast Receivers Subsystem
  *
+ * What it is:
+ * Architecture definition and implementation for [AccessibilityWatchdogReceiver].
+ *
+ * What it does:
  * Periodic watchdog receiver testing accessibility service liveness and self-healing when dead.
  *
  * Linked With:
- * - Health Manager: [com.jmd.helper.core.AccessibilityHealthManager]
- * - Scheduler: [com.jmd.helper.scheduler.AccessibilityWatchdogScheduler]
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.AccessibilityWatchdogScheduler]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - Core Security & Utilities: [android.os.PowerManager], [android.util.Log], [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.ProtectedApplicationManager]
+ * - Android Framework & Jetpack: [android.content.BroadcastReceiver]
  */
+
 package com.jmd.helper.receiver
 
 import android.content.BroadcastReceiver
@@ -24,13 +28,40 @@ import com.jmd.helper.scheduler.AccessibilityWatchdogScheduler
 import com.jmd.helper.service.TaskAccessibilityService
 
 /**
+ * What it is:
  * Watchdog broadcast receiver monitoring accessibility service health and auto-recovery.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AccessibilityWatchdogReceiver].
+ *
+ * Linked with:
+ * - Architecture: [AccessibilityWatchdogReceiver], [AccessibilityWatchdogReceiver]
  */
 class AccessibilityWatchdogReceiver : BroadcastReceiver() {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [AccessibilityWatchdogReceiver].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [AccessibilityWatchdogReceiver]
+     */
 
     companion object {
         private const val TAG = "A11yWatchdog"
     }
+    /**
+     * What it is:
+     * Execution routine for [onReceive].
+     *
+     * What it does:
+     * Coordinates onReceive operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AccessibilityWatchdogReceiver]
+     */
 
     override fun onReceive(context: Context, intent: Intent) {
         val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager

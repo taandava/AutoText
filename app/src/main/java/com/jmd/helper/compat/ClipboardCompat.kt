@@ -1,10 +1,18 @@
 /**
  * Package: com.jmd.helper.compat
- * Module: Compat Layer
+ * Module: Platform Compatibility Layer
  *
- * Provides safe clipboard synchronization, clip attachment, sensitive content protection,
- * and scheduled clipboard wipe across Android versions.
+ * What it is:
+ * Architecture definition and implementation for [ClipboardCompat].
+ *
+ * What it does:
+ * Provides safe clipboard synchronization, clip attachment, sensitive content protection, and scheduled clipboard wipe across Android versions.
+ *
+ * Linked With:
+ * - Core Security & Utilities: [android.content.ClipboardManager], [android.util.Log]
+ * - Android Framework & Jetpack: [android.content.ClipData], [android.content.ClipDescription], [android.os.Build], [android.os.Handler]
  */
+
 package com.jmd.helper.compat
 
 import android.content.ClipData
@@ -18,7 +26,14 @@ import android.os.PersistableBundle
 import android.util.Log
 
 /**
+ * What it is:
  * Backward-compatible helper for [ClipboardManager] interactions with built-in privacy protection.
+ *
+ * What it does:
+ * Executes ClipboardCompat operations conforming to application constraints.
+ *
+ * Linked with:
+ * - Architecture: [ClipboardCompat], [ClipboardCompat]
  */
 object ClipboardCompat {
 
@@ -26,8 +41,14 @@ object ClipboardCompat {
     private val handler = Handler(Looper.getMainLooper())
 
     /**
+     * What it is:
      * Safely assigns primary clip data to system clipboard.
      *
+     * What it does:
+     * Executes setPrimaryClip operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Architecture: [ClipboardCompat], [setPrimaryClip]
      * @param clipboardManager System [ClipboardManager] service or null.
      * @param clipData [ClipData] payload to set or null.
      */
@@ -43,11 +64,14 @@ object ClipboardCompat {
     }
 
     /**
+     * What it is:
      * Copies text to system clipboard with privacy safeguards:
-     * 1. Marks content as sensitive ([ClipDescription.EXTRA_IS_SENSITIVE]) on Android 13+ (API 33+)
-     *    to hide visual clipboard overlay and prevent clipboard manager leakage.
-     * 2. Schedules clipboard wipe after [autoClearSeconds] if > 0.
-     * 3. Verifies target package exclusion via PrivacyManager before proceeding.
+     *
+     * What it does:
+     * 1. Marks content as sensitive ([ClipDescription.EXTRA_IS_SENSITIVE]) on Android 13+ (API 33+) to hide visual clipboard overlay and prevent clipboard manager leakage. 2. Schedules clipboard wipe after [autoClearSeconds] if > 0. 3. Verifies target package exclusion via PrivacyManager before proceeding.
+     *
+     * Linked with:
+     * - Architecture: [ClipboardCompat], [copyToClipboardWithPrivacy]
      */
     @JvmStatic
     fun copyToClipboardWithPrivacy(
@@ -93,7 +117,14 @@ object ClipboardCompat {
     }
 
     /**
+     * What it is:
      * Schedules a delayed wipe of system clipboard if it still contains the specified text.
+     *
+     * What it does:
+     * Executes scheduleClipboardClear operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Architecture: [ClipboardCompat], [scheduleClipboardClear]
      */
     @JvmStatic
     fun scheduleClipboardClear(context: Context, expectedText: String, delaySeconds: Int) {
@@ -119,7 +150,14 @@ object ClipboardCompat {
     }
 
     /**
+     * What it is:
      * Clears primary clipboard immediately.
+     *
+     * What it does:
+     * Executes clearClipboard operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Architecture: [ClipboardCompat], [clearClipboard]
      */
     @JvmStatic
     fun clearClipboard(context: Context) {

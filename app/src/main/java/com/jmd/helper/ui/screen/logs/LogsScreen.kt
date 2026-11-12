@@ -1,14 +1,21 @@
 /**
  * Package: com.jmd.helper.ui.screen.logs
- * Module: UI Task Logs & Audit Screen Layer
+ * Module: Application Core Subsystem
  *
+ * What it is:
+ * Architecture definition and implementation for [LogsScreen].
+ *
+ * What it does:
  * Primary coordinator screen managing:
- * - Execution history audit ledger.
- * - Filtering by channel (All, SMS, WhatsApp, Calls, Campaigns, Failed).
- * - CSV export via Storage Access Framework (SAF).
- * - Purge control.
- * - Detail inspection via [LogDetailView].
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.ExecutionLog]
+ * - UI Screens & Components: [androidx.activity.compose.BackHandler], [androidx.activity.compose.rememberLauncherForActivityResult], [androidx.activity.result.contract.ActivityResultContracts], [androidx.compose.ui.Alignment]
+ * - Core Security & Utilities: [java.util.*], [com.jmd.helper.core.showAppToast]
+ * - Android Framework & Jetpack: [android.net.Uri], [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.horizontalScroll], [androidx.compose.foundation.lazy.LazyColumn]
  */
+
 package com.jmd.helper.ui.screen.logs
 
 import androidx.compose.material.icons.automirrored.filled.*
@@ -52,8 +59,14 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
+ * What it is:
  * Comprehensive execution history and audit ledger screen.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [LogsView] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [LogsScreen], [LogsView]
  * @param repository Data layer repository providing historical log records.
  * @param onNavigateToSystemLogs Callback routing to raw system file logs viewer.
  * @param onBack Callback invoked to return to the parent menu.

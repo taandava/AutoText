@@ -1,13 +1,18 @@
 /**
  * Package: com.jmd.helper.service
- * Module: Foreground Service Layer
+ * Module: Background Services & Quick Tiles
  *
+ * What it is:
+ * Architecture definition and implementation for [TaskForegroundService].
+ *
+ * What it does:
  * Dedicated foreground service lifecycle manager ensuring background task visibility and clean notification teardown.
  *
  * Linked With:
- * - Engine: [com.jmd.helper.engine.SequentialTaskEngine]
- * - Application: [com.jmd.helper.HelperApplication]
+ * - Core Security & Utilities: [android.app.NotificationManager], [android.util.Log]
+ * - Android Framework & Jetpack: [android.app.Service], [android.os.IBinder]
  */
+
 package com.jmd.helper.service
 
 import android.app.NotificationManager
@@ -18,9 +23,26 @@ import android.os.IBinder
 import android.util.Log
 
 /**
+ * What it is:
  * Service managing task foreground state and ongoing notification channels.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [TaskForegroundService].
+ *
+ * Linked with:
+ * - Architecture: [TaskForegroundService], [TaskForegroundService]
  */
 class TaskForegroundService : Service() {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [TaskForegroundService].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [TaskForegroundService]
+     */
 
     companion object {
         private const val TAG = "TaskFGS"
@@ -52,8 +74,28 @@ class TaskForegroundService : Service() {
             }
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [onBind].
+     *
+     * What it does:
+     * Coordinates onBind operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskForegroundService]
+     */
 
     override fun onBind(intent: Intent?): IBinder? = null
+    /**
+     * What it is:
+     * Execution routine for [onCreate].
+     *
+     * What it does:
+     * Coordinates onCreate operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskForegroundService]
+     */
 
     override fun onCreate() {
         super.onCreate()
@@ -65,6 +107,16 @@ class TaskForegroundService : Service() {
         }
         stopSelf()
     }
+    /**
+     * What it is:
+     * Execution routine for [onStartCommand].
+     *
+     * What it does:
+     * Coordinates onStartCommand operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskForegroundService]
+     */
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         try {

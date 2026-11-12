@@ -1,14 +1,19 @@
 /**
  * Package: com.jmd.helper.receiver
- * Module: Broadcast Receivers Layer
+ * Module: Broadcast Receivers Subsystem
  *
- * Listens for system clock and timezone changes to immediately recalculate and reschedule
- * all pending task alarms and daily outreach timers.
+ * What it is:
+ * Architecture definition and implementation for [TimeChangeReceiver].
+ *
+ * What it does:
+ * Listens for system clock and timezone changes to immediately recalculate and reschedule all pending task alarms and daily outreach timers.
  *
  * Linked With:
- * - Scheduler: [com.jmd.helper.scheduler.AlarmScheduler]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.AlarmScheduler]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [android.content.BroadcastReceiver]
  */
+
 package com.jmd.helper.receiver
 
 import android.content.BroadcastReceiver
@@ -19,12 +24,26 @@ import com.jmd.helper.core.AppFileLogger
 import com.jmd.helper.scheduler.AlarmScheduler
 
 /**
+ * What it is:
  * System broadcast receiver triggered on [Intent.ACTION_TIME_CHANGED] and [Intent.ACTION_TIMEZONE_CHANGED].
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [TimeChangeReceiver].
+ *
+ * Linked with:
+ * - Architecture: [TimeChangeReceiver], [TimeChangeReceiver]
  */
 class TimeChangeReceiver : BroadcastReceiver() {
 
     /**
+     * What it is:
      * Reschedules all pending tasks whenever device time or timezone shifts to maintain execution accuracy.
+     *
+     * What it does:
+     * Executes [onReceive] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TimeChangeReceiver], [onReceive]
      */
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action ?: return

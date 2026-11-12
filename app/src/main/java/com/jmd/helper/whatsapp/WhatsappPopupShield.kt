@@ -1,16 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.whatsapp
- * Module: WhatsApp Task Subsystem
+ * Module: WhatsApp Automation Subsystem
  *
- * Scans window hierarchies to detect and dismiss intrusive blocking overlays, system permission dialogs,
- * incoming call caller ID overlays (e.g. Truecaller), and notification shades before starting UI actions.
+ * What it is:
+ * Architecture definition and implementation for [WhatsappPopupShield].
+ *
+ * What it does:
+ * Scans window hierarchies to detect and dismiss intrusive blocking overlays, system permission dialogs, incoming call caller ID overlays (e.g. Truecaller), and notification shades before starting UI actions.
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Engines: [com.jmd.helper.whatsapp.WhatsAppDirectSendEngine], [com.jmd.helper.whatsapp.WhatsAppStatusEngine]
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService]
+ * - Core Security & Utilities: [android.util.Log]
+ * - Android Framework & Jetpack: [android.os.Build], [android.os.Handler], [android.os.Looper], [android.view.accessibility.AccessibilityNodeInfo]
  */
+
 package com.jmd.helper.whatsapp
 
 import android.accessibilityservice.AccessibilityService
@@ -22,7 +25,14 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 
 /**
+ * What it is:
  * Resilient overlay inspector detecting and dismissing UI obstacles.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [PopupShield].
+ *
+ * Linked with:
+ * - Architecture: [WhatsappPopupShield], [PopupShield]
  */
 object PopupShield {
     private const val TAG = "PopupShield"
@@ -35,9 +45,14 @@ object PopupShield {
     )
 
     /**
-     * Executes an asynchronous multi-pass loop to dismiss any blocking popups, dialogs,
-     * or pulled-down notification shades before dispatch commences.
+     * What it is:
+     * Executes an asynchronous multi-pass loop to dismiss any blocking popups, dialogs, or pulled-down notification shades before dispatch commences.
      *
+     * What it does:
+     * Executes [clearAllBlockingPopups] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappPopupShield], [clearAllBlockingPopups]
      * @param service The active [AccessibilityService] used to query root windows and invoke dismiss actions.
      * @param onComplete Callback invoked on the main looper once all obstacles are cleared or max passes are exhausted.
      */
@@ -46,8 +61,14 @@ object PopupShield {
     }
 
     /**
+     * What it is:
      * Executes a single pass of UI cleanup, re-scheduling subsequent passes until the window hierarchy is clear.
      *
+     * What it does:
+     * Executes [clearPass] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappPopupShield], [clearPass]
      * @param service The active [AccessibilityService].
      * @param pass The current pass iteration index (0-indexed).
      * @param maxPasses The maximum allowed retry attempts before relinquishing control to `onComplete`.
@@ -102,9 +123,14 @@ object PopupShield {
     }
 
     /**
-     * Inspects all visible windows on screen for floating overlays, heads-up banners,
-     * or open notification shades that are not the target application.
+     * What it is:
+     * Inspects all visible windows on screen for floating overlays, heads-up banners, or open notification shades that are not the target application.
      *
+     * What it does:
+     * Executes [hasActiveBlockingOverlay] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappPopupShield], [hasActiveBlockingOverlay]
      * @param service The active [AccessibilityService] providing window introspection.
      * @param targetPkg The target package expected to hold user focus (defaults to "com.whatsapp").
      * @return `true` if an active blocking overlay or extended notification shade is detected; `false` otherwise.
@@ -160,9 +186,14 @@ object PopupShield {
     }
 
     /**
-     * Clears all open notification shades, floating overlays, Truecaller popups,
-     * and system dialogs to leave the screen clean and ready for task clicks.
+     * What it is:
+     * Clears all open notification shades, floating overlays, Truecaller popups, and system dialogs to leave the screen clean and ready for task clicks.
      *
+     * What it does:
+     * Executes [clearOverlaysAndNotificationShade] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappPopupShield], [clearOverlaysAndNotificationShade]
      * @param service The active [AccessibilityService] used to perform dismiss actions and global back navigation.
      * @param targetPkg The target application package name.
      * @return `true` if any overlay, notification shade, or dialog button was closed; `false` otherwise.
@@ -255,9 +286,14 @@ object PopupShield {
     }
 
     /**
-     * Executes a single synchronous pass over the view hierarchy to find and click any visible
-     * dismiss, OK, accept, close, or permission dialog buttons.
+     * What it is:
+     * Executes a single synchronous pass over the view hierarchy to find and click any visible dismiss, OK, accept, close, or permission dialog buttons.
      *
+     * What it does:
+     * Executes [clickDismissButton] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappPopupShield], [clickDismissButton]
      * @param root The root [AccessibilityNodeInfo] representing the active window or popup hierarchy.
      * @param service The active [AccessibilityService] used to perform the element click action.
      * @return `true` if a matching dismissal button was clicked; `false` otherwise.

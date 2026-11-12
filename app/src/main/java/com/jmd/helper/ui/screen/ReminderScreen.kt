@@ -1,14 +1,18 @@
-
-
 /**
  * Package: com.jmd.helper.ui.screen
- * Module: UI Reminder Fullscreen Alert Layer
+ * Module: Application Core Subsystem
  *
+ * What it is:
+ * Architecture definition and implementation for [ReminderScreen].
+ *
+ * What it does:
  * Fullscreen alarm and reminder interaction screen showing note content with snooze and dismiss actions.
  *
  * Linked With:
- * - Activity: [com.jmd.helper.ui.activity.ReminderAlarmActivity]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.text.font.FontWeight]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape], [androidx.compose.material.icons.Icons]
  */
+
 package com.jmd.helper.ui.screen
 
 import androidx.compose.foundation.*
@@ -30,9 +34,14 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.*
 
 /**
- * Fullscreen alarm and reminder interaction screen rendering custom note content,
- * prominent alarm iconography, and intuitive snooze / dismiss action controls.
+ * What it is:
+ * Fullscreen alarm and reminder interaction screen rendering custom note content, prominent alarm iconography, and intuitive snooze / dismiss action controls.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [ReminderScreen] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ReminderScreen], [ReminderScreen]
  * @param title Header title of the triggered reminder (e.g., "Meeting Reminder").
  * @param text Detailed descriptive body message.
  * @param onDismiss Callback invoked when user acknowledges and cancels the alarm.
@@ -129,6 +138,16 @@ fun ReminderScreen(
 // ============================================================================
 
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [ReminderComposerCard].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for ReminderComposerCard.
+ *
+ * Linked with:
+ * - Component: [ReminderScreen]
+ */
 @Composable
 fun ReminderComposerCard(
     reminderTitle: String,
@@ -235,5 +254,3 @@ fun ReminderComposerCard(
         }
     }
 }
-
-

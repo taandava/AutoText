@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SystemLogViewerScreen].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SystemLogViewerScreen.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.graphics.Color], [androidx.compose.ui.platform.LocalLocale]
+ * - Core Security & Utilities: [android.content.ClipboardManager], [com.jmd.helper.compat.ClipboardCompat], [com.jmd.helper.core.AppFileLogger], [com.jmd.helper.core.showAppToast]
+ * - Android Framework & Jetpack: [android.content.ClipData], [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.horizontalScroll], [androidx.compose.foundation.lazy.LazyColumn]
+ */
+
 package com.jmd.helper.ui.screen.settings
 
 import androidx.compose.material.icons.automirrored.filled.*
@@ -37,11 +53,28 @@ import com.jmd.helper.ui.components.GlassChip
 import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
+ * What it is:
  * Structured log models for rich execution-history style display.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [ParsedSystemLogItem].
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [ParsedSystemLogItem]
  */
 sealed class ParsedSystemLogItem {
     abstract val rawText: String
     abstract val timestamp: String
+    /**
+     * What it is:
+     * Component definition for [ActionLog].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for ActionLog.
+     *
+     * Linked with:
+     * - Component: [SystemLogViewerScreen]
+     */
 
     data class ActionLog(
         override val timestamp: String,
@@ -51,6 +84,16 @@ sealed class ParsedSystemLogItem {
         val details: String = "",
         override val rawText: String
     ) : ParsedSystemLogItem()
+    /**
+     * What it is:
+     * Component definition for [LedgerLog].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for LedgerLog.
+     *
+     * Linked with:
+     * - Component: [SystemLogViewerScreen]
+     */
 
     data class LedgerLog(
         override val timestamp: String,
@@ -64,6 +107,16 @@ sealed class ParsedSystemLogItem {
         val details: String,
         override val rawText: String
     ) : ParsedSystemLogItem()
+    /**
+     * What it is:
+     * Component definition for [ErrorLog].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for ErrorLog.
+     *
+     * Linked with:
+     * - Component: [SystemLogViewerScreen]
+     */
 
     data class ErrorLog(
         override val timestamp: String,
@@ -72,6 +125,16 @@ sealed class ParsedSystemLogItem {
         val stackTrace: String = "",
         override val rawText: String
     ) : ParsedSystemLogItem()
+    /**
+     * What it is:
+     * Component definition for [RawLine].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for RawLine.
+     *
+     * Linked with:
+     * - Component: [SystemLogViewerScreen]
+     */
 
     data class RawLine(
         override val timestamp: String = "",
@@ -80,8 +143,14 @@ sealed class ParsedSystemLogItem {
 }
 
 /**
- * Modernized Diagnostic Log Reader rendering Actions, Task Batch Ledger, and Errors
- * formatted cleanly with Material 3 Expressive cards, chips, and level badges like Execution History.
+ * What it is:
+ * Modernized Diagnostic Log Reader rendering Actions, Task Batch Ledger, and Errors formatted cleanly with Material 3 Expressive cards, chips, and level badges like Execution History.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [SystemLogViewerView] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [SystemLogViewerView]
  */
 @Composable
 fun SystemLogViewerView(
@@ -569,7 +638,14 @@ fun SystemLogViewerView(
 }
 
 /**
+ * What it is:
  * Card rendering an Action / System log entry with badge, tag, timestamp, and message.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [ActionLogCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [ActionLogCard]
  */
 @Composable
 private fun ActionLogCard(
@@ -663,7 +739,14 @@ private fun ActionLogCard(
 }
 
 /**
+ * What it is:
  * Card rendering a Task Batch Ledger entry with recipient, channel, status pill, and details.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [LedgerLogCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [LedgerLogCard]
  */
 @Composable
 private fun LedgerLogCard(
@@ -799,7 +882,14 @@ private fun LedgerLogCard(
 }
 
 /**
+ * What it is:
  * Card rendering an Error entry with collapsible stack trace and copy capability.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [ErrorLogCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [ErrorLogCard]
  */
 @Composable
 private fun ErrorLogCard(
@@ -925,7 +1015,14 @@ private fun ErrorLogCard(
 }
 
 /**
+ * What it is:
  * Fallback card for raw unstructured log text.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [RawLogCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [RawLogCard]
  */
 @Composable
 private fun RawLogCard(
@@ -947,7 +1044,14 @@ private fun RawLogCard(
 }
 
 /**
+ * What it is:
  * Standard CSV line parser supporting double-quoted fields.
+ *
+ * What it does:
+ * Executes [parseCsvLine] logic in accordance with system and security invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [parseCsvLine]
  */
 private fun parseCsvLine(line: String): List<String> {
     val result = mutableListOf<String>()

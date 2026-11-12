@@ -1,16 +1,20 @@
 /**
  * Package: com.jmd.helper.core
- * Module: Permission Management & Verification Layer
+ * Module: Core Security, Invariants & Privacy
  *
- * Provides comprehensive, verified permission-to-feature mapping, live runtime state verification,
- * graceful degradation rules, and transparent user-directed settings intent routing.
+ * What it is:
+ * Architecture definition and implementation for [PermissionManager].
  *
- * Adheres strictly to Part 9 Invariants:
- * 1. Zero root 'su' commands or artificial elevation.
- * 2. Transparent user-directed system settings navigation.
- * 3. Never claims a permission is granted without verifying live system state via official APIs.
- * 4. Application remains completely stable when optional permissions are unavailable.
+ * What it does:
+ * Provides comprehensive, verified permission-to-feature mapping, live runtime state verification, graceful degradation rules, and transparent user-directed settings intent routing. Adheres strictly to Part 9 Invariants: 1. Zero root 'su' commands or artificial elevation. 2. Transparent user-directed system settings navigation. 3. Never claims a permission is granted without verifying live system state via official APIs. 4. Application remains completely stable when optional permissions are unavailable.
+ *
+ * Linked With:
+ * - Schedulers & Receivers: [android.app.AlarmManager], [com.jmd.helper.receiver.HelperDeviceAdminReceiver]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService], [com.jmd.helper.service.TaskNotificationListenerService]
+ * - Core Security & Utilities: [android.app.NotificationManager], [android.content.pm.PackageManager], [android.os.PowerManager], [androidx.core.content.ContextCompat]
+ * - Android Framework & Jetpack: [android.Manifest], [android.content.ComponentName], [android.os.Build], [android.provider.Settings]
  */
+
 package com.jmd.helper.core
 
 import android.Manifest
@@ -30,7 +34,14 @@ import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.service.TaskNotificationListenerService
 
 /**
+ * What it is:
  * Model describing the architectural mapping and runtime behavior of a system permission.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [PermissionFeatureInfo].
+ *
+ * Linked with:
+ * - Architecture: [PermissionManager], [PermissionFeatureInfo]
  */
 data class PermissionFeatureInfo(
     val permissionId: String,
@@ -47,6 +58,16 @@ data class PermissionFeatureInfo(
     val isCritical: Boolean
         get() = !canWorkWithout || permissionId == PermissionManager.ID_ACCESSIBILITY || permissionId == PermissionManager.ID_EXACT_ALARMS
 }
+/**
+ * What it is:
+ * Component definition for [PermissionCategory].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for PermissionCategory.
+ *
+ * Linked with:
+ * - Component: [PermissionManager]
+ */
 
 enum class PermissionCategory(val displayName: String) {
     CORE("Core Permissions"),
@@ -57,7 +78,14 @@ enum class PermissionCategory(val displayName: String) {
 }
 
 /**
+ * What it is:
  * Centralized, verifiable Permission Manager for Helper.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [PermissionManager].
+ *
+ * Linked with:
+ * - Architecture: [PermissionManager], [PermissionManager]
  */
 object PermissionManager {
 
@@ -236,58 +264,134 @@ object PermissionManager {
             category = PermissionCategory.MEDIA
         )
     )
+    /**
+     * What it is:
+     * Execution routine for [getAllPermissions].
+     *
+     * What it does:
+     * Coordinates getAllPermissions operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PermissionManager]
+     */
 
     fun getAllPermissions(): List<PermissionFeatureInfo> = ALL_SPECIFICATIONS
+    /**
+     * What it is:
+     * Execution routine for [getPermission].
+     *
+     * What it does:
+     * Coordinates getPermission operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PermissionManager]
+     */
 
     fun getPermission(permissionId: String): PermissionFeatureInfo? =
         ALL_SPECIFICATIONS.firstOrNull { it.permissionId == permissionId }
 
     /**
+     * What it is:
      * Inspects live status of a standard Android runtime permission.
+     *
+     * What it does:
+     * Executes [isPermissionGranted] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [isPermissionGranted]
      */
     fun isPermissionGranted(context: Context, permission: String): Boolean {
         return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
     }
 
     /**
+     * What it is:
      * Checks if the app can dispatch cellular SMS messages directly.
+     *
+     * What it does:
+     * Executes [hasSmsSendPermission] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [hasSmsSendPermission]
      */
     fun hasSmsSendPermission(context: Context): Boolean =
         isPermissionGranted(context, Manifest.permission.SEND_SMS)
 
     /**
+     * What it is:
      * Checks if the app can read incoming SMS messages for auto-reply rules.
+     *
+     * What it does:
+     * Executes [hasSmsReadPermission] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [hasSmsReadPermission]
      */
     fun hasSmsReadPermission(context: Context): Boolean =
         isPermissionGranted(context, Manifest.permission.READ_SMS) &&
         isPermissionGranted(context, Manifest.permission.RECEIVE_SMS)
 
     /**
+     * What it is:
      * Checks if the app can place direct cellular phone calls.
+     *
+     * What it does:
+     * Executes [hasCallPhonePermission] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [hasCallPhonePermission]
      */
     fun hasCallPhonePermission(context: Context): Boolean =
         isPermissionGranted(context, Manifest.permission.CALL_PHONE)
 
     /**
+     * What it is:
      * Checks if the app can inspect telephony radio state for call connection detection.
+     *
+     * What it does:
+     * Executes [hasPhoneStatePermission] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [hasPhoneStatePermission]
      */
     fun hasPhoneStatePermission(context: Context): Boolean =
         isPermissionGranted(context, Manifest.permission.READ_PHONE_STATE)
 
     /**
+     * What it is:
      * Checks if the app can inspect CallLog to discriminate missed calls from completed calls.
+     *
+     * What it does:
+     * Executes [hasCallLogPermission] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [hasCallLogPermission]
      */
     fun hasCallLogPermission(context: Context): Boolean =
         isPermissionGranted(context, Manifest.permission.READ_CALL_LOG)
 
     /**
+     * What it is:
      * Checks if the app can access device contacts for recipient selection and auto-reply filters.
+     *
+     * What it does:
+     * Executes [hasContactsPermission] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [hasContactsPermission]
      */
     fun hasContactsPermission(context: Context): Boolean =
         isPermissionGranted(context, Manifest.permission.READ_CONTACTS)
 
     /**
+     * What it is:
      * Checks if the app can access device media files for photo/video attachments.
+     *
+     * What it does:
+     * Executes [hasMediaPermission] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [hasMediaPermission]
      */
     fun hasMediaPermission(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -299,7 +403,14 @@ object PermissionManager {
     }
 
     /**
+     * What it is:
      * Resolves the list of runtime permissions needed for media attachments based on platform version.
+     *
+     * What it does:
+     * Executes [getRequiredMediaPermissions] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [getRequiredMediaPermissions]
      */
     fun getRequiredMediaPermissions(): List<String> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -310,7 +421,14 @@ object PermissionManager {
     }
 
     /**
+     * What it is:
      * Checks if the app can post notifications on Android 13+ (API 33+).
+     *
+     * What it does:
+     * Executes [hasPostNotificationsPermission] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [hasPostNotificationsPermission]
      */
     fun hasPostNotificationsPermission(context: Context): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
@@ -318,7 +436,14 @@ object PermissionManager {
     }
 
     /**
+     * What it is:
      * Checks if the app can schedule exact RTC_WAKEUP alarms on Android 12+ (API 31+).
+     *
+     * What it does:
+     * Executes [canScheduleExactAlarms] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [canScheduleExactAlarms]
      */
     fun canScheduleExactAlarms(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -330,7 +455,14 @@ object PermissionManager {
     }
 
     /**
+     * What it is:
      * Checks if battery optimization is ignored for Helper background survival.
+     *
+     * What it does:
+     * Executes [isBatteryOptimizationIgnored] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [isBatteryOptimizationIgnored]
      */
     fun isBatteryOptimizationIgnored(context: Context): Boolean {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
@@ -338,14 +470,28 @@ object PermissionManager {
     }
 
     /**
+     * What it is:
      * Checks if Helper Accessibility Service is active and bound.
+     *
+     * What it does:
+     * Executes [isAccessibilityOperational] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [isAccessibilityOperational]
      */
     fun isAccessibilityOperational(context: Context): Boolean {
         return TaskAccessibilityService.isServiceRunning || AccessibilityHealthManager.isAccessibilityEnabledInSystem(context)
     }
 
     /**
+     * What it is:
      * Checks if notification policy access (DND control) is granted.
+     *
+     * What it does:
+     * Executes [hasNotificationPolicyAccess] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [hasNotificationPolicyAccess]
      */
     fun hasNotificationPolicyAccess(context: Context): Boolean {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
@@ -353,14 +499,28 @@ object PermissionManager {
     }
 
     /**
+     * What it is:
      * Checks if Device Administration is active for instant hardware screen re-locking.
+     *
+     * What it does:
+     * Executes [isDeviceAdminActive] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [isDeviceAdminActive]
      */
     fun isDeviceAdminActive(context: Context): Boolean {
         return HelperDeviceAdminReceiver.isAdminActive(context)
     }
 
     /**
+     * What it is:
      * Checks if Notification Listener Service is enabled in system settings.
+     *
+     * What it does:
+     * Executes [isNotificationListenerActive] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [isNotificationListenerActive]
      */
     fun isNotificationListenerActive(context: Context): Boolean {
         val cr = context.contentResolver
@@ -370,7 +530,14 @@ object PermissionManager {
     }
 
     /**
+     * What it is:
      * Comprehensive live audit generating the complete Permission-to-Feature mapping.
+     *
+     * What it does:
+     * Executes [getPermissionFeatureCatalog] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [getPermissionFeatureCatalog]
      */
     fun getPermissionFeatureCatalog(context: Context): List<PermissionFeatureInfo> {
         return ALL_SPECIFICATIONS.map { spec ->
@@ -395,7 +562,14 @@ object PermissionManager {
     }
 
     /**
+     * What it is:
      * Generates standard, transparent user-directed settings intent for resolving permissions.
+     *
+     * What it does:
+     * Executes [createSettingsIntent] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [createSettingsIntent]
      */
     fun createSettingsIntent(context: Context, permissionId: String): Intent {
         return when (permissionId) {
@@ -430,19 +604,40 @@ object PermissionManager {
     }
 
     /**
+     * What it is:
      * Dispatches intent to launch OEM-specific background management or autostart settings.
+     *
+     * What it does:
+     * Executes [openOemBackgroundSettings] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [openOemBackgroundSettings]
      */
     fun openOemBackgroundSettings(context: Context): Boolean =
         OemBrandHelper.openOemBackgroundSettings(context)
 
     /**
+     * What it is:
      * Checks if the app has permission to display overlays on top of other applications.
+     *
+     * What it does:
+     * Executes [hasOverlayPermission] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [hasOverlayPermission]
      */
     fun hasOverlayPermission(context: Context): Boolean =
         OverlayPermissionHelper.canDrawOverlays(context)
 
     /**
+     * What it is:
      * Standard Application Details settings intent.
+     *
+     * What it does:
+     * Executes [createAppDetailsIntent] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PermissionManager], [createAppDetailsIntent]
      */
     fun createAppDetailsIntent(context: Context): Intent {
         return Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {

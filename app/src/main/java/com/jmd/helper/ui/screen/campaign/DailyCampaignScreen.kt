@@ -1,3 +1,23 @@
+/**
+ * Package: com.jmd.helper.ui.screen.campaign
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [DailyCampaignScreen].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for DailyCampaignScreen.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.*]
+ * - Models & Entities: [com.jmd.helper.data.model.*]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.*]
+ * - Services & Engines: [com.jmd.helper.engine.*]
+ * - UI Screens & Components: [androidx.activity.compose.BackHandler], [androidx.activity.compose.rememberLauncherForActivityResult], [androidx.activity.result.contract.ActivityResultContracts], [androidx.compose.ui.Alignment]
+ * - Core Security & Utilities: [java.util.*], [com.jmd.helper.core.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.lazy.items], [androidx.compose.foundation.shape.CircleShape], [androidx.compose.material.icons.Icons]
+ */
+
 package com.jmd.helper.ui.screen.campaign
 
 import android.content.*
@@ -36,8 +56,14 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.*
 
 /**
+ * What it is:
  * Dedicated recurrent daily campaign manager orchestrating SMS and WhatsApp multi-contact dispatches.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [DailyAutoSenderScreen] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignScreen], [DailyAutoSenderScreen]
  * @param initialCampaignId Target campaign identifier to open on initial composition.
  * @param onCampaignIdChange Callback invoked when active campaign selection changes.
  */
@@ -78,6 +104,16 @@ fun DailyAutoSenderScreen(
     var showSelectChannelDialog by remember { mutableStateOf(false) }
     var showCreateCampaignDialog by remember { mutableStateOf(false) }
     var createChannelType by remember { mutableStateOf("SMS") }
+    /**
+     * What it is:
+     * Execution routine for [loadAllCampaigns].
+     *
+     * What it does:
+     * Coordinates loadAllCampaigns operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignScreen]
+     */
 
     fun loadAllCampaigns() {
         scope.launch(Dispatchers.IO) {
@@ -103,11 +139,31 @@ fun DailyAutoSenderScreen(
     LaunchedEffect(initialCampaignId) {
         selectedCampaignId = initialCampaignId
     }
+    /**
+     * What it is:
+     * Execution routine for [setCampaign].
+     *
+     * What it does:
+     * Coordinates setCampaign operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignScreen]
+     */
 
     fun setCampaign(id: Long) {
         selectedCampaignId = id
         onCampaignIdChange?.invoke(id)
     }
+    /**
+     * What it is:
+     * Execution routine for [refreshData].
+     *
+     * What it does:
+     * Coordinates refreshData operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignScreen]
+     */
 
     fun refreshData() {
         val currentTab = poolTab

@@ -1,10 +1,18 @@
 /**
  * Package: com.jmd.helper.core
- * Module: Core Task Utilities
+ * Module: Core Security, Invariants & Privacy
  *
- * Provides international and national phone number standardization, emergency service rejection,
- * contact verification, duplicate detection, and multi-delimiter input ingestion.
+ * What it is:
+ * Architecture definition and implementation for [PhoneNumberUtils].
+ *
+ * What it does:
+ * Provides international and national phone number standardization, emergency service rejection, contact verification, duplicate detection, and multi-delimiter input ingestion.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.db.DatabaseHelper]
+ * - Android Framework & Jetpack: [android.net.Uri], [android.provider.ContactsContract]
  */
+
 package com.jmd.helper.core
 
 import android.content.Context
@@ -13,16 +21,26 @@ import android.provider.ContactsContract
 import com.jmd.helper.data.db.DatabaseHelper
 
 /**
+ * What it is:
  * Normalization, validation, and parsing engine for cellular phone numbers and recipient inputs.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [PhoneNumberNormalizer].
+ *
+ * Linked with:
+ * - Architecture: [PhoneNumberUtils], [PhoneNumberNormalizer]
  */
 object PhoneNumberNormalizer {
 
     /**
-     * Standardizes raw phone input into E.164 international format (e.g. +919876543210).
+     * What it is:
+     * Standardizes raw phone input into E.164 international format (e.g.
      *
-     * Directly strips whitespace, punctuation, and leading zeroes.
-     * Safely returns empty string if input matches an emergency service number.
+     * What it does:
+     * +919876543210). Directly strips whitespace, punctuation, and leading zeroes. Safely returns empty string if input matches an emergency service number.
      *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [normalize]
      * @param raw Raw input string from user, clipboard, or contact book.
      * @param defaultCountryCode Default international dialing code (defaults to "+91").
      * @return E.164 normalized phone string with leading '+', or empty string if invalid.
@@ -53,8 +71,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
+     * What it is:
      * Formats normalized phone number specifically for WhatsApp deep-links (stripping leading '+').
      *
+     * What it does:
+     * Executes [formatForWhatsApp] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [formatForWhatsApp]
      * @param raw Raw phone number input.
      * @param defaultCountryCode Country code prefix.
      * @return Pure digit string formatted for whatsapp:// and api.whatsapp.com URIs.
@@ -65,7 +89,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
+     * What it is:
      * Checks if two phone number strings represent the same recipient.
+     *
+     * What it does:
+     * Executes [isSamePhoneNumber] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [isSamePhoneNumber]
      */
     fun isSamePhoneNumber(p1: String, p2: String): Boolean {
         if (p1.equals(p2, ignoreCase = true)) return true
@@ -82,8 +113,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
+     * What it is:
      * Extracts raw phone digits from decorated contact labels (e.g., "+919876543210 (John)").
      *
+     * What it does:
+     * Executes [extractRawPhoneNumber] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [extractRawPhoneNumber]
      * @param decorated Formatted string containing number and optional trailing name.
      * @return Extracted raw phone number digits.
      */
@@ -96,8 +133,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
+     * What it is:
      * Strips whitespace, parentheses, and dashes from a phone string.
      *
+     * What it does:
+     * Executes [cleanPhoneNumber] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [cleanPhoneNumber]
      * @param raw Target raw phone string.
      * @return Stripped phone string.
      */
@@ -106,9 +149,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
-     * Verifies whether a given number represents a genuine mobile subscriber rather than a landline,
-     * toll-free service (1800/1860/800), or invalid repetitive sequence.
+     * What it is:
+     * Verifies whether a given number represents a genuine mobile subscriber rather than a landline, toll-free service (1800/1860/800), or invalid repetitive sequence.
      *
+     * What it does:
+     * Executes [isMobileNumber] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [isMobileNumber]
      * @param raw Raw or normalized phone number string.
      * @return True if valid mobile number, false otherwise.
      */
@@ -159,8 +207,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
+     * What it is:
      * Queries the Android device ContactsContract to resolve a contact's display name by phone.
      *
+     * What it does:
+     * Executes [getContactName] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [getContactName]
      * @param context Active Android [Context].
      * @param number Phone number to look up.
      * @return Contact display name string, or null if unlisted.
@@ -192,9 +246,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
-     * Determines whether an identifier (phone number or name) corresponds to an existing contact
-     * in the device address book or local dynamic contact pool.
+     * What it is:
+     * Determines whether an identifier (phone number or name) corresponds to an existing contact in the device address book or local dynamic contact pool.
      *
+     * What it does:
+     * Executes [isContact] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [isContact]
      * @param context Active Android [Context].
      * @param identifier Phone number or contact name string.
      * @return True if recognized as a known contact, false otherwise.
@@ -234,11 +293,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
-     * Identifies emergency service numbers and Indian national helplines
-     * (112, 100, 101, 102, 108, 1090, 1091, 1098, 1930, 1075, 1070, 1077, 1072, 1073, 139,
-     *  1947, 1909, 155260, 104, 1097, 1064, 1076, 14416, 1033, 1071, 1099, 182, 911, 999)
-     * to strictly block scheduled dispatch and protect national emergency helplines.
+     * What it is:
+     * Identifies emergency service numbers and Indian national helplines (112, 100, 101, 102, 108, 1090, 1091, 1098, 1930, 1075, 1070, 1077, 1072, 1073, 139, 1947, 1909, 155260, 104, 1097, 1064, 1076, 14416, 1033, 1071, 1099, 182, 911, 999) to strictly block scheduled dispatch and protect national emergency helplines.
      *
+     * What it does:
+     * Executes [isEmergencyNumber] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [isEmergencyNumber]
      * @param raw Target phone string.
      * @return True if identified as emergency number, false otherwise.
      */
@@ -253,8 +315,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
+     * What it is:
      * Verifies if a number represents an active Indian mobile subscriber (+91 followed by 10 digits starting with 6, 7, 8, or 9).
      *
+     * What it does:
+     * Executes [isIndianMobileNumber] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [isIndianMobileNumber]
      * @param raw Raw or formatted phone number.
      * @return True if valid Indian mobile subscriber.
      */
@@ -267,9 +335,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
+     * What it is:
      * Formats an Indian or international phone number for clean user interface rendering.
+     *
+     * What it does:
      * For Indian numbers: transforms +919876543210 into "+91 98765 43210".
      *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [formatForDisplay]
      * @param raw Phone number string.
      * @return User-friendly formatted phone string.
      */
@@ -283,8 +356,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
-     * Detects duplicate phone numbers across diverse input formats (e.g. "9876543210" and "+91 98765-43210").
+     * What it is:
+     * Detects duplicate phone numbers across diverse input formats (e.g.
      *
+     * What it does:
+     * "9876543210" and "+91 98765-43210").
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [detectDuplicates]
      * @param numbers List of candidate raw phone numbers.
      * @return Map of normalized phone number to list of indices where duplicates occur.
      */
@@ -300,8 +379,14 @@ object PhoneNumberNormalizer {
     }
 
     /**
+     * What it is:
      * Ingests multi-line or comma/semicolon delimited recipient inputs into structured tokens.
      *
+     * What it does:
+     * Executes [parseMultiInput] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PhoneNumberUtils], [parseMultiInput]
      * @param input Raw pasted text containing multiple recipient records.
      * @param defaultCountryCode Default country code for normalization.
      * @return List of Pairs: original raw token to normalized mobile number (or null if invalid).

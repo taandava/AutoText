@@ -1,11 +1,22 @@
 /**
  * Package: com.jmd.helper.ui.screen.logs
- * Module: UI Log Detail & Telemetry View
+ * Module: Application Core Subsystem
  *
- * Detailed view presenting technical execution telemetry for an individual [ExecutionLog] item.
- * Displays timestamp, recipient identifiers, channel details, dispatch payloads, raw error stack
- * traces (if failed), and an instant one-tap retry dispatch trigger.
+ * What it is:
+ * Architecture definition and implementation for [LogDetailScreen].
+ *
+ * What it does:
+ * Detailed view presenting technical execution telemetry for an individual [ExecutionLog] item. Displays timestamp, recipient identifiers, channel details, dispatch payloads, raw error stack traces (if failed), and an instant one-tap retry dispatch trigger.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.ExecutionLog]
+ * - Services & Engines: [com.jmd.helper.engine.SequentialTaskEngine], [com.jmd.helper.engine.SmsSender], [com.jmd.helper.engine.WhatsAppSender], [com.jmd.helper.service.TaskAccessibilityService]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.platform.LocalContext], [androidx.compose.ui.platform.LocalLocale]
+ * - Core Security & Utilities: [android.content.ClipboardManager], [java.util.Date], [com.jmd.helper.core.AppFileLogger], [com.jmd.helper.core.PhoneNumberNormalizer]
+ * - Android Framework & Jetpack: [android.content.ClipData], [androidx.compose.foundation.background], [androidx.compose.foundation.border], [androidx.compose.foundation.rememberScrollState]
  */
+
 package com.jmd.helper.ui.screen.logs
 
 import androidx.compose.material.icons.automirrored.filled.*
@@ -50,8 +61,14 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
+ * What it is:
  * Detailed view presenting technical execution telemetry for an individual [ExecutionLog] item.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [LogDetailView] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [LogDetailScreen], [LogDetailView]
  * @param log Execution log model item to inspect.
  * @param repository Data layer repository for task retry and status queries.
  * @param onBack Callback invoked to exit detail view.

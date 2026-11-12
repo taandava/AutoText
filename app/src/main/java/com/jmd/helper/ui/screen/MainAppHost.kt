@@ -1,12 +1,20 @@
-
-
 /**
  * Package: com.jmd.helper.ui.screen
- * Module: UI Layer - Navigation & Hosting
+ * Module: Application Core Subsystem
  *
- * Primary UI application host managing bottom navigation tabs, deep-link text ingestion,
- * full-screen composer sheets, sequence studios, and task type selection dialogs.
+ * What it is:
+ * Architecture definition and implementation for [MainAppHost].
+ *
+ * What it does:
+ * Primary UI application host managing bottom navigation tabs, deep-link text ingestion, full-screen composer sheets, sequence studios, and task type selection dialogs.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.ScheduledTask]
+ * - UI Screens & Components: [androidx.activity.compose.BackHandler], [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip]
+ * - Core Security & Utilities: [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.background], [androidx.compose.foundation.border], [androidx.compose.foundation.clickable]
  */
+
 package com.jmd.helper.ui.screen
 
 import androidx.compose.material.icons.automirrored.filled.*
@@ -44,8 +52,14 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
+ * What it is:
  * Root Composable host managing top-level navigation, tab selection, and global overlay dialogs.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [MainAppHost] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [MainAppHost], [MainAppHost]
  * @param sharedText Incoming text received from external ACTION_SEND intents.
  * @param onSharedTextConsumed Callback to reset consumed share intent data.
  * @param onThemeChanged Callback invoked when user modifies color theme settings.

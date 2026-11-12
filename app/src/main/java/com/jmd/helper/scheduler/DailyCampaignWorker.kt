@@ -1,21 +1,22 @@
-
-
 /**
  * Package: com.jmd.helper.scheduler
- * Module: Schedulers Layer
+ * Module: Schedulers & Background Workers
  *
- * Background WorkManager [CoroutineWorker] executing scheduled daily outreach batch campaigns.
- * Coordinates dynamic contact ingestion, per-contact cooldowns, gap delays (pacing), SMS quota tracking,
- * and dispatching via [SmsSender] or [WhatsAppSender].
+ * What it is:
+ * Architecture definition and implementation for [DailyCampaignWorker].
+ *
+ * What it does:
+ * Background WorkManager [CoroutineWorker] executing scheduled daily outreach batch campaigns. Coordinates dynamic contact ingestion, per-contact cooldowns, gap delays (pacing), SMS quota tracking, and dispatching via [SmsSender] or [WhatsAppSender].
  *
  * Linked With:
- * - Scheduler: [com.jmd.helper.scheduler.DailyCampaignScheduler]
- * - Ingestion Engine: [com.jmd.helper.engine.ContactIngestionEngine]
- * - Senders: [com.jmd.helper.engine.SmsSender], [com.jmd.helper.engine.WhatsAppSender]
- * - Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.DailyCampaignRepository]
- * - Quotas: [com.jmd.helper.core.SmsQuotaManager]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.ExecutionLog]
+ * - Schedulers & Receivers: [androidx.work.CoroutineWorker], [androidx.work.WorkerParameters]
+ * - Services & Engines: [com.jmd.helper.engine.ContactIngestionEngine], [com.jmd.helper.engine.SequentialTaskEngine], [com.jmd.helper.engine.SmsSender], [com.jmd.helper.engine.WhatsAppSender]
+ * - Core Security & Utilities: [android.content.pm.PackageManager], [androidx.core.content.ContextCompat], [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [kotlinx.coroutines.delay], [kotlinx.coroutines.sync.Mutex], [kotlinx.coroutines.sync.withLock]
  */
+
 package com.jmd.helper.scheduler
 
 import android.content.Context
@@ -45,12 +46,29 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 /**
+ * What it is:
  * Background worker executing paced daily batch outreach campaigns.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [DailyCampaignWorker].
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignWorker], [DailyCampaignWorker]
  */
 class DailyCampaignWorker(
     appContext: Context,
     params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [DailyCampaignWorker].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignWorker]
+     */
 
     companion object {
         const val TAG = "DailyCampaignWorker"
@@ -61,13 +79,14 @@ class DailyCampaignWorker(
     }
 
     /**
-     * Executes the background campaign workflow:
-     * 1. Validates campaign status, schedule date, and permission readiness (Accessibility for WhatsApp, SEND_SMS for cellular).
-     * 2. Checks India TRAI regulatory SMS quotas (100 SMS/day ceiling) and campaign daily allowance limits.
-     * 3. Triggers scheduled contact ingestion if auto-scan is enabled.
-     * 4. Queries pending recipient pool contacts and paces sequential dispatch according to configured throttle delays.
-     * 5. Logs detailed execution results and updates campaign progress ledgers.
+     * What it is:
+     * Executes the background campaign workflow: 1.
      *
+     * What it does:
+     * Validates campaign status, schedule date, and permission readiness (Accessibility for WhatsApp, SEND_SMS for cellular). 2. Checks India TRAI regulatory SMS quotas (100 SMS/day ceiling) and campaign daily allowance limits. 3. Triggers scheduled contact ingestion if auto-scan is enabled. 4. Queries pending recipient pool contacts and paces sequential dispatch according to configured throttle delays. 5. Logs detailed execution results and updates campaign progress ledgers.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignWorker], [doWork]
      * @return [Result.success] on clean completion/pause, or [Result.failure] on fatal missing permissions.
      */
     override suspend fun doWork(): Result = workerMutex.withLock {

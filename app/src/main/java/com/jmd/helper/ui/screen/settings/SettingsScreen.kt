@@ -1,3 +1,20 @@
+/**
+ * Package: com.jmd.helper.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SettingsScreen].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SettingsScreen.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - UI Screens & Components: [androidx.activity.compose.rememberLauncherForActivityResult], [androidx.activity.result.contract.ActivityResultContracts], [androidx.compose.ui.Modifier], [androidx.compose.ui.graphics.vector.ImageVector]
+ * - Core Security & Utilities: [com.jmd.helper.core.showAppToast], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [android.net.Uri], [androidx.compose.foundation.horizontalScroll], [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.rememberScrollState]
+ */
+
 package com.jmd.helper.ui.screen.settings
 
 import android.content.Context
@@ -23,7 +40,14 @@ import com.jmd.helper.ui.components.GlassChip
 import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
+ * What it is:
  * Functional subdivisions dividing the comprehensive application settings into focused tabs.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [SettingsSubdivision].
+ *
+ * Linked with:
+ * - Architecture: [SettingsScreen], [SettingsSubdivision]
  */
 enum class SettingsSubdivision(
     val title: String,
@@ -38,10 +62,14 @@ enum class SettingsSubdivision(
 }
 
 /**
- * Application settings and operational configuration screen providing controls for
- * dynamic message templates, automation channels, lockscreen PIN unlock, accessibility
- * banking guard, theme styling, system diagnostics, and database backup/restore.
+ * What it is:
+ * Application settings and operational configuration screen providing controls for dynamic message templates, automation channels, lockscreen PIN unlock, accessibility banking guard, theme styling, system diagnostics, and database backup/restore.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [SettingsView] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsScreen], [SettingsView]
  * @param context Android context for resolving system services and content resolvers.
  * @param repository Application data repository for database serialization and migrations.
  * @param prefs SharedPreferences manager storing persistent user configuration.

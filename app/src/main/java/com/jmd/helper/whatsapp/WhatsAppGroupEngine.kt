@@ -1,15 +1,19 @@
 /**
  * Package: com.jmd.helper.whatsapp
- * Module: WhatsApp Task Subsystem
+ * Module: WhatsApp Automation Subsystem
  *
- * Scheduled group messaging dispatcher. Locates WhatsApp groups via search query, opens the group chat,
- * verifies conversation context, and invokes text transmission.
+ * What it is:
+ * Architecture definition and implementation for [WhatsAppGroupEngine].
+ *
+ * What it does:
+ * Scheduled group messaging dispatcher. Locates WhatsApp groups via search query, opens the group chat, verifies conversation context, and invokes text transmission.
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Direct Engine: [com.jmd.helper.whatsapp.WhatsAppDirectSendEngine]
- * - Node Utils: [com.jmd.helper.whatsapp.AccessibilityNodeUtils]
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService]
+ * - Core Security & Utilities: [android.util.Log]
+ * - Android Framework & Jetpack: [android.view.accessibility.AccessibilityNodeInfo], [android.view.accessibility.AccessibilityWindowInfo]
  */
+
 package com.jmd.helper.whatsapp
 
 import android.accessibilityservice.AccessibilityService
@@ -18,8 +22,14 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 
 /**
+ * What it is:
  * WhatsApp group search and message dispatch engine for both WhatsApp and WhatsApp Business.
  *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [WhatsAppGroupEngine].
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppGroupEngine], [WhatsAppGroupEngine]
  * @param service Active accessibility service instance.
  * @param loggerTag Logging tag for diagnostic output.
  */
@@ -29,8 +39,14 @@ class WhatsAppGroupEngine(
 ) {
 
     /**
+     * What it is:
      * Conducts group search, navigates into matching group conversation, and transitions mode to message transmission.
      *
+     * What it does:
+     * Executes [tryHandleGroupSearchAndSend] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppGroupEngine], [tryHandleGroupSearchAndSend]
      * @param root Active accessibility tree root.
      * @param pkg Target WhatsApp package identifier.
      * @param pendingGroupRecipient Group chat title to find and open.
@@ -146,6 +162,16 @@ class WhatsAppGroupEngine(
             onRetry(400L)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [findSearchButton].
+     *
+     * What it does:
+     * Coordinates findSearchButton operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppGroupEngine]
+     */
 
     private fun findSearchButton(
         root: AccessibilityNodeInfo,
@@ -184,6 +210,16 @@ class WhatsAppGroupEngine(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [findSearchInput].
+     *
+     * What it does:
+     * Coordinates findSearchInput operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppGroupEngine]
+     */
 
     private fun findSearchInput(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val queue = ArrayDeque<AccessibilityNodeInfo>()
@@ -207,6 +243,16 @@ class WhatsAppGroupEngine(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [findMatchingChatResult].
+     *
+     * What it does:
+     * Coordinates findMatchingChatResult operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppGroupEngine]
+     */
 
     private fun findMatchingChatResult(
         root: AccessibilityNodeInfo,
@@ -263,6 +309,16 @@ class WhatsAppGroupEngine(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [findConversationTitle].
+     *
+     * What it does:
+     * Coordinates findConversationTitle operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppGroupEngine]
+     */
 
     private fun findConversationTitle(
         root: AccessibilityNodeInfo,
@@ -292,13 +348,43 @@ class WhatsAppGroupEngine(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [stripGroupPrefix].
+     *
+     * What it does:
+     * Coordinates stripGroupPrefix operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppGroupEngine]
+     */
 
     private fun stripGroupPrefix(value: String): String =
         value.replaceFirst(Regex("^group\\s*:", RegexOption.IGNORE_CASE), "").trim()
+    /**
+     * What it is:
+     * Execution routine for [normalizeTitle].
+     *
+     * What it does:
+     * Coordinates normalizeTitle operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppGroupEngine]
+     */
 
     private fun normalizeTitle(value: String): String = stripGroupPrefix(value)
         .replace(Regex("\\s+"), " ")
         .lowercase()
+    /**
+     * What it is:
+     * Execution routine for [findMessageInputField].
+     *
+     * What it does:
+     * Coordinates findMessageInputField operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppGroupEngine]
+     */
 
     private fun findMessageInputField(
         root: AccessibilityNodeInfo,
@@ -329,4 +415,3 @@ class WhatsAppGroupEngine(
         return null
     }
 }
-

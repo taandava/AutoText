@@ -1,3 +1,21 @@
+/**
+ * Package: com.jmd.helper.ui.screen.autoreply
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [AutoReplyDialogs].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for AutoReplyDialogs.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.*]
+ * - Models & Entities: [com.jmd.helper.data.model.*], [com.jmd.helper.ui.model.AutoReplyTypeItem]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Core Security & Utilities: [com.jmd.helper.core.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.lazy.items], [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape]
+ */
+
 package com.jmd.helper.ui.screen.autoreply
 
 import android.content.*
@@ -33,8 +51,14 @@ import com.jmd.helper.ui.model.AutoReplyTypeItem
 import com.jmd.helper.ui.theme.*
 
 /**
+ * What it is:
  * Bottom sheet modal enabling users to select the trigger medium (Call, SMS, WhatsApp) and event type.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [AutoReplyTypeSelectionSheet] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [AutoReplyDialogs], [AutoReplyTypeSelectionSheet]
  * @param onDismiss Callback to dismiss bottom sheet.
  * @param onSelectType Callback receiving chosen channel and event type key.
  */
@@ -166,8 +190,14 @@ fun AutoReplyTypeSelectionSheet(
 
 
 /**
+ * What it is:
  * Comprehensive modal dialog for creating or updating an scheduled reply rule with channel, triggers, recipient filters, and schedule.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [AutoReplyRuleDialog] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [AutoReplyDialogs], [AutoReplyRuleDialog]
  * @param initialRule Existing rule to edit, or null when creating a new rule.
  * @param onDismiss Callback to dismiss editor dialog.
  * @param onSave Callback receiving populated rule data class on confirmation.
@@ -826,5 +856,3 @@ fun AutoReplyRuleDialog(
 // ============================================================================
 // TASK CREATION & COMPOSITION SCREEN
 // ============================================================================
-
-

@@ -1,19 +1,23 @@
-
-
 /**
  * Package: com.jmd.helper.engine
- * Module: Task Engine
+ * Module: Task Execution & Dispatch Engines
  *
- * Centralized sequential execution orchestrator for scheduled tasks across SMS,
- * WhatsApp chats, WhatsApp Status stories, Phone Calls, Reminders, and Sound Mode events.
+ * What it is:
+ * Architecture definition and implementation for [SequentialTaskEngine].
+ *
+ * What it does:
+ * Centralized sequential execution orchestrator for scheduled tasks across SMS, WhatsApp chats, WhatsApp Status stories, Phone Calls, Reminders, and Sound Mode events.
  *
  * Linked With:
- * - Schedulers: [com.jmd.helper.scheduler.AlarmScheduler], [com.jmd.helper.receiver.TaskAlarmReceiver]
- * - Services: [com.jmd.helper.service.TaskForegroundService], [com.jmd.helper.service.TaskAccessibilityService]
- * - Dispatchers: [com.jmd.helper.engine.SmsSender], [com.jmd.helper.engine.WhatsAppSender]
- * - Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.TaskRepository]
- * - Safety & Quota: [TaskSafetyManager], [com.jmd.helper.core.SmsQuotaManager]
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.*]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.AlarmScheduler], [com.jmd.helper.ui.activity.ReminderAlarmActivity]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService], [com.jmd.helper.whatsapp.WhatsAppIntentDispatcher]
+ * - UI Screens & Components: [com.jmd.helper.ui.activity.CallSimulationActivity], [com.jmd.helper.ui.activity.TaskLauncherActivity]
+ * - Core Security & Utilities: [android.app.KeyguardManager], [android.app.NotificationManager], [android.content.pm.PackageManager], [android.media.AudioManager]
+ * - Android Framework & Jetpack: [android.app.PendingIntent], [android.net.Uri], [kotlinx.coroutines.channels.Channel], [kotlinx.coroutines.sync.Mutex]
  */
+
 package com.jmd.helper.engine
 
 import android.app.KeyguardManager
@@ -53,10 +57,14 @@ import kotlin.time.Duration.Companion.milliseconds
 private const val WHATSAPP_SEND_TIMEOUT_MS = 35000L
 
 /**
+ * What it is:
  * Singleton sequential task execution pipeline.
  *
- * Guarantees serial execution of UI task tasks via [uiTaskMutex] and safe
- * concurrency for background cellular SMS dispatches via [smsMutex].
+ * What it does:
+ * Guarantees serial execution of UI task tasks via [uiTaskMutex] and safe concurrency for background cellular SMS dispatches via [smsMutex].
+ *
+ * Linked with:
+ * - Architecture: [SequentialTaskEngine], [SequentialTaskEngine]
  */
 class SequentialTaskEngine private constructor(private val appContext: Context) {
 
@@ -75,6 +83,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     init {
         startSequentialProcessor()
     }
+    /**
+     * What it is:
+     * Execution routine for [startSequentialProcessor].
+     *
+     * What it does:
+     * Coordinates startSequentialProcessor operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     private fun startSequentialProcessor() {
         engineScope.launch {
@@ -142,7 +160,14 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     }
 
     /**
+     * What it is:
      * Cooperatively cancels a specific task if currently executing and removes it from active tracking.
+     *
+     * What it does:
+     * Executes [cancelTask] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SequentialTaskEngine], [cancelTask]
      */
     fun cancelTask(taskId: Long) {
         Log.i(TAG, "cancelTask requested for Task #$taskId")
@@ -161,7 +186,14 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     }
 
     /**
+     * What it is:
      * Cooperatively aborts the currently running task, drains the sequential queue, and resets engine state.
+     *
+     * What it does:
+     * Executes [cancelAll] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SequentialTaskEngine], [cancelAll]
      */
     fun cancelAll() {
         Log.i(TAG, "cancelAll requested for SequentialTaskEngine")
@@ -182,6 +214,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
         currentTaskId = -1L
     }
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [SequentialTaskEngine].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     companion object {
         private const val TAG = "SequentialTaskEngine"
@@ -303,15 +345,27 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
     }
 
-    /** Shortened convenience alias for [enqueue]. */
+    /**
+     * What it is:
+     * Execution routine for [queue].
+     *
+     * What it does:
+     * Coordinates queue operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Architecture: [SequentialTaskEngine], [queue]
+     */
     fun queue(taskId: Long): Boolean = enqueue(taskId)
 
     /**
+     * What it is:
      * Submits a scheduled task ID into the sequential dispatch pipeline queue.
      *
-     * Tasks are queued into an asynchronous coroutine channel and executed one-by-one.
-     * If the task is already being processed or enqueued, duplicate submissions are rejected.
+     * What it does:
+     * Tasks are queued into an asynchronous coroutine channel and executed one-by-one. If the task is already being processed or enqueued, duplicate submissions are rejected.
      *
+     * Linked with:
+     * - Architecture: [SequentialTaskEngine], [enqueue]
      * @param taskId Unique identifier of the task.
      * @return `true` if enqueued successfully; `false` if ID <= 0 or already queued.
      */
@@ -332,9 +386,14 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     }
 
     /**
-     * Top-level safe execution handler routing tasks to appropriate channel engines
-     * (SMS, WhatsApp, Calls, Reminders, Call Simulations, Sound Modes) with circuit-breaker protection.
+     * What it is:
+     * Top-level safe execution handler routing tasks to appropriate channel engines (SMS, WhatsApp, Calls, Reminders, Call Simulations, Sound Modes) with circuit-breaker protection.
      *
+     * What it does:
+     * Executes [executeTaskSafely] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SequentialTaskEngine], [executeTaskSafely]
      * @param repository The central application repository.
      * @param task The scheduled task to execute.
      * @return `true` if task completed successfully; `false` on failure.
@@ -473,6 +532,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         AccessibilityHealthManager.enforceAutoRotateInvariant(appContext)
         return success
     }
+    /**
+     * What it is:
+     * Execution routine for [ensureDeviceAwakeAndUnlocked].
+     *
+     * What it does:
+     * Coordinates ensureDeviceAwakeAndUnlocked operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     suspend fun ensureDeviceAwakeAndUnlocked(
         task: ScheduledTask,
@@ -480,9 +549,14 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     ): Boolean = ensureDeviceAwakeAndUnlocked(task.id, task.channel, targetRecipient)
 
     /**
+     * What it is:
      * Verifies whether the screen is interactive and keyguard is unlocked.
-     * If the screen is off or keyguard is locked, turns on the display and initiates
-     * keyguard dismiss or scheduled PIN entry via [TaskLauncherActivity].
+     *
+     * What it does:
+     * If the screen is off or keyguard is locked, turns on the display and initiates keyguard dismiss or scheduled PIN entry via [TaskLauncherActivity].
+     *
+     * Linked with:
+     * - Architecture: [SequentialTaskEngine], [ensureDeviceAwakeAndUnlocked]
      */
     suspend fun ensureDeviceAwakeAndUnlocked(
         taskId: Long,
@@ -548,6 +622,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
         return true
     }
+    /**
+     * What it is:
+     * Execution routine for [executeWhatsAppTaskWithRetries].
+     *
+     * What it does:
+     * Coordinates executeWhatsAppTaskWithRetries operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     private suspend fun executeWhatsAppTaskWithRetries(
         repository: AppRepository,
@@ -765,6 +849,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         completeOrRescheduleTask(appContext, repository, task, success)
         return success
     }
+    /**
+     * What it is:
+     * Execution routine for [waitForWhatsAppCompletion].
+     *
+     * What it does:
+     * Coordinates waitForWhatsAppCompletion operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     private suspend fun waitForWhatsAppCompletion(): Boolean {
         var waitedMs = 0L
@@ -777,6 +871,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
         return TaskAccessibilityService.lastSendResult == TaskAccessibilityService.RESULT_SUCCESS
     }
+    /**
+     * What it is:
+     * Execution routine for [executeSmsTask].
+     *
+     * What it does:
+     * Coordinates executeSmsTask operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     private suspend fun executeSmsTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val smsSender = SmsSender(appContext)
@@ -870,10 +974,14 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
     }
 
     /**
+     * What it is:
      * Executes post-task device lock if enabled in preferences.
-     * Minimizes to home and executes Power button auto-lock via [TaskAccessibilityService.lockScreenNow]
-     * (using Android Pie+ GLOBAL_ACTION_LOCK_SCREEN) so biometrics and fingerprint are 100% preserved.
-     * Never calls DevicePolicyManager.lockNow().
+     *
+     * What it does:
+     * Minimizes to home and executes Power button auto-lock via [TaskAccessibilityService.lockScreenNow] (using Android Pie+ GLOBAL_ACTION_LOCK_SCREEN) so biometrics and fingerprint are 100% preserved. Never calls DevicePolicyManager.lockNow().
+     *
+     * Linked with:
+     * - Architecture: [SequentialTaskEngine], [executeDeviceLockPostcondition]
      */
     private suspend fun executeDeviceLockPostcondition(context: Context, taskTitle: String): Boolean {
         val prefs = PreferenceManager(context)
@@ -907,6 +1015,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
         return success
     }
+    /**
+     * What it is:
+     * Execution routine for [executeCallTask].
+     *
+     * What it does:
+     * Coordinates executeCallTask operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     private suspend fun executeCallTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val baseRecipients = task.recipients.filter { it.isNotBlank() }
@@ -1268,6 +1386,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
         return allCallsSuccess
     }
+    /**
+     * What it is:
+     * Execution routine for [executeWhatsAppCallTask].
+     *
+     * What it does:
+     * Coordinates executeWhatsAppCallTask operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     private suspend fun executeWhatsAppCallTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val baseRecipients = task.recipients.filter { it.isNotBlank() }
@@ -1543,6 +1671,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
         return allCallsSuccess
     }
+    /**
+     * What it is:
+     * Execution routine for [executeReminderTask].
+     *
+     * What it does:
+     * Coordinates executeReminderTask operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     private fun executeReminderTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val success = try {
@@ -1616,6 +1754,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         completeOrRescheduleTask(appContext, repository, task, success)
         return success
     }
+    /**
+     * What it is:
+     * Execution routine for [executeCallSimulationTask].
+     *
+     * What it does:
+     * Coordinates executeCallSimulationTask operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     private fun executeCallSimulationTask(repository: AppRepository, task: ScheduledTask): Boolean {
         val success = try {
@@ -1680,6 +1828,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         completeOrRescheduleTask(appContext, repository, task, success)
         return success
     }
+    /**
+     * What it is:
+     * Execution routine for [personalize].
+     *
+     * What it does:
+     * Coordinates personalize operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
 
     private fun personalize(template: String, name: String, phone: String): String {
         return MessageTemplateResolver.resolve(

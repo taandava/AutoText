@@ -1,10 +1,18 @@
 /**
  * Package: com.jmd.helper.compat
- * Module: Compat Layer
+ * Module: Platform Compatibility Layer
  *
- * Provides backward-compatible framework adaptations across Android SDK versions (API 26 through API 36+),
- * strictly avoiding lint suppressions through explicit permission verification and runtime SDK branching.
+ * What it is:
+ * Architecture definition and implementation for [TelephonyManagerCompat].
+ *
+ * What it does:
+ * Provides backward-compatible framework adaptations across Android SDK versions (API 26 through API 36+), strictly avoiding lint suppressions through explicit permission verification and runtime SDK branching.
+ *
+ * Linked With:
+ * - Core Security & Utilities: [android.content.pm.PackageManager], [android.telecom.TelecomManager], [android.telephony.SubscriptionManager], [android.telephony.TelephonyManager]
+ * - Android Framework & Jetpack: [android.os.Build]
  */
+
 package com.jmd.helper.compat
 
 import android.content.Context
@@ -17,22 +25,30 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 
 /**
+ * What it is:
  * Backward-compatible helper for [TelephonyManager] call state inspection.
  *
- * Handles SDK branching between legacy [TelephonyManager.getCallState] (< API 31)
- * and [TelephonyManager.getCallStateForSubscription] (>= API 31) across multi-SIM subscriptions.
- * Gracefully recovers from missing permissions and runtime security exceptions without failing task execution.
+ * What it does:
+ * Handles SDK branching between legacy [TelephonyManager.getCallState] (< API 31) and [TelephonyManager.getCallStateForSubscription] (>= API 31) across multi-SIM subscriptions. Gracefully recovers from missing permissions and runtime security exceptions without failing task execution.
+ *
+ * Linked with:
+ * - Architecture: [TelephonyManagerCompat], [TelephonyManagerCompat]
  */
 object TelephonyManagerCompat {
 
     private const val TAG = "TelephonyCompat"
 
     /**
+     * What it is:
      * Retrieves current call state for the given TelephonyManager instance.
      *
+     * What it does:
+     * or [TelephonyManager.CALL_STATE_OFFHOOK]. Returns IDLE on null or security exception.
+     *
+     * Linked with:
+     * - Architecture: [TelephonyManagerCompat], [getCallState]
      * @param tm Target [TelephonyManager] or null.
      * @return One of [TelephonyManager.CALL_STATE_IDLE], [TelephonyManager.CALL_STATE_RINGING],
-     *         or [TelephonyManager.CALL_STATE_OFFHOOK]. Returns IDLE on null or security exception.
      */
     @JvmStatic
     fun getCallState(tm: TelephonyManager?): Int {
@@ -54,9 +70,14 @@ object TelephonyManagerCompat {
     }
 
     /**
+     * What it is:
      * Safely checks [android.Manifest.permission.READ_PHONE_STATE] before inspecting call state.
+     *
+     * What it does:
      * Evaluates all active multi-SIM subscriptions to ensure call activity on secondary SIMs is not missed.
      *
+     * Linked with:
+     * - Architecture: [TelephonyManagerCompat], [getCallState]
      * @param context Active Android [Context] for runtime permission verification.
      * @param tm Target [TelephonyManager] or null.
      * @return Call state integer, or [TelephonyManager.CALL_STATE_IDLE] if permission is missing.
@@ -100,8 +121,14 @@ object TelephonyManagerCompat {
     }
 
     /**
+     * What it is:
      * Determines whether an active cellular call has connected and is currently in conversation (OFFHOOK).
      *
+     * What it does:
+     * Executes isCallConnected operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Architecture: [TelephonyManagerCompat], [isCallConnected]
      * @param context Active Android [Context] or null.
      * @param tm Target [TelephonyManager] or null.
      * @return True only when an active cellular call is in progress and answered.
@@ -112,9 +139,14 @@ object TelephonyManagerCompat {
     }
 
     /**
+     * What it is:
      * Determines whether any cellular call is active, dialing, ringing, or in conversation.
+     *
+     * What it does:
      * Uses TelecomManager and TelephonyManager multi-SIM states.
      *
+     * Linked with:
+     * - Architecture: [TelephonyManagerCompat], [isCallActiveOrRinging]
      * @param context Active Android [Context] or null.
      * @param tm Target [TelephonyManager] or null.
      * @return True if a cellular call is currently ongoing in any state.

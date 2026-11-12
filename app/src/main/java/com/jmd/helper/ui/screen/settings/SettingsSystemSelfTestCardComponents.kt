@@ -1,11 +1,20 @@
 /**
  * Package: com.jmd.helper.ui.screen.settings
- * Module: UI Settings - System Integrity & Feature Self-Test Card
+ * Module: Application Core Subsystem
  *
- * Provides an interactive Material 3 diagnostic test suite embedded directly inside
- * the Settings screen. Allows users to audit all 14 core application subsystems,
- * database tables, schedulers, and services, and execute 1-tap automated repairs.
+ * What it is:
+ * Architecture definition and implementation for [SettingsSystemSelfTestCardComponents].
+ *
+ * What it does:
+ * Provides an interactive Material 3 diagnostic test suite embedded directly inside the Settings screen. Allows users to audit all 14 core application subsystems, database tables, schedulers, and services, and execute 1-tap automated repairs.
+ *
+ * Linked With:
+ * - Schedulers & Receivers: [com.jmd.helper.receiver.HelperDeviceAdminReceiver]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Core Security & Utilities: [android.content.ClipboardManager], [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.diagnostic.DiagnosticLevel], [com.jmd.helper.core.diagnostic.DiagnosticReport]
+ * - Android Framework & Jetpack: [android.content.ClipData], [android.provider.Settings], [androidx.compose.foundation.background], [androidx.compose.foundation.clickable]
  */
+
 package com.jmd.helper.ui.screen.settings
 
 import android.content.ClipData
@@ -48,7 +57,14 @@ import com.jmd.helper.ui.theme.OrangeBrandPalette
 import kotlinx.coroutines.launch
 
 /**
+ * What it is:
  * Settings card component running live programmatic audits and automated self-healing.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [SettingsSystemSelfTestCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsSystemSelfTestCardComponents], [SettingsSystemSelfTestCard]
  */
 @Composable
 fun SettingsSystemSelfTestCard(
@@ -363,7 +379,14 @@ fun SettingsSystemSelfTestCard(
 }
 
 /**
+ * What it is:
  * Diagnostic row rendering individual subsystem check with status, category, and expandable details.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [DiagnosticItemRow] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsSystemSelfTestCardComponents], [DiagnosticItemRow]
  */
 @Composable
 private fun DiagnosticItemRow(
@@ -495,7 +518,14 @@ private fun DiagnosticItemRow(
 }
 
 /**
+ * What it is:
  * Handles individual subsystem one-tap repair routing.
+ *
+ * What it does:
+ * Executes [handleIndividualFix] logic in accordance with system and security invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsSystemSelfTestCardComponents], [handleIndividualFix]
  */
 private fun handleIndividualFix(context: Context, itemId: String, onDone: () -> Unit) {
     try {

@@ -1,18 +1,20 @@
-
-
 /**
  * Package: com.jmd.helper.engine
- * Module: Task Engine Layer
+ * Module: Task Execution & Dispatch Engines
  *
- * Coordinates contact and recipient ingestion across device ContactsContract, CallLog,
- * cellular SMS inbox/outbox history, and WhatsApp chat history scans.
+ * What it is:
+ * Architecture definition and implementation for [ContactIngestionEngine].
+ *
+ * What it does:
+ * Coordinates contact and recipient ingestion across device ContactsContract, CallLog, cellular SMS inbox/outbox history, and WhatsApp chat history scans.
  *
  * Linked With:
- * - Normalizer: [com.jmd.helper.core.PhoneNumberNormalizer]
- * - Database: [com.jmd.helper.data.db.DatabaseHelper]
- * - Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.WhatsAppRepository]
- * - Schedulers: [com.jmd.helper.scheduler.DailyCampaignWorker]
+ * - Repositories: [com.jmd.helper.data.db.DatabaseHelper], [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.WhatsAppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.DynamicContactItem], [com.jmd.helper.data.model.IngestionSummary]
+ * - Core Security & Utilities: [android.content.pm.PackageManager], [android.util.Log], [androidx.core.content.ContextCompat], [com.jmd.helper.core.PhoneNumberNormalizer]
+ * - Android Framework & Jetpack: [android.Manifest], [android.provider.CallLog], [android.provider.ContactsContract], [android.provider.Telephony]
  */
+
 package com.jmd.helper.engine
 
 import android.Manifest
@@ -33,8 +35,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
+ * What it is:
  * Ingestion engine for extracting contacts from system providers and local chat caches.
  *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [ContactIngestionEngine].
+ *
+ * Linked with:
+ * - Architecture: [ContactIngestionEngine], [ContactIngestionEngine]
  * @param context Application context.
  * @param repo Application central repository.
  */
@@ -44,13 +52,14 @@ class ContactIngestionEngine(
 ) {
 
     /**
-     * Executes an end-to-end multi-provider scan to discover and ingest contacts from
-     * device address books, call logs, SMS message threads, and WhatsApp account links.
+     * What it is:
+     * Executes an end-to-end multi-provider scan to discover and ingest contacts from device address books, call logs, SMS message threads, and WhatsApp account links.
      *
-     * Ingested items are deduplicated by phone number, normalized into E.164 format via
-     * [PhoneNumberNormalizer], enriched with high-resolution photo URIs where available,
-     * and stored in the dynamic campaign recipient pool.
+     * What it does:
+     * Ingested items are deduplicated by phone number, normalized into E.164 format via [PhoneNumberNormalizer], enriched with high-resolution photo URIs where available, and stored in the dynamic campaign recipient pool.
      *
+     * Linked with:
+     * - Architecture: [ContactIngestionEngine], [scanAndIngestAll]
      * @return [IngestionSummary] detailing the counts of records processed from each data source and newly added contacts.
      */
     suspend fun scanAndIngestAll(): IngestionSummary = withContext(Dispatchers.IO) {

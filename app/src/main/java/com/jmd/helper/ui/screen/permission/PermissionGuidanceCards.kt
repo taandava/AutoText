@@ -1,7 +1,19 @@
 /**
  * Package: com.jmd.helper.ui.screen.permission
- * Module: UI Permission Center - System Guidance & Diagnostics Cards
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [PermissionGuidanceCards].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for PermissionGuidanceCards.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.scale], [androidx.compose.ui.platform.LocalContext]
+ * - Core Security & Utilities: [androidx.core.net.toUri], [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.OemBrandHelper], [com.jmd.helper.core.OverlayPermissionHelper]
+ * - Android Framework & Jetpack: [android.provider.Settings], [androidx.compose.animation.AnimatedVisibility], [androidx.compose.animation.expandVertically], [androidx.compose.animation.fadeIn]
  */
+
 package com.jmd.helper.ui.screen.permission
 
 import android.content.Context
@@ -40,7 +52,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
+ * What it is:
  * OEM background autostart & freeze prevention guidance card tailored to current device hardware.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [OemAutostartCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [PermissionGuidanceCards], [OemAutostartCard]
  */
 @Composable
 fun OemAutostartCard(
@@ -170,7 +189,14 @@ fun OemAutostartCard(
 }
 
 /**
+ * What it is:
  * Android 13+ restricted settings assistance card.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [SideloadedAppHelpCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [PermissionGuidanceCards], [SideloadedAppHelpCard]
  */
 @Composable
 fun SideloadedAppHelpCard(
@@ -209,7 +235,14 @@ fun SideloadedAppHelpCard(
 }
 
 /**
+ * What it is:
  * Watchdog & Self-Healing Service Trigger Card.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [AutoHealWatchdogCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [PermissionGuidanceCards], [AutoHealWatchdogCard]
  */
 @Composable
 fun AutoHealWatchdogCard(
@@ -254,4 +287,3 @@ fun AutoHealWatchdogCard(
         )
     }
 }
-

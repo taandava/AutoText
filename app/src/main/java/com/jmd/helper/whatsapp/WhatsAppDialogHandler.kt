@@ -1,16 +1,21 @@
-
-
 /**
  * Package: com.jmd.helper.whatsapp
- * Module: WhatsApp Task Subsystem
+ * Module: WhatsApp Automation Subsystem
  *
- * WhatsApp dialog and confirmation handler. Gracefully handles in-app modal prompts,
- * "Continue" or "OK" disclaimers, and network/session popups strictly scoped to WhatsApp packages.
+ * What it is:
+ * Architecture definition and implementation for [WhatsAppDialogHandler].
+ *
+ * What it does:
+ * WhatsApp dialog and confirmation handler. Gracefully handles in-app modal prompts, "Continue" or "OK" disclaimers, and network/session popups strictly scoped to WhatsApp packages.
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Logging: [com.jmd.helper.core.AppFileLogger]
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.ExecutionLog]
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [android.view.accessibility.AccessibilityNodeInfo]
  */
+
 package com.jmd.helper.whatsapp
 
 import android.accessibilityservice.AccessibilityService
@@ -21,15 +26,28 @@ import com.jmd.helper.data.model.ExecutionLog
 import com.jmd.helper.data.repo.AppRepository
 
 /**
+ * What it is:
  * Resolves known WhatsApp popup dialogs without disturbing user security boundaries.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [WhatsAppDialogHandler].
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppDialogHandler], [WhatsAppDialogHandler]
  */
 object WhatsAppDialogHandler {
 
     private const val TAG = "WADialogHandler"
 
     /**
-     * Inspects active window for internal WhatsApp modal confirmations (e.g. "Continue", "OK", "Got it") and taps them.
+     * What it is:
+     * Inspects active window for internal WhatsApp modal confirmations (e.g.
      *
+     * What it does:
+     * "Continue", "OK", "Got it") and taps them.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppDialogHandler], [checkAndHandlePermissionOrPopup]
      * @param root Accessibility node root.
      * @param service Active accessibility service instance.
      */
@@ -71,8 +89,14 @@ object WhatsAppDialogHandler {
     }
 
     /**
+     * What it is:
      * Detects "Phone number isn't on WhatsApp" or "Invalid phone number" error popups, marks task as invalid, and dismisses prompt.
      *
+     * What it does:
+     * Executes [checkAndHandleErrorDialog] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppDialogHandler], [checkAndHandleErrorDialog]
      * @param root Accessibility node root.
      * @param pkg Target WhatsApp package identifier.
      * @param pendingTaskId Unique task ID.

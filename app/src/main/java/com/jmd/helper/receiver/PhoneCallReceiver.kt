@@ -1,23 +1,21 @@
 /**
  * Package: com.jmd.helper.receiver
- * Module: Broadcast Receivers Layer
+ * Module: Broadcast Receivers Subsystem
  *
- * Monitors telephony call state transitions (RINGING, OFFHOOK, IDLE) to trigger scheduled SMS
- * replies for missed calls, answered and ended incoming calls, or connected and ended outgoing calls.
+ * What it is:
+ * Architecture definition and implementation for [PhoneCallReceiver].
  *
- * Accurately distinguishes between:
- * 1. Missed Incoming Calls (rings but not answered) -> Triggers MISSED_CALL auto-reply.
- * 2. Answered & Disconnected Incoming Calls (conversation occurred) -> Triggers CALL_ENDED auto-reply.
- * 3. Answered & Disconnected Outgoing Calls (conversation occurred, duration > 0) -> Triggers CALL_ENDED auto-reply.
- * 4. Unconnected Outgoing Calls (dialed by user but not answered, rejected, or cancelled, duration == 0) -> Strictly IGNORED (no auto-reply).
+ * What it does:
+ * Monitors telephony call state transitions (RINGING, OFFHOOK, IDLE) to trigger scheduled SMS replies for missed calls, answered and ended incoming calls, or connected and ended outgoing calls. Accurately distinguishes between: 1. Missed Incoming Calls (rings but not answered) -> Triggers MISSED_CALL auto-reply. 2. Answered & Disconnected Incoming Calls (conversation occurred) -> Triggers CALL_ENDED auto-reply. 3. Answered & Disconnected Outgoing Calls (conversation occurred, duration > 0) -> Triggers CALL_ENDED auto-reply. 4. Unconnected Outgoing Calls (dialed by user but not answered, rejected, or cancelled, duration == 0) -> Strictly IGNORED (no auto-reply).
  *
  * Linked With:
- * - Compat: [com.jmd.helper.compat.TelephonyManagerCompat]
- * - Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.AutoReplyRepository]
- * - Senders: [com.jmd.helper.engine.SmsSender]
- * - Templates: [com.jmd.helper.core.MessageTemplateResolver]
- * - Quotas: [com.jmd.helper.core.SmsQuotaManager]
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.ExecutionLog]
+ * - Services & Engines: [com.jmd.helper.engine.SmsSender]
+ * - Core Security & Utilities: [android.telephony.TelephonyManager], [android.util.Log], [com.jmd.helper.core.AppFileLogger], [com.jmd.helper.core.MessageTemplateResolver]
+ * - Android Framework & Jetpack: [android.content.BroadcastReceiver], [android.net.Uri], [android.provider.CallLog], [android.provider.ContactsContract]
  */
+
 package com.jmd.helper.receiver
 
 import android.content.BroadcastReceiver
@@ -48,9 +46,26 @@ import java.util.*
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
+ * What it is:
  * Broadcast receiver monitoring telephony calls to execute configured auto-replies.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [PhoneCallReceiver].
+ *
+ * Linked with:
+ * - Architecture: [PhoneCallReceiver], [PhoneCallReceiver]
  */
 class PhoneCallReceiver : BroadcastReceiver() {
+    /**
+     * What it is:
+     * Component definition for [CallRecord].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for CallRecord.
+     *
+     * Linked with:
+     * - Component: [PhoneCallReceiver]
+     */
 
     data class CallRecord(
         val number: String,
@@ -58,6 +73,16 @@ class PhoneCallReceiver : BroadcastReceiver() {
         val durationSeconds: Long,
         val timestamp: Long
     )
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [PhoneCallReceiver].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [PhoneCallReceiver]
+     */
 
     companion object {
         private const val TAG = "PhoneCallReceiver"
@@ -68,12 +93,14 @@ class PhoneCallReceiver : BroadcastReceiver() {
     }
 
     /**
-     * Listens to `ACTION_PHONE_STATE_CHANGED` broadcasts to detect state transitions
-     * between RINGING, OFFHOOK, and IDLE.
+     * What it is:
+     * Listens to `ACTION_PHONE_STATE_CHANGED` broadcasts to detect state transitions between RINGING, OFFHOOK, and IDLE.
      *
-     * Identifies missed calls and completed incoming/outgoing calls, dispatches background coroutines
-     * using [goAsync], and evaluates enabled auto-reply rules against time windows and contact filters.
+     * What it does:
+     * Identifies missed calls and completed incoming/outgoing calls, dispatches background coroutines using [goAsync], and evaluates enabled auto-reply rules against time windows and contact filters.
      *
+     * Linked with:
+     * - Architecture: [PhoneCallReceiver], [onReceive]
      * @param context Active application context.
      * @param intent Incoming telephony broadcast intent.
      */
@@ -146,6 +173,16 @@ class PhoneCallReceiver : BroadcastReceiver() {
             Log.e(TAG, "Unexpected error in PhoneCallReceiver onReceive", t)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [handleCallTransition].
+     *
+     * What it does:
+     * Coordinates handleCallTransition operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PhoneCallReceiver]
+     */
 
     private suspend fun handleCallTransition(
         context: Context,
@@ -256,6 +293,16 @@ class PhoneCallReceiver : BroadcastReceiver() {
 
         handleCallAutoReply(context, targetNumber, isMissedCall = isMissedCall, isCallEnded = isCallEnded)
     }
+    /**
+     * What it is:
+     * Execution routine for [queryLatestCallLog].
+     *
+     * What it does:
+     * Coordinates queryLatestCallLog operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PhoneCallReceiver]
+     */
 
     private fun queryLatestCallLog(context: Context): CallRecord? {
         return try {
@@ -304,6 +351,16 @@ class PhoneCallReceiver : BroadcastReceiver() {
             null
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [handleCallAutoReply].
+     *
+     * What it does:
+     * Coordinates handleCallAutoReply operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PhoneCallReceiver]
+     */
 
     private fun handleCallAutoReply(
         context: Context,
@@ -435,6 +492,16 @@ class PhoneCallReceiver : BroadcastReceiver() {
             break
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [getContactName].
+     *
+     * What it does:
+     * Coordinates getContactName operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PhoneCallReceiver]
+     */
 
     private fun getContactName(context: Context, number: String): String? {
         return try {

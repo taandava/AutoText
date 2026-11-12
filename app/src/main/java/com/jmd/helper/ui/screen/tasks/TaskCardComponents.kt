@@ -1,10 +1,20 @@
 /**
  * Package: com.jmd.helper.ui.screen.tasks
- * Module: UI Scheduled Task Card Item
+ * Module: Application Core Subsystem
  *
- * Interactive presentation card displaying an individual scheduled task with channel badge,
- * schedule timestamp, recipient summary, recurrence pill, and action buttons (Run Now, Pause/Resume, Delete).
+ * What it is:
+ * Architecture definition and implementation for [TaskCardComponents].
+ *
+ * What it does:
+ * Interactive presentation card displaying an individual scheduled task with channel badge, schedule timestamp, recipient summary, recurrence pill, and action buttons (Run Now, Pause/Resume, Delete).
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.RecurrenceType], [com.jmd.helper.data.model.ScheduledTask], [com.jmd.helper.data.model.TaskStatus]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.platform.LocalLocale], [androidx.compose.ui.text.font.FontWeight]
+ * - Core Security & Utilities: [java.util.Date]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.BorderStroke], [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.outlined.Delete], [androidx.compose.runtime.Composable]
  */
+
 package com.jmd.helper.ui.screen.tasks
 
 import androidx.compose.material.icons.automirrored.filled.*
@@ -34,9 +44,14 @@ import com.jmd.helper.ui.theme.AppDesignTokens
 import com.jmd.helper.ui.theme.MaterialIconMapper
 
 /**
- * Interactive card displaying an individual scheduled task with channel badge, schedule timestamp,
- * recipient summary, recurrence pill, and action buttons (Run Now, Pause/Resume, Delete).
+ * What it is:
+ * Interactive card displaying an individual scheduled task with channel badge, schedule timestamp, recipient summary, recurrence pill, and action buttons (Run Now, Pause/Resume, Delete).
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [TaskCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [TaskCardComponents], [TaskCard]
  * @param task The [ScheduledTask] domain entity to render.
  * @param onRunNow Callback to trigger immediate manual dispatch.
  * @param onToggle Callback to activate or pause the task.

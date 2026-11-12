@@ -1,17 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.receiver
- * Module: Broadcast Receivers Layer
+ * Module: Broadcast Receivers Subsystem
  *
- * Implements Android Device Administration callbacks enabling immediate device re-locking
- * after autonomous WhatsApp messaging sessions.
+ * What it is:
+ * Architecture definition and implementation for [HelperDeviceAdminReceiver].
+ *
+ * What it does:
+ * Implements Android Device Administration callbacks enabling immediate device re-locking after autonomous WhatsApp messaging sessions.
  *
  * Linked With:
- * - Engine: [com.jmd.helper.whatsapp.KeyguardAssistEngine]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
- * - UI Screens: `PermissionScreen`
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - Core Security & Utilities: [android.app.admin.DevicePolicyManager], [android.util.Log], [androidx.core.net.toUri], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [android.app.admin.DeviceAdminReceiver], [android.content.ComponentName]
  */
+
 package com.jmd.helper.receiver
 
 import android.app.admin.DeviceAdminReceiver
@@ -26,9 +28,26 @@ import com.jmd.helper.core.showAppToast
 import com.jmd.helper.service.TaskAccessibilityService
 
 /**
+ * What it is:
  * DeviceAdminReceiver providing screen lock capabilities for security relocking post-task.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [HelperDeviceAdminReceiver].
+ *
+ * Linked with:
+ * - Architecture: [HelperDeviceAdminReceiver], [HelperDeviceAdminReceiver]
  */
 class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
+    /**
+     * What it is:
+     * Execution routine for [onEnabled].
+     *
+     * What it does:
+     * Coordinates onEnabled operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperDeviceAdminReceiver]
+     */
 
     override fun onEnabled(context: Context, intent: Intent) {
         super.onEnabled(context, intent)
@@ -36,12 +55,32 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
         AppFileLogger.i(context, TAG, "Device Admin enabled successfully")
         context.showAppToast("Helper Device Administration enabled")
     }
+    /**
+     * What it is:
+     * Execution routine for [onDisabled].
+     *
+     * What it does:
+     * Coordinates onDisabled operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperDeviceAdminReceiver]
+     */
 
     override fun onDisabled(context: Context, intent: Intent) {
         super.onDisabled(context, intent)
         Log.i(TAG, "Device Admin disabled for Helper")
         AppFileLogger.i(context, TAG, "Device Admin disabled")
     }
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [HelperDeviceAdminReceiver].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [HelperDeviceAdminReceiver]
+     */
 
     companion object {
         private const val TAG = "HelperDeviceAdmin"

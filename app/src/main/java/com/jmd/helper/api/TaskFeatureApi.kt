@@ -1,20 +1,23 @@
 /**
  * Package: com.jmd.helper.api
- * Module: Unified Task Feature Endpoints API
+ * Module: Public Automation API Layer
  *
- * Exposes standardized, callable endpoints for all core task features:
- * - WhatsApp Direct & Group Messaging
- * - WhatsApp Status Story Publishing
- * - WhatsApp Voice Calling
- * - Cellular SMS Dispatch (Multi-SIM)
- * - Direct Telecom Phone Calling (Multi-SIM & Hangup)
- * - Interactive Reminder Alarms
- * - Inbound Call Simulation
- * - System Sound Mode & DND Switching
+ * What it is:
+ * Architecture definition and implementation for [TaskFeatureApi].
  *
- * Each endpoint enforces pre-condition validation, semantic designated element actions,
- * accurate result verification, and room execution logging with verified real-device execution outcome.
+ * What it does:
+ * Exposes standardized, callable endpoints for all core task features: Each endpoint enforces pre-condition validation, semantic designated element actions, accurate result verification, and room execution logging with verified real-device execution outcome.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.ExecutionLog], [com.jmd.helper.data.model.ScheduledTask], [com.jmd.helper.data.model.TaskStatus]
+ * - Schedulers & Receivers: [com.jmd.helper.ui.activity.ReminderAlarmActivity]
+ * - Services & Engines: [com.jmd.helper.engine.SmsSender], [com.jmd.helper.engine.WhatsAppSender], [com.jmd.helper.service.TaskAccessibilityService], [com.jmd.helper.whatsapp.WhatsAppIntentDispatcher]
+ * - UI Screens & Components: [com.jmd.helper.ui.activity.CallSimulationActivity]
+ * - Core Security & Utilities: [android.app.NotificationManager], [android.media.AudioManager], [android.telecom.TelecomManager], [android.telephony.SubscriptionManager]
+ * - Android Framework & Jetpack: [android.app.PendingIntent], [android.net.Uri], [android.os.Bundle], [kotlinx.coroutines.delay]
  */
+
 package com.jmd.helper.api
 
 import android.app.NotificationManager
@@ -50,7 +53,14 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
+ * What it is:
  * Standard structured execution outcome returned by every feature endpoint.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [FeatureExecutionResult].
+ *
+ * Linked with:
+ * - Architecture: [TaskFeatureApi], [FeatureExecutionResult]
  */
 data class FeatureExecutionResult(
     val taskId: Long,
@@ -63,7 +73,14 @@ data class FeatureExecutionResult(
 )
 
 /**
+ * What it is:
  * Request payload for WhatsApp direct or group messaging.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [WhatsAppMessageRequest].
+ *
+ * Linked with:
+ * - Architecture: [TaskFeatureApi], [WhatsAppMessageRequest]
  */
 data class WhatsAppMessageRequest(
     val taskId: Long,
@@ -76,7 +93,14 @@ data class WhatsAppMessageRequest(
 )
 
 /**
+ * What it is:
  * Request payload for WhatsApp Status story publishing.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [WhatsAppStatusRequest].
+ *
+ * Linked with:
+ * - Architecture: [TaskFeatureApi], [WhatsAppStatusRequest]
  */
 data class WhatsAppStatusRequest(
     val taskId: Long,
@@ -88,7 +112,14 @@ data class WhatsAppStatusRequest(
 )
 
 /**
+ * What it is:
  * Request payload for WhatsApp Voice Call dispatch.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [WhatsAppCallRequest].
+ *
+ * Linked with:
+ * - Architecture: [TaskFeatureApi], [WhatsAppCallRequest]
  */
 data class WhatsAppCallRequest(
     val taskId: Long,
@@ -100,7 +131,14 @@ data class WhatsAppCallRequest(
 )
 
 /**
+ * What it is:
  * Request payload for SMS dispatch.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [SmsRequest].
+ *
+ * Linked with:
+ * - Architecture: [TaskFeatureApi], [SmsRequest]
  */
 data class SmsRequest(
     val taskId: Long,
@@ -110,7 +148,14 @@ data class SmsRequest(
 )
 
 /**
+ * What it is:
  * Request payload for Telecom Phone Calling.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [PhoneCallRequest].
+ *
+ * Linked with:
+ * - Architecture: [TaskFeatureApi], [PhoneCallRequest]
  */
 data class PhoneCallRequest(
     val taskId: Long,
@@ -121,7 +166,14 @@ data class PhoneCallRequest(
 )
 
 /**
+ * What it is:
  * Request payload for Interactive Reminder Alarms.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [ReminderRequest].
+ *
+ * Linked with:
+ * - Architecture: [TaskFeatureApi], [ReminderRequest]
  */
 data class ReminderRequest(
     val taskId: Long,
@@ -131,7 +183,14 @@ data class ReminderRequest(
 )
 
 /**
+ * What it is:
  * Request payload for Inbound Call Simulation.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [CallSimulationRequest].
+ *
+ * Linked with:
+ * - Architecture: [TaskFeatureApi], [CallSimulationRequest]
  */
 data class CallSimulationRequest(
     val taskId: Long,
@@ -141,14 +200,28 @@ data class CallSimulationRequest(
 )
 
 /**
+ * What it is:
  * Master singleton API providing typed, reliable, and audited execution endpoints for all application capabilities.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [TaskFeatureApi].
+ *
+ * Linked with:
+ * - Architecture: [TaskFeatureApi], [TaskFeatureApi]
  */
 object TaskFeatureApi {
 
     private const val TAG = "TaskFeatureApi"
 
     /**
+     * What it is:
      * Executes WhatsApp or WhatsApp Business message task using designated buttons.
+     *
+     * What it does:
+     * Executes [sendWhatsAppMessage] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [sendWhatsAppMessage]
      */
     suspend fun sendWhatsAppMessage(
         context: Context,
@@ -199,7 +272,14 @@ object TaskFeatureApi {
     }
 
     /**
+     * What it is:
      * Publishes a status story to WhatsApp or WhatsApp Business using designated buttons.
+     *
+     * What it does:
+     * Executes [postWhatsAppStatus] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [postWhatsAppStatus]
      */
     suspend fun postWhatsAppStatus(
         context: Context,
@@ -240,7 +320,14 @@ object TaskFeatureApi {
     }
 
     /**
+     * What it is:
      * Executes scheduled WhatsApp VoIP voice calling, confirming dropdown items and verifying connection.
+     *
+     * What it does:
+     * Executes [startWhatsAppCall] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [startWhatsAppCall]
      */
     suspend fun startWhatsAppCall(
         context: Context,
@@ -300,7 +387,14 @@ object TaskFeatureApi {
     }
 
     /**
+     * What it is:
      * Dispatches cellular SMS with full Multi-SIM support and modem delivery verification.
+     *
+     * What it does:
+     * Executes [sendSms] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [sendSms]
      */
     fun sendSms(
         context: Context,
@@ -334,7 +428,14 @@ object TaskFeatureApi {
     }
 
     /**
+     * What it is:
      * Places a direct Telecom phone call with Multi-SIM OEM extras and optional duration holding.
+     *
+     * What it does:
+     * Executes [placePhoneCall] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [placePhoneCall]
      */
     suspend fun placePhoneCall(
         context: Context,
@@ -418,7 +519,14 @@ object TaskFeatureApi {
     }
 
     /**
+     * What it is:
      * Triggers high-priority full-screen interactive reminder alarm.
+     *
+     * What it does:
+     * Executes [triggerReminder] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [triggerReminder]
      */
     fun triggerReminder(
         context: Context,
@@ -476,7 +584,14 @@ object TaskFeatureApi {
     }
 
     /**
+     * What it is:
      * Simulates an inbound phone call with fullscreen ringing UI.
+     *
+     * What it does:
+     * Executes [simulateCall] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [simulateCall]
      */
     fun simulateCall(
         context: Context,
@@ -534,7 +649,14 @@ object TaskFeatureApi {
     }
 
     /**
+     * What it is:
      * Terminates an active cellular phone call or WhatsApp VoIP call using designated system hooks.
+     *
+     * What it does:
+     * Executes [hangupActiveCall] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [hangupActiveCall]
      */
     fun hangupActiveCall(
         context: Context,
@@ -563,7 +685,14 @@ object TaskFeatureApi {
     }
 
     /**
+     * What it is:
      * Executes manual immediate run of a scheduled task via the unified endpoint pipeline.
+     *
+     * What it does:
+     * Executes [runTaskImmediately] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [runTaskImmediately]
      */
     fun runTaskImmediately(
         context: Context,
@@ -580,7 +709,14 @@ object TaskFeatureApi {
     }
 
     /**
+     * What it is:
      * Standard toggle endpoint to pause or resume a scheduled task.
+     *
+     * What it does:
+     * Executes [toggleTaskSchedule] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [toggleTaskSchedule]
      */
     fun toggleTaskSchedule(
         context: Context,
@@ -600,7 +736,14 @@ object TaskFeatureApi {
     }
 
     /**
+     * What it is:
      * Standard removal endpoint for a scheduled task.
+     *
+     * What it does:
+     * Executes [deleteTask] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskFeatureApi], [deleteTask]
      */
     fun deleteTask(
         context: Context,
@@ -611,6 +754,16 @@ object TaskFeatureApi {
         com.jmd.helper.scheduler.AlarmScheduler(context).cancelTask(taskId)
         repository.deleteTask(taskId)
     }
+    /**
+     * What it is:
+     * Execution routine for [waitForAccessibilityCompletion].
+     *
+     * What it does:
+     * Coordinates waitForAccessibilityCompletion operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskFeatureApi]
+     */
 
     private suspend fun waitForAccessibilityCompletion(timeoutMs: Long): Boolean {
         var waitedMs = 0L
@@ -623,6 +776,16 @@ object TaskFeatureApi {
         }
         return TaskAccessibilityService.lastSendResult == TaskAccessibilityService.RESULT_SUCCESS
     }
+    /**
+     * What it is:
+     * Execution routine for [logResult].
+     *
+     * What it does:
+     * Coordinates logResult operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskFeatureApi]
+     */
 
     private fun logResult(repository: AppRepository, result: FeatureExecutionResult) {
         val status = if (result.success) "SUCCESS" else "FAILED"

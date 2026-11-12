@@ -1,18 +1,17 @@
-
-
 /**
  * Package: com.jmd.helper.data.prefs
- * Module: Preferences Layer
+ * Module: Application Core Subsystem
  *
- * Provides typed configuration storage for app preferences, default SIM bindings,
- * security PIN settings, keyguard unlock options, UI branding, and Direct Boot (FBE) device-protected storage.
+ * What it is:
+ * Architecture definition and implementation for [PreferenceManager].
+ *
+ * What it does:
+ * Provides typed configuration storage for app preferences, default SIM bindings, security PIN settings, keyguard unlock options, UI branding, and Direct Boot (FBE) device-protected storage.
  *
  * Linked With:
- * - Direct Boot Receivers: [com.jmd.helper.receiver.BootReceiver], [com.jmd.helper.receiver.TaskAlarmReceiver]
- * - UI Screens: `SettingsScreen`, `MainAppHost`
- * - Core Safety: [com.jmd.helper.core.TaskSafetyManager], [com.jmd.helper.core.SmsQuotaManager]
- * - WhatsApp Engines: [com.jmd.helper.whatsapp.KeyguardAssistEngine]
+ * - Core Security & Utilities: [androidx.core.content.edit], [android.util.Log], [java.util.UUID]
  */
+
 package com.jmd.helper.data.prefs
 
 import android.content.*
@@ -21,7 +20,14 @@ import android.util.Log
 import java.util.UUID
 
 /**
+ * What it is:
  * Encapsulated storage manager for user preferences and direct-boot security configurations.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [PreferenceManager].
+ *
+ * Linked with:
+ * - Architecture: [PreferenceManager], [PreferenceManager]
  */
 class PreferenceManager(private val context: Context) {
     private val prefs: SharedPreferences by lazy {
@@ -59,6 +65,16 @@ class PreferenceManager(private val context: Context) {
         migrateLegacyPreferences(target, "autotext_de_prefs")
         target
     }
+    /**
+     * What it is:
+     * Execution routine for [migrateLegacyPreferences].
+     *
+     * What it does:
+     * Coordinates migrateLegacyPreferences operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PreferenceManager]
+     */
 
     private fun migrateLegacyPreferences(target: SharedPreferences, legacyName: String) {
         try {
@@ -84,6 +100,16 @@ class PreferenceManager(private val context: Context) {
             Log.w(TAG, "Legacy settings migration note: ${t.message}")
         }
     }
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [PreferenceManager].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [PreferenceManager]
+     */
 
     companion object {
         private const val TAG = "PreferenceManager"
@@ -172,8 +198,14 @@ class PreferenceManager(private val context: Context) {
 
 
     /**
+     * What it is:
      * Resolves or generates a hardware-backed 256-bit AES key inside the Android Keystore.
+     *
+     * What it does:
      * Hardware isolation protects encryption keys against memory dumping or physical extraction.
+     *
+     * Linked with:
+     * - Architecture: [PreferenceManager], [getOrCreateHardwareKey]
      */
     private fun getOrCreateHardwareKey(): javax.crypto.SecretKey? {
         return try {
@@ -203,6 +235,16 @@ class PreferenceManager(private val context: Context) {
             null
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [encryptSecretWithDerivedKey].
+     *
+     * What it does:
+     * Coordinates encryptSecretWithDerivedKey operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PreferenceManager]
+     */
 
     private fun encryptSecretWithDerivedKey(secret: String): String {
         return try {
@@ -223,9 +265,14 @@ class PreferenceManager(private val context: Context) {
     }
 
     /**
-     * Encrypts sensitive secrets (such as the device lockscreen PIN) using Hardware Keystore AES/GCM/NoPadding
-     * when available, with quick fallback to Direct Boot compatible derived AES-GCM.
+     * What it is:
+     * Encrypts sensitive secrets (such as the device lockscreen PIN) using Hardware Keystore AES/GCM/NoPadding when available, with quick fallback to Direct Boot compatible derived AES-GCM.
      *
+     * What it does:
+     * Executes [encryptSecret] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PreferenceManager], [encryptSecret]
      * @param secret Plaintext string to encrypt.
      * @return Base64 ciphertext string prefixed with "HW_ENC:" or "ENC:".
      */
@@ -253,11 +300,14 @@ class PreferenceManager(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Decrypts AES/GCM encrypted secrets prefixed with "ENC:".
-     * First attempts decryption using the device-hardware bound key. If that fails (e.g. legacy stored secret),
-     * falls back to the legacy package seed and directly re-encrypts using the modern key.
-     * Transparently returns legacy plaintext values for backwards compatibility.
      *
+     * What it does:
+     * First attempts decryption using the device-hardware bound key. If that fails (e.g. legacy stored secret), falls back to the legacy package seed and directly re-encrypts using the modern key. Transparently returns legacy plaintext values for backwards compatibility.
+     *
+     * Linked with:
+     * - Architecture: [PreferenceManager], [decryptSecret]
      * @param stored Stored encrypted or legacy plaintext string.
      * @return Decrypted plaintext secret string.
      */
@@ -314,6 +364,16 @@ class PreferenceManager(private val context: Context) {
             ""
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [decryptSecretWithKey].
+     *
+     * What it does:
+     * Coordinates decryptSecretWithKey operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PreferenceManager]
+     */
 
     private fun decryptSecretWithKey(stored: String, keyBytes: ByteArray): String {
         val encoded = stored.substring(4)
@@ -332,9 +392,14 @@ class PreferenceManager(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Derives a 256-bit AES cryptographic key bound to the local application package.
+     *
+     * What it does:
      * Compatible with Direct Boot (FBE) storage prior to device unlock.
      *
+     * Linked with:
+     * - Architecture: [PreferenceManager], [getDeviceSecretKey]
      * @return 32-byte SHA-256 derived key.
      */
     private fun getDeviceSecretKey(): ByteArray {
@@ -344,7 +409,14 @@ class PreferenceManager(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Legacy key derivation preserved for backwards compatibility with secrets encrypted with random device id seed.
+     *
+     * What it does:
+     * Executes [getLegacyDeviceSecretKey] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PreferenceManager], [getLegacyDeviceSecretKey]
      */
     private fun getLegacyDeviceSecretKey(): ByteArray {
         val storedId = prefs.getString(KEY_UNIQUE_DEVICE_ID, null) ?: ""

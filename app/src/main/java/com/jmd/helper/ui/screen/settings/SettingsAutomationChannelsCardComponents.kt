@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SettingsAutomationChannelsCardComponents].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SettingsAutomationChannelsCardComponents.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.text.font.FontWeight], [androidx.compose.ui.text.input.KeyboardType]
+ * - Core Security & Utilities: [java.util.Locale], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [android.speech.tts.TextToSpeech], [androidx.compose.foundation.text.KeyboardOptions], [androidx.compose.material.icons.Icons]
+ */
+
 package com.jmd.helper.ui.screen.settings
 
 import android.content.Context
@@ -20,8 +36,14 @@ import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.ui.components.*
 
 /**
- * Operational controls for automation channels: WhatsApp pacing, SMS quotas,
- * multi-SIM preferences, call simulation defaults, TTS voice engine, and auto-reply.
+ * What it is:
+ * Operational controls for automation channels: WhatsApp pacing, SMS quotas, multi-SIM preferences, call simulation defaults, TTS voice engine, and auto-reply.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [SettingsAutomationChannelsCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsAutomationChannelsCardComponents], [SettingsAutomationChannelsCard]
  */
 @Composable
 fun SettingsAutomationChannelsCard(

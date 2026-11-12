@@ -1,19 +1,20 @@
-
-
 /**
  * Package: com.jmd.helper.ui.activity
- * Module: UI Task Trampoline Layer
+ * Module: Application Core Subsystem
  *
- * Transparent trampoline Activity that wakes the display, handles keyguard dismissal flags,
- * and launches WhatsApp or phone intents from background contexts (e.g. AlarmManager or Service)
- * complying with Android 10+ background activity start restrictions.
+ * What it is:
+ * Architecture definition and implementation for [TaskLauncherActivity].
+ *
+ * What it does:
+ * Transparent trampoline Activity that wakes the display, handles keyguard dismissal flags, and launches WhatsApp or phone intents from background contexts (e.g. AlarmManager or Service) complying with Android 10+ background activity start restrictions.
  *
  * Linked With:
- * - Engine: [com.jmd.helper.engine.SequentialTaskEngine]
- * - Dispatcher: [com.jmd.helper.whatsapp.WhatsAppIntentDispatcher]
- * - Keyguard: [com.jmd.helper.whatsapp.KeyguardAssistEngine]
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService], [com.jmd.helper.whatsapp.WhatsAppIntentDispatcher]
+ * - Core Security & Utilities: [android.app.KeyguardManager], [android.app.NotificationManager], [android.os.PowerManager], [android.util.Log]
+ * - Android Framework & Jetpack: [android.app.Activity], [android.os.Bundle], [android.os.Handler], [android.os.Looper]
  */
+
 package com.jmd.helper.ui.activity
 
 import android.app.Activity
@@ -34,9 +35,26 @@ import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.whatsapp.WhatsAppIntentDispatcher
 
 /**
+ * What it is:
  * Transparent bridge activity enabling background task startup.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [TaskLauncherActivity].
+ *
+ * Linked with:
+ * - Architecture: [TaskLauncherActivity], [TaskLauncherActivity]
  */
 class TaskLauncherActivity : Activity() {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [TaskLauncherActivity].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [TaskLauncherActivity]
+     */
 
     companion object {
         private const val TAG = "AutoLauncherAct"
@@ -67,6 +85,16 @@ class TaskLauncherActivity : Activity() {
             Log.e(TAG, "Keyguard dismiss error callback received; waiting for polling timeout or accessibility unlock.")
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [onCreate].
+     *
+     * What it does:
+     * Coordinates onCreate operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskLauncherActivity]
+     */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -207,6 +235,16 @@ class TaskLauncherActivity : Activity() {
     }
 
     private var isFinishingCleanly = false
+    /**
+     * What it is:
+     * Execution routine for [cleanFinish].
+     *
+     * What it does:
+     * Coordinates cleanFinish operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskLauncherActivity]
+     */
 
     private fun cleanFinish() {
         if (isFinishingCleanly || isFinishing || isDestroyed) return
@@ -218,6 +256,16 @@ class TaskLauncherActivity : Activity() {
         }
         finish()
     }
+    /**
+     * What it is:
+     * Execution routine for [pollKeyguardStatusUntilUnlocked].
+     *
+     * What it does:
+     * Coordinates pollKeyguardStatusUntilUnlocked operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskLauncherActivity]
+     */
 
     private fun pollKeyguardStatusUntilUnlocked(km: KeyguardManager, timeoutRemainingMs: Long) {
         if (!km.isKeyguardLocked && !km.isDeviceLocked) {
@@ -237,8 +285,14 @@ class TaskLauncherActivity : Activity() {
     }
 
     /**
+     * What it is:
      * Forwards task payloads to [WhatsAppIntentDispatcher] and gracefully finishes trampoline activity.
      *
+     * What it does:
+     * Executes [launchWhatsApp] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskLauncherActivity], [launchWhatsApp]
      * @param taskId Unique identifier of the scheduled task.
      * @param channel Target channel type (WhatsApp or WA Business).
      * @param recipient Target phone number or group name.
@@ -273,12 +327,32 @@ class TaskLauncherActivity : Activity() {
             900,
         )
     }
+    /**
+     * What it is:
+     * Execution routine for [onResume].
+     *
+     * What it does:
+     * Coordinates onResume operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskLauncherActivity]
+     */
 
     override fun onResume() {
         super.onResume()
         setShowWhenLocked(true)
         setTurnScreenOn(true)
     }
+    /**
+     * What it is:
+     * Execution routine for [onWindowFocusChanged].
+     *
+     * What it does:
+     * Coordinates onWindowFocusChanged operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskLauncherActivity]
+     */
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -290,6 +364,16 @@ class TaskLauncherActivity : Activity() {
             }
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [onPause].
+     *
+     * What it does:
+     * Coordinates onPause operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskLauncherActivity]
+     */
 
     override fun onPause() {
         super.onPause()
@@ -302,6 +386,16 @@ class TaskLauncherActivity : Activity() {
         }
         wakeLock = null
     }
+    /**
+     * What it is:
+     * Execution routine for [onDestroy].
+     *
+     * What it does:
+     * Coordinates onDestroy operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskLauncherActivity]
+     */
 
     override fun onDestroy() {
         super.onDestroy()
@@ -313,5 +407,3 @@ class TaskLauncherActivity : Activity() {
 // ============================================================================
 // CALL SIMULATOR ACTIVITY
 // ============================================================================
-
-

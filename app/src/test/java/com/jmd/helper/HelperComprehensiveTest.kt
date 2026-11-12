@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper
+ * Module: Automated Unit Test Suite
+ *
+ * What it is:
+ * Architecture definition and implementation for [HelperComprehensiveTest].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for HelperComprehensiveTest.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.ui.model.TaskTypeItem], [com.jmd.helper.data.model.*]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.AlarmScheduler]
+ * - Core Security & Utilities: [com.jmd.helper.core.ProtectedApplicationManager], [com.jmd.helper.core.PermissionManager], [com.jmd.helper.core.TaskSafetyManager], [com.jmd.helper.core.DEFAULT_MESSAGE_TEXT]
+ */
+
 package com.jmd.helper
 
 import com.jmd.helper.core.ProtectedApplicationManager
@@ -15,9 +31,29 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import java.util.Calendar
+/**
+ * What it is:
+ * Component definition for [HelperComprehensiveTest].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for HelperComprehensiveTest.
+ *
+ * Linked with:
+ * - Component: [HelperComprehensiveTest]
+ */
 
 class HelperComprehensiveTest {
 
+    /**
+     * What it is:
+     * Execution routine for [setUp].
+     *
+     * What it does:
+     * Coordinates setUp operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Before
     fun setUp() {
         TaskSafetyManager.resetSafeguards(null)
@@ -27,6 +63,16 @@ class HelperComprehensiveTest {
     // 1. PHONE NORMALIZATION & VALIDATION TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testPhoneNormalizationStandard].
+     *
+     * What it does:
+     * Coordinates testPhoneNormalizationStandard operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPhoneNormalizationStandard() {
         assertEquals("+919876543210", PhoneNumberNormalizer.normalize("9876543210"))
@@ -36,6 +82,16 @@ class HelperComprehensiveTest {
         assertEquals("+447911123456", PhoneNumberNormalizer.normalize("00447911123456"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testPhoneValidation].
+     *
+     * What it does:
+     * Coordinates testPhoneValidation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPhoneValidation() {
         assertTrue(PhoneNumberNormalizer.isMobileNumber("+919876543210"))
@@ -46,6 +102,16 @@ class HelperComprehensiveTest {
         assertFalse(PhoneNumberNormalizer.isMobileNumber(""))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testSpecificRequestedNumbersNormalization].
+     *
+     * What it does:
+     * Coordinates testSpecificRequestedNumbersNormalization operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testSpecificRequestedNumbersNormalization() {
         val numbers = listOf("9769602020", "9769402020", "9500910092")
@@ -56,12 +122,32 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testCleanPhoneNumber].
+     *
+     * What it does:
+     * Coordinates testCleanPhoneNumber operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testCleanPhoneNumber() {
         assertEquals("+919876543210", PhoneNumberNormalizer.cleanPhoneNumber("+91 (987) 654-3210"))
         assertEquals("9876543210", PhoneNumberNormalizer.cleanPhoneNumber("98765 43210"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testHyphenatedInternationalPhoneNumberNotClassifiedAsGroup].
+     *
+     * What it does:
+     * Coordinates testHyphenatedInternationalPhoneNumberNotClassifiedAsGroup operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testHyphenatedInternationalPhoneNumberNotClassifiedAsGroup() {
         val testNumbers = listOf(
@@ -93,6 +179,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testSafeguardsResetState].
+     *
+     * What it does:
+     * Coordinates testSafeguardsResetState operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testSafeguardsResetState() {
         TaskSafetyManager.recordFailure(ChannelType.SMS, null)
@@ -108,6 +204,16 @@ class HelperComprehensiveTest {
     // 2. MESSAGE TEMPLATE RESOLVER TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testTemplatePlaceholderResolution].
+     *
+     * What it does:
+     * Coordinates testTemplatePlaceholderResolution operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTemplatePlaceholderResolution() {
         val template = "Hello {name}, your phone number is {phone}."
@@ -122,6 +228,16 @@ class HelperComprehensiveTest {
         assertFalse(resolved.contains("{phone}"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testTemplateEmptyNameFallback].
+     *
+     * What it does:
+     * Coordinates testTemplateEmptyNameFallback operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTemplateEmptyNameFallback() {
         val template = "Hello {name}, your first name is {first_name}."
@@ -134,6 +250,16 @@ class HelperComprehensiveTest {
         assertTrue(resolved.contains("first name is there"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testDateTimeResolution].
+     *
+     * What it does:
+     * Coordinates testDateTimeResolution operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testDateTimeResolution() {
         val template = "Meeting scheduled for {date} at {time}."
@@ -146,6 +272,16 @@ class HelperComprehensiveTest {
     // 3. TASK SAFETY MANAGER & CIRCUIT BREAKER TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testChannelCircuitBreakerExecutionCheck].
+     *
+     * What it does:
+     * Coordinates testChannelCircuitBreakerExecutionCheck operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testChannelCircuitBreakerExecutionCheck() {
         assertTrue(TaskSafetyManager.canExecute(ChannelType.WHATSAPP))
@@ -162,6 +298,16 @@ class HelperComprehensiveTest {
         assertTrue(TaskSafetyManager.canExecute(ChannelType.WHATSAPP))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testCircuitBreakerTripsAfterThreeConsecutiveFailures].
+     *
+     * What it does:
+     * Coordinates testCircuitBreakerTripsAfterThreeConsecutiveFailures operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testCircuitBreakerTripsAfterThreeConsecutiveFailures() {
         val channel = ChannelType.WHATSAPP_BUSINESS
@@ -191,12 +337,32 @@ class HelperComprehensiveTest {
     // 4. WHATSAPP PACKAGE CONSTANTS & CHAT PICKER SAFEGUARD TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testWhatsAppPackageConstants].
+     *
+     * What it does:
+     * Coordinates testWhatsAppPackageConstants operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testWhatsAppPackageConstants() {
         assertEquals("com.whatsapp", WhatsAppPackageHelper.PACKAGE_WHATSAPP)
         assertEquals("com.whatsapp.w4b", WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testBlockedChatNamesPreventInfiniteLoop].
+     *
+     * What it does:
+     * Coordinates testBlockedChatNamesPreventInfiniteLoop operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testBlockedChatNamesPreventInfiniteLoop() {
         val blockedNames = listOf(
@@ -229,6 +395,16 @@ class HelperComprehensiveTest {
     // 5. PHONE CALL SCHEDULING & SEQUENTIAL EXECUTION TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testCallTaskModelParameters].
+     *
+     * What it does:
+     * Coordinates testCallTaskModelParameters operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testCallTaskModelParameters() {
         val task = ScheduledTask(
@@ -249,6 +425,16 @@ class HelperComprehensiveTest {
         assertEquals(3, task.recipients.size)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testCallSequenceModeOrdering].
+     *
+     * What it does:
+     * Coordinates testCallSequenceModeOrdering operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testCallSequenceModeOrdering() {
         val baseRecipients = listOf("+919769602020", "+919769402020", "+919500910092")
@@ -276,6 +462,16 @@ class HelperComprehensiveTest {
         assertTrue(shuffled.containsAll(baseRecipients))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testInterCallDelayCalculation].
+     *
+     * What it does:
+     * Coordinates testInterCallDelayCalculation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testInterCallDelayCalculation() {
         val calculateDelayMs = { delaySec: Int -> maxOf(1000L, delaySec * 1000L) }
@@ -287,6 +483,16 @@ class HelperComprehensiveTest {
     // 6. SCHEDULER & RECURRENCE ENGINE TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testAlarmSchedulerRecurrenceDaily].
+     *
+     * What it does:
+     * Coordinates testAlarmSchedulerRecurrenceDaily operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAlarmSchedulerRecurrenceDaily() {
         val now = System.currentTimeMillis()
@@ -299,6 +505,16 @@ class HelperComprehensiveTest {
         assertTrue("Next daily trigger must be within ~25 hours", nextTrigger <= now + 25 * 3600 * 1000L)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testAlarmSchedulerRecurrenceCustomInterval].
+     *
+     * What it does:
+     * Coordinates testAlarmSchedulerRecurrenceCustomInterval operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAlarmSchedulerRecurrenceCustomInterval() {
         val baseTime = 1700000000000L
@@ -312,6 +528,16 @@ class HelperComprehensiveTest {
         assertEquals("Next trigger timestamp should equal baseTime plus custom interval", expected, calculatedTrigger)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testAlarmSchedulerWeeklySelectedDays].
+     *
+     * What it does:
+     * Coordinates testAlarmSchedulerWeeklySelectedDays operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAlarmSchedulerWeeklySelectedDays() {
         val cal = Calendar.getInstance().apply {
@@ -338,6 +564,16 @@ class HelperComprehensiveTest {
     // 7. FORM & RECIPIENT JSON SERIALIZATION TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testRecipientsJsonSerializationAndParsing].
+     *
+     * What it does:
+     * Coordinates testRecipientsJsonSerializationAndParsing operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testRecipientsJsonSerializationAndParsing() {
         val numbers = listOf("9769602020", "9769402020", "9500910092")
@@ -356,6 +592,16 @@ class HelperComprehensiveTest {
     // 8. EMERGENCY NUMBER REJECTION & MULTI-INPUT PARSING TESTS
     // ─────────────────────────────────────────────────────────────
 
+    /**
+     * What it is:
+     * Execution routine for [testEmergencyNumberRejection].
+     *
+     * What it does:
+     * Coordinates testEmergencyNumberRejection operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testEmergencyNumberRejection() {
         val emergencyNumbers = listOf(
@@ -368,6 +614,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testDuplicateDetectionAcrossFormats].
+     *
+     * What it does:
+     * Coordinates testDuplicateDetectionAcrossFormats operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testDuplicateDetectionAcrossFormats() {
         val listWithDuplicates = listOf(
@@ -382,6 +638,16 @@ class HelperComprehensiveTest {
         assertEquals(3, dupes["+919769602020"]!!.size)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testMultiInputParsingDelimiterSupport].
+     *
+     * What it does:
+     * Coordinates testMultiInputParsingDelimiterSupport operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testMultiInputParsingDelimiterSupport() {
         val multiline = "9769602020\n8765432109, +917654321098; 9500910092"
@@ -398,6 +664,16 @@ class HelperComprehensiveTest {
     // 9. CALL FAILURE POLICY & VALIDATOR TESTS
     // ─────────────────────────────────────────────────────────────
 
+    /**
+     * What it is:
+     * Execution routine for [testCallFailurePolicyDefaultsAndTransitions].
+     *
+     * What it does:
+     * Coordinates testCallFailurePolicyDefaultsAndTransitions operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testCallFailurePolicyDefaultsAndTransitions() {
         val defaultTask = ScheduledTask(
@@ -410,6 +686,16 @@ class HelperComprehensiveTest {
         assertEquals("STOP_ON_FAILURE", stopOnFailTask.callFailurePolicy)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testTaskContentValidatorWhatsAppBusinessStatus].
+     *
+     * What it does:
+     * Coordinates testTaskContentValidatorWhatsAppBusinessStatus operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTaskContentValidatorWhatsAppBusinessStatus() {
         val resultEmpty = com.jmd.helper.core.TaskContentValidator.validateContent(
@@ -429,6 +715,16 @@ class HelperComprehensiveTest {
         assertTrue("Expected text acceptance", resultText is com.jmd.helper.core.ContentValidationResult.AcceptTextOnly)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testSmsSegmentCalculation].
+     *
+     * What it does:
+     * Coordinates testSmsSegmentCalculation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testSmsSegmentCalculation() {
         val calculateSegments = { text: String, isUnicode: Boolean ->
@@ -450,6 +746,16 @@ class HelperComprehensiveTest {
     // 10. FORM SEPARATION & CHANNEL SELECTION TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testStatusFormSeparation].
+     *
+     * What it does:
+     * Coordinates testStatusFormSeparation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testStatusFormSeparation() {
         // Distinct channel types for WhatsApp Status vs WhatsApp Business Status
@@ -469,6 +775,16 @@ class HelperComprehensiveTest {
         assertNotEquals(personalPkg, businessPkg)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testScheduledTaskChannelSeparation].
+     *
+     * What it does:
+     * Coordinates testScheduledTaskChannelSeparation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testScheduledTaskChannelSeparation() {
         val smsTask = ScheduledTask(channel = ChannelType.SMS, messageText = "SMS Task")
@@ -482,6 +798,16 @@ class HelperComprehensiveTest {
         assertNotEquals(waTask.channel, w4bTask.channel)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testDailyAutoChannelSeparation].
+     *
+     * What it does:
+     * Coordinates testDailyAutoChannelSeparation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testDailyAutoChannelSeparation() {
         val supportedChannels = listOf("SMS", "WHATSAPP", "WHATSAPP_BUSINESS")
@@ -509,6 +835,16 @@ class HelperComprehensiveTest {
         assertEquals("WHATSAPP_BUSINESS", configs[2].channel)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testDailyCampaignScheduleTargetCalculation].
+     *
+     * What it does:
+     * Coordinates testDailyCampaignScheduleTargetCalculation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testDailyCampaignScheduleTargetCalculation() {
         val config = DailyCampaignConfig(
@@ -565,6 +901,16 @@ class HelperComprehensiveTest {
         assertEquals(1, dayDiff)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testWhatsAppGroupSearchCleaning].
+     *
+     * What it does:
+     * Coordinates testWhatsAppGroupSearchCleaning operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testWhatsAppGroupSearchCleaning() {
         fun stripPrefix(v: String) = v.replaceFirst(Regex("^group\\s*:", RegexOption.IGNORE_CASE), "").trim()
@@ -580,6 +926,16 @@ class HelperComprehensiveTest {
     // 11. COMPAT SUITE TESTS (ZERO SUPPRESSION INVARIANT)
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testTelephonyManagerCompatNullSafety].
+     *
+     * What it does:
+     * Coordinates testTelephonyManagerCompatNullSafety operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTelephonyManagerCompatNullSafety() {
         val state = com.jmd.helper.compat.TelephonyManagerCompat.getCallState(null)
@@ -592,12 +948,32 @@ class HelperComprehensiveTest {
         assertFalse(isActive)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testAccessibilityCompatNullSafety].
+     *
+     * What it does:
+     * Coordinates testAccessibilityCompatNullSafety operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAccessibilityCompatNullSafety() {
         val isChecked = com.jmd.helper.compat.AccessibilityCompat.isNodeChecked(null)
         assertFalse(isChecked)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testClipboardCompatNullSafety].
+     *
+     * What it does:
+     * Coordinates testClipboardCompatNullSafety operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testClipboardCompatNullSafety() {
         // Must handle null gracefully without throwing any exception
@@ -605,6 +981,16 @@ class HelperComprehensiveTest {
         assertTrue(true)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testPackageManagerCompatNullSafety].
+     *
+     * What it does:
+     * Coordinates testPackageManagerCompatNullSafety operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPackageManagerCompatNullSafety() {
         // Verify PackageManagerCompat object and method signature integrity
@@ -615,12 +1001,32 @@ class HelperComprehensiveTest {
     // 12. WHATSAPP VOICE CALL DISPATCH MODE & CHANNEL TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testWhatsAppVoiceCallDispatchModeExists].
+     *
+     * What it does:
+     * Coordinates testWhatsAppVoiceCallDispatchModeExists operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testWhatsAppVoiceCallDispatchModeExists() {
         val modes = com.jmd.helper.service.TaskAccessibilityService.Companion.DispatchMode.entries.map { it.name }
         assertTrue(modes.contains("WHATSAPP_VOICE_CALL"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testChannelTypeWhatsAppCallProperties].
+     *
+     * What it does:
+     * Coordinates testChannelTypeWhatsAppCallProperties operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testChannelTypeWhatsAppCallProperties() {
         val callChannel = ChannelType.WHATSAPP_CALL
@@ -632,6 +1038,16 @@ class HelperComprehensiveTest {
     // 13. CHAT PICKER CLASSIFICATION & METADATA TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testPickedChatTypesEnumValues].
+     *
+     * What it does:
+     * Coordinates testPickedChatTypesEnumValues operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPickedChatTypesEnumValues() {
         val types = PickedChatType.entries.map { it.name }
@@ -642,6 +1058,16 @@ class HelperComprehensiveTest {
         assertTrue(types.contains("CHANNEL"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testChannelTypeWhatsAppProperties].
+     *
+     * What it does:
+     * Coordinates testChannelTypeWhatsAppProperties operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testChannelTypeWhatsAppProperties() {
         val waChannel = ChannelType.WHATSAPP
@@ -649,6 +1075,16 @@ class HelperComprehensiveTest {
         assertEquals("💬", waChannel.emoji)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testChannelTypeWhatsAppGroupProperties].
+     *
+     * What it does:
+     * Coordinates testChannelTypeWhatsAppGroupProperties operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testChannelTypeWhatsAppGroupProperties() {
         val groupChannel = ChannelType.WHATSAPP_GROUP
@@ -656,6 +1092,16 @@ class HelperComprehensiveTest {
         assertEquals("👥", groupChannel.emoji)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testWhatsAppGroupItemModel].
+     *
+     * What it does:
+     * Coordinates testWhatsAppGroupItemModel operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testWhatsAppGroupItemModel() {
         val group = WhatsAppGroupItem(
@@ -672,6 +1118,16 @@ class HelperComprehensiveTest {
         assertEquals("Official project group", group.description)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testWhatsAppContactItemModel].
+     *
+     * What it does:
+     * Coordinates testWhatsAppContactItemModel operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testWhatsAppContactItemModel() {
         val contact = WhatsAppContactItem(
@@ -686,6 +1142,16 @@ class HelperComprehensiveTest {
         assertEquals("com.whatsapp", contact.accountType)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testPickedChatInfoDataClass].
+     *
+     * What it does:
+     * Coordinates testPickedChatInfoDataClass operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPickedChatInfoDataClass() {
         val infoIndividual = PickedChatInfo("Dilip Gupta", PickedChatType.INDIVIDUAL, "+919876543210", "online")
@@ -705,6 +1171,16 @@ class HelperComprehensiveTest {
     // 14. TARGET NUMBERS & CALL DURATION BEHAVIOR TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testTargetUserPhoneNumbersFormattingAndChannels].
+     *
+     * What it does:
+     * Coordinates testTargetUserPhoneNumbersFormattingAndChannels operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTargetUserPhoneNumbersFormattingAndChannels() {
         val num1 = "9769602020"
@@ -735,6 +1211,16 @@ class HelperComprehensiveTest {
         assertEquals(3, task.delayBetweenCallsSeconds)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testCallDurationConfigurationVariants].
+     *
+     * What it does:
+     * Coordinates testCallDurationConfigurationVariants operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testCallDurationConfigurationVariants() {
         val shortCallTask = ScheduledTask(
@@ -764,6 +1250,16 @@ class HelperComprehensiveTest {
     // 13. REPETITION & FLEXIBLE SCHEDULE TESTS (SECONDS, MINUTES, HOURS, DAYS, WEEKS, MONTHS)
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testRepeatUnitEnumAndRecurrenceMapping].
+     *
+     * What it does:
+     * Coordinates testRepeatUnitEnumAndRecurrenceMapping operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testRepeatUnitEnumAndRecurrenceMapping() {
         assertEquals("Seconds", RepeatUnit.SECONDS.displayName)
@@ -782,6 +1278,16 @@ class HelperComprehensiveTest {
         assertEquals(RecurrenceType.REPEAT_MONTHS, RepeatUnit.MONTHS.toRecurrenceType())
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testRecurrenceTypeParsing].
+     *
+     * What it does:
+     * Coordinates testRecurrenceTypeParsing operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testRecurrenceTypeParsing() {
         assertEquals(RecurrenceType.REPEAT_SECONDS, RecurrenceType.fromString("REPEAT_SECONDS"))
@@ -795,6 +1301,16 @@ class HelperComprehensiveTest {
         assertEquals(RecurrenceType.ONCE, RecurrenceType.fromString("UNKNOWN_VALUE"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testFlexibleRecurrenceNextTriggerCalculation].
+     *
+     * What it does:
+     * Coordinates testFlexibleRecurrenceNextTriggerCalculation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testFlexibleRecurrenceNextTriggerCalculation() {
         val baseTime = 1700000000000L // arbitrary fixed timestamp
@@ -843,6 +1359,16 @@ class HelperComprehensiveTest {
     // 13. ALL TASK TYPES SETUP, 10S INTERVAL, REPEAT_SECONDS & EXECUTION LOG TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testAllTwelveTaskChannelsSetupAndExecutionLogging].
+     *
+     * What it does:
+     * Coordinates testAllTwelveTaskChannelsSetupAndExecutionLogging operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAllTwelveTaskChannelsSetupAndExecutionLogging() {
         val testRecipients = listOf("9500910092", "9769602020", "9769402020")
@@ -926,6 +1452,16 @@ class HelperComprehensiveTest {
     // 17. HUMAN INTERACTION & IDLE AUTO-POSTPONE TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testHumanInteractionRecordingAndIdleState].
+     *
+     * What it does:
+     * Coordinates testHumanInteractionRecordingAndIdleState operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testHumanInteractionRecordingAndIdleState() {
         val baseTime = System.currentTimeMillis()
@@ -940,6 +1476,16 @@ class HelperComprehensiveTest {
         assertTrue("Device must be considered idle 12s after human interaction", isIdle(12000L))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testHumanInterruptionFlagAndPostponeCalculation].
+     *
+     * What it does:
+     * Coordinates testHumanInterruptionFlagAndPostponeCalculation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testHumanInterruptionFlagAndPostponeCalculation() {
         // Interruption flag behavior
@@ -985,6 +1531,16 @@ class HelperComprehensiveTest {
     // 18. SYSTEM ALARM REMINDER & WATCHDOG HEARTBEAT ISOLATION TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testSystemAlarmUniqueLabelGeneration].
+     *
+     * What it does:
+     * Coordinates testSystemAlarmUniqueLabelGeneration operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testSystemAlarmUniqueLabelGeneration() {
         // Standard title
@@ -1028,6 +1584,16 @@ class HelperComprehensiveTest {
         assertTrue("Label must contain task ID", label4.startsWith("Helper #26:"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testSystemAlarmIsolationFromUserAlarms].
+     *
+     * What it does:
+     * Coordinates testSystemAlarmIsolationFromUserAlarms operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testSystemAlarmIsolationFromUserAlarms() {
         val userPersonalAlarmLabels = listOf("Wake up", "Gym", "7:00 AM", "Morning Alarm", "Meeting")
@@ -1045,6 +1611,16 @@ class HelperComprehensiveTest {
         assertTrue("Helper alarm must be prefixed with unique Helper tag", helperLabel.startsWith("Helper #99:"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testWatchdogHeartbeatResilienceConstants].
+     *
+     * What it does:
+     * Coordinates testWatchdogHeartbeatResilienceConstants operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testWatchdogHeartbeatResilienceConstants() {
         assertEquals("HelperA11yWatchdogWork", com.jmd.helper.scheduler.AccessibilityWatchdogWorker.UNIQUE_WORK_NAME)
@@ -1057,6 +1633,16 @@ class HelperComprehensiveTest {
     // 19. BANKING PROTECTION & FINANCIAL PACKAGE ISOLATION TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testBankingPackageDetectionAndIsolation].
+     *
+     * What it does:
+     * Coordinates testBankingPackageDetectionAndIsolation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testBankingPackageDetectionAndIsolation() {
         val bankingPackages = listOf(
@@ -1093,6 +1679,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testNonBankingPackageAllowed].
+     *
+     * What it does:
+     * Coordinates testNonBankingPackageAllowed operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testNonBankingPackageAllowed() {
         val standardPackages = listOf(
@@ -1112,6 +1708,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testSmsQuotaManagerPduCalculation].
+     *
+     * What it does:
+     * Coordinates testSmsQuotaManagerPduCalculation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testSmsQuotaManagerPduCalculation() {
         val shortAscii = "Hello world"
@@ -1131,6 +1737,16 @@ class HelperComprehensiveTest {
     // 19. ALL TWELVE CHANNELS VALIDATION & REPEAT UNITS TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testAllChannelsValidationAcceptsTextPayload].
+     *
+     * What it does:
+     * Coordinates testAllChannelsValidationAcceptsTextPayload operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAllChannelsValidationAcceptsTextPayload() {
         val channels = com.jmd.helper.data.model.ChannelType.entries
@@ -1150,6 +1766,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testRepeatUnitsRoundTripAndRecurrenceTypeMapping].
+     *
+     * What it does:
+     * Coordinates testRepeatUnitsRoundTripAndRecurrenceTypeMapping operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testRepeatUnitsRoundTripAndRecurrenceTypeMapping() {
         for (unit in com.jmd.helper.data.model.RepeatUnit.entries) {
@@ -1160,6 +1786,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testLocalBackupListingFilterAndSorting].
+     *
+     * What it does:
+     * Coordinates testLocalBackupListingFilterAndSorting operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testLocalBackupListingFilterAndSorting() {
         val tempDir = java.nio.file.Files.createTempDirectory("helper_backup_test").toFile()
@@ -1186,16 +1822,46 @@ class HelperComprehensiveTest {
     // ═══════════════════════════════════════════════════════════════════════════════════
     // 17. CALL ENDED VS UNANSWERED OUTGOING DIAL LOGIC TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
+    /**
+     * What it is:
+     * Execution routine for [isCallEndedTransition].
+     *
+     * What it does:
+     * Coordinates isCallEndedTransition operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
 
     private fun isCallEndedTransition(callType: Int, durationSeconds: Long): Boolean {
         val isOutgoing = callType == android.provider.CallLog.Calls.OUTGOING_TYPE
         return isOutgoing && durationSeconds > 0L
     }
+    /**
+     * What it is:
+     * Execution routine for [isMissedCallEvent].
+     *
+     * What it does:
+     * Coordinates isMissedCallEvent operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
 
     private fun isMissedCallEvent(callType: Int, durationSeconds: Long): Boolean {
         return callType == android.provider.CallLog.Calls.MISSED_TYPE || (callType != android.provider.CallLog.Calls.OUTGOING_TYPE && durationSeconds == 0L)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testOutgoingCallWithZeroDurationIsNotCallEnded].
+     *
+     * What it does:
+     * Coordinates testOutgoingCallWithZeroDurationIsNotCallEnded operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testOutgoingCallWithZeroDurationIsNotCallEnded() {
         // Simulating the user placing an outgoing call (type = 2) where remote party does not answer (duration = 0)
@@ -1206,6 +1872,16 @@ class HelperComprehensiveTest {
         assertFalse("Outgoing dial must not be treated as Missed Call", isMissedCall)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testOutgoingCallWithPositiveDurationIsCallEnded].
+     *
+     * What it does:
+     * Coordinates testOutgoingCallWithPositiveDurationIsCallEnded operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testOutgoingCallWithPositiveDurationIsCallEnded() {
         // Simulating user dialing an outgoing call that was answered and spoke for 45 seconds
@@ -1214,6 +1890,16 @@ class HelperComprehensiveTest {
         assertTrue("Connected outgoing call with duration > 0 must be treated as Call Ended", isCallEnded)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testCallDurationCriteriaRules].
+     *
+     * What it does:
+     * Coordinates testCallDurationCriteriaRules operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testCallDurationCriteriaRules() {
         // Criteria 1: Untimed call (duration 0) must never auto-hangup
@@ -1231,6 +1917,16 @@ class HelperComprehensiveTest {
         assertEquals(30, conversationOnlyTask.callDurationSeconds)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testIncomingMissedCallLogic].
+     *
+     * What it does:
+     * Coordinates testIncomingMissedCallLogic operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testIncomingMissedCallLogic() {
         // Incoming call that rang but was not answered
@@ -1238,6 +1934,16 @@ class HelperComprehensiveTest {
         assertTrue("Missed incoming call must be recognized", isMissed)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testCalculateNextFutureTriggerPreservesDailyTime].
+     *
+     * What it does:
+     * Coordinates testCalculateNextFutureTriggerPreservesDailyTime operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testCalculateNextFutureTriggerPreservesDailyTime() {
         val now = System.currentTimeMillis()
@@ -1265,6 +1971,16 @@ class HelperComprehensiveTest {
         assertEquals("Scheduled second (0) must be preserved", 0, nextCal.get(Calendar.SECOND))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testExpiredOnceTaskIsNotAdvanced].
+     *
+     * What it does:
+     * Coordinates testExpiredOnceTaskIsNotAdvanced operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testExpiredOnceTaskIsNotAdvanced() {
         val now = System.currentTimeMillis()
@@ -1284,17 +2000,47 @@ class HelperComprehensiveTest {
     // 16. TEMPLATE DEFAULTS & STATUS INDICATOR PALETTE TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testDefaultMessageTextIsEmpty].
+     *
+     * What it does:
+     * Coordinates testDefaultMessageTextIsEmpty operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testDefaultMessageTextIsEmpty() {
         assertEquals("Default message text across app must be blank by specification", "", DEFAULT_MESSAGE_TEXT)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testStatusIndicatorPaletteValues].
+     *
+     * What it does:
+     * Coordinates testStatusIndicatorPaletteValues operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testStatusIndicatorPaletteValues() {
         assertEquals(androidx.compose.ui.graphics.Color(0xFF00E676), com.jmd.helper.ui.components.IndicatorActiveGreen)
         assertEquals(androidx.compose.ui.graphics.Color(0xFFFF5252), com.jmd.helper.ui.components.IndicatorInactiveRed)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testAutoReplyRulePreservesEmptyReplyText].
+     *
+     * What it does:
+     * Coordinates testAutoReplyRulePreservesEmptyReplyText operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAutoReplyRulePreservesEmptyReplyText() {
         val rule = AutoReplyRule(
@@ -1308,6 +2054,16 @@ class HelperComprehensiveTest {
         assertEquals("Rule reply text must remain empty without prefilled template injection", "", rule.replyText)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testScreenOrientationGuardIndicatorConfig].
+     *
+     * What it does:
+     * Coordinates testScreenOrientationGuardIndicatorConfig operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testScreenOrientationGuardIndicatorConfig() {
         // Verify indicator color constants strictly match spec: Green = 0xFF00E676, Red = 0xFFFF5252
@@ -1319,6 +2075,16 @@ class HelperComprehensiveTest {
     // 17. PRIVACY, APP VISIBILITY & COMPATIBILITY ENGINEERING TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testAppPrivacyConfigDefaults].
+     *
+     * What it does:
+     * Coordinates testAppPrivacyConfigDefaults operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAppPrivacyConfigDefaults() {
         val config = AppPrivacyConfig(
@@ -1337,6 +2103,16 @@ class HelperComprehensiveTest {
         assertEquals("", config.customNotes)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testSensitiveTextMasking].
+     *
+     * What it does:
+     * Coordinates testSensitiveTextMasking operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testSensitiveTextMasking() {
         assertEquals("", com.jmd.helper.core.PrivacyManager.maskSensitiveText(""))
@@ -1345,6 +2121,16 @@ class HelperComprehensiveTest {
         assertEquals("P***d", com.jmd.helper.core.PrivacyManager.maskSensitiveText("Password"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testPhoneNumberMasking].
+     *
+     * What it does:
+     * Coordinates testPhoneNumberMasking operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPhoneNumberMasking() {
         assertEquals("9769***020", com.jmd.helper.core.PrivacyManager.maskPhoneNumber("9769602020"))
@@ -1352,6 +2138,16 @@ class HelperComprehensiveTest {
         assertEquals("***", com.jmd.helper.core.PrivacyManager.maskPhoneNumber("123"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testBankingPackageDetection].
+     *
+     * What it does:
+     * Coordinates testBankingPackageDetection operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testBankingPackageDetection() {
         // Banking & UPI apps
@@ -1375,6 +2171,16 @@ class HelperComprehensiveTest {
         assertFalse(com.jmd.helper.service.TaskAccessibilityService.isFinancialOrBankingPackage("com.jmd.helper"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testBaseTaskTargetPackages].
+     *
+     * What it does:
+     * Coordinates testBaseTaskTargetPackages operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testBaseTaskTargetPackages() {
         val targets = com.jmd.helper.core.PrivacyManager.BASE_TASK_TARGET_PACKAGES
@@ -1387,6 +2193,16 @@ class HelperComprehensiveTest {
         assertFalse(targets.contains("net.one97.paytm"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testGlobalPrivacySettingsDefaults].
+     *
+     * What it does:
+     * Coordinates testGlobalPrivacySettingsDefaults operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testGlobalPrivacySettingsDefaults() {
         val settings = GlobalPrivacySettings()
@@ -1401,6 +2217,16 @@ class HelperComprehensiveTest {
         assertTrue(settings.blockOverlaysOverExcluded)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testPrivacyConfigCopyAndModifications].
+     *
+     * What it does:
+     * Coordinates testPrivacyConfigCopyAndModifications operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPrivacyConfigCopyAndModifications() {
         val original = AppPrivacyConfig(
@@ -1423,6 +2249,16 @@ class HelperComprehensiveTest {
     // 23. PROTECTED APPLICATION MANAGER (BANKING & PAYMENT ISOLATION) TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testProtectedApplicationCatalogDetection].
+     *
+     * What it does:
+     * Coordinates testProtectedApplicationCatalogDetection operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testProtectedApplicationCatalogDetection() {
         // Explicit banking & payment package verification
@@ -1453,6 +2289,16 @@ class HelperComprehensiveTest {
         assertFalse(ProtectedApplicationManager.isProtectedPackage("com.jmd.helper"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testProtectedApplicationManagerDefaultDenyAllowlist].
+     *
+     * What it does:
+     * Coordinates testProtectedApplicationManagerDefaultDenyAllowlist operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testProtectedApplicationManagerDefaultDenyAllowlist() {
         // Only authorized task targets are permitted
@@ -1472,6 +2318,16 @@ class HelperComprehensiveTest {
         assertFalse(ProtectedApplicationManager.isAuthorizedTarget("com.instagram.android"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testProtectedApplicationContextVerificationBeforeInteraction].
+     *
+     * What it does:
+     * Coordinates testProtectedApplicationContextVerificationBeforeInteraction operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testProtectedApplicationContextVerificationBeforeInteraction() {
         // Valid same-target interaction on authorized app
@@ -1518,6 +2374,16 @@ class HelperComprehensiveTest {
         )
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testProtectedApplicationTaskTargetAuthorization].
+     *
+     * What it does:
+     * Coordinates testProtectedApplicationTaskTargetAuthorization operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testProtectedApplicationTaskTargetAuthorization() {
         val validWhatsAppTask = ScheduledTask(
@@ -1541,6 +2407,16 @@ class HelperComprehensiveTest {
         assertTrue(ProtectedApplicationManager.isTaskTargetAuthorized(validSmsTask))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testProtectedApplicationOverlayAndInterferenceRefusal].
+     *
+     * What it does:
+     * Coordinates testProtectedApplicationOverlayAndInterferenceRefusal operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testProtectedApplicationOverlayAndInterferenceRefusal() {
         // Overlay suppression and strict blocking over financial and unauthorized applications
@@ -1557,6 +2433,16 @@ class HelperComprehensiveTest {
     // 24. PERMISSION MANAGER CATALOG & MAPPING TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testPermissionManagerCatalogCompleteness].
+     *
+     * What it does:
+     * Coordinates testPermissionManagerCatalogCompleteness operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPermissionManagerCatalogCompleteness() {
         val permissions = PermissionManager.getAllPermissions()
@@ -1602,6 +2488,16 @@ class HelperComprehensiveTest {
     // 25. TASK STATUS LIFECYCLE & STATE MACHINE TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testTaskStatusStateTransitions].
+     *
+     * What it does:
+     * Coordinates testTaskStatusStateTransitions operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTaskStatusStateTransitions() {
         // DRAFT transitions
@@ -1637,6 +2533,16 @@ class HelperComprehensiveTest {
         assertFalse(TaskStatus.canTransition(TaskStatus.PAUSED, TaskStatus.RUNNING))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testTaskStatusHelperPredicates].
+     *
+     * What it does:
+     * Coordinates testTaskStatusHelperPredicates operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTaskStatusHelperPredicates() {
         assertTrue(TaskStatus.SCHEDULED.isPendingOrScheduled)
@@ -1668,6 +2574,16 @@ class HelperComprehensiveTest {
     // 34. POLICY REFACTORING & TERMINOLOGY COMPLIANCE TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testChannelTypeCallSimulationCompatibility].
+     *
+     * What it does:
+     * Coordinates testChannelTypeCallSimulationCompatibility operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testChannelTypeCallSimulationCompatibility() {
         // Primary policy-compliant enum name
@@ -1685,6 +2601,16 @@ class HelperComprehensiveTest {
         assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("SIMULATION"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testSimulatedCallerModelProperties].
+     *
+     * What it does:
+     * Coordinates testSimulatedCallerModelProperties operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testSimulatedCallerModelProperties() {
         // Default ScheduledTask must use Indian mobile number format
@@ -1709,6 +2635,16 @@ class HelperComprehensiveTest {
         assertTrue(ProtectedApplicationManager.isTaskTargetAuthorized(task))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testProtectedAppExclusionGuaranteesForSimulationAndBanking].
+     *
+     * What it does:
+     * Coordinates testProtectedAppExclusionGuaranteesForSimulationAndBanking operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testProtectedAppExclusionGuaranteesForSimulationAndBanking() {
         // Verify known payment apps are strictly protected
@@ -1736,6 +2672,16 @@ class HelperComprehensiveTest {
     // 35. TASK LIFECYCLE & STATE TRANSITION TESTS (PART 5 & PART 8)
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testTaskLifecycleTransitions].
+     *
+     * What it does:
+     * Coordinates testTaskLifecycleTransitions operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTaskLifecycleTransitions() {
         // Valid forward transitions
@@ -1771,6 +2717,16 @@ class HelperComprehensiveTest {
         assertFalse(TaskStatus.SCHEDULED.isTerminal)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testDefaultDenyAndAuthorizedTargets].
+     *
+     * What it does:
+     * Coordinates testDefaultDenyAndAuthorizedTargets operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testDefaultDenyAndAuthorizedTargets() {
         // Explicitly authorized targets under Default-Deny
@@ -1809,6 +2765,16 @@ class HelperComprehensiveTest {
         assertFalse(ProtectedApplicationManager.verifyContextBeforeInteraction("", "com.whatsapp"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testIndianHelplineNumbersAndMobileFormatters].
+     *
+     * What it does:
+     * Coordinates testIndianHelplineNumbersAndMobileFormatters operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testIndianHelplineNumbersAndMobileFormatters() {
         val requestedNumbers = listOf("9769602020", "9930604542")
@@ -1826,6 +2792,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testIndianExpandedBankingAndIdentityProtection].
+     *
+     * What it does:
+     * Coordinates testIndianExpandedBankingAndIdentityProtection operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testIndianExpandedBankingAndIdentityProtection() {
         val indianFinancialAndIdentityApps = listOf(
@@ -1847,6 +2823,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testIndiaCentricTemplateTagsAndEmojiResolution].
+     *
+     * What it does:
+     * Coordinates testIndiaCentricTemplateTagsAndEmojiResolution operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testIndiaCentricTemplateTagsAndEmojiResolution() {
         val template = "{namaste} {name}! Your token is {rupee}500. Message: {greeting} 🚀✨🙏"
@@ -1863,6 +2849,16 @@ class HelperComprehensiveTest {
         assertFalse(resolved.contains("{greeting}"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testExpandedIndianFintechAndBankingShieldCoverage].
+     *
+     * What it does:
+     * Coordinates testExpandedIndianFintechAndBankingShieldCoverage operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testExpandedIndianFintechAndBankingShieldCoverage() {
         val additionalIndianApps = listOf(
@@ -1893,6 +2889,16 @@ class HelperComprehensiveTest {
     // 22. LAUNCHER ICON & ALL 12 CHANNELS VERIFICATION
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testAllChannelsCompleteness].
+     *
+     * What it does:
+     * Coordinates testAllChannelsCompleteness operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAllChannelsCompleteness() {
         val allChannels = ChannelType.entries
@@ -1920,6 +2926,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testLauncherIconAssetsIntegrity].
+     *
+     * What it does:
+     * Coordinates testLauncherIconAssetsIntegrity operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testLauncherIconAssetsIntegrity() {
         val resDir = java.io.File("src/main/res")
@@ -1967,6 +2983,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testManualPickModeInvariants].
+     *
+     * What it does:
+     * Coordinates testManualPickModeInvariants operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testManualPickModeInvariants() {
         assertFalse(
@@ -1977,6 +3003,16 @@ class HelperComprehensiveTest {
         assertTrue("DispatchMode.MANUAL_PICK_CHAT must be present", modes.contains("MANUAL_PICK_CHAT"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testContactNameStrippingForDynamicPool].
+     *
+     * What it does:
+     * Coordinates testContactNameStrippingForDynamicPool operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testContactNameStrippingForDynamicPool() {
         val testCases = listOf(
@@ -1992,6 +3028,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testBlockedChatNamesLogic].
+     *
+     * What it does:
+     * Coordinates testBlockedChatNamesLogic operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testBlockedChatNamesLogic() {
         val blockedExactOrPrefix = listOf(
@@ -2025,6 +3071,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testTaskContentValidatorChannelRules].
+     *
+     * What it does:
+     * Coordinates testTaskContentValidatorChannelRules operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTaskContentValidatorChannelRules() {
         // SMS requires text; rejects empty
@@ -2056,6 +3112,16 @@ class HelperComprehensiveTest {
         assertTrue(badScheme is com.jmd.helper.core.ContentValidationResult.Reject)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testAutoReplyPatternMatching].
+     *
+     * What it does:
+     * Coordinates testAutoReplyPatternMatching operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAutoReplyPatternMatching() {
         val wildcardRule = AutoReplyRule(
@@ -2099,6 +3165,16 @@ class HelperComprehensiveTest {
         assertFalse("Exact match should NOT pass for partial substring 'what is your price list?'", nonExactMatched)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testPacedCampaignProgressiveDelayTiming].
+     *
+     * What it does:
+     * Coordinates testPacedCampaignProgressiveDelayTiming operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPacedCampaignProgressiveDelayTiming() {
         val baseTime = 1700000000000L
@@ -2118,6 +3194,16 @@ class HelperComprehensiveTest {
         assertEquals("Step 3 trigger time (+120m from Step 2)", baseTime + (150 * 60 * 1000L), calculatedTimes[2])
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testAllChannelTypesCoverage].
+     *
+     * What it does:
+     * Coordinates testAllChannelTypesCoverage operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAllChannelTypesCoverage() {
         val allChannels = ChannelType.entries
@@ -2141,6 +3227,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testPermissionManagerCatalogSpecifications].
+     *
+     * What it does:
+     * Coordinates testPermissionManagerCatalogSpecifications operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPermissionManagerCatalogSpecifications() {
         val specs = PermissionManager.ALL_SPECIFICATIONS
@@ -2173,6 +3269,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testTaskTypeSelectionItemDefinitions].
+     *
+     * What it does:
+     * Coordinates testTaskTypeSelectionItemDefinitions operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTaskTypeSelectionItemDefinitions() {
         val items = listOf(
@@ -2269,6 +3375,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testExpandedMessageTemplateTokensAndContext].
+     *
+     * What it does:
+     * Coordinates testExpandedMessageTemplateTokensAndContext operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testExpandedMessageTemplateTokensAndContext() {
         val template = "Dispatched via {channel} to {recipient_count} recipients on {today} at {ist_time}. {time_greeting}!"
@@ -2306,11 +3422,31 @@ class HelperComprehensiveTest {
     // 21. PERMISSIONS & BACKUP REGISTRY INTEGRATION TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testAppPrivacyConfigsTableConstants].
+     *
+     * What it does:
+     * Coordinates testAppPrivacyConfigsTableConstants operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testAppPrivacyConfigsTableConstants() {
         assertEquals("app_privacy_configs", com.jmd.helper.data.db.DatabaseHelper.TABLE_APP_PRIVACY_CONFIGS)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testOverlayPermissionCatalogAndSpecification].
+     *
+     * What it does:
+     * Coordinates testOverlayPermissionCatalogAndSpecification operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testOverlayPermissionCatalogAndSpecification() {
         val overlaySpec = PermissionManager.getPermission(PermissionManager.ID_OVERLAY)
@@ -2325,6 +3461,16 @@ class HelperComprehensiveTest {
         assertTrue(overlaySpec.revocationSafety.isNotBlank())
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testPermissionManagerCallLogAndMediaSpecifications].
+     *
+     * What it does:
+     * Coordinates testPermissionManagerCallLogAndMediaSpecifications operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testPermissionManagerCallLogAndMediaSpecifications() {
         val allSpecs = PermissionManager.getAllPermissions()
@@ -2342,6 +3488,16 @@ class HelperComprehensiveTest {
     // 22. CHANNEL TYPE ALIAS RESOLUTION & QUERY COMPATIBILITY TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testChannelTypeFromStringAliases].
+     *
+     * What it does:
+     * Coordinates testChannelTypeFromStringAliases operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testChannelTypeFromStringAliases() {
         assertEquals(ChannelType.CALL_SIMULATION, ChannelType.fromString("SIMULATED_CALL"))
@@ -2372,6 +3528,16 @@ class HelperComprehensiveTest {
     // 23. RUNNING TASK RECOVERY & RECONCILIATION INVARIANT TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testOrphanedRunningTaskRecoveryInvariants].
+     *
+     * What it does:
+     * Coordinates testOrphanedRunningTaskRecoveryInvariants operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testOrphanedRunningTaskRecoveryInvariants() {
         val recurringTask = ScheduledTask(
@@ -2399,6 +3565,16 @@ class HelperComprehensiveTest {
         assertEquals(TaskStatus.FAILED, recoveredSingleStatus)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testTaskStatusReconciliationInvariant].
+     *
+     * What it does:
+     * Coordinates testTaskStatusReconciliationInvariant operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testTaskStatusReconciliationInvariant() {
         val recurringTask = ScheduledTask(
@@ -2423,6 +3599,16 @@ class HelperComprehensiveTest {
     // 24. OEM BRAND INTEGRATION TESTS (OPPO, VIVO, SAMSUNG, NOKIA, MOTOROLA, ETC.)
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testOemBrandEnumAndGuidanceCompleteness].
+     *
+     * What it does:
+     * Coordinates testOemBrandEnumAndGuidanceCompleteness operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testOemBrandEnumAndGuidanceCompleteness() {
         // Verify all target OEM brands are declared
@@ -2462,6 +3648,16 @@ class HelperComprehensiveTest {
         }
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testOemSafeSystemOverlayFiltering].
+     *
+     * What it does:
+     * Coordinates testOemSafeSystemOverlayFiltering operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testOemSafeSystemOverlayFiltering() {
         // System and OEM gestures / sidebars must be recognized as safe system overlays
@@ -2489,6 +3685,16 @@ class HelperComprehensiveTest {
     // 25. UNIVERSAL CONSTRAINTS & OPERATION RESULT TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testUniversalConstraintsRecipientValidation].
+     *
+     * What it does:
+     * Coordinates testUniversalConstraintsRecipientValidation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testUniversalConstraintsRecipientValidation() {
         val valid = com.jmd.helper.core.UniversalConstraintValidator.validateRecipient("+919876543210")
@@ -2502,6 +3708,16 @@ class HelperComprehensiveTest {
         assertTrue(tooShort.isFailure)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testUniversalConstraintsMessageValidation].
+     *
+     * What it does:
+     * Coordinates testUniversalConstraintsMessageValidation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testUniversalConstraintsMessageValidation() {
         val valid = com.jmd.helper.core.UniversalConstraintValidator.validateMessageContent("Hello world")
@@ -2514,6 +3730,16 @@ class HelperComprehensiveTest {
         assertTrue(allowedEmpty.isSuccess)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testUniversalConstraintsIntervalValidation].
+     *
+     * What it does:
+     * Coordinates testUniversalConstraintsIntervalValidation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testUniversalConstraintsIntervalValidation() {
         val valid = com.jmd.helper.core.UniversalConstraintValidator.validateInterval(30, 0, 3600)
@@ -2523,6 +3749,16 @@ class HelperComprehensiveTest {
         assertTrue(negative.isFailure)
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testUniversalConstraintsSimSlotValidation].
+     *
+     * What it does:
+     * Coordinates testUniversalConstraintsSimSlotValidation operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testUniversalConstraintsSimSlotValidation() {
         assertTrue(com.jmd.helper.core.UniversalConstraintValidator.validateSimSlot(0).isSuccess)
@@ -2535,6 +3771,16 @@ class HelperComprehensiveTest {
     // 26. SETTINGS SUBDIVISIONS & CUSTOMIZABLE TEMPLATE TOKENS TESTS
     // ═══════════════════════════════════════════════════════════════════════════════════
 
+    /**
+     * What it is:
+     * Execution routine for [testSettingsSubdivisionsEnum].
+     *
+     * What it does:
+     * Coordinates testSettingsSubdivisionsEnum operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testSettingsSubdivisionsEnum() {
         val subdivisions = com.jmd.helper.ui.screen.settings.SettingsSubdivision.entries
@@ -2546,6 +3792,16 @@ class HelperComprehensiveTest {
         assertTrue(subdivisions.any { it.name == "SYSTEM" && it.title.contains("System") })
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testResolveEffectiveDatePatternStandard].
+     *
+     * What it does:
+     * Coordinates testResolveEffectiveDatePatternStandard operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testResolveEffectiveDatePatternStandard() {
         // Base standard formats without separator override
@@ -2557,6 +3813,16 @@ class HelperComprehensiveTest {
         assertEquals("dd-MM-yy", MessageTemplateResolver.resolveEffectiveDatePattern("dd-MM-yy", separator = "auto"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testResolveEffectiveDatePatternSeparatorOverrides].
+     *
+     * What it does:
+     * Coordinates testResolveEffectiveDatePatternSeparatorOverrides operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testResolveEffectiveDatePatternSeparatorOverrides() {
         // Separator replacements on "dd-MM-yyyy"
@@ -2572,6 +3838,16 @@ class HelperComprehensiveTest {
         assertEquals("ddMMyyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd/MM/yyyy", separator = ""))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testResolveEffectiveDatePatternCustomPattern].
+     *
+     * What it does:
+     * Coordinates testResolveEffectiveDatePatternCustomPattern operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testResolveEffectiveDatePatternCustomPattern() {
         // Custom base format
@@ -2580,6 +3856,16 @@ class HelperComprehensiveTest {
         assertEquals("dd-MM-yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("CUSTOM", customPattern = "", separator = "auto")) // fallback default
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testMessageTemplateResolverCustomDateAndCurrencyTokens].
+     *
+     * What it does:
+     * Coordinates testMessageTemplateResolverCustomDateAndCurrencyTokens operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testMessageTemplateResolverCustomDateAndCurrencyTokens() {
         val cal = Calendar.getInstance().apply {
@@ -2605,6 +3891,16 @@ class HelperComprehensiveTest {
         assertTrue("Should contain namaste greeting", resolved.contains("Namaste"))
     }
 
+    /**
+     * What it is:
+     * Execution routine for [testExpandedExplicitDateAndTimeDynamicTokens].
+     *
+     * What it does:
+     * Coordinates testExpandedExplicitDateAndTimeDynamicTokens operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [HelperComprehensiveTest]
+     */
     @Test
     fun testExpandedExplicitDateAndTimeDynamicTokens() {
         val cal = Calendar.getInstance().apply {

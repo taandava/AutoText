@@ -1,3 +1,21 @@
+/**
+ * Package: com.jmd.helper.ui.screen.campaign
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [DailyCampaignDialogComponents].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for DailyCampaignDialogComponents.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.*]
+ * - Models & Entities: [com.jmd.helper.data.model.*]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Core Security & Utilities: [com.jmd.helper.core.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape], [androidx.compose.foundation.text.KeyboardOptions], [androidx.compose.material.icons.Icons]
+ */
+
 package com.jmd.helper.ui.screen.campaign
 
 import android.content.*
@@ -31,6 +49,16 @@ import com.jmd.helper.data.repo.*
 import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.*
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [CreateDailyCampaignSheet].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for CreateDailyCampaignSheet.
+ *
+ * Linked with:
+ * - Component: [DailyCampaignDialogComponents]
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateDailyCampaignSheet(
@@ -290,8 +318,14 @@ fun CreateDailyCampaignSheet(
 }
 
 /**
+ * What it is:
  * Dialog enabling user to pick between SMS, WhatsApp, and WhatsApp Business channels for a new campaign.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [DailyCampaignChannelSelectionDialog] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignDialogComponents], [DailyCampaignChannelSelectionDialog]
  * @param onDismiss Callback to dismiss channel selection dialog.
  * @param onSelectChannel Callback receiving channel key identifier (SMS, WHATSAPP, WHATSAPP_BUSINESS).
  */
@@ -378,6 +412,16 @@ fun DailyCampaignChannelSelectionDialog(
     }
 }
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [DailyChannelOptionCard].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for DailyChannelOptionCard.
+ *
+ * Linked with:
+ * - Component: [DailyCampaignDialogComponents]
+ */
 @Composable
 private fun DailyChannelOptionCard(
     title: String,
@@ -463,4 +507,3 @@ private fun DailyChannelOptionCard(
         }
     }
 }
-

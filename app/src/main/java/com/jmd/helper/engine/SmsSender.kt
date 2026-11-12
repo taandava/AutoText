@@ -1,16 +1,18 @@
 /**
  * Package: com.jmd.helper.engine
- * Module: Task Engine
+ * Module: Task Execution & Dispatch Engines
  *
- * Coordinates cellular SMS transmission, dual-SIM slot binding, multipart PDU assembly,
- * radio modem acknowledgement latching, and quota reconciliation.
+ * What it is:
+ * Architecture definition and implementation for [SmsSender].
+ *
+ * What it does:
+ * Coordinates cellular SMS transmission, dual-SIM slot binding, multipart PDU assembly, radio modem acknowledgement latching, and quota reconciliation.
  *
  * Linked With:
- * - Compat: [com.jmd.helper.compat.SmsManagerCompat]
- * - Quota: [com.jmd.helper.core.SmsQuotaManager]
- * - Engine: [com.jmd.helper.engine.SequentialTaskEngine]
- * - Receivers: [com.jmd.helper.receiver.SmsReceiver]
+ * - Core Security & Utilities: [android.telephony.SmsManager], [android.telephony.SubscriptionManager], [android.util.Log], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [android.app.Activity], [android.app.PendingIntent], [android.content.BroadcastReceiver], [android.content.IntentFilter]
  */
+
 package com.jmd.helper.engine
 
 import android.app.Activity
@@ -28,13 +30,26 @@ import com.jmd.helper.core.AppFileLogger
 import com.jmd.helper.core.SmsQuotaManager
 
 /**
+ * What it is:
  * Enterprise cellular SMS dispatch engine.
  *
- * Utilizes [com.jmd.helper.compat.SmsManagerCompat] and [SubscriptionManager] to route messages
- * through user-selected SIM slots (SIM 1 or SIM 2), listens for modem broadcast callbacks,
- * and tracks partial delivery outcomes.
+ * What it does:
+ * Utilizes [com.jmd.helper.compat.SmsManagerCompat] and [SubscriptionManager] to route messages through user-selected SIM slots (SIM 1 or SIM 2), listens for modem broadcast callbacks, and tracks partial delivery outcomes.
+ *
+ * Linked with:
+ * - Architecture: [SmsSender], [SmsSender]
  */
 class SmsSender(private val context: Context) {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [SmsSender].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [SmsSender]
+     */
 
     companion object {
         private const val TAG = "SmsSender"
@@ -42,7 +57,14 @@ class SmsSender(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Delivery status outcome for an SMS transmission attempt.
+     *
+     * What it does:
+     * Encapsulates state, business contracts, and operations for [DeliveryStatus].
+     *
+     * Linked with:
+     * - Architecture: [SmsSender], [DeliveryStatus]
      */
     enum class DeliveryStatus {
         /** All PDU parts confirmed by the cellular modem. */
@@ -56,8 +78,14 @@ class SmsSender(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Detailed result model returned after attempting an SMS dispatch.
      *
+     * What it does:
+     * Encapsulates state, business contracts, and operations for [SendResult].
+     *
+     * Linked with:
+     * - Architecture: [SmsSender], [SendResult]
      * @property success True if all parts were confirmed by carrier modem.
      * @property segments Number of PDU parts into which message was split.
      * @property reason Human-readable diagnostic description.
@@ -75,8 +103,14 @@ class SmsSender(private val context: Context) {
     )
 
     /**
+     * What it is:
      * Dispatches an SMS message synchronously, waiting up to 5 seconds for radio modem acknowledgment.
      *
+     * What it does:
+     * Executes [sendSmsWithResult] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsSender], [sendSmsWithResult]
      * @param recipientPhone Destination phone number string.
      * @param messageText SMS payload string.
      * @param simSlot Target SIM slot (0 = default OS SIM, 1 = SIM 1, 2 = SIM 2).
@@ -222,8 +256,14 @@ class SmsSender(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Resolves the proper [SmsManager] instance for a specified SIM slot index.
      *
+     * What it does:
+     * Executes [getSmsManagerForSlot] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SmsSender], [getSmsManagerForSlot]
      * @param simSlot 0 for default SIM, 1 for SIM slot 1, 2 for SIM slot 2.
      * @return Resolved [SmsManager] bound to requested subscription.
      * @throws IllegalStateException If requested subscription is inactive or unavailable.

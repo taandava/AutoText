@@ -1,10 +1,21 @@
 /**
  * Package: com.jmd.helper.whatsapp
- * Module: WhatsApp Task & Tree Traversal
+ * Module: WhatsApp Automation Subsystem
  *
- * Discovery engine for harvesting WhatsApp direct chats and groups via accessibility
- * node traversal, scrolling, and pool enrichment.
+ * What it is:
+ * Architecture definition and implementation for [WhatsAppChatScanner].
+ *
+ * What it does:
+ * Discovery engine for harvesting WhatsApp direct chats and groups via accessibility node traversal, scrolling, and pool enrichment.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.DynamicContactItem]
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService], [com.jmd.helper.service.TaskAccessibilityService], [com.jmd.helper.whatsapp.AccessibilityNodeUtils.recycleSafely]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.compat.AccessibilityCompat], [com.jmd.helper.core.PhoneNumberNormalizer], [com.jmd.helper.core.showAppToast]
+ * - Android Framework & Jetpack: [android.graphics.Rect], [android.view.accessibility.AccessibilityNodeInfo]
  */
+
 package com.jmd.helper.whatsapp
 
 import android.accessibilityservice.AccessibilityService
@@ -20,7 +31,16 @@ import com.jmd.helper.data.repo.AppRepository
 import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.whatsapp.AccessibilityNodeUtils.recycleSafely
 
-/** Target filtering scope for scanner discovery. */
+/**
+ * What it is:
+ * Component definition for [ScanTarget].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for ScanTarget.
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppChatScanner], [ScanTarget]
+ */
 enum class ScanTarget {
     ALL_CHATS,
     GROUPS_ONLY,
@@ -28,8 +48,14 @@ enum class ScanTarget {
 }
 
 /**
- * Accessibility-based scanner engine that directly iterates WhatsApp and WhatsApp Business
- * conversation lists, discovers individual contacts and chats, and saves them into the local dynamic pool.
+ * What it is:
+ * Accessibility-based scanner engine that directly iterates WhatsApp and WhatsApp Business conversation lists, discovers individual contacts and chats, and saves them into the local dynamic pool.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [WhatsAppChatScanner].
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppChatScanner], [WhatsAppChatScanner]
  */
 class WhatsAppChatScanner(
     private val service: AccessibilityService,
@@ -38,6 +64,16 @@ class WhatsAppChatScanner(
 
     /** Backward compatibility alias for nested enum references. */
     typealias ScanTarget = com.jmd.helper.whatsapp.ScanTarget
+    /**
+     * What it is:
+     * Component definition for [DeepScanPhase].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for DeepScanPhase.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private enum class DeepScanPhase {
         ENSURE_CHATS_TAB,
@@ -63,7 +99,14 @@ class WhatsAppChatScanner(
     private val maxStagnantCycles = 4
 
     /**
+     * What it is:
      * Clears discovery cache and resets traversal state for a fresh chat scanning pass.
+     *
+     * What it does:
+     * Executes [resetScanState] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppChatScanner], [resetScanState]
      */
     fun resetScanState(target: ScanTarget = ScanTarget.ALL_CHATS) {
         scanTarget = target
@@ -81,8 +124,14 @@ class WhatsAppChatScanner(
     }
 
     /**
+     * What it is:
      * Drives accessibility node inspection across recent conversation lists, harvesting contact entities.
      *
+     * What it does:
+     * Executes [tryScanWhatsAppChats] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppChatScanner], [tryScanWhatsAppChats]
      * @param root Accessibility tree root.
      * @param pkg Target WhatsApp package identifier.
      * @param sendAttemptCount Counter of elapsed retry attempts.
@@ -353,6 +402,16 @@ class WhatsAppChatScanner(
             finishAndSave(onFinish)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [finishAndSave].
+     *
+     * What it does:
+     * Coordinates finishAndSave operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun finishAndSave(onFinish: () -> Unit) {
         val repo = AppRepository(service)
@@ -390,7 +449,14 @@ class WhatsAppChatScanner(
     }
 
     /**
+     * What it is:
      * Determines whether a filter chip or bottom tab is currently selected.
+     *
+     * What it does:
+     * Executes [isChipSelected] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppChatScanner], [isChipSelected]
      */
     private fun isChipSelected(node: AccessibilityNodeInfo): Boolean {
         if (node.isSelected) return true
@@ -402,7 +468,14 @@ class WhatsAppChatScanner(
     }
 
     /**
+     * What it is:
      * Finds and selects the bottom navigation "Chats" tab if WhatsApp was opened on Updates, Calls, or Tools.
+     *
+     * What it does:
+     * Executes [findChatsBottomTab] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppChatScanner], [findChatsBottomTab]
      */
     private fun findChatsBottomTab(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val q = ArrayDeque<AccessibilityNodeInfo>()
@@ -436,6 +509,16 @@ class WhatsAppChatScanner(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [isSearchInGroupFilter].
+     *
+     * What it does:
+     * Coordinates isSearchInGroupFilter operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun isSearchInGroupFilter(root: AccessibilityNodeInfo): Boolean {
         val q = ArrayDeque<AccessibilityNodeInfo>()
@@ -456,6 +539,16 @@ class WhatsAppChatScanner(
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [findScrollableList].
+     *
+     * What it does:
+     * Coordinates findScrollableList operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun findScrollableList(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val q = ArrayDeque<AccessibilityNodeInfo>()
@@ -491,6 +584,16 @@ class WhatsAppChatScanner(
         Log.i(loggerTag, "findScrollableList: fallback to '${fallbackScrollable?.viewIdResourceName}' (${fallbackScrollable?.className})")
         return fallbackScrollable
     }
+    /**
+     * What it is:
+     * Execution routine for [isFilterBarNode].
+     *
+     * What it does:
+     * Coordinates isFilterBarNode operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun isFilterBarNode(node: AccessibilityNodeInfo): Boolean {
         val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
@@ -511,6 +614,16 @@ class WhatsAppChatScanner(
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [findAllRowContainers].
+     *
+     * What it does:
+     * Coordinates findAllRowContainers operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun findAllRowContainers(root: AccessibilityNodeInfo): List<AccessibilityNodeInfo> {
         val containers = mutableListOf<AccessibilityNodeInfo>()
@@ -583,6 +696,16 @@ class WhatsAppChatScanner(
         Log.i(loggerTag, "findAllRowContainers: returning ${containers.size} fallback containers")
         return containers
     }
+    /**
+     * What it is:
+     * Execution routine for [extractTitleFromRow].
+     *
+     * What it does:
+     * Coordinates extractTitleFromRow operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun extractTitleFromRow(row: AccessibilityNodeInfo): String? {
         // 1. Primary: Direct lookup for known title/contact name resource IDs
@@ -686,6 +809,16 @@ class WhatsAppChatScanner(
 
         return fallbackCandidates.firstOrNull()
     }
+    /**
+     * What it is:
+     * Execution routine for [extractNameFromAvatarDesc].
+     *
+     * What it does:
+     * Coordinates extractNameFromAvatarDesc operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun extractNameFromAvatarDesc(desc: String): String? {
         val trimmed = desc.trim()
@@ -734,6 +867,16 @@ class WhatsAppChatScanner(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [isIgnoredTitle].
+     *
+     * What it does:
+     * Coordinates isIgnoredTitle operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun isIgnoredTitle(title: String): Boolean {
         val lower = title.trim().lowercase()
@@ -751,6 +894,16 @@ class WhatsAppChatScanner(
         )
         return blocked.any { lower == it || lower.startsWith("$it ") || lower.startsWith("$it…") || lower.startsWith("$it...") }
     }
+    /**
+     * What it is:
+     * Execution routine for [extractSubtitleFromRow].
+     *
+     * What it does:
+     * Coordinates extractSubtitleFromRow operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun extractSubtitleFromRow(row: AccessibilityNodeInfo): String {
         val q = ArrayDeque<AccessibilityNodeInfo>()
@@ -769,6 +922,16 @@ class WhatsAppChatScanner(
         }
         return ""
     }
+    /**
+     * What it is:
+     * Execution routine for [hasMessageAuthorView].
+     *
+     * What it does:
+     * Coordinates hasMessageAuthorView operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun hasMessageAuthorView(row: AccessibilityNodeInfo): Boolean {
         val q = ArrayDeque<AccessibilityNodeInfo>()
@@ -789,6 +952,16 @@ class WhatsAppChatScanner(
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [findGroupsFilterChip].
+     *
+     * What it does:
+     * Coordinates findGroupsFilterChip operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun findGroupsFilterChip(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val q = ArrayDeque<AccessibilityNodeInfo>()
@@ -843,6 +1016,16 @@ class WhatsAppChatScanner(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [isGroupRow].
+     *
+     * What it does:
+     * Coordinates isGroupRow operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppChatScanner]
+     */
 
     private fun isGroupRow(
         row: AccessibilityNodeInfo,

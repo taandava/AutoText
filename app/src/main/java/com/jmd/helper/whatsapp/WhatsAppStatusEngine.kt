@@ -1,21 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.whatsapp
- * Module: WhatsApp Task Subsystem
+ * Module: WhatsApp Automation Subsystem
  *
- * Dedicated status story publishing engine dispatching text and photo/video story posting
- * for both personal WhatsApp and WhatsApp Business. Navigates to Updates tab, clicks pencil/camera FAB,
- * enters story caption/text, confirms My Status audience, and clicks publish.
+ * What it is:
+ * Architecture definition and implementation for [WhatsAppStatusEngine].
+ *
+ * What it does:
+ * Dedicated status story publishing engine dispatching text and photo/video story posting for both personal WhatsApp and WhatsApp Business. Navigates to Updates tab, clicks pencil/camera FAB, enters story caption/text, confirms My Status audience, and clicks publish.
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Dispatcher: [com.jmd.helper.whatsapp.WhatsAppIntentDispatcher]
- * - Node Utils: [com.jmd.helper.whatsapp.AccessibilityNodeUtils]
- * - Popup Shield: [com.jmd.helper.whatsapp.PopupShield]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
- * - Senders: [com.jmd.helper.engine.WhatsAppSender]
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [android.view.accessibility.AccessibilityNodeInfo], [android.view.accessibility.AccessibilityWindowInfo]
  */
+
 package com.jmd.helper.whatsapp
 
 import android.accessibilityservice.AccessibilityService
@@ -25,7 +23,14 @@ import android.view.accessibility.AccessibilityWindowInfo
 import com.jmd.helper.core.AppFileLogger
 
 /**
+ * What it is:
  * Status story engine for WhatsApp and WhatsApp Business.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [WhatsAppStatusEngine].
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppStatusEngine], [WhatsAppStatusEngine]
  */
 class WhatsAppStatusEngine(
     private val service: AccessibilityService,
@@ -40,7 +45,14 @@ class WhatsAppStatusEngine(
     private var statusComposerWaitCount = 0
 
     /**
+     * What it is:
      * Resets internal status publishing sequence state flags for subsequent posts.
+     *
+     * What it does:
+     * Executes [resetState] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppStatusEngine], [resetState]
      */
     fun resetState() {
         hasClickedSendButton = false
@@ -52,8 +64,14 @@ class WhatsAppStatusEngine(
     }
 
     /**
+     * What it is:
      * Executes accessibility inspection and clicks required to compose and publish a WhatsApp status story.
      *
+     * What it does:
+     * Executes [tryHandleStatusPost] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppStatusEngine], [tryHandleStatusPost]
      * @param root Accessibility tree root.
      * @param targetPkg Target WhatsApp package identifier.
      * @param pendingMessage Text body or caption to post.
@@ -288,6 +306,16 @@ class WhatsAppStatusEngine(
             onTimeout()
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [isSharePickerScreen].
+     *
+     * What it does:
+     * Coordinates isSharePickerScreen operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppStatusEngine]
+     */
 
     private fun isSharePickerScreen(
         root: AccessibilityNodeInfo,
@@ -303,6 +331,16 @@ class WhatsAppStatusEngine(
         val pickerOnlyIds = listOf("contactpicker_row_name", "contactpicker_row", "contact_picker_row")
         return pickerOnlyIds.any { AccessibilityNodeUtils.findNodesByViewId(root, targetPkg, it, windows).any { node -> node.isVisibleToUser } }
     }
+    /**
+     * What it is:
+     * Execution routine for [isStatusComposerScreen].
+     *
+     * What it does:
+     * Coordinates isStatusComposerScreen operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppStatusEngine]
+     */
 
     private fun isStatusComposerScreen(
         root: AccessibilityNodeInfo,
@@ -335,6 +373,16 @@ class WhatsAppStatusEngine(
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [isMyStatusSelected].
+     *
+     * What it does:
+     * Coordinates isMyStatusSelected operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppStatusEngine]
+     */
 
     private fun isMyStatusSelected(
         root: AccessibilityNodeInfo,
@@ -368,6 +416,16 @@ class WhatsAppStatusEngine(
 
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [findWhatsAppShareMyStatusRow].
+     *
+     * What it does:
+     * Coordinates findWhatsAppShareMyStatusRow operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppStatusEngine]
+     */
 
     private fun findWhatsAppShareMyStatusRow(
         root: AccessibilityNodeInfo,
@@ -443,6 +501,16 @@ class WhatsAppStatusEngine(
             windows = windows
         )?.takeIf { it.isVisibleToUser }
     }
+    /**
+     * What it is:
+     * Execution routine for [findWhatsAppStatusProceedButton].
+     *
+     * What it does:
+     * Coordinates findWhatsAppStatusProceedButton operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppStatusEngine]
+     */
 
     private fun findWhatsAppStatusProceedButton(
         root: AccessibilityNodeInfo,
@@ -485,6 +553,16 @@ class WhatsAppStatusEngine(
 
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [findWhatsAppStatusInputField].
+     *
+     * What it does:
+     * Coordinates findWhatsAppStatusInputField operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppStatusEngine]
+     */
 
     private fun findWhatsAppStatusInputField(
         root: AccessibilityNodeInfo,
@@ -519,6 +597,16 @@ class WhatsAppStatusEngine(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [findWhatsAppStatusSendButton].
+     *
+     * What it does:
+     * Coordinates findWhatsAppStatusSendButton operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppStatusEngine]
+     */
 
     private fun findWhatsAppStatusSendButton(
         root: AccessibilityNodeInfo,
@@ -545,6 +633,16 @@ class WhatsAppStatusEngine(
 
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [isNodeOrAncestorSelected].
+     *
+     * What it does:
+     * Coordinates isNodeOrAncestorSelected operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppStatusEngine]
+     */
 
     private fun isNodeOrAncestorSelected(node: AccessibilityNodeInfo?): Boolean {
         var candidate = node
@@ -556,6 +654,16 @@ class WhatsAppStatusEngine(
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [findWhatsAppUpdatesTab].
+     *
+     * What it does:
+     * Coordinates findWhatsAppUpdatesTab operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppStatusEngine]
+     */
 
     private fun findWhatsAppUpdatesTab(
         root: AccessibilityNodeInfo,
@@ -582,6 +690,16 @@ class WhatsAppStatusEngine(
             windows = windows
         )?.takeIf { it.isVisibleToUser }
     }
+    /**
+     * What it is:
+     * Execution routine for [findWhatsAppTextStatusFab].
+     *
+     * What it does:
+     * Coordinates findWhatsAppTextStatusFab operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppStatusEngine]
+     */
 
     private fun findWhatsAppTextStatusFab(
         root: AccessibilityNodeInfo,

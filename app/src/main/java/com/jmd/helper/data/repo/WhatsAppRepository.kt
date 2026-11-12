@@ -1,19 +1,20 @@
-
-
 /**
  * Package: com.jmd.helper.data.repo
- * Module: Data Access Layer
+ * Module: Application Core Subsystem
  *
- * Manages harvested WhatsApp contacts, group items, chat title validation heuristics,
- * contact book cross-referencing, and profile photo resolution.
+ * What it is:
+ * Architecture definition and implementation for [WhatsAppRepository].
+ *
+ * What it does:
+ * Manages harvested WhatsApp contacts, group items, chat title validation heuristics, contact book cross-referencing, and profile photo resolution.
  *
  * Linked With:
- * - Database: [com.jmd.helper.data.db.DatabaseHelper]
- * - Models: [com.jmd.helper.data.model.WhatsAppContactItem], [com.jmd.helper.data.model.WhatsAppGroupItem]
- * - Normalizer: [com.jmd.helper.core.PhoneNumberNormalizer]
- * - Scanner: [com.jmd.helper.whatsapp.WhatsAppChatScanner]
- * - UI Screens: `WhatsAppSetupScreen`, `ComposeTaskScreen`
+ * - Repositories: [android.database.sqlite.SQLiteDatabase], [com.jmd.helper.data.db.DatabaseHelper]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.WhatsAppContactItem], [com.jmd.helper.data.model.WhatsAppGroupItem]
+ * - Core Security & Utilities: [android.content.pm.PackageManager], [android.util.Log], [androidx.core.content.ContextCompat], [androidx.core.database.sqlite.transaction]
+ * - Android Framework & Jetpack: [android.content.ContentValues], [android.net.Uri], [android.provider.ContactsContract]
  */
+
 package com.jmd.helper.data.repo
 
 import android.content.ContentValues
@@ -32,16 +33,28 @@ import com.jmd.helper.data.model.WhatsAppContactItem
 import com.jmd.helper.data.model.WhatsAppGroupItem
 
 /**
+ * What it is:
  * Repository managing WhatsApp contact items and address book lookups.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [WhatsAppRepository].
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppRepository], [WhatsAppRepository]
  */
 class WhatsAppRepository(private val context: Context) {
 
     private val dbHelper = DatabaseHelper.getInstance(context)
 
     /**
+     * What it is:
      * Verifies that a user-selected or accessibility-scraped string corresponds to a valid conversation title.
+     *
+     * What it does:
      * Filters out standard UI controls, action prompts, status tabs, and header labels.
      *
+     * Linked with:
+     * - Architecture: [WhatsAppRepository], [isValidPickedChatName]
      * @param name Scraped or selected chat title.
      * @return True if valid conversation title, false if blocked UI keyword.
      */
@@ -72,9 +85,14 @@ class WhatsAppRepository(private val context: Context) {
     }
 
     /**
-     * Resolves the cellular phone number for a contact name by checking the local dynamic contact pool,
-     * falling back to the Android device ContactsContract provider.
+     * What it is:
+     * Resolves the cellular phone number for a contact name by checking the local dynamic contact pool, falling back to the Android device ContactsContract provider.
      *
+     * What it does:
+     * Executes [findPhoneForContactName] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppRepository], [findPhoneForContactName]
      * @param name Target contact display name.
      * @return Resolved phone number string or null if unlisted.
      */
@@ -182,8 +200,14 @@ class WhatsAppRepository(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Checks whether a contact has a verified numeric cellular phone number (excluding group/chat virtual identifiers).
+     *
+     * What it does:
      * Performs strict exact name matching only to avoid false positives on groups sharing substrings with contacts.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppRepository], [hasCellularPhoneContact]
      */
     fun hasCellularPhoneContact(name: String): Boolean {
         val cleanName = name.trim().removePrefix("~").trim()
@@ -229,6 +253,16 @@ class WhatsAppRepository(private val context: Context) {
 
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [findPhotoForContactName].
+     *
+     * What it does:
+     * Coordinates findPhotoForContactName operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppRepository]
+     */
 
     fun findPhotoForContactName(name: String): String {
         val cleanName = name.trim().removePrefix("~").trim()
@@ -277,6 +311,16 @@ class WhatsAppRepository(private val context: Context) {
         }
         return ""
     }
+    /**
+     * What it is:
+     * Execution routine for [findContactByPhone].
+     *
+     * What it does:
+     * Coordinates findContactByPhone operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppRepository]
+     */
 
     fun findContactByPhone(phone: String): Pair<String, String>? {
         val raw = phone.trim()
@@ -324,6 +368,16 @@ class WhatsAppRepository(private val context: Context) {
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [getWhatsAppContacts].
+     *
+     * What it does:
+     * Coordinates getWhatsAppContacts operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppRepository]
+     */
 
     fun getWhatsAppContacts(
         query: String = "",
@@ -575,8 +629,14 @@ class WhatsAppRepository(private val context: Context) {
     }
 
     /**
-     * Clears saved WhatsApp groups for a specific source (WA_GROUP or WA_BUSINESS_GROUP),
-     * or all groups if source is omitted.
+     * What it is:
+     * Clears saved WhatsApp groups for a specific source (WA_GROUP or WA_BUSINESS_GROUP), or all groups if source is omitted.
+     *
+     * What it does:
+     * Executes [deleteAllWhatsAppGroups] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppRepository], [deleteAllWhatsAppGroups]
      */
     fun deleteAllWhatsAppGroups(source: String? = null): Int {
         return try {
@@ -601,12 +661,26 @@ class WhatsAppRepository(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Convenience method to purge all group entries from the dynamic pool.
+     *
+     * What it does:
+     * Executes [purgeAllGroupsFromPool] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppRepository], [purgeAllGroupsFromPool]
      */
     fun purgeAllGroupsFromPool(): Int = deleteAllWhatsAppGroups(null)
 
     /**
-     * Purges corrupted or misclassified groups from the dynamic pool (e.g. system footers or contacts mislabeled as groups).
+     * What it is:
+     * Purges corrupted or misclassified groups from the dynamic pool (e.g.
+     *
+     * What it does:
+     * system footers or contacts mislabeled as groups).
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppRepository], [purgeCorruptedGroupsFromPool]
      */
     fun purgeCorruptedGroupsFromPool(): Int {
         return try {

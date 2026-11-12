@@ -1,19 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.whatsapp
- * Module: WhatsApp Task Subsystem
+ * Module: WhatsApp Automation Subsystem
  *
- * Direct message dispatcher executing accessibility tree inspection, input field text population,
- * clipboard synchronization, and send button clicks across WhatsApp and WhatsApp Business conversations.
+ * What it is:
+ * Architecture definition and implementation for [WhatsAppDirectSendEngine].
+ *
+ * What it does:
+ * Direct message dispatcher executing accessibility tree inspection, input field text population, clipboard synchronization, and send button clicks across WhatsApp and WhatsApp Business conversations.
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Node Utils: [com.jmd.helper.whatsapp.AccessibilityNodeUtils]
- * - Voice Note Guard: [com.jmd.helper.whatsapp.VoiceNoteProtectionGuard]
- * - Popup Shield: [com.jmd.helper.whatsapp.PopupShield]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [android.graphics.Rect], [android.os.Bundle], [android.view.accessibility.AccessibilityNodeInfo], [android.view.accessibility.AccessibilityWindowInfo]
  */
+
 package com.jmd.helper.whatsapp
 
 import android.accessibilityservice.AccessibilityService
@@ -25,7 +25,14 @@ import android.view.accessibility.AccessibilityWindowInfo
 import com.jmd.helper.core.AppFileLogger
 
 /**
+ * What it is:
  * Direct chat interaction engine identifying and clicking the send button in WhatsApp chat screens.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [WhatsAppDirectSendEngine].
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppDirectSendEngine], [WhatsAppDirectSendEngine]
  */
 class WhatsAppDirectSendEngine(
     private val service: AccessibilityService,
@@ -33,8 +40,14 @@ class WhatsAppDirectSendEngine(
 ) {
 
     /**
+     * What it is:
      * Traverses accessibility hierarchy, validates input text population, protects voice notes, and clicks Send button.
      *
+     * What it does:
+     * Executes [tryClickSendButton] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppDirectSendEngine], [tryClickSendButton]
      * @param root Active accessibility node root.
      * @param pkg Target WhatsApp package identifier.
      * @param pendingMessage Expected message body to dispatch.
@@ -226,8 +239,14 @@ class WhatsAppDirectSendEngine(
     }
 
     /**
+     * What it is:
      * Identifies the primary message composer EditText node within the active WhatsApp chat window.
      *
+     * What it does:
+     * Executes [findMessageInputField] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppDirectSendEngine], [findMessageInputField]
      * @param root Accessibility tree root.
      * @param pkg Target WhatsApp package identifier.
      * @param windows Optional list of screen windows.
@@ -291,8 +310,14 @@ class WhatsAppDirectSendEngine(
     }
 
     /**
+     * What it is:
      * Resolves the WhatsApp Send button node while strictly guarding against microphone voice note nodes.
      *
+     * What it does:
+     * Executes [findSendButton] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppDirectSendEngine], [findSendButton]
      * @param root Accessibility tree root.
      * @param pkg Target WhatsApp package identifier.
      * @param windows Optional list of screen windows.
@@ -397,6 +422,16 @@ class WhatsAppDirectSendEngine(
 
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [isInputEmptyOrHint].
+     *
+     * What it does:
+     * Coordinates isInputEmptyOrHint operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppDirectSendEngine]
+     */
 
     private fun isInputEmptyOrHint(node: AccessibilityNodeInfo): Boolean {
         val text = node.text?.toString()?.trim().orEmpty()
@@ -408,6 +443,16 @@ class WhatsAppDirectSendEngine(
         )
         return placeholders.any { text.equals(it, ignoreCase = true) }
     }
+    /**
+     * What it is:
+     * Execution routine for [inputContainsPendingMessage].
+     *
+     * What it does:
+     * Coordinates inputContainsPendingMessage operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppDirectSendEngine]
+     */
 
     private fun inputContainsPendingMessage(node: AccessibilityNodeInfo, pendingMessage: String): Boolean {
         val visible = node.text?.toString().orEmpty().replace("\r\n", "\n").trim()
@@ -419,6 +464,16 @@ class WhatsAppDirectSendEngine(
         if (visible.length >= 10 && expected.contains(visible.take(10))) return true
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [tryResolveContactPicker].
+     *
+     * What it does:
+     * Coordinates tryResolveContactPicker operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppDirectSendEngine]
+     */
 
     private fun tryResolveContactPicker(
         root: AccessibilityNodeInfo,

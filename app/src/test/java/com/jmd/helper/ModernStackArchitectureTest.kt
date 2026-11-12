@@ -1,3 +1,22 @@
+/**
+ * Package: com.jmd.helper
+ * Module: Automated Unit Test Suite
+ *
+ * What it is:
+ * Architecture definition and implementation for [ModernStackArchitectureTest].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for ModernStackArchitectureTest.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.db.room.RoomTypeConverters]
+ * - Models & Entities: [com.jmd.helper.data.model.BackupPayloadDto], [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.RecurrenceType], [com.jmd.helper.data.model.TaskBackupDto]
+ * - Services & Engines: [com.jmd.helper.whatsapp.AccessibilityNodeUtils]
+ * - UI Screens & Components: [androidx.compose.ui.unit.dp]
+ * - Core Security & Utilities: [com.jmd.helper.core.AccessibilityHealthManager]
+ * - Android Framework & Jetpack: [kotlinx.coroutines.flow.flowOf], [kotlinx.coroutines.test.runTest], [kotlinx.serialization.encodeToString], [kotlinx.serialization.json.Json]
+ */
+
 package com.jmd.helper
 
 import android.content.Context
@@ -26,11 +45,14 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Unit test suite verifying the newly implemented architectural components:
- * 1. Kotlinx Serialization (reflection-free JSON roundtrip).
- * 2. Room Type Converters for domain enums.
- * 3. Turbine Coroutine Flow assertion pipeline.
- * 4. MockK mocking framework integration.
+ * What it is:
+ * Unit test suite verifying the newly implemented architectural components: 1.
+ *
+ * What it does:
+ * Kotlinx Serialization (reflection-free JSON roundtrip). 2. Room Type Converters for domain enums. 3. Turbine Coroutine Flow assertion pipeline. 4. MockK mocking framework integration.
+ *
+ * Linked with:
+ * - Architecture: [ModernStackArchitectureTest], [ModernStackArchitectureTest]
  */
 class ModernStackArchitectureTest {
 

@@ -1,19 +1,22 @@
-
-
 /**
  * Package: com.jmd.helper.receiver
- * Module: Broadcast Receivers Layer
+ * Module: Broadcast Receivers Subsystem
  *
- * Listens for exact RTC_WAKEUP alarms triggered by Android AlarmManager for scheduled task tasks.
- * Wakes the device, logs alarm activation, updates task execution state, and enqueues the task ID
- * into [com.jmd.helper.engine.SequentialTaskEngine].
+ * What it is:
+ * Architecture definition and implementation for [TaskAlarmReceiver].
+ *
+ * What it does:
+ * Listens for exact RTC_WAKEUP alarms triggered by Android AlarmManager for scheduled task tasks. Wakes the device, logs alarm activation, updates task execution state, and enqueues the task ID into [com.jmd.helper.engine.SequentialTaskEngine].
  *
  * Linked With:
- * - Scheduler: [com.jmd.helper.scheduler.AlarmScheduler]
- * - Engine: [com.jmd.helper.engine.SequentialTaskEngine]
- * - Repository: [com.jmd.helper.data.repo.AppRepository]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.RecurrenceType], [com.jmd.helper.data.model.ScheduledTask], [com.jmd.helper.data.model.TaskStatus]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.AlarmScheduler]
+ * - Services & Engines: [com.jmd.helper.engine.SequentialTaskEngine]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.AppFileLogger], [com.jmd.helper.core.TaskSafetyManager], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [android.content.BroadcastReceiver]
  */
+
 package com.jmd.helper.receiver
 
 import android.content.BroadcastReceiver
@@ -32,9 +35,26 @@ import com.jmd.helper.engine.SequentialTaskEngine
 import com.jmd.helper.scheduler.AlarmScheduler
 
 /**
+ * What it is:
  * High-priority wakeful receiver dispatched by Android AlarmManager when a scheduled task is due.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [TaskAlarmReceiver].
+ *
+ * Linked with:
+ * - Architecture: [TaskAlarmReceiver], [TaskAlarmReceiver]
  */
 class TaskAlarmReceiver : BroadcastReceiver() {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [TaskAlarmReceiver].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [TaskAlarmReceiver]
+     */
 
     companion object {
         private const val TAG = "TaskAlarmReceiver"
@@ -257,9 +277,14 @@ class TaskAlarmReceiver : BroadcastReceiver() {
     }
 
     /**
-     * Receives wakeful alarm broadcasts from AlarmManager, validates task existence and state,
-     * checks cancellation flags, and enqueues the task ID into [SequentialTaskEngine].
+     * What it is:
+     * Receives wakeful alarm broadcasts from AlarmManager, validates task existence and state, checks cancellation flags, and enqueues the task ID into [SequentialTaskEngine].
      *
+     * What it does:
+     * Executes [onReceive] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskAlarmReceiver], [onReceive]
      * @param context Active Context.
      * @param intent Alarm trigger intent carrying task ID and flags.
      */

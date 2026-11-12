@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper.ui.screen.autoreply
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [AutoReplyCardComponents].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for AutoReplyCardComponents.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.AutoReplyRule], [com.jmd.helper.data.model.ChannelType]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.background], [androidx.compose.foundation.border], [androidx.compose.foundation.clickable]
+ */
+
 package com.jmd.helper.ui.screen.autoreply
 
 import androidx.compose.material.icons.automirrored.filled.*
@@ -32,8 +48,14 @@ import com.jmd.helper.ui.components.GlassInputField
 import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
+ * What it is:
  * Card displaying an auto reply rule with condition summary and action triggers.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [AutoReplyRuleCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [AutoReplyCardComponents], [AutoReplyRuleCard]
  * @param rule The auto reply rule definition to render.
  * @param onToggle Callback triggered when rule activation switch is flipped.
  * @param onEdit Callback triggered to open editor dialog for this rule.
@@ -221,8 +243,14 @@ fun AutoReplyRuleCard(
 
 
 /**
+ * What it is:
  * Anti-rate limit and frequency throttling card managing daily message caps and cooldown intervals per sender.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [AutoReplyLimitsCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [AutoReplyCardComponents], [AutoReplyLimitsCard]
  * @param dailyLimitMode Selected daily quota preset or custom string.
  * @param onDailyLimitModeChanged Callback invoked when daily quota preset changes.
  * @param customDailyLimitText Custom integer limit string when in custom mode.
@@ -407,8 +435,14 @@ fun AutoReplyLimitsCard(
 
 
 /**
- * Template message editor card for crafting response texts with dynamic placeholder chips (e.g. {name}, {time}).
+ * What it is:
+ * Template message editor card for crafting response texts with dynamic placeholder chips (e.g.
  *
+ * What it does:
+ * {name}, {time}).
+ *
+ * Linked with:
+ * - Architecture: [AutoReplyCardComponents], [AutoReplyTemplateCard]
  * @param channel Target channel type (Calls, SMS, WhatsApp).
  * @param callEventType Associated trigger event type.
  * @param replyText Current draft message body.
@@ -481,5 +515,3 @@ fun AutoReplyTemplateCard(
         }
     }
 }
-
-

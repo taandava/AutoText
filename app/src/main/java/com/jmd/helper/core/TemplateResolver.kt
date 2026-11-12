@@ -1,9 +1,17 @@
 /**
  * Package: com.jmd.helper.core
- * Module: Core Task Utilities
+ * Module: Core Security, Invariants & Privacy
  *
+ * What it is:
+ * Architecture definition and implementation for [TemplateResolver].
+ *
+ * What it does:
  * Provides dynamic placeholder substitution for scheduled message drafting and templating.
+ *
+ * Linked With:
+ * - Core Security & Utilities: [java.util.*]
  */
+
 package com.jmd.helper.core
 
 import java.text.SimpleDateFormat
@@ -13,18 +21,26 @@ import java.util.*
 const val DEFAULT_MESSAGE_TEXT = ""
 
 /**
+ * What it is:
  * Dynamic message template token replacer.
  *
+ * What it does:
  * Supports contextual tokens:
- * - Date/Time: `{date}`, `{short_date}`, `{time}`, `{day}`, `{short_day}`, `{day_number}`, `{day_num}`, `{today}`, `{ist_time}`
- * - Recipient: `{name}`, `{first_name}`, `{phone}`, `{recipient_count}`
- * - Contextual: `{event}`, `{greeting}`, `{time_greeting}`, `{namaste}`, `{pranam}`, `{rupee}`, `{currency}`, `{channel}`
+ *
+ * Linked with:
+ * - Architecture: [TemplateResolver], [MessageTemplateResolver]
  */
 object MessageTemplateResolver {
 
     /**
+     * What it is:
      * Resolves all placeholder tokens within a template string.
      *
+     * What it does:
+     * Executes [resolve] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TemplateResolver], [resolve]
      * @param template Raw template text containing token patterns.
      * @param name Recipient's display name (defaults to "there" if blank).
      * @param phone Recipient's phone number or identifier.
@@ -177,7 +193,14 @@ object MessageTemplateResolver {
     }
 
     /**
+     * What it is:
      * Resolves the final SimpleDateFormat pattern based on base format choice, custom pattern, and custom separator.
+     *
+     * What it does:
+     * Executes [resolveEffectiveDatePattern] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TemplateResolver], [resolveEffectiveDatePattern]
      */
     fun resolveEffectiveDatePattern(
         baseFormat: String,

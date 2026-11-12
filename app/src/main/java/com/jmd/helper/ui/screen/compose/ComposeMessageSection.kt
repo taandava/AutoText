@@ -1,3 +1,22 @@
+/**
+ * Package: com.jmd.helper.ui.screen.compose
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [ComposeMessageSection].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for ComposeMessageSection.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.*], [com.jmd.helper.ui.model.*]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.text.style.TextOverflow]
+ * - Core Security & Utilities: [com.jmd.helper.core.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape], [androidx.compose.foundation.text.KeyboardOptions], [androidx.compose.material.icons.Icons]
+ */
+
 package com.jmd.helper.ui.screen.compose
 
 import android.content.*
@@ -30,7 +49,14 @@ import com.jmd.helper.ui.model.*
 import com.jmd.helper.ui.theme.*
 
 /**
+ * What it is:
  * Card managing message recipients, message drafting, and attachments.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [ComposeRecipientsAndMessageCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposeMessageSection], [ComposeRecipientsAndMessageCard]
  * @param messageText Text draft content.
  * @param onMessageTextChange Callback when text is edited.
  * @param onOpenTemplates Callback to open template picker drawer.

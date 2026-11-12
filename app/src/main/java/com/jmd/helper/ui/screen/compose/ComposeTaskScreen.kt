@@ -1,3 +1,23 @@
+/**
+ * Package: com.jmd.helper.ui.screen.compose
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [ComposeTaskScreen].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for ComposeTaskScreen.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.*]
+ * - Models & Entities: [com.jmd.helper.data.model.*], [com.jmd.helper.ui.model.*]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.*]
+ * - Services & Engines: [com.jmd.helper.engine.*], [com.jmd.helper.service.*], [com.jmd.helper.whatsapp.*]
+ * - UI Screens & Components: [androidx.activity.compose.BackHandler], [androidx.activity.compose.rememberLauncherForActivityResult], [androidx.activity.result.contract.ActivityResultContracts], [androidx.compose.ui.Alignment]
+ * - Core Security & Utilities: [android.content.pm.PackageManager], [android.util.Log], [androidx.core.content.ContextCompat], [java.util.*]
+ * - Android Framework & Jetpack: [android.net.Uri], [android.provider.ContactsContract], [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.shape.CircleShape]
+ */
+
 package com.jmd.helper.ui.screen.compose
 
 import android.content.*
@@ -49,9 +69,14 @@ import com.jmd.helper.ui.theme.*
 import com.jmd.helper.whatsapp.*
 
 /**
- * Unified task composition screen providing authoring environments for SMS, WhatsApp direct messages,
- * WhatsApp Status updates, WhatsApp Groups, Phone Calls, Call Simulations, and Reminders.
+ * What it is:
+ * Unified task composition screen providing authoring environments for SMS, WhatsApp direct messages, WhatsApp Status updates, WhatsApp Groups, Phone Calls, Call Simulations, and Reminders.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [ComposeTaskScreen] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposeTaskScreen], [ComposeTaskScreen]
  * @param initialChannel Channel pre-selected upon launching the composer.
  * @param initialMessage Initial text pre-filled into the message body.
  * @param taskToEdit Existing scheduled task if editing; null if drafting a new task.
@@ -92,6 +117,16 @@ fun ComposeTaskScreen(
             taskToEdit?.messageText ?: initialMessage
         )
     }
+    /**
+     * What it is:
+     * Execution routine for [tryAddRecipient].
+     *
+     * What it does:
+     * Coordinates tryAddRecipient operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [ComposeTaskScreen]
+     */
 
     fun tryAddRecipient(name: String, rawPhone: String): Boolean {
         val cleanPhone = rawPhone.trim()

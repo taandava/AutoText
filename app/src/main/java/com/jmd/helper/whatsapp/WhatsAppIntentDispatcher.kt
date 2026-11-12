@@ -1,18 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.whatsapp
- * Module: WhatsApp Task Subsystem
+ * Module: WhatsApp Automation Subsystem
  *
- * Formulates and fires explicit deep link intents (`api.whatsapp.com/send?phone=...` and package-targeted actions)
- * launching WhatsApp or WhatsApp Business chats, groups, and status updates while attaching security metadata.
+ * What it is:
+ * Architecture definition and implementation for [WhatsAppIntentDispatcher].
+ *
+ * What it does:
+ * Formulates and fires explicit deep link intents (`api.whatsapp.com/send?phone=...` and package-targeted actions) launching WhatsApp or WhatsApp Business chats, groups, and status updates while attaching security metadata.
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Sender: [com.jmd.helper.engine.WhatsAppSender]
- * - Package Helper: [com.jmd.helper.core.WhatsAppPackageHelper]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - Core Security & Utilities: [androidx.core.net.toUri], [android.util.Log], [com.jmd.helper.core.AppFileLogger], [com.jmd.helper.core.PhoneNumberNormalizer]
  */
+
 package com.jmd.helper.whatsapp
 
 import android.content.*
@@ -27,18 +28,27 @@ import com.jmd.helper.service.TaskAccessibilityService
 import java.net.URLEncoder
 
 /**
+ * What it is:
  * High-reliability intent launcher for personal and business WhatsApp endpoints.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [WhatsAppIntentDispatcher].
+ *
+ * Linked with:
+ * - Architecture: [WhatsAppIntentDispatcher], [WhatsAppIntentDispatcher]
  */
 object WhatsAppIntentDispatcher {
     private const val TAG = "WhatsAppIntentDisp"
 
     /**
-     * Prepares the accessibility task state and launches WhatsApp/WhatsApp Business
-     * targeting a recipient phone number, group name, or status feed.
+     * What it is:
+     * Prepares the accessibility task state and launches WhatsApp/WhatsApp Business targeting a recipient phone number, group name, or status feed.
      *
-     * Handles text messages, media attachment sharing via `ACTION_SEND`, deep link schemes
-     * (`whatsapp://send` and `https://api.whatsapp.com/send`), and flags for foreground task execution.
+     * What it does:
+     * Handles text messages, media attachment sharing via `ACTION_SEND`, deep link schemes (`whatsapp://send` and `https://api.whatsapp.com/send`), and flags for foreground task execution.
      *
+     * Linked with:
+     * - Architecture: [WhatsAppIntentDispatcher], [launchWhatsApp]
      * @param context Application or activity context used to start activities.
      * @param taskId Unique identifier of the task being processed.
      * @param channel The delivery channel ([ChannelType.WHATSAPP], [ChannelType.WHATSAPP_BUSINESS], [ChannelType.WHATSAPP_GROUP], or status).
@@ -190,9 +200,14 @@ object WhatsAppIntentDispatcher {
         }
 
     /**
-     * Dispatches an intent to open a WhatsApp direct conversation and prepares the
-     * accessibility engine to initiate a voice call.
+     * What it is:
+     * Dispatches an intent to open a WhatsApp direct conversation and prepares the accessibility engine to initiate a voice call.
      *
+     * What it does:
+     * Executes [launchWhatsAppCall] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppIntentDispatcher], [launchWhatsAppCall]
      * @param context Context used to start activities.
      * @param taskId Unique identifier for the calling task.
      * @param channel The WhatsApp channel to target.

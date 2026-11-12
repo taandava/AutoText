@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper.ui.screen.compose
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [ComposeHeaderFooter].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for ComposeHeaderFooter.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.*]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.text.font.FontWeight], [androidx.compose.ui.unit.dp]
+ * - Android Framework & Jetpack: [androidx.compose.material.icons.Icons]
+ */
+
 package com.jmd.helper.ui.screen.compose
 
 import androidx.compose.foundation.layout.*
@@ -16,7 +32,14 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.*
 
 /**
+ * What it is:
  * Top bar header rendering task title, mode indicator, channel badge, and close button.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [ComposeTopHeader] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposeHeaderFooter], [ComposeTopHeader]
  * @param selectedChannel Channel configuration active for this compose session.
  * @param taskToEdit Existing task model if editing; null if drafting a new item.
  * @param onCancel Callback invoked to dismiss draft.
@@ -81,8 +104,14 @@ fun ComposeTopHeader(
 }
 
 /**
+ * What it is:
  * Bottom action bar with Save Task, Cancel, and optional Delete triggers.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [ComposeBottomBar] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposeHeaderFooter], [ComposeBottomBar]
  * @param isEditing True if modifying an existing task; false for new creation.
  * @param onCancel Callback to dismiss the draft.
  * @param onSave Callback to validate and schedule task.

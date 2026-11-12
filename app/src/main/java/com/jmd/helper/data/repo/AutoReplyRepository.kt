@@ -1,18 +1,20 @@
-
-
 /**
  * Package: com.jmd.helper.data.repo
- * Module: Data Access Layer
+ * Module: Application Core Subsystem
  *
- * Governs auto-reply rule configurations, time-window evaluation, keyword pattern matching,
- * per-sender cooldown intervals, and daily reply rate limiting.
+ * What it is:
+ * Architecture definition and implementation for [AutoReplyRepository].
+ *
+ * What it does:
+ * Governs auto-reply rule configurations, time-window evaluation, keyword pattern matching, per-sender cooldown intervals, and daily reply rate limiting.
  *
  * Linked With:
- * - Database: [com.jmd.helper.data.db.DatabaseHelper]
- * - Models: [com.jmd.helper.data.model.AutoReplyRule], [com.jmd.helper.data.model.ChannelType]
- * - Normalizer: [com.jmd.helper.core.PhoneNumberNormalizer]
- * - UI Screens: `AutoReplyScreen`
+ * - Repositories: [android.database.sqlite.SQLiteDatabase], [com.jmd.helper.data.db.DatabaseHelper]
+ * - Models & Entities: [com.jmd.helper.data.model.AutoReplyRule], [com.jmd.helper.data.model.ChannelType]
+ * - Core Security & Utilities: [android.util.Log], [androidx.core.database.sqlite.transaction], [com.jmd.helper.core.PhoneNumberNormalizer], [java.util.*]
+ * - Android Framework & Jetpack: [android.database.Cursor]
  */
+
 package com.jmd.helper.data.repo
 
 import android.content.*
@@ -28,15 +30,28 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
+ * What it is:
  * Repository managing [AutoReplyRule] persistence and sender deduplication history.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AutoReplyRepository].
+ *
+ * Linked with:
+ * - Architecture: [AutoReplyRepository], [AutoReplyRepository]
  */
 class AutoReplyRepository(context: Context) {
 
     private val dbHelper = DatabaseHelper.getInstance(context)
 
     /**
+     * What it is:
      * Inserts or replaces an [AutoReplyRule] in the SQLite database.
      *
+     * What it does:
+     * Executes [insertRule] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AutoReplyRepository], [insertRule]
      * @param rule The rule instance to persist.
      * @return Row ID of the inserted rule, or -1 on error.
      */
@@ -68,8 +83,14 @@ class AutoReplyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Updates an existing [AutoReplyRule] in storage.
      *
+     * What it does:
+     * Executes [updateRule] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AutoReplyRepository], [updateRule]
      * @param rule Modified rule object.
      * @return `true` if update succeeded.
      */
@@ -78,8 +99,14 @@ class AutoReplyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Retrieves all configured [AutoReplyRule] records ordered by ID descending.
      *
+     * What it does:
+     * Executes [getAllRules] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AutoReplyRepository], [getAllRules]
      * @return List of auto-reply rules.
      */
     fun getAllRules(): List<AutoReplyRule> {
@@ -94,8 +121,14 @@ class AutoReplyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Retrieves enabled auto-reply rules, optionally filtered by communication channel.
      *
+     * What it does:
+     * Executes [getEnabledRules] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AutoReplyRepository], [getEnabledRules]
      * @param channel Optional target channel filter.
      * @return List of enabled rules.
      */
@@ -105,8 +138,14 @@ class AutoReplyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Deletes an auto-reply rule and purges its execution history.
      *
+     * What it does:
+     * Executes [deleteRule] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AutoReplyRepository], [deleteRule]
      * @param id The rule identifier.
      * @return `true` if rule was successfully removed.
      */
@@ -121,9 +160,14 @@ class AutoReplyRepository(context: Context) {
     }
 
     /**
-     * Evaluates cooldown intervals and daily reply rate limits to determine whether an auto-reply
-     * is permitted for a given sender number or chat title.
+     * What it is:
+     * Evaluates cooldown intervals and daily reply rate limits to determine whether an auto-reply is permitted for a given sender number or chat title.
      *
+     * What it does:
+     * Executes [canReplyToNumber] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AutoReplyRepository], [canReplyToNumber]
      * @param rule The candidate [AutoReplyRule].
      * @param phone The sender phone number or chat title.
      * @return `true` if reply is allowed; `false` if rate limit or cooldown is active.
@@ -180,8 +224,14 @@ class AutoReplyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Records a successful auto-reply dispatch in the history ledger, updating counters and timestamps.
      *
+     * What it does:
+     * Executes [recordReplySent] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AutoReplyRepository], [recordReplySent]
      * @param ruleId The triggered rule ID.
      * @param phone The recipient phone number or chat title.
      */
@@ -216,6 +266,16 @@ class AutoReplyRepository(context: Context) {
             }
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [cursorToAutoReplyRule].
+     *
+     * What it does:
+     * Coordinates cursorToAutoReplyRule operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AutoReplyRepository]
+     */
 
     private fun cursorToAutoReplyRule(c: Cursor): AutoReplyRule {
         val chanStr = c.getString(c.getColumnIndexOrThrow("channel"))

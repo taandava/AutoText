@@ -1,17 +1,20 @@
-
-
 /**
  * Package: com.jmd.helper.ui.activity
- * Module: UI Reminder & TTS Layer
+ * Module: Application Core Subsystem
  *
- * Fullscreen alarm activity displaying reminder title, notes, and speaking reminder message
- * aloud using Android [TextToSpeech] with snooze and dismiss actions.
+ * What it is:
+ * Architecture definition and implementation for [ReminderAlarmActivity].
+ *
+ * What it does:
+ * Fullscreen alarm activity displaying reminder title, notes, and speaking reminder message aloud using Android [TextToSpeech] with snooze and dismiss actions.
  *
  * Linked With:
- * - Engine: [com.jmd.helper.engine.SequentialTaskEngine]
- * - Screen: `ReminderScreen`
- * - Scheduler: [com.jmd.helper.scheduler.AlarmScheduler]
+ * - Schedulers & Receivers: [android.app.AlarmManager]
+ * - UI Screens & Components: [androidx.activity.ComponentActivity], [androidx.activity.compose.setContent], [com.jmd.helper.ui.screen.ReminderScreen]
+ * - Core Security & Utilities: [android.util.Log], [android.view.WindowManager], [java.util.Locale]
+ * - Android Framework & Jetpack: [android.app.PendingIntent], [android.os.Build], [android.os.Bundle], [android.speech.tts.TextToSpeech]
  */
+
 package com.jmd.helper.ui.activity
 
 import android.app.AlarmManager
@@ -29,7 +32,14 @@ import java.util.Locale
 import com.jmd.helper.ui.screen.ReminderScreen
 
 /**
+ * What it is:
  * Activity presenting audible on-device reminder alarm with Text-to-Speech playback.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [ReminderAlarmActivity].
+ *
+ * Linked with:
+ * - Architecture: [ReminderAlarmActivity], [ReminderAlarmActivity]
  */
 class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
 
@@ -40,6 +50,16 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             finish()
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [onCreate].
+     *
+     * What it does:
+     * Coordinates onCreate operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [ReminderAlarmActivity]
+     */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,8 +104,14 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     }
 
     /**
+     * What it is:
      * TextToSpeech engine initialization callback; immediately speaks the reminder prompt if available.
      *
+     * What it does:
+     * Executes [onInit] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [ReminderAlarmActivity], [onInit]
      * @param status Status code returned by TTS initialization (e.g. [TextToSpeech.SUCCESS]).
      */
     override fun onInit(status: Int) {
@@ -96,8 +122,14 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
     }
 
     /**
+     * What it is:
      * Reschedules this reminder alarm activity to re-trigger after specified minutes interval.
      *
+     * What it does:
+     * Executes [snooze] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [ReminderAlarmActivity], [snooze]
      * @param minutes Delay in minutes before firing alarm again.
      * @param title Header title of the reminder.
      * @param text Detailed reminder body text.
@@ -128,6 +160,16 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
             am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, trigger, pi)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [onDestroy].
+     *
+     * What it does:
+     * Coordinates onDestroy operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [ReminderAlarmActivity]
+     */
 
     override fun onDestroy() {
         window.decorView.removeCallbacks(autoDismissRunnable)
@@ -137,5 +179,3 @@ class ReminderAlarmActivity : ComponentActivity(), TextToSpeech.OnInitListener {
         super.onDestroy()
     }
 }
-
-

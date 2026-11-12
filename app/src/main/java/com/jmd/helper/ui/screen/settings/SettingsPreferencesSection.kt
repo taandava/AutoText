@@ -1,3 +1,19 @@
+/**
+ * Package: com.jmd.helper.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SettingsPreferencesSection].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SettingsPreferencesSection.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.text.font.FontWeight], [androidx.compose.ui.text.input.KeyboardType]
+ * - Core Security & Utilities: [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.clickable], [androidx.compose.foundation.text.KeyboardOptions], [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.filled.Palette]
+ */
+
 package com.jmd.helper.ui.screen.settings
 
 import androidx.compose.foundation.clickable
@@ -21,9 +37,14 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
- * Operational controls for default international dialing prefix, multi-SIM routing,
- * touch coordinate offsets, dispatch delays, and visual application theme.
+ * What it is:
+ * Operational controls for default international dialing prefix, multi-SIM routing, touch coordinate offsets, dispatch delays, and visual application theme.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [SettingsPreferencesCards] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsPreferencesSection], [SettingsPreferencesCards]
  * @param prefs Preferences manager reading and storing configuration flags.
  * @param modifier Optional layout modifier.
  * @param onThemeChanged Callback invoked when active theme selection is changed.

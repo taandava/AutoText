@@ -1,27 +1,28 @@
-
-
 /**
  * Package: com.jmd.helper.data.model
- * Module: Data Models Layer
+ * Module: Application Core Subsystem
  *
- * Defines core immutable data contracts and domain models across the entire Helper ecosystem.
- * Encompasses scheduled tasks, dynamic contact items, campaign configurations, auto-reply rules,
- * execution logs, channel types, and recurrence rules.
+ * What it is:
+ * Architecture definition and implementation for [Models].
+ *
+ * What it does:
+ * Defines core immutable data contracts and domain models across the entire Helper ecosystem. Encompasses scheduled tasks, dynamic contact items, campaign configurations, auto-reply rules, execution logs, channel types, and recurrence rules. `DailyCampaignScreen`
  *
  * Linked With:
- * - Persistence: [com.jmd.helper.data.db.DatabaseHelper]
- * - Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.TaskRepository]
- * - Engines: [com.jmd.helper.engine.SequentialTaskEngine], [com.jmd.helper.engine.ContactIngestionEngine]
- * - UI Screens: `ComposeTaskScreen`, `TasksScreen`,
- *   `DailyCampaignScreen`
+ * - Architecture: Standard application component linkages
  */
+
 package com.jmd.helper.data.model
 
 /**
+ * What it is:
  * Model representing an ingested contact inside the dynamic outreach pool.
  *
- * Tracks individual contact outreach status, last sent timestamps, and dispatch counts
- * across both SMS and WhatsApp channels.
+ * What it does:
+ * Tracks individual contact outreach status, last sent timestamps, and dispatch counts across both SMS and WhatsApp channels.
+ *
+ * Linked with:
+ * - Architecture: [Models], [DynamicContactItem]
  */
 data class DynamicContactItem(
     val id: Long = 0,
@@ -39,6 +40,16 @@ data class DynamicContactItem(
     val waStatus: String = "PENDING",
     val photoUri: String = "",
 )
+/**
+ * What it is:
+ * Component definition for [DailyCampaignConfig].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for DailyCampaignConfig.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 data class DailyCampaignConfig(
     val id: Long = 1,
@@ -54,6 +65,16 @@ data class DailyCampaignConfig(
     val isActive: Boolean = false,
     val lastRunDate: String = "",
 )
+/**
+ * What it is:
+ * Component definition for [IngestionSummary].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for IngestionSummary.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 data class IngestionSummary(
     val contactsScanned: Int = 0,
@@ -64,6 +85,16 @@ data class IngestionSummary(
     val newAdded: Int = 0,
     val totalPoolCount: Int = 0
 )
+/**
+ * What it is:
+ * Component definition for [DynamicPoolStats].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for DynamicPoolStats.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 data class DynamicPoolStats(
     val totalCount: Int = 0,
@@ -72,6 +103,16 @@ data class DynamicPoolStats(
 )
 
 // ==================== COMMUNICATION CHANNEL TYPE ENUMERATION ====================
+/**
+ * What it is:
+ * Component definition for [ChannelType].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for ChannelType.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 enum class ChannelType(val displayName: String, val emoji: String = "") {
     SMS("SMS", "📩"),
@@ -86,6 +127,16 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
     WHATSAPP_BUSINESS_CALL("WA Business Call", "📞💼"),
     CALL_SIMULATION("Call Simulation", "🎭"),
     REMINDER("Reminder", "⏰");
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [Models].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [Models]
+     */
 
     companion object {
         /**
@@ -107,6 +158,16 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
 }
 
 // ==================== EXECUTION LOG DATA MODELS ====================
+/**
+ * What it is:
+ * Component definition for [ExecutionLog].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for ExecutionLog.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 data class ExecutionLog(
     val id: Long = 0,
@@ -121,6 +182,16 @@ data class ExecutionLog(
 )
 
 // ==================== RECIPIENT & CONTACT DATA MODELS ====================
+/**
+ * What it is:
+ * Component definition for [RecipientItem].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for RecipientItem.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 data class RecipientItem(
     val id: Long = 0,
@@ -129,6 +200,16 @@ data class RecipientItem(
     val groupName: String = "General",
     val photoUri: String = ""
 )
+/**
+ * What it is:
+ * Component definition for [WhatsAppContactItem].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for WhatsAppContactItem.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 data class WhatsAppContactItem(
     val name: String,
@@ -137,6 +218,16 @@ data class WhatsAppContactItem(
     val accountType: String = "com.whatsapp",
     val photoUri: String = ""
 )
+/**
+ * What it is:
+ * Component definition for [WhatsAppGroupItem].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for WhatsAppGroupItem.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 data class WhatsAppGroupItem(
     val name: String,
@@ -148,6 +239,16 @@ data class WhatsAppGroupItem(
 )
 
 // ==================== QUICK REPLY RULE DATA MODELS ====================
+/**
+ * What it is:
+ * Component definition for [AutoReplyRule].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for AutoReplyRule.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 data class AutoReplyRule(
     val id: Long = 0,
@@ -171,6 +272,16 @@ data class AutoReplyRule(
 // ==================== CONTACT SEQUENCE STEP DATA MODELS ====================
 
 // ==================== SCHEDULED TASK & RECURRENCE DATA MODELS ====================
+/**
+ * What it is:
+ * Component definition for [RepeatUnit].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for RepeatUnit.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 enum class RepeatUnit(val displayName: String, val singularName: String) {
     SECONDS("Seconds", "Second"),
@@ -179,6 +290,16 @@ enum class RepeatUnit(val displayName: String, val singularName: String) {
     DAYS("Days", "Day"),
     WEEKS("Weeks", "Week"),
     MONTHS("Months", "Month");
+    /**
+     * What it is:
+     * Execution routine for [toRecurrenceType].
+     *
+     * What it does:
+     * Coordinates toRecurrenceType operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [Models]
+     */
 
     fun toRecurrenceType(): RecurrenceType = when (this) {
         SECONDS -> RecurrenceType.REPEAT_SECONDS
@@ -188,6 +309,16 @@ enum class RepeatUnit(val displayName: String, val singularName: String) {
         WEEKS -> RecurrenceType.REPEAT_WEEKS
         MONTHS -> RecurrenceType.REPEAT_MONTHS
     }
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [Models].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [Models]
+     */
 
     companion object {
         fun fromString(str: String?): RepeatUnit {
@@ -204,6 +335,16 @@ enum class RepeatUnit(val displayName: String, val singularName: String) {
         }
     }
 }
+/**
+ * What it is:
+ * Component definition for [RecurrenceType].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for RecurrenceType.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 enum class RecurrenceType(val displayName: String) {
     ONCE("Once"),
@@ -221,6 +362,16 @@ enum class RecurrenceType(val displayName: String) {
     MONTHLY("Monthly"),
     YEARLY("Yearly"),
     CUSTOM_INTERVAL("Custom Interval");
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [Models].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [Models]
+     */
 
     companion object {
         fun fromString(value: String?): RecurrenceType {
@@ -247,6 +398,16 @@ enum class RecurrenceType(val displayName: String) {
         }
     }
 }
+/**
+ * What it is:
+ * Component definition for [TaskStatus].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for TaskStatus.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 enum class TaskStatus(val displayName: String) {
     DRAFT("Draft"),
@@ -276,6 +437,16 @@ enum class TaskStatus(val displayName: String) {
 
     val isPaused: Boolean
         get() = this == PAUSED
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [Models].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [Models]
+     */
 
     companion object {
         fun fromString(value: String?): TaskStatus {
@@ -312,6 +483,16 @@ enum class TaskStatus(val displayName: String) {
         }
     }
 }
+/**
+ * What it is:
+ * Component definition for [ScheduledTask].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for ScheduledTask.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 data class ScheduledTask(
     val id: Long = 0,
@@ -343,6 +524,16 @@ data class ScheduledTask(
 )
 
 // ==================== CHAT PICKER METADATA MODELS ====================
+/**
+ * What it is:
+ * Component definition for [PickedChatType].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for PickedChatType.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 enum class PickedChatType(val displayName: String) {
     INDIVIDUAL("Individual"),
@@ -351,6 +542,16 @@ enum class PickedChatType(val displayName: String) {
     STATUS("Status"),
     CHANNEL("Channel")
 }
+/**
+ * What it is:
+ * Component definition for [PickedChatInfo].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for PickedChatInfo.
+ *
+ * Linked with:
+ * - Component: [Models]
+ */
 
 data class PickedChatInfo(
     val title: String,

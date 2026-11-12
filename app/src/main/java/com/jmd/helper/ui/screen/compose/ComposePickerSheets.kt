@@ -1,3 +1,22 @@
+/**
+ * Package: com.jmd.helper.ui.screen.compose
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [ComposePickerSheets].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for ComposePickerSheets.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.*]
+ * - Models & Entities: [com.jmd.helper.data.model.*], [com.jmd.helper.ui.model.*]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService], [com.jmd.helper.engine.*], [com.jmd.helper.whatsapp.*]
+ * - UI Screens & Components: [androidx.activity.compose.rememberLauncherForActivityResult], [androidx.activity.result.contract.ActivityResultContracts], [androidx.compose.ui.text.style.TextAlign], [androidx.compose.ui.Alignment]
+ * - Core Security & Utilities: [android.content.pm.PackageManager], [android.util.Log], [androidx.core.content.ContextCompat], [com.jmd.helper.core.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.lazy.items], [androidx.compose.foundation.lazy.itemsIndexed], [androidx.compose.foundation.shape.CircleShape]
+ */
+
 package com.jmd.helper.ui.screen.compose
 
 import android.content.*
@@ -40,10 +59,27 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.model.*
 import com.jmd.helper.ui.theme.*
 import com.jmd.helper.whatsapp.*
+/**
+ * What it is:
+ * Execution routine for [isSamePhoneNumber].
+ *
+ * What it does:
+ * Coordinates isSamePhoneNumber operations conforming to application constraints.
+ *
+ * Linked with:
+ * - Component: [ComposePickerSheets]
+ */
 
 fun isSamePhoneNumber(p1: String, p2: String): Boolean = PhoneNumberNormalizer.isSamePhoneNumber(p1, p2)
 /**
+ * What it is:
  * Contact pool picker bottom sheet modal.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [ContactPoolPickerSheet] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposePickerSheets], [ContactPoolPickerSheet]
  * @param onAddRecipient Callback invoked to validate and add a contact.
  * @param onCommitRecipients Optional callback committing updated selection batch.
  * @param onDismiss Callback to dismiss contact pool modal.
@@ -69,10 +105,30 @@ fun ContactPoolPickerSheet(
             selectedRecipients.forEach { put(it.phone, it) }
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [isContactSelected].
+     *
+     * What it does:
+     * Coordinates isContactSelected operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [ComposePickerSheets]
+     */
 
     fun isContactSelected(phone: String): Boolean {
         return selectedRecipientsMap.containsKey(phone) || selectedRecipientsMap.keys.any { isSamePhoneNumber(it, phone) }
     }
+    /**
+     * What it is:
+     * Execution routine for [toggleContact].
+     *
+     * What it does:
+     * Coordinates toggleContact operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [ComposePickerSheets]
+     */
 
     fun toggleContact(name: String, phone: String, isCurrentlySelected: Boolean) {
         if (isCurrentlySelected) {
@@ -385,8 +441,14 @@ fun ContactPoolPickerSheet(
 }
 
 /**
+ * What it is:
  * Modal bottom sheet allowing users to multi-select contacts for WhatsApp or WhatsApp Business direct messaging and calling.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [WhatsAppContactsPickerSheet] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposePickerSheets], [WhatsAppContactsPickerSheet]
  * @param repository Data repository reading stored contacts and sync state.
  * @param selectedRecipients Current list of selected recipients.
  * @param selectedChannel Channel configuration (WHATSAPP, WHATSAPP_BUSINESS, etc.).
@@ -457,6 +519,16 @@ fun WhatsAppContactsPickerSheet(
             selectedRecipients.forEach { put(it.phone, it) }
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [isContactSelected].
+     *
+     * What it does:
+     * Coordinates isContactSelected operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [ComposePickerSheets]
+     */
 
     fun isContactSelected(phone: String): Boolean {
         if (phone.startsWith("group:", ignoreCase = true)) {
@@ -464,6 +536,16 @@ fun WhatsAppContactsPickerSheet(
         }
         return selectedRecipientsMap.containsKey(phone) || selectedRecipientsMap.keys.any { isSamePhoneNumber(it, phone) }
     }
+    /**
+     * What it is:
+     * Execution routine for [toggleContact].
+     *
+     * What it does:
+     * Coordinates toggleContact operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [ComposePickerSheets]
+     */
 
     fun toggleContact(name: String, phone: String, isCurrentlySelected: Boolean) {
         if (isCalling && (phone.startsWith("group:") || phone.filter { it.isDigit() }.length < 7)) {
@@ -823,4 +905,3 @@ fun WhatsAppContactsPickerSheet(
         }
     }
 }
-

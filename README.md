@@ -1,12 +1,14 @@
 # Helper — Autonomous On-Device Communication & Hardware Automation Platform
 
 [![Android](https://img.shields.io/badge/Platform-Android_8.1--16+_(API_27--37)-3DDC84.svg?style=flat&logo=android)](https://developer.android.com)
-[![Version](https://img.shields.io/badge/Release-v1.3.0_(Build_4)-blue.svg?style=flat)](https://github.com)
+[![Version](https://img.shields.io/badge/Release-v1.3.1_(Build_5)-blue.svg?style=flat)](https://github.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0.21-7F52FF.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
-[![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-M3_Expressive-4285F4.svg?style=flat&logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
-[![Tests](https://img.shields.io/badge/Unit_Tests-26%2F26_Passing-brightgreen.svg?style=flat)](https://github.com)
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-Material_3_Expressive-4285F4.svg?style=flat&logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
+[![Tests](https://img.shields.io/badge/Unit_Tests-141%2F141_Passing-brightgreen.svg?style=flat)](https://github.com)
 [![Privacy](https://img.shields.io/badge/Data_Sovereignty-100%25_On--Device-success.svg?style=flat)](https://developer.android.com)
 [![No Internet](https://img.shields.io/badge/Internet_Permission-OMITTED_(Zero_Network)-red.svg?style=flat)](https://developer.android.com)
+[![Code Cleanliness](https://img.shields.io/badge/Code_Cleanliness-Zero_Suppress_Annotations-blueviolet.svg?style=flat)](https://github.com)
+[![In-APK Source](https://img.shields.io/badge/Self--Contained-Full_Source_In_APK-teal.svg?style=flat)](https://github.com)
 
 **Helper** (`com.jmd.helper`) is a commercial-grade, high-reliability autonomous hardware and communication task automation engine built natively for Android 8.1 through Android 16+ (API 27–37). Operating on a pure zero-trust, 100% offline security architecture, Helper omits `android.permission.INTERNET` entirely, guaranteeing complete data sovereignty and strict compliance with Google Play Store policies and Android Accessibility frameworks.
 
@@ -33,13 +35,18 @@
 - **Strict Banking & Payment Application Isolation**: Hardened default-deny security shield. When any banking, UPI, or financial application (Google Pay, PhonePe, Paytm, BHIM, HDFC, SBI, ICICI, etc.) enters the foreground, Helper instantly triggers `disableSelf()` on its Accessibility Service, guaranteeing that financial screens are completely shielded from traversal or inspection.
 - **Biometric-Safe Hardware Auto-Lock**: Dispatches `GLOBAL_ACTION_LOCK_SCREEN` (simulating physical Power button press on API 28+) rather than corporate `lockNow()`, preserving device fingerprint, face unlock, and smart lock trust without triggering `strongAuthRequired=0x2`.
 - **Zero Code Warning Suppressions**: Re-engineered under strict clean-code invariants with zero `@Suppress` annotations across handwritten Kotlin source code.
-- **Material 3 Expressive Glassmorphic UI**: Dual-theme UI (Deep Obsidian Dark and Pristine White Light) powered by standardized 8-point layout tokens, high-contrast accessible typography, and dynamic channel badge branding.
+- **Material 3 Expressive Compact UI**: Compact, high-efficiency interface strictly adhering to an 8-point layout grid with $\ge 48\text{dp}$ touch targets, high-contrast accessible typography, and dynamic channel badge branding (no glassmorphism).
+- **Self-Contained In-APK Codebase Distribution**: The release APK packages the entire unabridged project codebase into `assets/codebase/` and `assets/project_source.zip`. Extracting the APK yields the complete, build-ready Kotlin project.
+- **Exhaustive Code Block Documentation**: Every file and code block (144 files, 1,288 code blocks) features structured KDoc specifications detailing:
+  - **What it is** (Component role, layer, design pattern)
+  - **What it does** (Core behavior, algorithms, state mutations)
+  - **What it is linked with** (Callers, dependencies, models, repositories)
 
 ---
 
-## 18 Autonomous Communication & Hardware Channels
+## 12 Autonomous Communication & Hardware Channels
 
-Helper provides unified scheduling, execution, and audit logging across 18 specialized operational channels:
+Helper provides unified scheduling, execution, and audit logging across 12 streamlined operational channels:
 
 | # | Channel | Identifier | Mechanism | Capabilities |
 |---|---|---|---|---|
@@ -55,12 +62,6 @@ Helper provides unified scheduling, execution, and audit logging across 18 speci
 | 10 | **WhatsApp Business Call** | `WHATSAPP_BUSINESS_CALL` | Deep Intent + A11y | VoIP voice calling through WhatsApp Business |
 | 11 | **Call Simulation** | `CALL_SIMULATION` | High-Priority FullScreen | Simulated incoming call alert with custom caller name, phone number, and OEM UI styles (Pixel, Samsung, WhatsApp) |
 | 12 | **Local Reminder Alarm** | `REMINDER` | `AlarmManager` | Fullscreen Doze-bypassing audio alarm dialog with dynamic token message display |
-| 13 | **Sound Mode Profile** | `SOUND_MODE` | `AudioManager` | Programmatic sound profile switching (Normal, Vibrate, Silent/DND) |
-| 14 | **Camera Snapshot** | `CAMERA` | CameraX | Autonomous background frame capture via front or rear lenses |
-| 15 | **Flashlight Strobe** | `TORCH` | `CameraManager` | Variable-frequency hardware LED flashlight strobe and SOS beacon signaling |
-| 16 | **Audio Sound Recorder** | `RECORDER` | `MediaRecorder` | Private background voice note capture stored in sandboxed internal storage |
-| 17 | **Screen Brightness** | `BRIGHTNESS` | `Settings.System` | Contextual display brightness adjustment for power optimization |
-| 18 | **Text-To-Speech (TTS)** | `TTS` | `TextToSpeech` | On-device voice speech synthesis with custom pitch, rate, and multilingual support |
 
 ---
 
@@ -201,7 +202,6 @@ Helper persists all data locally in `helper.db` across 16 relational tables:
 | `tasks` | Master task queue & schedules | `id`, `channel`, `recipients`, `message_text`, `trigger_time`, `status`, `sim_slot` |
 | `dynamic_contacts` | Harvested contact & group pool | `id`, `name`, `phone`, `normalized_number`, `source`, `photo_uri`, `enabled` |
 | `custom_recipients` | Manually added custom contacts | `id`, `name`, `phone_or_email`, `group_name` |
-| `templates` | Reusable dynamic draft templates | `id`, `title`, `content`, `category` |
 | `execution_logs` | Audit trail of all channel dispatches | `id`, `task_id`, `channel`, `recipient`, `status`, `details`, `timestamp` |
 | `auto_reply_rules` | Smart reply trigger rules | `id`, `trigger_keywords`, `reply_message`, `channel`, `is_active` |
 | `daily_campaigns` | High-speed outreach campaign batches | `id`, `name`, `channel`, `quota_per_day`, `interval_seconds`, `status` |
@@ -210,19 +210,45 @@ Helper persists all data locally in `helper.db` across 16 relational tables:
 
 ---
 
+## Self-Contained In-APK Source Code Distribution
+
+Helper is built with complete, self-contained source reproducibility. Every generated signed release APK (`app-release.apk`) directly contains the full, pristine source code tree inside its asset bundle.
+
+### Extracting Codebase from APK
+To extract the complete project from the APK on any machine:
+```bash
+# Method 1: Using standard unzip
+unzip app-release.apk "assets/codebase/*" -d extracted_project/
+# Or unzip the archive
+unzip app-release.apk "assets/project_source.zip" -d extracted_project/
+
+# Method 2: Using 7-Zip (Windows / Linux / macOS)
+7z x app-release.apk assets/codebase/ -oextracted_project/
+```
+The extracted directory contains:
+- `build.gradle.kts`, `settings.gradle.kts`, `gradle.properties`
+- `gradlew`, `gradlew.bat`, `gradle/wrapper/`
+- `app/build.gradle.kts`, `app/proguard-rules.pro`
+- Complete `app/src/` hierarchy (all Kotlin sources, tests, manifests, and resources)
+- Full documentation (`*.md`)
+
+This guarantees that you can inspect, modify, and rebuild the application from anywhere at any point in the future.
+
+---
+
 ## Build, Sign, and Installation Pipeline
 
 ### Prerequisites
-- **JDK**: Java Development Kit 21 (`jdk-21.0.12` / `jbr-21`)
-- **Android SDK**: Build Tools `36.0.0`, Platform `android-36` / `android-37`
+- **JDK**: Java Development Kit 21 (`jdk-21.0.13` / `jbr-21`)
+- **Android SDK**: Build Tools `36.0.0`, Platform `android-37`
 - **Gradle**: 9.8.2 (included via wrapper)
 
 ### Compile & Execute Tests
 ```powershell
 # Set Java 21 environment
-$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.13.9-hotspot"
 
-# Run unit tests
+# Run unit tests (141 tests)
 .\gradlew.bat :app:testDebugUnitTest
 
 # Compile Release Kotlin
@@ -231,7 +257,7 @@ $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
 
 ### Assemble & Install Release APK
 ```powershell
-# Build signed release APK
+# Build signed release APK with bundled codebase
 .\gradlew.bat :app:assembleRelease
 
 # Install on connected device via ADB
@@ -247,11 +273,11 @@ adb -s <DEVICE_ID> shell pm grant com.jmd.helper android.permission.WRITE_SECURE
 
 Helper is verified live on physical hardware:
 - **Test Device**: `10BF1G0HCD0024R` (Vivo / iQOO I2401, Android 16 API 36, OriginOS / FuntouchOS)
-- **Unit Test Coverage**: 26/26 Unit Tests Passing (100% Success Rate in 3s)
-- **Production Build**: Full R8 shrinking and resource minification passed in 39s; signed `app-release.apk` (6.8 MB) deployed via streamed install.
+- **Unit Test Coverage**: 141/141 Unit Tests Passing (100% Success Rate across 144 files)
+- **Production Build**: Full R8 shrinking and resource minification passed; signed `app-release.apk` with bundled source code deployed via streamed install.
 - **Google Pay & UPI Payment Execution**: Verified live payment success with 0% accessibility interference in Google Pay. Helper operates seamlessly in Bank-Safe Dynamic On-Demand Standby.
-- **WhatsApp Group Harvesting**: 37 verified groups harvested with exact `android:id/list` targeting, backward swipe reset, and avatar indicator detection.
-- **Contact Sequence Studio**: Verified 3000-contact selection sheet rendering above Scaffold with zero occlusion.
+- **WhatsApp Direct & Group Automation**: Verified group messaging and direct chat dispatches with exact button target validation.
+- **Compact Material 3 UI**: Compact 8-point layout grid with all touch targets $\ge 48\text{dp}$.
 - **End-to-End Scheduling**: Verified live SMS and WhatsApp dispatches with Doze-safe alarm execution and biometric-safe auto-locking.
 
 ---

@@ -1,3 +1,20 @@
+/**
+ * Package: com.jmd.helper.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SettingsScreenAssistCard].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SettingsScreenAssistCard.
+ *
+ * Linked With:
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.text.font.FontWeight], [androidx.compose.ui.text.input.KeyboardType]
+ * - Core Security & Utilities: [com.jmd.helper.core.showAppToast], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.text.KeyboardOptions], [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.filled.Lock], [androidx.compose.material.icons.filled.LockOpen]
+ */
+
 package com.jmd.helper.ui.screen.settings
 
 import android.content.Context
@@ -21,8 +38,14 @@ import com.jmd.helper.service.TaskAccessibilityService
 import com.jmd.helper.ui.components.*
 
 /**
+ * What it is:
  * Configuration card managing screen wake, keyguard PIN input, and post-dispatch hardware lock.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [SettingsScreenAssistCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsScreenAssistCard], [SettingsScreenAssistCard]
  * @param context Local context for keyguard and device admin validation.
  * @param prefs Preferences manager storing unlock credentials and auto-lock state.
  * @param modifier Optional layout modifier.
@@ -274,7 +297,14 @@ fun SettingsScreenAssistCard(
 }
 
 /**
+ * What it is:
  * Backward-compatible alias for [SettingsScreenAssistCard].
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [SettingsAutoUnlockCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SettingsScreenAssistCard], [SettingsAutoUnlockCard]
  */
 @Composable
 fun SettingsAutoUnlockCard(
@@ -284,4 +314,3 @@ fun SettingsAutoUnlockCard(
 ) {
     SettingsScreenAssistCard(context, prefs, modifier)
 }
-

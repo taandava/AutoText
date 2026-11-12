@@ -1,16 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.ui.screen
- * Module: UI In-App Documentation Screen Layer
+ * Module: Application Core Subsystem
  *
- * In-app interactive documentation, feature guides, troubleshooting references,
- * and task architecture explanations for users.
+ * What it is:
+ * Architecture definition and implementation for [DocumentationScreen].
+ *
+ * What it does:
+ * In-app interactive documentation, feature guides, troubleshooting references, and task architecture explanations for users.
  *
  * Linked With:
- * - Host: `MainAppHost`
- * - Components: `GlassComponentsKt`
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.text.font.FontFamily], [androidx.compose.ui.text.font.FontWeight]
+ * - Core Security & Utilities: [com.jmd.helper.core.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.lazy.items], [androidx.compose.material.icons.Icons]
  */
+
 package com.jmd.helper.ui.screen
 
 import android.content.*
@@ -35,8 +38,14 @@ import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.theme.*
 
 /**
+ * What it is:
  * Reads bundled markdown documentation asset (`HELPER_FEATURES_AND_LOGIC.md`) from application assets.
  *
+ * What it does:
+ * Executes [readDocumentationAsset] logic in accordance with system and security invariants.
+ *
+ * Linked with:
+ * - Architecture: [DocumentationScreen], [readDocumentationAsset]
  * @param context Active Android [Context].
  * @return Entire markdown document string, or fallback message if asset is unreadable.
  */
@@ -51,9 +60,14 @@ fun readDocumentationAsset(context: Context): String {
 // ----------------- SUB SCREEN: SPECIFICATIONS & LOGIC MANUAL -----------------
 
 /**
- * In-app interactive documentation screen featuring full-text search, topic chapter filters,
- * collapsible section cards, and code block formatting.
+ * What it is:
+ * In-app interactive documentation screen featuring full-text search, topic chapter filters, collapsible section cards, and code block formatting.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [DocumentationView] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DocumentationScreen], [DocumentationView]
  * @param context Active Android [Context].
  * @param onBack Callback invoked when user exits documentation.
  */
@@ -241,5 +255,3 @@ fun DocumentationView(
         }
     }
 }
-
-

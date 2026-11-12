@@ -1,11 +1,21 @@
 /**
  * Package: com.jmd.helper.core.diagnostic
- * Module: Core System Self-Test & Diagnostic Engine
+ * Module: Core Security, Invariants & Privacy
  *
- * Provides a comprehensive, automated self-verification suite that audits all application
- * subsystems, database tables, reactive DAOs, schedulers, notification channels, background
- * workers, system services, and navigation routes with 1-tap automated repair.
+ * What it is:
+ * Architecture definition and implementation for [SystemSelfTestManager].
+ *
+ * What it does:
+ * Provides a comprehensive, automated self-verification suite that audits all application subsystems, database tables, reactive DAOs, schedulers, notification channels, background workers, system services, and navigation routes with 1-tap automated repair.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.db.DatabaseHelper], [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.BackupPayloadDto]
+ * - Schedulers & Receivers: [android.app.AlarmManager], [com.jmd.helper.receiver.HelperDeviceAdminReceiver], [com.jmd.helper.scheduler.AlarmScheduler], [com.jmd.helper.scheduler.DailyCampaignScheduler]
+ * - Core Security & Utilities: [android.app.NotificationManager], [android.content.pm.PackageManager], [android.telephony.SubscriptionManager], [android.util.Log]
+ * - Android Framework & Jetpack: [android.Manifest], [android.os.Build], [kotlinx.coroutines.CancellationException], [kotlinx.coroutines.Dispatchers]
  */
+
 package com.jmd.helper.core.diagnostic
 
 import android.Manifest
@@ -42,7 +52,14 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 /**
+ * What it is:
  * Diagnostic status levels for individual subsystem checks.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [DiagnosticLevel].
+ *
+ * Linked with:
+ * - Architecture: [SystemSelfTestManager], [DiagnosticLevel]
  */
 enum class DiagnosticLevel {
     PASS,
@@ -51,7 +68,14 @@ enum class DiagnosticLevel {
 }
 
 /**
+ * What it is:
  * Detailed report item representing the health and state of a single subsystem.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [DiagnosticResultItem].
+ *
+ * Linked with:
+ * - Architecture: [SystemSelfTestManager], [DiagnosticResultItem]
  */
 data class DiagnosticResultItem(
     val id: String,
@@ -65,7 +89,14 @@ data class DiagnosticResultItem(
 )
 
 /**
+ * What it is:
  * Comprehensive diagnostic report summarizing all system health metrics.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [DiagnosticReport].
+ *
+ * Linked with:
+ * - Architecture: [SystemSelfTestManager], [DiagnosticReport]
  */
 data class DiagnosticReport(
     val timestamp: Long = System.currentTimeMillis(),
@@ -86,7 +117,14 @@ data class DiagnosticReport(
 }
 
 /**
+ * What it is:
  * Automated diagnostic runner and self-healing repair orchestrator for the Helper app.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [SystemSelfTestManager].
+ *
+ * Linked with:
+ * - Architecture: [SystemSelfTestManager], [SystemSelfTestManager]
  */
 object SystemSelfTestManager {
 
@@ -99,8 +137,14 @@ object SystemSelfTestManager {
     }
 
     /**
+     * What it is:
      * Executes all automated subsystem health checks asynchronously on Dispatchers.IO.
      *
+     * What it does:
+     * Executes [runFullDiagnostic] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SystemSelfTestManager], [runFullDiagnostic]
      * @param context Active application context.
      * @return Complete [DiagnosticReport] detailing all pass, warning, and failure states.
      */
@@ -172,8 +216,14 @@ object SystemSelfTestManager {
     }
 
     /**
+     * What it is:
      * Executes automated self-healing routines across all repairable subsystems.
      *
+     * What it does:
+     * Executes [autoFixAll] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SystemSelfTestManager], [autoFixAll]
      * @param context Active application context.
      * @return Fresh [DiagnosticReport] generated immediately following the repair cycle.
      */
@@ -259,6 +309,16 @@ object SystemSelfTestManager {
     // ========================================================================
     // INDIVIDUAL SUBSYSTEM AUDITS
     // ========================================================================
+    /**
+     * What it is:
+     * Execution routine for [checkSqliteDatabase].
+     *
+     * What it does:
+     * Coordinates checkSqliteDatabase operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkSqliteDatabase(context: Context): DiagnosticResultItem {
         return try {
@@ -356,6 +416,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkRoomDatabase].
+     *
+     * What it does:
+     * Coordinates checkRoomDatabase operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkRoomDatabase(context: Context): DiagnosticResultItem {
         return try {
@@ -386,6 +456,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkPreferencesAndDataStore].
+     *
+     * What it does:
+     * Coordinates checkPreferencesAndDataStore operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private suspend fun checkPreferencesAndDataStore(context: Context): DiagnosticResultItem {
         return try {
@@ -418,6 +498,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkNotificationChannels].
+     *
+     * What it does:
+     * Coordinates checkNotificationChannels operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkNotificationChannels(context: Context): DiagnosticResultItem {
         return try {
@@ -483,6 +573,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkAlarmScheduler].
+     *
+     * What it does:
+     * Coordinates checkAlarmScheduler operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkAlarmScheduler(context: Context): DiagnosticResultItem {
         return try {
@@ -545,6 +645,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkWorkManagerAndCampaigns].
+     *
+     * What it does:
+     * Coordinates checkWorkManagerAndCampaigns operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkWorkManagerAndCampaigns(context: Context): DiagnosticResultItem {
         return try {
@@ -576,6 +686,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkAccessibilityService].
+     *
+     * What it does:
+     * Coordinates checkAccessibilityService operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkAccessibilityService(context: Context): DiagnosticResultItem {
         return try {
@@ -628,6 +748,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkDeviceAdmin].
+     *
+     * What it does:
+     * Coordinates checkDeviceAdmin operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkDeviceAdmin(context: Context): DiagnosticResultItem {
         return try {
@@ -667,6 +797,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkTelephonyAndSms].
+     *
+     * What it does:
+     * Coordinates checkTelephonyAndSms operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkTelephonyAndSms(context: Context): DiagnosticResultItem {
         return try {
@@ -717,6 +857,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkWhatsAppIntegration].
+     *
+     * What it does:
+     * Coordinates checkWhatsAppIntegration operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkWhatsAppIntegration(context: Context): DiagnosticResultItem {
         return try {
@@ -756,6 +906,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkJsonBackupEngine].
+     *
+     * What it does:
+     * Coordinates checkJsonBackupEngine operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkJsonBackupEngine(context: Context): DiagnosticResultItem {
         return try {
@@ -803,6 +963,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkBankingShieldAndPrivacy].
+     *
+     * What it does:
+     * Coordinates checkBankingShieldAndPrivacy operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkBankingShieldAndPrivacy(context: Context): DiagnosticResultItem {
         return try {
@@ -833,6 +1003,16 @@ object SystemSelfTestManager {
             )
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [checkNavigationAndScreenRegistry].
+     *
+     * What it does:
+     * Coordinates checkNavigationAndScreenRegistry operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkNavigationAndScreenRegistry(context: Context): DiagnosticResultItem {
         val registeredRoutes = listOf(
@@ -857,6 +1037,16 @@ object SystemSelfTestManager {
             details = registeredRoutes.joinToString { "${it.first} (${it.second})" }
         )
     }
+    /**
+     * What it is:
+     * Execution routine for [checkSystemLogTraces].
+     *
+     * What it does:
+     * Coordinates checkSystemLogTraces operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SystemSelfTestManager]
+     */
 
     private fun checkSystemLogTraces(context: Context): DiagnosticResultItem {
         return try {

@@ -1,7 +1,20 @@
 /**
  * Package: com.jmd.helper.ui.screen.permission
- * Module: UI Permission Center - Privilege Domain Models & Evaluation Logic
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [AppPrivilegeScreen].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for AppPrivilegeScreen.
+ *
+ * Linked With:
+ * - Schedulers & Receivers: [android.app.AlarmManager], [com.jmd.helper.receiver.HelperDeviceAdminReceiver]
+ * - UI Screens & Components: [androidx.compose.ui.graphics.vector.ImageVector]
+ * - Core Security & Utilities: [android.os.PowerManager], [androidx.core.app.NotificationManagerCompat], [androidx.core.net.toUri], [com.jmd.helper.core.AccessibilityHealthManager]
+ * - Android Framework & Jetpack: [android.os.Build], [android.provider.Settings], [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.automirrored.filled.VolumeUp]
  */
+
 package com.jmd.helper.ui.screen.permission
 
 import android.app.AlarmManager
@@ -22,7 +35,14 @@ import com.jmd.helper.core.PermissionManager
 import com.jmd.helper.receiver.HelperDeviceAdminReceiver
 
 /**
+ * What it is:
  * Functional category for organizing system privileges in Permission Center.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [PrivilegeCategory].
+ *
+ * Linked with:
+ * - Architecture: [AppPrivilegeScreen], [PrivilegeCategory]
  */
 enum class PrivilegeCategory(val title: String, val subtitle: String) {
     CORE(
@@ -40,7 +60,14 @@ enum class PrivilegeCategory(val title: String, val subtitle: String) {
 }
 
 /**
+ * What it is:
  * Strongly typed definition of all 8 system privileges managed by Helper.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AppPrivilege].
+ *
+ * Linked with:
+ * - Architecture: [AppPrivilegeScreen], [AppPrivilege]
  */
 enum class AppPrivilege(
     val title: String,
@@ -114,6 +141,16 @@ enum class AppPrivilege(
         category = PrivilegeCategory.COMMUNICATION,
         buttonLabel = "Grant"
     );
+    /**
+     * What it is:
+     * Execution routine for [isGranted].
+     *
+     * What it does:
+     * Coordinates isGranted operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppPrivilegeScreen]
+     */
 
     fun isGranted(context: Context): Boolean = when (this) {
         ACCESSIBILITY -> {
@@ -146,6 +183,16 @@ enum class AppPrivilege(
         }
         NOTIFICATION_POLICY -> PermissionManager.hasNotificationPolicyAccess(context)
     }
+    /**
+     * What it is:
+     * Execution routine for [openSettings].
+     *
+     * What it does:
+     * Coordinates openSettings operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AppPrivilegeScreen]
+     */
 
     fun openSettings(context: Context) {
         when (this) {
@@ -211,4 +258,3 @@ enum class AppPrivilege(
         }
     }
 }
-

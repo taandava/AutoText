@@ -1,19 +1,19 @@
 /**
  * Package: com.jmd.helper.ui.theme
- * Module: UI Theme & Design Tokens Layer
+ * Module: Application Core Subsystem
  *
+ * What it is:
+ * Architecture definition and implementation for [Theme].
+ *
+ * What it does:
  * Defines the Material 3 Expressive Orange Design System:
- * - Brand Orange Palette (#E76F00, #FFB77A, #FFF3E7, #F8E2CF, #563316)
- * - Compact spacing & information density tokens
- * - Full-width layout conventions
- * - M3 Expressive shape scale & typography
- * - System-integrated Light, Dark, and optional Dynamic Color theming
  *
  * Linked With:
- * - Directives: design.md
- * - Activity: [com.jmd.helper.ui.activity.MainActivity]
- * - Components: `GlassComponents.kt` ([com.jmd.helper.ui.components.GlassSurface])
+ * - UI Screens & Components: [androidx.compose.ui.graphics.*], [androidx.compose.ui.platform.LocalContext], [androidx.compose.ui.platform.LocalView], [androidx.compose.ui.text.TextStyle]
+ * - Core Security & Utilities: [androidx.compose.animation.core.*], [androidx.core.view.WindowCompat]
+ * - Android Framework & Jetpack: [android.app.Activity], [android.os.Build], [androidx.compose.foundation.isSystemInDarkTheme], [androidx.compose.foundation.shape.RoundedCornerShape]
  */
+
 package com.jmd.helper.ui.theme
 
 import android.app.Activity
@@ -46,6 +46,16 @@ val AppDesignTokens = Material3DesignTokens
 // ============================================================================
 // 1. BRAND PALETTE (Per design.md Section 5.1)
 // ============================================================================
+/**
+ * What it is:
+ * Component definition for [OrangeBrandPalette].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for OrangeBrandPalette.
+ *
+ * Linked with:
+ * - Component: [Theme]
+ */
 object OrangeBrandPalette {
     val PrimaryBrand = Color(0xFFE76F00)       // Primary brand orange
     val PrimaryLightAccent = Color(0xFFFFB77A) // Light orange accent
@@ -95,8 +105,14 @@ object OrangeBrandPalette {
 }
 
 /**
- * Material 3 Design Tokens for Helper
- * Compact, full-width, responsive, with an expressive Orange brand identity.
+ * What it is:
+ * Material 3 Design Tokens for Helper Compact, full-width, responsive, with an expressive Orange brand identity.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [Material3DesignTokens].
+ *
+ * Linked with:
+ * - Architecture: [Theme], [Material3DesignTokens]
  */
 object Material3DesignTokens {
 
@@ -438,8 +454,14 @@ val LightColorScheme = lightColorScheme(
 )
 
 /**
+ * What it is:
  * Top-level Helper Theme Composable.
+ *
+ * What it does:
  * Supports SYSTEM (default), LIGHT, DARK, and Android 12+ Wallpaper Dynamic Color.
+ *
+ * Linked with:
+ * - Architecture: [Theme], [HelperTheme]
  */
 @Composable
 fun HelperTheme(
@@ -491,14 +513,27 @@ fun HelperTheme(
 }
 
 /**
+ * What it is:
  * Returns true if the active application surface color is dark, independent of OS dark mode.
+ *
+ * What it does:
  * Eliminates theme-mismatch contrast bugs across all screens and custom components.
+ *
+ * Linked with:
+ * - Architecture: [Theme], [isAppDarkTheme]
  */
 @Composable
 fun isAppDarkTheme(): Boolean = MaterialTheme.colorScheme.surface.luminance() < 0.5f
 
 /**
+ * What it is:
  * Universal dynamic semantic color tokens ensuring high contrast legibility in both Light and Dark themes.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AppSemanticColors].
+ *
+ * Linked with:
+ * - Architecture: [Theme], [AppSemanticColors]
  */
 object AppSemanticColors {
     val success: Color
@@ -537,9 +572,14 @@ object AppSemanticColors {
 }
 
 /**
+ * What it is:
  * Universal CSS-Grid & 8-point layout grid tokens for Jetpack Compose.
- * Formulates standard responsive spacing, corner radii, elevation, touch targets,
- * and adaptive layout boundaries across the entire application.
+ *
+ * What it does:
+ * Formulates standard responsive spacing, corner radii, elevation, touch targets, and adaptive layout boundaries across the entire application.
+ *
+ * Linked with:
+ * - Architecture: [Theme], [AppLayoutGrid]
  */
 object AppLayoutGrid {
     // 8-Point Spacing Scale
@@ -577,4 +617,3 @@ object AppLayoutGrid {
     val ElevationMedium = 3.dp
     val ElevationHigh   = 6.dp
 }
-

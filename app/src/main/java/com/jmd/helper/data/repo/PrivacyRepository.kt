@@ -1,10 +1,20 @@
 /**
  * Package: com.jmd.helper.data.repo
- * Module: Privacy & App Visibility Layer
+ * Module: Application Core Subsystem
  *
- * Provides transactional CRUD persistence for per-application privacy configurations
- * in the local SQLite database (`helper.db`).
+ * What it is:
+ * Architecture definition and implementation for [PrivacyRepository].
+ *
+ * What it does:
+ * Provides transactional CRUD persistence for per-application privacy configurations in the local SQLite database (`helper.db`).
+ *
+ * Linked With:
+ * - Repositories: [android.database.sqlite.SQLiteDatabase], [com.jmd.helper.data.db.DatabaseHelper]
+ * - Models & Entities: [com.jmd.helper.data.model.AppPrivacyConfig]
+ * - Core Security & Utilities: [androidx.core.database.sqlite.transaction], [android.util.Log]
+ * - Android Framework & Jetpack: [android.content.ContentValues], [android.database.Cursor]
  */
+
 package com.jmd.helper.data.repo
 
 import android.content.ContentValues
@@ -17,20 +27,43 @@ import com.jmd.helper.data.db.DatabaseHelper
 import com.jmd.helper.data.model.AppPrivacyConfig
 
 /**
+ * What it is:
  * Repository managing relational persistence and retrieval of [AppPrivacyConfig] records.
  *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [PrivacyRepository].
+ *
+ * Linked with:
+ * - Architecture: [PrivacyRepository], [PrivacyRepository]
  * @param context Active Android application context.
  */
 class PrivacyRepository(context: Context) {
 
     private val dbHelper = DatabaseHelper.getInstance(context)
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [PrivacyRepository].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [PrivacyRepository]
+     */
 
     companion object {
         private const val TAG = "PrivacyRepository"
     }
 
     /**
+     * What it is:
      * Retrieves all stored [AppPrivacyConfig] records ordered by app name.
+     *
+     * What it does:
+     * Executes [getAllConfigs] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PrivacyRepository], [getAllConfigs]
      */
     fun getAllConfigs(): List<AppPrivacyConfig> {
         val list = mutableListOf<AppPrivacyConfig>()
@@ -56,7 +89,14 @@ class PrivacyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Retrieves all [AppPrivacyConfig] records where `is_excluded == 1`.
+     *
+     * What it does:
+     * Executes [getExcludedConfigs] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PrivacyRepository], [getExcludedConfigs]
      */
     fun getExcludedConfigs(): List<AppPrivacyConfig> {
         val list = mutableListOf<AppPrivacyConfig>()
@@ -82,7 +122,14 @@ class PrivacyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Retrieves the privacy configuration for a specific package name, or null if not registered.
+     *
+     * What it does:
+     * Executes [getConfigForPackage] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PrivacyRepository], [getConfigForPackage]
      */
     fun getConfigForPackage(packageName: String): AppPrivacyConfig? {
         if (packageName.isBlank()) return null
@@ -108,7 +155,14 @@ class PrivacyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Inserts or updates an individual [AppPrivacyConfig] record atomically.
+     *
+     * What it does:
+     * Executes [saveConfig] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PrivacyRepository], [saveConfig]
      */
     fun saveConfig(config: AppPrivacyConfig): Boolean {
         if (config.packageName.isBlank()) return false
@@ -129,7 +183,14 @@ class PrivacyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Inserts or updates multiple [AppPrivacyConfig] records within a single database transaction.
+     *
+     * What it does:
+     * Executes [saveConfigs] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PrivacyRepository], [saveConfigs]
      */
     fun saveConfigs(configs: List<AppPrivacyConfig>): Boolean {
         if (configs.isEmpty()) return true
@@ -157,7 +218,14 @@ class PrivacyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Deletes a privacy configuration for a given package name.
+     *
+     * What it does:
+     * Executes [deleteConfig] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PrivacyRepository], [deleteConfig]
      */
     fun deleteConfig(packageName: String): Boolean {
         if (packageName.isBlank()) return false
@@ -176,7 +244,14 @@ class PrivacyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Purges all application privacy configurations from the database.
+     *
+     * What it does:
+     * Executes [deleteAllConfigs] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [PrivacyRepository], [deleteAllConfigs]
      */
     fun deleteAllConfigs(): Boolean {
         val db = dbHelper.writableDatabase
@@ -190,8 +265,14 @@ class PrivacyRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Seeds initial default configurations for known banking, payment, and UPI packages.
+     *
+     * What it does:
      * Skips packages that already have persisted records.
+     *
+     * Linked with:
+     * - Architecture: [PrivacyRepository], [seedDefaultBankingConfigs]
      */
     fun seedDefaultBankingConfigs(knownPackages: List<String>) {
         if (knownPackages.isEmpty()) return
@@ -239,6 +320,16 @@ class PrivacyRepository(context: Context) {
             Log.e(TAG, "Error seeding default banking configs", e)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [deriveFriendlyName].
+     *
+     * What it does:
+     * Coordinates deriveFriendlyName operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PrivacyRepository]
+     */
 
     private fun deriveFriendlyName(packageName: String): String {
         val lower = packageName.lowercase()
@@ -286,6 +377,16 @@ class PrivacyRepository(context: Context) {
             else -> packageName.substringAfterLast('.').replaceFirstChar { it.uppercase() }
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [configToContentValues].
+     *
+     * What it does:
+     * Coordinates configToContentValues operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PrivacyRepository]
+     */
 
     private fun configToContentValues(config: AppPrivacyConfig): ContentValues {
         return ContentValues().apply {
@@ -302,6 +403,16 @@ class PrivacyRepository(context: Context) {
             put("updated_at", config.updatedAt)
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [cursorToAppPrivacyConfig].
+     *
+     * What it does:
+     * Coordinates cursorToAppPrivacyConfig operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [PrivacyRepository]
+     */
 
     private fun cursorToAppPrivacyConfig(cursor: Cursor): AppPrivacyConfig {
         return AppPrivacyConfig(
@@ -319,4 +430,3 @@ class PrivacyRepository(context: Context) {
         )
     }
 }
-

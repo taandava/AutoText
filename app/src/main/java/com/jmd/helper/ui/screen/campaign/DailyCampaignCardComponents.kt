@@ -1,3 +1,22 @@
+/**
+ * Package: com.jmd.helper.ui.screen.campaign
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [DailyCampaignCardComponents].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for DailyCampaignCardComponents.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.*]
+ * - Models & Entities: [com.jmd.helper.data.model.*]
+ * - Services & Engines: [com.jmd.helper.engine.*]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Core Security & Utilities: [com.jmd.helper.core.*], [java.util.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape], [androidx.compose.foundation.text.KeyboardOptions], [androidx.compose.material.icons.Icons]
+ */
+
 package com.jmd.helper.ui.screen.campaign
 
 import android.content.*
@@ -33,6 +52,16 @@ import com.jmd.helper.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * What it is:
+ * Jetpack Compose UI component for [ActiveCampaignOverviewCard].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for ActiveCampaignOverviewCard.
+ *
+ * Linked with:
+ * - Component: [DailyCampaignCardComponents]
+ */
 @Composable
 fun ActiveCampaignOverviewCard(
     campaign: DailyCampaignConfig,
@@ -214,8 +243,14 @@ fun ActiveCampaignOverviewCard(
 
 
 /**
+ * What it is:
  * Status and resumption card rendered when a recurring campaign is currently paused.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [PausedCampaignOverviewCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignCardComponents], [PausedCampaignOverviewCard]
  * @param campaign Target campaign configuration data class.
  * @param onResume Callback to reactivate and schedule the paused campaign.
  * @param onConfigure Callback to navigate to campaign configuration settings.
@@ -351,8 +386,14 @@ fun PausedCampaignOverviewCard(
 
 
 /**
+ * What it is:
  * Empty state card displayed when no recurring campaign has been configured, offering channel creation presets.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [DailyCampaignEmptyStateCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignCardComponents], [DailyCampaignEmptyStateCard]
  * @param totalPoolCount Current number of contacts discovered across dynamic device contact pools.
  * @param onSelectChannel Callback receiving channel selection string to create a campaign.
  * @param onSyncPool Callback to trigger phonebook contact scan and synchronization.
@@ -495,8 +536,14 @@ fun DailyCampaignEmptyStateCard(
 
 
 /**
+ * What it is:
  * Channel selection tile rendering branding icon, badge, description, and direct activation action.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [ChannelSelectionCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignCardComponents], [ChannelSelectionCard]
  * @param title Name of the channel (e.g. SMS, WhatsApp, WhatsApp Business).
  * @param badge Status or capability tag displayed on top right.
  * @param description Detailed text explaining channel constraints and behavior.
@@ -561,8 +608,14 @@ fun ChannelSelectionCard(
 }
 
 /**
+ * What it is:
  * Diagnostic card showing WhatsApp Business package installation and accessibility engine readiness.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [WhatsAppBusinessReadinessCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignCardComponents], [WhatsAppBusinessReadinessCard]
  * @param isInstalled True if com.whatsapp.w4b package is discovered on the device.
  * @param isA11yActive True if accessibility task binder is responsive.
  * @param onAutoHeal Callback to trigger accessibility reactivation.
@@ -625,8 +678,14 @@ fun WhatsAppBusinessReadinessCard(
 
 
 /**
+ * What it is:
  * Campaign hero banner card presenting live execution status, contact pool counters, accessibility health, and batch trigger.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [DailyCampaignBannerCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignCardComponents], [DailyCampaignBannerCard]
  * @param isWhatsApp True if this campaign dispatches via WhatsApp or WA Business.
  * @param config Target campaign configuration data class.
  * @param stats Real-time contact pool counts.
@@ -782,8 +841,14 @@ fun DailyCampaignBannerCard(
 
 
 /**
+ * What it is:
  * Configuration card managing message templates, dispatch schedule timing, daily send caps, and SIM routing.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [DailyCampaignConfigCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignCardComponents], [DailyCampaignConfigCard]
  * @param config Target campaign configuration data class.
  * @param isWhatsApp True if campaign is routed via WhatsApp.
  * @param campaignThemeColor Color accent tailored to current campaign medium.
@@ -1209,8 +1274,14 @@ fun DailyCampaignConfigCard(
 
 
 /**
+ * What it is:
  * TRAI Telecom Regulatory Authority quota progress card displaying India's 100 SMS/day limits.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [DailySmsQuotaCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignCardComponents], [DailySmsQuotaCard]
  * @param smsQuota Quota computation metrics containing total dispatched count and remaining allowance.
  * @param modifier Optional layout modifier.
  */
@@ -1271,8 +1342,14 @@ fun DailySmsQuotaCard(
 }
 
 /**
+ * What it is:
  * Compact horizontal banner displaying accessibility task readiness and one-click heal button.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [WhatsAppA11yHealthBar] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignCardComponents], [WhatsAppA11yHealthBar]
  * @param isA11yActive True if accessibility task engine is active.
  * @param onAutoHeal Callback triggered when user taps to restart accessibility service.
  * @param modifier Optional layout modifier.

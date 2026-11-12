@@ -1,3 +1,20 @@
+/**
+ * Package: com.jmd.helper.ui.screen.compose
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [ComposeCallSection].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for ComposeCallSection.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.*], [com.jmd.helper.ui.model.*]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.text.style.TextOverflow]
+ * - Core Security & Utilities: [com.jmd.helper.core.*]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape], [androidx.compose.foundation.text.KeyboardOptions], [androidx.compose.material.icons.Icons]
+ */
+
 package com.jmd.helper.ui.screen.compose
 
 import android.content.*
@@ -28,7 +45,14 @@ import com.jmd.helper.ui.model.*
 import com.jmd.helper.ui.theme.*
 
 /**
+ * What it is:
  * Card managing simulated incoming phone call timing and audio profile.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [ComposeCallSimulationAndSoundCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposeCallSection], [ComposeCallSimulationAndSoundCard]
  * @param onSimulatedCallerNameChange Callback when simulated name changes.
  * @param simulatedCallerNumber Simulated incoming phone number.
  * @param onSimulatedCallerNumberChange Callback when simulated number changes.
@@ -112,7 +136,14 @@ fun ComposeCallSimulationAndSoundCard(
 }
 
 /**
+ * What it is:
  * Backward-compatible alias for [ComposeCallSimulationAndSoundCard].
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [ComposeSimulatedCallAndSoundCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposeCallSection], [ComposeSimulatedCallAndSoundCard]
  */
 @Composable
 fun ComposeSimulatedCallAndSoundCard(
@@ -143,8 +174,14 @@ fun ComposeSimulatedCallAndSoundCard(
 
 
 /**
+ * What it is:
  * Recipient selector and calling policy card for cellular and WhatsApp outbound voice calls.
  *
+ * What it does:
+ * Renders interactive Material 3 UI for [ComposePhoneCallCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [ComposeCallSection], [ComposePhoneCallCard]
  * @param selectedRecipients List of selected target phone numbers.
  * @param duplicateWarning Warning text if a contact is already added.
  * @param onDismissDuplicateWarning Callback to clear warning banner.
@@ -617,4 +654,3 @@ fun ComposePhoneCallCard(
         }
     }
 }
-

@@ -1,18 +1,19 @@
 /**
  * Package: com.jmd.helper.whatsapp
- * Module: WhatsApp Task Subsystem
+ * Module: WhatsApp Automation Subsystem
  *
- * WhatsApp Voice Call engine inspecting the accessibility hierarchy
- * to locate and click the voice call action in personal and business WhatsApp conversations,
- * confirm calling dialogs, and verify VoIP call screen transitions.
+ * What it is:
+ * Architecture definition and implementation for [WhatsAppCallEngine].
+ *
+ * What it does:
+ * WhatsApp Voice Call engine inspecting the accessibility hierarchy to locate and click the voice call action in personal and business WhatsApp conversations, confirm calling dialogs, and verify VoIP call screen transitions.
  *
  * Linked With:
- * - Service: [com.jmd.helper.service.TaskAccessibilityService]
- * - Dispatcher: [com.jmd.helper.whatsapp.WhatsAppIntentDispatcher]
- * - Node Utils: [com.jmd.helper.whatsapp.AccessibilityNodeUtils]
- * - Popup Shield: [com.jmd.helper.whatsapp.PopupShield]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [android.graphics.Rect], [android.view.accessibility.AccessibilityNodeInfo], [android.view.accessibility.AccessibilityWindowInfo]
  */
+
 package com.jmd.helper.whatsapp
 
 import android.accessibilityservice.AccessibilityService
@@ -21,6 +22,16 @@ import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 import com.jmd.helper.core.AppFileLogger
+/**
+ * What it is:
+ * Component definition for [WhatsAppCallEngine].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for WhatsAppCallEngine.
+ *
+ * Linked with:
+ * - Component: [WhatsAppCallEngine]
+ */
 
 class WhatsAppCallEngine(
     private val service: AccessibilityService,
@@ -29,15 +40,28 @@ class WhatsAppCallEngine(
     private var hasAttemptedCallClick = false
 
     /**
+     * What it is:
      * Resets internal dispatch flags for new outgoing call attempts.
+     *
+     * What it does:
+     * Executes [resetState] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppCallEngine], [resetState]
      */
     fun resetState() {
         hasAttemptedCallClick = false
     }
 
     /**
+     * What it is:
      * Inspects active WhatsApp window, taps voice call action, confirms outgoing calling dialogs, and detects VoIP screen.
      *
+     * What it does:
+     * Executes [tryHandleVoiceCall] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppCallEngine], [tryHandleVoiceCall]
      * @param root Accessibility tree root.
      * @param pkg Target WhatsApp package identifier.
      * @param pendingRecipient Recipient phone number or contact title.
@@ -218,8 +242,14 @@ class WhatsAppCallEngine(
     }
 
     /**
-     * Checks for specific call failure dialogs (e.g. "Couldn't place call", "On another call", "Call failed")
-     * and gracefully dismisses them while marking failure.
+     * What it is:
+     * Checks for specific call failure dialogs (e.g.
+     *
+     * What it does:
+     * "Couldn't place call", "On another call", "Call failed") and gracefully dismisses them while marking failure.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppCallEngine], [checkAndHandleCallErrorDialog]
      */
     private fun checkAndHandleCallErrorDialog(
         root: AccessibilityNodeInfo,
@@ -273,6 +303,16 @@ class WhatsAppCallEngine(
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [hasConversationComposer].
+     *
+     * What it does:
+     * Coordinates hasConversationComposer operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppCallEngine]
+     */
 
     private fun hasConversationComposer(root: AccessibilityNodeInfo): Boolean {
         val q = java.util.ArrayDeque<AccessibilityNodeInfo>()
@@ -289,6 +329,16 @@ class WhatsAppCallEngine(
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [isInVoipCallScreen].
+     *
+     * What it does:
+     * Coordinates isInVoipCallScreen operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppCallEngine]
+     */
 
     fun isInVoipCallScreen(
         root: AccessibilityNodeInfo,
@@ -342,8 +392,14 @@ class WhatsAppCallEngine(
     }
 
     /**
+     * What it is:
      * Determines whether the active VoIP call is confirmed connected (answered) rather than still dialing or ringing.
      *
+     * What it does:
+     * Executes [isVoipCallConnected] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppCallEngine], [isVoipCallConnected]
      * @param root Active window root node.
      * @param windows List of window infos from accessibility service.
      * @return True if VoIP call has connected and ongoing conversation timer is active.
@@ -399,8 +455,14 @@ class WhatsAppCallEngine(
     }
 
     /**
-     * Searches across all candidate roots (including alert dialogs, bottom sheets, popup menus, and permission prompts)
-     * for positive confirmation actions to initiate or allow the voice call.
+     * What it is:
+     * Searches across all candidate roots (including alert dialogs, bottom sheets, popup menus, and permission prompts) for positive confirmation actions to initiate or allow the voice call.
+     *
+     * What it does:
+     * Executes [findCallConfirmationOrPopupAction] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppCallEngine], [findCallConfirmationOrPopupAction]
      */
     private fun findCallConfirmationOrPopupAction(
         candidateRoots: List<AccessibilityNodeInfo>,
@@ -526,6 +588,16 @@ class WhatsAppCallEngine(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [findDiscardVoiceNoteButton].
+     *
+     * What it does:
+     * Coordinates findDiscardVoiceNoteButton operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppCallEngine]
+     */
 
     private fun findDiscardVoiceNoteButton(candidateRoots: List<AccessibilityNodeInfo>): AccessibilityNodeInfo? {
         for (candRoot in candidateRoots) {
@@ -545,6 +617,16 @@ class WhatsAppCallEngine(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [findVoiceCallButton].
+     *
+     * What it does:
+     * Coordinates findVoiceCallButton operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppCallEngine]
+     */
 
     private fun findVoiceCallButton(
         root: AccessibilityNodeInfo,
@@ -563,6 +645,16 @@ class WhatsAppCallEngine(
         }
         return null
     }
+    /**
+     * What it is:
+     * Execution routine for [searchVoiceCallInSubtree].
+     *
+     * What it does:
+     * Coordinates searchVoiceCallInSubtree operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppCallEngine]
+     */
 
     private fun searchVoiceCallInSubtree(root: AccessibilityNodeInfo, pkg: String): AccessibilityNodeInfo? {
         val q = java.util.ArrayDeque<AccessibilityNodeInfo>()
@@ -635,8 +727,14 @@ class WhatsAppCallEngine(
     }
 
     /**
+     * What it is:
      * Traverses display windows to find and tap the WhatsApp End Call button to terminate active voice call.
      *
+     * What it does:
+     * Executes [endCurrentCall] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsAppCallEngine], [endCurrentCall]
      * @param root Accessibility tree root.
      * @param windows Optional list of screen windows.
      * @return True if End Call button was found and clicked.
@@ -672,6 +770,16 @@ class WhatsAppCallEngine(
         }
         return false
     }
+    /**
+     * What it is:
+     * Execution routine for [findEndCallButton].
+     *
+     * What it does:
+     * Coordinates findEndCallButton operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [WhatsAppCallEngine]
+     */
 
     private fun findEndCallButton(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val q = java.util.ArrayDeque<AccessibilityNodeInfo>()

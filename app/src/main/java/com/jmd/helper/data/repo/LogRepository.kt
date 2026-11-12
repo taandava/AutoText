@@ -1,17 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.data.repo
- * Module: Data Repositories Layer
+ * Module: Application Core Subsystem
  *
- * Persists and queries task execution logs for SMS, WhatsApp, and call actions.
- * Maintains execution history with timestamps, delivery status, and failure diagnostics.
+ * What it is:
+ * Architecture definition and implementation for [LogRepository].
+ *
+ * What it does:
+ * Persists and queries task execution logs for SMS, WhatsApp, and call actions. Maintains execution history with timestamps, delivery status, and failure diagnostics.
  *
  * Linked With:
- * - Database: [com.jmd.helper.data.db.DatabaseHelper]
- * - Models: [com.jmd.helper.data.model.ExecutionLog]
- * - UI Screens: `LogsScreen`
+ * - Repositories: [com.jmd.helper.data.db.DatabaseHelper]
+ * - Models & Entities: [com.jmd.helper.data.model.ExecutionLog]
+ * - Android Framework & Jetpack: [android.database.Cursor]
  */
+
 package com.jmd.helper.data.repo
 
 import android.content.*
@@ -20,11 +22,27 @@ import com.jmd.helper.data.db.DatabaseHelper
 import com.jmd.helper.data.model.ExecutionLog
 
 /**
+ * What it is:
  * Repository for logging execution outcomes and querying diagnostic event history.
  *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [LogRepository].
+ *
+ * Linked with:
+ * - Architecture: [LogRepository], [LogRepository]
  * @param context Application context.
  */
 class LogRepository(private val context: Context) {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [LogRepository].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [LogRepository]
+     */
 
     companion object {
         private const val TAG = "LogRepository"
@@ -36,10 +54,14 @@ class LogRepository(private val context: Context) {
     private val dbHelper = DatabaseHelper.getInstance(context)
 
     /**
-     * Enforces rolling log retention policy:
-     * 1. Removes records older than [maxAgeDays] (default 45 days).
-     * 2. Caps maximum total log rows to [maxCount] (default 5,000 entries).
+     * What it is:
+     * Enforces rolling log retention policy: 1.
      *
+     * What it does:
+     * Removes records older than [maxAgeDays] (default 45 days). 2. Caps maximum total log rows to [maxCount] (default 5,000 entries).
+     *
+     * Linked with:
+     * - Architecture: [LogRepository], [pruneOldLogs]
      * @param maxCount Maximum number of recent log entries to retain.
      * @param maxAgeDays Maximum age of logs in days before eviction.
      * @return Number of pruned historical log records.
@@ -66,8 +88,14 @@ class LogRepository(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Persists an execution diagnostic event with channel, recipient, status, and SMS part count.
      *
+     * What it does:
+     * Executes [logExecution] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [LogRepository], [logExecution]
      * @param taskId Associated task ID (0 if autonomous auto-reply or campaign).
      * @param channel Channel name string.
      * @param recipient Target destination phone or contact string.
@@ -109,8 +137,14 @@ class LogRepository(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Inserts an [ExecutionLog] entity instance into the database.
      *
+     * What it does:
+     * Executes [insertLog] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [LogRepository], [insertLog]
      * @param log The log model.
      * @return Generated database row ID.
      */
@@ -138,8 +172,14 @@ class LogRepository(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Queries all recorded execution logs up to [limit] ordered by timestamp descending.
      *
+     * What it does:
+     * Executes [getAllLogs] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [LogRepository], [getAllLogs]
      * @param limit Maximum rows to return (default 200).
      * @return List of [ExecutionLog] entries.
      */
@@ -156,8 +196,14 @@ class LogRepository(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Queries logs generated during the current calendar day.
      *
+     * What it does:
+     * Executes [getLogsForToday] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [LogRepository], [getLogsForToday]
      * @return Today's [ExecutionLog] events.
      */
     fun getLogsForToday(): List<ExecutionLog> {
@@ -180,12 +226,29 @@ class LogRepository(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Purges all recorded execution logs from the database table.
+     *
+     * What it does:
+     * Executes [clearAllLogs] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [LogRepository], [clearAllLogs]
      */
     fun clearAllLogs() {
         val db = dbHelper.writableDatabase
         db.delete(DatabaseHelper.TABLE_LOGS, null, null)
     }
+    /**
+     * What it is:
+     * Execution routine for [cursorToLog].
+     *
+     * What it does:
+     * Coordinates cursorToLog operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [LogRepository]
+     */
 
     private fun cursorToLog(c: Cursor): ExecutionLog {
         val segIdx = c.getColumnIndex("segments")

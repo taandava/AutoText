@@ -1,19 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.data.db
- * Module: Data Persistence Layer
+ * Module: Application Core Subsystem
  *
- * Provides thread-safe SQLite database initialization, schema versioning, transaction isolation,
- * and scheduled schema migrations across database versions 1 through 6.
+ * What it is:
+ * Architecture definition and implementation for [DatabaseHelper].
+ *
+ * What it does:
+ * Provides thread-safe SQLite database initialization, schema versioning, transaction isolation, and scheduled schema migrations across database versions 1 through 6. [com.jmd.helper.data.repo.DailyCampaignRepository], [com.jmd.helper.data.repo.LogRepository], [com.jmd.helper.data.repo.AutoReplyRepository], [com.jmd.helper.data.repo.WhatsAppRepository]
  *
  * Linked With:
- * - Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.TaskRepository],
- *   [com.jmd.helper.data.repo.DailyCampaignRepository], [com.jmd.helper.data.repo.LogRepository],
- *   [com.jmd.helper.data.repo.AutoReplyRepository], [com.jmd.helper.data.repo.WhatsAppRepository]
- * - Engines: [com.jmd.helper.engine.SequentialTaskEngine], [com.jmd.helper.engine.ContactIngestionEngine]
- * - Schedulers: [com.jmd.helper.scheduler.DailyCampaignWorker], [com.jmd.helper.scheduler.AlarmScheduler]
+ * - Repositories: [android.database.sqlite.SQLiteDatabase]
+ * - Core Security & Utilities: [android.util.Log]
+ * - Android Framework & Jetpack: [android.database.sqlite.SQLiteOpenHelper]
  */
+
 package com.jmd.helper.data.db
 
 import android.content.*
@@ -22,23 +22,14 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 /**
+ * What it is:
  * Thread-safe SQLite OpenHelper managing all relational persistence tables for Helper.
  *
+ * What it does:
  * Manages 15 relational tables:
- * - tasks: Scheduled task tasks across SMS, WhatsApp, Calls, Reminders, and Sound modes.
- * - recipients: Contact book recipients and metadata.
- * - templates: Quick message templates and dynamic token strings.
- * - auto_reply_rules: Pattern matching rules for scheduled incoming replies.
- * - campaigns / drip_steps: Announcement campaigns and multi-phase drip sequences.
- * - execution_logs: Comprehensive on-device audit logs for every task attempt.
- * - dynamic_contact_pool: Ingested contact pool for daily outreach campaigns.
- * - daily_campaign_config: Scheduled daily batch dispatch settings and throttle pacing.
- * - auto_reply_history: Duplicate-suppression history for incoming notification auto-replies.
- * - contact_sequences: Multi-step follow-up sequences for individual contacts.
- * - sequence_steps: Individual drip steps belonging to contact follow-up sequences.
- * - whatsapp_groups: WhatsApp and WhatsApp Business group metadata and participant caches.
- * - daily_campaign_sent_ledger: Rolling sent log for daily taskBatch contact deduplication.
- * - task_recipient_deliveries: Per-recipient status tracking for batch dispatches.
+ *
+ * Linked with:
+ * - Architecture: [DatabaseHelper], [DatabaseHelper]
  */
 class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(context.applicationContext, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -53,6 +44,16 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             Log.w(TAG, "Legacy database copy note: ${t.message}")
         }
     }
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [DatabaseHelper].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [DatabaseHelper]
+     */
 
     companion object {
         private const val TAG = "DatabaseHelper"
@@ -94,9 +95,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
     /**
+     * What it is:
      * Configures database connection before schema creation, migrations, or queries.
-     * Enables SQLite Write-Ahead Logging (WAL) for high-concurrency read/write operations
-     * and enforces foreign key relational constraints.
+     *
+     * What it does:
+     * Enables SQLite Write-Ahead Logging (WAL) for high-concurrency read/write operations and enforces foreign key relational constraints.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [onConfigure]
      */
     override fun onConfigure(db: SQLiteDatabase) {
         super.onConfigure(db)
@@ -109,8 +115,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
     /**
+     * What it is:
      * Executes initial schema creation for all 15 relational tables, indices, and seed records.
      *
+     * What it does:
+     * Executes [onCreate] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [onCreate]
      * @param db Target SQLiteDatabase instance.
      */
     override fun onCreate(db: SQLiteDatabase) {
@@ -182,9 +194,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
     /**
+     * What it is:
      * Invoked whenever the database connection is opened.
+     *
+     * What it does:
      * Ensures all dynamic pool tables, supplemental columns, and legacy group row prunings are enforced.
      *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [onOpen]
      * @param db Target SQLiteDatabase instance.
      */
     override fun onOpen(db: SQLiteDatabase) {
@@ -194,8 +211,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
     /**
+     * What it is:
      * Executes non-destructive schema migrations when upgrading across database versions.
      *
+     * What it does:
+     * Executes [onUpgrade] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [onUpgrade]
      * @param db Target SQLiteDatabase instance.
      * @param oldVersion Pre-existing database version number.
      * @param newVersion Target updated database version number.
@@ -210,9 +233,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
     /**
+     * What it is:
      * Deduplicates dynamic contact pool records, group entries, and recipient lists by normalized number.
+     *
+     * What it does:
      * Enforces unique indices to prevent redundant rows from entering tables in future operations.
      *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [deduplicateAllPools]
      * @param db Target SQLiteDatabase instance.
      */
     private fun deduplicateAllPools(db: SQLiteDatabase) {
@@ -255,8 +283,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
     /**
+     * What it is:
      * Handles non-destructive schema adjustments during app downgrades to prevent app crashes.
      *
+     * What it does:
+     * Executes [onDowngrade] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [onDowngrade]
      * @param db Target SQLiteDatabase instance.
      * @param oldVersion Pre-existing higher database version.
      * @param newVersion Target downgraded database version.
@@ -267,9 +301,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
     /**
+     * What it is:
      * Cleanses legacy and corrupted entries from dynamic contact pools and WhatsApp group tables.
+     *
+     * What it does:
      * Removes status text, ephemeral indicators, web links, and individual contacts mistakenly classified as groups.
      *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [pruneLegacyPoolAndGroupRows]
      * @param db Target SQLiteDatabase instance.
      */
     private fun pruneLegacyPoolAndGroupRows(db: SQLiteDatabase) {
@@ -301,8 +340,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
     /**
+     * What it is:
      * Inspects PRAGMA table_info to safely append a column to a table if it does not yet exist.
      *
+     * What it does:
+     * Executes [addColumnIfNotExists] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [addColumnIfNotExists]
      * @param db Target SQLiteDatabase instance.
      * @param table Name of the table to inspect.
      * @param column Name of the column to append if absent.
@@ -331,9 +376,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     }
 
     /**
-     * Initializes and verifies all secondary persistence tables, supplemental feature columns,
-     * seed campaigns, and performance indices across dynamic contact pools and delivery ledgers.
+     * What it is:
+     * Initializes and verifies all secondary persistence tables, supplemental feature columns, seed campaigns, and performance indices across dynamic contact pools and delivery ledgers.
      *
+     * What it does:
+     * Executes [ensureDynamicPoolTables] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [ensureDynamicPoolTables]
      * @param db Target SQLiteDatabase instance.
      */
     private fun ensureDynamicPoolTables(db: SQLiteDatabase) {

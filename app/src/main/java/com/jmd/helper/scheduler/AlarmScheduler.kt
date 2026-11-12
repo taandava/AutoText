@@ -1,19 +1,21 @@
-
-
 /**
  * Package: com.jmd.helper.scheduler
- * Module: Alarm Scheduling Layer
+ * Module: Schedulers & Background Workers
  *
- * Configures exact RTC_WAKEUP alarms with Android AlarmManager across API versions (API 26 through API 36+),
- * strictly verifying [AlarmManager.canScheduleExactAlarms] on Android 12+ (API 31+) and falling back
- * to inexact windowed alarms when exact alarm privileges are restricted.
+ * What it is:
+ * Architecture definition and implementation for [AlarmScheduler].
+ *
+ * What it does:
+ * Configures exact RTC_WAKEUP alarms with Android AlarmManager across API versions (API 26 through API 36+), strictly verifying [AlarmManager.canScheduleExactAlarms] on Android 12+ (API 31+) and falling back to inexact windowed alarms when exact alarm privileges are restricted.
  *
  * Linked With:
- * - Receiver: [com.jmd.helper.receiver.TaskAlarmReceiver]
- * - Engine: [com.jmd.helper.engine.SequentialTaskEngine]
- * - Repository: [com.jmd.helper.data.repo.AppRepository]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.RecurrenceType], [com.jmd.helper.data.model.ScheduledTask], [com.jmd.helper.data.model.TaskStatus]
+ * - Schedulers & Receivers: [android.app.AlarmManager], [android.provider.AlarmClock], [com.jmd.helper.receiver.TaskAlarmReceiver]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.AppFileLogger], [com.jmd.helper.core.TaskSafetyManager], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [android.app.PendingIntent], [android.os.Build]
  */
+
 package com.jmd.helper.scheduler
 
 import android.app.AlarmManager
@@ -35,7 +37,14 @@ import com.jmd.helper.receiver.TaskAlarmReceiver
 import java.util.Calendar
 
 /**
+ * What it is:
  * Manages exact alarm registration, cancellation, and recurrence calculations.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AlarmScheduler].
+ *
+ * Linked with:
+ * - Architecture: [AlarmScheduler], [AlarmScheduler]
  */
 class AlarmScheduler(private val context: Context) {
 
@@ -43,15 +52,38 @@ class AlarmScheduler(private val context: Context) {
         ?: (context.getSystemService(AlarmManager::class.java))
 
     // --- 1-word / 2-word shortened function aliases ---
+    /**
+     * What it is:
+     * Execution routine for [schedule].
+     *
+     * What it does:
+     * Coordinates schedule operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AlarmScheduler]
+     */
     fun schedule(task: ScheduledTask) = scheduleTask(task)
+    /**
+     * What it is:
+     * Execution routine for [cancel].
+     *
+     * What it does:
+     * Coordinates cancel operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [AlarmScheduler]
+     */
     fun cancel(taskId: Long) = cancelTask(taskId)
 
     /**
+     * What it is:
      * Schedules a task for exact or windowed execution using Android's [AlarmManager].
-     * Checks [AlarmManager.canScheduleExactAlarms] on Android 12+ (API 31+) and falls back
-     * to `setAndAllowWhileIdle` if exact alarm scheduling is not granted by the user.
-     * For [ChannelType.REMINDER], registers an alarm clock with the system clock app.
      *
+     * What it does:
+     * Checks [AlarmManager.canScheduleExactAlarms] on Android 12+ (API 31+) and falls back to `setAndAllowWhileIdle` if exact alarm scheduling is not granted by the user. For [ChannelType.REMINDER], registers an alarm clock with the system clock app.
+     *
+     * Linked with:
+     * - Architecture: [AlarmScheduler], [scheduleTask]
      * @param task [ScheduledTask] configuration to schedule.
      */
     fun scheduleTask(task: ScheduledTask) {
@@ -131,11 +163,14 @@ class AlarmScheduler(private val context: Context) {
     }
 
     /**
-     * Integrates with Android's system clock app using [AlarmClock.ACTION_SET_ALARM]
-     * to set an audible device-level alarm for [ChannelType.REMINDER] tasks.
-     * Uses a unique, task-specific label pattern to prevent colliding with or dismissing
-     * unrelated personal alarms.
+     * What it is:
+     * Integrates with Android's system clock app using [AlarmClock.ACTION_SET_ALARM] to set an audible device-level alarm for [ChannelType.REMINDER] tasks.
      *
+     * What it does:
+     * Uses a unique, task-specific label pattern to prevent colliding with or dismissing unrelated personal alarms.
+     *
+     * Linked with:
+     * - Architecture: [AlarmScheduler], [setDeviceSystemAlarm]
      * @param task Reminder task configuration.
      */
     fun setDeviceSystemAlarm(task: ScheduledTask) {
@@ -143,10 +178,14 @@ class AlarmScheduler(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Dismisses the device-level system alarm from Android's system clock app using [AlarmClock.ACTION_DISMISS_ALARM].
-     * Specifically matches ONLY the exact unique label set for this task (`Helper #<id>: ...`)
-     * using [AlarmClock.ALARM_SEARCH_MODE_LABEL], strictly preserving all other user-configured alarms.
      *
+     * What it does:
+     * Specifically matches ONLY the exact unique label set for this task (`Helper #<id>: ...`) using [AlarmClock.ALARM_SEARCH_MODE_LABEL], strictly preserving all other user-configured alarms.
+     *
+     * Linked with:
+     * - Architecture: [AlarmScheduler], [dismissDeviceSystemAlarm]
      * @param task Target reminder task to dismiss from system clock.
      */
     fun dismissDeviceSystemAlarm(task: ScheduledTask) {
@@ -154,9 +193,14 @@ class AlarmScheduler(private val context: Context) {
     }
 
     /**
-     * Cancels any pending [AlarmManager] alarms associated with the specified task ID,
-     * and if the task is a [ChannelType.REMINDER], dismisses its corresponding system clock alarm.
+     * What it is:
+     * Cancels any pending [AlarmManager] alarms associated with the specified task ID, and if the task is a [ChannelType.REMINDER], dismisses its corresponding system clock alarm.
      *
+     * What it does:
+     * Executes [cancelTask] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AlarmScheduler], [cancelTask]
      * @param taskId Unique identifier of the task to cancel.
      * @param task Optional pre-loaded [ScheduledTask] instance (if available).
      */
@@ -190,7 +234,14 @@ class AlarmScheduler(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Cancels all scheduled alarms for all tasks currently registered in the database.
+     *
+     * What it does:
+     * Executes [cancelAll] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [AlarmScheduler], [cancelAll]
      */
     fun cancelAll() {
         val repository = AppRepository(context)
@@ -202,8 +253,14 @@ class AlarmScheduler(private val context: Context) {
     }
 
     /**
+     * What it is:
      * Scans the database for all pending tasks and re-registers alarms with the [AlarmManager].
+     *
+     * What it does:
      * Invoked after device boot, timezone alterations, or app upgrades.
+     *
+     * Linked with:
+     * - Architecture: [AlarmScheduler], [rescheduleAllPending]
      */
     fun rescheduleAllPending() {
         val repository = AppRepository(context)
@@ -215,6 +272,16 @@ class AlarmScheduler(private val context: Context) {
         }
         AppFileLogger.action(context, TAG, "Rescheduled ${pendingTasks.size} pending tasks across system event")
     }
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [AlarmScheduler].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [AlarmScheduler]
+     */
 
     companion object {
         private const val TAG = "AlarmScheduler"

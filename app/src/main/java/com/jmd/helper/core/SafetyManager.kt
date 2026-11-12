@@ -1,10 +1,22 @@
 /**
  * Package: com.jmd.helper.core
- * Module: Core Task Utilities
+ * Module: Core Security, Invariants & Privacy
  *
- * Provides fail-safe protections and channel-level circuit breakers preventing
- * task execution loops and unintended dispatches.
+ * What it is:
+ * Architecture definition and implementation for [SafetyManager].
+ *
+ * What it does:
+ * Provides fail-safe protections and channel-level circuit breakers preventing task execution loops and unintended dispatches.
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.ExecutionLog], [com.jmd.helper.data.model.ScheduledTask], [com.jmd.helper.data.model.TaskStatus]
+ * - Schedulers & Receivers: [com.jmd.helper.scheduler.AlarmScheduler]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - Core Security & Utilities: [android.app.KeyguardManager], [android.os.PowerManager], [android.util.Log], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [kotlinx.coroutines.CoroutineScope], [kotlinx.coroutines.Dispatchers], [kotlinx.coroutines.SupervisorJob], [kotlinx.coroutines.launch]
  */
+
 package com.jmd.helper.core
 
 import android.app.KeyguardManager
@@ -32,6 +44,16 @@ import java.util.concurrent.atomic.AtomicLong
  * Global task safety manager and circuit breaker.
  */
 typealias SafetyManager = TaskSafetyManager
+/**
+ * What it is:
+ * Component definition for [TaskSafetyManager].
+ *
+ * What it does:
+ * Provides domain logic and lifecycle management for TaskSafetyManager.
+ *
+ * Linked with:
+ * - Component: [SafetyManager]
+ */
 
 object TaskSafetyManager {
 
@@ -76,9 +98,14 @@ object TaskSafetyManager {
     private val safetyScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     /**
+     * What it is:
      * Records a detected human interaction event across the operating system or application.
+     *
+     * What it does:
      * Updates interaction timestamp, signals ongoing task to abort, and auto-postpones upcoming tasks.
      *
+     * Linked with:
+     * - Architecture: [SafetyManager], [recordHumanInteraction]
      * @param context Active Android [Context].
      * @param reason Human-readable description of detected interaction.
      */
@@ -117,12 +144,14 @@ object TaskSafetyManager {
     }
 
     /**
+     * What it is:
      * Evaluates whether the device is currently idle and safe for scheduled task execution.
-     * Device is considered idle if:
-     * 1. Screen is turned off (PowerManager.isInteractive == false), OR
-     * 2. Keyguard is locked (KeyguardManager.isKeyguardLocked == true), OR
-     * 3. No human interaction has occurred for at least [USER_IDLE_COOLDOWN_MS] (10s).
      *
+     * What it does:
+     * Device is considered idle if: 1. Screen is turned off (PowerManager.isInteractive == false), OR 2. Keyguard is locked (KeyguardManager.isKeyguardLocked == true), OR 3. No human interaction has occurred for at least [USER_IDLE_COOLDOWN_MS] (10s).
+     *
+     * Linked with:
+     * - Architecture: [SafetyManager], [isDeviceIdle]
      * @param context Active Android [Context].
      * @return True if device is idle; false if human is actively using the device.
      */
@@ -149,8 +178,14 @@ object TaskSafetyManager {
     }
 
     /**
+     * What it is:
      * Postpones a specific task by ID and reschedules its system alarm.
      *
+     * What it does:
+     * Executes [postponeTask] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SafetyManager], [postponeTask]
      * @param context Active Android [Context].
      * @param taskId Unique identifier of the task.
      * @param postponeMillis Duration in milliseconds to postpone (defaults to 30s).
@@ -190,8 +225,14 @@ object TaskSafetyManager {
     }
 
     /**
+     * What it is:
      * Postpones all pending tasks due within the postponement window.
      *
+     * What it does:
+     * Executes [postponeUpcomingTasks] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SafetyManager], [postponeUpcomingTasks]
      * @param context Active Android [Context].
      * @param postponeMillis Duration in milliseconds to postpone.
      * @param reason Human-readable justification.
@@ -227,8 +268,14 @@ object TaskSafetyManager {
     }
 
     /**
+     * What it is:
      * Resets all channel circuit breakers and interaction state, restoring normal operation.
      *
+     * What it does:
+     * Executes [resetSafeguards] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SafetyManager], [resetSafeguards]
      * @param context Active Android [Context] (optional, used for logging and user feedback).
      */
     fun resetSafeguards(context: Context? = null) {
@@ -251,9 +298,14 @@ object TaskSafetyManager {
     }
 
     /**
-     * Records an execution failure for a given channel, incrementing failure counter and tripping
-     * circuit breaker if threshold is exceeded.
+     * What it is:
+     * Records an execution failure for a given channel, incrementing failure counter and tripping circuit breaker if threshold is exceeded.
      *
+     * What it does:
+     * Executes [recordFailure] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SafetyManager], [recordFailure]
      * @param channel The failing [ChannelType].
      * @param context Active Android [Context] for toast alerts and file logging.
      */
@@ -274,8 +326,14 @@ object TaskSafetyManager {
     }
 
     /**
+     * What it is:
      * Records a successful execution for a given channel, resetting its failure counter and circuit breaker.
      *
+     * What it does:
+     * Executes [recordSuccess] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SafetyManager], [recordSuccess]
      * @param channel The successful [ChannelType].
      */
     fun recordSuccess(channel: ChannelType) {
@@ -285,9 +343,14 @@ object TaskSafetyManager {
     }
 
     /**
+     * What it is:
      * Determines whether the circuit breaker for a channel is currently tripped.
+     *
+     * What it does:
      * Directly clears the trip flag if the cooldown interval has elapsed.
      *
+     * Linked with:
+     * - Architecture: [SafetyManager], [isCircuitBreakerTripped]
      * @param channel Target [ChannelType].
      * @return True if tripped (preventing scheduled dispatch), false otherwise.
      */
@@ -306,8 +369,14 @@ object TaskSafetyManager {
     }
 
     /**
+     * What it is:
      * Pre-flight gatekeeper verifying whether a channel is eligible to execute.
      *
+     * What it does:
+     * Executes [canExecute] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [SafetyManager], [canExecute]
      * @param channel Target [ChannelType].
      * @return True if safe to proceed, false if circuit breaker is tripped.
      */

@@ -1,3 +1,18 @@
+/**
+ * Package: com.jmd.helper.data.prefs
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [EncryptedKeyguardStore].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for EncryptedKeyguardStore.
+ *
+ * Linked With:
+ * - Core Security & Utilities: [android.util.Base64], [androidx.core.content.edit], [com.jmd.helper.core.AppFileLogger]
+ * - Android Framework & Jetpack: [android.content.SharedPreferences], [android.security.keystore.KeyGenParameterSpec], [android.security.keystore.KeyProperties]
+ */
+
 package com.jmd.helper.data.prefs
 
 import android.content.Context
@@ -14,8 +29,14 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 /**
+ * What it is:
  * Hardware-backed encrypted credential store using Android Keystore and AES-256-GCM.
+ *
+ * What it does:
  * Stores sensitive screen assist PINs and fallback authentication credentials in hardware keystore.
+ *
+ * Linked with:
+ * - Architecture: [EncryptedKeyguardStore], [EncryptedKeyguardStore]
  */
 class EncryptedKeyguardStore(context: Context) {
 
@@ -31,6 +52,16 @@ class EncryptedKeyguardStore(context: Context) {
         prefs = targetContext.getSharedPreferences(STORAGE_PREFS_NAME, Context.MODE_PRIVATE)
         ensureMasterKey()
     }
+    /**
+     * What it is:
+     * Execution routine for [ensureMasterKey].
+     *
+     * What it does:
+     * Coordinates ensureMasterKey operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [EncryptedKeyguardStore]
+     */
 
     private fun ensureMasterKey() {
         try {
@@ -52,6 +83,16 @@ class EncryptedKeyguardStore(context: Context) {
             AppFileLogger.w("EncryptedKeyguardStore", "Keystore initialization note: ${t.message}")
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [encrypt].
+     *
+     * What it does:
+     * Coordinates encrypt operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [EncryptedKeyguardStore]
+     */
 
     private fun encrypt(plainText: String): String {
         if (plainText.isEmpty()) return ""
@@ -70,6 +111,16 @@ class EncryptedKeyguardStore(context: Context) {
             plainText
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [decrypt].
+     *
+     * What it does:
+     * Coordinates decrypt operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [EncryptedKeyguardStore]
+     */
 
     private fun decrypt(cipherText: String): String {
         if (cipherText.isEmpty()) return ""
@@ -92,7 +143,14 @@ class EncryptedKeyguardStore(context: Context) {
     }
 
     /**
+     * What it is:
      * Stores the user-configured lockscreen security PIN with hardware-backed encryption.
+     *
+     * What it does:
+     * Executes [saveLockscreenPin] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [EncryptedKeyguardStore], [saveLockscreenPin]
      */
     fun saveLockscreenPin(pin: String) {
         val encrypted = encrypt(pin)
@@ -101,7 +159,14 @@ class EncryptedKeyguardStore(context: Context) {
     }
 
     /**
+     * What it is:
      * Retrieves the decrypted lockscreen security PIN.
+     *
+     * What it does:
+     * Executes [getLockscreenPin] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [EncryptedKeyguardStore], [getLockscreenPin]
      */
     fun getLockscreenPin(): String {
         val raw = prefs.getString(KEY_LOCKSCREEN_PIN, "") ?: ""
@@ -109,31 +174,72 @@ class EncryptedKeyguardStore(context: Context) {
     }
 
     /**
+     * What it is:
      * Clears the stored lockscreen security PIN.
+     *
+     * What it does:
+     * Executes [clearLockscreenPin] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [EncryptedKeyguardStore], [clearLockscreenPin]
      */
     fun clearLockscreenPin() {
         prefs.edit { remove(KEY_LOCKSCREEN_PIN) }
     }
 
     /**
+     * What it is:
      * Checks if a security PIN has been set.
+     *
+     * What it does:
+     * Executes [hasLockscreenPin] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [EncryptedKeyguardStore], [hasLockscreenPin]
      */
     fun hasLockscreenPin(): Boolean {
         return getLockscreenPin().isNotBlank()
     }
 
     /**
+     * What it is:
      * Saves the in-app biometric lock fallback authentication credential or salt.
+     *
+     * What it does:
+     * Executes [saveAppLockSecret] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [EncryptedKeyguardStore], [saveAppLockSecret]
      */
     fun saveAppLockSecret(secret: String) {
         val encrypted = encrypt(secret)
         prefs.edit { putString(KEY_APP_LOCK_SECRET, encrypted) }
     }
+    /**
+     * What it is:
+     * Execution routine for [getAppLockSecret].
+     *
+     * What it does:
+     * Coordinates getAppLockSecret operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [EncryptedKeyguardStore]
+     */
 
     fun getAppLockSecret(): String {
         val raw = prefs.getString(KEY_APP_LOCK_SECRET, "") ?: ""
         return decrypt(raw)
     }
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [EncryptedKeyguardStore].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [EncryptedKeyguardStore]
+     */
 
     companion object {
         private const val ANDROID_KEYSTORE = "AndroidKeyStore"

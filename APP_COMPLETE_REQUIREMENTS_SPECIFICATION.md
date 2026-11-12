@@ -319,8 +319,10 @@ Every release candidate must satisfy all of the following quality gates:
 
 1. **Compilation:** Compiles cleanly with zero Kotlin compilation errors across debug and release build variants (`compileDebugKotlin`, `compileReleaseKotlin`).
 2. **Lint & Security:** Release lint passes with zero fatal errors (`lintVitalRelease`).
-3. **Unit Tests:** 100% of unit tests pass (`.\gradlew :app:testDebugUnitTest`, 26/26 tests green).
+3. **Unit Tests:** 100% of unit tests pass (`.\gradlew :app:testDebugUnitTest`, 141/141 tests green).
 4. **Hardware Verification:** Verified on physical test device `10BF1G0HCD0024R` (Vivo / iQOO 13, Android 16 API 36) including live Google Pay payment success and WhatsApp group harvesting.
 5. **Privacy:** Zero network permissions in `AndroidManifest.xml` verified via `aapt dump permissions`.
 6. **Code Standards:** Zero `@Suppress` annotations in handwritten Kotlin code.
 7. **Production Artifact:** Signed `app-release.apk` compiled with full R8 shrinking and minification.
+8. **In-APK Codebase Distribution:** Release APK contains complete pristine source code in `assets/codebase/` and `assets/project_source.zip`.
+9. **Architectural Documentation:** All 144 files and 1,288 code blocks feature structured "What it is", "What it does", and "Linked with" specifications.

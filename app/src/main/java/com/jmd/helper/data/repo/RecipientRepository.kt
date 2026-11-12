@@ -1,16 +1,19 @@
-
-
 /**
  * Package: com.jmd.helper.data.repo
- * Module: Data Repositories Layer
+ * Module: Application Core Subsystem
  *
+ * What it is:
+ * Architecture definition and implementation for [RecipientRepository].
+ *
+ * What it does:
  * Manages saved contacts and grouped recipients used across campaign sequences and ad-hoc task creation.
  *
  * Linked With:
- * - Database: [com.jmd.helper.data.db.DatabaseHelper]
- * - Models: [com.jmd.helper.data.model.RecipientItem]
- * - UI Screens: `ContactsScreen`
+ * - Repositories: [android.database.sqlite.SQLiteDatabase], [com.jmd.helper.data.db.DatabaseHelper]
+ * - Models & Entities: [com.jmd.helper.data.model.RecipientItem]
+ * - Core Security & Utilities: [androidx.core.database.sqlite.transaction]
  */
+
 package com.jmd.helper.data.repo
 
 import android.content.*
@@ -20,8 +23,14 @@ import com.jmd.helper.data.db.DatabaseHelper
 import com.jmd.helper.data.model.RecipientItem
 
 /**
+ * What it is:
  * Repository providing CRUD access to saved recipient contacts and group definitions.
  *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [RecipientRepository].
+ *
+ * Linked with:
+ * - Architecture: [RecipientRepository], [RecipientRepository]
  * @param context Application context.
  */
 class RecipientRepository(context: Context) {
@@ -29,8 +38,14 @@ class RecipientRepository(context: Context) {
     private val dbHelper = DatabaseHelper.getInstance(context)
 
     /**
+     * What it is:
      * Retrieves all saved recipient records sorted alphabetically by contact name.
      *
+     * What it does:
+     * Executes [getAllRecipients] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [RecipientRepository], [getAllRecipients]
      * @return List of [RecipientItem] contacts.
      */
     fun getAllRecipients(): List<RecipientItem> {
@@ -54,8 +69,14 @@ class RecipientRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Inserts or replaces a recipient record in the local database.
      *
+     * What it does:
+     * Executes [insertRecipient] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [RecipientRepository], [insertRecipient]
      * @param recipient The recipient model to persist.
      * @return Row ID of the stored recipient.
      */
@@ -72,8 +93,14 @@ class RecipientRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Updates an existing recipient record in storage.
      *
+     * What it does:
+     * Executes [updateRecipient] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [RecipientRepository], [updateRecipient]
      * @param recipient The modified recipient model.
      * @return `true` if update affected 1 or more rows.
      */
@@ -88,8 +115,14 @@ class RecipientRepository(context: Context) {
     }
 
     /**
+     * What it is:
      * Deletes a recipient record by ID.
      *
+     * What it does:
+     * Executes [deleteRecipient] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [RecipientRepository], [deleteRecipient]
      * @param id The recipient identifier.
      * @return `true` if deletion succeeded.
      */
@@ -97,6 +130,16 @@ class RecipientRepository(context: Context) {
         val db = dbHelper.writableDatabase
         return db.delete(DatabaseHelper.TABLE_RECIPIENTS, "id = ?", arrayOf(id.toString())) > 0
     }
+    /**
+     * What it is:
+     * Execution routine for [bulkInsertRecipients].
+     *
+     * What it does:
+     * Coordinates bulkInsertRecipients operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [RecipientRepository]
+     */
 
     fun bulkInsertRecipients(items: List<RecipientItem>): Int {
         val db = dbHelper.writableDatabase
@@ -115,6 +158,16 @@ class RecipientRepository(context: Context) {
             count
         }
     }
+    /**
+     * What it is:
+     * Execution routine for [importContactsFromCsv].
+     *
+     * What it does:
+     * Coordinates importContactsFromCsv operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [RecipientRepository]
+     */
 
     fun importContactsFromCsv(csvText: String): Int {
         val lines = csvText.lines()
@@ -131,6 +184,16 @@ class RecipientRepository(context: Context) {
         }
         return bulkInsertRecipients(items)
     }
+    /**
+     * What it is:
+     * Execution routine for [exportContactsToCsv].
+     *
+     * What it does:
+     * Coordinates exportContactsToCsv operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [RecipientRepository]
+     */
 
     fun exportContactsToCsv(): String {
         val list = getAllRecipients()

@@ -1,7 +1,19 @@
 /**
  * Package: com.jmd.helper.ui.screen.permission
- * Module: UI Permission Center - Executive Hero System Health Card
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [PermissionHeroCard].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for PermissionHeroCard.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.text.font.FontWeight]
+ * - Core Security & Utilities: [androidx.compose.animation.core.animateFloatAsState], [androidx.compose.material.icons.filled.SecurityUpdateWarning], [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.showAppToast]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.background], [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape]
  */
+
 package com.jmd.helper.ui.screen.permission
 
 import android.content.Context
@@ -38,8 +50,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Executive Material 3 Hero Card presenting real-time system privilege readiness,
- * animated circular health gauge, subsystem status pill indicators, and self-healing controls.
+ * What it is:
+ * Executive Material 3 Hero Card presenting real-time system privilege readiness, animated circular health gauge, subsystem status pill indicators, and self-healing controls.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [PermissionHeroCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [PermissionHeroCard], [PermissionHeroCard]
  */
 @Composable
 fun PermissionHeroCard(
@@ -228,7 +246,14 @@ fun PermissionHeroCard(
 }
 
 /**
+ * What it is:
  * At-a-glance status chip representing a privilege subsystem.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [SubsystemStatusChip] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [PermissionHeroCard], [SubsystemStatusChip]
  */
 @Composable
 private fun SubsystemStatusChip(

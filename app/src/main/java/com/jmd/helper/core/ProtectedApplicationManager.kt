@@ -1,19 +1,19 @@
 /**
  * Package: com.jmd.helper.core
- * Module: Security & Protected Application Isolation Layer
+ * Module: Core Security, Invariants & Privacy
  *
- * Dedicated Protected Application Manager enforcing strict isolation between Helper
- * and banking, UPI, payment, financial authentication, and designated sensitive applications.
+ * What it is:
+ * Architecture definition and implementation for [ProtectedApplicationManager].
  *
- * Enforces Part 8 Invariants:
- * 1. Default-deny policy for all external UI interactions.
- * 2. Only explicitly authorized target applications (WhatsApp, WhatsApp Business, Phone/Dialer, Keyguard) may receive UI actions.
- * 3. Immediate pre-action context verification before every physical tap, click, or text entry.
- * 4. Zero inspection or traversal of protected applications' UI trees or window nodes.
- * 5. Instant cancellation of pending task callbacks when a protected or non-authorized application is encountered.
- * 6. Zero collection of credentials, PINs, OTPs, card details, or screen contents.
- * 7. Zero overlay displays or notification heads-up over protected applications.
+ * What it does:
+ * Dedicated Protected Application Manager enforcing strict isolation between Helper and banking, UPI, payment, financial authentication, and designated sensitive applications. Enforces Part 8 Invariants: 1. Default-deny policy for all external UI interactions. 2. Only explicitly authorized target applications (WhatsApp, WhatsApp Business, Phone/Dialer, Keyguard) may receive UI actions. 3. Immediate pre-action context verification before every physical tap, click, or text entry. 4. Zero inspection or traversal of protected applications' UI trees or window nodes. 5. Instant cancellation of pending task callbacks when a protected or non-authorized application is encountered. 6. Zero collection of credentials, PINs, OTPs, card details, or screen contents. 7. Zero overlay displays or notification heads-up over protected applications.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.ScheduledTask]
+ * - Services & Engines: [com.jmd.helper.service.TaskAccessibilityService]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.data.prefs.PreferenceManager]
  */
+
 package com.jmd.helper.core
 
 import android.content.Context
@@ -24,7 +24,14 @@ import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.service.TaskAccessibilityService
 
 /**
+ * What it is:
  * Dedicated architectural controller guaranteeing absolute isolation of banking and payment apps.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [ProtectedApplicationManager].
+ *
+ * Linked with:
+ * - Architecture: [ProtectedApplicationManager], [ProtectedApplicationManager]
  */
 object ProtectedApplicationManager {
 
@@ -265,7 +272,14 @@ object ProtectedApplicationManager {
     )
 
     /**
+     * What it is:
      * Checks whether a package is a known or user-configured banking/financial application.
+     *
+     * What it does:
+     * Executes [isProtectedPackage] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [ProtectedApplicationManager], [isProtectedPackage]
      */
     fun isProtectedPackage(packageName: String?): Boolean {
         if (packageName.isNullOrBlank()) return false
@@ -294,9 +308,14 @@ object ProtectedApplicationManager {
     }
 
     /**
-     * Enforces the Default-Deny Policy:
-     * Returns true ONLY if the package is in the explicit allowlist of authorized targets.
+     * What it is:
+     * Enforces the Default-Deny Policy: Returns true ONLY if the package is in the explicit allowlist of authorized targets.
+     *
+     * What it does:
      * All other third-party applications, games, browsers, and financial tools are denied.
+     *
+     * Linked with:
+     * - Architecture: [ProtectedApplicationManager], [isAuthorizedTarget]
      */
     fun isAuthorizedTarget(packageName: String?): Boolean {
         if (packageName.isNullOrBlank()) return false
@@ -315,9 +334,14 @@ object ProtectedApplicationManager {
     }
 
     /**
-     * Pre-action context verification:
-     * Immediately verified before every click, gesture, or text entry.
+     * What it is:
+     * Pre-action context verification: Immediately verified before every click, gesture, or text entry.
      *
+     * What it does:
+     * Executes [verifyContextBeforeInteraction] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [ProtectedApplicationManager], [verifyContextBeforeInteraction]
      * @param currentPackage The currently foreground/rendered package.
      * @param expectedTargetPackage The expected authorized target package for the active task.
      * @return `true` if context is safe and authorized; `false` if interaction must be denied.
@@ -359,7 +383,14 @@ object ProtectedApplicationManager {
     }
 
     /**
+     * What it is:
      * Validates whether a scheduled task's channel targets an authorized, safe destination.
+     *
+     * What it does:
+     * Executes [isTaskTargetAuthorized] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [ProtectedApplicationManager], [isTaskTargetAuthorized]
      */
     fun isTaskTargetAuthorized(task: ScheduledTask): Boolean {
         return when (task.channel) {
@@ -379,9 +410,14 @@ object ProtectedApplicationManager {
     }
 
     /**
+     * What it is:
      * Invoked immediately when a protected application is detected in the foreground.
-     * Cancels any pending task callbacks, resets service task state,
-     * logs a privacy-safe masked diagnostic record, and detaches accessibility if on-demand.
+     *
+     * What it does:
+     * Cancels any pending task callbacks, resets service task state, logs a privacy-safe masked diagnostic record, and detaches accessibility if on-demand.
+     *
+     * Linked with:
+     * - Architecture: [ProtectedApplicationManager], [handleProtectedAppEncountered]
      */
     fun handleProtectedAppEncountered(context: Context, detectedPackage: String, source: String) {
         val maskedPkg = PrivacyManager.maskSensitiveText(detectedPackage)
@@ -404,8 +440,14 @@ object ProtectedApplicationManager {
     }
 
     /**
-     * Determines whether floating overlays, notifications, or toasts should be suppressed
-     * over the given package.
+     * What it is:
+     * Determines whether floating overlays, notifications, or toasts should be suppressed over the given package.
+     *
+     * What it does:
+     * Executes [shouldBlockOverlays] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [ProtectedApplicationManager], [shouldBlockOverlays]
      */
     fun shouldBlockOverlays(packageName: String?): Boolean {
         return !packageName.isNullOrBlank() && (isProtectedPackage(packageName) || !isAuthorizedTarget(packageName))

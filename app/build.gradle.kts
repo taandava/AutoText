@@ -96,11 +96,13 @@ android {
     }
 
     val generatedAssetsDir = file("${layout.buildDirectory.get().asFile.path}/generated/assets/sourceZip")
+    val generatedSourceTreeDir = file("${layout.buildDirectory.get().asFile.path}/generated/assets/sourceTree")
 
     sourceSets {
         getByName("main") {
             assets.directories.add("src/main/assets")
             assets.directories.add(generatedAssetsDir.path)
+            assets.directories.add(generatedSourceTreeDir.path)
         }
     }
 
@@ -187,6 +189,39 @@ val bundleProjectSource = tasks.register<Zip>("bundleProjectSource") {
         include("app/build.gradle.kts")
         include("app/proguard-rules.pro")
         include("app/src/**")
+        include("*.md")
+        include("docs/**")
+        exclude("keystore.properties")
+        exclude("app/keystore.properties")
+        exclude("app/release-key.jks")
+        exclude("**/*.jks")
+        exclude("**/*.keystore")
+        exclude("**/local.properties")
+        exclude("**/.env*")
+        exclude("**/build/**")
+        exclude("**/.gradle/**")
+        exclude("**/.kotlin/**")
+        exclude("**/project_source.zip")
+        exclude("**/*.apk")
+    }
+}
+
+val bundleProjectSourceFolder = tasks.register<Sync>("bundleProjectSourceFolder") {
+    description = "Copies the complete project source tree into an assets folder for in-APK source extraction"
+    group = "build"
+    into(layout.buildDirectory.dir("generated/assets/sourceTree/codebase"))
+    from(rootProject.projectDir) {
+        include("build.gradle.kts")
+        include("settings.gradle.kts")
+        include("gradle.properties")
+        include("gradlew")
+        include("gradlew.bat")
+        include("gradle/wrapper/**")
+        include("app/build.gradle.kts")
+        include("app/proguard-rules.pro")
+        include("app/src/**")
+        include("*.md")
+        include("docs/**")
         exclude("keystore.properties")
         exclude("app/keystore.properties")
         exclude("app/release-key.jks")
@@ -221,5 +256,5 @@ afterEvaluate {
 }
 
 tasks.named("preBuild") {
-    dependsOn(bundleProjectSource)
+    dependsOn(bundleProjectSource, bundleProjectSourceFolder)
 }

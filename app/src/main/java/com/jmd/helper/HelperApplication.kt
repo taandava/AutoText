@@ -2,15 +2,24 @@
  * Package: com.jmd.helper
  * Module: Application Root
  *
- * Serves as the central Android Application entry point and orchestrator for Helper.
- * Manages global application lifecycle hooks, notification channels, background alarm
- * reconciliations, accessibility health monitoring, and defensive self-healing routines.
+ * What it is:
+ * Central Android Application entry point and process lifecycle orchestrator for Helper.
  *
- * Features & Architectural Workflow:
- * - Bootstrapping: Initializes application context singletons and registers high-priority notification channels.
- * - Non-blocking Concurrency: Offloads database queries, contact hygiene, and alarm reschedulings to a dedicated daemon thread.
- * - Resilience: Activates periodic accessibility service watchdog heartbeats and self-heals corrupted permission states.
- * - Legacy Migration: Cleans up legacy persistent foreground service notifications directly.
+ * What it does:
+ * - Bootstraps the application process and provides global singleton access.
+ * - Sets up defensive global uncaught crash handler with immediate diagnostic log dumping.
+ * - Creates and registers system-level notification channels for tasks and alarms.
+ * - Enforces accessibility service component enablement and auto-rotation invariance.
+ * - Spawns structured background coroutine to recover interrupted tasks, re-arm pending alarms,
+ *   schedule daily campaigns, and launch the accessibility watchdog heartbeat.
+ *
+ * Linked With:
+ * - Schedulers: [com.jmd.helper.scheduler.AlarmScheduler], [com.jmd.helper.scheduler.DailyCampaignScheduler],
+ *   [com.jmd.helper.scheduler.AccessibilityWatchdogScheduler]
+ * - Receivers: [com.jmd.helper.receiver.TaskAlarmReceiver]
+ * - Core Managers: [com.jmd.helper.core.AccessibilityHealthManager], [com.jmd.helper.core.AppFileLogger]
+ * - Data Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Services: [com.jmd.helper.service.TaskForegroundService]
  */
 package com.jmd.helper
 
@@ -32,13 +41,29 @@ import com.jmd.helper.service.TaskForegroundService
 import kotlinx.coroutines.*
 
 /**
+ * What it is:
  * Root Application class for the Helper Android task suite.
  *
+ * What it does:
  * Coordinates system-wide services, registers user-facing notification categories,
  * launches watchdog monitors, and initializes scheduled outreach pipelines.
+ *
+ * Linked with:
+ * - System runtime: [Application], [Configuration.Provider]
+ * - Architecture: [HelperApplication.instance], [HelperApplication.applicationScope]
  */
 class HelperApplication : Application(), Configuration.Provider {
 
+    /**
+     * What it is:
+     * Custom WorkManager configuration provider.
+     *
+     * What it does:
+     * Configures the logging level for background WorkManager jobs to INFO.
+     *
+     * Linked with:
+     * - AndroidX WorkManager: [Configuration.Builder]
+     */
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setMinimumLoggingLevel(Log.INFO)
@@ -66,8 +91,16 @@ class HelperApplication : Application(), Configuration.Provider {
             private set
 
         /**
+         * What it is:
+         * System notification channel registration factory.
+         *
+         * What it does:
          * Creates and configures the system notification channels with appropriate sound,
          * vibration, and importance levels, while retiring obsolete legacy channels.
+         *
+         * Linked with:
+         * - System: [NotificationManager], [NotificationChannel]
+         * - Resources: [R.string.notification_channel_tasks], [R.string.notification_channel_reminders]
          */
         fun createNotificationChannels(context: Context) {
             val notificationManager = context.getSystemService(NotificationManager::class.java) ?: return
@@ -103,11 +136,31 @@ class HelperApplication : Application(), Configuration.Provider {
         }
     }
 
+    /**
+     * What it is:
+     * Application-wide coroutine scope backed by SupervisorJob and IO dispatcher.
+     *
+     * What it does:
+     * Executes non-blocking background initialization and asynchronous maintenance routines.
+     *
+     * Linked with:
+     * - Coroutines: [SupervisorJob], [Dispatchers.IO]
+     */
     val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /**
-     * Initializes the application process, registers notification channels, and launches
-     * background initialization routines without blocking the main UI thread.
+     * What it is:
+     * Primary application process lifecycle entry point.
+     *
+     * What it does:
+     * Initializes the application process, registers notification channels, attaches crash handler,
+     * and launches background initialization routines without blocking the main UI thread.
+     *
+     * Linked with:
+     * - Crash logger: [Thread.setDefaultUncaughtExceptionHandler], [AppFileLogger], [TaskAlarmReceiver.dumpExecutionLogsToFile]
+     * - Watchdogs: [AccessibilityHealthManager.ensureServiceComponentEnabled], [AccessibilityWatchdogScheduler.scheduleHeartbeat]
+     * - Repositories: [AppRepository.recoverInterruptedRunningTasks], [AppRepository.purgeAllGroupsFromPool]
+     * - Schedulers: [AlarmScheduler.rescheduleAllPending], [DailyCampaignScheduler.scheduleAll]
      */
     override fun onCreate() {
         super.onCreate()

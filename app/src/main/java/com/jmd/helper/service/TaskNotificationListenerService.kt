@@ -1,18 +1,21 @@
-
-
 /**
  * Package: com.jmd.helper.service
- * Module: Notification Listener Service Layer
+ * Module: Background Services & Quick Tiles
  *
- * Processes incoming notifications across messaging apps (WhatsApp, WhatsApp Business, SMS, Telegram, Messenger)
- * and dispatches scheduled replies via inline [RemoteInput] actions without launching UI on screen.
+ * What it is:
+ * Architecture definition and implementation for [TaskNotificationListenerService].
+ *
+ * What it does:
+ * Processes incoming notifications across messaging apps (WhatsApp, WhatsApp Business, SMS, Telegram, Messenger) and dispatches scheduled replies via inline [RemoteInput] actions without launching UI on screen.
  *
  * Linked With:
- * - Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.AutoReplyRepository]
- * - Templates: [com.jmd.helper.core.MessageTemplateResolver]
- * - Preferences: [com.jmd.helper.data.prefs.PreferenceManager]
- * - Diagnostics: [com.jmd.helper.core.AppFileLogger]
+ * - Repositories: [com.jmd.helper.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.helper.data.model.AutoReplyRule], [com.jmd.helper.data.model.ChannelType], [com.jmd.helper.data.model.ExecutionLog]
+ * - Services & Engines: [android.service.notification.NotificationListenerService], [android.service.notification.StatusBarNotification]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.helper.core.MessageTemplateResolver], [com.jmd.helper.core.PhoneNumberNormalizer], [com.jmd.helper.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [android.app.Notification], [android.app.PendingIntent], [android.app.RemoteInput], [android.os.Bundle]
  */
+
 package com.jmd.helper.service
 
 import android.app.Notification
@@ -34,21 +37,58 @@ import kotlinx.coroutines.*
 import java.util.*
 
 /**
+ * What it is:
  * System NotificationListenerService processing incoming messages to perform scheduled replies via RemoteInput.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [TaskNotificationListenerService].
+ *
+ * Linked with:
+ * - Architecture: [TaskNotificationListenerService], [TaskNotificationListenerService]
  */
 class TaskNotificationListenerService : NotificationListenerService() {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [TaskNotificationListenerService].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [TaskNotificationListenerService]
+     */
 
     companion object {
         private const val TAG = "AutoReplyNL"
         var isListenerConnected = false
             private set
     }
+    /**
+     * What it is:
+     * Execution routine for [onListenerConnected].
+     *
+     * What it does:
+     * Coordinates onListenerConnected operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskNotificationListenerService]
+     */
 
     override fun onListenerConnected() {
         super.onListenerConnected()
         isListenerConnected = true
         Log.d(TAG, "Notification Listener connected")
     }
+    /**
+     * What it is:
+     * Execution routine for [onListenerDisconnected].
+     *
+     * What it does:
+     * Coordinates onListenerDisconnected operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskNotificationListenerService]
+     */
 
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
@@ -59,6 +99,16 @@ class TaskNotificationListenerService : NotificationListenerService() {
     private val serviceScope = CoroutineScope(
         Dispatchers.IO + SupervisorJob()
     )
+    /**
+     * What it is:
+     * Execution routine for [onDestroy].
+     *
+     * What it does:
+     * Coordinates onDestroy operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [TaskNotificationListenerService]
+     */
 
     override fun onDestroy() {
         super.onDestroy()
@@ -66,8 +116,14 @@ class TaskNotificationListenerService : NotificationListenerService() {
     }
 
     /**
+     * What it is:
      * Processes posted status bar notifications, inspects text or call events, evaluates matching rules, and triggers replies.
      *
+     * What it does:
+     * Executes [onNotificationPosted] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskNotificationListenerService], [onNotificationPosted]
      * @param sbn Notification container posted by the Android notification subsystem.
      */
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
@@ -173,8 +229,14 @@ class TaskNotificationListenerService : NotificationListenerService() {
     }
 
     /**
+     * What it is:
      * Checks if notification message content and current time window satisfy rule filter criteria.
      *
+     * What it does:
+     * Executes [matchesRule] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskNotificationListenerService], [matchesRule]
      * @param rule Auto reply rule configuration.
      * @param messageText Incoming text string.
      * @param isCallEvent True if triggered by a missed or ended phone call.
@@ -212,8 +274,14 @@ class TaskNotificationListenerService : NotificationListenerService() {
     }
 
     /**
+     * What it is:
      * Delivers text directly into the notification's [RemoteInput] reply action without waking screen.
      *
+     * What it does:
+     * Executes [sendInlineReply] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskNotificationListenerService], [sendInlineReply]
      * @param notification Target notification object containing reply action.
      * @param replyText Generated message text to dispatch.
      * @return True if remote input reply intent was sent.
