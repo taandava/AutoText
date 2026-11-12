@@ -5,6 +5,7 @@ import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -44,12 +45,11 @@ fun SettingsAutomationChannelsCard(
     var contactSyncHours by remember { mutableIntStateOf(prefs.contactSyncIntervalHours) }
 
     // TTS Engine for live testing
+    var isTtsReady by remember { mutableStateOf(false) }
     var ttsEngine by remember { mutableStateOf<TextToSpeech?>(null) }
     DisposableEffect(Unit) {
         val tts = TextToSpeech(context) { status ->
-            if (status == TextToSpeech.SUCCESS) {
-                // Initialized successfully
-            }
+            isTtsReady = (status == TextToSpeech.SUCCESS)
         }
         ttsEngine = tts
         onDispose {
@@ -67,7 +67,7 @@ fun SettingsAutomationChannelsCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Icon(Icons.Filled.Chat, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                    Icon(Icons.AutoMirrored.Filled.Chat, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                     Text("WhatsApp Dispatch & Human Cadence", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
                 AppBadge(text = "${waDelay}s Pace", color = MaterialTheme.colorScheme.primary)
@@ -216,7 +216,7 @@ fun SettingsAutomationChannelsCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Icon(Icons.Filled.PhoneForwarded, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                    Icon(Icons.AutoMirrored.Filled.PhoneForwarded, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                     Text("Call Simulation Customizations", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
                 AppBadge(text = callSimStyle, color = MaterialTheme.colorScheme.primary)
@@ -356,7 +356,7 @@ fun SettingsAutomationChannelsCard(
                         )
                     }
                 },
-                icon = Icons.Filled.VolumeUp,
+                icon = Icons.AutoMirrored.Filled.VolumeUp,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -369,7 +369,7 @@ fun SettingsAutomationChannelsCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Icon(Icons.Filled.Reply, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                    Icon(Icons.AutoMirrored.Filled.Reply, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                     Text("Auto-Reply & Contact Pool Sync", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
                 AppBadge(text = "${autoReplyCooldown}s Throttle", color = MaterialTheme.colorScheme.tertiary)
