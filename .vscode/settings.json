@@ -2,9 +2,12 @@
   "kotlin.linting.debounce": 250,
   "kotlin.compiler.jvm.target": "21",
   "kotlin.indexing.enabled": true,
-  "kotlin.diagnostics.level": "information",
+  "kotlin.diagnostics.level": "warning",
+  "errorLens.enabledDiagnosticLevels": [
+    "error",
+    "warning"
+  ],
   "errorLens.exclude": [
     "FunctionName"
   ]
 }
-
