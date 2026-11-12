@@ -2528,4 +2528,78 @@ class HelperComprehensiveTest {
         assertTrue(com.jmd.helper.core.UniversalConstraintValidator.validateSimSlot(-1).isSuccess)
         assertTrue(com.jmd.helper.core.UniversalConstraintValidator.validateSimSlot(10).isFailure)
     }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // 26. SETTINGS SUBDIVISIONS & CUSTOMIZABLE TEMPLATE TOKENS TESTS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun testSettingsSubdivisionsEnum() {
+        val subdivisions = com.jmd.helper.ui.screen.settings.SettingsSubdivision.entries
+        assertEquals(5, subdivisions.size)
+        assertTrue(subdivisions.any { it.name == "TEMPLATES" && it.title.contains("Templates") })
+        assertTrue(subdivisions.any { it.name == "AUTOMATION" && it.title.contains("Automation") })
+        assertTrue(subdivisions.any { it.name == "SECURITY" && it.title.contains("Security") })
+        assertTrue(subdivisions.any { it.name == "THEME_UI" && it.title.contains("Theme") })
+        assertTrue(subdivisions.any { it.name == "SYSTEM" && it.title.contains("System") })
+    }
+
+    @Test
+    fun testResolveEffectiveDatePatternStandard() {
+        // Base standard formats without separator override
+        assertEquals("dd MMM yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd MMM yyyy", separator = "auto"))
+        assertEquals("dd-MM-yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd-MM-yyyy", separator = "auto"))
+        assertEquals("dd/MM/yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd/MM/yyyy", separator = "auto"))
+        assertEquals("dd.MM.yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd.MM.yyyy", separator = "auto"))
+        assertEquals("ddMMyyyy", MessageTemplateResolver.resolveEffectiveDatePattern("ddMMyyyy", separator = "auto"))
+        assertEquals("dd-MM-yy", MessageTemplateResolver.resolveEffectiveDatePattern("dd-MM-yy", separator = "auto"))
+    }
+
+    @Test
+    fun testResolveEffectiveDatePatternSeparatorOverrides() {
+        // Separator replacements on "dd-MM-yyyy"
+        assertEquals("dd/MM/yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd-MM-yyyy", separator = "/"))
+        assertEquals("dd.MM.yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd-MM-yyyy", separator = "."))
+        assertEquals("dd-MM-yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd-MM-yyyy", separator = "-"))
+        assertEquals("dd MM yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd-MM-yyyy", separator = " "))
+        assertEquals("ddMMyyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd-MM-yyyy", separator = ""))
+
+        // Separator replacements on "dd/MM/yyyy"
+        assertEquals("dd-MM-yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd/MM/yyyy", separator = "-"))
+        assertEquals("dd.MM.yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd/MM/yyyy", separator = "."))
+        assertEquals("ddMMyyyy", MessageTemplateResolver.resolveEffectiveDatePattern("dd/MM/yyyy", separator = ""))
+    }
+
+    @Test
+    fun testResolveEffectiveDatePatternCustomPattern() {
+        // Custom base format
+        assertEquals("yyyy-MM-dd", MessageTemplateResolver.resolveEffectiveDatePattern("CUSTOM", customPattern = "yyyy-MM-dd", separator = "auto"))
+        assertEquals("yyyy/MM/dd", MessageTemplateResolver.resolveEffectiveDatePattern("CUSTOM", customPattern = "yyyy-MM-dd", separator = "/"))
+        assertEquals("dd-MM-yyyy", MessageTemplateResolver.resolveEffectiveDatePattern("CUSTOM", customPattern = "", separator = "auto")) // fallback default
+    }
+
+    @Test
+    fun testMessageTemplateResolverCustomDateAndCurrencyTokens() {
+        val cal = Calendar.getInstance().apply {
+            set(2026, Calendar.MARCH, 25, 14, 30, 0)
+        }
+        val targetTs = cal.timeInMillis
+
+        val template = "Date: {date}, Short: {short_date}, Time: {time}, Amount: {rupee}500, Curr: {currency}, Namaste: {namaste}"
+        val resolved = MessageTemplateResolver.resolve(
+            template = template,
+            targetTimestamp = targetTs
+        )
+
+        assertFalse("Template tokens should not be unparsed", resolved.contains("{date}"))
+        assertFalse("Template tokens should not be unparsed", resolved.contains("{short_date}"))
+        assertFalse("Template tokens should not be unparsed", resolved.contains("{time}"))
+        assertFalse("Template tokens should not be unparsed", resolved.contains("{rupee}"))
+        assertFalse("Template tokens should not be unparsed", resolved.contains("{currency}"))
+        assertFalse("Template tokens should not be unparsed", resolved.contains("{namaste}"))
+
+        assertTrue("Should contain currency symbol", resolved.contains("₹500"))
+        assertTrue("Should contain currency code", resolved.contains("INR"))
+        assertTrue("Should contain namaste greeting", resolved.contains("Namaste"))
+    }
 }

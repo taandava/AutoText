@@ -126,6 +126,29 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_SMS_QUOTA_LIMIT_ENABLED = "sms_quota_limit_enabled"
         private const val KEY_PREVENT_SYSTEM_AUTO_ROTATE = "prevent_system_auto_rotate"
 
+        // Template & Token Customization Keys
+        private const val KEY_CUSTOM_DATE_FORMAT = "custom_date_format"
+        private const val KEY_CUSTOM_DATE_PATTERN = "custom_date_pattern"
+        private const val KEY_CUSTOM_DATE_SEPARATOR = "custom_date_separator"
+        private const val KEY_CUSTOM_SHORT_DATE_FORMAT = "custom_short_date_format"
+        private const val KEY_CUSTOM_TIME_FORMAT = "custom_time_format"
+        private const val KEY_CUSTOM_GREETING_STYLE = "custom_greeting_style"
+        private const val KEY_CUSTOM_GREETING_TEXT = "custom_greeting_text"
+        private const val KEY_CUSTOM_NAMASTE_TEXT = "custom_namaste_text"
+        private const val KEY_CUSTOM_CURRENCY_SYMBOL = "custom_currency_symbol"
+        private const val KEY_CUSTOM_INDIAN_NUMBERING = "custom_indian_numbering"
+
+        // Channel & Automation Customization Keys
+        private const val KEY_WHATSAPP_TYPING_DELAY_MS = "whatsapp_typing_delay_ms"
+        private const val KEY_AUTO_SMS_FALLBACK_ENABLED = "auto_sms_fallback_enabled"
+        private const val KEY_CALL_SIM_DURATION_SECONDS = "call_sim_duration_seconds"
+        private const val KEY_CALL_SIM_DEFAULT_NAME = "call_sim_default_name"
+        private const val KEY_CALL_SIM_DEFAULT_NUMBER = "call_sim_default_number"
+        private const val KEY_CALL_SIM_DEFAULT_STYLE = "call_sim_default_style"
+        private const val KEY_TTS_SPEECH_RATE = "tts_speech_rate"
+        private const val KEY_TTS_SPEECH_PITCH = "tts_speech_pitch"
+        private const val KEY_AUTOREPLY_COOLDOWN_SECONDS = "autoreply_cooldown_seconds"
+
         private const val KEYSTORE_PROVIDER = "AndroidKeyStore"
         private const val KEYSTORE_ALIAS = "Helper_Hardware_Key"
     }
@@ -605,4 +628,107 @@ class PreferenceManager(private val context: Context) {
     var isBankSafeProtectionEnabled: Boolean
         get() = isBankingProtectionEnabled
         set(value) { isBankingProtectionEnabled = value }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // TEMPLATE & TOKEN CUSTOMIZATIONS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    /** Date format style for {date} token. Default "dd MMM yyyy". */
+    var customDateFormat: String
+        get() = prefs.getString(KEY_CUSTOM_DATE_FORMAT, "dd MMM yyyy") ?: "dd MMM yyyy"
+        set(value) = prefs.edit { putString(KEY_CUSTOM_DATE_FORMAT, value) }
+
+    /** Custom user-defined SimpleDateFormat pattern when customDateFormat == "CUSTOM". */
+    var customDateCustomPattern: String
+        get() = prefs.getString(KEY_CUSTOM_DATE_PATTERN, "dd-MM-yyyy") ?: "dd-MM-yyyy"
+        set(value) = prefs.edit { putString(KEY_CUSTOM_DATE_PATTERN, value) }
+
+    /** Explicit date separator ("auto", "-", "/", ".", " ", ""). */
+    var customDateSeparator: String
+        get() = prefs.getString(KEY_CUSTOM_DATE_SEPARATOR, "auto") ?: "auto"
+        set(value) = prefs.edit { putString(KEY_CUSTOM_DATE_SEPARATOR, value) }
+
+    /** Format style for {short_date} token. Default "dd/MM/yyyy". */
+    var customShortDateFormat: String
+        get() = prefs.getString(KEY_CUSTOM_SHORT_DATE_FORMAT, "dd/MM/yyyy") ?: "dd/MM/yyyy"
+        set(value) = prefs.edit { putString(KEY_CUSTOM_SHORT_DATE_FORMAT, value) }
+
+    /** Time format style for {time} token. Default "hh:mm a". */
+    var customTimeFormat: String
+        get() = prefs.getString(KEY_CUSTOM_TIME_FORMAT, "hh:mm a") ?: "hh:mm a"
+        set(value) = prefs.edit { putString(KEY_CUSTOM_TIME_FORMAT, value) }
+
+    /** Greeting style for {greeting} token: "DYNAMIC", "NAMASTE", "PRANAM", "HELLO", "HI", "CUSTOM". */
+    var customGreetingStyle: String
+        get() = prefs.getString(KEY_CUSTOM_GREETING_STYLE, "DYNAMIC") ?: "DYNAMIC"
+        set(value) = prefs.edit { putString(KEY_CUSTOM_GREETING_STYLE, value) }
+
+    /** Custom greeting text when customGreetingStyle == "CUSTOM". */
+    var customGreetingCustomText: String
+        get() = prefs.getString(KEY_CUSTOM_GREETING_TEXT, "Hello") ?: "Hello"
+        set(value) = prefs.edit { putString(KEY_CUSTOM_GREETING_TEXT, value) }
+
+    /** Localized text for {namaste} token. Default "Namaste". */
+    var customNamasteText: String
+        get() = prefs.getString(KEY_CUSTOM_NAMASTE_TEXT, "Namaste") ?: "Namaste"
+        set(value) = prefs.edit { putString(KEY_CUSTOM_NAMASTE_TEXT, value) }
+
+    /** Currency symbol for {rupee} and {currency} tokens. Default "₹". */
+    var customCurrencySymbol: String
+        get() = prefs.getString(KEY_CUSTOM_CURRENCY_SYMBOL, "₹") ?: "₹"
+        set(value) = prefs.edit { putString(KEY_CUSTOM_CURRENCY_SYMBOL, value) }
+
+    /** Indian number grouping format (1,00,000 vs 100,000). Default true. */
+    var isIndianNumberFormattingEnabled: Boolean
+        get() = prefs.getBoolean(KEY_CUSTOM_INDIAN_NUMBERING, true)
+        set(value) = prefs.edit { putBoolean(KEY_CUSTOM_INDIAN_NUMBERING, value) }
+
+    // ═══════════════════════════════════════════════════════════════════════════════════
+    // CHANNEL & AUTOMATION CUSTOMIZATIONS
+    // ═══════════════════════════════════════════════════════════════════════════════════
+
+    /** WhatsApp typing simulation delay in milliseconds before dispatching. Default 400ms. */
+    var whatsappTypingDelayMs: Int
+        get() = prefs.getInt(KEY_WHATSAPP_TYPING_DELAY_MS, 400)
+        set(value) = prefs.edit { putInt(KEY_WHATSAPP_TYPING_DELAY_MS, value.coerceIn(0, 3000)) }
+
+    /** Automatic SMS fallback when WhatsApp chat cannot be resolved or is not installed. */
+    var isAutoSmsFallbackEnabled: Boolean
+        get() = prefs.getBoolean(KEY_AUTO_SMS_FALLBACK_ENABLED, false)
+        set(value) = prefs.edit { putBoolean(KEY_AUTO_SMS_FALLBACK_ENABLED, value) }
+
+    /** Ring duration for simulated incoming call activity in seconds. Default 30s. */
+    var callSimulationRingDurationSeconds: Int
+        get() = prefs.getInt(KEY_CALL_SIM_DURATION_SECONDS, 30)
+        set(value) = prefs.edit { putInt(KEY_CALL_SIM_DURATION_SECONDS, value.coerceIn(5, 120)) }
+
+    /** Default caller display name for incoming call simulation. */
+    var callSimulationDefaultName: String
+        get() = prefs.getString(KEY_CALL_SIM_DEFAULT_NAME, "Boss / Office") ?: "Boss / Office"
+        set(value) = prefs.edit { putString(KEY_CALL_SIM_DEFAULT_NAME, value) }
+
+    /** Default caller phone number for incoming call simulation. */
+    var callSimulationDefaultNumber: String
+        get() = prefs.getString(KEY_CALL_SIM_DEFAULT_NUMBER, "+91 98765 43210") ?: "+91 98765 43210"
+        set(value) = prefs.edit { putString(KEY_CALL_SIM_DEFAULT_NUMBER, value) }
+
+    /** Default visual skin style for incoming call simulation ("PIXEL", "SAMSUNG", "WHATSAPP"). */
+    var callSimulationDefaultStyle: String
+        get() = prefs.getString(KEY_CALL_SIM_DEFAULT_STYLE, "PIXEL") ?: "PIXEL"
+        set(value) = prefs.edit { putString(KEY_CALL_SIM_DEFAULT_STYLE, value) }
+
+    /** Text-To-Speech speech rate multiplier (0.5f to 2.0f, default 1.0f). */
+    var ttsSpeechRate: Float
+        get() = prefs.getFloat(KEY_TTS_SPEECH_RATE, 1.0f)
+        set(value) = prefs.edit { putFloat(KEY_TTS_SPEECH_RATE, value.coerceIn(0.5f, 2.0f)) }
+
+    /** Text-To-Speech speech pitch multiplier (0.5f to 2.0f, default 1.0f). */
+    var ttsSpeechPitch: Float
+        get() = prefs.getFloat(KEY_TTS_SPEECH_PITCH, 1.0f)
+        set(value) = prefs.edit { putFloat(KEY_TTS_SPEECH_PITCH, value.coerceIn(0.5f, 2.0f)) }
+
+    /** Auto-reply cooldown period in seconds per sender. Default 60s. */
+    var autoReplyCooldownSeconds: Int
+        get() = prefs.getInt(KEY_AUTOREPLY_COOLDOWN_SECONDS, 60)
+        set(value) = prefs.edit { putInt(KEY_AUTOREPLY_COOLDOWN_SECONDS, value.coerceIn(10, 600)) }
 }

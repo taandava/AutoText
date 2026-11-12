@@ -4,22 +4,43 @@ import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.jmd.helper.core.showAppToast
 import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.data.repo.AppRepository
 import com.jmd.helper.ui.components.AppSubScreenHeader
+import com.jmd.helper.ui.components.GlassChip
 import com.jmd.helper.ui.theme.AppDesignTokens
 
 /**
+ * Functional subdivisions dividing the comprehensive application settings into focused tabs.
+ */
+enum class SettingsSubdivision(
+    val title: String,
+    val icon: ImageVector,
+    val description: String
+) {
+    TEMPLATES("Templates & Tokens", Icons.Filled.TextFields, "Date formats, tokens & dynamic variables"),
+    AUTOMATION("Automation & Channels", Icons.Filled.Bolt, "WhatsApp, SMS quota, SIM & call simulation"),
+    SECURITY("Security & Shield", Icons.Filled.Shield, "PIN unlock, banking shield & gesture fallback"),
+    THEME_UI("Theme & Display", Icons.Filled.Palette, "App theme, styling & layout preferences"),
+    SYSTEM("System & Diagnostics", Icons.Filled.Build, "Diagnostics, self-repair, backup & docs")
+}
+
+/**
  * Application settings and operational configuration screen providing controls for
- * lockscreen PIN unlock, accessibility banking guard, fallback touch coordinates,
- * carrier preferences, and database backup/restore.
+ * dynamic message templates, automation channels, lockscreen PIN unlock, accessibility
+ * banking guard, theme styling, system diagnostics, and database backup/restore.
  *
  * @param context Android context for resolving system services and content resolvers.
  * @param repository Application data repository for database serialization and migrations.
@@ -38,6 +59,7 @@ fun SettingsView(
     onOpenDocumentation: () -> Unit = {},
     onBack: () -> Unit
 ) {
+    var selectedSubdivision by remember { mutableStateOf(SettingsSubdivision.TEMPLATES) }
     var restoreSummaryMsg by remember { mutableStateOf<String?>(null) }
 
     val exportFileLauncher = rememberLauncherForActivityResult(
@@ -85,83 +107,118 @@ fun SettingsView(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             AppSubScreenHeader(
-                title = "Settings & Security",
-                subtitle = "Security, screen assistance, banking shield & backups",
+                title = "Settings & Configuration",
+                subtitle = selectedSubdivision.description,
                 onBack = onBack
             )
         },
         containerColor = AppDesignTokens.VoidBackground
     ) { padding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(
-                top = 12.dp,
-                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 24.dp
-            )
         ) {
-            // 0. Status Indicators & System Health Guide Card
-            item {
-                SettingsStatusIndicatorsGuideCard(
-                    context = context,
-                    prefs = prefs
-                )
+            // Horizontal Subdivisions Tab Selector
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val primaryColor = androidx.compose.material3.MaterialTheme.colorScheme.primary
+                SettingsSubdivision.entries.forEach { sub ->
+                    GlassChip(
+                        selected = selectedSubdivision == sub,
+                        onClick = { selectedSubdivision = sub },
+                        label = sub.title,
+                        icon = sub.icon,
+                        activeColor = primaryColor
+                    )
+                }
             }
 
-            // 0b. System Integrity, Feature Diagnostic & Auto-Repair Suite
-            item {
-                SettingsSystemSelfTestCard(
-                    context = context
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                contentPadding = PaddingValues(
+                    top = 8.dp,
+                    bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 24.dp
                 )
-            }
-
-            // 1. Lock Screen Assistance Card
-            item {
-                SettingsScreenAssistCard(
-                    context = context,
-                    prefs = prefs
-                )
-            }
-
-            // 3. Bank App Shield & Accessibility Standby Guard
-            item {
-                SettingsBankingShieldCard(
-                    context = context,
-                    prefs = prefs,
-                    onOpenPrivacySettings = onOpenPrivacySettings
-                )
-            }
-
-            // 4. User & Carrier Preferences Cards
-            item {
-                SettingsPreferencesCards(
-                    prefs = prefs,
-                    onThemeChanged = onThemeChanged
-                )
-            }
-
-            // 5. Data Backup & Restore Center
-            item {
-                SettingsBackupRestoreCard(
-                    context = context,
-                    repository = repository,
-                    exportFileLauncher = exportFileLauncher,
-                    filePickerLauncher = filePickerLauncher,
-                    restoreSummaryMsg = restoreSummaryMsg,
-                    onDismissSummary = { restoreSummaryMsg = null },
-                    onRestoreSuccess = { summary -> restoreSummaryMsg = summary }
-                )
-            }
-
-            // 6. Technical Manual & Logic Guide
-            item {
-                SettingsDocumentationCard(
-                    context = context,
-                    onOpenDocumentation = onOpenDocumentation
-                )
+            ) {
+                when (selectedSubdivision) {
+                    SettingsSubdivision.TEMPLATES -> {
+                        item {
+                            SettingsTemplateTokensCard(
+                                prefs = prefs
+                            )
+                        }
+                    }
+                    SettingsSubdivision.AUTOMATION -> {
+                        item {
+                            SettingsAutomationChannelsCard(
+                                context = context,
+                                prefs = prefs
+                            )
+                        }
+                    }
+                    SettingsSubdivision.SECURITY -> {
+                        item {
+                            SettingsBankingShieldCard(
+                                context = context,
+                                prefs = prefs,
+                                onOpenPrivacySettings = onOpenPrivacySettings
+                            )
+                        }
+                        item {
+                            SettingsScreenAssistCard(
+                                context = context,
+                                prefs = prefs
+                            )
+                        }
+                    }
+                    SettingsSubdivision.THEME_UI -> {
+                        item {
+                            SettingsPreferencesCards(
+                                prefs = prefs,
+                                onThemeChanged = onThemeChanged
+                            )
+                        }
+                    }
+                    SettingsSubdivision.SYSTEM -> {
+                        item {
+                            SettingsSystemSelfTestCard(
+                                context = context
+                            )
+                        }
+                        item {
+                            SettingsStatusIndicatorsGuideCard(
+                                context = context,
+                                prefs = prefs
+                            )
+                        }
+                        item {
+                            SettingsBackupRestoreCard(
+                                context = context,
+                                repository = repository,
+                                exportFileLauncher = exportFileLauncher,
+                                filePickerLauncher = filePickerLauncher,
+                                restoreSummaryMsg = restoreSummaryMsg,
+                                onDismissSummary = { restoreSummaryMsg = null },
+                                onRestoreSuccess = { summary -> restoreSummaryMsg = summary }
+                            )
+                        }
+                        item {
+                            SettingsDocumentationCard(
+                                context = context,
+                                onOpenDocumentation = onOpenDocumentation
+                            )
+                        }
+                    }
+                }
             }
         }
     }
