@@ -10,8 +10,7 @@
  * Linked With:
  * - Repositories: [com.jmd.helper.data.repo.AppRepository], [com.jmd.helper.data.repo.TaskRepository],
  *   [com.jmd.helper.data.repo.DailyCampaignRepository], [com.jmd.helper.data.repo.LogRepository],
- *   [com.jmd.helper.data.repo.SequenceRepository], [com.jmd.helper.data.repo.AutoReplyRepository],
- *   [com.jmd.helper.data.repo.TemplateRepository], [com.jmd.helper.data.repo.WhatsAppRepository]
+ *   [com.jmd.helper.data.repo.AutoReplyRepository], [com.jmd.helper.data.repo.WhatsAppRepository]
  * - Engines: [com.jmd.helper.engine.SequentialTaskEngine], [com.jmd.helper.engine.ContactIngestionEngine]
  * - Schedulers: [com.jmd.helper.scheduler.DailyCampaignWorker], [com.jmd.helper.scheduler.AlarmScheduler]
  */

@@ -11,7 +11,7 @@
  * - Models: [com.jmd.helper.data.model.RecipientItem]
  * - UI Screens: `ContactsScreen`
  */
- package com.jmd.helper.data.repo
+package com.jmd.helper.data.repo
 
 import android.content.*
 import android.database.sqlite.SQLiteDatabase
