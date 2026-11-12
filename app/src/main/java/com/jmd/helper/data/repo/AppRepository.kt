@@ -45,7 +45,7 @@ import java.util.Locale
 /**
  * Unified data access facade coordinating CRUD operations across all sub-repositories.
  */
-class AppRepository(private val context: Context) {
+class AppRepository(context: Context) {
 
     private val dbHelper = DatabaseHelper.getInstance(context)
 

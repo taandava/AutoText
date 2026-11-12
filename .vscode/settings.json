@@ -2,6 +2,7 @@
   "kotlin.linting.debounce": 250,
   "kotlin.compiler.jvm.target": "21",
   "kotlin.indexing.enabled": true,
+  "kotlin.diagnostics.level": "information",
   "errorLens.exclude": [
     "FunctionName"
   ]
