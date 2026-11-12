@@ -82,6 +82,9 @@ fun DocumentationView(
         "12. " to "12. High-Efficiency Upgrades",
         "13. " to "13. In-App Diagnostics",
         "14. " to "14. Quality Certification",
+        "15. " to "15. Security & Shield Invariants",
+        "16. " to "16. Automated Maintenance",
+        "17. " to "17. Restoration & Grid Logic",
     )
 
     val rawSections = remember(fullDocText) {
@@ -139,7 +142,7 @@ fun DocumentationView(
                 .fillMaxSize()
                 .padding(padding)
                 .navigationBarsPadding()
-                .padding(horizontal = 12.dp, vertical = 6.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             GlassSearchField(
                 value = searchQuery,

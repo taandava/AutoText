@@ -2854,24 +2854,23 @@ Under the **System & Diagnostics** subdivision:
 
 ---
 
-# 17. Production Architecture Modernization: Streamlined Single-Task & Direct-Contact Paradigm, Grid Layout Audit & Removal of Legacy Sequences and Groups
+# 17. Production Architecture Modernization: Full Restoration of WhatsApp Groups, Decommissioning of Task Sequences & Bulk Contacts, and Comprehensive UI Grid Audit
 
-## 17.1 Architectural Simplification Rationale & Scope
-To achieve maximum runtime determinism, eliminate redundant UI flows, and ensure seamless automated task execution, Helper's architecture was fundamentally modernized and streamlined:
-1. **Elimination of Task Sequences (`ContactSequence`)**:
-   - Replaced multi-step contact sequences with clean, standalone scheduled tasks. Standalone tasks support recurring schedules, customizable intervals, direct per-task editing, individual retry controls, and immediate Run Now dispatch.
-   - Deleted obsolete components: `ContactSequenceStudio.kt`, `ContactSequenceCard.kt`, `SequenceRepository.kt`.
-   - Purged legacy database tables: `contact_sequences` and `sequence_steps` (`DROP TABLE IF EXISTS`).
-   - Removed `ContactSequence` and `ContactSequenceStep` models from the domain layer.
-2. **Elimination of WhatsApp Group Automation & Bulk Contacts Management**:
-   - Eliminated WhatsApp group messaging and harvesting due to fragile OEM UI dependency on chat title searching and group filter chips.
-   - All WhatsApp dispatches are now 100% direct 1-on-1 contact conversations via official intent schema (`https://api.whatsapp.com/send?phone=...`) and WhatsApp Status story updates.
-   - Deleted obsolete components: `WhatsAppGroupEngine.kt`, `BulkContactsView.kt`, `ContactImportView.kt`, `ContactsScreen.kt`, `ContactAddEditDialog.kt`, `ContactCardComponents.kt`.
-   - Purged `whatsAppGroups` table and removed `WHATSAPP_SEARCH_GROUP` dispatch mode from `TaskAccessibilityService`.
-   - Purged any existing group virtual identifiers (`group:...`) from the local dynamic contact pool.
+## 17.1 Architectural Scope & Core Boundaries
+Helper maintains a laser focus on high-efficiency, reliable on-device automation. Per user direction, the architectural boundaries are defined as follows:
+
+1. **Full Restoration of WhatsApp Group Automation (`WhatsAppGroupEngine`)**:
+   - **Restored Components**: `WhatsAppGroupEngine.kt`, `TABLE_WHATSAPP_GROUPS` (`whatsapp_groups`) SQLite cache table, `ChannelType.WHATSAPP_GROUP` ("WhatsApp Group", "👥"), `ChannelType.WHATSAPP_BUSINESS_GROUP` ("WA Business Group", "👥💼"), and `WhatsAppGroupItem` domain data model.
+   - **Accessibility Dispatch Pipeline**: `TaskAccessibilityService` retains `DispatchMode.WHATSAPP_SEARCH_GROUP` executing dedicated group search, candidate matching (title, snippet, participant count), row tapping, and automatic handover to `WhatsAppDirectSendEngine` once inside the group conversation.
+   - **Automated Group Harvesting**: `WhatsAppChatScanner` supports `ScanTarget.GROUPS_ONLY` scraping group conversations directly from WhatsApp and WhatsApp Business, storing discovered groups in both `TABLE_WHATSAPP_GROUPS` and the dynamic pool.
+   - **UI Task Creation & Pickers**: `TaskTypeSelectionDialog` includes the dedicated **WhatsApp Group** creation flow with a choice between Personal WhatsApp and WhatsApp Business. `ComposePickerSheets` provides 1-tap **"Harvest Groups (WA)"** and **"Harvest Groups (W4B)"** triggers and filters recipient lists for `group:` addressing.
+
+2. **Permanent Decommissioning of Task Sequences & Generic Bulk Contacts**:
+   - **Task Sequences Removed**: Multi-step drip sequences (`ContactSequence`, `ContactSequenceStudio.kt`, `ContactSequenceCard.kt`, `SequenceRepository.kt`) and their linked database tables (`contact_sequences`, `sequence_steps`) remain completely removed. All task scheduling is executed via standalone scheduled tasks or high-speed Daily Auto Campaigns.
+   - **Generic Bulk Contacts Removed**: The obsolete bulk contact list management screen (`ContactsScreen.kt`, `BulkContactsView.kt`, `ContactImportView.kt`, `ContactAddEditDialog.kt`, `ContactCardComponents.kt`) remains completely removed. Contact selection utilizes direct device address book queries (`ContactsContract`), harvested WhatsApp chats/groups, and the fast dynamic pool.
 
 ## 17.2 Modern Tasks Screen Layout & Single-Category Design
-The primary `TasksListScreen` was streamlined from an awkward dual-tab interface ("Single Tasks" vs "Contact Sequences") into a unified, high-efficiency dashboard:
+The primary `TasksListScreen` provides an ultra-responsive, unified dashboard:
 - **Unified Real-Time Search (`GlassSearchField`)**: Instant text filter matching task label, message body, or recipient phone/name.
 - **Segmented Status Filter (`GlassSegmentedControl`)**: 4 status categories with live badge counts:
   - `All (N)`: Complete view of all scheduled, executed, and paused tasks.
@@ -2879,34 +2878,44 @@ The primary `TasksListScreen` was streamlined from an awkward dual-tab interface
   - `Sent (N)`: Successfully dispatched tasks.
   - `Failed (N)`: Tasks that encountered an error or reached timeout limits.
 - **Task Cards (`TaskCard`)**: Modern Glassmorphic cards with channel-colored badges, next run countdowns, repeat interval indicators, Run Now button, enable/disable schedule toggle, edit sheet, and delete action.
-- **Floating Action Button (`FloatingActionButton`)**: Material 3 Expressive FAB positioned at `BottomEnd` with `navigationBarsPadding()` and `16.dp` edge margin, triggering the streamlined `TaskTypeSelectionDialog`.
+- **Floating Action Button (`FloatingActionButton`)**: Material 3 Expressive FAB positioned at `BottomEnd` with `navigationBarsPadding()` and `16.dp` edge margin, triggering `TaskTypeSelectionDialog`.
 
 ## 17.3 8-Point Layout Grid, Button Placement & Touch Target Sizing Audit
-Every screen, dialog, sheet, form, and button was audited for strict 8-point grid adherence and Android WCAG touch target standards:
+Every screen, tab, page, dialog, sheet, and form was rigorously audited and refined to ensure:
 1. **Minimum Touch Target ($\ge 48\text{dp}$)**:
-   - All interactive controls (buttons, chips, list items, toggles, icon buttons) enforce a minimum touch target size of 48dp (`defaultMinSize(minHeight = 48.dp)` across all `GlassButton` variants, `FloatingActionButton`, etc.).
-2. **Consistent Spacing & Padding**:
-   - Outer horizontal padding standardized to `16.dp` (`AppDesignTokens.SpacingNormal`).
+   - All interactive controls (buttons, chips, list items, toggles, icon buttons) enforce a minimum touch target size of 48dp (`defaultMinSize(minHeight = 48.dp)` across all `GlassButton` variants, `FloatingActionButton`, dialog tiles, and header icon buttons).
+2. **Consistent 8-Point Grid Spacing & Padding**:
+   - Screen outer horizontal padding standardized to `16.dp` (`AppDesignTokens.SpacingNormal`).
    - Card vertical spacing standardized to `8.dp` (`Arrangement.spacedBy(8.dp)`).
    - Dialog option items padded with `horizontal = 12.dp, vertical = 10.dp`.
+   - Settings subdivision chips and tabs aligned with `16.dp` edge margin and `8.dp` inter-chip spacing.
 3. **Form Input Inset Handling (`navigationBarsPadding()` & `imePadding()`)**:
-   - `ComposeTaskScreen`, `ComposeBottomBar`, `SettingsScreen`, and picker sheets now explicitly declare `.navigationBarsPadding()` and `.imePadding()`.
-   - Virtual on-screen keyboards and 3-button / gesture navigation bars never obscure form input fields or bottom action buttons ("Save Task", "Cancel", "Run Now").
+   - `ComposeTaskScreen`, `ComposeBottomBar`, `SettingsScreen`, `DocumentationView`, and picker sheets explicitly declare `.navigationBarsPadding()` and `.imePadding()`.
+   - Virtual on-screen keyboards and 3-button / gesture navigation bars never obscure form input fields, picker list items, or bottom action buttons ("Save Task", "Cancel", "Send Now").
 4. **Equal Weight Action Buttons**:
    - Form action bars feature balanced, weighted buttons with appropriate visual hierarchy (`GlassButtonVariant.PRIMARY`, `SECONDARY`, and `DANGER`).
 
-## 17.4 Multi-Channel Direct Contact Selection Architecture
-Contact selection across SMS, WhatsApp, WhatsApp Business, and Phone Calls is now unified and streamlined:
-1. **Device Contacts (`ContactsContract`)**: Reads device address book contacts with name, phone, and profile photo.
-2. **Harvested WhatsApp Contacts (`WhatsAppChatScanner`)**: Discovers direct 1-on-1 WhatsApp and WhatsApp Business chats into the local SQLite dynamic pool.
-3. **Dynamic Contact Pool**: Fast-access local contact cache prioritized by usage recency and communication channel.
-4. **Manual Contact Input**: Direct phone number entry with automatic normalization according to default international dialing standards (`+91`).
+## 17.4 Complete Channel Architecture (13 Channels)
+With WhatsApp Group automation restored, Helper supports exactly 13 specialized automation channels:
+1. `ChannelType.SMS` ("SMS", "📩")
+2. `ChannelType.WHATSAPP` ("WhatsApp", "💬")
+3. `ChannelType.WHATSAPP_BUSINESS` ("WA Business", "💼")
+4. `ChannelType.WHATSAPP_GROUP` ("WhatsApp Group", "👥")
+5. `ChannelType.WHATSAPP_BUSINESS_GROUP` ("WA Business Group", "👥💼")
+6. `ChannelType.WHATSAPP_STATUS` ("WA Status", "📸")
+7. `ChannelType.WHATSAPP_BUSINESS_STATUS` ("W4B Status", "📸💼")
+8. `ChannelType.CALL` ("Phone Call", "📞")
+9. `ChannelType.WHATSAPP_CALL` ("WA Call", "📞")
+10. `ChannelType.WHATSAPP_BUSINESS_CALL` ("W4B Call", "📞💼")
+11. `ChannelType.CALL_SIMULATION` ("Call Simulation", "🎭")
+12. `ChannelType.REMINDER` ("Alarm / Reminder", "⏰")
+13. `ChannelType.SOUND_MODE` ("Sound Mode", "🔊")
 
 ## 17.5 Verification, Unit Testing & Hardware Release Metrics
 - **Unit Test Suite**: **138 of 138 unit tests passing** (100% success rate across `HelperComprehensiveTest` [121 tests] and `ModernStackArchitectureTest` [17 tests]).
 - **Zero Linter Warnings**: Certified zero syntax errors, zero unresolved references, and zero deprecated icon warnings.
 - **Production APK**: Compiled with R8 full-mode optimization (`assembleRelease`).
-- **Hardware Verified**: Streamed and tested on Vivo/iQOO Android 16 (`10BF1G0HCD0024R`).
+- **Hardware Verified**: Streamed and tested on connected device via ADB (`10BF1G0HCD0024R`).
 
 
 

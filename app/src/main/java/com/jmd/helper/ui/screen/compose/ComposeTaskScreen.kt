@@ -421,7 +421,9 @@ fun ComposeTaskScreen(
             if (selectedChannel in listOf(
                     ChannelType.SMS,
                     ChannelType.WHATSAPP,
-                    ChannelType.WHATSAPP_BUSINESS
+                    ChannelType.WHATSAPP_BUSINESS,
+                    ChannelType.WHATSAPP_GROUP,
+                    ChannelType.WHATSAPP_BUSINESS_GROUP
                 )) {
                 if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
             }

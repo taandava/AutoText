@@ -68,8 +68,9 @@ fun ComposeRecipientsAndMessageCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge
     ) {
-        val isWa = selectedChannel == ChannelType.WHATSAPP || selectedChannel == ChannelType.WHATSAPP_BUSINESS
-        val isBusiness = selectedChannel == ChannelType.WHATSAPP_BUSINESS
+        val isWa = selectedChannel == ChannelType.WHATSAPP || selectedChannel == ChannelType.WHATSAPP_BUSINESS ||
+            selectedChannel == ChannelType.WHATSAPP_GROUP || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
+        val isBusiness = selectedChannel == ChannelType.WHATSAPP_BUSINESS || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
 
         // Recipients Header
         Row(
@@ -124,7 +125,9 @@ fun ComposeRecipientsAndMessageCard(
                                     }
                                 }
                                 PickedChatType.GROUP -> {
-                                    localCtx.showAppToast("Group messaging is disabled. Select an individual chat.")
+                                    onAddDirectRecipient?.invoke(chatInfo.title, "group:${chatInfo.title}") ?: run {
+                                        onAddManualRecipient()
+                                    }
                                 }
                                 PickedChatType.INDIVIDUAL -> {
                                     val clean = chatInfo.title

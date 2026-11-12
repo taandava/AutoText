@@ -496,10 +496,24 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_reply_history_lookup ON $TABLE_AUTO_REPLY_HISTORY(rule_id, phone_number, date_str)")
         } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
-        // Note: Task sequences and WhatsApp groups features decommissioned in favor of 100% reliable direct single task dispatch.
+        // Task sequences decommissioned in favor of standalone single tasks.
         try { db.execSQL("DROP TABLE IF EXISTS $TABLE_CONTACT_SEQUENCES") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         try { db.execSQL("DROP TABLE IF EXISTS $TABLE_SEQUENCE_STEPS") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
-        try { db.execSQL("DROP TABLE IF EXISTS $TABLE_WHATSAPP_GROUPS") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+
+        // WhatsApp and WhatsApp Business Groups Cache
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_WHATSAPP_GROUPS (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                normalized_name TEXT NOT NULL UNIQUE,
+                package_name TEXT NOT NULL DEFAULT 'com.whatsapp',
+                participant_count TEXT DEFAULT '',
+                photo_uri TEXT DEFAULT '',
+                description TEXT DEFAULT '',
+                last_discovered_at INTEGER NOT NULL
+            )
+        """.trimIndent())
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_wagroups_pkg ON $TABLE_WHATSAPP_GROUPS(package_name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_TASK_DELIVERIES (

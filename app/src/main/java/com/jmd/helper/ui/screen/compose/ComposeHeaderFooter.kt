@@ -45,7 +45,7 @@ fun ComposeTopHeader(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(
                     onClick = onCancel,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Close,

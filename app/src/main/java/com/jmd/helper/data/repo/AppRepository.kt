@@ -442,6 +442,8 @@ class AppRepository(private val context: Context) {
         whatsAppRepo.getWhatsAppContacts(query, channel, limit)
 
     // ==================== WHATSAPP DATA CLEANUP ====================
+    fun deleteAllWhatsAppGroups(source: String? = null): Int = whatsAppRepo.deleteAllWhatsAppGroups(source)
+    fun purgeCorruptedGroupsFromPool(): Int = whatsAppRepo.purgeCorruptedGroupsFromPool()
     fun purgeAllGroupsFromPool(): Int = whatsAppRepo.purgeAllGroupsFromPool()
 
     // ==================== BACKUP ====================

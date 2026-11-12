@@ -84,6 +84,14 @@ fun TaskTypeSelectionDialog(
             channel = ChannelType.WHATSAPP_BUSINESS,
         ),
         TaskTypeItem(
+            title = "WhatsApp Group",
+            description = "Send message to a WhatsApp or WhatsApp Business group chat",
+            icon = Icons.Filled.Groups,
+            color = Color(0xFF15803D),
+            channel = null,
+            isGroup = true,
+        ),
+        TaskTypeItem(
             title = "Status Story",
             description = "Schedule auto-posting text or photo/video stories to Status",
             icon = Icons.Filled.PhotoCamera,
@@ -183,6 +191,7 @@ fun TaskTypeSelectionDialog(
                             Text(
                                 text = when (selectedSubFlow) {
                                     "STATUS" -> "Choose Status Platform"
+                                    "GROUP" -> "Choose WhatsApp Group App"
                                     "WA_CALL" -> "Choose WhatsApp Calling App"
                                     else -> "Choose Task Type"
                                 },
@@ -193,6 +202,7 @@ fun TaskTypeSelectionDialog(
                             Text(
                                 text = when (selectedSubFlow) {
                                     "STATUS" -> "Select which app to post your Status story to"
+                                    "GROUP" -> "Select WhatsApp or WhatsApp Business for this group message"
                                     "WA_CALL" -> "Select WhatsApp or WhatsApp Business for this voice call"
                                     else -> "Select what action you want to schedule"
                                 },
@@ -202,7 +212,11 @@ fun TaskTypeSelectionDialog(
                         }
                     }
 
-                    IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier
+                            .size(36.dp)
+                    ) {
                         Icon(Icons.Default.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
@@ -235,6 +249,35 @@ fun TaskTypeSelectionDialog(
                                 color = Color(0xFF0D9488),
                                 onClick = {
                                     onSelectChannel(ChannelType.WHATSAPP_BUSINESS_STATUS)
+                                }
+                            )
+                        }
+                    }
+                    "GROUP" -> {
+                        // Sub-selection: WhatsApp Group vs WhatsApp Business Group
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            DialogOptionTile(
+                                title = "WhatsApp Group",
+                                description = "Send message to a group via personal WhatsApp Messenger",
+                                badge = "Personal",
+                                icon = Icons.Filled.Groups,
+                                color = Color(0xFF16A34A),
+                                onClick = {
+                                    onSelectChannel(ChannelType.WHATSAPP_GROUP)
+                                }
+                            )
+
+                            DialogOptionTile(
+                                title = "WhatsApp Business Group",
+                                description = "Send message to a client/team group via WhatsApp Business (W4B)",
+                                badge = "Business",
+                                icon = Icons.Filled.Groups,
+                                color = Color(0xFF0D9488),
+                                onClick = {
+                                    onSelectChannel(ChannelType.WHATSAPP_BUSINESS_GROUP)
                                 }
                             )
                         }
@@ -282,6 +325,7 @@ fun TaskTypeSelectionDialog(
                                     border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant),
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                        .defaultMinSize(minHeight = 48.dp)
                                         .clip(AppDesignTokens.ShapeMedium)
                                         .clickable {
                                             when {
@@ -290,6 +334,9 @@ fun TaskTypeSelectionDialog(
                                                 }
                                                 item.isWaCall -> {
                                                     selectedSubFlow = "WA_CALL"
+                                                }
+                                                item.isGroup -> {
+                                                    selectedSubFlow = "GROUP"
                                                 }
                                                 item.isDailyCampaign -> {
                                                     onSelectDailyCampaign()

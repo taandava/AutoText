@@ -29,6 +29,7 @@ import com.jmd.helper.core.PhoneNumberNormalizer
 import com.jmd.helper.data.db.DatabaseHelper
 import com.jmd.helper.data.model.ChannelType
 import com.jmd.helper.data.model.WhatsAppContactItem
+import com.jmd.helper.data.model.WhatsAppGroupItem
 
 /**
  * Repository managing WhatsApp contact items and address book lookups.
@@ -331,7 +332,8 @@ class WhatsAppRepository(private val context: Context) {
     ): List<WhatsAppContactItem> {
         val map = LinkedHashMap<String, WhatsAppContactItem>()
         val queryLower = query.trim().lowercase()
-        val isBusiness = channel == ChannelType.WHATSAPP_BUSINESS || channel == ChannelType.WHATSAPP_BUSINESS_CALL || channel == ChannelType.WHATSAPP_BUSINESS_STATUS
+        val isGroupChannel = channel == ChannelType.WHATSAPP_GROUP || channel == ChannelType.WHATSAPP_BUSINESS_GROUP
+        val isBusiness = channel == ChannelType.WHATSAPP_BUSINESS || channel == ChannelType.WHATSAPP_BUSINESS_GROUP
 
         // Helper to check match
         fun matchesQuery(name: String, phone: String, norm: String): Boolean =
@@ -340,27 +342,50 @@ class WhatsAppRepository(private val context: Context) {
         // 1. Query TABLE_DYNAMIC_POOL (Main Pool) with channel prioritization
         try {
             val db = dbHelper.readableDatabase
-            val poolSql = if (isBusiness) {
-                """
-                SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
-                FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
-                WHERE enabled = 1 AND phone NOT LIKE 'group:%'
-                ORDER BY CASE
-                    WHEN source = 'WA_BUSINESS' THEN 0
-                    WHEN source = 'WA_CHAT' THEN 1
-                    ELSE 2 END, name ASC
-                LIMIT ?
+            val poolSql = when {
+                isGroupChannel && isBusiness -> """
+                    SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
+                    FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
+                    WHERE enabled = 1 AND (source IN ('WA_BUSINESS_GROUP', 'WA_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%')
+                    ORDER BY CASE
+                        WHEN source = 'WA_BUSINESS_GROUP' THEN 0
+                        WHEN source = 'WA_GROUP' THEN 1
+                        ELSE 2 END, name ASC
+                    LIMIT ?
                 """.trimIndent()
-            } else {
-                """
-                SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
-                FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
-                WHERE enabled = 1 AND phone NOT LIKE 'group:%'
-                ORDER BY CASE
-                    WHEN source = 'WA_CHAT' THEN 0
-                    WHEN source = 'WA_BUSINESS' THEN 1
-                    ELSE 2 END, name ASC
-                LIMIT ?
+                isGroupChannel -> """
+                    SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
+                    FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
+                    WHERE enabled = 1 AND (source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%')
+                    ORDER BY CASE
+                        WHEN source = 'WA_GROUP' THEN 0
+                        WHEN source = 'WA_BUSINESS_GROUP' THEN 1
+                        ELSE 2 END, name ASC
+                    LIMIT ?
+                """.trimIndent()
+                isBusiness -> """
+                    SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
+                    FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
+                    WHERE enabled = 1
+                    ORDER BY CASE
+                        WHEN source = 'WA_BUSINESS' THEN 0
+                        WHEN source = 'WA_BUSINESS_GROUP' THEN 1
+                        WHEN source = 'WA_CHAT' THEN 2
+                        WHEN source = 'WA_GROUP' THEN 3
+                        ELSE 4 END, name ASC
+                    LIMIT ?
+                """.trimIndent()
+                else -> """
+                    SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
+                    FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
+                    WHERE enabled = 1
+                    ORDER BY CASE
+                        WHEN source = 'WA_CHAT' THEN 0
+                        WHEN source = 'WA_GROUP' THEN 1
+                        WHEN source = 'WA_BUSINESS' THEN 2
+                        WHEN source = 'WA_BUSINESS_GROUP' THEN 3
+                        ELSE 4 END, name ASC
+                    LIMIT ?
                 """.trimIndent()
             }
             db.rawQuery(poolSql, arrayOf(limit.toString())).use { c ->
@@ -370,12 +395,17 @@ class WhatsAppRepository(private val context: Context) {
                     val norm = c.getString(2) ?: PhoneNumberNormalizer.normalize(phone)
                     val photo = c.getString(3) ?: ""
                     val source = if (c.columnCount >= 5) c.getString(4).orEmpty() else ""
+                    val isGroup = phone.startsWith("group:", ignoreCase = true) || norm.startsWith("group:", ignoreCase = true) || source.contains("group", ignoreCase = true)
                     val isW4bEntry = source.contains("w4b", ignoreCase = true) || source.contains("business", ignoreCase = true)
 
-                    val dedupeKey = norm.ifBlank { phone }
+                    val dedupeKey = if (isGroup) "group:${name.lowercase()}" else norm.ifBlank { phone }
                     if (phone.isNotBlank() && !map.containsKey(dedupeKey)) {
                         if (matchesQuery(name, phone, norm)) {
-                            val accType = if (isW4bEntry || isBusiness) "com.whatsapp.w4b" else "com.whatsapp"
+                            val accType = when {
+                                isGroup -> if (isW4bEntry || isBusiness) "com.whatsapp.w4b" else "com.whatsapp"
+                                isW4bEntry || isBusiness -> "com.whatsapp.w4b"
+                                else -> "com.whatsapp"
+                            }
                             map[dedupeKey] = WhatsAppContactItem(
                                 name = name.ifBlank { phone },
                                 phone = phone,
@@ -392,7 +422,7 @@ class WhatsAppRepository(private val context: Context) {
         }
 
         // 2. Query ContactsContract.Data for WhatsApp sync profiles if supported
-        if (map.size < limit && ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+        if (!isGroupChannel && map.size < limit && ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             try {
                 val resolver = context.contentResolver
                 val profileMime = if (isBusiness) "vnd.android.cursor.item/vnd.com.whatsapp.w4b.profile" else "vnd.android.cursor.item/vnd.com.whatsapp.profile"
@@ -461,7 +491,7 @@ class WhatsAppRepository(private val context: Context) {
         }
 
         // 4. Fill with General Contacts (ContactsContract.CommonDataKinds.Phone) if still below limit
-        if (map.size < limit && ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+        if (!isGroupChannel && map.size < limit && ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             try {
                 val resolver = context.contentResolver
                 val selection = if (queryLower.isNotBlank()) {
@@ -545,20 +575,55 @@ class WhatsAppRepository(private val context: Context) {
     }
 
     /**
-     * Purges all group entries from the dynamic pool.
+     * Clears saved WhatsApp groups for a specific source (WA_GROUP or WA_BUSINESS_GROUP),
+     * or all groups if source is omitted.
      */
-    fun purgeAllGroupsFromPool(): Int {
+    fun deleteAllWhatsAppGroups(source: String? = null): Int {
+        return try {
+            val db = dbHelper.writableDatabase
+            if (source.isNullOrBlank()) {
+                db.delete(
+                    DatabaseHelper.TABLE_DYNAMIC_POOL,
+                    "source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%'",
+                    null
+                )
+            } else {
+                db.delete(
+                    DatabaseHelper.TABLE_DYNAMIC_POOL,
+                    "source = ? OR (source = ? AND phone LIKE 'group:%')",
+                    arrayOf(source, source)
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("WhatsAppRepo", "Failed clearing groups: ${e.message}")
+            0
+        }
+    }
+
+    /**
+     * Convenience method to purge all group entries from the dynamic pool.
+     */
+    fun purgeAllGroupsFromPool(): Int = deleteAllWhatsAppGroups(null)
+
+    /**
+     * Purges corrupted or misclassified groups from the dynamic pool (e.g. system footers or contacts mislabeled as groups).
+     */
+    fun purgeCorruptedGroupsFromPool(): Int {
         return try {
             val db = dbHelper.writableDatabase
             val count = db.delete(
                 DatabaseHelper.TABLE_DYNAMIC_POOL,
-                "source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%'",
+                "(source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%') AND (" +
+                    "LOWER(name) IN ('hidden updates', 'find channels to follow', 'explore more', 'create channel', 'inbox filters', 'radio group', 'add status', 'recent updates', 'recent searches', 'clear all', 'ask meta ai or search', 'search group chats', 'search chats', 'manage groups', 'manage group', 'new group', 'new community', 'archived', 'starred messages', 'disappearing messages', 'chats', 'updates', 'communities', 'calls', 'tools', 'all filter', 'groups filter', 'unread filter', 'favorites filter') " +
+                    "OR phone IN ('group:Hidden updates', 'group:Find channels to follow', 'group:Explore more', 'group:Create channel', 'group:Inbox filters', 'group:Recent updates', 'group:Add status', 'group:Manage Groups', 'group:Manage groups', 'group:New group', 'group:Archived') " +
+                    "OR normalized_number IN ('group:hidden updates', 'group:find channels to follow', 'group:explore more', 'group:create channel', 'group:inbox filters', 'group:recent updates', 'group:add status', 'group:manage groups', 'group:new group', 'group:archived')" +
+                ")",
                 null
             )
-            Log.i("WhatsAppRepo", "Purged $count group entries from dynamic pool")
+            Log.i("WhatsAppRepo", "Purged $count corrupted group entries from dynamic pool")
             count
         } catch (e: Exception) {
-            Log.w("WhatsAppRepo", "purgeAllGroupsFromPool failed: ${e.message}")
+            Log.w("WhatsAppRepo", "purgeCorruptedGroupsFromPool failed: ${e.message}")
             0
         }
     }
