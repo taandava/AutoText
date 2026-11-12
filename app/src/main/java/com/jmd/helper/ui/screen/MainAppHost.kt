@@ -69,8 +69,6 @@ fun MainAppHost(
     var isToolsSubSectionOpen by remember { mutableStateOf(value = false) }
     var toolsInitialSubSection by remember { mutableStateOf("MENU") }
     var isAutoReplyEditing by remember { mutableStateOf(value = false) }
-    var isTasksStudioOpen by remember { mutableStateOf(value = false) }
-    var tasksInitialCategory by remember { mutableIntStateOf(0) }
     var showTaskTypeDialog by remember { mutableStateOf(value = false) }
 
     LaunchedEffect(sharedText) {
@@ -91,11 +89,6 @@ fun MainAppHost(
                 editingTask = null
                 composeChannel = channel
                 isComposing = true
-            },
-            onSelectSequence = { _ ->
-                showTaskTypeDialog = false
-                tasksInitialCategory = 1
-                currentTab = 0
             },
             onSelectDailyCampaign = {
                 showTaskTypeDialog = false
@@ -131,7 +124,7 @@ fun MainAppHost(
     } else {
         val isToolsSubSection = (currentTab == 3 && isToolsSubSectionOpen)
         val isCampaignDetail = (currentTab == 1 && selectedDailyCampaignId > 0L)
-        val shouldShowBars = !isToolsSubSection && !isCampaignDetail && !isAutoReplyEditing && !isTasksStudioOpen
+        val shouldShowBars = !isToolsSubSection && !isCampaignDetail && !isAutoReplyEditing
 
         BackHandler(enabled = currentTab != 0 && shouldShowBars) {
             currentTab = 0
@@ -293,9 +286,6 @@ fun MainAppHost(
                             selected = isSelected,
                             alwaysShowLabel = true,
                             onClick = {
-                                if (tabIndex == 0) {
-                                    tasksInitialCategory = 0
-                                }
                                 if (tabIndex == 1) {
                                     selectedDailyCampaignId = 0L
                                 }
@@ -346,14 +336,10 @@ fun MainAppHost(
                 ) {
                 when (currentTab) {
                     0 -> TasksListScreen(
-                        initialCategoryTab = tasksInitialCategory,
                         onNavigateToCompose = { channel ->
                             editingTask = null
                             composeChannel = channel
                             isComposing = true
-                        },
-                        onNavigateToSequenceStudio = { _ ->
-                            tasksInitialCategory = 1
                         },
                         onEditTask = { task ->
                             editingTask = task
@@ -361,8 +347,7 @@ fun MainAppHost(
                         },
                         onNavigateToDailyCampaign = {
                             currentTab = 1
-                        },
-                        onStudioStateChanged = { isTasksStudioOpen = it }
+                        }
                     )
                     1 -> DailyAutoSenderScreen(
                         initialCampaignId = selectedDailyCampaignId,

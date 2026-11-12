@@ -36,9 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.jmd.helper.data.prefs.*
 import com.jmd.helper.data.repo.*
 import com.jmd.helper.ui.screen.campaign.DailyAutoSenderScreen
-import com.jmd.helper.ui.screen.contacts.BulkContactsView
 import com.jmd.helper.ui.screen.logs.LogsView
-import com.jmd.helper.ui.screen.sequence.ContactSequenceStudio
 import com.jmd.helper.ui.screen.settings.*
 import com.jmd.helper.ui.screen.templates.TemplatesView
 import com.jmd.helper.ui.theme.*
@@ -92,9 +90,7 @@ fun MoreScreenView(
         "DAILY_SMS" -> DailyAutoSenderScreen(initialCampaignId = 1L, onBack = { navigateToSubSection("MENU") })
         "DAILY_WHATSAPP" -> DailyAutoSenderScreen(initialCampaignId = 2L, onBack = { navigateToSubSection("MENU") })
         "WHATSAPP_SETUP" -> WhatsAppSetupAndScreenAssistView(context, prefs) { navigateToSubSection("MENU") }
-        "SEQUENCES" -> ContactSequenceStudio(onDismiss = { navigateToSubSection("MENU") }) { navigateToSubSection("MENU") }
         "TEMPLATES" -> TemplatesView(repository) { navigateToSubSection("MENU") }
-        "BULK_CONTACTS" -> BulkContactsView(repository) { navigateToSubSection("MENU") }
         "LOGS" -> LogsView(
             repository,
             onNavigateToSystemLogs = {
@@ -205,29 +201,11 @@ fun MoreScreenView(
                 }
                 item {
                     MenuItemCard(
-                        "Task Sequences",
-                        Icons.Filled.LinearScale,
-                        Color(0xFFF57C00),
-                    ) {
-                        navigateToSubSection("SEQUENCES")
-                    }
-                }
-                item {
-                    MenuItemCard(
                         "Message Templates",
                         Icons.Filled.Description,
                         Color(0xFF8B5CF6),
                     ) {
                         navigateToSubSection("TEMPLATES")
-                    }
-                }
-                item {
-                    MenuItemCard(
-                        "Bulk Contacts & Groups",
-                        Icons.Filled.GroupAdd,
-                        Color(0xFF2E7D32),
-                    ) {
-                        navigateToSubSection("BULK_CONTACTS")
                     }
                 }
 

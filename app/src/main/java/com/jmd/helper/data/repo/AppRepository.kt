@@ -28,7 +28,6 @@ import com.jmd.helper.core.PhoneNumberNormalizer
 import com.jmd.helper.data.db.DatabaseHelper
 import com.jmd.helper.data.model.AutoReplyRule
 import com.jmd.helper.data.model.ChannelType
-import com.jmd.helper.data.model.ContactSequence
 import com.jmd.helper.data.model.DailyCampaignConfig
 import com.jmd.helper.data.model.DynamicContactItem
 import com.jmd.helper.data.model.DynamicPoolStats
@@ -54,7 +53,6 @@ class AppRepository(private val context: Context) {
     val dailyCampaignRepo = DailyCampaignRepository(context)
     val autoReplyRepo = AutoReplyRepository(context)
     val logRepo = LogRepository(context)
-    val sequenceRepo = SequenceRepository(context)
     val backupRepo = BackupRepository(context)
     val templateRepo = TemplateRepository(context)
     val recipientRepo = RecipientRepository(context)
@@ -434,151 +432,6 @@ class AppRepository(private val context: Context) {
     fun importContactsFromCsv(csvText: String): Int = recipientRepo.importContactsFromCsv(csvText)
     fun exportContactsToCsv(): String = recipientRepo.exportContactsToCsv()
 
-
-    fun saveContactSequence(seq: ContactSequence, startTs: Long): Long {
-        val seqId = sequenceRepo.insertSequence(seq)
-        val now = System.currentTimeMillis()
-        val effectiveStart = maxOf(startTs, now + 1000L)
-
-        try {
-            val db = dbHelper.writableDatabase
-            val cursor = db.query(
-                DatabaseHelper.TABLE_TASKS,
-                arrayOf("id"),
-                "title LIKE ? OR title LIKE ?",
-                arrayOf("[Seq #$seqId %", "%(Seq #$seqId)%"),
-                null, null, null
-            )
-            val idsToDelete = mutableListOf<Long>()
-            cursor.use { c ->
-                while (c.moveToNext()) {
-                    idsToDelete.add(c.getLong(0))
-                }
-            }
-            val alarmScheduler = AlarmScheduler(context)
-            for (taskId in idsToDelete) {
-                alarmScheduler.cancelTask(taskId)
-                taskRepo.deleteTask(taskId)
-            }
-        } catch (e: Exception) {
-            Log.w("ContactSequenceRepo", "Error clearing prior scheduled tasks for sequence #$seqId: ${e.message}")
-        }
-
-        if (seq.isEnabled) {
-            val fullSeq = seq.copy(id = seqId)
-            val alarmScheduler = AlarmScheduler(context)
-            var currentTriggerTime = effectiveStart
-
-            fullSeq.steps.forEachIndexed { index, step ->
-                if (step.specificTriggerTime > now) {
-                    currentTriggerTime = step.specificTriggerTime
-                } else if (index > 0) {
-                    currentTriggerTime += step.delayMinutesFromPrevious * 60 * 1000L
-                }
-                val stepTitle = "[Seq #$seqId Step ${index + 1}] ${fullSeq.title.ifBlank { fullSeq.contactName }}"
-                val task = ScheduledTask(
-                    title = stepTitle,
-                    channel = step.channel,
-                    recipients = listOf(fullSeq.contactPhone),
-                    recipientNames = listOf(fullSeq.contactName.ifBlank { fullSeq.contactPhone }),
-                    messageText = step.messageText,
-                    triggerTimeMillis = currentTriggerTime,
-                    recurrence = RecurrenceType.ONCE,
-                    status = TaskStatus.PENDING,
-                    simSlot = step.simSlot,
-                    createdAtMillis = now
-                )
-                val insertedTaskId = taskRepo.insertTask(task)
-                if (insertedTaskId > 0) {
-                    alarmScheduler.scheduleTask(task.copy(id = insertedTaskId))
-                }
-            }
-        }
-        return seqId
-    }
-
-    fun getAllContactSequences(): List<ContactSequence> = sequenceRepo.getAllSequences()
-    fun getContactSequenceById(id: Long): ContactSequence? = sequenceRepo.getAllSequences().find { it.id == id }
-
-    fun deleteContactSequence(id: Long): Boolean = deleteSequence(id)
-
-    fun deleteSequence(id: Long): Boolean {
-        try {
-            val db = dbHelper.writableDatabase
-            val cursor = db.query(
-                DatabaseHelper.TABLE_TASKS,
-                arrayOf("id"),
-                "title LIKE ? OR title LIKE ?",
-                arrayOf("[Seq #$id %", "%(Seq #$id)%"),
-                null, null, null
-            )
-            val idsToDelete = mutableListOf<Long>()
-            cursor.use { c ->
-                while (c.moveToNext()) {
-                    idsToDelete.add(c.getLong(0))
-                }
-            }
-            val alarmScheduler = AlarmScheduler(context)
-            for (taskId in idsToDelete) {
-                alarmScheduler.cancelTask(taskId)
-                taskRepo.deleteTask(taskId)
-            }
-        } catch (e: Exception) {
-            Log.w("HelperRepo", "Error deleting linked sequence tasks for sequence #$id: ${e.message}")
-        }
-        return sequenceRepo.deleteSequence(id)
-    }
-
-    fun toggleContactSequence(id: Long, enabled: Boolean): Boolean {
-        val db = dbHelper.writableDatabase
-        val cv = ContentValues().apply {
-            put("is_enabled", if (enabled) 1 else 0)
-        }
-        val updated = db.update(DatabaseHelper.TABLE_CONTACT_SEQUENCES, cv, "id = ?", arrayOf(id.toString())) > 0
-        if (updated) {
-            try {
-                val cursor = db.query(
-                    DatabaseHelper.TABLE_TASKS,
-                    arrayOf("id", "trigger_time", "status"),
-                    "title LIKE ? OR title LIKE ?",
-                    arrayOf("[Seq #$id %", "%(Seq #$id)%"),
-                    null, null, null
-                )
-                val alarmScheduler = AlarmScheduler(context)
-                val now = System.currentTimeMillis()
-                cursor.use { c ->
-                    while (c.moveToNext()) {
-                        val taskId = c.getLong(0)
-                        val triggerTime = c.getLong(1)
-                        val currentStatus = c.getString(2)
-                        if (!enabled) {
-                            if (currentStatus == TaskStatus.PENDING.name) {
-                                alarmScheduler.cancelTask(taskId)
-                                taskRepo.updateTaskStatus(taskId, TaskStatus.CANCELLED)
-                                try {
-                                    com.jmd.helper.engine.SequentialTaskEngine.getInstance(context).cancelTask(taskId)
-                                } catch (t: Throwable) {
-                                    android.util.Log.d("AppRepository", "cancelTask on engine for #$taskId: ${t.message}")
-                                }
-                            }
-                        } else {
-                            if (currentStatus == TaskStatus.CANCELLED.name && triggerTime > now) {
-                                taskRepo.updateTaskStatus(taskId, TaskStatus.PENDING)
-                                val task = taskRepo.getTaskById(taskId)
-                                if (task != null) {
-                                    alarmScheduler.scheduleTask(task)
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Log.w("HelperRepo", "Error updating linked sequence tasks for sequence #$id toggle: ${e.message}")
-            }
-        }
-        return updated
-    }
-
     // ==================== WHATSAPP CONTACTS ====================
     fun isValidPickedChatName(name: String): Boolean = whatsAppRepo.isValidPickedChatName(name)
     fun findPhoneForContactName(name: String): String? = whatsAppRepo.findPhoneForContactName(name)
@@ -589,8 +442,7 @@ class AppRepository(private val context: Context) {
         whatsAppRepo.getWhatsAppContacts(query, channel, limit)
 
     // ==================== WHATSAPP DATA CLEANUP ====================
-    fun deleteAllWhatsAppGroups(source: String? = null): Int = whatsAppRepo.deleteAllWhatsAppGroups(source)
-    fun purgeCorruptedGroupsFromPool(): Int = whatsAppRepo.purgeCorruptedGroupsFromPool()
+    fun purgeAllGroupsFromPool(): Int = whatsAppRepo.purgeAllGroupsFromPool()
 
     // ==================== BACKUP ====================
     fun exportDatabaseToJson(): String = backupRepo.exportDatabaseToJson()

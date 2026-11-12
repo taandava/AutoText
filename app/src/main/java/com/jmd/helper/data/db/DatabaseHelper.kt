@@ -496,33 +496,9 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_reply_history_lookup ON $TABLE_AUTO_REPLY_HISTORY(rule_id, phone_number, date_str)")
         } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
-        db.execSQL("""
-            CREATE TABLE IF NOT EXISTS $TABLE_CONTACT_SEQUENCES (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                contact_name TEXT DEFAULT '',
-                contact_phone TEXT NOT NULL,
-                title TEXT DEFAULT '',
-                is_enabled INTEGER DEFAULT 1,
-                created_at INTEGER NOT NULL
-            )
-        """.trimIndent())
-
-        db.execSQL("""
-            CREATE TABLE IF NOT EXISTS $TABLE_SEQUENCE_STEPS (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                sequence_id INTEGER NOT NULL,
-                step_order INTEGER NOT NULL,
-                channel TEXT NOT NULL,
-                message_text TEXT NOT NULL,
-                delay_minutes INTEGER DEFAULT 0,
-                trigger_time INTEGER DEFAULT 0,
-                sim_slot INTEGER DEFAULT 0
-            )
-        """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_seq_steps ON $TABLE_SEQUENCE_STEPS(sequence_id)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
-
-        // Note: WhatsApp groups feature removed in favor of 100% reliable direct phone/contact dispatch.
-        // Drop legacy table if present.
+        // Note: Task sequences and WhatsApp groups features decommissioned in favor of 100% reliable direct single task dispatch.
+        try { db.execSQL("DROP TABLE IF EXISTS $TABLE_CONTACT_SEQUENCES") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("DROP TABLE IF EXISTS $TABLE_SEQUENCE_STEPS") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         try { db.execSQL("DROP TABLE IF EXISTS $TABLE_WHATSAPP_GROUPS") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
         db.execSQL("""

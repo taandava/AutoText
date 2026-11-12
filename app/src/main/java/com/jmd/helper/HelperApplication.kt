@@ -145,7 +145,7 @@ class HelperApplication : Application(), Configuration.Provider {
                 val repo = AppRepository(this@HelperApplication)
                 // Reconcile and recover any tasks left stranded in RUNNING status from a previous process termination
                 repo.recoverInterruptedRunningTasks()
-                repo.purgeCorruptedGroupsFromPool()
+                repo.purgeAllGroupsFromPool()
 
                 // Re-arm all active and pending task alarms across SMS, WhatsApp, Calls, and Reminders
                 AlarmScheduler(this@HelperApplication).rescheduleAllPending()

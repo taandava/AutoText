@@ -33,10 +33,10 @@ object WhatsAppPackageHelper {
     fun getPackageForChannel(context: Context, channel: ChannelType): String? {
         val pm = context.packageManager
         return when (channel) {
-            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> {
+            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> {
                 if (isPackageInstalled(pm, PACKAGE_WHATSAPP_BUSINESS)) PACKAGE_WHATSAPP_BUSINESS else null
             }
-            ChannelType.WHATSAPP, ChannelType.WHATSAPP_GROUP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL -> {
+            ChannelType.WHATSAPP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL -> {
                 if (isPackageInstalled(pm, PACKAGE_WHATSAPP)) PACKAGE_WHATSAPP else null
             }
             else -> getInstalledWhatsAppPackage(context)

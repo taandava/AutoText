@@ -45,7 +45,6 @@ import com.jmd.helper.service.*
 import com.jmd.helper.ui.components.*
 import com.jmd.helper.ui.model.*
 import com.jmd.helper.ui.screen.ReminderComposerCard
-import com.jmd.helper.ui.screen.sequence.*
 import com.jmd.helper.ui.theme.*
 import com.jmd.helper.whatsapp.*
 
@@ -422,9 +421,7 @@ fun ComposeTaskScreen(
             if (selectedChannel in listOf(
                     ChannelType.SMS,
                     ChannelType.WHATSAPP,
-                    ChannelType.WHATSAPP_BUSINESS,
-                    ChannelType.WHATSAPP_GROUP,
-                    ChannelType.WHATSAPP_BUSINESS_GROUP
+                    ChannelType.WHATSAPP_BUSINESS
                 )) {
                 if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
             }

@@ -58,56 +58,14 @@ class WhatsAppSender(private val context: Context) {
         mediaUri: String = "",
         isBatchCampaign: Boolean = false
     ): Boolean {
-        val isBusiness = (channel == ChannelType.WHATSAPP_BUSINESS || channel == ChannelType.WHATSAPP_BUSINESS_STATUS || channel == ChannelType.WHATSAPP_BUSINESS_GROUP)
+        val isBusiness = (channel == ChannelType.WHATSAPP_BUSINESS || channel == ChannelType.WHATSAPP_BUSINESS_STATUS)
         val targetPkg = if (isBusiness) "com.whatsapp.w4b" else "com.whatsapp"
 
         val isStatus = (channel == ChannelType.WHATSAPP_STATUS || channel == ChannelType.WHATSAPP_BUSINESS_STATUS)
-        val isGroup = (channel == ChannelType.WHATSAPP_GROUP || channel == ChannelType.WHATSAPP_BUSINESS_GROUP || recipientPhone.startsWith("group:", ignoreCase = true))
 
         return when {
             isStatus -> sendWhatsAppStatusMessage(targetPkg, taskId, mediaUri, shouldRelock, messageText)
-            isGroup -> sendWhatsAppGroupMessage(targetPkg, taskId, mediaUri, shouldRelock, isBatchCampaign, recipientPhone, messageText)
             else -> sendWhatsAppDirectChatMessage(targetPkg, taskId, mediaUri, shouldRelock, isBatchCampaign, recipientPhone, messageText)
-        }
-    }
-
-    /**
-     * Configures accessibility service and launches intent to locate and message a WhatsApp group.
-     */
-    private fun sendWhatsAppGroupMessage(
-        targetPkg: String,
-        taskId: Long,
-        mediaUri: String,
-        shouldRelock: Boolean,
-        isBatchCampaign: Boolean,
-        recipientGroup: String,
-        messageText: String
-    ): Boolean {
-        val cleanGroupName = recipientGroup.replaceFirst(Regex("^group\\s*:", RegexOption.IGNORE_CASE), "").trim()
-        TaskAccessibilityService.prepareForGroup(
-            taskId = taskId,
-            packageName = targetPkg,
-            groupName = cleanGroupName,
-            messageText = messageText,
-            shouldRelock = shouldRelock,
-            isBatchCampaign = isBatchCampaign,
-            mediaUri = mediaUri
-        )
-
-        if (mediaUri.isNotBlank()) {
-            return launchActionSend(targetPkg, mediaUri, messageText)
-        } else {
-            val launchIntent = context.packageManager.getLaunchIntentForPackage(targetPkg)
-            if (launchIntent != null) {
-                launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                context.startActivity(launchIntent)
-                Log.d(tag, "Launched $targetPkg for group search: '$cleanGroupName'")
-                AppFileLogger.action(context, tag, "Launched $targetPkg for group search: '$cleanGroupName'")
-                return true
-            } else {
-                Log.e(tag, "Launch intent unavailable for $targetPkg group send")
-                return false
-            }
         }
     }
 

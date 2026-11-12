@@ -470,16 +470,16 @@ class HelperComprehensiveTest {
     }
 
     @Test
-    fun testContactSequenceChannelSeparation() {
-        val smsStep = ContactSequenceStep(stepOrder = 1, channel = ChannelType.SMS, messageText = "SMS Drip")
-        val waStep = ContactSequenceStep(stepOrder = 1, channel = ChannelType.WHATSAPP, messageText = "WA Drip")
-        val w4bStep = ContactSequenceStep(stepOrder = 1, channel = ChannelType.WHATSAPP_BUSINESS, messageText = "W4B Drip")
+    fun testScheduledTaskChannelSeparation() {
+        val smsTask = ScheduledTask(channel = ChannelType.SMS, messageText = "SMS Task")
+        val waTask = ScheduledTask(channel = ChannelType.WHATSAPP, messageText = "WA Task")
+        val w4bTask = ScheduledTask(channel = ChannelType.WHATSAPP_BUSINESS, messageText = "W4B Task")
 
-        assertEquals(ChannelType.SMS, smsStep.channel)
-        assertEquals(ChannelType.WHATSAPP, waStep.channel)
-        assertEquals(ChannelType.WHATSAPP_BUSINESS, w4bStep.channel)
-        assertNotEquals(smsStep.channel, waStep.channel)
-        assertNotEquals(waStep.channel, w4bStep.channel)
+        assertEquals(ChannelType.SMS, smsTask.channel)
+        assertEquals(ChannelType.WHATSAPP, waTask.channel)
+        assertEquals(ChannelType.WHATSAPP_BUSINESS, w4bTask.channel)
+        assertNotEquals(smsTask.channel, waTask.channel)
+        assertNotEquals(waTask.channel, w4bTask.channel)
     }
 
     @Test
@@ -643,26 +643,24 @@ class HelperComprehensiveTest {
     }
 
     @Test
-    fun testChannelTypeWhatsAppGroupProperties() {
-        val groupChannel = ChannelType.WHATSAPP_GROUP
-        assertEquals("WhatsApp Group", groupChannel.displayName)
-        assertEquals("👥", groupChannel.emoji)
+    fun testChannelTypeWhatsAppProperties() {
+        val waChannel = ChannelType.WHATSAPP
+        assertEquals("WhatsApp", waChannel.displayName)
+        assertEquals("💬", waChannel.emoji)
     }
 
     @Test
-    fun testWhatsAppGroupItemModel() {
-        val group = WhatsAppGroupItem(
-            name = "Project Team",
-            participantCount = "25 participants",
-            lastDiscoveredAt = 1000L,
-            packageName = "com.whatsapp",
-            photoUri = "",
-            description = "Official project group"
+    fun testWhatsAppContactItemModel() {
+        val contact = WhatsAppContactItem(
+            name = "Project Lead",
+            phone = "+919876543210",
+            normalizedPhone = "+919876543210",
+            accountType = "com.whatsapp",
+            photoUri = ""
         )
-        assertEquals("Project Team", group.name)
-        assertEquals("25 participants", group.participantCount)
-        assertEquals("com.whatsapp", group.packageName)
-        assertEquals("Official project group", group.description)
+        assertEquals("Project Lead", contact.name)
+        assertEquals("+919876543210", contact.phone)
+        assertEquals("com.whatsapp", contact.accountType)
     }
 
     @Test
@@ -856,7 +854,7 @@ class HelperComprehensiveTest {
         }
 
         // Verify count of all task types
-        assertEquals(13, tasks.size)
+        assertEquals(11, tasks.size)
 
         // Verify each channel type is uniquely present
         val presentChannels = tasks.map { it.channel }.toSet()
@@ -1113,7 +1111,7 @@ class HelperComprehensiveTest {
     @Test
     fun testAllChannelsValidationAcceptsTextPayload() {
         val channels = com.jmd.helper.data.model.ChannelType.entries
-        assertEquals(13, channels.size)
+        assertEquals(11, channels.size)
 
         for (channel in channels) {
             val result = com.jmd.helper.core.TaskContentValidator.validateContent(
@@ -1875,14 +1873,12 @@ class HelperComprehensiveTest {
     @Test
     fun testAllChannelsCompleteness() {
         val allChannels = ChannelType.entries
-        assertEquals("Expected exactly 13 channels", 13, allChannels.size)
+        assertEquals("Expected exactly 11 channels", 11, allChannels.size)
 
         val expectedChannels = setOf(
             ChannelType.SMS,
             ChannelType.WHATSAPP,
             ChannelType.WHATSAPP_BUSINESS,
-            ChannelType.WHATSAPP_GROUP,
-            ChannelType.WHATSAPP_BUSINESS_GROUP,
             ChannelType.WHATSAPP_STATUS,
             ChannelType.WHATSAPP_BUSINESS_STATUS,
             ChannelType.CALL,
@@ -2080,19 +2076,15 @@ class HelperComprehensiveTest {
     }
 
     @Test
-    fun testContactSequenceProgressiveDelayTiming() {
+    fun testPacedCampaignProgressiveDelayTiming() {
         val baseTime = 1700000000000L
-        val steps = listOf(
-            ContactSequenceStep(stepOrder = 1, channel = ChannelType.SMS, messageText = "Step 1", delayMinutesFromPrevious = 0),
-            ContactSequenceStep(stepOrder = 2, channel = ChannelType.SMS, messageText = "Step 2", delayMinutesFromPrevious = 30),
-            ContactSequenceStep(stepOrder = 3, channel = ChannelType.SMS, messageText = "Step 3", delayMinutesFromPrevious = 120)
-        )
+        val intervals = listOf(0, 30, 120)
 
         var currentTriggerTime = baseTime
         val calculatedTimes = mutableListOf<Long>()
-        steps.forEachIndexed { index, step ->
+        intervals.forEachIndexed { index, delayMinutes ->
             if (index > 0) {
-                currentTriggerTime += step.delayMinutesFromPrevious * 60 * 1000L
+                currentTriggerTime += delayMinutes * 60 * 1000L
             }
             calculatedTimes.add(currentTriggerTime)
         }
@@ -2105,12 +2097,10 @@ class HelperComprehensiveTest {
     @Test
     fun testAllChannelTypesCoverage() {
         val allChannels = ChannelType.entries
-        assertEquals("There should be exactly 13 channel types", 13, allChannels.size)
+        assertEquals("There should be exactly 11 channel types", 11, allChannels.size)
         assertTrue(allChannels.contains(ChannelType.SMS))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS))
-        assertTrue(allChannels.contains(ChannelType.WHATSAPP_GROUP))
-        assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS_GROUP))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_STATUS))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS_STATUS))
         assertTrue(allChannels.contains(ChannelType.CALL))
@@ -2183,13 +2173,6 @@ class HelperComprehensiveTest {
                 channel = ChannelType.WHATSAPP_BUSINESS
             ),
             TaskTypeItem(
-                title = "WhatsApp Group",
-                description = "Send message to a WhatsApp or WA Business group",
-                emoji = "👥",
-                color = androidx.compose.ui.graphics.Color.Green,
-                channel = ChannelType.WHATSAPP_GROUP
-            ),
-            TaskTypeItem(
                 title = "Status Story",
                 description = "Schedule auto-posting text or photo/video stories to Status",
                 emoji = "📸",
@@ -2220,14 +2203,6 @@ class HelperComprehensiveTest {
                 channel = ChannelType.CALL_SIMULATION
             ),
             TaskTypeItem(
-                title = "Contact Sequence (Multi-Task)",
-                description = "Step-by-step drip messages for a contact across SMS & WhatsApp",
-                emoji = "🔗",
-                color = androidx.compose.ui.graphics.Color.Blue,
-                channel = null,
-                isSequence = true
-            ),
-            TaskTypeItem(
                 title = "Daily Auto Campaign",
                 description = "High-speed paced outreach batch",
                 emoji = "⚡",
@@ -2251,12 +2226,11 @@ class HelperComprehensiveTest {
             )
         )
 
-        assertEquals(12, items.size)
+        assertEquals(10, items.size)
         val channels = items.mapNotNull { it.channel }.toSet()
         assertTrue(channels.contains(ChannelType.SMS))
         assertTrue(channels.contains(ChannelType.WHATSAPP))
         assertTrue(channels.contains(ChannelType.WHATSAPP_BUSINESS))
-        assertTrue(channels.contains(ChannelType.WHATSAPP_GROUP))
         assertTrue(channels.contains(ChannelType.CALL))
         assertTrue(channels.contains(ChannelType.CALL_SIMULATION))
         assertTrue(channels.contains(ChannelType.REMINDER))
@@ -2356,9 +2330,9 @@ class HelperComprehensiveTest {
         assertEquals(ChannelType.CALL, ChannelType.fromString("call"))
         assertEquals(ChannelType.WHATSAPP, ChannelType.fromString("WHATSAPP"))
         assertEquals(ChannelType.WHATSAPP_BUSINESS, ChannelType.fromString("WHATSAPP_BUSINESS"))
-        assertEquals(ChannelType.WHATSAPP_GROUP, ChannelType.fromString("WHATSAPP_GROUP"))
-        assertEquals(ChannelType.WHATSAPP_GROUP, ChannelType.fromString("whatsapp_group"))
-        assertEquals(ChannelType.WHATSAPP_GROUP, ChannelType.fromString("GROUP"))
+        assertEquals(ChannelType.WHATSAPP, ChannelType.fromString("WHATSAPP_GROUP"))
+        assertEquals(ChannelType.WHATSAPP, ChannelType.fromString("whatsapp_group"))
+        assertEquals(ChannelType.WHATSAPP, ChannelType.fromString("GROUP"))
         assertEquals(ChannelType.REMINDER, ChannelType.fromString("REMINDER"))
         assertEquals(ChannelType.SOUND_MODE, ChannelType.fromString("SOUND_MODE"))
         assertEquals(ChannelType.SMS, ChannelType.fromString(null))

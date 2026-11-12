@@ -75,11 +75,9 @@ data class TaskTypeItem(
     val emoji: String = "",
     val color: Color,
     val channel: ChannelType?,
-    val isSequence: Boolean = false,
     val isStatus: Boolean = false,
     val isDailyCampaign: Boolean = false,
     val isWaCall: Boolean = false,
-    val isGroup: Boolean = false,
     val icon: ImageVector? = null
 )
 

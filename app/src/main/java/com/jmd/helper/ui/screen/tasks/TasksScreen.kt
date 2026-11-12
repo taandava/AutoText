@@ -3,23 +3,19 @@
  * Module: UI Tasks Management Screen Layer
  *
  * Primary coordinator screen managing:
- * - Single Tasks list and Contact Sequences list.
- * - Live real-time search and status filtering (All, Active, Sent, Failed).
+ * - Single Tasks list with real-time search and status filtering (All, Active, Sent, Failed).
  * - Master task scheduler engine toggle.
  * - Banking app shield status indicator.
  * - Task actions: Immediate Run Now, pause/resume, edit, delete.
  */
 package com.jmd.helper.ui.screen.tasks
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.AltRoute
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -27,96 +23,46 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.jmd.helper.core.showAppToast
 import com.jmd.helper.data.model.ChannelType
-import com.jmd.helper.data.model.ContactSequence
 import com.jmd.helper.data.model.ScheduledTask
 import com.jmd.helper.data.model.TaskStatus
-import com.jmd.helper.data.prefs.PreferenceManager
 import com.jmd.helper.data.repo.AppRepository
-import com.jmd.helper.receiver.TaskAlarmReceiver
-import com.jmd.helper.scheduler.AlarmScheduler
-import com.jmd.helper.ui.components.AppCardElevated
 import com.jmd.helper.ui.components.AppEmptyState
 import com.jmd.helper.ui.components.GlassSearchField
 import com.jmd.helper.ui.components.GlassSegmentedControl
-import com.jmd.helper.ui.screen.sequence.ContactSequenceCard
-import com.jmd.helper.ui.screen.sequence.ContactSequenceStudio
 import com.jmd.helper.ui.screen.TaskTypeSelectionDialog
 import com.jmd.helper.ui.theme.AppDesignTokens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * Primary task dashboard presenting scheduled single tasks and multi-step contact sequences.
+ * Primary task dashboard presenting scheduled tasks with search, filtering, and creation controls.
  *
- * @param initialCategoryTab Selected tab index on launch (0 = Single Tasks, 1 = Sequences).
- * @param onNavigateToCompose Route callback to create a new single task for a channel.
- * @param onNavigateToSequenceStudio Route callback to create or edit a multi-step sequence.
+ * @param onNavigateToCompose Route callback to create a new task for a channel.
  * @param onEditTask Route callback to open existing task in the task composer.
  * @param onNavigateToDailyCampaign Route callback to navigate to daily campaigns.
- * @param onStudioStateChanged Callback notifying when sequence studio is opened or closed.
  */
 @Composable
 fun TasksListScreen(
-    initialCategoryTab: Int = 0,
     onNavigateToCompose: (ChannelType) -> Unit,
-    onNavigateToSequenceStudio: (Long) -> Unit = {},
     onEditTask: (ScheduledTask) -> Unit = {},
     onNavigateToDailyCampaign: () -> Unit = {},
-    onStudioStateChanged: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
     val repository = remember { AppRepository(context) }
-    val prefs = remember { PreferenceManager(context) }
     var tasks by remember { mutableStateOf(emptyList<ScheduledTask>()) }
-    var sequences by remember { mutableStateOf(emptyList<ContactSequence>()) }
-    var mainCategoryTab by remember(initialCategoryTab) { mutableIntStateOf(initialCategoryTab) } // 0 = Single Tasks, 1 = Contact Sequences
-    var selectedTab by remember { mutableIntStateOf(0) } // 0=All, 1=Pending, 2=Done, 3=Failed
+    var selectedTab by remember { mutableIntStateOf(0) } // 0=All, 1=Active, 2=Sent, 3=Failed
     var searchQuery by remember { mutableStateOf("") }
-    var showTaskTypeDialog by remember { mutableStateOf(value = false) }
+    var showTaskTypeDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             val t = repository.getAllTasks()
-            val s = repository.getAllContactSequences()
             withContext(Dispatchers.Main) {
                 tasks = t
-                sequences = s
             }
         }
-    }
-
-    // Studio Full Page State
-    var studioSequenceId by remember { mutableStateOf<Long?>(null) }
-    var studioSequenceChannel by remember { mutableStateOf<ChannelType?>(null) }
-    var isStudioOpen by remember { mutableStateOf(value = false) }
-
-    LaunchedEffect(isStudioOpen) {
-        onStudioStateChanged(isStudioOpen)
-    }
-
-    if (isStudioOpen) {
-        ContactSequenceStudio(
-            sequenceId = studioSequenceId ?: 0L,
-            initialChannel = studioSequenceChannel,
-            onDismiss = {
-                isStudioOpen = false
-                studioSequenceId = null
-                studioSequenceChannel = null
-            },
-            onSaved = {
-                isStudioOpen = false
-                studioSequenceId = null
-                studioSequenceChannel = null
-                tasks = repository.getAllTasks()
-                sequences = repository.getAllContactSequences()
-            },
-        )
-        return
     }
 
     val filteredTasks = remember(tasks, selectedTab, searchQuery) {
@@ -136,15 +82,11 @@ fun TasksListScreen(
         }
     }
 
-    val filteredSequences = remember(sequences, searchQuery) {
-        sequences.filter { seq ->
-            searchQuery.isEmpty() ||
-                    seq.contactName.contains(searchQuery, ignoreCase = true) ||
-                    seq.contactPhone.contains(searchQuery) ||
-                    seq.title.contains(searchQuery, ignoreCase = true) ||
-                    seq.steps.any { it.messageText.contains(searchQuery, ignoreCase = true) }
-        }
+    val pendingTasksCount = remember(tasks) {
+        tasks.count { it.status.isPendingOrScheduled || it.status == TaskStatus.PENDING_CONFIRMATION || it.status.isRunning }
     }
+    val doneTasksCount = remember(tasks) { tasks.count { it.status.isSuccessOrDone } }
+    val failedTasksCount = remember(tasks) { tasks.count { it.status == TaskStatus.FAILED } }
 
     Box(
         modifier = Modifier
@@ -154,154 +96,96 @@ fun TasksListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 14.dp, vertical = 6.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Main Mode Tab: Single Tasks vs Contact Sequences
-            GlassSegmentedControl(
-                items = listOf("Single Tasks (${tasks.size})", "Contact Sequences (${sequences.size})"),
-                selectedIndex = mainCategoryTab,
-                onItemSelected = { mainCategoryTab = it },
-                activeColor = if (mainCategoryTab == 0) AppDesignTokens.ElectricIndigo else AppDesignTokens.NeonCyan
-            )
-
             // Enterprise Modern Glass Search Bar
             GlassSearchField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = if (mainCategoryTab == 0) "Search tasks, contacts or message..." else "Search sequence contact, phone or title...",
+                placeholder = "Search tasks, contacts or message...",
                 leadingIcon = Icons.Default.Search,
                 onClear = { searchQuery = "" }
             )
 
-            if (mainCategoryTab == 0) {
-                val pendingTasksCount = remember(tasks) { tasks.count { it.status.isPendingOrScheduled || it.status == TaskStatus.PENDING_CONFIRMATION || it.status.isRunning } }
-                val doneTasksCount = remember(tasks) { tasks.count { it.status.isSuccessOrDone } }
-                val failedTasksCount = remember(tasks) { tasks.count { it.status == TaskStatus.FAILED } }
+            // Segmented Status Filter with Live Counts
+            GlassSegmentedControl(
+                items = listOf(
+                    "All (${tasks.size})",
+                    "Active ($pendingTasksCount)",
+                    "Sent ($doneTasksCount)",
+                    "Failed ($failedTasksCount)"
+                ),
+                selectedIndex = selectedTab,
+                onItemSelected = { selectedTab = it },
+                activeColor = MaterialTheme.colorScheme.primary
+            )
 
-                // Enterprise Modern Segmented Status Filter with Live Counts
-                GlassSegmentedControl(
-                    items = listOf("All (${tasks.size})", "Active ($pendingTasksCount)", "Sent ($doneTasksCount)", "Failed ($failedTasksCount)"),
-                    selectedIndex = selectedTab,
-                    onItemSelected = { selectedTab = it },
-                    activeColor = MaterialTheme.colorScheme.primary
-                )
-
-                // Task List or Empty State
-                if (filteredTasks.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 20.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppEmptyState(
-                            icon = Icons.Default.Inbox,
-                            title = "No Tasks Found",
-                            description = if (searchQuery.isNotEmpty()) "No tasks match your search filter." else "No scheduled tasks in this section. Create your first task schedule!",
-                            actionText = "Schedule New Task",
-                            onActionClick = { showTaskTypeDialog = true }
-                        )
-                    }
-                } else {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = 80.dp)
-                    ) {
-                        items(filteredTasks, key = { it.id }) { task ->
-                            TaskCard(
-                                task = task,
-                                onRunNow = {
-                                    com.jmd.helper.api.TaskFeatureApi.runTaskImmediately(context, repository, task)
-                                    tasks = repository.getAllTasks()
-                                },
-                                onToggle = { isChecked: Boolean ->
-                                    com.jmd.helper.api.TaskFeatureApi.toggleTaskSchedule(context, repository, task, isChecked)
-                                    tasks = repository.getAllTasks()
-                                },
-                                onEdit = {
-                                    onEditTask(task)
-                                },
-                                onDelete = {
-                                    com.jmd.helper.api.TaskFeatureApi.deleteTask(context, repository, task.id)
-                                    tasks = repository.getAllTasks()
-                                }
-                            )
-                        }
-                    }
+            // Task List or Empty State
+            if (filteredTasks.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppEmptyState(
+                        icon = Icons.Default.Inbox,
+                        title = "No Tasks Found",
+                        description = if (searchQuery.isNotEmpty()) {
+                            "No tasks match your search filter."
+                        } else {
+                            "No scheduled tasks in this section. Create your first task schedule!"
+                        },
+                        actionText = "Schedule New Task",
+                        onActionClick = { showTaskTypeDialog = true }
+                    )
                 }
             } else {
-                // Contact Sequences Tab
-                if (filteredSequences.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 20.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppEmptyState(
-                            icon = Icons.AutoMirrored.Filled.AltRoute,
-                            title = "No Contact Sequences",
-                            description = if (searchQuery.isNotEmpty()) "No sequences match your search." else "Create multiple scheduled tasks inside a single contact with custom intervals across SMS and WhatsApp!",
-                            actionText = "Create Contact Sequence",
-                            onActionClick = {
-                                studioSequenceId = 0L
-                                isStudioOpen = true
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(top = 4.dp, bottom = 88.dp)
+                ) {
+                    items(filteredTasks, key = { it.id }) { task ->
+                        TaskCard(
+                            task = task,
+                            onRunNow = {
+                                com.jmd.helper.api.TaskFeatureApi.runTaskImmediately(context, repository, task)
+                                tasks = repository.getAllTasks()
+                            },
+                            onToggle = { isChecked: Boolean ->
+                                com.jmd.helper.api.TaskFeatureApi.toggleTaskSchedule(context, repository, task, isChecked)
+                                tasks = repository.getAllTasks()
+                            },
+                            onEdit = {
+                                onEditTask(task)
+                            },
+                            onDelete = {
+                                com.jmd.helper.api.TaskFeatureApi.deleteTask(context, repository, task.id)
+                                tasks = repository.getAllTasks()
                             }
                         )
-                    }
-                } else {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = 80.dp)
-                    ) {
-                        items(filteredSequences, key = { it.id }) { seq ->
-                            ContactSequenceCard(
-                                sequence = seq,
-                                onEdit = {
-                                    onNavigateToSequenceStudio(seq.id)
-                                    studioSequenceId = seq.id
-                                    isStudioOpen = true
-                                },
-                                onToggle = { enable: Boolean ->
-                                    repository.toggleContactSequence(seq.id, enable)
-                                    sequences = repository.getAllContactSequences()
-                                    tasks = repository.getAllTasks()
-                                },
-                                onDelete = {
-                                    repository.deleteContactSequence(seq.id)
-                                    sequences = repository.getAllContactSequences()
-                                    tasks = repository.getAllTasks()
-                                }
-                            )
-                        }
                     }
                 }
             }
         }
 
-        // Material 3 Expressive Orange Floating Action Button
+        // Material 3 Floating Action Button with min 48dp target & navigationBarsPadding
         FloatingActionButton(
-            onClick = {
-                if (mainCategoryTab == 0) {
-                    showTaskTypeDialog = true
-                } else {
-                    studioSequenceId = 0L
-                    isStudioOpen = true
-                }
-            },
+            onClick = { showTaskTypeDialog = true },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp),
+                .navigationBarsPadding()
+                .padding(end = 16.dp, bottom = 16.dp)
+                .sizeIn(minWidth = 56.dp, minHeight = 56.dp),
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
             shape = AppDesignTokens.ShapeLarge
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = if (mainCategoryTab == 0) "Create Task" else "Create Contact Sequence",
+                contentDescription = "Create Task",
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -312,13 +196,6 @@ fun TasksListScreen(
                 onSelectChannel = { channel ->
                     showTaskTypeDialog = false
                     onNavigateToCompose(channel)
-                },
-                onSelectSequence = { chosenChannel ->
-                    showTaskTypeDialog = false
-                    mainCategoryTab = 1
-                    studioSequenceChannel = chosenChannel
-                    studioSequenceId = 0L
-                    isStudioOpen = true
                 },
                 onSelectDailyCampaign = {
                     showTaskTypeDialog = false

@@ -357,15 +357,8 @@ class WhatsAppChatScanner(
     private fun finishAndSave(onFinish: () -> Unit) {
         val repo = AppRepository(service)
 
-        // Clear previous group pool for the target package before saving fresh discovered batch
-        if (scanTarget == ScanTarget.GROUPS_ONLY) {
-            val targetGroupSource = if (activePkg.contains("w4b", ignoreCase = true)) "WA_BUSINESS_GROUP" else "WA_GROUP"
-            if (discoveredChats.isNotEmpty()) {
-                repo.deleteAllWhatsAppGroups(targetGroupSource)
-            } else {
-                repo.purgeCorruptedGroupsFromPool()
-            }
-        }
+        // Purge any residual group records from the dynamic pool
+        repo.purgeAllGroupsFromPool()
 
         val savedChats = if (discoveredChats.isNotEmpty()) {
             val count = repo.upsertDynamicPoolBatch(discoveredChats.values.toList())

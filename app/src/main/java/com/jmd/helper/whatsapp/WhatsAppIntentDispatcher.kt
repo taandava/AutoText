@@ -58,11 +58,9 @@ object WhatsAppIntentDispatcher {
         isBatch: Boolean,
         mediaUri: String = ""
     ) {
-        val isGroup = channel == ChannelType.WHATSAPP_GROUP || channel == ChannelType.WHATSAPP_BUSINESS_GROUP || recipient.startsWith("group:", ignoreCase = true)
         val targetPkg = when (channel) {
-            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.WHATSAPP_BUSINESS_STATUS -> "com.whatsapp.w4b"
+            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS -> "com.whatsapp.w4b"
             ChannelType.WHATSAPP_STATUS -> if (recipient.contains("w4b", ignoreCase = true) || recipient.contains("business", ignoreCase = true)) "com.whatsapp.w4b" else (WhatsAppPackageHelper.getInstalledWhatsAppPackage(context) ?: "com.whatsapp")
-            ChannelType.WHATSAPP_GROUP -> if (recipient.contains("w4b", ignoreCase = true) || recipient.contains("business", ignoreCase = true)) "com.whatsapp.w4b" else (WhatsAppPackageHelper.getInstalledWhatsAppPackage(context) ?: "com.whatsapp")
             else -> WhatsAppPackageHelper.getInstalledWhatsAppPackage(context) ?: "com.whatsapp"
         }
 
@@ -104,26 +102,6 @@ object WhatsAppIntentDispatcher {
                     } else {
                         Log.e(TAG, "WhatsApp launch intent unavailable for text status")
                     }
-                }
-            }
-            isGroup -> {
-                val cleanGroupName = recipient.replaceFirst(Regex("^group\\s*:", RegexOption.IGNORE_CASE), "").trim()
-                TaskAccessibilityService.prepareForGroup(
-                    taskId = taskId,
-                    packageName = targetPkg,
-                    groupName = cleanGroupName,
-                    messageText = message,
-                    shouldRelock = shouldRelock,
-                    isBatchCampaign = isBatch,
-                    mediaUri = mediaUri
-                )
-                val launchIntent = context.packageManager.getLaunchIntentForPackage(targetPkg)
-                if (launchIntent != null) {
-                    launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    context.startActivity(launchIntent)
-                    Log.d(TAG, "launchWhatsApp: Launched $targetPkg for group search: $cleanGroupName")
-                } else {
-                    Log.e(TAG, "WhatsApp launch intent unavailable for group: $cleanGroupName")
                 }
             }
             else -> {

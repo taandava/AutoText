@@ -406,7 +406,6 @@ fun WhatsAppContactsPickerSheet(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val isBusiness = selectedChannel == ChannelType.WHATSAPP_BUSINESS ||
-        selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP ||
         selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL ||
         selectedChannel == ChannelType.WHATSAPP_BUSINESS_STATUS
     val isCalling = selectedChannel == ChannelType.CALL || selectedChannel == ChannelType.WHATSAPP_CALL || selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL
@@ -414,8 +413,6 @@ fun WhatsAppContactsPickerSheet(
     val sheetTitle = when {
         selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL -> "Select WA Business Call Contacts"
         selectedChannel == ChannelType.WHATSAPP_CALL -> "Select WhatsApp Call Contacts"
-        selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP -> "Select WA Business Groups"
-        selectedChannel == ChannelType.WHATSAPP_GROUP -> "Select WhatsApp Groups"
         isBusiness -> "Select WA Business Contacts"
         else -> "Select WhatsApp Contacts"
     }
@@ -436,15 +433,13 @@ fun WhatsAppContactsPickerSheet(
         }
     }
 
-    val isGroupChannel = selectedChannel == ChannelType.WHATSAPP_GROUP || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
-
     LaunchedEffect(waSearch, refreshTrigger) {
         withContext(Dispatchers.IO) {
             val allContacts = repository.getWhatsAppContacts(query = waSearch, channel = selectedChannel, limit = 10000)
-            val filteredContacts = when {
-                isCalling -> allContacts.filter { !it.phone.startsWith("group:") && !it.normalizedPhone.startsWith("group:") }
-                isGroupChannel -> allContacts.filter { it.phone.startsWith("group:") || it.normalizedPhone.startsWith("group:") || it.accountType.contains("group", ignoreCase = true) }
-                else -> allContacts
+            val filteredContacts = if (isCalling) {
+                allContacts.filter { !it.phone.startsWith("group:") && !it.normalizedPhone.startsWith("group:") }
+            } else {
+                allContacts
             }
             withContext(Dispatchers.Main) {
                 waContacts = filteredContacts
@@ -648,21 +643,6 @@ fun WhatsAppContactsPickerSheet(
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                     shape = AppDesignTokens.ShapePill
                 )
-                GlassButton(
-                    text = if (isBusiness) "Harvest Groups (W4B)" else "Harvest Groups (WA)",
-                    onClick = {
-                        TaskAccessibilityService.startWhatsAppGroupScan(
-                            context,
-                            targetPackage = targetPkg,
-                            channel = selectedChannel
-                        )
-                        onDismiss()
-                    },
-                    variant = GlassButtonVariant.PRIMARY,
-                    icon = Icons.Default.Groups,
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                    shape = AppDesignTokens.ShapePill
-                )
             }
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -670,8 +650,8 @@ fun WhatsAppContactsPickerSheet(
             GlassInputField(
                 value = waSearch,
                 onValueChange = { waSearch = it },
-                label = "Search $appLabel Contacts & Groups",
-                placeholder = "Type name, phone, or group...",
+                label = "Search $appLabel Contacts",
+                placeholder = "Type name or phone...",
                 leadingIcon = Icons.Default.Search,
                 accentColor = MaterialTheme.colorScheme.tertiary
             )
@@ -733,9 +713,9 @@ fun WhatsAppContactsPickerSheet(
                 if (waContacts.isEmpty()) {
                     item {
                         AppEmptyState(
-                            icon = if (isGroupChannel) Icons.Default.Groups else Icons.AutoMirrored.Filled.Send,
-                            title = if (isGroupChannel) "No $appLabel Groups Found" else "No $appLabel Contacts Found",
-                            description = if (waSearch.isNotBlank()) "No results matching '$waSearch'" else if (isGroupChannel) "No WhatsApp groups harvested yet. Tap '$harvestLabel' above to scan and harvest your groups directly from WhatsApp." else "No contacts with $appLabel account detected on device. Tap '$scanLabel' to scan contacts or '$harvestLabel' to scan open chats."
+                            icon = Icons.AutoMirrored.Filled.Send,
+                            title = "No $appLabel Contacts Found",
+                            description = if (waSearch.isNotBlank()) "No results matching '$waSearch'" else "No contacts with $appLabel account detected on device. Tap '$scanLabel' to scan contacts or '$harvestLabel' to scan open chats."
                         )
                     }
                 } else {

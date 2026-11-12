@@ -56,10 +56,9 @@ import com.jmd.helper.ui.theme.*
 fun TaskTypeSelectionDialog(
     onDismiss: () -> Unit,
     onSelectChannel: (ChannelType) -> Unit,
-    onSelectSequence: (ChannelType) -> Unit = {},
     onSelectDailyCampaign: () -> Unit = {},
 ) {
-    // Sub-flow state: null = root list, "STATUS" = choose WhatsApp vs W4B status, "SEQUENCE" = choose SMS vs WA vs W4B sequence
+    // Sub-flow state: null = root list, "STATUS" = choose WhatsApp vs W4B status, "WA_CALL" = choose WA vs W4B call
     var selectedSubFlow by remember { mutableStateOf<String?>(null) }
 
     val taskTypes = listOf(
@@ -83,14 +82,6 @@ fun TaskTypeSelectionDialog(
             icon = Icons.Filled.BusinessCenter,
             color = Color(0xFF0D9488),
             channel = ChannelType.WHATSAPP_BUSINESS,
-        ),
-        TaskTypeItem(
-            title = "WhatsApp Group",
-            description = "Send message to a WhatsApp or WhatsApp Business group chat",
-            icon = Icons.Filled.Groups,
-            color = Color(0xFF15803D),
-            channel = null,
-            isGroup = true,
         ),
         TaskTypeItem(
             title = "Status Story",
@@ -121,14 +112,6 @@ fun TaskTypeSelectionDialog(
             icon = Icons.AutoMirrored.Filled.PhoneForwarded,
             color = Color(0xFFD97706),
             channel = ChannelType.CALL_SIMULATION,
-        ),
-        TaskTypeItem(
-            title = "Contact Sequence (Multi-Task)",
-            description = "Step-by-step drip messages for a contact across SMS & WhatsApp",
-            icon = Icons.Filled.LinearScale,
-            color = Color(0xFFF57C00),
-            channel = null,
-            isSequence = true,
         ),
         TaskTypeItem(
             title = "Daily Auto Campaign",
@@ -200,8 +183,6 @@ fun TaskTypeSelectionDialog(
                             Text(
                                 text = when (selectedSubFlow) {
                                     "STATUS" -> "Choose Status Platform"
-                                    "GROUP" -> "Choose WhatsApp Group App"
-                                    "SEQUENCE" -> "Choose Sequence Channel"
                                     "WA_CALL" -> "Choose WhatsApp Calling App"
                                     else -> "Choose Task Type"
                                 },
@@ -212,8 +193,6 @@ fun TaskTypeSelectionDialog(
                             Text(
                                 text = when (selectedSubFlow) {
                                     "STATUS" -> "Select which app to post your Status story to"
-                                    "GROUP" -> "Select WhatsApp or WhatsApp Business for this group message"
-                                    "SEQUENCE" -> "Select messaging channel for this multi-step sequence"
                                     "WA_CALL" -> "Select WhatsApp or WhatsApp Business for this voice call"
                                     else -> "Select what action you want to schedule"
                                 },
@@ -260,46 +239,6 @@ fun TaskTypeSelectionDialog(
                             )
                         }
                     }
-                    "SEQUENCE" -> {
-                        // Sub-selection: SMS vs WhatsApp vs WhatsApp Business Sequence
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(10.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            DialogOptionTile(
-                                title = "SMS Message Sequence",
-                                description = "Step-by-step drip messages via device SIM card (Carrier Direct)",
-                                badge = "SIM Direct",
-                                icon = Icons.AutoMirrored.Filled.Message,
-                                color = MaterialTheme.colorScheme.primary,
-                                onClick = {
-                                    onSelectSequence(ChannelType.SMS)
-                                }
-                            )
-
-                            DialogOptionTile(
-                                title = "WhatsApp Sequence",
-                                description = "Multi-step scheduled messages via personal WhatsApp",
-                                badge = "Personal WA",
-                                icon = Icons.AutoMirrored.Filled.Chat,
-                                color = Color(0xFF16A34A),
-                                onClick = {
-                                    onSelectSequence(ChannelType.WHATSAPP)
-                                }
-                            )
-
-                            DialogOptionTile(
-                                title = "WhatsApp Business (W4B) Sequence",
-                                description = "Client outreach and paced follow-up sequence via WhatsApp Business",
-                                badge = "Business W4B",
-                                icon = Icons.Filled.BusinessCenter,
-                                color = Color(0xFF0D9488),
-                                onClick = {
-                                    onSelectSequence(ChannelType.WHATSAPP_BUSINESS)
-                                }
-                            )
-                        }
-                    }
                     "WA_CALL" -> {
                         // Sub-selection: WhatsApp Call vs WhatsApp Business Call
                         Column(
@@ -329,35 +268,6 @@ fun TaskTypeSelectionDialog(
                             )
                         }
                     }
-                    "GROUP" -> {
-                        // Sub-selection: WhatsApp Group vs WhatsApp Business Group
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(10.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            DialogOptionTile(
-                                title = "WhatsApp Group",
-                                description = "Send message to a group via personal WhatsApp Messenger",
-                                badge = "Personal",
-                                icon = Icons.Filled.Groups,
-                                color = Color(0xFF16A34A),
-                                onClick = {
-                                    onSelectChannel(ChannelType.WHATSAPP_GROUP)
-                                }
-                            )
-
-                            DialogOptionTile(
-                                title = "WhatsApp Business Group",
-                                description = "Send message to a client/team group via WhatsApp Business (W4B)",
-                                badge = "Business",
-                                icon = Icons.Filled.Groups,
-                                color = Color(0xFF0D9488),
-                                onClick = {
-                                    onSelectChannel(ChannelType.WHATSAPP_BUSINESS_GROUP)
-                                }
-                            )
-                        }
-                    }
                     else -> {
                         // Main Task Type List
                         LazyColumn(
@@ -378,14 +288,8 @@ fun TaskTypeSelectionDialog(
                                                 item.isStatus -> {
                                                     selectedSubFlow = "STATUS"
                                                 }
-                                                item.isSequence -> {
-                                                    selectedSubFlow = "SEQUENCE"
-                                                }
                                                 item.isWaCall -> {
                                                     selectedSubFlow = "WA_CALL"
-                                                }
-                                                item.isGroup -> {
-                                                    selectedSubFlow = "GROUP"
                                                 }
                                                 item.isDailyCampaign -> {
                                                     onSelectDailyCampaign()

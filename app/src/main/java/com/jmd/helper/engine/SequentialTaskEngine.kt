@@ -355,8 +355,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
         val privacyMgr = com.jmd.helper.core.PrivacyManager.getInstance(appContext)
         val targetPkg = when (task.channel) {
-            ChannelType.WHATSAPP, ChannelType.WHATSAPP_GROUP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL -> "com.whatsapp"
-            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "com.whatsapp.w4b"
+            ChannelType.WHATSAPP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_CALL -> "com.whatsapp"
+            ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "com.whatsapp.w4b"
             else -> null
         }
         if (targetPkg != null && privacyMgr.isTaskBlockedForPackage(targetPkg)) {
@@ -404,8 +404,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val success = when (task.channel) {
             ChannelType.WHATSAPP,
             ChannelType.WHATSAPP_BUSINESS,
-            ChannelType.WHATSAPP_GROUP,
-            ChannelType.WHATSAPP_BUSINESS_GROUP,
             ChannelType.WHATSAPP_STATUS,
             ChannelType.WHATSAPP_BUSINESS_STATUS,
             -> {
@@ -465,7 +463,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         val isUiTaskChannel = when (task.channel) {
-            ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_GROUP, ChannelType.WHATSAPP_BUSINESS_GROUP,
+            ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS,
             ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_BUSINESS_STATUS,
             ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> true
             else -> false
@@ -586,7 +584,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         val requiredPackage = WhatsAppPackageHelper.getPackageForChannel(appContext, task.channel)
         if (requiredPackage == null) {
             val missingPkgName = when (task.channel) {
-                ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "WhatsApp Business (com.whatsapp.w4b)"
+                ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_BUSINESS_STATUS, ChannelType.WHATSAPP_BUSINESS_CALL -> "WhatsApp Business (com.whatsapp.w4b)"
                 else -> "WhatsApp (com.whatsapp)"
             }
             AppFileLogger.w(appContext, TAG, "Cannot execute Task #${task.id}: $missingPkgName is not installed on this device.")

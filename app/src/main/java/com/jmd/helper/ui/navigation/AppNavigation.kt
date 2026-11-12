@@ -20,12 +20,6 @@ sealed interface AppRoute {
     data object AutoReply : AppRoute
 
     @Serializable
-    data object ContactSequences : AppRoute
-
-    @Serializable
-    data object Contacts : AppRoute
-
-    @Serializable
     data object Templates : AppRoute
 
     @Serializable

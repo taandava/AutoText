@@ -77,8 +77,6 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
     SMS("SMS", "📩"),
     WHATSAPP("WhatsApp", "💬"),
     WHATSAPP_BUSINESS("WA Business", "💼"),
-    WHATSAPP_GROUP("WhatsApp Group", "👥"),
-    WHATSAPP_BUSINESS_GROUP("WA Business Group", "👥💼"),
     WHATSAPP_STATUS("WA Status", "📸"),
     WHATSAPP_BUSINESS_STATUS("W4B Status", "📸💼"),
     CALL("Phone Call", "📞"),
@@ -99,8 +97,8 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
             if (value.isNullOrBlank()) return SMS
             return when (val clean = value.trim().uppercase()) {
                 "CALL_SIMULATION", "SIMULATION", "SIMULATED_CALL" -> CALL_SIMULATION
-                "WHATSAPP_GROUP", "GROUP", "WA_GROUP" -> WHATSAPP_GROUP
-                "WHATSAPP_BUSINESS_GROUP", "W4B_GROUP", "WA_BUSINESS_GROUP" -> WHATSAPP_BUSINESS_GROUP
+                "WHATSAPP_GROUP", "GROUP", "WA_GROUP" -> WHATSAPP
+                "WHATSAPP_BUSINESS_GROUP", "W4B_GROUP", "WA_BUSINESS_GROUP" -> WHATSAPP_BUSINESS
                 else -> entries.firstOrNull { it.name == clean } ?: SMS
             }
         }
@@ -139,15 +137,6 @@ data class WhatsAppContactItem(
     val photoUri: String = ""
 )
 
-data class WhatsAppGroupItem(
-    val name: String,
-    val participantCount: String = "",
-    val lastDiscoveredAt: Long = System.currentTimeMillis(),
-    val packageName: String = "com.whatsapp",
-    val photoUri: String = "",
-    val description: String = ""
-)
-
 // ==================== QUICK REPLY RULE DATA MODELS ====================
 
 data class AutoReplyRule(
@@ -170,27 +159,6 @@ data class AutoReplyRule(
 )
 
 // ==================== CONTACT SEQUENCE STEP DATA MODELS ====================
-
-data class ContactSequence(
-    val id: Long = 0,
-    val contactName: String = "",
-    val contactPhone: String = "",
-    val title: String = "",
-    val isEnabled: Boolean = true,
-    val createdAt: Long = System.currentTimeMillis(),
-    val steps: List<ContactSequenceStep> = emptyList()
-)
-
-data class ContactSequenceStep(
-    val id: Long = 0,
-    val sequenceId: Long = 0,
-    val stepOrder: Int = 1,
-    val channel: ChannelType = ChannelType.SMS,
-    val messageText: String = "",
-    val delayMinutesFromPrevious: Int = 0,
-    val specificTriggerTime: Long = 0,
-    val simSlot: Int = 0
-)
 
 // ==================== SCHEDULED TASK & RECURRENCE DATA MODELS ====================
 
