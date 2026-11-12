@@ -68,12 +68,32 @@ abstract class AppRoomDatabase : RoomDatabase() {
 
         @Volatile
         private var instance: AppRoomDatabase? = null
+        /**
+         * What it is:
+         * Operational routine [getInstance].
+         *
+         * What it does:
+         * Executes getInstance actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [AppRoomDatabase]
+         */
 
         fun getInstance(context: Context): AppRoomDatabase {
             return instance ?: synchronized(this) {
                 instance ?: buildDatabase(context.applicationContext).also { instance = it }
             }
         }
+        /**
+         * What it is:
+         * Operational routine [buildDatabase].
+         *
+         * What it does:
+         * Executes buildDatabase actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [AppRoomDatabase]
+         */
 
         private fun buildDatabase(context: Context): AppRoomDatabase {
             return Room.databaseBuilder(context, AppRoomDatabase::class.java, DATABASE_NAME)
@@ -86,3 +106,4 @@ abstract class AppRoomDatabase : RoomDatabase() {
         }
     }
 }
+

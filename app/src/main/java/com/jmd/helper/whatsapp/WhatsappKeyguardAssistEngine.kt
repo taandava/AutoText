@@ -311,6 +311,16 @@ class KeyguardAssistEngine(
         if (isEnteringPinDigits) return
         isEnteringPinDigits = true
         Log.i(loggerTag, "Starting element-based PIN keypad entry for ${pin.length} digits...")
+        /**
+         * What it is:
+         * Operational routine [tapNextDigit].
+         *
+         * What it does:
+         * Executes tapNextDigit actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [WhatsappKeyguardAssistEngine]
+         */
 
         fun tapNextDigit(index: Int) {
             if (!isUnlockPending) {
@@ -427,6 +437,16 @@ class KeyguardAssistEngine(
 
                     // Never blindly tap bottom-right coordinate fallback when no Enter node is found,
                     // as row 4 column 3 on modern Android devices (Vivo, Samsung, Pixel) is the Delete/Backspace button!
+                    /**
+                     * What it is:
+                     * Operational routine [pollUnlockVerification].
+                     *
+                     * What it does:
+                     * Executes pollUnlockVerification actions according to system invariants.
+                     *
+                     * Linked with:
+                     * - Component: [WhatsappKeyguardAssistEngine]
+                     */
                     fun pollUnlockVerification(attempt: Int) {
                         val finalKm = service.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
                         if (finalKm?.isKeyguardLocked == false) {
@@ -842,10 +862,30 @@ class KeyguardAssistEngine(
 
             val gesture = builder.build()
             service.dispatchGesture(gesture, object : AccessibilityService.GestureResultCallback() {
+                /**
+                 * What it is:
+                 * Accessibility gesture callback [onCompleted].
+                 *
+                 * What it does:
+                 * Handles gesture completion or cancellation dispatch for onCompleted.
+                 *
+                 * Linked with:
+                 * - Component: [WhatsappKeyguardAssistEngine]
+                 */
                 override fun onCompleted(gestureDescription: GestureDescription?) {
                     Log.d(loggerTag, "Swipe gesture completed")
                     handler.postDelayed({ onComplete() }, 300L)
                 }
+                /**
+                 * What it is:
+                 * Accessibility gesture callback [onCancelled].
+                 *
+                 * What it does:
+                 * Handles gesture completion or cancellation dispatch for onCancelled.
+                 *
+                 * Linked with:
+                 * - Component: [WhatsappKeyguardAssistEngine]
+                 */
 
                 override fun onCancelled(gestureDescription: GestureDescription?) {
                     Log.w(loggerTag, "Swipe gesture cancelled")
@@ -863,3 +903,4 @@ class KeyguardAssistEngine(
  * Backward-compatible typealias for [KeyguardAssistEngine].
  */
 typealias KeyguardUnlockEngine = KeyguardAssistEngine
+

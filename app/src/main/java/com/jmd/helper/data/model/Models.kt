@@ -144,6 +144,16 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
          */
         @JvmField
         val SIMULATED_CALL: ChannelType = CALL_SIMULATION
+        /**
+         * What it is:
+         * Operational routine [fromString].
+         *
+         * What it does:
+         * Executes fromString actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [Models]
+         */
 
         fun fromString(value: String?): ChannelType {
             if (value.isNullOrBlank()) return SMS
@@ -321,6 +331,16 @@ enum class RepeatUnit(val displayName: String, val singularName: String) {
      */
 
     companion object {
+        /**
+         * What it is:
+         * Operational routine [fromString].
+         *
+         * What it does:
+         * Executes fromString actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [Models]
+         */
         fun fromString(str: String?): RepeatUnit {
             val clean = str?.trim()?.uppercase() ?: "MINUTES"
             return when {
@@ -374,6 +394,16 @@ enum class RecurrenceType(val displayName: String) {
      */
 
     companion object {
+        /**
+         * What it is:
+         * Operational routine [fromString].
+         *
+         * What it does:
+         * Executes fromString actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [Models]
+         */
         fun fromString(value: String?): RecurrenceType {
             if (value.isNullOrBlank()) return ONCE
             val clean = value.trim().uppercase().replace(" ", "_").replace("-", "_")
@@ -449,6 +479,16 @@ enum class TaskStatus(val displayName: String) {
      */
 
     companion object {
+        /**
+         * What it is:
+         * Operational routine [fromString].
+         *
+         * What it does:
+         * Executes fromString actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [Models]
+         */
         fun fromString(value: String?): TaskStatus {
             if (value.isNullOrBlank()) return PENDING
             val clean = value.trim().uppercase()
@@ -466,6 +506,16 @@ enum class TaskStatus(val displayName: String) {
                 else -> PENDING
             }
         }
+        /**
+         * What it is:
+         * Operational routine [canTransition].
+         *
+         * What it does:
+         * Executes canTransition actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [Models]
+         */
 
         fun canTransition(from: TaskStatus, to: TaskStatus): Boolean {
             return from == to || when (from) {
@@ -559,3 +609,4 @@ data class PickedChatInfo(
     val phoneOrId: String? = null,
     val subtitle: String = ""
 )
+

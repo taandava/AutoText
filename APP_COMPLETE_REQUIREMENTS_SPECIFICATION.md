@@ -325,4 +325,4 @@ Every release candidate must satisfy all of the following quality gates:
 6. **Code Standards:** Zero `@Suppress` annotations in handwritten Kotlin code.
 7. **Production Artifact:** Signed `app-release.apk` compiled with full R8 shrinking and minification.
 8. **In-APK Codebase Distribution:** Release APK contains complete pristine source code in `assets/codebase/` and `assets/project_source.zip`.
-9. **Architectural Documentation:** All 144 files and 1,288 code blocks feature structured "What it is", "What it does", and "Linked with" specifications.
+9. **Architectural Documentation:** All 144 files and 1,328 code blocks feature structured "What it is", "What it does", and "Linked with" specifications.

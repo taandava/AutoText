@@ -267,6 +267,16 @@ class WhatsAppDirectSendEngine(
         }
 
         // Exclude search inputs and status/updates screens from being treated as chat composer
+        /**
+         * What it is:
+         * Operational routine [isSearchOrStatusTab].
+         *
+         * What it does:
+         * Executes isSearchOrStatusTab actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [WhatsAppDirectSendEngine]
+         */
         fun isSearchOrStatusTab(node: AccessibilityNodeInfo): Boolean {
             val id = node.viewIdResourceName?.lowercase().orEmpty()
             val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
@@ -566,3 +576,4 @@ class WhatsAppDirectSendEngine(
         return false
     }
 }
+

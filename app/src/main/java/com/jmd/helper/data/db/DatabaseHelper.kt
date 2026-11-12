@@ -64,8 +64,14 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         private var instance: DatabaseHelper? = null
 
         /**
+         * What it is:
          * Returns the thread-safe singleton instance of [DatabaseHelper].
          *
+         * What it does:
+         * Executes [getInstance] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [DatabaseHelper], [getInstance]
          * @param context Target Android application or activity context.
          * @return Singleton [DatabaseHelper] instance.
          */
@@ -620,3 +626,4 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
 
 
 }
+

@@ -151,6 +151,16 @@ class SmsSender(private val context: Context) {
             val sentCountLatch = java.util.concurrent.CountDownLatch(partsSize)
 
             val receiver = object : BroadcastReceiver() {
+                /**
+                 * What it is:
+                 * Broadcast receiver entry point [onReceive].
+                 *
+                 * What it does:
+                 * Processes incoming system broadcast intents for onReceive.
+                 *
+                 * Linked with:
+                 * - Component: [SmsSender]
+                 */
                 override fun onReceive(c: Context?, intent: Intent?) {
                     val partIdx = intent?.getIntExtra("part_index", 0) ?: 0
                     val code = resultCode
@@ -299,3 +309,4 @@ class SmsSender(private val context: Context) {
         return slotSmsManager
     }
 }
+

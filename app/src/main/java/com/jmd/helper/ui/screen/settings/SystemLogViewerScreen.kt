@@ -387,6 +387,16 @@ fun SystemLogViewerView(
                     .padding(horizontal = 12.dp, vertical = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                /**
+                 * What it is:
+                 * Data entity or component [LogTabItem].
+                 *
+                 * What it does:
+                 * Encapsulates state, business rules, and lifecycle for LogTabItem.
+                 *
+                 * Linked with:
+                 * - Component: [SystemLogViewerScreen]
+                 */
                 data class LogTabItem(val index: Int, val title: String, val icon: androidx.compose.ui.graphics.vector.ImageVector, val accent: Color)
                 val tabs = listOf(
                     LogTabItem(1, "Actions & Exec", Icons.Filled.Bolt, MaterialTheme.colorScheme.primary),
@@ -442,6 +452,16 @@ fun SystemLogViewerView(
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
+                    /**
+                     * What it is:
+                     * Data entity or component [LevelFilterItem].
+                     *
+                     * What it does:
+                     * Encapsulates state, business rules, and lifecycle for LevelFilterItem.
+                     *
+                     * Linked with:
+                     * - Component: [SystemLogViewerScreen]
+                     */
                     data class LevelFilterItem(val key: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector?)
                     listOf(
                         LevelFilterItem("ALL", "All", null),
@@ -466,6 +486,16 @@ fun SystemLogViewerView(
                         .horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
+                    /**
+                     * What it is:
+                     * Data entity or component [StatusFilterItem].
+                     *
+                     * What it does:
+                     * Encapsulates state, business rules, and lifecycle for StatusFilterItem.
+                     *
+                     * Linked with:
+                     * - Component: [SystemLogViewerScreen]
+                     */
                     data class StatusFilterItem(val key: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector?)
                     listOf(
                         StatusFilterItem("ALL", "All", null),
@@ -1078,3 +1108,4 @@ private fun parseCsvLine(line: String): List<String> {
     result.add(cur.toString().trim())
     return result
 }
+

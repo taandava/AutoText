@@ -465,10 +465,30 @@ object AccessibilityNodeUtils {
             val gesture = GestureDescription.Builder().addStroke(stroke).build()
 
             service.dispatchGesture(gesture, object : AccessibilityService.GestureResultCallback() {
+                /**
+                 * What it is:
+                 * Accessibility gesture callback [onCompleted].
+                 *
+                 * What it does:
+                 * Handles gesture completion or cancellation dispatch for onCompleted.
+                 *
+                 * Linked with:
+                 * - Component: [WhatsappAccessibilityNodeUtils]
+                 */
                 override fun onCompleted(gestureDescription: GestureDescription?) {
                     Log.d(TAG, "Physical tap completed at ($x, $y)")
                     onComplete?.invoke()
                 }
+                /**
+                 * What it is:
+                 * Accessibility gesture callback [onCancelled].
+                 *
+                 * What it does:
+                 * Handles gesture completion or cancellation dispatch for onCancelled.
+                 *
+                 * Linked with:
+                 * - Component: [WhatsappAccessibilityNodeUtils]
+                 */
 
                 override fun onCancelled(gestureDescription: GestureDescription?) {
                     Log.w(TAG, "Physical tap cancelled at ($x, $y)")
@@ -585,3 +605,4 @@ object AccessibilityNodeUtils {
         return roots
     }
 }
+

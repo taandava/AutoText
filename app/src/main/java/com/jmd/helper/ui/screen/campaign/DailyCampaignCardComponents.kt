@@ -1401,3 +1401,4 @@ fun WhatsAppA11yHealthBar(
         }
     }
 }
+

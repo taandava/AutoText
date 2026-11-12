@@ -86,8 +86,14 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
         private const val TAG = "HelperDeviceAdmin"
 
         /**
+         * What it is:
          * Returns the concrete [ComponentName] for [HelperDeviceAdminReceiver].
          *
+         * What it does:
+         * Executes [getComponentName] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [HelperDeviceAdminReceiver], [getComponentName]
          * @param context Active context.
          * @return Explicit component identifier.
          */
@@ -96,8 +102,14 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
         }
 
         /**
+         * What it is:
          * Checks whether Helper is currently an active device administrator.
          *
+         * What it does:
+         * Executes [isAdminActive] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [HelperDeviceAdminReceiver], [isAdminActive]
          * @param context Active context.
          * @return `true` if registered and active in [DevicePolicyManager]; `false` otherwise.
          */
@@ -107,8 +119,14 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
         }
 
         /**
+         * What it is:
          * Builds the standard system prompt intent requesting device administration activation.
          *
+         * What it does:
+         * Executes [getAddDeviceAdminIntent] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [HelperDeviceAdminReceiver], [getAddDeviceAdminIntent]
          * @param context Active context.
          * @return Intent ready to be launched via [Context.startActivity].
          */
@@ -124,8 +142,14 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
         }
 
         /**
+         * What it is:
          * Requests device admin activation with OEM fallback routing for Samsung, Xiaomi, Vivo, and Oppo devices.
          *
+         * What it does:
+         * Executes [requestActivation] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [HelperDeviceAdminReceiver], [requestActivation]
          * @param context Active context.
          * @return `true` if an administration prompt or security settings activity was opened.
          */
@@ -216,8 +240,14 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
         }
 
         /**
+         * What it is:
          * Verifies whether device administrator status is active.
          *
+         * What it does:
+         * Executes [ensureActive] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [HelperDeviceAdminReceiver], [ensureActive]
          * @param context Active context.
          * @return `true` if active or successfully activated; `false` otherwise.
          */
@@ -226,10 +256,14 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
         }
 
         /**
+         * What it is:
          * Safely locks the device screen mimicking the physical Power button press via accessibility.
          *
+         * What it does:
          * Crucially: Never calls DevicePolicyManager.lockNow() to prevent fingerprint and biometric lockout.
          *
+         * Linked with:
+         * - Architecture: [HelperDeviceAdminReceiver], [lockNow]
          * @param context Active context.
          * @return `true` if screen lock was dispatched successfully.
          */
@@ -252,3 +286,4 @@ class HelperDeviceAdminReceiver : DeviceAdminReceiver() {
         }
     }
 }
+

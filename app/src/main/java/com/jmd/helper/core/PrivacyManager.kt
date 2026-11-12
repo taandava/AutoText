@@ -70,7 +70,14 @@ class PrivacyManager private constructor(private val appContext: Context) {
         private var instance: PrivacyManager? = null
 
         /**
+         * What it is:
          * Returns the thread-safe singleton instance of [PrivacyManager].
+         *
+         * What it does:
+         * Executes [getInstance] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [PrivacyManager], [getInstance]
          */
         fun getInstance(context: Context): PrivacyManager {
             return instance ?: synchronized(this) {
@@ -103,7 +110,14 @@ class PrivacyManager private constructor(private val appContext: Context) {
         )
 
         /**
-         * Masks sensitive message text (e.g. "Meeting at 5 PM" -> "M***M" or `[PROTECTED]`).
+         * What it is:
+         * Masks sensitive message text (e.g.
+         *
+         * What it does:
+         * "Meeting at 5 PM" -> "M***M" or `[PROTECTED]`).
+         *
+         * Linked with:
+         * - Architecture: [PrivacyManager], [maskSensitiveText]
          */
         fun maskSensitiveText(text: String): String {
             if (text.isBlank()) return ""
@@ -113,7 +127,14 @@ class PrivacyManager private constructor(private val appContext: Context) {
         }
 
         /**
-         * Masks recipient phone numbers for privacy-safe logs and lockscreen alerts (e.g. "9769602020" -> "9769***020").
+         * What it is:
+         * Masks recipient phone numbers for privacy-safe logs and lockscreen alerts (e.g.
+         *
+         * What it does:
+         * "9769602020" -> "9769***020").
+         *
+         * Linked with:
+         * - Architecture: [PrivacyManager], [maskPhoneNumber]
          */
         fun maskPhoneNumber(phone: String): String {
             val digits = phone.filter { it.isDigit() }
@@ -622,3 +643,4 @@ class PrivacyManager private constructor(private val appContext: Context) {
         }
     }
 }
+

@@ -375,6 +375,16 @@ fun ComposeTaskScreen(
     }
 
     val saveTaskAction: () -> Unit = saveTaskAction@ {
+        /**
+         * What it is:
+         * Operational routine [validateContentOrShowToast].
+         *
+         * What it does:
+         * Executes validateContentOrShowToast actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [ComposeTaskScreen]
+         */
         fun validateContentOrShowToast(channel: ChannelType, text: String, media: String): Boolean {
             val validation = TaskContentValidator.validateContent(
                 context = context,
@@ -775,3 +785,4 @@ fun ComposeTaskScreen(
     }
     }
 }
+

@@ -72,8 +72,14 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         const val ACTION_TEST_AUTO_UNLOCK = "com.jmd.helper.ACTION_TEST_AUTO_UNLOCK" 
 
         /**
+         * What it is:
          * Cancels all scheduled alarms and deletes all tasks from the SQLite database.
          *
+         * What it does:
+         * Executes [deleteAllTasks] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAlarmReceiver], [deleteAllTasks]
          * @param context Active Android [Context].
          * @return Number of deleted tasks.
          */
@@ -92,8 +98,14 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         }
 
         /**
+         * What it is:
          * Sets up all 12 supported task types in the SQLite database and registers alarms.
          *
+         * What it does:
+         * Executes [setupAllTasks] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAlarmReceiver], [setupAllTasks]
          * @param context Active Android [Context].
          * @param recipients Destination recipient numbers (defaults to empty list).
          * @param staggerSeconds Staggered offset in seconds between sequential initial trigger times.
@@ -172,9 +184,14 @@ class TaskAlarmReceiver : BroadcastReceiver() {
         }
 
         /**
-         * Dumps complete diagnostics, active tasks, execution logs, and system error traces to
-         * a file in external storage (helper_execution_dump.txt) for IDE inspection and support.
+         * What it is:
+         * Dumps complete diagnostics, active tasks, execution logs, and system error traces to a file in external storage (helper_execution_dump.txt) for IDE inspection and support.
          *
+         * What it does:
+         * Executes [dumpExecutionLogsToFile] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAlarmReceiver], [dumpExecutionLogsToFile]
          * @param context Active Android [Context].
          * @return Dump file if created successfully, null otherwise.
          */
@@ -224,10 +241,16 @@ class TaskAlarmReceiver : BroadcastReceiver() {
                 null
             }
         }
-        /**
-         * Populates dynamic contact pool with specified contact numbers and resets campaign sent ledgers
-         * to enable complete end-to-end verification of all daily outreach campaigns.
-         */
+         /**
+          * What it is:
+          * Populates dynamic contact pool with specified contact numbers and resets campaign sent ledgers to enable complete end-to-end verification of all daily outreach campaigns.
+          *
+          * What it does:
+          * Executes [setupDailyCampaignContacts] logic in accordance with system invariants.
+          *
+          * Linked with:
+          * - Architecture: [TaskAlarmReceiver], [setupDailyCampaignContacts]
+          */
          fun setupDailyCampaignContacts(
             context: Context,
             phoneNumbers: List<String> = emptyList(),
@@ -532,3 +555,4 @@ class TaskAlarmReceiver : BroadcastReceiver() {
 }
 
 }
+

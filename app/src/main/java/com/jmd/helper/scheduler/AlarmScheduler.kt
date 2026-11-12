@@ -292,10 +292,14 @@ class AlarmScheduler(private val context: Context) {
         private const val MAX_DAY_ADVANCE = 400
 
         /**
+         * What it is:
          * Generates a unique, non-colliding system alarm label identifying this exact task.
-         * Prepends `Helper #<id>: ` to ensure searches specifically match only alarms
-         * scheduled by this application and never dismiss user personal alarms.
          *
+         * What it does:
+         * Prepends `Helper #<id>: ` to ensure searches specifically match only alarms scheduled by this application and never dismiss user personal alarms.
+         *
+         * Linked with:
+         * - Architecture: [AlarmScheduler], [getSystemAlarmLabel]
          * @param task Target [ScheduledTask].
          * @return Formatted unique alarm label.
          */
@@ -306,9 +310,14 @@ class AlarmScheduler(private val context: Context) {
         }
 
         /**
-         * Integrates with Android's system clock app using [AlarmClock.ACTION_SET_ALARM]
-         * to set an audible device-level alarm for [ChannelType.REMINDER] tasks.
+         * What it is:
+         * Integrates with Android's system clock app using [AlarmClock.ACTION_SET_ALARM] to set an audible device-level alarm for [ChannelType.REMINDER] tasks.
          *
+         * What it does:
+         * Executes [setDeviceSystemAlarm] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [AlarmScheduler], [setDeviceSystemAlarm]
          * @param context Active Android [Context].
          * @param task Reminder task configuration.
          */
@@ -348,10 +357,14 @@ class AlarmScheduler(private val context: Context) {
         }
 
         /**
+         * What it is:
          * Dismisses the device-level system alarm from Android's system clock app using [AlarmClock.ACTION_DISMISS_ALARM].
-         * Uses [AlarmClock.ALARM_SEARCH_MODE_LABEL] with [getSystemAlarmLabel] to guarantee that
-         * only alarms set by this task are dismissed, completely leaving other user alarms intact.
          *
+         * What it does:
+         * Uses [AlarmClock.ALARM_SEARCH_MODE_LABEL] with [getSystemAlarmLabel] to guarantee that only alarms set by this task are dismissed, completely leaving other user alarms intact.
+         *
+         * Linked with:
+         * - Architecture: [AlarmScheduler], [dismissDeviceSystemAlarm]
          * @param context Active Android [Context].
          * @param task Target reminder task.
          */
@@ -374,10 +387,14 @@ class AlarmScheduler(private val context: Context) {
         }
 
         /**
-         * Computes the epoch millisecond timestamp for the next trigger of a [ScheduledTask]
-         * strictly in the future relative to [now], preserving the user's scheduled time of day
-         * for recurring tasks based on its recurrence type, interval, and selected days of week.
+         * What it is:
+         * Computes the epoch millisecond timestamp for the next trigger of a [ScheduledTask] strictly in the future relative to [now], preserving the user's scheduled time of day for recurring tasks based on its recurrence type, interval, and selected days of week.
          *
+         * What it does:
+         * Executes [calculateNextFutureTrigger] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [AlarmScheduler], [calculateNextFutureTrigger]
          * @param task Target [ScheduledTask].
          * @param now Reference millisecond timestamp (defaults to current time).
          * @return Next trigger timestamp in epoch milliseconds.
@@ -448,14 +465,29 @@ class AlarmScheduler(private val context: Context) {
             return cal.timeInMillis
         }
 
+        /**
+         * What it is:
+         * Operational routine [calculateNextTrigger].
+         *
+         * What it does:
+         * Executes calculateNextTrigger actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [AlarmScheduler]
+         */
         @JvmStatic
         fun calculateNextTrigger(task: ScheduledTask, fromTime: Long = System.currentTimeMillis()): Long =
             calculateNextTrigger(task.recurrence, task.customIntervalMinutes, fromTime, task.selectedDaysOfWeek)
 
         /**
+         * What it is:
          * Core recurrence calculation resolving the next trigger time.
+         *
+         * What it does:
          * Handles ONCE, DAILY, WEEKDAYS, WEEKENDS, WEEKLY, MONTHLY, YEARLY, and CUSTOM_INTERVAL.
          *
+         * Linked with:
+         * - Architecture: [AlarmScheduler], [calculateNextTrigger]
          * @param recurrence [RecurrenceType] pattern.
          * @param customIntervalMinutes Interval minutes for custom schedules.
          * @param fromTime Base timestamp to calculate forward from.
@@ -545,6 +577,16 @@ class AlarmScheduler(private val context: Context) {
                 }
             }
         }
+        /**
+         * What it is:
+         * Operational routine [advanceUntil].
+         *
+         * What it does:
+         * Executes advanceUntil actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [AlarmScheduler]
+         */
 
         private fun advanceUntil(cal: Calendar, predicate: (Calendar) -> Boolean) {
             var guard = 0
@@ -555,3 +597,4 @@ class AlarmScheduler(private val context: Context) {
         }
     }
 }
+

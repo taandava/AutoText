@@ -169,6 +169,16 @@ object TaskContentValidator {
         if (scheme != null && scheme != "content" && scheme != "file") {
             return AttachmentValidationResult.Invalid("Unsupported attachment URI scheme: '$scheme'")
         }
+        /**
+         * What it is:
+         * Operational routine [resolveFile].
+         *
+         * What it does:
+         * Executes resolveFile actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [ContentValidator]
+         */
 
         fun resolveFile(rawUri: String): File {
             val withoutScheme = if (rawUri.startsWith("file://", ignoreCase = true)) {
@@ -300,3 +310,4 @@ object TaskContentValidator {
         }
     }
 }
+

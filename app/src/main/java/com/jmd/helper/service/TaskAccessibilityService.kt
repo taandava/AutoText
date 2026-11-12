@@ -100,6 +100,16 @@ class TaskAccessibilityService : AccessibilityService() {
 
         val scanCompletedEvent = kotlinx.coroutines.flow.MutableStateFlow(0L)
 
+        /**
+         * What it is:
+         * Operational routine [notifyScanCompleted].
+         *
+         * What it does:
+         * Executes notifyScanCompleted actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [TaskAccessibilityService]
+         */
         @JvmStatic
         fun notifyScanCompleted() {
             scanCompletedEvent.value = System.currentTimeMillis()
@@ -114,7 +124,14 @@ class TaskAccessibilityService : AccessibilityService() {
         private var instance: TaskAccessibilityService? = null
 
         /**
+         * What it is:
          * Returns the active live accessibility service instance, or null if unbound/disconnected.
+         *
+         * What it does:
+         * Executes [getInstance] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [getInstance]
          */
         fun getInstance(): TaskAccessibilityService? = instance
 
@@ -186,7 +203,14 @@ class TaskAccessibilityService : AccessibilityService() {
         )
 
         /**
+         * What it is:
          * Returns true if the package belongs to a banking, payment, or financial application.
+         *
+         * What it does:
+         * Executes [isFinancialOrBankingPackage] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [isFinancialOrBankingPackage]
          */
         fun isFinancialOrBankingPackage(pkg: String): Boolean {
             if (pkg.isBlank()) return false
@@ -211,8 +235,14 @@ class TaskAccessibilityService : AccessibilityService() {
             return hasFinancialKeyword || com.jmd.helper.core.ProtectedApplicationManager.KNOWN_PROTECTED_PACKAGES.contains(pkg.trim())
         }
         /**
+         * What it is:
          * Checks whether the active window belongs to the system keyguard or Android SystemUI lockscreen.
          *
+         * What it does:
+         * Executes [isKeyguardWindowShowing] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [isKeyguardWindowShowing]
          * @return True if keyguard or bouncer package is currently rendering on display.
          */
         fun isKeyguardWindowShowing(): Boolean {
@@ -251,10 +281,30 @@ class TaskAccessibilityService : AccessibilityService() {
 
         @Volatile
         private var isStandbyThrottlingActive = true
+        /**
+         * What it is:
+         * Operational routine [setStandbyEventMask].
+         *
+         * What it does:
+         * Executes setStandbyEventMask actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [TaskAccessibilityService]
+         */
 
         fun setStandbyEventMask(standby: Boolean) {
             isStandbyThrottlingActive = standby
         }
+        /**
+         * What it is:
+         * Operational routine [setDispatchingState].
+         *
+         * What it does:
+         * Executes setDispatchingState actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [TaskAccessibilityService]
+         */
 
         private fun setDispatchingState(dispatching: Boolean) {
             isDispatching = dispatching
@@ -272,12 +322,26 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Returns the task ID currently undergoing accessibility dispatch, or 0 if idle.
+         *
+         * What it does:
+         * Executes [getActiveTaskId] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [getActiveTaskId]
          */
         fun getActiveTaskId(): Long = pendingTaskId
 
         /**
+         * What it is:
          * Returns true if an automated dispatch, unlock, or scan operation is actively executing.
+         *
+         * What it does:
+         * Executes [isDispatchingActive] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [isDispatchingActive]
          */
         @JvmStatic
         fun isDispatchingActive(): Boolean = isDispatching || isUnlockPending || isTestUnlockMode || (pendingTaskId != 0L)
@@ -294,15 +358,28 @@ class TaskAccessibilityService : AccessibilityService() {
             private set
 
         /**
+         * What it is:
          * Resets and arms last send result tracker into [RESULT_PENDING] state.
+         *
+         * What it does:
+         * Executes [markDispatchPending] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [markDispatchPending]
          */
         fun markDispatchPending() {
             lastSendResult = RESULT_PENDING
         }
 
         /**
+         * What it is:
          * Executes an accessibility global back navigation action.
          *
+         * What it does:
+         * Executes [navigateBack] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [navigateBack]
          * @return True if system back event was dispatched successfully.
          */
         fun navigateBack(): Boolean {
@@ -335,6 +412,16 @@ class TaskAccessibilityService : AccessibilityService() {
             set(value) { shouldRelockAfterTask = value }
 
         private var isBatchCampaignMode = false
+        /**
+         * What it is:
+         * Data entity or component [DispatchMode].
+         *
+         * What it does:
+         * Encapsulates state, business rules, and lifecycle for DispatchMode.
+         *
+         * Linked with:
+         * - Component: [TaskAccessibilityService]
+         */
 
         enum class DispatchMode {
             DIRECT_SEND,
@@ -354,8 +441,14 @@ class TaskAccessibilityService : AccessibilityService() {
         var onManualChatPicked: ((chatTitle: String) -> Unit)? = null
 
         /**
+         * What it is:
          * Launches WhatsApp in manual picker mode, allowing the user to tap any chat or group to capture its name and metadata.
          *
+         * What it does:
+         * Executes [startManualChatPicker] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [startManualChatPicker]
          * @param context Android context for launching WhatsApp package intent.
          * @param targetPackage Explicit WhatsApp package identifier (com.whatsapp or com.whatsapp.w4b).
          * @param channel Channel configuration indicating standard or business WhatsApp.
@@ -450,8 +543,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Simplified manual chat picker returning only the resolved conversation title string.
          *
+         * What it does:
+         * Executes [startManualChatPickerTitle] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [startManualChatPickerTitle]
          * @param context Android context for launching target application.
          * @param targetPackage Explicit WhatsApp package identifier.
          * @param channel Channel configuration indicating standard or business WhatsApp.
@@ -477,8 +576,14 @@ class TaskAccessibilityService : AccessibilityService() {
         private var pendingReturnToApp: Boolean = false
 
         /**
+         * What it is:
          * Opens WhatsApp and drives the chat scanner across recent conversation items.
          *
+         * What it does:
+         * Executes [startWhatsAppChatScan] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [startWhatsAppChatScan]
          * @param context Local context for launching package intent.
          * @param targetPackage WhatsApp package to inspect (standard or business).
          * @param channel Target channel type.
@@ -572,7 +677,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Initiates dedicated WhatsApp or WhatsApp Business group discovery.
+         *
+         * What it does:
+         * Executes [startWhatsAppGroupScan] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [startWhatsAppGroupScan]
          */
         fun startWhatsAppGroupScan(
             context: Context,
@@ -590,8 +702,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Arms task engine for posting text or media to WhatsApp Status.
          *
+         * What it does:
+         * Executes [prepareForStatus] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [prepareForStatus]
          * @param taskId Unique task ID.
          * @param packageName WhatsApp package to target.
          * @param messageText Text body or status caption.
@@ -612,8 +730,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Arms task engine for searching and sending a message to a WhatsApp or WhatsApp Business group.
          *
+         * What it does:
+         * Executes [prepareForGroup] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [prepareForGroup]
          * @param taskId Unique task ID.
          * @param packageName Target WhatsApp package (com.whatsapp or com.whatsapp.w4b).
          * @param groupName Target group chat title.
@@ -637,8 +761,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Arms task engine for executing outbound WhatsApp voice calls.
          *
+         * What it does:
+         * Executes [prepareForWhatsAppCall] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [prepareForWhatsAppCall]
          * @param taskId Unique task ID.
          * @param packageName WhatsApp package to target.
          * @param recipient Target phone number or contact name.
@@ -675,8 +805,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Programmatically terminates an active WhatsApp voice call via accessibility tap on End Call button.
          *
+         * What it does:
+         * Executes [endWhatsAppCall] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [endWhatsAppCall]
          * @param pkg Target WhatsApp package identifier.
          * @return True if end call action was executed.
          */
@@ -686,8 +822,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Programmatically terminates an active phone call via TelecomManager.endCall() or accessibility click on in-call UI.
          *
+         * What it does:
+         * Executes [endPhoneCall] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [endPhoneCall]
          * @param context Active context used to access TelecomManager.
          * @return True if the call was terminated.
          */
@@ -714,8 +856,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Sets up state variables, logs action, and arms send timeout watchdog for direct message dispatch.
          *
+         * What it does:
+         * Executes [prepareForSend] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [prepareForSend]
          * @param taskId Unique task ID.
          * @param packageName Target WhatsApp package.
          * @param recipient Target phone number or contact name.
@@ -760,8 +908,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Primary method for arming screen task assistance.
          *
+         * What it does:
+         * Executes [armScreenAssist] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [armScreenAssist]
          * @param pin Keyguard PIN or swipe code.
          * @param shouldRelockAfterSend True to re-lock screen after sending finishes.
          */
@@ -790,7 +944,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Backward-compatible alias for [armScreenAssist].
+         *
+         * What it does:
+         * Executes [armAutoUnlock] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [armAutoUnlock]
          */
         @JvmStatic
         fun armAutoUnlock(pin: String, shouldRelockAfterSend: Boolean = false) {
@@ -806,8 +967,14 @@ class TaskAccessibilityService : AccessibilityService() {
         @Volatile var pendingUnlockBatch: Boolean = false
 
         /**
+         * What it is:
          * Queues task payload parameters to execute immediately upon confirmed lockscreen dismissal.
          *
+         * What it does:
+         * Executes [setPendingTask] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [setPendingTask]
          * @param taskId Unique task ID.
          * @param channel Target channel.
          * @param recipient Target recipient phone or group.
@@ -836,18 +1003,28 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Records accessibility service timestamp heartbeat to [AccessibilityHealthManager].
+         *
+         * What it does:
+         * Executes [notifyHeartbeat] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [notifyHeartbeat]
          */
         fun notifyHeartbeat() {
             AccessibilityHealthManager.recordHeartbeat()
         }
 
         /**
-         * Immediately locks the physical screen mimicking the hardware Power button press
-         * via Android Pie+ [GLOBAL_ACTION_LOCK_SCREEN].
+         * What it is:
+         * Immediately locks the physical screen mimicking the hardware Power button press via Android Pie+ [GLOBAL_ACTION_LOCK_SCREEN].
          *
-         * Crucially: Never calls DevicePolicyManager.lockNow() because third-party device admin locks
-         * block biometrics (fingerprint/face unlock) and force manual PIN entry.
+         * What it does:
+         * Crucially: Never calls DevicePolicyManager.lockNow() because third-party device admin locks block biometrics (fingerprint/face unlock) and force manual PIN entry.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [lockScreenNow]
          */
         @JvmStatic
         fun lockScreenNow(): Boolean {
@@ -901,7 +1078,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Checks whether WhatsApp is currently rendering an active VoIP call screen.
+         *
+         * What it does:
+         * Executes [isInWhatsAppCall] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [isInWhatsAppCall]
          */
         @JvmStatic
         fun isInWhatsAppCall(): Boolean {
@@ -911,7 +1095,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Checks whether WhatsApp is currently rendering an active, answered VoIP call with conversation timer.
+         *
+         * What it does:
+         * Executes [isWhatsAppCallConnected] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [isWhatsAppCallConnected]
          */
         @JvmStatic
         fun isWhatsAppCallConnected(): Boolean {
@@ -921,7 +1112,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Checks whether a native cellular in-call or dialer screen is actively rendered.
+         *
+         * What it does:
+         * Executes [isPhoneCallUiActive] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [isPhoneCallUiActive]
          */
         @JvmStatic
         fun isPhoneCallUiActive(): Boolean {
@@ -939,8 +1137,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Diagnostic tool locking the phone immediately and triggering scheduled screen assist 4 seconds later to verify setup.
          *
+         * What it does:
+         * Executes [testScreenAssist] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [testScreenAssist]
          * @param context Local Android context.
          * @param pin Keyguard PIN to test.
          */
@@ -1077,7 +1281,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Backward-compatible alias for [testScreenAssist].
+         *
+         * What it does:
+         * Executes [testLockAndAutoUnlock] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [testLockAndAutoUnlock]
          */
         @JvmStatic
         fun testLockAndAutoUnlock(context: Context, pin: String) {
@@ -1085,7 +1296,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Clears all pending task variables, disarms keyguard watchdog, and resets engine back to idle.
+         *
+         * What it does:
+         * Executes [clearPending] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [clearPending]
          */
         @JvmStatic
         fun clearPending() {
@@ -1121,17 +1339,38 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Checks whether accessibility service is currently running an active dispatch workflow.
+         *
+         * What it does:
+         * Executes [isCurrentlyDispatching] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [isCurrentlyDispatching]
          */
         fun isCurrentlyDispatching(): Boolean = isDispatching || isUnlockPending || isTestUnlockMode
 
         /**
+         * What it is:
          * Checks whether accessibility task is currently in manual chat picker mode waiting for user touch.
+         *
+         * What it does:
+         * Executes [isManualPickMode] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [isManualPickMode]
          */
         fun isManualPickMode(): Boolean = isDispatching && currentMode == DispatchMode.MANUAL_PICK_CHAT
 
         /**
+         * What it is:
          * Safely aborts active accessibility task when a protected banking/financial app is encountered.
+         *
+         * What it does:
+         * Executes [abortDueToProtectedApp] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [abortDueToProtectedApp]
          */
         @JvmStatic
         fun abortDueToProtectedApp(pkg: String) {
@@ -1148,7 +1387,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Safely aborts active task dispatch upon detected human interaction.
+         *
+         * What it does:
+         * Executes [abortDueToHumanInterruption] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [abortDueToHumanInterruption]
          */
         fun abortDueToHumanInterruption() {
             val taskId = pendingTaskId
@@ -1160,8 +1406,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
+         * What it is:
          * Navigates the device back to the home launcher screen using accessibility global actions.
          *
+         * What it does:
+         * Executes [minimizeToHome] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [minimizeToHome]
          * @param context Optional Android context for fallback home intent dispatch.
          */
         @JvmStatic
@@ -1187,8 +1439,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         /**
-         * Disables the accessibility service directly using disableSelf() on API 24+ without requiring
-         * manual navigation through system settings. Allows immediate access to banking and UPI apps.
+         * What it is:
+         * Disables the accessibility service directly using disableSelf() on API 24+ without requiring manual navigation through system settings.
+         *
+         * What it does:
+         * Allows immediate access to banking and UPI apps.
+         *
+         * Linked with:
+         * - Architecture: [TaskAccessibilityService], [disableServiceIfActive]
          */
         fun disableServiceIfActive(): Boolean {
             return instance?.disableService() ?: false
@@ -1325,6 +1583,16 @@ class TaskAccessibilityService : AccessibilityService() {
     }
 
     private val unlockLoopRunnable = object : Runnable {
+        /**
+         * What it is:
+         * Operational routine [run].
+         *
+         * What it does:
+         * Executes run actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [TaskAccessibilityService]
+         */
         override fun run() {
             try {
                 if (!isUnlockPending) return
@@ -1477,6 +1745,16 @@ class TaskAccessibilityService : AccessibilityService() {
     }
 
     private val sendRunnable: Runnable = object : Runnable {
+        /**
+         * What it is:
+         * Operational routine [run].
+         *
+         * What it does:
+         * Executes run actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [TaskAccessibilityService]
+         */
         override fun run() {
             try {
                 if (!isDispatching || currentMode == DispatchMode.MANUAL_PICK_CHAT) return
@@ -2794,3 +3072,4 @@ class TaskAccessibilityService : AccessibilityService() {
         handler.removeCallbacks(sendRunnable)
     }
 }
+

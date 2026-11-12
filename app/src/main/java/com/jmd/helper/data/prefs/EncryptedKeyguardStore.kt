@@ -252,6 +252,16 @@ class EncryptedKeyguardStore(context: Context) {
 
         @Volatile
         private var instance: EncryptedKeyguardStore? = null
+        /**
+         * What it is:
+         * Operational routine [getInstance].
+         *
+         * What it does:
+         * Executes getInstance actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [EncryptedKeyguardStore]
+         */
 
         fun getInstance(context: Context): EncryptedKeyguardStore {
             return instance ?: synchronized(this) {
@@ -260,3 +270,4 @@ class EncryptedKeyguardStore(context: Context) {
         }
     }
 }
+

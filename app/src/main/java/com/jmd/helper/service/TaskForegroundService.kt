@@ -51,8 +51,14 @@ class TaskForegroundService : Service() {
         const val NOTIFICATION_ID = 2001
 
         /**
+         * What it is:
          * Reconciles foreground notifications by delegating to [stop] to guarantee no sticky notifications remain.
          *
+         * What it does:
+         * Executes [start] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskForegroundService], [start]
          * @param context Active Android [Context].
          */
         fun start(context: Context) {
@@ -61,8 +67,14 @@ class TaskForegroundService : Service() {
         }
 
         /**
+         * What it is:
          * Cancels any lingering notification with [NOTIFICATION_ID] from the system [NotificationManager].
          *
+         * What it does:
+         * Executes [stop] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskForegroundService], [stop]
          * @param context Active Android [Context].
          */
         fun stop(context: Context) {
@@ -129,3 +141,4 @@ class TaskForegroundService : Service() {
         return START_NOT_STICKY
     }
 }
+

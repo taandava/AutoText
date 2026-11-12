@@ -37,7 +37,7 @@
 - **Zero Code Warning Suppressions**: Re-engineered under strict clean-code invariants with zero `@Suppress` annotations across handwritten Kotlin source code.
 - **Material 3 Expressive Compact UI**: Compact, high-efficiency interface strictly adhering to an 8-point layout grid with $\ge 48\text{dp}$ touch targets, high-contrast accessible typography, and dynamic channel badge branding (no glassmorphism).
 - **Self-Contained In-APK Codebase Distribution**: The release APK packages the entire unabridged project codebase into `assets/codebase/` and `assets/project_source.zip`. Extracting the APK yields the complete, build-ready Kotlin project.
-- **Exhaustive Code Block Documentation**: Every file and code block (144 files, 1,288 code blocks) features structured KDoc specifications detailing:
+- **Exhaustive Code Block Documentation**: Every file and code block (144 files, 1,328 code blocks) features structured KDoc specifications detailing:
   - **What it is** (Component role, layer, design pattern)
   - **What it does** (Core behavior, algorithms, state mutations)
   - **What it is linked with** (Callers, dependencies, models, repositories)

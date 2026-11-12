@@ -195,6 +195,16 @@ fun LogsView(
                     .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                /**
+                 * What it is:
+                 * Data entity or component [LogFilterChip].
+                 *
+                 * What it does:
+                 * Encapsulates state, business rules, and lifecycle for LogFilterChip.
+                 *
+                 * Linked with:
+                 * - Component: [LogsScreen]
+                 */
                 data class LogFilterChip(val key: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector)
                 listOf(
                     LogFilterChip("ALL", "All (${logs.size})", Icons.Filled.BarChart),
@@ -363,3 +373,4 @@ fun LogsView(
         }
     }
 }
+

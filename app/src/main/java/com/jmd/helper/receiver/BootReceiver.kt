@@ -59,9 +59,14 @@ class BootReceiver : BroadcastReceiver() {
         private const val TAG = "BootReceiver"
 
         /**
-         * Dispatches a temporary wake lock and launches [TaskLauncherActivity] to simulate keyguard
-         * wake-up and schedule credential-protected screen access assistance directly following a cold reboot.
+         * What it is:
+         * Dispatches a temporary wake lock and launches [TaskLauncherActivity] to simulate keyguard wake-up and schedule credential-protected screen access assistance directly following a cold reboot.
          *
+         * What it does:
+         * Executes [triggerPostRebootScreenAssist] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [BootReceiver], [triggerPostRebootScreenAssist]
          * @param context Device protected or application [Context].
          * @param pin Configured numeric security PIN to enter.
          */
@@ -97,6 +102,16 @@ class BootReceiver : BroadcastReceiver() {
             message = "Use triggerPostRebootScreenAssist for policy-compliant naming",
             replaceWith = ReplaceWith("triggerPostRebootScreenAssist(context, pin)")
         )
+        /**
+         * What it is:
+         * Operational routine [triggerPostRebootAutoUnlock].
+         *
+         * What it does:
+         * Executes triggerPostRebootAutoUnlock actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [BootReceiver]
+         */
         fun triggerPostRebootAutoUnlock(context: Context, pin: String) = triggerPostRebootScreenAssist(context, pin)
     }
 
@@ -148,3 +163,4 @@ class BootReceiver : BroadcastReceiver() {
         }
     }
 }
+

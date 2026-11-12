@@ -74,13 +74,43 @@ class TaskLauncherActivity : Activity() {
     private var wakeLock: PowerManager.WakeLock? = null
 
     private val dismissCallback = object : KeyguardManager.KeyguardDismissCallback() {
+        /**
+         * What it is:
+         * Keyguard dismissal callback [onDismissSucceeded].
+         *
+         * What it does:
+         * Handles keyguard dismissal result status for onDismissSucceeded.
+         *
+         * Linked with:
+         * - Component: [TaskLauncherActivity]
+         */
         override fun onDismissSucceeded() {
             Log.i(TAG, "Keyguard dismiss succeeded callback received.")
             cleanFinish()
         }
+        /**
+         * What it is:
+         * Keyguard dismissal callback [onDismissCancelled].
+         *
+         * What it does:
+         * Handles keyguard dismissal result status for onDismissCancelled.
+         *
+         * Linked with:
+         * - Component: [TaskLauncherActivity]
+         */
         override fun onDismissCancelled() {
             Log.w(TAG, "Keyguard dismiss cancelled callback received; allowing accessibility unlock engine to continue.")
         }
+        /**
+         * What it is:
+         * Keyguard dismissal callback [onDismissError].
+         *
+         * What it does:
+         * Handles keyguard dismissal result status for onDismissError.
+         *
+         * Linked with:
+         * - Component: [TaskLauncherActivity]
+         */
         override fun onDismissError() {
             Log.e(TAG, "Keyguard dismiss error callback received; waiting for polling timeout or accessibility unlock.")
         }
@@ -407,3 +437,4 @@ class TaskLauncherActivity : Activity() {
 // ============================================================================
 // CALL SIMULATOR ACTIVITY
 // ============================================================================
+

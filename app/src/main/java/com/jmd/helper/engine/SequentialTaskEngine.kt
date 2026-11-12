@@ -230,16 +230,46 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
         @Volatile
         private var INSTANCE: SequentialTaskEngine? = null
+        /**
+         * What it is:
+         * Operational routine [getInstance].
+         *
+         * What it does:
+         * Executes getInstance actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [SequentialTaskEngine]
+         */
 
         fun getInstance(context: Context): SequentialTaskEngine {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: SequentialTaskEngine(context.applicationContext).also { INSTANCE = it }
             }
         }
+        /**
+         * What it is:
+         * Operational routine [getUiTaskMutex].
+         *
+         * What it does:
+         * Executes getUiTaskMutex actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [SequentialTaskEngine]
+         */
 
         fun getUiTaskMutex(context: Context): Mutex {
             return getInstance(context).uiTaskMutex
         }
+        /**
+         * What it is:
+         * Operational routine [completeOrRescheduleTask].
+         *
+         * What it does:
+         * Executes completeOrRescheduleTask actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [SequentialTaskEngine]
+         */
 
         fun completeOrRescheduleTask(
             context: Context,
@@ -1848,3 +1878,4 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         )
     }
 }
+

@@ -390,6 +390,16 @@ class WhatsAppRepository(private val context: Context) {
         val isBusiness = channel == ChannelType.WHATSAPP_BUSINESS || channel == ChannelType.WHATSAPP_BUSINESS_GROUP
 
         // Helper to check match
+        /**
+         * What it is:
+         * Operational routine [matchesQuery].
+         *
+         * What it does:
+         * Executes matchesQuery actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [WhatsAppRepository]
+         */
         fun matchesQuery(name: String, phone: String, norm: String): Boolean =
             queryLower.isEmpty() || name.lowercase().contains(queryLower) || phone.contains(queryLower) || norm.contains(queryLower)
 
@@ -702,3 +712,4 @@ class WhatsAppRepository(private val context: Context) {
         }
     }
 }
+

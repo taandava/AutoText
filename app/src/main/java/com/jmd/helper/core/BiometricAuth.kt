@@ -78,17 +78,47 @@ class BiometricAuthManager(private val context: Context) {
             .build()
 
         val biometricPrompt = BiometricPrompt(activity, executor, object : BiometricPrompt.AuthenticationCallback() {
+            /**
+             * What it is:
+             * Biometric authentication lifecycle callback [onAuthenticationSucceeded].
+             *
+             * What it does:
+             * Receives authentication state transitions and updates security credentials for onAuthenticationSucceeded.
+             *
+             * Linked with:
+             * - Component: [BiometricAuth]
+             */
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
                 AppFileLogger.i("BiometricAuthManager", "User biometric authentication succeeded")
                 onSuccess()
             }
+            /**
+             * What it is:
+             * Biometric authentication lifecycle callback [onAuthenticationError].
+             *
+             * What it does:
+             * Receives authentication state transitions and updates security credentials for onAuthenticationError.
+             *
+             * Linked with:
+             * - Component: [BiometricAuth]
+             */
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)
                 AppFileLogger.w("BiometricAuthManager", "Biometric authentication error ($errorCode): $errString")
                 onError(errString.toString())
             }
+            /**
+             * What it is:
+             * Biometric authentication lifecycle callback [onAuthenticationFailed].
+             *
+             * What it does:
+             * Receives authentication state transitions and updates security credentials for onAuthenticationFailed.
+             *
+             * Linked with:
+             * - Component: [BiometricAuth]
+             */
 
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
@@ -104,3 +134,4 @@ class BiometricAuthManager(private val context: Context) {
         }
     }
 }
+
