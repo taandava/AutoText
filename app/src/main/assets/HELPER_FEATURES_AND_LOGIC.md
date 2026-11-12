@@ -46,7 +46,7 @@ Built with **zero third-party cloud dependencies**, **zero external analytics**,
 - **Verified Hardware:**
   - Samsung Galaxy A04 (`SM-A045F`, Android 14 API 34, Hardware ID: `R9ZW105MFDR`)
   - Vivo / iQOO I2401 (`I2401`, Android 16 API 36, Hardware ID: `10BF1G0HCD0024R`)
-- **Unit Test Suite:** 138 of 138 Unit Tests Passing (100% Success Rate across HelperComprehensiveTest [121 tests] and ModernStackArchitectureTest [17 tests])
+- **Unit Test Suite:** 141 of 141 Unit Tests Passing (100% Success Rate across HelperComprehensiveTest [124 tests] and ModernStackArchitectureTest [17 tests])
 - **Data Sovereignty:** 100% On-Device Sovereignty. No remote servers, no cloud telemetry, no internet permission.
 - **Persistence:** 16 Relational SQLite Tables + Jetpack Room ORM Entities + Jetpack DataStore Flow Cache
 - **Policy Compliance:** Full compliance with Google Play Store and OEM policies; sanitized terminology ("Task", "Smart Dispatch", "Helper", "Simulated Call").
@@ -3060,10 +3060,24 @@ Helper officially supports **12 production-grade automation channels**:
 ---
 
 ## 18.8 Verification & Release Metrics
-- **Unit Test Suite**: **141 of 141 unit tests passing** (100% green across `HelperComprehensiveTest` and `ModernStackArchitectureTest`).
-- **Zero Linter Warnings**: Clean compilation with zero errors, zero unresolved references, and zero deprecated icon warnings.
-- **Hardware Verified**: Tested and verified on connected test device (`10BF1G0HCD0024R`).
-- **Production Artifact**: Fully signed APK generated via `assembleRelease`.
+- **Unit Test Suite**: **141 of 141 unit tests passing** (100% green across `HelperComprehensiveTest` [124 tests] and `ModernStackArchitectureTest` [17 tests]).
+- **Zero Compiler Warnings**: Clean compilation with zero errors, zero unresolved references, and zero deprecated icon warnings.
+- **Hardware Verified**: Tested and verified on connected physical device via ADB (`10BF1G0HCD0024R`).
+- **Production Artifact**: Fully signed APK generated via `assembleRelease` with R8 optimization (`app-release.apk`).
+
+---
+
+## 18.9 IDE Diagnostics Invariant: Jetpack Compose PascalCase Standard & Zero-Suppress Architecture
+To maintain pristine codebase cleanliness, Helper enforces a strict policy regarding IDE diagnostic hygiene:
+1. **Jetpack Compose PascalCase Standard**:
+   - According to Google's official Jetpack Compose and Kotlin API styling guidelines, any `@Composable` function that returns `Unit` (such as `MaterialIconBadge`, `AutoReplyRuleDialog`, `ComposeTaskScreen`, `DocumentationView`, and `TaskTypeSelectionDialog`) **must be named using PascalCase (capitalized first letter)** because it emits UI elements into the visual tree rather than returning data.
+   - Traditional Kotlin utility functions and methods returning values continue to use standard `camelCase`.
+2. **Zero-`@Suppress` Architecture**:
+   - Helper maintains a strict engineering rule: **Zero `@Suppress` annotations across handwritten Kotlin code**. No code clutter or suppression masks are applied to source files.
+3. **Workspace Language Server Configuration**:
+   - The Kotlin Language Server / extension is configured via [.vscode/settings.json](file:///d:/GPU-D/apps/Helper/.vscode/settings.json) to set the minimum diagnostic reporting severity to `warning` (`"kotlin.diagnostics.level": "warning"` and `"errorLens.enabledDiagnosticLevels": ["error", "warning"]`).
+   - Stylistic hints (Severity 4 `FunctionName`) on `@Composable` functions are cleanly filtered at the language server boundary while ensuring that true compiler Errors (Severity 1) and Warnings (Severity 2) remain fully visible and actionable.
+
 
 
 
