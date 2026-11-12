@@ -1156,7 +1156,12 @@ fun DailyCampaignConfigCard(
         // Dynamic Tag Chips
         Text("Dynamic Variables:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(4.dp))
-        val campaignVariables = listOf("{name}", "{first_name}", "{phone}", "{date}", "{short_date}", "{time}", "{day}", "{short_day}", "{day_num}")
+        val campaignVariables = listOf(
+            "{name}", "{first_name}", "{phone}",
+            "{date}", "{short_date}", "{time}",
+            "{date_dd_mm_yyyy}", "{date_words}", "{greeting}",
+            "{namaste}", "{rupee}", "{today}"
+        )
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             campaignVariables.chunked(3).forEach { rowVars ->
                 Row(

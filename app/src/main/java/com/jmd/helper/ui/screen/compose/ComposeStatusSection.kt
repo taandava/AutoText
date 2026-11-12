@@ -37,7 +37,7 @@ fun WhatsAppStatusComposerCard(
     messageText: String,
     onMessageTextChange: (String) -> Unit,
     onLaunchMediaPicker: () -> Unit,
-    onOpenTemplates: () -> Unit
+    onOpenTemplates: (() -> Unit)? = null
 ) {
     val accentColor = MaterialTheme.colorScheme.tertiary
 
@@ -233,13 +233,11 @@ fun WhatsAppStatusComposerCard(
                 fontSize = 12.5.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            GlassButton(
-                text = "Templates",
-                onClick = onOpenTemplates,
-                variant = GlassButtonVariant.SECONDARY,
-                icon = Icons.Default.FormatQuote,
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
-                shape = AppDesignTokens.ShapePill
+            Text(
+                "Dynamic tokens supported",
+                fontSize = 11.sp,
+                color = accentColor,
+                fontWeight = FontWeight.Medium
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -301,7 +299,11 @@ fun WhatsAppStatusComposerCard(
         Spacer(modifier = Modifier.height(10.dp))
         Text("Dynamic Variables:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(4.dp))
-        val statusVariables = listOf("{date}", "{short_date}", "{time}", "{day}", "{short_day}", "{day_num}")
+        val statusVariables = listOf(
+            "{date}", "{short_date}", "{time}",
+            "{date_dd_mm_yyyy}", "{date_words}", "{time_24h}",
+            "{day}", "{short_day}", "{today}", "{ist_time}"
+        )
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             statusVariables.chunked(3).forEach { rowVars ->
                 Row(
@@ -347,7 +349,7 @@ fun WhatsAppBusinessStatusComposerCard(
     messageText: String,
     onMessageTextChange: (String) -> Unit,
     onLaunchMediaPicker: () -> Unit,
-    onOpenTemplates: () -> Unit
+    onOpenTemplates: (() -> Unit)? = null
 ) {
     val accentColor = MaterialTheme.colorScheme.primary
 
@@ -543,13 +545,11 @@ fun WhatsAppBusinessStatusComposerCard(
                 fontSize = 12.5.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            GlassButton(
-                text = "Templates",
-                onClick = onOpenTemplates,
-                variant = GlassButtonVariant.SECONDARY,
-                icon = Icons.Default.FormatQuote,
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
-                shape = AppDesignTokens.ShapePill
+            Text(
+                "Dynamic tokens supported",
+                fontSize = 11.sp,
+                color = accentColor,
+                fontWeight = FontWeight.Medium
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -611,7 +611,11 @@ fun WhatsAppBusinessStatusComposerCard(
         Spacer(modifier = Modifier.height(10.dp))
         Text("Dynamic Variables:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(4.dp))
-        val statusVariables = listOf("{date}", "{short_date}", "{time}", "{day}", "{short_day}", "{day_num}")
+        val statusVariables = listOf(
+            "{date}", "{short_date}", "{time}",
+            "{date_dd_mm_yyyy}", "{date_words}", "{time_24h}",
+            "{day}", "{short_day}", "{today}", "{ist_time}"
+        )
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             statusVariables.chunked(3).forEach { rowVars ->
                 Row(

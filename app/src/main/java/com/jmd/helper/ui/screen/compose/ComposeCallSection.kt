@@ -46,8 +46,8 @@ fun ComposeCallSimulationAndSoundCard(
     onSimulatedCallerNumberChange: (String) -> Unit,
     simulatedCallStyle: String,
     onSimulatedCallStyleChange: (String) -> Unit,
-    soundModeSetting: String,
-    onSoundModeSettingChange: (String) -> Unit
+    soundModeSetting: String = "",
+    onSoundModeSettingChange: (String) -> Unit = {}
 ) {
     when (selectedChannel) {
         ChannelType.CALL_SIMULATION -> {
@@ -99,39 +99,6 @@ fun ComposeCallSimulationAndSoundCard(
                                 selected = simulatedCallStyle == style,
                                 onClick = { onSimulatedCallStyleChange(style) },
                                 colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.error)
-                            )
-                            Spacer(modifier = Modifier.width(2.dp))
-                            Text(label, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
-                        }
-                    }
-                }
-            }
-        }
-        ChannelType.SOUND_MODE -> {
-            AppCard(
-                modifier = Modifier.fillMaxWidth(),
-                shape = AppDesignTokens.ShapeLarge
-            ) {
-                Text(
-                    "Sound Profile Mode",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.5.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    listOf("NORMAL" to "Normal", "VIBRATE" to "Vibrate", "SILENT" to "Silent").forEach { (mode, label) ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { onSoundModeSettingChange(mode) }
-                        ) {
-                            RadioButton(
-                                selected = soundModeSetting == mode,
-                                onClick = { onSoundModeSettingChange(mode) },
-                                colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
                             )
                             Spacer(modifier = Modifier.width(2.dp))
                             Text(label, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)

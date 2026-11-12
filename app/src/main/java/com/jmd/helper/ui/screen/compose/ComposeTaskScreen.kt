@@ -315,14 +315,10 @@ fun ComposeTaskScreen(
     var showWhatsAppContactsDialog by remember { mutableStateOf(false) }
 
     // Dialog states
-    var showTemplateDialog by remember { mutableStateOf(false) }
     var showPoolPickerDialog by remember { mutableStateOf(false) }
-    val templates = remember { repository.getAllTemplates() }
 
     BackHandler(enabled = true) {
-        if (showTemplateDialog) {
-            showTemplateDialog = false
-        } else if (showPoolPickerDialog) {
+        if (showPoolPickerDialog) {
             showPoolPickerDialog = false
         } else if (showWhatsAppContactsDialog) {
             showWhatsAppContactsDialog = false
@@ -410,9 +406,6 @@ fun ComposeTaskScreen(
         } else if (selectedChannel == ChannelType.CALL_SIMULATION) {
             finalRecipients = listOf(simulatedCallerNumber.ifBlank { "Incoming Call" })
             finalRecipientNames = listOf(simulatedCallerName.ifBlank { "Simulated Caller" })
-        } else if (selectedChannel == ChannelType.SOUND_MODE) {
-            finalRecipients = listOf("System")
-            finalRecipientNames = listOf(soundModeSetting.ifBlank { "Sound Profile" })
         } else if (finalPhoneList.isEmpty()) {
             context.showAppToast("Select a recipient", isLong = true)
             return@saveTaskAction
@@ -577,7 +570,7 @@ fun ComposeTaskScreen(
                         onMessageTextChange = { messageText = it }
                     )
                 }
-                ChannelType.CALL_SIMULATION, ChannelType.SOUND_MODE -> {
+                ChannelType.CALL_SIMULATION -> {
                     ComposeCallSimulationAndSoundCard(
                         selectedChannel = selectedChannel,
                         simulatedCallerName = simulatedCallerName,
@@ -652,8 +645,7 @@ fun ComposeTaskScreen(
                         onMediaUriChange = { mediaUri = it },
                         messageText = messageText,
                         onMessageTextChange = { messageText = it },
-                        onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") },
-                        onOpenTemplates = { showTemplateDialog = true }
+                        onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") }
                     )
                 }
                 ChannelType.WHATSAPP_BUSINESS_STATUS -> {
@@ -662,8 +654,7 @@ fun ComposeTaskScreen(
                         onMediaUriChange = { mediaUri = it },
                         messageText = messageText,
                         onMessageTextChange = { messageText = it },
-                        onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") },
-                        onOpenTemplates = { showTemplateDialog = true }
+                        onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") }
                     )
                 }
                 else -> {
@@ -699,7 +690,6 @@ fun ComposeTaskScreen(
                         onOpenContactsPicker = { contactPickerLauncher.launch(null) },
                         messageText = messageText,
                         onMessageTextChange = { messageText = it },
-                        onOpenTemplates = { showTemplateDialog = true },
                         smsPartCount = smsPartCount,
                         isUnicode = isUnicode,
                         mediaUri = mediaUri,
@@ -726,18 +716,6 @@ fun ComposeTaskScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
         }
-    }
-
-    if (showTemplateDialog) {
-        TemplatePickerSheet(
-            repository = repository,
-            initialTemplates = templates,
-            onSelectTemplate = { t ->
-                messageText = t.content
-                showTemplateDialog = false
-            },
-            onDismiss = { showTemplateDialog = false }
-        )
     }
 
     if (showPoolPickerDialog) {

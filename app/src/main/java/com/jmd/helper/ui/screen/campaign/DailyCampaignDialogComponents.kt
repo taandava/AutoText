@@ -224,22 +224,29 @@ fun CreateDailyCampaignSheet(
             )
 
             // Variable helper chips
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                listOf("{name}", "{first_name}", "{phone}", "{date}").forEach { tag ->
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clip(AppDesignTokens.ShapePill)
-                            .background(accentColor.copy(alpha = 0.12f))
-                            .border(1.dp, accentColor.copy(alpha = 0.35f), AppDesignTokens.ShapePill)
-                            .clickable { messageTemplate += " $tag" }
-                            .padding(vertical = 5.dp),
-                        contentAlignment = Alignment.Center
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                listOf(
+                    listOf("{name}", "{first_name}", "{phone}", "{date}"),
+                    listOf("{short_date}", "{time}", "{greeting}", "{rupee}")
+                ).forEach { rowTags ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Text(tag, fontSize = 11.sp, color = accentColor, fontWeight = FontWeight.Bold)
+                        rowTags.forEach { tag ->
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(AppDesignTokens.ShapePill)
+                                    .background(accentColor.copy(alpha = 0.12f))
+                                    .border(1.dp, accentColor.copy(alpha = 0.35f), AppDesignTokens.ShapePill)
+                                    .clickable { messageTemplate += " $tag" }
+                                    .padding(vertical = 5.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(tag, fontSize = 11.sp, color = accentColor, fontWeight = FontWeight.Bold)
+                            }
+                        }
                     }
                 }
             }

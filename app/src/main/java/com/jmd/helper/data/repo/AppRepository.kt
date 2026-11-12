@@ -11,8 +11,8 @@
  * - Persistence: [com.jmd.helper.data.db.DatabaseHelper]
  * - Sub-Repositories: [com.jmd.helper.data.repo.TaskRepository], [com.jmd.helper.data.repo.DailyCampaignRepository],
  *   [com.jmd.helper.data.repo.LogRepository], [com.jmd.helper.data.repo.RecipientRepository],
- *   [com.jmd.helper.data.repo.AutoReplyRepository], [com.jmd.helper.data.repo.TemplateRepository],
- *   [com.jmd.helper.data.repo.SequenceRepository], [com.jmd.helper.data.repo.WhatsAppRepository]
+ *   [com.jmd.helper.data.repo.AutoReplyRepository],
+ *   [com.jmd.helper.data.repo.WhatsAppRepository]
  * - UI Screens: `TasksScreen`, `DailyCampaignScreen`,
  *   `ComposeTaskScreen`, `DailyCampaignScreen`
  * - Schedulers: [com.jmd.helper.scheduler.AlarmScheduler]
@@ -32,7 +32,6 @@ import com.jmd.helper.data.model.DailyCampaignConfig
 import com.jmd.helper.data.model.DynamicContactItem
 import com.jmd.helper.data.model.DynamicPoolStats
 import com.jmd.helper.data.model.ExecutionLog
-import com.jmd.helper.data.model.MessageTemplate
 import com.jmd.helper.data.model.RecipientItem
 import com.jmd.helper.data.model.RecurrenceType
 import com.jmd.helper.data.model.ScheduledTask
@@ -54,7 +53,6 @@ class AppRepository(context: Context) {
     val autoReplyRepo = AutoReplyRepository(context)
     val logRepo = LogRepository(context)
     val backupRepo = BackupRepository(context)
-    val templateRepo = TemplateRepository(context)
     val recipientRepo = RecipientRepository(context)
     val whatsAppRepo = WhatsAppRepository(context)
     val privacyRepo = PrivacyRepository(context)
@@ -417,12 +415,6 @@ class AppRepository(context: Context) {
         }
         return sb.toString()
     }
-
-    // ==================== TEMPLATES ====================
-    fun getAllTemplates(): List<MessageTemplate> = templateRepo.getAllTemplates()
-    fun insertTemplate(template: MessageTemplate): Long = templateRepo.insertTemplate(template)
-    fun updateTemplate(template: MessageTemplate): Boolean = templateRepo.updateTemplate(template)
-    fun deleteTemplate(id: Long): Boolean = templateRepo.deleteTemplate(id)
 
     // ==================== RECIPIENTS ====================
     fun getAllRecipients(): List<RecipientItem> = recipientRepo.getAllRecipients()

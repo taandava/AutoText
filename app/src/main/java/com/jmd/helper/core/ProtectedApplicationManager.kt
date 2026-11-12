@@ -366,8 +366,7 @@ object ProtectedApplicationManager {
             ChannelType.SMS,
             ChannelType.CALL,
             ChannelType.CALL_SIMULATION,
-            ChannelType.REMINDER,
-            ChannelType.SOUND_MODE -> true
+            ChannelType.REMINDER -> true
             ChannelType.WHATSAPP,
             ChannelType.WHATSAPP_GROUP,
             ChannelType.WHATSAPP_STATUS,

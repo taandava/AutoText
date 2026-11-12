@@ -85,8 +85,7 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
     WHATSAPP_CALL("WhatsApp Call", "📞"),
     WHATSAPP_BUSINESS_CALL("WA Business Call", "📞💼"),
     CALL_SIMULATION("Call Simulation", "🎭"),
-    REMINDER("Reminder", "⏰"),
-    SOUND_MODE("Sound Mode", "🔊");
+    REMINDER("Reminder", "⏰");
 
     companion object {
         /**
@@ -341,15 +340,6 @@ data class ScheduledTask(
     val callSequenceMode: String = "GIVEN", // "GIVEN" or "RANDOM"
     val delayBetweenCallsSeconds: Int = 5,
     val callFailurePolicy: String = "CONTINUE" // "CONTINUE" or "STOP_ON_FAILURE"
-)
-
-// ==================== MESSAGE TEMPLATE DATA MODELS ====================
-
-data class MessageTemplate(
-    val id: Long = 0,
-    val title: String,
-    val category: String = "General",
-    val content: String
 )
 
 // ==================== CHAT PICKER METADATA MODELS ====================

@@ -57,7 +57,7 @@ fun ComposeRecipientsAndMessageCard(
     onOpenContactsPicker: () -> Unit,
     messageText: String,
     onMessageTextChange: (String) -> Unit,
-    onOpenTemplates: () -> Unit,
+    onOpenTemplates: (() -> Unit)? = null,
     smsPartCount: Int,
     isUnicode: Boolean,
     mediaUri: String = "",
@@ -327,7 +327,7 @@ fun ComposeRecipientsAndMessageCard(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        // Message Header & Templates Trigger
+        // Message Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -339,13 +339,11 @@ fun ComposeRecipientsAndMessageCard(
                 fontSize = 12.5.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            GlassButton(
-                text = "Templates",
-                onClick = onOpenTemplates,
-                variant = GlassButtonVariant.SECONDARY,
-                icon = Icons.Default.FormatQuote,
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
-                shape = AppDesignTokens.ShapePill
+            Text(
+                "1-tap insert tokens below",
+                fontSize = 11.sp,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Medium
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -482,10 +480,11 @@ fun ComposeRecipientsAndMessageCard(
         Spacer(modifier = Modifier.height(4.dp))
         val variables = listOf(
             "{name}", "{first_name}", "{phone}",
-            "{time}", "{date}", "{day}",
-            "{today}", "{ist_time}", "{greeting}",
-            "{namaste}", "{rupee}", "{short_date}",
-            "{short_day}", "{day_num}", "{time_greeting}"
+            "{date}", "{short_date}", "{time}",
+            "{date_dd_mm_yyyy}", "{date_dd_mm_yy}", "{date_words}",
+            "{time_24h}", "{today}", "{ist_time}",
+            "{day}", "{greeting}", "{namaste}",
+            "{rupee}", "{month_name}", "{year}"
         )
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             variables.chunked(3).forEach { rowVars ->

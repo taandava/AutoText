@@ -141,14 +141,6 @@ data class CallSimulationRequest(
 )
 
 /**
- * Request payload for Sound Mode & DND switching.
- */
-data class SoundModeRequest(
-    val taskId: Long,
-    val modeSetting: String
-)
-
-/**
  * Master singleton API providing typed, reliable, and audited execution endpoints for all application capabilities.
  */
 object TaskFeatureApi {
@@ -536,73 +528,6 @@ object TaskFeatureApi {
             success = success,
             recipient = request.callerNumber,
             messageSnippet = snippet
-        )
-        logResult(repository, outcome)
-        return outcome
-    }
-
-    /**
-     * Applies system sound mode (Normal, Silent, Vibrate) with DND compatibility guard.
-     */
-    fun applySoundMode(
-        context: Context,
-        repository: AppRepository,
-        request: SoundModeRequest
-    ): FeatureExecutionResult {
-        val audioManager = context.getSystemService(AudioManager::class.java)
-            ?: (context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager)
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-
-        if (audioManager == null) {
-            val res = FeatureExecutionResult(request.taskId, ChannelType.SOUND_MODE, false, "System", "AudioManager unavailable")
-            logResult(repository, res)
-            return res
-        }
-
-        val modeSetting = request.modeSetting.lowercase()
-        val currentRinger = audioManager.ringerMode
-        val targetRinger = when (modeSetting) {
-            "silent" -> AudioManager.RINGER_MODE_SILENT
-            "vibrate" -> AudioManager.RINGER_MODE_VIBRATE
-            else -> AudioManager.RINGER_MODE_NORMAL
-        }
-
-        val hasPolicyAccess = notificationManager?.isNotificationPolicyAccessGranted == true
-        val isDndTransition = (currentRinger != targetRinger) && (
-            currentRinger == AudioManager.RINGER_MODE_SILENT ||
-            currentRinger == AudioManager.RINGER_MODE_VIBRATE ||
-            targetRinger == AudioManager.RINGER_MODE_SILENT ||
-            targetRinger == AudioManager.RINGER_MODE_VIBRATE
-        )
-
-        var success = false
-        var details = "Ringer mode set to $modeSetting"
-
-        if (isDndTransition && !hasPolicyAccess) {
-            try {
-                audioManager.ringerMode = AudioManager.RINGER_MODE_VIBRATE
-                success = true
-                details = "Applied Vibrate fallback: DND policy permission required for complete silent mode."
-            } catch (e: Exception) {
-                details = "DND transition blocked without policy access: ${e.message}"
-            }
-        } else {
-            try {
-                audioManager.ringerMode = targetRinger
-                success = true
-            } catch (e: Exception) {
-                details = "Failed setting ringer mode: ${e.message}"
-            }
-        }
-
-        val snippet = "Sound mode: ${request.modeSetting} ($details)"
-        val outcome = FeatureExecutionResult(
-            taskId = request.taskId,
-            channel = ChannelType.SOUND_MODE,
-            success = success,
-            recipient = "System",
-            messageSnippet = snippet,
-            details = details
         )
         logResult(repository, outcome)
         return outcome

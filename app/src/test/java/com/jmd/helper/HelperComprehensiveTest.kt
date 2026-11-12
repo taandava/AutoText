@@ -877,7 +877,7 @@ class HelperComprehensiveTest {
         }
 
         // Verify count of all task types
-        assertEquals(13, tasks.size)
+        assertEquals(12, tasks.size)
 
         // Verify each channel type is uniquely present
         val presentChannels = tasks.map { it.channel }.toSet()
@@ -1134,7 +1134,7 @@ class HelperComprehensiveTest {
     @Test
     fun testAllChannelsValidationAcceptsTextPayload() {
         val channels = com.jmd.helper.data.model.ChannelType.entries
-        assertEquals(13, channels.size)
+        assertEquals(12, channels.size)
 
         for (channel in channels) {
             val result = com.jmd.helper.core.TaskContentValidator.validateContent(
@@ -1896,7 +1896,7 @@ class HelperComprehensiveTest {
     @Test
     fun testAllChannelsCompleteness() {
         val allChannels = ChannelType.entries
-        assertEquals("Expected exactly 13 channels", 13, allChannels.size)
+        assertEquals("Expected exactly 12 channels", 12, allChannels.size)
 
         val expectedChannels = setOf(
             ChannelType.SMS,
@@ -1910,8 +1910,7 @@ class HelperComprehensiveTest {
             ChannelType.WHATSAPP_CALL,
             ChannelType.WHATSAPP_BUSINESS_CALL,
             ChannelType.REMINDER,
-            ChannelType.CALL_SIMULATION,
-            ChannelType.SOUND_MODE
+            ChannelType.CALL_SIMULATION
         )
         assertEquals(expectedChannels, allChannels.toSet())
 
@@ -2122,7 +2121,7 @@ class HelperComprehensiveTest {
     @Test
     fun testAllChannelTypesCoverage() {
         val allChannels = ChannelType.entries
-        assertEquals("There should be exactly 13 channel types", 13, allChannels.size)
+        assertEquals("There should be exactly 12 channel types", 12, allChannels.size)
         assertTrue(allChannels.contains(ChannelType.SMS))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP))
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS))
@@ -2135,7 +2134,6 @@ class HelperComprehensiveTest {
         assertTrue(allChannels.contains(ChannelType.WHATSAPP_BUSINESS_CALL))
         assertTrue(allChannels.contains(ChannelType.CALL_SIMULATION))
         assertTrue(allChannels.contains(ChannelType.REMINDER))
-        assertTrue(allChannels.contains(ChannelType.SOUND_MODE))
 
         for (ch in allChannels) {
             assertNotNull(ch.displayName)
@@ -2251,17 +2249,10 @@ class HelperComprehensiveTest {
                 emoji = "⏰",
                 color = androidx.compose.ui.graphics.Color.Blue,
                 channel = ChannelType.REMINDER
-            ),
-            TaskTypeItem(
-                title = "Sound Mode Switcher",
-                description = "Switch between Silent, Vibrate, and Normal sound",
-                emoji = "🔊",
-                color = androidx.compose.ui.graphics.Color.Cyan,
-                channel = ChannelType.SOUND_MODE
             )
         )
 
-        assertEquals(11, items.size)
+        assertEquals(10, items.size)
         val channels = items.mapNotNull { it.channel }.toSet()
         assertTrue(channels.contains(ChannelType.SMS))
         assertTrue(channels.contains(ChannelType.WHATSAPP))
@@ -2269,7 +2260,6 @@ class HelperComprehensiveTest {
         assertTrue(channels.contains(ChannelType.CALL))
         assertTrue(channels.contains(ChannelType.CALL_SIMULATION))
         assertTrue(channels.contains(ChannelType.REMINDER))
-        assertTrue(channels.contains(ChannelType.SOUND_MODE))
 
         // Ensure all items have non-blank title and emoji
         for ((title, description, emoji) in items) {
@@ -2372,7 +2362,7 @@ class HelperComprehensiveTest {
         assertEquals(ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.fromString("WHATSAPP_BUSINESS_GROUP"))
         assertEquals(ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.fromString("w4b_group"))
         assertEquals(ChannelType.REMINDER, ChannelType.fromString("REMINDER"))
-        assertEquals(ChannelType.SOUND_MODE, ChannelType.fromString("SOUND_MODE"))
+        assertEquals(ChannelType.SMS, ChannelType.fromString("SOUND_MODE")) // Obsolete channel safely defaults to SMS fallback
         assertEquals(ChannelType.SMS, ChannelType.fromString(null))
         assertEquals(ChannelType.SMS, ChannelType.fromString(""))
         assertEquals(ChannelType.SMS, ChannelType.fromString("INVALID_UNKNOWN_CHANNEL"))
@@ -2613,5 +2603,40 @@ class HelperComprehensiveTest {
         assertTrue("Should contain currency symbol", resolved.contains("₹500"))
         assertTrue("Should contain currency code", resolved.contains("INR"))
         assertTrue("Should contain namaste greeting", resolved.contains("Namaste"))
+    }
+
+    @Test
+    fun testExpandedExplicitDateAndTimeDynamicTokens() {
+        val cal = Calendar.getInstance().apply {
+            set(2026, Calendar.NOVEMBER, 12, 14, 30, 0)
+        }
+        val targetTs = cal.timeInMillis
+
+        val template = "Format variants: ddmmyyyy={date_ddmmyyyy}, ddmmyy={date_ddmmyy}, dash={date_dd_mm_yyyy}, dash_short={date_dd_mm_yy}, slash={date_slash}, dot={date_dot}, words={date_words}, month={month}, month_name={month_name}, short_month={short_month}, year={year}, year_short={year_short}, time12h={time_12h}, time24h={time_24h}, ampm={ampm}, time_hm={time_hm}"
+        val resolved = MessageTemplateResolver.resolve(
+            template = template,
+            targetTimestamp = targetTs
+        )
+
+        assertFalse("Tokens should be fully substituted", resolved.contains("{date_"))
+        assertFalse("Tokens should be fully substituted", resolved.contains("{month"))
+        assertFalse("Tokens should be fully substituted", resolved.contains("{year"))
+        assertFalse("Tokens should be fully substituted", resolved.contains("{time_"))
+        assertFalse("Tokens should be fully substituted", resolved.contains("{ampm}"))
+
+        assertTrue("Should resolve ddmmyyyy=12112026", resolved.contains("ddmmyyyy=12112026"))
+        assertTrue("Should resolve ddmmyy=121126", resolved.contains("ddmmyy=121126"))
+        assertTrue("Should resolve dash=12-11-2026", resolved.contains("dash=12-11-2026"))
+        assertTrue("Should resolve dash_short=12-11-26", resolved.contains("dash_short=12-11-26"))
+        assertTrue("Should resolve slash=12/11/2026", resolved.contains("slash=12/11/2026"))
+        assertTrue("Should resolve dot=12.11.2026", resolved.contains("dot=12.11.2026"))
+        assertTrue("Should resolve words=12 November 2026", resolved.contains("words=12 November 2026"))
+        assertTrue("Should resolve month=11", resolved.contains("month=11"))
+        assertTrue("Should resolve month_name=November", resolved.contains("month_name=November"))
+        assertTrue("Should resolve short_month=Nov", resolved.contains("short_month=Nov"))
+        assertTrue("Should resolve year=2026", resolved.contains("year=2026"))
+        assertTrue("Should resolve year_short=26", resolved.contains("year_short=26"))
+        assertTrue("Should resolve time24h=14:30", resolved.contains("time24h=14:30"))
+        assertTrue("Should resolve ampm=pm (ignore case)", resolved.contains("ampm=pm", ignoreCase = true))
     }
 }

@@ -120,8 +120,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
 
         db.execSQL("CREATE TABLE $TABLE_RECIPIENTS (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, phone_or_email TEXT, group_name TEXT)")
 
-        db.execSQL("CREATE TABLE $TABLE_TEMPLATES (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, category TEXT, content TEXT)")
-
         db.execSQL("""
             CREATE TABLE $TABLE_AUTO_REPLY (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -496,9 +494,10 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             db.execSQL("CREATE INDEX IF NOT EXISTS idx_reply_history_lookup ON $TABLE_AUTO_REPLY_HISTORY(rule_id, phone_number, date_str)")
         } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
-        // Task sequences decommissioned in favor of standalone single tasks.
+        // Task sequences & canned templates decommissioned in favor of direct standalone tasks and dynamic variables.
         try { db.execSQL("DROP TABLE IF EXISTS $TABLE_CONTACT_SEQUENCES") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         try { db.execSQL("DROP TABLE IF EXISTS $TABLE_SEQUENCE_STEPS") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("DROP TABLE IF EXISTS $TABLE_TEMPLATES") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
         // WhatsApp and WhatsApp Business Groups Cache
         db.execSQL("""

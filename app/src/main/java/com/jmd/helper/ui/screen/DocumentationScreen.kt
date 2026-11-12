@@ -85,6 +85,7 @@ fun DocumentationView(
         "15. " to "15. Security & Shield Invariants",
         "16. " to "16. Automated Maintenance",
         "17. " to "17. Restoration & Grid Logic",
+        "18. " to "18. Material 3 & Dynamic Tokens",
     )
 
     val rawSections = remember(fullDocText) {

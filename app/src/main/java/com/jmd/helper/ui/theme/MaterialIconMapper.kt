@@ -42,7 +42,6 @@ object MaterialIconMapper {
         ChannelType.WHATSAPP_BUSINESS_CALL -> Icons.Filled.ContactPhone
         ChannelType.CALL_SIMULATION -> Icons.AutoMirrored.Filled.PhoneForwarded
         ChannelType.REMINDER -> Icons.Filled.Alarm
-        ChannelType.SOUND_MODE -> Icons.AutoMirrored.Filled.VolumeUp
     }
 
     fun channelColor(channel: ChannelType): Color = when (channel) {
@@ -58,7 +57,6 @@ object MaterialIconMapper {
         ChannelType.WHATSAPP_BUSINESS_CALL -> Color(0xFF0284C7) // Sky Blue
         ChannelType.CALL_SIMULATION -> Color(0xFFD97706) // Amber Simulation
         ChannelType.REMINDER -> Color(0xFFE11D48) // Rose Alarm
-        ChannelType.SOUND_MODE -> Color(0xFFEA580C) // Orange Sound Mode
     }
 
     fun statusIcon(status: TaskStatus): ImageVector = when (status) {

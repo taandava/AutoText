@@ -37,8 +37,8 @@ import com.jmd.helper.data.prefs.*
 import com.jmd.helper.data.repo.*
 import com.jmd.helper.ui.screen.campaign.DailyAutoSenderScreen
 import com.jmd.helper.ui.screen.logs.LogsView
-import com.jmd.helper.ui.screen.settings.*
-import com.jmd.helper.ui.screen.templates.TemplatesView
+import com.jmd.helper.ui.screen.settings.SettingsView
+import com.jmd.helper.ui.screen.settings.SystemLogViewerView
 import com.jmd.helper.ui.theme.*
 
 /**
@@ -90,7 +90,6 @@ fun MoreScreenView(
         "DAILY_SMS" -> DailyAutoSenderScreen(initialCampaignId = 1L, onBack = { navigateToSubSection("MENU") })
         "DAILY_WHATSAPP" -> DailyAutoSenderScreen(initialCampaignId = 2L, onBack = { navigateToSubSection("MENU") })
         "WHATSAPP_SETUP" -> WhatsAppSetupAndScreenAssistView(context, prefs) { navigateToSubSection("MENU") }
-        "TEMPLATES" -> TemplatesView(repository) { navigateToSubSection("MENU") }
         "LOGS" -> LogsView(
             repository,
             onNavigateToSystemLogs = {
@@ -197,15 +196,6 @@ fun MoreScreenView(
                         Color(0xFF0D9488),
                     ) {
                         navigateToSubSection("WHATSAPP_SETUP")
-                    }
-                }
-                item {
-                    MenuItemCard(
-                        "Message Templates",
-                        Icons.Filled.Description,
-                        Color(0xFF8B5CF6),
-                    ) {
-                        navigateToSubSection("TEMPLATES")
                     }
                 }
 

@@ -136,13 +136,6 @@ fun TaskTypeSelectionDialog(
             color = Color(0xFFE11D48),
             channel = ChannelType.REMINDER,
         ),
-        TaskTypeItem(
-            title = "Sound Mode Switcher",
-            description = "Switch between Silent, Vibrate, and Normal sound",
-            icon = Icons.AutoMirrored.Filled.VolumeUp,
-            color = Color(0xFFEA580C),
-            channel = ChannelType.SOUND_MODE,
-        ),
     )
 
     Dialog(
