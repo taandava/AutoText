@@ -152,22 +152,28 @@ object PopupShield {
             for (window in windows) {
                 val windowType = window.type
                 val windowPkg = window.root?.packageName?.toString()?.lowercase().orEmpty()
+                val windowTitle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    window.title?.toString()?.lowercase().orEmpty()
+                } else ""
 
-                if (windowPkg.isBlank()) continue
+                if (windowPkg.isBlank() && windowTitle.isBlank()) continue
 
                 val rect = android.graphics.Rect()
                 window.getBoundsInScreen(rect)
 
                 // 1. Caller ID overlays (Truecaller etc.) are always blocking regardless of height
                 if (windowPkg.contains("truecaller") || windowPkg.contains("callapp") ||
-                    windowPkg.contains("hiya") || windowPkg.contains("callerid")) {
+                    windowPkg.contains("hiya") || windowPkg.contains("callerid") ||
+                    windowTitle.contains("truecaller") || windowTitle.contains("callapp") ||
+                    windowTitle.contains("hiya") || windowTitle.contains("callerid")) {
                     return true
                 }
 
                 // 2. Heads-Up Notification (HUN) drop-down banner at top of display
-                val isTopWindow = rect.top <= screenHeight * 0.05f && rect.bottom in (screenHeight * 0.06f).toInt()..(screenHeight * 0.38f).toInt()
-                val isSystemUiOrNotification = windowPkg.contains("systemui") || windowPkg.contains("notification") || windowPkg.contains("upslide")
-                if (isTopWindow && isSystemUiOrNotification && rect.width() >= screenWidth * 0.5f) {
+                val isTopWindow = rect.top <= screenHeight * 0.08f && rect.bottom in (screenHeight * 0.05f).toInt()..(screenHeight * 0.45f).toInt()
+                val isSystemUiOrNotification = windowPkg.contains("systemui") || windowPkg.contains("notification") || windowPkg.contains("upslide") ||
+                    windowTitle.contains("notification") || windowTitle.contains("heads-up")
+                if (isTopWindow && isSystemUiOrNotification && rect.width() >= screenWidth * 0.4f) {
                     return true
                 }
 
@@ -274,15 +280,19 @@ object PopupShield {
                 val windowType = window.type
                 val windowRoot = window.root
                 val windowPkg = windowRoot?.packageName?.toString()?.lowercase().orEmpty()
+                val windowTitle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    window.title?.toString()?.lowercase().orEmpty()
+                } else ""
 
                 val wRect = android.graphics.Rect()
                 window.getBoundsInScreen(wRect)
 
                 // 2a. Heads-Up Notification (HUN) drop-down covering the top of the display
-                val isTopWindow = wRect.top <= screenHeight * 0.05f && wRect.bottom in (screenHeight * 0.06f).toInt()..(screenHeight * 0.38f).toInt()
-                val isSystemUiOrNotif = windowPkg.contains("systemui") || windowPkg.contains("notification") || windowPkg.contains("upslide")
+                val isTopWindow = wRect.top <= screenHeight * 0.08f && wRect.bottom in (screenHeight * 0.05f).toInt()..(screenHeight * 0.45f).toInt()
+                val isSystemUiOrNotif = windowPkg.contains("systemui") || windowPkg.contains("notification") || windowPkg.contains("upslide") ||
+                    windowTitle.contains("notification") || windowTitle.contains("heads-up")
 
-                if (isTopWindow && isSystemUiOrNotif && wRect.width() >= screenWidth * 0.5f) {
+                if (isTopWindow && isSystemUiOrNotif && wRect.width() >= screenWidth * 0.4f) {
                     Log.i(TAG, "Heads-Up Notification (HUN) banner detected at top ($windowPkg, bounds=$wRect). Dismissing...")
                     if (windowRoot != null && clickDismissButton(windowRoot, service)) {
                         clearedSomething = true
@@ -299,9 +309,11 @@ object PopupShield {
 
                 // 2b. Caller ID overlays (Truecaller etc.) in window list
                 val isCallerId = windowPkg.contains("truecaller") || windowPkg.contains("callapp") ||
-                    windowPkg.contains("hiya") || windowPkg.contains("callerid")
+                    windowPkg.contains("hiya") || windowPkg.contains("callerid") ||
+                    windowTitle.contains("truecaller") || windowTitle.contains("callapp") ||
+                    windowTitle.contains("hiya") || windowTitle.contains("callerid")
                 if (isCallerId) {
-                    Log.i(TAG, "Caller ID overlay window detected: $windowPkg (bounds=$wRect)")
+                    Log.i(TAG, "Caller ID overlay window detected: $windowPkg / $windowTitle (bounds=$wRect)")
                     if (windowRoot != null && clickDismissButton(windowRoot, service)) {
                         clearedSomething = true
                     } else {

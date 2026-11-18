@@ -434,7 +434,8 @@ class AlarmScheduler(private val context: Context) {
                     "Helper #${task.id}: $cleanTitle",
                     "AutoText #${task.id}: $cleanTitle",
                     "Super #${task.id}",
-                    "Helper #${task.id}"
+                    "Helper #${task.id}",
+                    "AutoText #${task.id}"
                 ).distinct()
 
                 for (label in labels) {

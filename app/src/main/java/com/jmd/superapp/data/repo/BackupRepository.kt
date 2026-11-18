@@ -329,6 +329,11 @@ class BackupRepository(context: Context) {
                 }
             }
 
+            AppDataEvents.notifyTasksChanged()
+            AppDataEvents.notifyCampaignsChanged()
+            AppDataEvents.notifyAutoReplyChanged()
+            AppDataEvents.notifyLogsChanged()
+
             Result.success("Restored $count items via Kotlinx Serialization")
         } catch (e: Exception) {
             AppFileLogger.w("BackupRepository", "Structured import failed, falling back to raw table import: ${e.message}")
