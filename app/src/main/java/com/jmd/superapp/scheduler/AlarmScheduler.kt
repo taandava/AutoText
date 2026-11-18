@@ -113,16 +113,16 @@ class AlarmScheduler(private val context: Context) {
         }
 
         val now = System.currentTimeMillis()
-        if (task.recurrence == RecurrenceType.ONCE && task.triggerTimeMillis < now - 60_000L) {
-            Log.w(TAG, "Task #${task.id} scheduled time has already passed (${now - task.triggerTimeMillis}ms ago). Cancelling to avoid spontaneous trigger.")
-            AlarmScheduler(context).cancelTask(task.id, task)
-            val repo = AppRepository(context)
-            repo.updateTaskStatus(task.id, TaskStatus.CANCELLED)
-            return
-        }
-
         val triggerTime = if (task.triggerTimeMillis <= now) {
-            calculateNextFutureTrigger(task, now)
+            val calculated = calculateNextFutureTrigger(task, now)
+            Log.i(TAG, "Task #${task.id} scheduled time had elapsed (${task.triggerTimeMillis} <= now). Auto-rescheduled to future trigger: $calculated")
+            try {
+                val repo = AppRepository(context)
+                repo.updateTask(task.copy(triggerTimeMillis = calculated, status = TaskStatus.SCHEDULED))
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not persist auto-rescheduled trigger timestamp in repository: ${e.message}")
+            }
+            calculated
         } else {
             task.triggerTimeMillis
         }
@@ -489,11 +489,42 @@ class AlarmScheduler(private val context: Context) {
          * @return Next trigger timestamp in epoch milliseconds.
          */
         fun calculateNextFutureTrigger(task: ScheduledTask, now: Long = System.currentTimeMillis()): Long {
-            if (task.recurrence == RecurrenceType.ONCE) {
+            if (task.triggerTimeMillis > now) {
                 return task.triggerTimeMillis
             }
+
+            if (task.recurrence == RecurrenceType.ONCE) {
+                val origCal = Calendar.getInstance().apply {
+                    timeInMillis = if (task.triggerTimeMillis > 0L) task.triggerTimeMillis else now
+                }
+                val targetHour = origCal.get(Calendar.HOUR_OF_DAY)
+                val targetMinute = origCal.get(Calendar.MINUTE)
+                val targetSecond = origCal.get(Calendar.SECOND)
+
+                val cal = Calendar.getInstance().apply {
+                    timeInMillis = now
+                    set(Calendar.HOUR_OF_DAY, targetHour)
+                    set(Calendar.MINUTE, targetMinute)
+                    set(Calendar.SECOND, targetSecond)
+                    set(Calendar.MILLISECOND, 0)
+                }
+
+                if (cal.timeInMillis <= now) {
+                    cal.add(Calendar.DAY_OF_YEAR, 1)
+                }
+
+                if (task.selectedDaysOfWeek.isNotEmpty()) {
+                    var guard = 0
+                    while (cal.get(Calendar.DAY_OF_WEEK) !in task.selectedDaysOfWeek && guard < 14) {
+                        cal.add(Calendar.DAY_OF_YEAR, 1)
+                        guard++
+                    }
+                }
+                return cal.timeInMillis
+            }
+
             val cal = Calendar.getInstance().apply {
-                timeInMillis = if (task.triggerTimeMillis > 0) task.triggerTimeMillis else now
+                timeInMillis = if (task.triggerTimeMillis > 0L) task.triggerTimeMillis else now
             }
             var guard = 0
             while (cal.timeInMillis <= now && guard < 1000) {

@@ -1,10 +1,10 @@
 # Super — Complete Conversation & Execution History
 
 > **Application:** Super (`com.jmd.superapp`)
-> **Last Synchronized:** 2026-11-18 19:20:10
+> **Last Synchronized:** 2026-11-18 19:52:14
 > **Conversation ID:** `c6f82cb6-9155-422a-9715-3da090d70384`
-> **Total Steps Processed:** 7892
-> **Total User Interaction Turns:** 32
+> **Total Steps Processed:** 8282
+> **Total User Interaction Turns:** 33
 
 ---
 
@@ -5242,7 +5242,7 @@ You can embed this image in an artifact if you need the USER to review it.
 
 ### 🛠️ Key Actions & Tools Executed
 
-**Total Tool Calls:** 199 — `edit_file` (21), `manage_task` (41), `read_file` (52), `run_command` (77), `schedule` (5), `write_file` (3)
+**Total Tool Calls:** 207 — `edit_file` (22), `manage_task` (41), `read_file` (54), `run_command` (82), `schedule` (5), `write_file` (3)
 
 <details>
 <summary>Click to view tool execution trace (sample up to 25 calls)</summary>
@@ -5272,9 +5272,161 @@ You can embed this image in an artifact if you need the USER to review it.
 - ⚡ `run_command` (Extract res/RN.xml from APK): `tar -xf Super-release.apk res/RN.xml -O`
 - ⚡ `run_command` (Dump xmltree of res/RN.xml): `& "C:\Users\JMD\AppData\Local\Android\Sdk\build-tools\35.0.0\aapt.exe" dump xmltree .\Super-relea...`
 - ⚡ `run_command` (Find resource names for drawable IDs): `& "C:\Users\JMD\AppData\Local\Android\Sdk\build-tools\35.0.0\aapt.exe" dump resources .\Super-rel...`
-- *...and 174 additional operations*
+- *...and 182 additional operations*
 
 </details>
+
+### 🤖 Assistant Responses
+
+# Audit & Fix Summary
+
+### 1. Root Cause Resolution for Notification Drawer Icons
+- **Cause**: Android Package Manager Service (PMS) and Vivo SystemUI cache launcher drawables on disk indexed by package name and `versionCode`. Previous builds removed density raster PNGs without generating replacements, and `versionCode` remained `1`. As a result, SystemUI served the cached orange bubble raster PNG for the notification card's large icon. Furthermore, notification builders were not explicitly setting `.setLargeIcon(bitmap)`.
+- **Fix**:
+  1. **Raster Density Generation**: Implemented [generate_app_icons.py](file:///c:/Users/JMD/Documents/Helper_Codebase/scripts/generate_app_icons.py) with 10x supersampling and Lanczos downsampling to create studio-grade raster PNGs across all densities (`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`) for both standard and round launcher formats, plus `drawable/ic_launcher_web.png`.
+  2. **Explicit Large Icon Binding**: Created [NotificationIconHelper.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/core/NotificationIconHelper.kt) to extract an ARGB_8888 `Bitmap` of the gold emblem icon. Bound `.setLargeIcon(...)` across all 7 `NotificationCompat.Builder` instances in [SequentialTaskEngine.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/engine/SequentialTaskEngine.kt), [TaskAccessibilityService.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/service/TaskAccessibilityService.kt), and [TaskFeatureApi.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/api/TaskFeatureApi.kt) to guarantee direct in-memory rendering.
+  3. **Automatic Stale Shade Clearance**: Added `nm?.cancelAll()` during background initialization in [SuperApplication.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/SuperApplication.kt) so old notification cards from previous installations are automatically cleared from the shade.
+
+---
+
+### 2. Universal Popup, Heads-Up Notification & Truecaller Dismissal
+- **Accessibility Scoping**: Added caller ID packages (`com.truecaller`, `com.truecaller.messenger`, `com.callapp.contacts`, `com.hiya.star`) to `BASE_TASK_TARGET_PACKAGES` in [PrivacyManager.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/core/PrivacyManager.kt). Previously, scoping restricted `packageNames` to WhatsApp and system apps, which caused Android to return `null` for `window.root` whenever Truecaller was on screen.
+- **Multi-Vector Dismissal Gestures**: Added `performHorizontalSwipe` in [WhatsappAccessibilityNodeUtils.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/whatsapp/WhatsappAccessibilityNodeUtils.kt) and enhanced [WhatsappPopupShield.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/whatsapp/WhatsappPopupShield.kt):
+  - Sends `GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE` and `ACTION_CLOSE_SYSTEM_DIALOGS`.
+  - Combines vertical upward swipes and horizontal swipes to fling away Heads-Up Notification (HUN) banners.
+  - Detects caller ID overlays (Truecaller etc.) and taps the top-right 'X' close button coordinates `(wRect.right - 8%, wRect.top + 12%)` via `dispatchPhysicalTap` if node dismissal fails.
+  - Expanded `dismissKeywords` ("mark as read", "view transactions", "remind later", "discard", "✕", "✖", "×") and resource ID pattern matching.
+- **Engine Proactive Interception**: Updated [WhatsAppStatusEngine.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/whatsapp/WhatsAppStatusEngine.kt), [WhatsAppDirectSendEngine.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/whatsapp/WhatsAppDirectSendEngine.kt), and [WhatsAppGroupEngine.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/whatsapp/WhatsAppGroupEngine.kt) to proactively invoke `PopupShield.clearOverlaysAndNotificationShade` whenever the foreground package is not WhatsApp, ensuring Truecaller overlays or incoming notifications are immediately cleared before clicking on status or sending messages.
+
+---
+
+### 3. Theme & Legacy Branding Cleanup
+- Updated theme description in [SettingsPreferencesSection.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/main/java/com/jmd/superapp/ui/screen/settings/SettingsPreferencesSection.kt) to `"Material 3 Expressive Gold & Slate identity with light/dark adaptation."`.
+- Bumped `versionCode = 3`, `versionName = "1.0.2"` in [app/build.gradle.kts](file:///c:/Users/JMD/Documents/Helper_Codebase/app/build.gradle.kts) and [VERSION](file:///c:/Users/JMD/Documents/Helper_Codebase/VERSION).
+
+---
+
+### 4. Verification & Hardware Deployment
+- **Unit Tests**: 15 suites, 80 tests passed 100% (`.\gradlew.bat :app:testDebugUnitTest`).
+- **Release Compilation**: Packaged `Super-release.apk` with R8 minification and APK Signature Scheme v2 validation.
+- **Live Device Install**: Deployed to Vivo I2401 (`10BF1G0HCD0024R`), launched `MainActivity`, and verified zero errors in logcat.
+- **Documentation & Git**:
+  - Regenerated [CHAT_HISTORY.md](file:///c:/Users/JMD/Documents/Helper_Codebase/CHAT_HISTORY.md) with 32 turns and 7,890+ steps.
+  - Documented Sections 13 & 14 in [CHAT_MEMORY.md](file:///c:/Users/JMD/Documents/Helper_Codebase/CHAT_MEMORY.md).
+  - Pushed all commits cleanly to GitHub `origin/main` (`fae9a35`).
+
+<!-- GOAL_COMPLETE -->
+
+---
+
+## Turn 33
+
+**Timestamp:** `2026-11-18T13:51:04Z`
+
+### 👤 User Request
+
+```markdown
+<USER_REQUEST>
+install latest app and check all things and cleanup
+also ensure if a task is disabled using toggle or is completed or failed and toggle is off
+whenevr i turn on the toggle and enable any task it shall auto reschedule itself using all logic provided in the form
+/goal 
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-18T19:21:04+05:30.
+
+The user has mentioned some items in the form @[ITEM]. Here is extra information about the items that were mentioned by the user, in the order that they appear:
+
+/goal is a [Slash Command]:
+The user has marked this task with /goal, indicating that this task is intended to run for a long time without user input, e.g. overnight. You should be extra thorough and only stop when you are confident the goal has been completely fulfilled. The system will force you to continue execution, prompting you to audit your work until completion. Once complete, include <!-- GOAL_COMPLETE --> in your response. If the user explicitly asked to stop or cancel this goal, include <!-- GOAL_CANCELLED --> in your response to cancel the goal.
+</ADDITIONAL_METADATA>
+```
+
+### 🛠️ Key Actions & Tools Executed
+
+**Total Tool Calls:** 161 — `edit_file` (11), `manage_task` (2), `read_file` (57), `run_command` (90), `write_file` (1)
+
+<details>
+<summary>Click to view tool execution trace (sample up to 25 calls)</summary>
+
+- ⚡ `run_command` (Search for task toggle references): `Get-ChildItem -Recurse -Filter "*.kt" app\src\main | Select-String -Pattern "toggle|isTaskEnabled...`
+- ⚡ `run_command` (Find task UI and ViewModel files): `Get-ChildItem -Recurse -Filter "*Task*Screen*.kt" app\src\main | Select-Object -ExpandProperty Fu...`
+- ⚡ `run_command` (Search tasks screen for toggle / switch): `Select-String -Path "app\src\main\java\com\jmd\superapp\ui\screen\tasks\*.kt" -Pattern "Switch|to...`
+- 📖 `read_file`: `TaskFeatureApi.kt`
+- ⚡ `run_command` (Find scheduleTask in AlarmScheduler): `Select-String -Path "app\src\main\java\com\jmd\superapp\scheduler\AlarmScheduler.kt" -Pattern "fu...`
+- ⚡ `run_command` (Inspect scheduling logic in ComposeTaskScreen): `Select-String -Path "app\src\main\java\com\jmd\superapp\ui\screen\compose\ComposeTaskScreen.kt" -...`
+- 📖 `read_file`: `ComposeTaskScreen.kt`
+- ⚡ `run_command` (Inspect calculateNextFutureTrigger in AlarmScheduler): `Select-String -Path "app\src\main\java\com\jmd\superapp\scheduler\AlarmScheduler.kt" -Pattern "fu...`
+- 📖 `read_file`: `AlarmScheduler.kt`
+- ⚡ `run_command` (Find all calls to toggleTaskSchedule): `Get-ChildItem -Recurse -Filter "*.kt" app\src\main | Select-String -Pattern "toggleTaskSchedule"`
+- ⚡ `run_command` (Find all calls to ComfortableSwitch): `Get-ChildItem -Recurse -Filter "*.kt" app\src\main | Select-String -Pattern "ComfortableSwitch"`
+- ⚡ `run_command` (Search for Switch in Compose screens): `Get-ChildItem -Recurse -Filter "*.kt" app\src\main | Select-String -Pattern "Switch\("`
+- 📖 `read_file`: `DailyCampaignScreen.kt`
+- 📖 `read_file`: `TasksScreen.kt`
+- 📖 `read_file`: `TaskCardComponents.kt`
+- ⚡ `run_command` (Inspect TaskStatus enum definition): `Select-String -Path "app\src\main\java\com\jmd\superapp\data\model\*.kt" -Pattern "enum class Tas...`
+- ⚡ `run_command` (Inspect ScheduledTask definition): `Select-String -Path "app\src\main\java\com\jmd\superapp\data\model\*.kt" -Pattern "data class Sch...`
+- ⚡ `run_command` (Inspect RecurrenceType enum definition): `Select-String -Path "app\src\main\java\com\jmd\superapp\data\model\*.kt" -Pattern "enum class Rec...`
+- ⚡ `run_command` (Inspect date formatting on TaskCard): `Select-String -Path "app\src\main\java\com\jmd\superapp\ui\screen\tasks\TaskCardComponents.kt" -P...`
+- ⚡ `run_command` (Inspect task completion and recurrence in SequentialTaskEngine): `Select-String -Path "app\src\main\java\com\jmd\superapp\engine\SequentialTaskEngine.kt" -Pattern ...`
+- 📖 `read_file`: `SequentialTaskEngine.kt`
+- ⚡ `run_command` (Search for calculateNextTrigger): `Get-ChildItem -Recurse -Filter "*.kt" app\src\main | Select-String -Pattern "calculateNextTrigger"`
+- 📖 `read_file`: `SequentialTaskEngine.kt`
+- 📖 `read_file`: `TasksScreen.kt`
+- 📖 `read_file`: `TasksScreen.kt`
+- *...and 136 additional operations*
+
+</details>
+
+### 🤖 Assistant Responses
+
+I am executing the unit test suite to verify current test baselines. I will proceed with the changes as soon as it completes.
+
+I am running the unit test suite to verify the updated recurrence and auto-rescheduling calculations. I will proceed as soon as the tests finish.
+
+I am building the release package (`Super-release.apk` v1.0.3). I will proceed once the build completes.
+
+I am checking connected ADB devices. I will proceed as soon as the check completes.
+
+I am installing the updated signed release build (`Super-release.apk` v1.0.3, versionCode 4) onto the connected Android device (`R9ZW105MFDR`). I will proceed as soon as installation completes.
+
+I am verifying the installed package metadata on the connected device. I will proceed as soon as it completes.
+
+I am launching MainActivity on the connected device. I will proceed as soon as it completes.
+
+I am checking logcat for any runtime errors or exceptions. I will proceed as soon as it completes.
+
+I am capturing the device screen to verify the updated running application. I will proceed as soon as it completes.
+
+I am dumping the UI hierarchy to locate the toggle switch coordinate. I will proceed as soon as it completes.
+
+I am toggling the switch to enable Task 1. I will proceed as soon as it completes.
+
+I am capturing the screen after toggling Task 1. I will proceed as soon as it completes.
+
+I am obtaining the exact bounds of the second task switch. I will proceed as soon as it completes.
+
+I am tapping the toggle on the second task. I will proceed as soon as it completes.
+
+I am capturing the screen to verify both tasks have auto-rescheduled. I will proceed as soon as it completes.
+
+I am testing pausing by toggling Switch 1. I will proceed as soon as it completes.
+
+I am checking device status. I will proceed as soon as the command completes.
+
+I am checking the installed package metadata on the Vivo phone. I will proceed as soon as it completes.
+
+I am launching Super on the Vivo device. I will proceed as soon as it completes.
+
+I am checking logcat on the Vivo device. I will proceed as soon as it completes.
+
+I am capturing the Vivo screen. I will proceed as soon as it completes.
+
+I am expanding the notification shade on the Vivo device. I will proceed as soon as it completes.
+
+I am pulling the notification shade screenshot on the Vivo device. I will proceed as soon as it completes.
+
+I am collapsing the notification shade. I will proceed as soon as it completes.
 
 ---
 

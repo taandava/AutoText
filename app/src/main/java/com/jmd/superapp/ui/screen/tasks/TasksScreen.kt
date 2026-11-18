@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.jmd.superapp.core.showAppToast
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -205,7 +206,10 @@ fun TasksListScreen(
                                 coroutineScope.launch(Dispatchers.IO) {
                                     com.jmd.superapp.api.TaskFeatureApi.toggleTaskSchedule(context, repository, task, isChecked)
                                     val t = repository.getAllTasks()
-                                    withContext(Dispatchers.Main) { tasks = t }
+                                    withContext(Dispatchers.Main) {
+                                        tasks = t
+                                        context.showAppToast(if (isChecked) "Task scheduled" else "Task paused")
+                                    }
                                 }
                             },
                             onEdit = {

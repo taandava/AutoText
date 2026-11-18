@@ -477,5 +477,37 @@ real messages.
   - Packaged and verified release APK `Super-release.apk` (v2 signed).
   - Deployed to physical Vivo I2401 (`10BF1G0HCD0024R`), verified clean installation and zero errors in logcat.
 
+---
+
+## 15. Task Toggle Auto-Rescheduling & Recurrence Logic Synchronization
+
+- **Problem Diagnostic:**
+  - When a task was completed (`DONE`), failed (`FAILED`), cancelled (`CANCELLED`), or paused (`PAUSED`), its `triggerTimeMillis` remained stored in the past.
+  - Toggling the task back ON previously only flipped `status = TaskStatus.SCHEDULED` and invoked `AlarmScheduler.scheduleTask(task)`.
+  - Because `triggerTimeMillis` was not updated, `AlarmScheduler` previously cancelled past one-time tasks or scheduled alarms that immediately expired, while the task card still displayed past timestamps.
+- **Architectural Remediation:**
+  1. **`AlarmScheduler.calculateNextFutureTrigger(task, now)`:**
+     - For `RecurrenceType.ONCE`: extracts original scheduled time-of-day (hour, minute, second) and anchors it to today; if already elapsed, steps to tomorrow (or the next selected day of week if `selectedDaysOfWeek` is specified).
+     - For recurring schedules (`DAILY`, `WEEKLY`, `CUSTOM_INTERVAL`, `REPEAT_SECONDS`, `REPEAT_MINUTES`, `REPEAT_HOURS`, `REPEAT_DAYS`, `REPEAT_WEEKS`, `REPEAT_MONTHS`, `WEEKDAYS`, `WEEKENDS`, `YEARLY`): steps forward along the recurrence rule until strictly in the future (`> now`).
+  2. **`TaskFeatureApi.toggleTaskSchedule(context, repository, task, enable)`:**
+     - When `enable == true`:
+       - Calculates `nextTrigger = AlarmScheduler.calculateNextFutureTrigger(task, now)`.
+       - Resets prior deliveries: `repository.clearDeliveriesForTask(task.id)`.
+       - Persists `triggerTimeMillis = nextTrigger` and `status = TaskStatus.SCHEDULED`.
+       - Registers exact alarm via `AlarmScheduler(context).scheduleTask(updated)`.
+       - Fires `AppDataEvents.notifyTasksChanged()`.
+     - When `enable == false`:
+       - Marks `status = TaskStatus.PAUSED`.
+       - Cancels alarms and active executions in `SequentialTaskEngine`.
+       - Fires `AppDataEvents.notifyTasksChanged()`.
+  3. **`TasksScreen.kt` & `ComposeTaskScreen.kt`:**
+     - User feedback toasts added for `"Task scheduled"` and `"Task paused"`.
+     - When editing completed or past tasks, form date/time defaults to `calculateNextFutureTrigger(taskToEdit)` instead of an expired timestamp.
+- **Release Verification & Multi-Device Validation:**
+  - Bumped `versionCode = 4`, `versionName = "1.0.3"` in `app/build.gradle.kts` and `VERSION`.
+  - All 15 test suites (81 unit tests) passing 100%.
+  - Verified on live connected Samsung Galaxy A04 (`R9ZW105MFDR`) and Vivo I2401 (`10BF1G0HCD0024R`).
+  - Confirmed live toggle auto-rescheduled past tasks forward to the next future occurrence, toggled status dots cyan, incremented the Active counter, and scheduled exact alarms.
+
 See `docs/FILE_REFERENCE.md` for a per-file map of the codebase and
 `README.md` / `HOW_TO_RUN_OR_UPDATE_PROJECT.md` for setup.

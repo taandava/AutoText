@@ -25,11 +25,30 @@ class TaskRecurrenceCalculationTest {
     )
 
     @Test
-    fun `once recurrence does not advance past trigger`() {
+    fun `once recurrence with future trigger preserves trigger`() {
         val now = 1000000L
-        val pastTrigger = 500000L
+        val futureTrigger = 1500000L
+        val task = sampleTask(RecurrenceType.ONCE, futureTrigger)
+        assertEquals(futureTrigger, AlarmScheduler.calculateNextFutureTrigger(task, now))
+    }
+
+    @Test
+    fun `once recurrence with past trigger advances to next future occurrence of scheduled time`() {
+        val cal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 14)
+            set(Calendar.MINUTE, 30)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+            add(Calendar.DAY_OF_YEAR, -2) // 2 days ago at 14:30
+        }
+        val pastTrigger = cal.timeInMillis
+        val now = System.currentTimeMillis()
         val task = sampleTask(RecurrenceType.ONCE, pastTrigger)
-        assertEquals(pastTrigger, AlarmScheduler.calculateNextFutureTrigger(task, now))
+        val next = AlarmScheduler.calculateNextFutureTrigger(task, now)
+        assertTrue("Next trigger must be in the future", next > now)
+        val resultCal = Calendar.getInstance().apply { timeInMillis = next }
+        assertEquals(14, resultCal.get(Calendar.HOUR_OF_DAY))
+        assertEquals(30, resultCal.get(Calendar.MINUTE))
     }
 
     @Test

@@ -318,13 +318,17 @@ fun ComposeTaskScreen(
     val calendar = remember {
         Calendar.getInstance().apply {
             if (taskToEdit != null) {
-                timeInMillis = taskToEdit.triggerTimeMillis
+                timeInMillis = if (taskToEdit.triggerTimeMillis > System.currentTimeMillis()) {
+                    taskToEdit.triggerTimeMillis
+                } else {
+                    com.jmd.superapp.scheduler.AlarmScheduler.calculateNextFutureTrigger(taskToEdit)
+                }
             } else {
                 add(Calendar.MINUTE, 5) // default 5 mins ahead
             }
         }
     }
-    var triggerTimeMillis by remember { mutableLongStateOf(taskToEdit?.triggerTimeMillis ?: calendar.timeInMillis) }
+    var triggerTimeMillis by remember { mutableLongStateOf(calendar.timeInMillis) }
     var selectedRecurrence by remember { mutableStateOf(taskToEdit?.recurrence ?: RecurrenceType.ONCE) }
     var selectedDaysOfWeek by remember { mutableStateOf(taskToEdit?.selectedDaysOfWeek ?: emptyList()) }
     var customIntervalMinutes by remember { mutableIntStateOf(taskToEdit?.customIntervalMinutes ?: 60) }

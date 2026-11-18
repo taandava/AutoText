@@ -689,15 +689,36 @@ object TaskFeatureApi {
         task: ScheduledTask,
         enable: Boolean
     ) {
-        val newStatus = if (enable) TaskStatus.SCHEDULED else TaskStatus.PAUSED
-        val updated = task.copy(status = newStatus)
-        repository.updateTask(updated)
-        if (enable) {
-            com.jmd.superapp.scheduler.AlarmScheduler(context).scheduleTask(updated)
-        } else {
+        if (!enable) {
+            val updated = task.copy(status = TaskStatus.PAUSED)
+            repository.updateTask(updated)
             com.jmd.superapp.scheduler.AlarmScheduler(context).cancelTask(task.id, task)
             com.jmd.superapp.engine.SequentialTaskEngine.getInstance(context).cancelTask(task.id)
+            com.jmd.superapp.core.AppDataEvents.notifyTasksChanged()
+            com.jmd.superapp.core.AppFileLogger.action(
+                context,
+                "TaskFeatureApi",
+                "Task #${task.id} (${task.title}) paused via toggle."
+            )
+            return
         }
+
+        val now = System.currentTimeMillis()
+        val nextTrigger = com.jmd.superapp.scheduler.AlarmScheduler.calculateNextFutureTrigger(task, now)
+        val updated = task.copy(
+            status = TaskStatus.SCHEDULED,
+            triggerTimeMillis = nextTrigger
+        )
+        // Reset deliveries from prior runs so execution is fresh
+        repository.clearDeliveriesForTask(task.id)
+        repository.updateTask(updated)
+        com.jmd.superapp.scheduler.AlarmScheduler(context).scheduleTask(updated)
+        com.jmd.superapp.core.AppDataEvents.notifyTasksChanged()
+        com.jmd.superapp.core.AppFileLogger.action(
+            context,
+            "TaskFeatureApi",
+            "Task #${task.id} (${task.title}) enabled via toggle. Rescheduled to $nextTrigger."
+        )
     }
 
     /**

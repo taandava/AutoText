@@ -98,7 +98,8 @@ class AlarmHygieneTest {
 
     @Test
     fun `once recurrence returns exact scheduled time without advancing`() {
-        val scheduledTime = 1750000000000L
+        val now = System.currentTimeMillis()
+        val scheduledTime = now + 86400000L // Tomorrow
         val task = ScheduledTask(
             id = 2L,
             title = "One-off Reminder",
@@ -106,7 +107,7 @@ class AlarmHygieneTest {
             recurrence = RecurrenceType.ONCE,
             triggerTimeMillis = scheduledTime
         )
-        val nextTrigger = AlarmScheduler.calculateNextFutureTrigger(task, System.currentTimeMillis())
+        val nextTrigger = AlarmScheduler.calculateNextFutureTrigger(task, now)
         assertEquals(scheduledTime, nextTrigger)
     }
 }
