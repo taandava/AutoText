@@ -356,5 +356,15 @@ real messages.
   - Remote branches `master` (legacy Helper code) and `feature/minimalist-engine-refactor` purged from GitHub remote via `git push origin --delete master feature/minimalist-engine-refactor`.
   - Repository `HEAD` points exclusively to `main`. Zero obsolete branches exist on GitHub.
 
+---
+
+## 8. Original Launcher Icon Restoration
+
+- **Icon Restored:** Original custom **Radiation / Hazard Symbol ☢️** (`ic_launcher_hazard_fg.xml` with vibrant gold `#FFD600`, dark core `#212121`, and outer glow `#80FF9100`).
+- **Background Restored:** Transparent vector background (`ic_launcher_bg_transparent.xml`).
+- **Adaptive Configuration:** `mipmap/ic_launcher.xml` and `mipmap/ic_launcher_round.xml` bound directly to `@drawable/ic_launcher_bg_transparent` and `@drawable/ic_launcher_hazard_fg`.
+- **Purged Overwrites:** Generic placeholder drawables (`ic_launcher_background`, `ic_launcher_foreground`, `ic_launcher_monochrome`) and density raster PNGs in `mipmap-*dpi` removed.
+- **Verification:** Full compilation check, 80/80 unit tests pass, and signed `Super-release.apk` re-packaged and committed.
+
 See `docs/FILE_REFERENCE.md` for a per-file map of the codebase and
 `README.md` / `HOW_TO_RUN_OR_UPDATE_PROJECT.md` for setup.

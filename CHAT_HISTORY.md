@@ -499,5 +499,21 @@ Every single channel, feature, and task type was executed on the live hardware a
   - Zero other branches remain on GitHub.
 - GitHub repository now exclusively hosts the production-ready **Super** codebase.
 
+---
+
+## 14. Restoration of Original Hazard / Radiation App Icon
+
+### 14.1 Diagnostic
+- Identified that earlier asset adjustments inadvertently introduced generic vector/raster launcher assets and removed the application's signature Radiation / Hazard symbol (`ic_launcher_hazard_fg.xml`).
+
+### 14.2 Remediation
+- Restored `app/src/main/res/drawable/ic_launcher_hazard_fg.xml` (Radiation/Hazard ☢️ gold/black vector symbol with outer glow layer).
+- Restored `app/src/main/res/drawable/ic_launcher_bg_transparent.xml` (transparent canvas).
+- Re-pointed `app/src/main/res/mipmap/ic_launcher.xml` and `app/src/main/res/mipmap/ic_launcher_round.xml` to `@drawable/ic_launcher_bg_transparent` and `@drawable/ic_launcher_hazard_fg`.
+- Removed all generic placeholder assets (`ic_launcher_background.xml`, `ic_launcher_foreground.xml`, `ic_launcher_monochrome.xml`, and density PNGs in `mipmap-*dpi`).
+- Re-executed full test suite (`./gradlew testDebugUnitTest` — 80/80 passed) and regenerated production release package `Super-release.apk`.
+- Updated remote repository on GitHub (`main` branch).
+
+
 
 
