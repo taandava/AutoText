@@ -1455,6 +1455,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                             val endNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
                                 .setSmallIcon(R.drawable.ic_notification)
+                                .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
                                 .setColor(0xFFFFD600.toInt())
                                 .setContentTitle("Call Ended")
                                 .setContentText("Scheduled call with $cleanPhone concluded (${durationSec}s).")
@@ -1764,6 +1765,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                                 val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                                 val endNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
                                     .setSmallIcon(R.drawable.ic_notification)
+                                    .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
                                     .setColor(0xFFFFD600.toInt())
                                     .setContentTitle("Call Ended")
                                     .setContentText("Scheduled WhatsApp call with $cleanPhone concluded (${durationSec}s).")
@@ -1891,6 +1893,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                 val reminderNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_REMINDERS)
                     .setSmallIcon(R.drawable.ic_notification)
+                    .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
                     .setColor(0xFFFFD600.toInt())
                     .setContentTitle(task.title.ifBlank { "Reminder" })
                     .setContentText(task.messageText.ifBlank { task.title.ifBlank { "Reminder Alert" } })
@@ -1968,6 +1971,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                 val callNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_REMINDERS)
                     .setSmallIcon(R.drawable.ic_notification)
+                    .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
                     .setColor(0xFFFFD600.toInt())
                     .setContentTitle(task.simulatedCallerName.ifBlank { "Incoming Call" })
                     .setContentText("Incoming call from ${task.simulatedCallerNumber.ifBlank { "Unknown Caller" }}")

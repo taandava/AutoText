@@ -121,7 +121,11 @@ class PrivacyManager private constructor(private val appContext: Context) {
             "com.oplus.battery",
             "com.android.permissioncontroller",
             "com.google.android.permissioncontroller",
-            "com.android.packageinstaller"
+            "com.android.packageinstaller",
+            "com.truecaller",
+            "com.truecaller.messenger",
+            "com.callapp.contacts",
+            "com.hiya.star"
         )
 
         /**

@@ -1377,6 +1377,7 @@ class TaskAccessibilityService : AccessibilityService() {
                     val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                     val fullScreenNotification = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
                         .setSmallIcon(R.drawable.ic_notification)
+                        .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
                         .setColor(0xFFFFD600.toInt())
                         .setContentTitle("Unlock Assist")
                         .setContentText("Waking screen and assisting lockscreen...")

@@ -227,6 +227,12 @@ class SuperApplication : Application(), Configuration.Provider {
 
                 // Purge any stale/completed/inactive alarms and re-arm pending tasks across channels
                 AlarmScheduler.cleanOrphanedAndCompletedAlarms(this@SuperApplication)
+                try {
+                    val nm = getSystemService(NotificationManager::class.java)
+                    nm?.cancelAll()
+                } catch (t: Throwable) {
+                    Log.d(TAG, "Notification cancelAll note: ${t.message}")
+                }
                 AlarmScheduler(this@SuperApplication).rescheduleAllPending()
 
                 // Arm daily campaign schedulers for scheduled outreach cycles

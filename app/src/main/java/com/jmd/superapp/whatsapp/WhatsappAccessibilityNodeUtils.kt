@@ -552,6 +552,50 @@ object AccessibilityNodeUtils {
     }
 
     /**
+     * Synthesizes a horizontal swipe gesture (e.g. to dismiss heads-up notifications or overlay cards).
+     *
+     * @param service The active [AccessibilityService].
+     * @param startXRatio Screen width ratio for swipe start (e.g. 0.20 for 20% across).
+     * @param endXRatio Screen width ratio for swipe termination (e.g. 0.90 for 90% across).
+     * @param yRatio Screen height ratio along which horizontal swipe travels.
+     * @param durationMs Duration of swipe movement in milliseconds.
+     * @return `true` if gesture dispatch was accepted by the accessibility framework.
+     */
+    fun performHorizontalSwipe(
+        service: AccessibilityService,
+        startXRatio: Float = 0.20f,
+        endXRatio: Float = 0.90f,
+        yRatio: Float = 0.12f,
+        durationMs: Long = 180L
+    ): Boolean {
+        val curPkg = service.rootInActiveWindow?.packageName?.toString()
+        if (com.jmd.superapp.core.ProtectedApplicationManager.isProtectedPackage(curPkg)) {
+            Log.e(TAG, "performHorizontalSwipe REFUSED: Active window belongs to protected application: $curPkg")
+            com.jmd.superapp.core.ProtectedApplicationManager.handleProtectedAppEncountered(service, curPkg ?: "unknown", "performHorizontalSwipe")
+            return false
+        }
+        return try {
+            val metrics = service.resources.displayMetrics
+            val width = metrics.widthPixels.toFloat()
+            val height = metrics.heightPixels.toFloat()
+            val startX = width * startXRatio
+            val endX = width * endXRatio
+            val y = height * yRatio
+
+            val path = Path().apply {
+                moveTo(startX, y)
+                lineTo(endX, y)
+            }
+            val stroke = GestureDescription.StrokeDescription(path, 0, durationMs)
+            val gesture = GestureDescription.Builder().addStroke(stroke).build()
+            service.dispatchGesture(gesture, null, null)
+        } catch (t: Throwable) {
+            Log.e(TAG, "performHorizontalSwipe failed: ${t.message}")
+            false
+        }
+    }
+
+    /**
      * What it is:
      * Finds the first descendant node in [root] marked as scrollable.
      *

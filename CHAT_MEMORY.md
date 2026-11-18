@@ -428,5 +428,54 @@ real messages.
   - Cryptographic validation via `apksigner` confirmed APK Signature Scheme v2 = `true`.
   - Deployed to connected Vivo I2401 (`10BF1G0HCD0024R`), launched `MainActivity`, and verified active accessibility subsystem registration with zero errors in logcat.
 
+---
+
+## 13. High-Resolution Raster Density Icons & Notification Large Icon Binding
+
+- **Root Cause Resolution for OEM Notification Shade Icons:**
+  - Diagnosed why the notification shade on the physical Vivo device was rendering the old orange speech bubble icon:
+    1. Early commits had raster PNGs in `mipmap-mdpi/`, `mipmap-hdpi/`, `mipmap-xhdpi/`, `mipmap-xxhdpi/`, and `mipmap-xxxhdpi/` containing the speech balloon.
+    2. When the modern gold emblem vector was restored, the raster PNGs were deleted without generating replacements, and `versionCode` remained `1`.
+    3. Vivo FuntouchOS / OriginOS SystemUI caches launcher icons by package name and `versionCode`. Since `versionCode` did not increment and the new APK lacked raster densities, SystemUI continued serving the cached orange balloon raster PNGs.
+    4. Furthermore, `NotificationCompat.Builder` did not specify `.setLargeIcon(bitmap)`, causing SystemUI to fall back to the cached application icon.
+- **Studio-Quality Raster Generation:**
+  - Implemented `scripts/generate_app_icons.py` using Pillow with 10x supersampling and Lanczos downsampling.
+  - Generated crisp, production-grade raster PNGs across all screen densities:
+    - `mipmap-mdpi/ic_launcher.png` (48x48) & `ic_launcher_round.png`
+    - `mipmap-hdpi/ic_launcher.png` (72x72) & `ic_launcher_round.png`
+    - `mipmap-xhdpi/ic_launcher.png` (96x96) & `ic_launcher_round.png`
+    - `mipmap-xxhdpi/ic_launcher.png` (144x144) & `ic_launcher_round.png`
+    - `mipmap-xxxhdpi/ic_launcher.png` (192x192) & `ic_launcher_round.png`
+    - `drawable/ic_launcher_web.png` (512x512)
+- **Explicit Large Icon Binding:**
+  - Implemented `com.jmd.superapp.core.NotificationIconHelper.kt` to dynamically extract and cache an ARGB_8888 `Bitmap` of the gold emblem icon.
+  - Bound `.setLargeIcon(NotificationIconHelper.getLargeIcon(context))` across all 7 `NotificationCompat.Builder` instances (`SequentialTaskEngine`, `TaskAccessibilityService`, `TaskFeatureApi`), guaranteeing direct memory rendering and overriding any OEM icon cache.
+- **Cache Invalidation & Automatic Cleanup:**
+  - Added automatic `nm?.cancelAll()` in `SuperApplication.kt` background initialization so stale completed notification cards from previous builds are automatically wiped from the shade on app launch.
+
+---
+
+## 14. Universal Popup, Heads-Up Notification & Truecaller Dismissal Architecture
+
+- **Accessibility Scoping Invariant:**
+  - Added caller ID packages (`"com.truecaller"`, `"com.truecaller.messenger"`, `"com.callapp.contacts"`, `"com.hiya.star"`) to `BASE_TASK_TARGET_PACKAGES` in `PrivacyManager.kt`.
+  - Previously, `updateAccessibilityScoping()` restricted `serviceInfo.packageNames` to only WhatsApp and system packages, causing Android to return `null` for `window.root` whenever Truecaller or an external app was focused.
+- **Multi-Vector Dismissal Gestures:**
+  - Implemented `performHorizontalSwipe` in `WhatsappAccessibilityNodeUtils.kt` to provide physical gesture swiping for floating notification cards and heads-up banners.
+  - Enhanced `WhatsappPopupShield.kt`:
+    1. Added `GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE` and `ACTION_CLOSE_SYSTEM_DIALOGS` broadcasts.
+    2. Combined vertical upward swipe and horizontal swipe to fling away Heads-Up Notifications (HUNs) across custom OEM skins.
+    3. Targeted top-right close 'X' coordinate `(wRect.right - wRect.width() * 0.08f, wRect.top + wRect.height() * 0.12f)` via `dispatchPhysicalTap` if node dismissal button click does not resolve.
+    4. Added `dismissKeywords` expansions ("mark as read", "view transactions", "remind later", "discard", "✕", "✖", "×") and resource ID pattern matching.
+- **Proactive Interception in Status & Message Engines:**
+  - Updated `WhatsAppStatusEngine`, `WhatsAppDirectSendEngine`, and `WhatsAppGroupEngine` to actively invoke `PopupShield.clearOverlaysAndNotificationShade(service, targetPkg)` whenever the active window package is not the expected WhatsApp package, immediately clearing Truecaller or third-party notification overlays.
+- **Theme Description Alignment:**
+  - Updated theme subtitle in `SettingsPreferencesSection.kt` from "Expressive Orange" to "Material 3 Expressive Gold & Slate identity with light/dark adaptation."
+- **Full Hardware Deployment & Verification:**
+  - Bumped `versionCode = 3`, `versionName = "1.0.2"` in `app/build.gradle.kts` and `VERSION`.
+  - All 15 test suites (80 unit tests) passed 100%.
+  - Packaged and verified release APK `Super-release.apk` (v2 signed).
+  - Deployed to physical Vivo I2401 (`10BF1G0HCD0024R`), verified clean installation and zero errors in logcat.
+
 See `docs/FILE_REFERENCE.md` for a per-file map of the codebase and
 `README.md` / `HOW_TO_RUN_OR_UPDATE_PROJECT.md` for setup.

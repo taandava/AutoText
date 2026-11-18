@@ -84,7 +84,9 @@ class WhatsAppDirectSendEngine(
 
             val curPkg = root.packageName?.toString() ?: ""
             if (!curPkg.contains(pkg, ignoreCase = true) && !pkg.contains(curPkg, ignoreCase = true)) {
-                Log.d(loggerTag, "Active window package '$curPkg' is not target '$pkg', skipping send check")
+                Log.d(loggerTag, "Active window package '$curPkg' is not target '$pkg', clearing potential overlays...")
+                PopupShield.clearOverlaysAndNotificationShade(service, pkg)
+                onRetry(350L)
                 return
             }
 

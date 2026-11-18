@@ -78,7 +78,9 @@ class WhatsAppGroupEngine(
 
             val curPkg = root.packageName?.toString().orEmpty()
             if (!curPkg.contains(pkg, ignoreCase = true) && !pkg.contains(curPkg, ignoreCase = true)) {
-                Log.d(loggerTag, "Not in target package $pkg yet ($curPkg)")
+                Log.d(loggerTag, "Not in target package $pkg yet ($curPkg), clearing potential overlays...")
+                PopupShield.clearOverlaysAndNotificationShade(service, pkg)
+                onRetry(350L)
                 return
             }
 

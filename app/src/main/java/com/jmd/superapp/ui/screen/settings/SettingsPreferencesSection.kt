@@ -81,7 +81,7 @@ fun SettingsPreferencesCards(
                 AppBadge(text = if (dynamicColor) "Dynamic System" else appTheme, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Material 3 Expressive Orange identity with light/dark adaptation.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Material 3 Expressive Gold & Slate identity with light/dark adaptation.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(8.dp))
 

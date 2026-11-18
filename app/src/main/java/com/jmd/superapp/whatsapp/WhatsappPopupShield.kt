@@ -42,7 +42,9 @@ object PopupShield {
         "allow", "continue", "accept", "ok", "got it", "never", "remind later",
         "skip", "close", "deny", "not now", "maybe later", "dismiss", "i agree",
         "agree", "confirm", "yes", "no thanks", "no, thanks", "cancel", "later",
-        "decline", "clear", "x", "reject", "block", "hide", "close ad", "done"
+        "decline", "clear", "x", "reject", "block", "hide", "close ad", "done",
+        "mark as read", "view transactions", "remind me later", "discard",
+        "✕", "✖", "×"
     )
 
     /**
@@ -269,6 +271,17 @@ object PopupShield {
                 if (root != null && clickDismissButton(root, service)) {
                     clearedSomething = true
                 } else {
+                    if (!rect.isEmpty) {
+                        val closeX = rect.right - (rect.width() * 0.08f)
+                        val closeY = rect.top + (rect.height() * 0.12f)
+                        AccessibilityNodeUtils.dispatchPhysicalTap(service, closeX, closeY)
+                    }
+                    AccessibilityNodeUtils.performHorizontalSwipe(
+                        service,
+                        startXRatio = 0.25f,
+                        endXRatio = 0.95f,
+                        yRatio = (rect.centerY().toFloat() / screenHeight).coerceIn(0.05f, 0.95f)
+                    )
                     service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                     clearedSomething = true
                 }
@@ -297,8 +310,9 @@ object PopupShield {
                     if (windowRoot != null && clickDismissButton(windowRoot, service)) {
                         clearedSomething = true
                     } else {
-                        // Fling HUN away using an upward swipe gesture
+                        // Fling HUN away using an upward swipe gesture and horizontal swipe
                         AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.12f, endYRatio = 0.01f, durationMs = 100L)
+                        AccessibilityNodeUtils.performHorizontalSwipe(service, startXRatio = 0.20f, endXRatio = 0.95f, yRatio = 0.08f, durationMs = 150L)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE)
                         }
@@ -317,7 +331,15 @@ object PopupShield {
                     if (windowRoot != null && clickDismissButton(windowRoot, service)) {
                         clearedSomething = true
                     } else {
-                        service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+                        val tapX = wRect.right - (wRect.width() * 0.08f)
+                        val tapY = wRect.top + (wRect.height() * 0.12f)
+                        AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                        AccessibilityNodeUtils.performHorizontalSwipe(
+                            service,
+                            startXRatio = 0.25f,
+                            endXRatio = 0.95f,
+                            yRatio = (wRect.centerY().toFloat() / screenHeight).coerceIn(0.05f, 0.95f)
+                        )
                         clearedSomething = true
                     }
                     continue
@@ -336,7 +358,7 @@ object PopupShield {
                 val isLargeOverlay = wRect.width() > screenWidth * 0.40f && wRect.height() > screenHeight * 0.15f
                 val coversInteractionArea = wRect.bottom > screenHeight * 0.25f
 
-                if (isOverlayType && isLargeOverlay && coversInteractionArea && windowRoot != null &&
+                if (isOverlayType && isLargeOverlay && coversInteractionArea &&
                     windowPkg.isNotBlank() &&
                     !isSafeSystemPkg &&
                     !windowPkg.contains(targetPkg, ignoreCase = true) &&
@@ -344,8 +366,19 @@ object PopupShield {
                     windowPkg != service.packageName.lowercase()
                 ) {
                     Log.i(TAG, "Large floating overlay detected from package: $windowPkg (type=$windowType, bounds=$wRect)")
-                    if (clickDismissButton(windowRoot, service)) {
+                    if (windowRoot != null && clickDismissButton(windowRoot, service)) {
                         Log.i(TAG, "Dismissed overlay button in $windowPkg")
+                        clearedSomething = true
+                    } else {
+                        val tapX = wRect.right - (wRect.width() * 0.08f)
+                        val tapY = wRect.top + (wRect.height() * 0.12f)
+                        AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                        AccessibilityNodeUtils.performHorizontalSwipe(
+                            service,
+                            startXRatio = 0.25f,
+                            endXRatio = 0.95f,
+                            yRatio = (wRect.centerY().toFloat() / screenHeight).coerceIn(0.05f, 0.95f)
+                        )
                         clearedSomething = true
                     }
                 }
@@ -407,13 +440,16 @@ object PopupShield {
                 continue
             }
 
+            val isCallerIdPkg = pkg.contains("truecaller") || pkg.contains("callapp") || pkg.contains("callerid")
             val isDialogButton = curr.isClickable &&
-                (dismissKeywords.any { txt == it || desc == it } ||
+                (dismissKeywords.any { txt == it || desc == it || txt.startsWith(it) || desc.startsWith(it) } ||
                     id.endsWith(":id/btn_close") || id.endsWith(":id/close_btn") ||
                     id.endsWith(":id/close") || id.endsWith(":id/iv_close") ||
                     id.endsWith(":id/button_close") || id.endsWith(":id/dialog_close") ||
                     id.endsWith(":id/dismiss") || id.endsWith(":id/btn_dismiss") ||
-                    id.endsWith(":id/caller_id_close") || id.endsWith(":id/floating_close"))
+                    id.endsWith(":id/caller_id_close") || id.endsWith(":id/floating_close") ||
+                    id.contains("close") || id.contains("dismiss") || id.contains("cancel") ||
+                    (isCallerIdPkg && (curr.className?.contains("Image") == true || curr.className?.contains("Button") == true)))
             if (isDialogButton && AccessibilityNodeUtils.clickElement(curr, service)) {
                 Log.d(TAG, "PopupShield dismissed button: $txt / $desc")
                 return true

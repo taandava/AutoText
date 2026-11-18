@@ -35,6 +35,7 @@ import androidx.core.content.ContextCompat
 import com.jmd.superapp.R
 import com.jmd.superapp.SuperApplication
 import com.jmd.superapp.core.AppFileLogger
+import com.jmd.superapp.core.NotificationIconHelper
 import com.jmd.superapp.core.PhoneNumberNormalizer
 import com.jmd.superapp.core.WhatsAppPackageHelper
 import com.jmd.superapp.data.model.ChannelType
@@ -514,6 +515,7 @@ object TaskFeatureApi {
                 val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                 val notif = NotificationCompat.Builder(context, SuperApplication.CHANNEL_REMINDERS)
                     .setSmallIcon(R.drawable.ic_notification)
+                    .apply { NotificationIconHelper.getLargeIcon(context)?.let { setLargeIcon(it) } }
                     .setColor(0xFFFFD600.toInt())
                     .setContentTitle(request.title.ifBlank { "Reminder" })
                     .setContentText(request.message)
@@ -580,6 +582,7 @@ object TaskFeatureApi {
                 val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                 val callNotif = NotificationCompat.Builder(context, SuperApplication.CHANNEL_REMINDERS)
                     .setSmallIcon(R.drawable.ic_notification)
+                    .apply { NotificationIconHelper.getLargeIcon(context)?.let { setLargeIcon(it) } }
                     .setColor(0xFFFFD600.toInt())
                     .setContentTitle(request.callerName.ifBlank { "Incoming Call" })
                     .setContentText("Incoming call from ${request.callerNumber.ifBlank { "Unknown Caller" }}")

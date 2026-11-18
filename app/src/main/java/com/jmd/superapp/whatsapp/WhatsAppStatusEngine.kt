@@ -113,8 +113,9 @@ class WhatsAppStatusEngine(
 
             val curPkg = root.packageName?.toString() ?: ""
             if (!curPkg.contains(targetPkg, ignoreCase = true) && !targetPkg.contains(curPkg, ignoreCase = true)) {
-                Log.d(loggerTag, "Not in target package $targetPkg yet for status ($curPkg)")
-                onRetry(300L)
+                Log.d(loggerTag, "Not in target package $targetPkg yet for status ($curPkg), clearing potential overlays...")
+                PopupShield.clearOverlaysAndNotificationShade(service, targetPkg)
+                onRetry(350L)
                 return
             }
 
