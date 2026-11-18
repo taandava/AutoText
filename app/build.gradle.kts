@@ -22,8 +22,8 @@ android {
         applicationId = "com.jmd.superapp"
         minSdk = 27
         targetSdk = 37
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.4"
 
         resourceConfigurations += listOf("en")
     }
@@ -66,12 +66,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    testOptions {
-        unitTests {
-            isReturnDefaultValues = true
-        }
     }
 
     lint {
@@ -130,6 +124,4 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.13.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
-
-    testImplementation("junit:junit:4.13.2")
 }

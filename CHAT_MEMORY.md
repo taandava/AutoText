@@ -509,5 +509,21 @@ real messages.
   - Verified on live connected Samsung Galaxy A04 (`R9ZW105MFDR`) and Vivo I2401 (`10BF1G0HCD0024R`).
   - Confirmed live toggle auto-rescheduled past tasks forward to the next future occurrence, toggled status dots cyan, incremented the Active counter, and scheduled exact alarms.
 
+---
+
+## 16. Test Suite Removal & Production Hardening
+
+- **Test Inspection & Logic Migration:**
+  - Audited all 15 test classes under `app/src/test/`: confirmed all domain functions (`AutoReplyMatcher`, `BackupCipher`, `DispatchJournal`, `MessageTemplateResolver`, `PhoneNumberNormalizer`, `PrivacyManager`, `ReplyLoopGuard`, `SmsQuotaManager`, `WhatsAppPackageHelper`, `ChannelType`, `RecurrenceType`, `TaskStatus`, `AlarmScheduler`) reside natively within `app/src/main/java/com/jmd/superapp/`.
+  - Zero application logic, dependencies, or runtime resources were bound to the test folder.
+- **Directory & Dependency Purge:**
+  - Removed entire `app/src/test/` directory.
+  - Stripped `testOptions { ... }` and `testImplementation("junit:junit:4.13.2")` from `app/build.gradle.kts`.
+- **Release Verification & Device Deployment:**
+  - Bumped `versionCode = 5`, `versionName = "1.0.4"` in `app/build.gradle.kts` and `VERSION`.
+  - Packaged and verified release build `Super-release.apk` (v2 signed, 0 errors).
+  - Deployed to connected Vivo I2401 (`10BF1G0HCD0024R`), launched `MainActivity`, and verified zero runtime errors in logcat.
+  - Verified live task auto-rescheduling on the physical hardware.
+
 See `docs/FILE_REFERENCE.md` for a per-file map of the codebase and
 `README.md` / `HOW_TO_RUN_OR_UPDATE_PROJECT.md` for setup.

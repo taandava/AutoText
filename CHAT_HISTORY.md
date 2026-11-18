@@ -1,10 +1,10 @@
 # Super — Complete Conversation & Execution History
 
 > **Application:** Super (`com.jmd.superapp`)
-> **Last Synchronized:** 2026-11-18 19:52:14
+> **Last Synchronized:** 2026-11-18 20:08:29
 > **Conversation ID:** `c6f82cb6-9155-422a-9715-3da090d70384`
-> **Total Steps Processed:** 8282
-> **Total User Interaction Turns:** 33
+> **Total Steps Processed:** 8442
+> **Total User Interaction Turns:** 34
 
 ---
 
@@ -5344,7 +5344,7 @@ The user has marked this task with /goal, indicating that this task is intended 
 
 ### 🛠️ Key Actions & Tools Executed
 
-**Total Tool Calls:** 161 — `edit_file` (11), `manage_task` (2), `read_file` (57), `run_command` (90), `write_file` (1)
+**Total Tool Calls:** 167 — `edit_file` (12), `manage_task` (2), `read_file` (58), `run_command` (94), `write_file` (1)
 
 <details>
 <summary>Click to view tool execution trace (sample up to 25 calls)</summary>
@@ -5374,7 +5374,7 @@ The user has marked this task with /goal, indicating that this task is intended 
 - 📖 `read_file`: `SequentialTaskEngine.kt`
 - 📖 `read_file`: `TasksScreen.kt`
 - 📖 `read_file`: `TasksScreen.kt`
-- *...and 136 additional operations*
+- *...and 142 additional operations*
 
 </details>
 
@@ -5427,6 +5427,137 @@ I am expanding the notification shade on the Vivo device. I will proceed as soon
 I am pulling the notification shade screenshot on the Vivo device. I will proceed as soon as it completes.
 
 I am collapsing the notification shade. I will proceed as soon as it completes.
+
+### Summary of Completed Objectives
+
+#### 1. Auto-Rescheduling on Task Toggle Enablement
+- **Problem Identified**: When a task was toggled off, completed, or failed, its `triggerTimeMillis` remained in the past. When toggled back on, the scheduler previously cancelled the alarm or scheduled expired timestamps without updating the database, leaving task cards showing stale past dates and the toggle immediately turning off.
+- **Remediation Implemented**:
+  1. **`AlarmScheduler.calculateNextFutureTrigger(task, now)`**:
+     - **One-time tasks (`RecurrenceType.ONCE`)**: Preserves the original scheduled time-of-day (hour, minute, second) configured in the form. If that time has already passed today, it anchors to tomorrow (and advances to the next matching day of the week if `selectedDaysOfWeek` was configured).
+     - **Recurring tasks (`DAILY`, `WEEKLY`, `CUSTOM_INTERVAL`, `REPEAT_*`, `WEEKDAYS`, `WEEKENDS`, `YEARLY`)**: Steps forward along the configured recurrence interval until strictly in the future (`> now`).
+  2. **`TaskFeatureApi.toggleTaskSchedule(context, repository, task, enable)`**:
+     - When enabling (`enable = true`), automatically calculates the next future occurrence using all form parameters (`calculateNextFutureTrigger`), resets previous delivery history via `repository.clearDeliveriesForTask(task.id)`, persists the updated trigger time and `status = TaskStatus.SCHEDULED`, registers the exact alarm with `AlarmManager`, and broadcasts `AppDataEvents.notifyTasksChanged()`.
+     - When disabling (`enable = false`), updates the database to `TaskStatus.PAUSED`, cancels alarms with `AlarmScheduler`, cancels running executions in `SequentialTaskEngine`, and triggers reactive UI updates.
+  3. **`TasksScreen.kt` & `ComposeTaskScreen.kt`**:
+     - Added immediate user toast feedback (`"Task scheduled"` vs `"Task paused"`).
+     - When editing a completed or past task, defaults form time to the next future occurrence rather than an expired date.
+
+#### 2. Test Verification & Baseline Alignment
+- Updated [AlarmHygieneTest.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/test/java/com/jmd/superapp/scheduler/AlarmHygieneTest.kt) and [TaskRecurrenceCalculationTest.kt](file:///c:/Users/JMD/Documents/Helper_Codebase/app/src/test/java/com/jmd/superapp/scheduler/TaskRecurrenceCalculationTest.kt).
+- Ran `./gradlew testDebugUnitTest` — **81 of 81 unit tests passing (100%)**.
+
+#### 3. Build, Packaging & Hardware Deployment
+- Bumped `versionCode = 4` and `versionName = "1.0.3"` in `app/build.gradle.kts` and `VERSION`.
+- Built and signed `Super-release.apk` with APK Signature Scheme v2 (apksigner verified).
+- **Physical Device Verification**:
+  - Installed and verified on **Samsung Galaxy A04 (`R9ZW105MFDR`)**:
+    - Tested toggling multiple failed tasks from the UI.
+    - Verified live auto-rescheduling from `12:45 pm` and `04:45 pm` to `08:45 pm` (60m interval).
+    - Verified status dots turned cyan, task cards updated reactively, Active tab counter incremented, and Failed tab counter decremented.
+  - Installed and verified on **Vivo I2401 (`10BF1G0HCD0024R`)**:
+    - Installed `versionCode=4`, launched `MainActivity` with zero runtime errors in logcat.
+    - Inspected notification tray: confirmed stale notification cards from previous builds are cleared.
+
+#### 4. Repository Cleanup & Git Push
+- Purged all temporary test dumps and screen captures from workspace root.
+- Re-exported complete session history using `scripts/export_chat_history.py` to [CHAT_HISTORY.md](file:///c:/Users/JMD/Documents/Helper_Codebase/CHAT_HISTORY.md).
+- Updated [CHAT_MEMORY.md](file:///c:/Users/JMD/Documents/Helper_Codebase/CHAT_MEMORY.md) with Section 15.
+- Committed and pushed changes to GitHub `main` branch (`c7ea16a`).
+
+<!-- GOAL_COMPLETE -->
+
+---
+
+## Turn 34
+
+**Timestamp:** `2026-11-18T14:00:57Z`
+
+### 👤 User Request
+
+```markdown
+<USER_REQUEST>
+remove all test files from the app 
+but if those test files have things realted to working of the app put required code into working files 
+and cleanup and install altest app and check everything/ /goal 
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-18T19:30:57+05:30.
+
+The user has mentioned some items in the form @[ITEM]. Here is extra information about the items that were mentioned by the user, in the order that they appear:
+
+/goal is a [Slash Command]:
+The user has marked this task with /goal, indicating that this task is intended to run for a long time without user input, e.g. overnight. You should be extra thorough and only stop when you are confident the goal has been completely fulfilled. The system will force you to continue execution, prompting you to audit your work until completion. Once complete, include <!-- GOAL_COMPLETE --> in your response. If the user explicitly asked to stop or cancel this goal, include <!-- GOAL_CANCELLED --> in your response to cancel the goal.
+</ADDITIONAL_METADATA>
+```
+
+### 🛠️ Key Actions & Tools Executed
+
+**Total Tool Calls:** 58 — `edit_file` (3), `read_file` (22), `run_command` (32), `write_file` (1)
+
+<details>
+<summary>Click to view tool execution trace (sample up to 25 calls)</summary>
+
+- ⚡ `run_command` (Find all test files in app/src): `Get-ChildItem -Path app/src -Recurse -File | Where-Object { $_.FullName -like "*test*" } | Select...`
+- ⚡ `run_command` (Find all test files in the entire project): `Get-ChildItem -Path . -Recurse -File | Where-Object { ($_.Name -like "*test*" -or $_.DirectoryNam...`
+- ⚡ `run_command` (Check test references in build.gradle.kts): `Select-String -Path app/build.gradle.kts -Pattern "test"`
+- 📖 `read_file`: `AutoReplyMatcherTest.kt`
+- 📖 `read_file`: `BackupCipherTest.kt`
+- 📖 `read_file`: `DispatchJournalTest.kt`
+- 📖 `read_file`: `FileLoggerMigrationTest.kt`
+- 📖 `read_file`: `LegacyKeyDerivationTest.kt`
+- 📖 `read_file`: `MessageTemplateResolverTest.kt`
+- 📖 `read_file`: `PhoneNumberNormalizerTest.kt`
+- 📖 `read_file`: `PrivacyManagerTest.kt`
+- 📖 `read_file`: `ReplyLoopGuardTest.kt`
+- 📖 `read_file`: `SmsQuotaManagerTest.kt`
+- 📖 `read_file`: `WhatsAppPackageHelperTest.kt`
+- 📖 `read_file`: `ChannelAndRecurrenceTypeTest.kt`
+- 📖 `read_file`: `TaskStatusTest.kt`
+- ⚡ `run_command` (Check for junit imports in main): `git grep -n "org.junit" app/src/main/`
+- ⚡ `run_command` (Check test references in main java): `git grep -i "test" app/src/main/java/ | grep -v "testOptions" | grep -v "test"`
+- ⚡ `run_command` (Search for test package references): `git grep "com.jmd.superapp.test"`
+- ⚡ `run_command` (Remove app/src/test directory): `powershell -Command "Remove-Item -Path app/src/test -Recurse -Force"`
+- ⚡ `run_command` (Verify app/src/test removed): `Test-Path app/src/test`
+- 📖 `read_file`: `build.gradle.kts`
+- 📖 `read_file`: `build.gradle.kts`
+- 📝 `edit_file`: `build.gradle.kts`
+- 📝 `edit_file`: `build.gradle.kts`
+- *...and 33 additional operations*
+
+</details>
+
+### 🤖 Assistant Responses
+
+I am building the release package (`Super-release.apk` v1.0.4) after removing all test files and dependencies. I will proceed as soon as the build finishes.
+
+I am checking connected devices. I will proceed as soon as it completes.
+
+I am verifying the installed package metadata on the device. I will proceed as soon as it completes.
+
+I am launching MainActivity on the device. I will proceed as soon as it completes.
+
+I am checking logcat for errors. I will proceed as soon as it completes.
+
+I am capturing the device screen to verify the app running on device. I will proceed as soon as it completes.
+
+I am waking the device and capturing the screen. I will proceed as soon as it completes.
+
+I am unlocking the screen to inspect the home screen and app. I will proceed as soon as it completes.
+
+I am capturing the app screen on Vivo. I will proceed as soon as it completes.
+
+I am dumping the UI to locate the switch coordinates on the Vivo device. I will proceed as soon as it completes.
+
+I am tapping Switch 1 on Vivo and capturing the screen. I will proceed as soon as it completes.
+
+I am toggling the switch ON on the Vivo device and capturing the screen. I will proceed as soon as it completes.
+
+I am returning to the Tasks screen. I will proceed as soon as it completes.
+
+I am turning the task switch ON and capturing the screen. I will proceed as soon as it completes.
+
+I am pressing back to return to the Tasks tab. I will proceed as soon as it completes.
 
 ---
 
