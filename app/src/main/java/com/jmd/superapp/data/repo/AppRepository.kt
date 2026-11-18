@@ -22,6 +22,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 import androidx.core.database.sqlite.transaction
+import com.jmd.superapp.core.AppDataEvents
 import com.jmd.superapp.scheduler.AlarmScheduler
 import com.jmd.superapp.core.PhoneNumberNormalizer
 import com.jmd.superapp.data.db.DatabaseHelper
@@ -642,13 +643,22 @@ class AppRepository(context: Context) {
             put("channel", config.channel)
         }
         val rows = db.update(DatabaseHelper.TABLE_DAILY_CAMPAIGN, cv, "id = ?", arrayOf(config.id.toString()))
-        if (rows > 0) return true
+        if (rows > 0) {
+            AppDataEvents.notifyCampaignsChanged()
+            return true
+        }
         val channelRows = db.update(DatabaseHelper.TABLE_DAILY_CAMPAIGN, cv, "channel = ?", arrayOf(config.channel))
-        if (channelRows > 0) return true
+        if (channelRows > 0) {
+            AppDataEvents.notifyCampaignsChanged()
+            return true
+        }
         if (config.id > 0L) {
             cv.put("id", config.id)
         }
         val insertId = db.insertWithOnConflict(DatabaseHelper.TABLE_DAILY_CAMPAIGN, null, cv, android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE)
+        if (insertId > 0) {
+            AppDataEvents.notifyCampaignsChanged()
+        }
         return insertId > 0
     }
     /**
@@ -660,12 +670,18 @@ class AppRepository(context: Context) {
      *
      * Linked with:
      * - Component: [AppRepository]
+     * @param id Identifier of the campaign to delete.
+     * @return True if deletion succeeded.
      */
 
     fun deleteDailyCampaignConfig(id: Long): Boolean {
         if (id <= 3L) return false // Protect primary seed campaigns
         val db = dbHelper.writableDatabase
-        return db.delete(DatabaseHelper.TABLE_DAILY_CAMPAIGN, "id = ?", arrayOf(id.toString())) > 0
+        val deleted = db.delete(DatabaseHelper.TABLE_DAILY_CAMPAIGN, "id = ?", arrayOf(id.toString())) > 0
+        if (deleted) {
+            AppDataEvents.notifyCampaignsChanged()
+        }
+        return deleted
     }
     /**
      * What it is:

@@ -45,6 +45,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.jmd.superapp.core.AppDataEvents
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -79,9 +83,38 @@ fun LogsView(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var logs by remember { mutableStateOf(repository.getAllLogs()) }
+    var logs by remember { mutableStateOf(emptyList<ExecutionLog>()) }
     var selectedFilter by remember { mutableStateOf("ALL") }
     var selectedLogDetail by remember { mutableStateOf<ExecutionLog?>(null) }
+
+    fun refreshLogs() {
+        scope.launch(Dispatchers.IO) {
+            val l = repository.getAllLogs()
+            withContext(Dispatchers.Main) {
+                logs = l
+            }
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                refreshLogs()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        refreshLogs()
+        AppDataEvents.logsChanged.collect {
+            refreshLogs()
+        }
+    }
 
     val csvExportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("text/csv")

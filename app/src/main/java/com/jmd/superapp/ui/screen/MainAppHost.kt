@@ -39,6 +39,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.jmd.superapp.data.model.ChannelType
 import com.jmd.superapp.data.model.ScheduledTask
 import com.jmd.superapp.data.prefs.PreferenceManager
@@ -152,14 +155,28 @@ fun MainAppHost(
                     var systemIndicators by remember {
                         mutableStateOf(emptyList<SystemIndicator>())
                     }
-                    LaunchedEffect(Unit) {
+                    var resumeCounter by remember { mutableLongStateOf(0L) }
+                    val lifecycleOwner = LocalLifecycleOwner.current
+                    DisposableEffect(lifecycleOwner) {
+                        val observer = LifecycleEventObserver { _, event ->
+                            if (event == Lifecycle.Event.ON_RESUME) {
+                                resumeCounter++
+                            }
+                        }
+                        lifecycleOwner.lifecycle.addObserver(observer)
+                        onDispose {
+                            lifecycleOwner.lifecycle.removeObserver(observer)
+                        }
+                    }
+
+                    LaunchedEffect(resumeCounter) {
                         while (true) {
                             // resolveAll performs multiple binder calls; never do that on the frame thread.
                             val next = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
                                 SystemIndicatorResolver.resolveAll(context, prefs)
                             }
                             if (next != systemIndicators) systemIndicators = next
-                            delay(8000L)
+                            delay(6000L)
                         }
                     }
                     val appTitle = prefs.customAppName.ifBlank { "Super" }

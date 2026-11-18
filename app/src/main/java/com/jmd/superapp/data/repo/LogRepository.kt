@@ -18,6 +18,7 @@ package com.jmd.superapp.data.repo
 
 import android.content.*
 import android.database.Cursor
+import com.jmd.superapp.core.AppDataEvents
 import com.jmd.superapp.data.db.DatabaseHelper
 import com.jmd.superapp.data.model.ExecutionLog
 
@@ -126,6 +127,9 @@ class LogRepository(private val context: Context) {
             put("timestamp", System.currentTimeMillis())
         }
         val rowId = db.insert(DatabaseHelper.TABLE_LOGS, null, cv)
+        if (rowId >= 0) {
+            AppDataEvents.notifyLogsChanged()
+        }
         if (insertCounter.incrementAndGet() % 100 == 0) {
             try {
                 pruneOldLogs()
@@ -238,6 +242,7 @@ class LogRepository(private val context: Context) {
     fun clearAllLogs() {
         val db = dbHelper.writableDatabase
         db.delete(DatabaseHelper.TABLE_LOGS, null, null)
+        AppDataEvents.notifyLogsChanged()
     }
     /**
      * What it is:

@@ -547,6 +547,30 @@ Every single channel, feature, and task type was executed on the live hardware a
    - Signed release package `Super-release.apk` recompiled and installed.
    - Clean state committed and pushed to GitHub `origin/main`.
 
+---
+
+## 16. Logcat & Execution Diagnostics, Gesture De-confliction & Universal Reactive Cross-Screen Linking
+
+### 16.1 Live Device Diagnostics
+- Captured and analyzed live execution traces from connected target device (Vivo I2401, PID 30430):
+  - **Contacts Ingestion Cancellation**: Identified `rememberCoroutineScope left the composition` error in `ComposePickerSheets.kt` during WhatsApp contact synchronization when dismissing or leaving the bottom sheet.
+  - **Gesture Cancellation Warning**: Identified `Physical tap cancelled` warning in `WhatsappAccessibilityNodeUtils.kt` caused by `WhatsAppCallEngine.kt` unconditionally firing both an accessibility click and an overlapping `dispatchPhysicalTap` at the exact same millisecond.
+  - **Cross-Screen State Decoupling**: Identified that UI screens (`TasksListScreen`, `DailyCampaignScreen`, `AutoReplyScreen`, `LogsView`) did not reactively observe database changes or lifecycle `ON_RESUME` events, leaving data stale when returning to tabs or after background task execution.
+
+### 16.2 Architectural Remediation
+1. **Global Reactive Event Bus (`AppDataEvents.kt`)**:
+   - Implemented `AppDataEvents` with `SharedFlow` signals for `tasksChanged`, `campaignsChanged`, `autoReplyChanged`, and `logsChanged`.
+   - Wired emitters into all mutations across `TaskRepository`, `DailyCampaignRepository`, `AutoReplyRepository`, `LogRepository`, and `AppRepository`.
+2. **Lifecycle & Event-Driven UI Refresh**:
+   - Updated `TasksListScreen`, `DailyCampaignScreen`, `AutoReplyScreen`, and `LogsView` to observe `Lifecycle.Event.ON_RESUME` and collect from `AppDataEvents`.
+   - Moving between tabs or resuming the application instantly triggers non-blocking background re-queries on `Dispatchers.IO`.
+3. **Contacts Ingestion Lifecycle Resilience**:
+   - Refactored contacts scanning in `ComposePickerSheets.kt` to run on `SuperApplication.instance.applicationScope`, preventing cancellation on sheet dismissal.
+4. **Gesture De-confliction in `WhatsAppCallEngine.kt`**:
+   - Replaced unconditional dual-dispatch with fallback gesture dispatch (`if (!clicked && hasBounds)`), eliminating concurrent conflicting gestures and `Physical tap cancelled` warnings.
+5. **Release Build & Live Device Verification**:
+   - Rebuilt signed release package (`Super-release.apk`) and installed on Vivo I2401 with full verification.
+
 
 
 

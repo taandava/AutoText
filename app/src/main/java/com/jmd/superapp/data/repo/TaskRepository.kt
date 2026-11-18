@@ -23,6 +23,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import com.jmd.superapp.core.AppDataEvents
 import com.jmd.superapp.core.PhoneNumberNormalizer
 import com.jmd.superapp.data.db.DatabaseHelper
 import com.jmd.superapp.data.model.ChannelType
@@ -91,6 +92,9 @@ class TaskRepository(context: Context) {
             put("call_failure_policy", task.callFailurePolicy)
         }
         val rowId = db.insertWithOnConflict(DatabaseHelper.TABLE_TASKS, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+        if (rowId >= 0) {
+            AppDataEvents.notifyTasksChanged()
+        }
         return if (task.id > 0 && rowId >= 0) task.id else rowId
     }
 
@@ -136,6 +140,7 @@ class TaskRepository(context: Context) {
         }
         val updated = db.update(DatabaseHelper.TABLE_TASKS, cv, "id = ?", arrayOf(task.id.toString())) > 0
         if (updated) {
+            AppDataEvents.notifyTasksChanged()
             val scheduler = AlarmScheduler(appContext)
             if (task.status == TaskStatus.PENDING || task.status == TaskStatus.SCHEDULED) {
                 scheduler.scheduleTask(task)
@@ -168,6 +173,7 @@ class TaskRepository(context: Context) {
             }
         }
         db.update(DatabaseHelper.TABLE_TASKS, cv, "id = ?", arrayOf(id.toString()))
+        AppDataEvents.notifyTasksChanged()
         if (status.isTerminal || status == TaskStatus.PAUSED) {
             val task = getTaskById(id)
             AlarmScheduler(appContext).cancelTask(id, task)
@@ -265,6 +271,9 @@ class TaskRepository(context: Context) {
                 }
             }
         }
+        if (postponedTasks.isNotEmpty()) {
+            AppDataEvents.notifyTasksChanged()
+        }
         return postponedTasks
     }
 
@@ -288,7 +297,11 @@ class TaskRepository(context: Context) {
             AlarmScheduler(appContext).cancelTask(id)
         }
         val db = dbHelper.writableDatabase
-        return db.delete(DatabaseHelper.TABLE_TASKS, "id = ?", arrayOf(id.toString())) > 0
+        val deleted = db.delete(DatabaseHelper.TABLE_TASKS, "id = ?", arrayOf(id.toString())) > 0
+        if (deleted) {
+            AppDataEvents.notifyTasksChanged()
+        }
+        return deleted
     }
 
     /**

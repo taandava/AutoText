@@ -22,6 +22,7 @@ package com.jmd.superapp.ui.screen.compose
 import android.content.*
 import android.content.pm.PackageManager
 import android.util.Log
+import com.jmd.superapp.SuperApplication
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.text.style.TextAlign
@@ -689,20 +690,25 @@ fun WhatsAppContactsPickerSheet(
                         }
                         if (!isScanning) {
                             isScanning = true
-                            scope.launch(Dispatchers.IO) {
+                            SuperApplication.instance.applicationScope.launch(Dispatchers.IO) {
                                 try {
                                     val scanner = ContactIngestionEngine(context, repository)
                                     val summary = scanner.scanAndIngestAll()
                                     val refreshed = repository.getWhatsAppContacts(query = waSearch, channel = selectedChannel, limit = 10000)
                                     withContext(Dispatchers.Main) {
-                                        waContacts = refreshed
-                                        isScanning = false
+                                        if (scope.isActive) {
+                                            waContacts = refreshed
+                                            isScanning = false
+                                        }
                                         context.showAppToast("Synced ${summary.newAdded} $appLabel contacts & chats", isLong = true)
                                     }
                                 } catch (t: Throwable) {
-                                    Log.e("WhatsAppContacts", "Error during contacts scan", t)
+                                    if (t is CancellationException) return@launch
+                                    Log.e("WhatsAppContacts", "Error during contacts scan: ${t.message}")
                                     withContext(Dispatchers.Main) {
-                                        isScanning = false
+                                        if (scope.isActive) {
+                                            isScanning = false
+                                        }
                                         context.showAppToast("Scan error: ${t.localizedMessage ?: "Unknown"}")
                                     }
                                 }

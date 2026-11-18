@@ -22,6 +22,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.core.database.sqlite.transaction
+import com.jmd.superapp.core.AppDataEvents
 import com.jmd.superapp.core.PhoneNumberNormalizer
 import com.jmd.superapp.data.db.DatabaseHelper
 import com.jmd.superapp.data.model.AutoReplyRule
@@ -79,7 +80,11 @@ class AutoReplyRepository(context: Context) {
             put("max_daily_replies", rule.maxDailyReplies)
             put("is_enabled", if (rule.isEnabled) 1 else 0)
         }
-        return db.insertWithOnConflict(DatabaseHelper.TABLE_AUTO_REPLY, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+        val rowId = db.insertWithOnConflict(DatabaseHelper.TABLE_AUTO_REPLY, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+        if (rowId >= 0) {
+            AppDataEvents.notifyAutoReplyChanged()
+        }
+        return rowId
     }
 
     /**
@@ -156,7 +161,11 @@ class AutoReplyRepository(context: Context) {
         } catch (e: Exception) {
             Log.w("AutoReplyRepo", "Failed to clear history for rule #$id: ${e.message}")
         }
-        return db.delete(DatabaseHelper.TABLE_AUTO_REPLY, "id = ?", arrayOf(id.toString())) > 0
+        val deleted = db.delete(DatabaseHelper.TABLE_AUTO_REPLY, "id = ?", arrayOf(id.toString())) > 0
+        if (deleted) {
+            AppDataEvents.notifyAutoReplyChanged()
+        }
+        return deleted
     }
 
     /**

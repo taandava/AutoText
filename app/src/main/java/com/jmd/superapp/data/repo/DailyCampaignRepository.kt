@@ -21,6 +21,7 @@ import android.content.*
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import com.jmd.superapp.core.AppDataEvents
 import com.jmd.superapp.data.db.DatabaseHelper
 import com.jmd.superapp.data.model.DynamicContactItem
 import com.jmd.superapp.data.model.DynamicPoolStats
@@ -137,6 +138,7 @@ class DailyCampaignRepository(appContext: Context) {
 
             val isWa = channel.contains("WHATSAPP", ignoreCase = true)
             markContactSuccess(contact.id, isWa)
+            AppDataEvents.notifyCampaignsChanged()
         } catch (e: Exception) {
             Log.e(tag, "Error marking campaign contact success", e)
         }
@@ -171,6 +173,7 @@ class DailyCampaignRepository(appContext: Context) {
                 put("segments", maxOf(1, segments))
             }
             db.insertWithOnConflict(DatabaseHelper.TABLE_DAILY_CAMPAIGN_SENT, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
+            AppDataEvents.notifyCampaignsChanged()
         } catch (e: Exception) {
             Log.e(tag, "Error marking campaign contact dispatched", e)
         }
@@ -226,6 +229,7 @@ class DailyCampaignRepository(appContext: Context) {
         try {
             val db = dbHelper.writableDatabase
             db.delete(DatabaseHelper.TABLE_DAILY_CAMPAIGN_SENT, "campaign_id = ?", arrayOf(campaignId.toString()))
+            AppDataEvents.notifyCampaignsChanged()
         } catch (e: Exception) {
             Log.e(tag, "Error resetting campaign ledger for $campaignId", e)
         }
@@ -247,6 +251,7 @@ class DailyCampaignRepository(appContext: Context) {
         try {
             val db = dbHelper.writableDatabase
             db.delete(DatabaseHelper.TABLE_DAILY_CAMPAIGN_SENT, "campaign_id = ? AND contact_id = ?", arrayOf(campaignId.toString(), contactId.toString()))
+            AppDataEvents.notifyCampaignsChanged()
         } catch (e: Exception) {
             Log.e(tag, "Error requeuing contact $contactId for campaign $campaignId", e)
         }

@@ -38,6 +38,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.jmd.superapp.core.AppDataEvents
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,10 +76,40 @@ fun AutoReplyScreen(
     val repository = remember { AppRepository(context) }
     val prefs = remember { PreferenceManager(context) }
     var isAutoReplyMasterEnabled by remember { mutableStateOf(prefs.isAutoReplyMasterEnabled) }
-    var rules by remember { mutableStateOf(repository.getAllAutoReplyRules()) }
+    var rules by remember { mutableStateOf(emptyList<AutoReplyRule>()) }
     var showDialog by remember { mutableStateOf(false) }
     var showTypeSelectionSheet by remember { mutableStateOf(false) }
     var editingRule by remember { mutableStateOf<AutoReplyRule?>(null) }
+    val scope = rememberCoroutineScope()
+
+    fun refreshRules() {
+        scope.launch(Dispatchers.IO) {
+            val r = repository.getAllAutoReplyRules()
+            withContext(Dispatchers.Main) {
+                rules = r
+            }
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                refreshRules()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        refreshRules()
+        AppDataEvents.autoReplyChanged.collect {
+            refreshRules()
+        }
+    }
 
     LaunchedEffect(showDialog || showTypeSelectionSheet) {
         onEditingStateChanged(showDialog || showTypeSelectionSheet)

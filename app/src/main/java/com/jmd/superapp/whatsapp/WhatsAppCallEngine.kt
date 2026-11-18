@@ -178,13 +178,13 @@ class WhatsAppCallEngine(
                 callDialogButton.getBoundsInScreen(dRect)
                 val hasBounds = dRect.width() > 0 && dRect.height() > 0
 
-                // Dual-dispatch: Attempt accessibility click first, then unconditionally deliver physical gesture tap
-                AccessibilityNodeUtils.clickElement(callDialogButton, service)
-                if (hasBounds) {
+                // Prioritize accessibility click, falling back to gesture tap only if direct action was unhandled
+                val clicked = AccessibilityNodeUtils.clickElement(callDialogButton, service)
+                if (!clicked && hasBounds) {
                     val tapX = dRect.centerX().toFloat()
                     val tapY = dRect.centerY().toFloat()
                     AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY, durationMs = 60L)
-                    Log.i(loggerTag, "Dispatched physical gesture tap & click on call confirmation button '$btnLabel' at ($tapX, $tapY)")
+                    Log.i(loggerTag, "Dispatched physical gesture tap fallback on call confirmation button '$btnLabel' at ($tapX, $tapY)")
                 }
                 onRetry(600L)
                 return
@@ -207,12 +207,12 @@ class WhatsAppCallEngine(
                 if (voiceCallNode != null) {
                     val vRect = Rect()
                     voiceCallNode.getBoundsInScreen(vRect)
-                    AccessibilityNodeUtils.clickElement(voiceCallNode, service)
-                    if (vRect.width() > 0 && vRect.height() > 0) {
+                    val clicked = AccessibilityNodeUtils.clickElement(voiceCallNode, service)
+                    if (!clicked && vRect.width() > 0 && vRect.height() > 0) {
                         val tapX = vRect.centerX().toFloat()
                         val tapY = vRect.centerY().toFloat()
                         AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY, durationMs = 60L)
-                        Log.i(loggerTag, "Dispatched physical gesture tap & click on voice call button at ($tapX, $tapY)")
+                        Log.i(loggerTag, "Dispatched physical gesture tap fallback on voice call button at ($tapX, $tapY)")
                     }
                     onRetry(500L)
                     return
@@ -235,12 +235,12 @@ class WhatsAppCallEngine(
             AppFileLogger.action(service, loggerTag, "Clicking Voice Call button in WhatsApp header for $pendingRecipient")
             val vRect = Rect()
             voiceCallNode.getBoundsInScreen(vRect)
-            AccessibilityNodeUtils.clickElement(voiceCallNode, service)
-            if (vRect.width() > 0 && vRect.height() > 0) {
+            val clicked = AccessibilityNodeUtils.clickElement(voiceCallNode, service)
+            if (!clicked && vRect.width() > 0 && vRect.height() > 0) {
                 val tapX = vRect.centerX().toFloat()
                 val tapY = vRect.centerY().toFloat()
                 AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY, durationMs = 60L)
-                Log.i(loggerTag, "Dispatched physical gesture tap & click on voice call button at ($tapX, $tapY)")
+                Log.i(loggerTag, "Dispatched physical gesture tap fallback on voice call button at ($tapX, $tapY)")
             }
             hasAttemptedCallClick = true
             onRetry(600L)

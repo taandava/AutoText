@@ -377,5 +377,15 @@ real messages.
 - **UI Production Standardization:** Replaced dev/test-oriented UI button labels with verified production terminology ("Verify PIN", "Verify Unlock", "Lock Now", "Preview Voice").
 - **Intent Constant Refactoring:** Renamed `EXTRA_IS_TEST_ASSIST` to `EXTRA_IS_VERIFY_ASSIST`.
 
+---
+
+## 10. Universal Cross-Screen Reactivity & Diagnostics Remediation
+
+- **Global Event Bus:** `AppDataEvents.kt` provides reactive `SharedFlow` streams for tasks, campaigns, auto-reply rules, and execution logs.
+- **Cross-Screen State Linking:** `TasksListScreen`, `DailyCampaignScreen`, `AutoReplyScreen`, and `LogsView` collect reactive events and observe `Lifecycle.Event.ON_RESUME` to automatically refresh on tab switch or app return.
+- **Gesture Conflict Resolution:** De-conflicted `WhatsAppCallEngine.kt` to avoid concurrent simultaneous `dispatchGesture` strokes, preventing `Physical tap cancelled` warnings.
+- **Ingestion Scope Resilience:** Switched contact ingestion to `SuperApplication.instance.applicationScope` to avoid `rememberCoroutineScope` cancellation when bottom sheets dismiss.
+- **Verification:** 80/80 unit tests passing, release build signed and verified on live device Vivo I2401.
+
 See `docs/FILE_REFERENCE.md` for a per-file map of the codebase and
 `README.md` / `HOW_TO_RUN_OR_UPDATE_PROJECT.md` for setup.

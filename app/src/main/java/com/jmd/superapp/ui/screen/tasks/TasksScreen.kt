@@ -35,6 +35,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.jmd.superapp.core.AppDataEvents
 import com.jmd.superapp.data.model.ChannelType
 import com.jmd.superapp.data.model.ScheduledTask
 import com.jmd.superapp.data.model.TaskStatus
@@ -84,12 +88,23 @@ fun TasksListScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            val t = repository.getAllTasks()
-            withContext(Dispatchers.Main) {
-                tasks = t
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                refreshTasks()
             }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        refreshTasks()
+        AppDataEvents.tasksChanged.collect {
+            refreshTasks()
         }
     }
 
