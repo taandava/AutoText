@@ -64,7 +64,7 @@ class TaskLauncherActivity : Activity() {
         const val EXTRA_MESSAGE = "extra_message"
         const val EXTRA_RELOCK = "extra_relock"
         const val EXTRA_IS_BATCH = "extra_is_batch"
-        const val EXTRA_IS_TEST_ASSIST = "extra_is_test_assist"
+        const val EXTRA_IS_VERIFY_ASSIST = "extra_is_verify_assist"
         const val EXTRA_PIN = "extra_pin"
         const val EXTRA_MEDIA_URI = "extra_media_uri"
         const val EXTRA_WAKE_ONLY = "extra_wake_only"
@@ -159,7 +159,7 @@ class TaskLauncherActivity : Activity() {
         }
 
         val prefs = PreferenceManager(this)
-        if (intent.getBooleanExtra(EXTRA_IS_TEST_ASSIST, false)) {
+        if (intent.getBooleanExtra(EXTRA_IS_VERIFY_ASSIST, false)) {
             prefs.isA11yUserPaused = false
         }
 
@@ -173,11 +173,11 @@ class TaskLauncherActivity : Activity() {
         }
         val keyguardManager = getSystemService(KeyguardManager::class.java)
 
-        // Handle Test Screen Assist mode
-        val isTestAssist = intent.getBooleanExtra(EXTRA_IS_TEST_ASSIST, false)
-        if (isTestAssist) {
+        // Handle Verify Screen Assist mode
+        val isVerifyAssist = intent.getBooleanExtra(EXTRA_IS_VERIFY_ASSIST, false)
+        if (isVerifyAssist) {
             val passedPin = intent.getStringExtra(EXTRA_PIN) ?: prefs.deviceUnlockPin
-            TaskAccessibilityService.isTestAssistMode = true
+            TaskAccessibilityService.isAssistVerificationMode = true
             TaskAccessibilityService.armScreenAssist(
                 pin = passedPin,
                 shouldRelockAfterSend = false,

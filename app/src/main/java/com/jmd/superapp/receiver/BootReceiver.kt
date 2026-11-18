@@ -81,7 +81,7 @@ class BootReceiver : BroadcastReceiver() {
                 wakeLock?.acquire(15000L)
 
                 val launchIntent = Intent(context, TaskLauncherActivity::class.java).apply {
-                    putExtra(TaskLauncherActivity.EXTRA_IS_TEST_ASSIST, false)
+                    putExtra(TaskLauncherActivity.EXTRA_IS_VERIFY_ASSIST, false)
                     putExtra(TaskLauncherActivity.EXTRA_PIN, pin)
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }

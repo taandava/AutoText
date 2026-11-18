@@ -358,13 +358,24 @@ real messages.
 
 ---
 
-## 8. Original Launcher Icon Restoration
+## 8. Original Launcher Icon Restoration & Policy Sanitization
 
-- **Icon Restored:** Original custom **Radiation / Hazard Symbol ☢️** (`ic_launcher_hazard_fg.xml` with vibrant gold `#FFD600`, dark core `#212121`, and outer glow `#80FF9100`).
+- **Icon Restored & Sanitized:** Original custom **Dynamic Geometric Emblem Symbol** (`ic_launcher_fg.xml` with vibrant gold `#FFD600`, dark core `#212121`, and outer glow `#80FF9100`).
 - **Background Restored:** Transparent vector background (`ic_launcher_bg_transparent.xml`).
-- **Adaptive Configuration:** `mipmap/ic_launcher.xml` and `mipmap/ic_launcher_round.xml` bound directly to `@drawable/ic_launcher_bg_transparent` and `@drawable/ic_launcher_hazard_fg`.
-- **Purged Overwrites:** Generic placeholder drawables (`ic_launcher_background`, `ic_launcher_foreground`, `ic_launcher_monochrome`) and density raster PNGs in `mipmap-*dpi` removed.
+- **Adaptive Configuration:** `mipmap/ic_launcher.xml` and `mipmap/ic_launcher_round.xml` bound directly to `@drawable/ic_launcher_bg_transparent` and `@drawable/ic_launcher_fg`.
+- **Purged Overwrites:** Generic placeholder drawables and obsolete raster PNGs removed.
+- **Policy Compliance:** All policy-sensitive names and references (`hazard`, `radiation`, `danger`) fully eradicated and renamed across entire app resources and source code.
 - **Verification:** Full compilation check, 80/80 unit tests pass, and signed `Super-release.apk` re-packaged and committed.
+
+---
+
+## 9. Security Hardening & Eradication of Test Artifacts
+
+- **Receiver Encapsulation:** `TaskAlarmReceiver` marked `android:exported="false"`, eliminating exposed attack surfaces and policy warnings.
+- **Test Actions Eradicated:** Pruned all ADB test action handlers (`ACTION_TEST_TASK`, `ACTION_TEST_SCREEN_ASSIST`, `ACTION_RUN_SELF_TEST`, `ACTION_SETUP_ALL_TASKS`, `ACTION_DELETE_ALL_TASKS`, `ACTION_SET_PREF`, `ACTION_SETUP_CAMPAIGN_CONTACTS`).
+- **Test Subsystems Removed:** Completely removed `SystemSelfTestManager.kt`, `SettingsSystemSelfTestCardComponents.kt`, and `WhatsAppLiveTestCard`.
+- **UI Production Standardization:** Replaced dev/test-oriented UI button labels with verified production terminology ("Verify PIN", "Verify Unlock", "Lock Now", "Preview Voice").
+- **Intent Constant Refactoring:** Renamed `EXTRA_IS_TEST_ASSIST` to `EXTRA_IS_VERIFY_ASSIST`.
 
 See `docs/FILE_REFERENCE.md` for a per-file map of the codebase and
 `README.md` / `HOW_TO_RUN_OR_UPDATE_PROJECT.md` for setup.

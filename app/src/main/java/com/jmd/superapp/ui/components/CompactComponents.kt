@@ -73,7 +73,7 @@ enum class AppButtonVariant {
     /** Success green highlight for affirmative operations. */
     SUCCESS,
     /** Error red highlight for destructive operations. */
-    DANGER,
+    DESTRUCTIVE,
     /** Subtle outlined button with outline stroke. */
     OUTLINE
 }
@@ -118,7 +118,7 @@ fun AppButton(
         AppButtonVariant.PRIMARY -> MaterialTheme.colorScheme.primary
         AppButtonVariant.SECONDARY -> MaterialTheme.colorScheme.secondaryContainer
         AppButtonVariant.SUCCESS -> if (isDark) Color(0xFF1B5E20) else Color(0xFF2E7D32)
-        AppButtonVariant.DANGER -> MaterialTheme.colorScheme.error
+        AppButtonVariant.DESTRUCTIVE -> MaterialTheme.colorScheme.error
         AppButtonVariant.OUTLINE -> Color.Transparent
     }
 
@@ -126,7 +126,7 @@ fun AppButton(
         AppButtonVariant.PRIMARY -> MaterialTheme.colorScheme.onPrimary
         AppButtonVariant.SECONDARY -> MaterialTheme.colorScheme.onSecondaryContainer
         AppButtonVariant.SUCCESS -> Color.White
-        AppButtonVariant.DANGER -> MaterialTheme.colorScheme.onError
+        AppButtonVariant.DESTRUCTIVE -> MaterialTheme.colorScheme.onError
         AppButtonVariant.OUTLINE -> MaterialTheme.colorScheme.primary
     }
 

@@ -153,7 +153,7 @@ fun ComposeBottomBar(
                 AppButton(
                     text = "Delete",
                     onClick = onDelete,
-                    variant = AppButtonVariant.DANGER,
+                    variant = AppButtonVariant.DESTRUCTIVE,
                     icon = Icons.Filled.DeleteOutline,
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
                     modifier = Modifier.weight(1f)

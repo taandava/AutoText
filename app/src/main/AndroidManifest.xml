@@ -169,20 +169,12 @@
             </intent-filter>
         </service>
 
-        <!-- Alarm Receiver for Exact Scheduling & Task Setup (Internal Only) -->
-        <receiver android:name=".receiver.TaskAlarmReceiver" android:directBootAware="true" android:exported="true" tools:ignore="ExportedReceiver">
+        <!-- Alarm Receiver for Exact Scheduling & Task Dispatch (Internal Only) -->
+        <receiver android:name=".receiver.TaskAlarmReceiver" android:directBootAware="true" android:exported="false">
             <intent-filter>
                 <action android:name="com.jmd.superapp.ACTION_FIRE_TASK" />
                 <action android:name="com.jmd.superapp.ACTION_COUNTDOWN_TIMEOUT" />
-                <action android:name="com.jmd.superapp.ACTION_TEST_TASK" />
-                <action android:name="com.jmd.superapp.ACTION_SETUP_ALL_TASKS" />
-                <action android:name="com.jmd.superapp.ACTION_DUMP_LOGS" />
-                <action android:name="com.jmd.superapp.ACTION_DELETE_ALL_TASKS" />
                 <action android:name="com.jmd.superapp.ACTION_FIRE_CAMPAIGN" />
-                <action android:name="com.jmd.superapp.ACTION_SETUP_CAMPAIGN_CONTACTS" />
-                <action android:name="com.jmd.superapp.ACTION_SET_PREF" />
-                <action android:name="com.jmd.superapp.ACTION_TEST_SCREEN_ASSIST" />
-                <action android:name="com.jmd.superapp.ACTION_RUN_SELF_TEST" />
             </intent-filter>
         </receiver>
 

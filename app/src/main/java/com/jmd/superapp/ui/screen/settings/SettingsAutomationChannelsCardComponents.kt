@@ -366,16 +366,16 @@ fun SettingsAutomationChannelsCard(
 
             Spacer(modifier = Modifier.height(4.dp))
             AppButton(
-                text = "Test Voice",
+                text = "Preview Voice",
                 onClick = {
                     ttsEngine?.let { engine ->
                         engine.setSpeechRate(ttsRate)
                         engine.setPitch(ttsPitch)
                         engine.speak(
-                            "Namaste! This is your voice reminder test with Super.",
+                            "Namaste! This is your voice reminder preview with Super.",
                             TextToSpeech.QUEUE_FLUSH,
                             null,
-                            "test_utterance"
+                            "preview_utterance"
                         )
                     }
                 },

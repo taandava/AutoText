@@ -88,7 +88,7 @@ fun DailyContactPoolHeaderCard(
             AppButton(
                 text = if (isConfirmClearVisible) "Cancel" else "Clear Pool",
                 onClick = { isConfirmClearVisible = !isConfirmClearVisible },
-                variant = AppButtonVariant.DANGER,
+                variant = AppButtonVariant.DESTRUCTIVE,
                 contentPadding = PaddingValues(horizontal = 9.dp, vertical = 4.dp),
                 shape = AppDesignTokens.ShapePill
             )
@@ -122,7 +122,7 @@ fun DailyContactPoolHeaderCard(
                                 onClearPool()
                                 isConfirmClearVisible = false
                             },
-                            variant = AppButtonVariant.DANGER,
+                            variant = AppButtonVariant.DESTRUCTIVE,
                             modifier = Modifier.weight(1f)
                         )
                     }

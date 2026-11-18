@@ -1029,7 +1029,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             val name = if (i in task.recipientNames.indices) task.recipientNames[i] else "Friend"
             val personalizedMsg = personalize(task.messageText, name, phone)
 
-            val shouldEnforceQuota = !task.title.startsWith("Live Test") && PreferenceManager(appContext).isSmsQuotaLimitEnabled
+            val shouldEnforceQuota = PreferenceManager(appContext).isSmsQuotaLimitEnabled
             if (shouldEnforceQuota) {
                 val slotQuota = SmsQuotaManager.getSlotQuotaStatus(appContext, task.simSlot)
                 if (slotQuota.isLimitReached) {

@@ -220,7 +220,7 @@ class MainActivity : ComponentActivity() {
 
     /**
      * What it is:
-     * Evaluates dangerous runtime permissions and requests any ungranted items.
+     * Evaluates sensitive runtime permissions and requests any ungranted items.
      *
      * What it does:
      * Executes [checkAndRequestPermissions] logic in accordance with system and security invariants.

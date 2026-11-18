@@ -6,7 +6,7 @@
  * Architecture definition and implementation for [WhatsAppSetupScreen].
  *
  * What it does:
- * Guided setup wizard for WhatsApp and WhatsApp Business dispatch. Steps through Accessibility service enablement, battery optimization disablement, test ping message verification, lockscreen PIN setup, and permission status checks.
+ * Guided setup wizard for WhatsApp and WhatsApp Business dispatch. Steps through Accessibility service enablement, battery optimization disablement, ping message verification, lockscreen PIN setup, and permission status checks.
  *
  * Linked With:
  * - Models & Entities: [com.jmd.superapp.data.model.*]
@@ -74,8 +74,6 @@ fun WhatsAppSetupAndScreenAssistView(
     var isAutoLockAfterSend by remember { mutableStateOf(prefs.isAutoLockAfterSendEnabled) }
     var countryCode by remember { mutableStateOf(prefs.defaultCountryCode) }
 
-    var testPhone by remember { mutableStateOf("") }
-    var testMessage by remember { mutableStateOf("") }
     var showPinPromptDialog by remember { mutableStateOf(false) }
     var promptPinInput by remember { mutableStateOf("") }
 
@@ -95,7 +93,7 @@ fun WhatsAppSetupAndScreenAssistView(
             text = {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Enter your phone lock PIN to test auto-unlock, or select Swipe if your device has no password.",
+                        text = "Enter your phone lock PIN to verify auto-unlock, or select Swipe if your device has no password.",
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -125,13 +123,13 @@ fun WhatsAppSetupAndScreenAssistView(
                             prefs.isScreenAssistEnabled = true
                             isScreenAssistEnabled = true
                             showPinPromptDialog = false
-                            TaskAccessibilityService.testScreenAssist(context, "")
+                            TaskAccessibilityService.verifyScreenAssist(context, "")
                         },
                         variant = AppButtonVariant.SECONDARY,
                         modifier = Modifier.weight(1f)
                     )
                     AppButton(
-                        text = "Test PIN",
+                        text = "Verify PIN",
                         onClick = {
                             if (promptPinInput.isNotBlank()) {
                                 pinCode = promptPinInput
@@ -141,7 +139,7 @@ fun WhatsAppSetupAndScreenAssistView(
                                 prefs.isScreenAssistEnabled = true
                                 isScreenAssistEnabled = true
                                 showPinPromptDialog = false
-                                TaskAccessibilityService.testScreenAssist(context, promptPinInput)
+                                TaskAccessibilityService.verifyScreenAssist(context, promptPinInput)
                             } else {
                                 context.showAppToast("Enter at least 4 digits")
                             }
@@ -329,9 +327,9 @@ fun WhatsAppSetupAndScreenAssistView(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Test Screen Lock & Auto-Unlock Testing Hub
+                    // Screen Lock & Auto-Unlock Verification Hub
                     AppButton(
-                        text = "Test Unlock",
+                        text = "Verify Unlock",
                         onClick = {
                             if (!isScreenAssistEnabled) {
                                 isScreenAssistEnabled = true
@@ -343,7 +341,7 @@ fun WhatsAppSetupAndScreenAssistView(
                                 showPinPromptDialog = true
                                 return@AppButton
                             }
-                            TaskAccessibilityService.testScreenAssist(context, currentPin)
+                            TaskAccessibilityService.verifyScreenAssist(context, currentPin)
                         },
                         icon = Icons.Default.LockOpen,
                         variant = AppButtonVariant.PRIMARY,
@@ -360,7 +358,7 @@ fun WhatsAppSetupAndScreenAssistView(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     AppButton(
-                        text = "Test Lock",
+                        text = "Lock Now",
                         onClick = {
                             scope.launch {
                                 withContext(Dispatchers.IO) {
@@ -408,16 +406,6 @@ fun WhatsAppSetupAndScreenAssistView(
             // 5. Battery Optimization & Background Guide Enterprise Card
             item {
                 WhatsAppBatteryOptimizationCard(context = context)
-            }
-
-            // 6. Live Test WhatsApp Task Enterprise Card
-            item {
-                WhatsAppLiveTestCard(
-                    context = context,
-                    testPhone = testPhone,
-                    onTestPhoneChange = { testPhone = it },
-                    testMessage = testMessage
-                ) { newTestMessage -> testMessage = newTestMessage }
             }
 
             item {
@@ -530,7 +518,7 @@ fun WhatsAppA11yStatusCard(context: Context, prefs: PreferenceManager) {
                 )
             },
             icon = Icons.Default.AccessibilityNew,
-            variant = if (isOperational) AppButtonVariant.SUCCESS else AppButtonVariant.DANGER,
+            variant = if (isOperational) AppButtonVariant.SUCCESS else AppButtonVariant.DESTRUCTIVE,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -645,100 +633,4 @@ fun WhatsAppBatteryOptimizationCard(context: Context) {
 }
 
 
-/**
- * What it is:
- * Interactive end-to-end testing card enabling instant test dispatch to any phone number.
- *
- * What it does:
- * Renders interactive Material 3 UI for [WhatsAppLiveTestCard] adhering to application design invariants.
- *
- * Linked with:
- * - Architecture: [WhatsAppSetupScreen], [WhatsAppLiveTestCard]
- * @param context Active Android [Context].
- * @param testPhone Destination phone number input.
- * @param onTestPhoneChange Callback invoked as test phone number changes.
- * @param testMessage Test message content string.
- * @param onTestMessageChange Callback invoked as test message content changes.
- */
-@Composable
-fun WhatsAppLiveTestCard(
-    context: Context,
-    testPhone: String,
-    onTestPhoneChange: (String) -> Unit,
-    testMessage: String,
-    onTestMessageChange: (String) -> Unit
-) {
-    val scope = rememberCoroutineScope()
-    AppCard(modifier = Modifier.fillMaxWidth()) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(20.dp))
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Live Test", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
-        }
 
-        Spacer(modifier = Modifier.height(4.dp))
-        Text("Test sending a WhatsApp message right now. Lock your screen right after tapping if you want to test screen assistance!", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        AppInputField(
-            value = testPhone,
-            onValueChange = onTestPhoneChange,
-            label = "Phone Number",
-            placeholder = "e.g. 9876543210",
-            leadingIcon = Icons.Default.Phone,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-            accentColor = MaterialTheme.colorScheme.tertiary
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        AppInputField(
-            value = testMessage,
-            onValueChange = onTestMessageChange,
-            label = "Message Text",
-            placeholder = "Type test message...",
-            leadingIcon = Icons.Default.EditNote,
-            accentColor = MaterialTheme.colorScheme.tertiary
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        AppButton(
-            text = "Send Test",
-            onClick = {
-                if (!WhatsAppPackageHelper.isWhatsAppInstalled(context)) {
-                    context.showAppToast("WhatsApp is not installed on this device")
-                    return@AppButton
-                }
-                if (testPhone.trim().isEmpty()) {
-                    context.showAppToast("Please enter a phone number")
-                    return@AppButton
-                }
-                val messageToSend = testMessage.trim().ifEmpty { "Super Test Ping: Task is active!" }
-                scope.launch {
-                    val mutex = SequentialTaskEngine.getUiTaskMutex(context)
-                    val success = mutex.withLock {
-                        withContext(Dispatchers.IO) {
-                            val sender = WhatsAppSender(context)
-                            sender.send(
-                                taskId = 9999L,
-                                channel = ChannelType.WHATSAPP,
-                                recipientPhone = testPhone.trim(),
-                                messageText = messageToSend
-                            )
-                        }
-                    }
-                    if (success) {
-                        context.showAppToast("WhatsApp dispatched")
-                    } else {
-                        context.showAppToast("Failed to launch WhatsApp.")
-                    }
-                }
-            },
-            icon = Icons.Default.PlayArrow,
-            variant = AppButtonVariant.SUCCESS,
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}

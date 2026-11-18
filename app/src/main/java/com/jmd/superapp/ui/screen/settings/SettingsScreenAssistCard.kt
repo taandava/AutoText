@@ -80,7 +80,7 @@ fun SettingsScreenAssistCard(
             text = {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Enter your phone lock PIN to test auto-unlock, or select Swipe if your device has no password.",
+                        text = "Enter your phone lock PIN to verify auto-unlock, or select Swipe if your device has no password.",
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -110,13 +110,13 @@ fun SettingsScreenAssistCard(
                             prefs.isScreenAssistEnabled = true
                             isScreenAssistEnabled = true
                             showPinPromptDialog = false
-                            TaskAccessibilityService.testScreenAssist(context, "")
+                            TaskAccessibilityService.verifyScreenAssist(context, "")
                         },
                         variant = AppButtonVariant.SECONDARY,
                         modifier = Modifier.weight(1f)
                     )
                     AppButton(
-                        text = "Test PIN",
+                        text = "Verify PIN",
                         onClick = {
                             if (promptPinInput.isNotBlank()) {
                                 assistPin = promptPinInput
@@ -126,7 +126,7 @@ fun SettingsScreenAssistCard(
                                 prefs.isScreenAssistEnabled = true
                                 isScreenAssistEnabled = true
                                 showPinPromptDialog = false
-                                TaskAccessibilityService.testScreenAssist(context, promptPinInput)
+                                TaskAccessibilityService.verifyScreenAssist(context, promptPinInput)
                             } else {
                                 context.showAppToast("Enter at least 4 digits")
                             }
@@ -297,9 +297,9 @@ fun SettingsScreenAssistCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Primary Action: Test Screen Wake & Unlock
+            // Primary Action: Verify Screen Wake & Unlock
             AppButton(
-                text = "Test Unlock",
+                text = "Verify Unlock",
                 onClick = {
                     if (!isScreenAssistEnabled) {
                         isScreenAssistEnabled = true
@@ -311,7 +311,7 @@ fun SettingsScreenAssistCard(
                         showPinPromptDialog = true
                         return@AppButton
                     }
-                    TaskAccessibilityService.testScreenAssist(context, currentPin)
+                    TaskAccessibilityService.verifyScreenAssist(context, currentPin)
                 },
                 icon = Icons.Filled.LockOpen,
                 variant = AppButtonVariant.PRIMARY,
@@ -327,9 +327,9 @@ fun SettingsScreenAssistCard(
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            // Secondary Action: Test Screen Lock Only
+            // Secondary Action: Screen Lock Only
             AppButton(
-                text = "Test Lock",
+                text = "Lock Now",
                 onClick = {
                     context.showAppToast("Locking phone now...")
                     TaskAccessibilityService.lockScreenNow()

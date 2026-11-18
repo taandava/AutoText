@@ -262,11 +262,6 @@ fun SettingsView(
                     }
                     SettingsSubdivision.SYSTEM -> {
                         item {
-                            SettingsSystemSelfTestCard(
-                                context = context
-                            )
-                        }
-                        item {
                             SettingsStatusIndicatorsGuideCard(
                                 context = context,
                                 prefs = prefs

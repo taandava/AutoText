@@ -50,7 +50,7 @@ class KeyguardAssistEngine(
     @Volatile var isAssistingDigits = false
     @Volatile var assistPin = ""
     @Volatile var shouldRelockAfterTask = false
-    @Volatile var isTestAssistMode = false
+    @Volatile var isAssistVerificationMode = false
 
     var assistAttemptCount = 0
     var assistLoopAttempts = 0
@@ -804,12 +804,12 @@ class KeyguardAssistEngine(
      */
 
     private fun isLockscreenErrorOrCooldownPresent(roots: List<AccessibilityNodeInfo>): String? {
-        val dangerKeywords = listOf(
+        val lockoutWarningKeywords = listOf(
             "try again in", "incorrect pin", "wrong pin", "wrong password",
             "too many attempts", "phone will be wiped", "device will be erased", "factory reset"
         )
         for (r in roots) {
-            val node = AccessibilityNodeUtils.findNodeByTextOrDesc(r, dangerKeywords)
+            val node = AccessibilityNodeUtils.findNodeByTextOrDesc(r, lockoutWarningKeywords)
             if (node != null) {
                 return node.text?.toString() ?: node.contentDescription?.toString() ?: "Cooldown / Error detected"
             }

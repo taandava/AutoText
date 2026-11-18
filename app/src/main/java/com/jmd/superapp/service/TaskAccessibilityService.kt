@@ -112,7 +112,7 @@ class TaskAccessibilityService : AccessibilityService() {
         }
 
         @Volatile
-        var isTestAssistMode = false
+        var isAssistVerificationMode = false
 
         @Volatile
         var currentForegroundPackage: String? = null
@@ -329,7 +329,7 @@ class TaskAccessibilityService : AccessibilityService() {
             if (!dispatching) {
                 instance?.let { s ->
                     val prefs = PreferenceManager(s.applicationContext ?: s)
-                    if (prefs.isDynamicA11yOnDemandEnabled && !isAssistPending && !isTestAssistMode) {
+                    if (prefs.isDynamicA11yOnDemandEnabled && !isAssistPending && !isAssistVerificationMode) {
                         s.scheduleIdleDetach(3000L)
                     }
                 }
@@ -361,7 +361,7 @@ class TaskAccessibilityService : AccessibilityService() {
          * - Architecture: [TaskAccessibilityService], [isDispatchingActive]
          */
         @JvmStatic
-        fun isDispatchingActive(): Boolean = isDispatching || isAssistPending || isTestAssistMode || (pendingTaskId != 0L)
+        fun isDispatchingActive(): Boolean = isDispatching || isAssistPending || isAssistVerificationMode || (pendingTaskId != 0L)
 
         // Send result tracking (used by batch campaigns and scheduled tasks)
         const val RESULT_NONE = -1
@@ -959,7 +959,7 @@ class TaskAccessibilityService : AccessibilityService() {
                 s.keyguardAssistEngine.isAssistPending = true
                 s.keyguardAssistEngine.unlockPin = pin
                 s.keyguardAssistEngine.shouldRelockAfterSend = shouldRelockAfterSend
-                s.keyguardAssistEngine.isTestAssistMode = isTestAssistMode
+                s.keyguardAssistEngine.isAssistVerificationMode = isAssistVerificationMode
                 s.keyguardAssistEngine.resetInitialDelay()
                 s.startProactiveUnlockLoop()
                 s.handler.removeCallbacks(s.masterDisarmRunnable)
@@ -1012,7 +1012,7 @@ class TaskAccessibilityService : AccessibilityService() {
         @JvmStatic
         fun disarmScreenAssist() {
             isAssistPending = false
-            isTestAssistMode = false
+            isAssistVerificationMode = false
             instance?.let { s ->
                 s.handler.removeCallbacks(s.unlockLoopRunnable)
                 s.handler.removeCallbacks(s.debouncedUnlockRunnable)
@@ -1260,17 +1260,17 @@ class TaskAccessibilityService : AccessibilityService() {
 
         /**
          * What it is:
-         * Diagnostic tool locking the phone immediately and triggering scheduled screen assist 4 seconds later to verify setup.
+         * Verification tool locking the phone immediately and triggering scheduled screen assist 4 seconds later to verify setup.
          *
          * What it does:
-         * Executes [testScreenAssist] logic in accordance with system invariants.
+         * Executes [verifyScreenAssist] logic in accordance with system invariants.
          *
          * Linked with:
-         * - Architecture: [TaskAccessibilityService], [testScreenAssist]
+         * - Architecture: [TaskAccessibilityService], [verifyScreenAssist]
          * @param context Local Android context.
-         * @param pin Keyguard PIN to test.
+         * @param pin Keyguard PIN to verify.
          */
-        fun testScreenAssist(context: Context, pin: String) {
+        fun verifyScreenAssist(context: Context, pin: String) {
             val appContext = context.applicationContext
             val prefs = PreferenceManager(appContext)
             val effectivePin = pin.ifBlank { prefs.screenAssistPin }.trim()
@@ -1314,14 +1314,14 @@ class TaskAccessibilityService : AccessibilityService() {
                     return@launch
                 }
 
-                isTestAssistMode = true
+                isAssistVerificationMode = true
                 instance?.cancelIdleDetach()
 
                 context.showAppToast("Locking screen now... Auto-unlock will trigger in 4 seconds. Keep phone steady!", isLong = true)
 
                 // 1. Acquire PARTIAL_WAKE_LOCK BEFORE locking so CPU CANNOT sleep during countdown
                 val pm = appContext.getSystemService(POWER_SERVICE) as? PowerManager
-                val cpuWakeLock = pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Super:TestCountdownWakeLock")
+                val cpuWakeLock = pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Super:CountdownWakeLock")
                 cpuWakeLock?.acquire(15000L)
 
                 // 2. Lock physical screen
@@ -1329,15 +1329,15 @@ class TaskAccessibilityService : AccessibilityService() {
 
                 // 3. Hardware RTC AlarmManager guarantee
                 val alarmManager = appContext.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-                val testIntent = Intent(appContext, TaskLauncherActivity::class.java).apply {
-                    putExtra(TaskLauncherActivity.EXTRA_IS_TEST_ASSIST, true)
+                val verifyIntent = Intent(appContext, TaskLauncherActivity::class.java).apply {
+                    putExtra(TaskLauncherActivity.EXTRA_IS_VERIFY_ASSIST, true)
                     putExtra(TaskLauncherActivity.EXTRA_PIN, effectivePin)
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
                 val pendingIntent = PendingIntent.getActivity(
                     appContext,
                     8899,
-                    testIntent,
+                    verifyIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
 
@@ -1364,14 +1364,14 @@ class TaskAccessibilityService : AccessibilityService() {
 
                     val screenWakeLock = pm?.newWakeLock(
                         PowerManager.PARTIAL_WAKE_LOCK,
-                        "Super:TestScreenWakeLock"
+                        "Super:ScreenWakeLock"
                     )
                     screenWakeLock?.acquire(15000L)
 
                     val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                     val fullScreenNotification = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
                         .setSmallIcon(android.R.drawable.ic_lock_idle_lock)
-                        .setContentTitle("Unlock Test")
+                        .setContentTitle("Unlock Assist")
                         .setContentText("Waking screen and assisting lockscreen...")
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setCategory(NotificationCompat.CATEGORY_ALARM)
@@ -1396,14 +1396,14 @@ class TaskAccessibilityService : AccessibilityService() {
                     } else {
                         null
                     }
-                    appContext.startActivity(testIntent, optionsBundle)
+                    appContext.startActivity(verifyIntent, optionsBundle)
                 } catch (t: Throwable) {
-                    Log.e(TAG, "Error initiating test auto unlock", t)
+                    Log.e(TAG, "Error initiating auto unlock verification", t)
                 } finally {
                     runCatching {
                         if (cpuWakeLock?.isHeld == true) cpuWakeLock.release()
                     }
-                    // Clean up test alarm from AlarmManager so request code 8899 never lingers
+                    // Clean up verification alarm from AlarmManager so request code 8899 never lingers
                     runCatching {
                         alarmManager?.cancel(pendingIntent)
                         pendingIntent.cancel()
@@ -1429,7 +1429,7 @@ class TaskAccessibilityService : AccessibilityService() {
             isVoipCallActive = false
             setDispatchingState(false)
             isAssistPending = false
-            isTestAssistMode = false
+            isAssistVerificationMode = false
             isBatchCampaignMode = false
             currentMode = DispatchMode.DIRECT_SEND
             unlockPin = ""
@@ -1467,7 +1467,7 @@ class TaskAccessibilityService : AccessibilityService() {
          * Linked with:
          * - Architecture: [TaskAccessibilityService], [isCurrentlyDispatching]
          */
-        fun isCurrentlyDispatching(): Boolean = isDispatching || isAssistPending || isTestAssistMode
+        fun isCurrentlyDispatching(): Boolean = isDispatching || isAssistPending || isAssistVerificationMode
 
         /**
          * What it is:
@@ -1600,7 +1600,7 @@ class TaskAccessibilityService : AccessibilityService() {
             val appContext = applicationContext ?: this
             val prefs = PreferenceManager(appContext)
             // Only detach dynamically if WRITE_SECURE_SETTINGS is held so the service can auto-reconnect on demand
-            val isBusy = isDispatching || isAssistPending || isTestAssistMode || isVoipCallActive || com.jmd.superapp.engine.SequentialTaskEngine.isEngineActive()
+            val isBusy = isDispatching || isAssistPending || isAssistVerificationMode || isVoipCallActive || com.jmd.superapp.engine.SequentialTaskEngine.isEngineActive()
             if (prefs.isDynamicA11yOnDemandEnabled && AccessibilityHealthManager.hasWriteSecureSettings(appContext) && !isBusy) {
                 Log.i(TAG, "Idle detach: No active task, safely detaching accessibility for banking app isolation")
                 AccessibilityHealthManager.disableAccessibilityService(appContext)
@@ -1786,8 +1786,8 @@ class TaskAccessibilityService : AccessibilityService() {
                 handler.removeCallbacks(unlockLoopRunnable)
                 handler.removeCallbacks(debouncedUnlockRunnable)
                 handler.removeCallbacks(masterDisarmRunnable)
-                if (isTestAssistMode) {
-                    isTestAssistMode = false
+                if (isAssistVerificationMode) {
+                    isAssistVerificationMode = false
                     showAppToast("Auto-unlock aborted: $reason", isLong = true)
                     val prefs = PreferenceManager(applicationContext ?: this)
                     if (prefs.isDynamicA11yOnDemandEnabled) {
@@ -1817,8 +1817,8 @@ class TaskAccessibilityService : AccessibilityService() {
         handler.removeCallbacks(debouncedUnlockRunnable)
         handler.removeCallbacks(masterDisarmRunnable)
 
-        if (isTestAssistMode) {
-            isTestAssistMode = false
+        if (isAssistVerificationMode) {
+            isAssistVerificationMode = false
             showAppToast("Auto-unlock verified!", isLong = true)
             val prefs = PreferenceManager(applicationContext ?: this)
             if (prefs.isDynamicA11yOnDemandEnabled) {
@@ -2082,7 +2082,7 @@ class TaskAccessibilityService : AccessibilityService() {
             keyguardAssistEngine.isAssistPending = true
             keyguardAssistEngine.unlockPin = unlockPin
             keyguardAssistEngine.shouldRelockAfterSend = shouldRelockAfterSend
-            keyguardAssistEngine.isTestAssistMode = isTestAssistMode
+            keyguardAssistEngine.isAssistVerificationMode = isAssistVerificationMode
             keyguardAssistEngine.unlockAttemptCount = 0
             keyguardAssistEngine.unlockLoopAttempts = 0
             keyguardAssistEngine.isEnteringPinDigits = false
@@ -2091,7 +2091,7 @@ class TaskAccessibilityService : AccessibilityService() {
             handler.postDelayed(masterDisarmRunnable, 15000L)
         } else {
             val prefs = PreferenceManager(applicationContext ?: this)
-            if (prefs.isDynamicA11yOnDemandEnabled && !isAssistPending && !isTestAssistMode) {
+            if (prefs.isDynamicA11yOnDemandEnabled && !isAssistPending && !isAssistVerificationMode) {
                 scheduleIdleDetach(5000L)
             }
         }
@@ -2154,7 +2154,7 @@ class TaskAccessibilityService : AccessibilityService() {
             keyguardAssistEngine.isAssistPending = true
             keyguardAssistEngine.unlockPin = unlockPin
             keyguardAssistEngine.shouldRelockAfterSend = shouldRelockAfterSend
-            keyguardAssistEngine.isTestAssistMode = isTestAssistMode
+            keyguardAssistEngine.isAssistVerificationMode = isAssistVerificationMode
             keyguardAssistEngine.unlockAttemptCount = 0
             keyguardAssistEngine.unlockLoopAttempts = 0
             keyguardAssistEngine.isEnteringPinDigits = false
