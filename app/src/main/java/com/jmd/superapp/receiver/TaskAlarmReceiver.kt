@@ -1,0 +1,615 @@
+/**
+ * Package: com.jmd.superapp.receiver
+ * Module: Broadcast Receivers Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [TaskAlarmReceiver].
+ *
+ * What it does:
+ * Listens for exact RTC_WAKEUP alarms triggered by Android AlarmManager for scheduled task tasks. Wakes the device, logs alarm activation, updates task execution state, and enqueues the task ID into [com.jmd.superapp.engine.SequentialTaskEngine].
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.superapp.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.superapp.data.model.ChannelType], [com.jmd.superapp.data.model.RecurrenceType], [com.jmd.superapp.data.model.ScheduledTask], [com.jmd.superapp.data.model.TaskStatus]
+ * - Schedulers & Receivers: [com.jmd.superapp.scheduler.AlarmScheduler]
+ * - Services & Engines: [com.jmd.superapp.engine.SequentialTaskEngine]
+ * - Core Security & Utilities: [android.util.Log], [com.jmd.superapp.core.AppFileLogger], [com.jmd.superapp.core.TaskSafetyManager], [com.jmd.superapp.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [android.content.BroadcastReceiver]
+ */
+
+package com.jmd.superapp.receiver
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.util.Log
+import com.jmd.superapp.SuperApplication
+import com.jmd.superapp.core.AppFileLogger
+import com.jmd.superapp.core.TaskSafetyManager
+import com.jmd.superapp.data.model.ChannelType
+import com.jmd.superapp.data.model.RecurrenceType
+import com.jmd.superapp.data.model.ScheduledTask
+import com.jmd.superapp.data.model.TaskStatus
+import com.jmd.superapp.data.prefs.PreferenceManager
+import com.jmd.superapp.data.repo.AppRepository
+import com.jmd.superapp.engine.SequentialTaskEngine
+import com.jmd.superapp.scheduler.AlarmScheduler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+
+/**
+ * What it is:
+ * High-priority wakeful receiver dispatched by Android AlarmManager when a scheduled task is due.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [TaskAlarmReceiver].
+ *
+ * Linked with:
+ * - Architecture: [TaskAlarmReceiver], [TaskAlarmReceiver]
+ */
+class TaskAlarmReceiver : BroadcastReceiver() {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [TaskAlarmReceiver].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [TaskAlarmReceiver]
+     */
+
+    companion object {
+        private const val TAG = "TaskAlarmReceiver"
+        const val EXTRA_CANCELLED = "extra_cancelled"
+        const val ACTION_COUNTDOWN_TIMEOUT = "com.jmd.superapp.ACTION_COUNTDOWN_TIMEOUT"
+        const val ACTION_TEST_TASK = "com.jmd.superapp.ACTION_TEST_TASK"
+        const val ACTION_SETUP_ALL_TASKS = "com.jmd.superapp.ACTION_SETUP_ALL_TASKS"
+        const val ACTION_DUMP_LOGS = "com.jmd.superapp.ACTION_DUMP_LOGS"
+        const val ACTION_DELETE_ALL_TASKS = "com.jmd.superapp.ACTION_DELETE_ALL_TASKS"
+        const val ACTION_SETUP_CAMPAIGN_CONTACTS = "com.jmd.superapp.ACTION_SETUP_CAMPAIGN_CONTACTS"
+        const val ACTION_FIRE_CAMPAIGN = "com.jmd.superapp.ACTION_FIRE_CAMPAIGN"
+        const val ACTION_SET_PREF = "com.jmd.superapp.ACTION_SET_PREF"
+        const val ACTION_TEST_SCREEN_ASSIST = "com.jmd.superapp.ACTION_TEST_SCREEN_ASSIST"
+        const val ACTION_RUN_SELF_TEST = "com.jmd.superapp.ACTION_RUN_SELF_TEST"
+
+        /**
+         * What it is:
+         * Cancels all scheduled alarms and deletes all tasks from the SQLite database.
+         *
+         * What it does:
+         * Executes [deleteAllTasks] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAlarmReceiver], [deleteAllTasks]
+         * @param context Active Android [Context].
+         * @return Number of deleted tasks.
+         */
+        fun deleteAllTasks(context: Context): Int {
+            val repository = AppRepository(context)
+            val scheduler = AlarmScheduler(context)
+            val allTasks = repository.getAllTasks()
+            val count = allTasks.size
+            allTasks.forEach { task ->
+                scheduler.cancelTask(task.id, task)
+                repository.deleteTask(task.id)
+            }
+            com.jmd.superapp.core.TaskSafetyManager.resetSafeguards(context)
+            AppFileLogger.action(context, TAG, "Purged all $count scheduled tasks and cancelled all active alarms.")
+            return count
+        }
+
+        /**
+         * What it is:
+         * Sets up all 12 supported task types in the SQLite database and registers alarms.
+         *
+         * What it does:
+         * Executes [setupAllTasks] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAlarmReceiver], [setupAllTasks]
+         * @param context Active Android [Context].
+         * @param recipients Destination recipient numbers (defaults to empty list).
+         * @param staggerSeconds Staggered offset in seconds between sequential initial trigger times.
+         * @param repeatIntervalSeconds Repeat cycle duration in seconds (REPEAT_SECONDS).
+         * @param executeFirstImmediately If true, queues the first generated task into SequentialTaskEngine immediately.
+         * @param callDurationSeconds Auto-hangup duration for calls in seconds.
+         * @param includeDialTimeInCallDuration Whether dial time is counted towards call duration.
+         * @param delayBetweenCallsSeconds Pacing delay between sequential recipient calls.
+         * @param clearExisting If true, cancels all pending alarms and clears prior tasks from database.
+         * @return List of generated database row IDs for all 12 scheduled tasks.
+         */
+        fun setupAllTasks(
+            context: Context,
+            recipients: List<String> = emptyList(),
+            message: String = "Automated Task Message",
+            staggerSeconds: Int = 10,
+            repeatIntervalSeconds: Int = 10,
+            executeFirstImmediately: Boolean = false,
+            callDurationSeconds: Int = 10,
+            includeDialTimeInCallDuration: Boolean = true,
+            delayBetweenCallsSeconds: Int = 5,
+            clearExisting: Boolean = false
+        ): List<Long> {
+            val repository = AppRepository(context)
+            val scheduler = AlarmScheduler(context)
+            if (clearExisting) {
+                repository.getAllTasks().forEach { oldTask ->
+                    scheduler.cancelTask(oldTask.id)
+                    repository.deleteTask(oldTask.id)
+                }
+                com.jmd.superapp.core.TaskSafetyManager.resetSafeguards(context)
+                AppFileLogger.action(context, TAG, "Cleared existing tasks and reset safety breakers before batch setup")
+            }
+            val now = System.currentTimeMillis()
+            val createdTaskIds = mutableListOf<Long>()
+
+            ChannelType.entries.forEachIndexed { index, channel ->
+                val targetRecipients = if (channel == ChannelType.WHATSAPP_STATUS || channel == ChannelType.WHATSAPP_BUSINESS_STATUS) {
+                    listOf("STATUS")
+                } else {
+                    recipients
+                }
+                val trigger = now + ((index + 1) * staggerSeconds * 1000L)
+                val task = ScheduledTask(
+                    title = "Task ${index + 1} • ${channel.displayName}",
+                    channel = channel,
+                    recipients = targetRecipients,
+                    recipientNames = targetRecipients,
+                    messageText = message.ifBlank { "jai mata di" },
+                    triggerTimeMillis = trigger,
+                    recurrence = RecurrenceType.REPEAT_SECONDS,
+                    customIntervalMinutes = repeatIntervalSeconds,
+                    callDurationSeconds = callDurationSeconds,
+                    includeDialTimeInCallDuration = includeDialTimeInCallDuration,
+                    delayBetweenCallsSeconds = delayBetweenCallsSeconds,
+                    soundModeSetting = "NORMAL",
+                    simulatedCallerName = "Super Test",
+                    simulatedCallerNumber = recipients.firstOrNull() ?: "+919876543210",
+                    status = TaskStatus.PENDING
+                )
+                val insertedId = repository.insertTask(task)
+                val savedTask = task.copy(id = insertedId)
+                scheduler.scheduleTask(savedTask)
+                createdTaskIds.add(insertedId)
+                AppFileLogger.action(
+                    context,
+                    TAG,
+                    "Setup task #$insertedId channel=${channel.displayName} trigger=+${(index + 1) * staggerSeconds}s repeat=${repeatIntervalSeconds}s callDuration=${callDurationSeconds}s dialTime=$includeDialTimeInCallDuration"
+                )
+                if (executeFirstImmediately && index == 0) {
+                    SequentialTaskEngine.getInstance(context).enqueue(insertedId)
+                }
+            }
+            AppFileLogger.action(context, TAG, "ACTION_SETUP_ALL_TASKS: successfully created ${createdTaskIds.size} tasks (IDs: $createdTaskIds)")
+            return createdTaskIds
+        }
+
+        /**
+         * What it is:
+         * Dumps complete diagnostics, active tasks, execution logs, and system error traces to a file in external storage (super_execution_dump.txt) for IDE inspection and support.
+         *
+         * What it does:
+         * Executes [dumpExecutionLogsToFile] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [TaskAlarmReceiver], [dumpExecutionLogsToFile]
+         * @param context Active Android [Context].
+         * @return Dump file if created successfully, null otherwise.
+         */
+        fun dumpExecutionLogsToFile(context: Context): java.io.File? {
+            val repository = AppRepository(context)
+            val logs = repository.getAllLogs()
+            val tasks = repository.getAllTasks()
+            val traceTail = AppFileLogger.readLogFile(context, 1000)
+            val errTail = AppFileLogger.readErrorLog(context, 100)
+            val isIdle = TaskSafetyManager.isDeviceIdle(context)
+            val lastInteraction = TaskSafetyManager.lastHumanInteractionTimestamp.get()
+            val now = System.currentTimeMillis()
+
+            Log.i(TAG, "========== [START EXECUTION LOG DUMP (count=${logs.size})] ==========")
+            logs.take(60).forEach { log ->
+                Log.i(TAG, "EXEC_LOG: id=${log.id} taskId=${log.taskId} channel=${log.channel} recipient=${log.recipient} status=${log.status} details=${log.details}")
+            }
+            Log.i(TAG, "========== [END EXECUTION LOG DUMP] ==========")
+
+            return try {
+                val outDir = context.getExternalFilesDir(null) ?: context.filesDir
+                val outFile = java.io.File(outDir, "super_execution_dump.txt")
+                val content = buildString {
+                    appendLine("=== SYSTEM IDLE & SAFETY STATE ===")
+                    appendLine("isDeviceIdle = $isIdle")
+                    appendLine("lastHumanInteractionTimestamp = $lastInteraction (${(now - lastInteraction) / 1000}s ago)")
+                    appendLine("currentTimestamp = $now")
+                    appendLine("\n=== SCHEDULED TASKS IN DATABASE (Total: ${tasks.size}) ===")
+                    tasks.forEach { t ->
+                        val triggerDiffSec = (t.triggerTimeMillis - now) / 1000
+                        appendLine("[ID: ${t.id}] ${t.title} | Channel: ${t.channel.displayName} | Status: ${t.status} | Trigger: in ${triggerDiffSec}s | Recurrence: ${t.recurrence.displayName} (custom: ${t.customIntervalMinutes}) | Recipients: ${t.recipients}")
+                    }
+                    appendLine("\n=== EXECUTION LOGS (Total: ${logs.size}) ===")
+                    logs.take(100).forEach { log ->
+                        appendLine("[${log.timestampMillis}] [taskId=${log.taskId}] [${log.channel}] [${log.recipient}] status=${log.status} details=${log.details} snippet=${log.messageSnippet}")
+                    }
+                    appendLine("\n=== SYSTEM TRACE LOGS TAIL ===")
+                    appendLine(traceTail)
+                    appendLine("\n=== ERROR LOGS TAIL ===")
+                    appendLine(errTail)
+                }
+                outFile.writeText(content)
+                Log.i(TAG, "Dumped logs to ${outFile.absolutePath}")
+                outFile
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed dumping to external files dir: ${e.message}")
+                null
+            }
+        }
+         /**
+          * What it is:
+          * Populates dynamic contact pool with specified contact numbers and resets campaign sent ledgers to enable complete end-to-end verification of all daily outreach campaigns.
+          *
+          * What it does:
+          * Executes [setupDailyCampaignContacts] logic in accordance with system invariants.
+          *
+          * Linked with:
+          * - Architecture: [TaskAlarmReceiver], [setupDailyCampaignContacts]
+          */
+         fun setupDailyCampaignContacts(
+            context: Context,
+            phoneNumbers: List<String> = emptyList(),
+            triggerImmediately: Boolean = false
+        ): Int {
+            if (phoneNumbers.isEmpty()) {
+                Log.w(TAG, "setupDailyCampaignContacts called with empty phoneNumbers list")
+                return 0
+            }
+            val repository = AppRepository(context)
+            val campaignRepo = com.jmd.superapp.data.repo.DailyCampaignRepository(context)
+            val contacts = phoneNumbers.mapIndexed { idx, phone ->
+                val norm = phone.filter { it.isDigit() }.let { if (it.length == 10) "91$it" else it }
+                val label = "Contact ${idx + 1}"
+                com.jmd.superapp.data.model.DynamicContactItem(
+                    name = label,
+                    phone = phone,
+                    normalizedNumber = norm,
+                    source = "CONTACT",
+                    enabled = true,
+                    createdAt = System.currentTimeMillis()
+                )
+            }
+
+            // Insert into TABLE_DYNAMIC_POOL
+            val inserted = repository.upsertDynamicPoolBatch(contacts)
+
+            // Reset campaign ledger and send counts so all 5 numbers are pending and ready
+            listOf(1L, 2L, 3L).forEach { campId ->
+                campaignRepo.resetCampaignLedger(campId)
+            }
+
+            AppFileLogger.action(
+                context,
+                TAG,
+                "ACTION_SETUP_CAMPAIGN_CONTACTS: Configured ${phoneNumbers.size} pool contacts ($phoneNumbers) and cleared past campaign ledgers."
+            )
+
+            if (triggerImmediately) {
+                listOf(1L, 2L, 3L).forEach { campId ->
+                    com.jmd.superapp.scheduler.DailyCampaignScheduler.triggerNow(context, campId)
+                    AppFileLogger.action(context, TAG, "Triggered immediate execution for Daily Campaign #$campId")
+                }
+            }
+            return inserted
+        }
+    }
+
+    /**
+     * What it is:
+     * Receives wakeful alarm broadcasts from AlarmManager, validates task existence and state, checks cancellation flags, and enqueues the task ID into [SequentialTaskEngine].
+     *
+     * What it does:
+     * Executes [onReceive] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [TaskAlarmReceiver], [onReceive]
+     * @param context Active Context.
+     * @param intent Alarm trigger intent carrying task ID and flags.
+     */
+    override fun onReceive(context: Context, intent: Intent) {
+        try {
+            if (intent.action == ACTION_FIRE_CAMPAIGN) {
+            val campId = intent.getLongExtra("campaign_id", 1L)
+            val repo = AppRepository(context)
+            val cfg = repo.getDailyCampaignConfig(campId)
+            if (!cfg.isActive) {
+                AppFileLogger.w(context, TAG, "ACTION_FIRE_CAMPAIGN suppressed: Campaign #$campId is inactive.")
+                com.jmd.superapp.scheduler.DailyCampaignScheduler.cancel(context, campId)
+                return
+            }
+            AppFileLogger.action(context, TAG, "ACTION_FIRE_CAMPAIGN received for Campaign #$campId. Triggering batch execution.")
+            com.jmd.superapp.scheduler.DailyCampaignScheduler.triggerNow(context, campId)
+            com.jmd.superapp.scheduler.DailyCampaignScheduler.scheduleOrUpdate(context, campId)
+            return
+        }
+
+        if (intent.action == ACTION_DUMP_LOGS) {
+            dumpExecutionLogsToFile(context)
+            return
+        }
+
+        if (intent.action == ACTION_SETUP_CAMPAIGN_CONTACTS) {
+            val numbersParam = parseStringListExtra(intent, "numbers")
+            if (numbersParam.isEmpty()) {
+                Log.w(TAG, "ACTION_SETUP_CAMPAIGN_CONTACTS: No numbers specified, ignoring request.")
+                return
+            }
+            val triggerNow = intent.getBooleanExtra("triggerNow", false)
+            val count = setupDailyCampaignContacts(context, numbersParam, triggerNow)
+            Log.i(TAG, "ACTION_SETUP_CAMPAIGN_CONTACTS: Processed $count contacts, triggerNow=$triggerNow")
+            return
+        }
+
+        if (intent.action == ACTION_SETUP_ALL_TASKS) {
+            val recipientsParam = parseStringListExtra(intent, "recipients")
+            if (recipientsParam.isEmpty()) {
+                Log.w(TAG, "ACTION_SETUP_ALL_TASKS: No recipients specified, ignoring request.")
+                return
+            }
+            val messageParam = intent.getStringExtra("message")?.ifBlank { "Test Automation Message" }
+                ?: intent.getStringExtra("messageText")?.ifBlank { "Test Automation Message" }
+                ?: "Test Automation Message"
+            val staggerSec = intent.getIntExtra("staggerSeconds", 10)
+            val repeatIntervalSec = intent.getIntExtra("repeatIntervalSeconds", 10)
+            val executeImmediately = intent.getBooleanExtra("executeImmediately", false)
+            val callDurationSec = intent.getIntExtra("callDurationSeconds", 10)
+            val includeDialTime = intent.getBooleanExtra("includeDialTimeInCallDuration", true)
+            val delayBetweenCalls = intent.getIntExtra("delayBetweenCallsSeconds", 5)
+            val clearExisting = intent.getBooleanExtra("clearExisting", false)
+            setupAllTasks(
+                context = context,
+                recipients = recipientsParam,
+                message = messageParam,
+                staggerSeconds = staggerSec,
+                repeatIntervalSeconds = repeatIntervalSec,
+                executeFirstImmediately = executeImmediately,
+                callDurationSeconds = callDurationSec,
+                includeDialTimeInCallDuration = includeDialTime,
+                delayBetweenCallsSeconds = delayBetweenCalls,
+                clearExisting = clearExisting
+            )
+            return
+        }
+
+        if (intent.action == ACTION_SET_PREF || intent.action == "com.jmd.superapp.ACTION_SET_PREF") {
+            val key = intent.getStringExtra("key")
+            val prefs = PreferenceManager(context)
+            when (key) {
+                "autoLock" -> {
+                    val value = intent.getBooleanExtra("value", true)
+                    prefs.isAutoLockAfterSendEnabled = value
+                    AppFileLogger.action(context, TAG, "ACTION_SET_PREF: isAutoLockAfterSendEnabled=$value")
+                }
+                "screenAssistPin" -> {
+                    val pin = intent.getStringExtra("value") ?: ""
+                    prefs.screenAssistPin = pin
+                    prefs.isScreenAssistEnabled = pin.isNotBlank()
+                    prefs.screenAssistType = "PIN"
+                    AppFileLogger.action(context, TAG, "ACTION_SET_PREF: screenAssistPin set (len=${pin.length}, enabled=${prefs.isScreenAssistEnabled})")
+                }
+                "screenAssistEnabled" -> {
+                    val value = intent.getBooleanExtra("value", true)
+                    prefs.isScreenAssistEnabled = value
+                    AppFileLogger.action(context, TAG, "ACTION_SET_PREF: isScreenAssistEnabled=$value")
+                }
+            }
+            return
+        }
+
+        if (intent.action == ACTION_DELETE_ALL_TASKS) {
+            val count = deleteAllTasks(context)
+            AppFileLogger.action(context, TAG, "ACTION_DELETE_ALL_TASKS: Successfully deleted $count tasks.")
+            Log.i(TAG, "ACTION_DELETE_ALL_TASKS: Successfully deleted $count tasks.")
+            return
+        }
+
+        if (intent.action == ACTION_TEST_SCREEN_ASSIST) {
+            val pin = intent.getStringExtra("pin") ?: PreferenceManager(context).screenAssistPin
+            Log.i(TAG, "Triggering testScreenAssist via ${intent.action}...")
+            com.jmd.superapp.service.TaskAccessibilityService.testScreenAssist(context, pin)
+            return
+        }
+
+        if (intent.action == ACTION_RUN_SELF_TEST || intent.action == "com.jmd.superapp.ACTION_RUN_SELF_TEST") {
+            val pending = goAsync()
+            val scope = (context.applicationContext as? SuperApplication)?.applicationScope
+                ?: CoroutineScope(Dispatchers.IO + SupervisorJob())
+            scope.launch(Dispatchers.IO) {
+                try {
+                    val autoFix = intent.getBooleanExtra("autoFix", false)
+                    AppFileLogger.action(context, TAG, "Starting System Self-Test diagnostic (autoFix=$autoFix)...")
+                    val report = if (autoFix) {
+                        com.jmd.superapp.core.diagnostic.SystemSelfTestManager.autoFixAll(context)
+                    } else {
+                        com.jmd.superapp.core.diagnostic.SystemSelfTestManager.runFullDiagnostic(context)
+                    }
+                    report.items.forEach { item ->
+                        AppFileLogger.action(
+                            context,
+                            TAG,
+                            "[SELF-TEST] ${item.level}: ${item.title} -> ${item.summary} (${item.details})"
+                        )
+                        Log.i(TAG, "[SELF-TEST] ${item.level}: ${item.title} -> ${item.summary}")
+                    }
+                    AppFileLogger.action(
+                        context,
+                        TAG,
+                        "System Self-Test completed: ${report.passedCount} PASS, ${report.warningCount} WARN, ${report.failedCount} FAIL (Overall: ${report.overallHealthPercentage}%)"
+                    )
+                    Log.i(TAG, "System Self-Test completed: ${report.passedCount} PASS, ${report.warningCount} WARN, ${report.failedCount} FAIL (Overall: ${report.overallHealthPercentage}%)")
+                } catch (e: Exception) {
+                    Log.e(TAG, "System Self-Test execution failed: ${e.message}", e)
+                } finally {
+                    try { pending.finish() } catch (_: Throwable) {}
+                }
+            }
+            return
+        }
+
+        if (intent.action == ACTION_TEST_TASK) {
+            val repository = AppRepository(context)
+            val channelStr = intent.getStringExtra("channel") ?: "CALL"
+            val channel = ChannelType.fromString(channelStr)
+            val recipientsParam = parseStringListExtra(intent, "recipients")
+            val callDurationSec = intent.getIntExtra("callDurationSeconds", 10)
+            val includeDialTime = intent.getBooleanExtra("includeDialTimeInCallDuration", true)
+            val delayBetweenCalls = intent.getIntExtra("delayBetweenCallsSeconds", 5)
+            val msgText = intent.getStringExtra("messageText") ?: "Super test message for $recipientsParam"
+            if (intent.hasExtra("autoLock")) {
+                PreferenceManager(context).isAutoLockAfterSendEnabled = intent.getBooleanExtra("autoLock", true)
+            }
+            if (intent.hasExtra("smsQuotaEnabled")) {
+                PreferenceManager(context).isSmsQuotaLimitEnabled = intent.getBooleanExtra("smsQuotaEnabled", true)
+            }
+            if (intent.hasExtra("dailySmsLimit")) {
+                PreferenceManager(context).dailySmsSafetyLimit = intent.getIntExtra("dailySmsLimit", 100)
+            }
+            val simulatedCallerName = intent.getStringExtra("simulatedCallerName")
+                ?: intent.getStringExtra("simulated_caller_name")
+                ?: msgText.ifBlank { "Incoming Call" }
+            val simulatedCallerNumber = intent.getStringExtra("simulatedCallerNumber")
+                ?: intent.getStringExtra("simulated_caller_number")
+                ?: recipientsParam.firstOrNull()
+                ?: "+91 98765 43210"
+            val soundMode = intent.getStringExtra("soundModeSetting") ?: "NORMAL"
+            val mediaUri = intent.getStringExtra("mediaUri") ?: ""
+
+            val testTask = ScheduledTask(
+                title = "${channel.displayName} Test",
+                channel = channel,
+                recipients = recipientsParam,
+                recipientNames = recipientsParam,
+                messageText = msgText,
+                triggerTimeMillis = System.currentTimeMillis(),
+                callDurationSeconds = callDurationSec,
+                includeDialTimeInCallDuration = includeDialTime,
+                delayBetweenCallsSeconds = delayBetweenCalls,
+                soundModeSetting = soundMode,
+                simulatedCallerName = simulatedCallerName,
+                simulatedCallerNumber = simulatedCallerNumber,
+                mediaUri = mediaUri,
+                status = TaskStatus.PENDING
+            )
+            val insertedId = repository.insertTask(testTask)
+            AppFileLogger.action(context, TAG, "Inserted ACTION_TEST_TASK #$insertedId channel=${channel.displayName} recipients=$recipientsParam duration=${callDurationSec}s")
+            SequentialTaskEngine.getInstance(context).enqueue(insertedId)
+            return
+        }
+
+        val taskId = intent.getLongExtra(AlarmScheduler.EXTRA_TASK_ID, -1L).let {
+            if (it == -1L) intent.getIntExtra(AlarmScheduler.EXTRA_TASK_ID, -1).toLong() else it
+        }.let {
+            if (it == -1L) intent.getStringExtra(AlarmScheduler.EXTRA_TASK_ID)?.toLongOrNull() ?: -1L else it
+        }.let {
+            if (it == -1L) intent.getLongExtra("task_id", -1L) else it
+        }.let {
+            if (it == -1L) intent.getIntExtra("task_id", -1).toLong() else it
+        }
+
+        AppFileLogger.action(context, TAG, "TaskAlarmReceiver received action=${intent.action}, taskId=$taskId")
+        if (intent.action == ACTION_COUNTDOWN_TIMEOUT) {
+            AppFileLogger.action(context, TAG, "Countdown timer elapsed for Task #$taskId. Enqueuing for execution.")
+        }
+
+        if (taskId == -1L) {
+            AppFileLogger.w(context, TAG, "TaskAlarmReceiver: taskId missing or invalid (-1)")
+            return
+        }
+        val isCancelled = intent.getBooleanExtra(EXTRA_CANCELLED, false)
+
+        val repository = AppRepository(context)
+        val task = repository.getTaskById(taskId) ?: run {
+            AppFileLogger.w(context, TAG, "Task #$taskId not found in database")
+            Log.w(TAG, "Task $taskId not found in database")
+            return
+        }
+
+        if (isCancelled) {
+            Log.i(TAG, "Task #$taskId execution cancelled via intent flag. Updating DB and cancelling alarms.")
+            AppFileLogger.action(context, TAG, "Task #$taskId execution cancelled via intent flag.")
+            repository.updateTaskStatus(taskId, TaskStatus.CANCELLED)
+            AlarmScheduler(context).cancelTask(taskId, task)
+            return
+        }
+
+        val isManualRun = intent.getBooleanExtra(AlarmScheduler.EXTRA_MANUAL_RUN, false)
+        if (isManualRun) {
+            AppFileLogger.action(context, TAG, "Manual run requested for Task #$taskId (current status: ${task.status}). Resetting to PENDING.")
+            if (task.status != TaskStatus.PENDING) {
+                repository.updateTaskStatus(taskId, TaskStatus.PENDING)
+            }
+        } else {
+            if (task.status == TaskStatus.CANCELLED) {
+                Log.w(TAG, "Task #$taskId is marked CANCELLED in DB. Skipping execution.")
+                AppFileLogger.w(context, TAG, "Alarm triggered for CANCELLED Task #$taskId. Suppressed.")
+                return
+            }
+
+            if (task.status == TaskStatus.PENDING_CONFIRMATION && task.recurrence == RecurrenceType.ONCE) {
+                Log.w(TAG, "Task #$taskId is Awaiting Confirmation. Skipping stale alarm trigger without manual retry.")
+                AppFileLogger.w(context, TAG, "Alarm triggered for PENDING_CONFIRMATION Task #$taskId. Suppressed.")
+                return
+            }
+
+            if (task.status == TaskStatus.FAILED && task.recurrence == RecurrenceType.ONCE) {
+                Log.w(TAG, "Task #$taskId is marked FAILED in DB. Skipping stale alarm trigger without manual retry.")
+                AppFileLogger.w(context, TAG, "Alarm triggered for FAILED Task #$taskId. Suppressed.")
+                AlarmScheduler(context).cancelTask(taskId, task)
+                return
+            }
+
+            if (task.status == TaskStatus.DONE && task.recurrence == RecurrenceType.ONCE) {
+                Log.d(TAG, "Task #$taskId is already marked DONE. Skipping alarm trigger.")
+                AlarmScheduler(context).cancelTask(taskId, task)
+                return
+            }
+        }
+
+        // Pre-flight Idle Check: Only trigger and complete task when idle (unless manually triggered from UI)
+        if (!isManualRun && !TaskSafetyManager.isDeviceIdle(context)) {
+            val idleSince = (System.currentTimeMillis() - TaskSafetyManager.lastHumanInteractionTimestamp.get()) / 1000
+            val reason = "Alarm fired while device was in active human use (${idleSince}s since last interaction)"
+            Log.i(TAG, "Task #$taskId postponed by 30s: $reason")
+            AppFileLogger.action(context, TAG, "Auto-postponing Task #$taskId: $reason. Will trigger once device is idle.")
+            TaskSafetyManager.postponeTask(context, taskId, reason = reason)
+            return
+        }
+
+        Log.d(TAG, "Alarm triggered for Task ID: $taskId. Routing to SequentialTaskEngine.")
+        AppFileLogger.action(context, TAG, "Alarm triggered for Task #${task.id} (${task.title}) [${task.channel.displayName}] -> SequentialTaskEngine")
+        val enqueued = SequentialTaskEngine.getInstance(context).enqueue(taskId)
+        if (!enqueued) {
+            Log.w(TAG, "Task #$taskId is already active or queued in SequentialTaskEngine. Suppressing duplicate alarm dispatch.")
+            AppFileLogger.w(context, TAG, "Task #$taskId already active in SequentialTaskEngine pipeline. Duplicate alarm trigger suppressed.")
+        }
+    } catch (t: Throwable) {
+        Log.e(TAG, "Unexpected error in TaskAlarmReceiver onReceive", t)
+    }
+}
+
+    private fun parseStringListExtra(intent: Intent, key: String): List<String> {
+        val stringVal = intent.getStringExtra(key)
+        if (!stringVal.isNullOrBlank()) {
+            return stringVal.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+        }
+        val arrayVal = intent.getStringArrayExtra(key)
+        if (!arrayVal.isNullOrEmpty()) {
+            return arrayVal.toList()
+        }
+        val listVal = intent.getStringArrayListExtra(key)
+        if (!listVal.isNullOrEmpty()) {
+            return listVal
+        }
+        return emptyList()
+    }
+}
+

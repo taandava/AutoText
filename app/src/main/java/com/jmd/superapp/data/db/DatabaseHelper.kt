@@ -1,0 +1,640 @@
+/**
+ * Package: com.jmd.superapp.data.db
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [DatabaseHelper].
+ *
+ * What it does:
+ * Provides thread-safe SQLite database initialization, schema versioning, transaction isolation, and scheduled schema migrations across database versions 1 through 6. [com.jmd.superapp.data.repo.DailyCampaignRepository], [com.jmd.superapp.data.repo.LogRepository], [com.jmd.superapp.data.repo.AutoReplyRepository], [com.jmd.superapp.data.repo.WhatsAppRepository]
+ *
+ * Linked With:
+ * - Repositories: [android.database.sqlite.SQLiteDatabase]
+ * - Core Security & Utilities: [android.util.Log]
+ * - Android Framework & Jetpack: [android.database.sqlite.SQLiteOpenHelper]
+ */
+
+package com.jmd.superapp.data.db
+
+import android.content.*
+import android.util.Log
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+
+/**
+ * What it is:
+ * Thread-safe SQLite OpenHelper managing all relational persistence tables for Super.
+ *
+ * What it does:
+ * Manages 15 relational tables:
+ *
+ * Linked with:
+ * - Architecture: [DatabaseHelper], [DatabaseHelper]
+ */
+class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(context.applicationContext, DATABASE_NAME, null, DATABASE_VERSION) {
+
+    init {
+        try {
+            val newDb = context.getDatabasePath(DATABASE_NAME)
+            if (!newDb.exists()) {
+                val legacyHelperDb = context.getDatabasePath("helper.db")
+                val legacyAutoTextDb = context.getDatabasePath("autotext.db")
+                if (legacyHelperDb.exists()) {
+                    legacyHelperDb.copyTo(newDb, overwrite = false)
+                } else if (legacyAutoTextDb.exists()) {
+                    legacyAutoTextDb.copyTo(newDb, overwrite = false)
+                }
+            }
+        } catch (t: Throwable) {
+            Log.w(TAG, "Legacy database copy note: ${t.message}")
+        }
+    }
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [DatabaseHelper].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [DatabaseHelper]
+     */
+
+    companion object {
+        private const val TAG = "DatabaseHelper"
+        const val DATABASE_NAME = "super.db"
+        const val DATABASE_VERSION = 9
+
+        @Volatile
+        private var instance: DatabaseHelper? = null
+
+        /**
+         * What it is:
+         * Returns the thread-safe singleton instance of [DatabaseHelper].
+         *
+         * What it does:
+         * Executes [getInstance] logic in accordance with system invariants.
+         *
+         * Linked with:
+         * - Architecture: [DatabaseHelper], [getInstance]
+         * @param context Target Android application or activity context.
+         * @return Singleton [DatabaseHelper] instance.
+         */
+        fun getInstance(context: Context): DatabaseHelper {
+            return instance ?: synchronized(this) {
+                instance ?: DatabaseHelper(context.applicationContext).also { instance = it }
+            }
+        }
+
+        // Tables
+        const val TABLE_TASKS = "tasks"
+        const val TABLE_RECIPIENTS = "recipients"
+        const val TABLE_TEMPLATES = "templates"
+        const val TABLE_AUTO_REPLY = "auto_reply_rules"
+        const val TABLE_CAMPAIGNS = "campaigns"
+        const val TABLE_DRIP_STEPS = "drip_steps"
+        const val TABLE_LOGS = "execution_logs"
+        const val TABLE_DYNAMIC_POOL = "dynamic_contact_pool"
+        const val TABLE_DAILY_CAMPAIGN = "daily_campaign_config"
+        const val TABLE_AUTO_REPLY_HISTORY = "auto_reply_history"
+        const val TABLE_CONTACT_SEQUENCES = "contact_sequences"
+        const val TABLE_SEQUENCE_STEPS = "sequence_steps"
+        const val TABLE_WHATSAPP_GROUPS = "whatsapp_groups"
+        const val TABLE_DAILY_CAMPAIGN_SENT = "daily_campaign_sent_ledger"
+        const val TABLE_TASK_DELIVERIES = "task_recipient_deliveries"
+        const val TABLE_APP_PRIVACY_CONFIGS = "app_privacy_configs"
+        const val TABLE_DISPATCH_JOURNAL = "dispatch_journal"
+    }
+
+    /**
+     * What it is:
+     * Configures database connection before schema creation, migrations, or queries.
+     *
+     * What it does:
+     * Enables SQLite Write-Ahead Logging (WAL) for high-concurrency read/write operations and enforces foreign key relational constraints.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [onConfigure]
+     */
+    override fun onConfigure(db: SQLiteDatabase) {
+        super.onConfigure(db)
+        try {
+            db.enableWriteAheadLogging()
+            db.setForeignKeyConstraintsEnabled(true)
+        } catch (e: Exception) {
+            Log.w("DatabaseHelper", "onConfigure WAL/ForeignKeys failed: ${e.message}")
+        }
+    }
+
+    /**
+     * What it is:
+     * Executes initial schema creation for all 15 relational tables, indices, and seed records.
+     *
+     * What it does:
+     * Executes [onCreate] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [onCreate]
+     * @param db Target SQLiteDatabase instance.
+     */
+    override fun onCreate(db: SQLiteDatabase) {
+        db.execSQL("CREATE TABLE $TABLE_TASKS (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, channel TEXT, recipients TEXT, recipient_names TEXT, message_text TEXT, trigger_time INTEGER, recurrence TEXT, custom_interval_minutes INTEGER, days_of_week TEXT, status TEXT, sim_slot INTEGER, ask_before_send INTEGER, sound_mode TEXT, simulated_caller_name TEXT DEFAULT '', simulated_caller_number TEXT DEFAULT '', simulated_call_style TEXT DEFAULT 'PIXEL', created_at INTEGER, last_executed INTEGER, execution_count INTEGER, media_uri TEXT, call_duration_seconds INTEGER DEFAULT 0, include_dial_time INTEGER DEFAULT 0, call_sequence_mode TEXT DEFAULT 'GIVEN', delay_between_calls_seconds INTEGER DEFAULT 5, call_failure_policy TEXT DEFAULT 'CONTINUE')")
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_status_trigger ON $TABLE_TASKS(status, trigger_time)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+
+        db.execSQL("CREATE TABLE $TABLE_RECIPIENTS (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, phone_or_email TEXT, group_name TEXT)")
+
+        db.execSQL("""
+            CREATE TABLE $TABLE_AUTO_REPLY (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                channel TEXT,
+                reply_text TEXT,
+                trigger_pattern TEXT,
+                is_exact_match INTEGER,
+                reply_contacts_only INTEGER,
+                reply_non_contacts_only INTEGER,
+                start_hour INTEGER,
+                start_minute INTEGER,
+                end_hour INTEGER,
+                end_minute INTEGER,
+                cooldown_minutes INTEGER,
+                call_event_type TEXT DEFAULT 'BOTH',
+                max_daily_replies INTEGER DEFAULT 1,
+                is_enabled INTEGER
+            )
+        """.trimIndent())
+
+
+        db.execSQL("""
+            CREATE TABLE $TABLE_CAMPAIGNS (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT,
+                recipients TEXT,
+                is_enabled INTEGER,
+                current_step INTEGER,
+                total_steps INTEGER
+            )
+        """.trimIndent())
+
+        db.execSQL("""
+            CREATE TABLE $TABLE_DRIP_STEPS (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                campaign_id INTEGER,
+                step_order INTEGER,
+                delay_days INTEGER,
+                delay_hours INTEGER,
+                message_text TEXT,
+                channel TEXT
+            )
+        """.trimIndent())
+
+        db.execSQL("""
+            CREATE TABLE $TABLE_LOGS (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task_id INTEGER,
+                channel TEXT,
+                recipient TEXT,
+                message_snippet TEXT,
+                status TEXT,
+                details TEXT,
+                segments INTEGER DEFAULT 1,
+                timestamp INTEGER
+            )
+        """.trimIndent())
+
+        ensureDynamicPoolTables(db)
+        com.jmd.superapp.core.DispatchJournal.ensureTable(db)
+    }
+
+    /**
+     * What it is:
+     * Invoked whenever the database connection is opened.
+     *
+     * What it does:
+     * Ensures all dynamic pool tables, supplemental columns, and legacy group row prunings are enforced.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [onOpen]
+     * @param db Target SQLiteDatabase instance.
+     */
+    override fun onOpen(db: SQLiteDatabase) {
+        super.onOpen(db)
+        ensureDynamicPoolTables(db)
+        com.jmd.superapp.core.DispatchJournal.ensureTable(db)
+        pruneLegacyPoolAndGroupRows(db)
+    }
+
+    /**
+     * What it is:
+     * Executes non-destructive schema migrations when upgrading across database versions.
+     *
+     * What it does:
+     * Executes [onUpgrade] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [onUpgrade]
+     * @param db Target SQLiteDatabase instance.
+     * @param oldVersion Pre-existing database version number.
+     * @param newVersion Target updated database version number.
+     */
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        ensureDynamicPoolTables(db)
+        deduplicateAllPools(db)
+
+        if (oldVersion < 4) {
+            pruneLegacyPoolAndGroupRows(db)
+        }
+    }
+
+    /**
+     * What it is:
+     * Deduplicates dynamic contact pool records, group entries, and recipient lists by normalized number.
+     *
+     * What it does:
+     * Enforces unique indices to prevent redundant rows from entering tables in future operations.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [deduplicateAllPools]
+     * @param db Target SQLiteDatabase instance.
+     */
+    private fun deduplicateAllPools(db: SQLiteDatabase) {
+        runCatching {
+            // 1. Deduplicate dynamic_contact_pool by normalized_number
+            db.execSQL("""
+                DELETE FROM $TABLE_DYNAMIC_POOL
+                WHERE id NOT IN (
+                    SELECT MIN(id)
+                    FROM $TABLE_DYNAMIC_POOL
+                    GROUP BY normalized_number
+                )
+            """.trimIndent())
+
+            // 2. Deduplicate group items in dynamic_contact_pool by group name
+            db.execSQL("""
+                DELETE FROM $TABLE_DYNAMIC_POOL
+                WHERE normalized_number LIKE 'group:%'
+                  AND id NOT IN (
+                    SELECT MIN(id)
+                    FROM $TABLE_DYNAMIC_POOL
+                    WHERE normalized_number LIKE 'group:%'
+                    GROUP BY LOWER(TRIM(name))
+                )
+            """.trimIndent())
+
+            // 4. Deduplicate recipients table by phone_or_email
+            db.execSQL("""
+                DELETE FROM $TABLE_RECIPIENTS
+                WHERE id NOT IN (
+                    SELECT MIN(id)
+                    FROM $TABLE_RECIPIENTS
+                    GROUP BY phone_or_email
+                )
+            """.trimIndent())
+
+            // 5. Ensure UNIQUE indexes exist to permanently prevent future duplicate inserts
+            try { db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_pool_unique_norm ON $TABLE_DYNAMIC_POOL(normalized_number)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        }
+    }
+
+    /**
+     * What it is:
+     * Handles non-destructive schema adjustments during app downgrades to prevent unhandled exceptions.
+     *
+     * What it does:
+     * Executes [onDowngrade] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [onDowngrade]
+     * @param db Target SQLiteDatabase instance.
+     * @param oldVersion Pre-existing higher database version.
+     * @param newVersion Target downgraded database version.
+     */
+    override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // Defensive non-destructive downgrade to avoid SQLiteException failures
+        ensureDynamicPoolTables(db)
+    }
+
+    /**
+     * What it is:
+     * Cleanses legacy and corrupted entries from dynamic contact pools and WhatsApp group tables.
+     *
+     * What it does:
+     * Removes status text, ephemeral indicators, web links, and individual contacts mistakenly classified as groups.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [pruneLegacyPoolAndGroupRows]
+     * @param db Target SQLiteDatabase instance.
+     */
+    private fun pruneLegacyPoolAndGroupRows(db: SQLiteDatabase) {
+        runCatching {
+            db.execSQL(
+                "DELETE FROM $TABLE_DYNAMIC_POOL " +
+                    "WHERE phone NOT LIKE 'group:%' AND phone NOT LIKE 'chat:%' AND phone NOT LIKE 'broadcast:%' " +
+                    "AND source NOT IN ('WA_CHAT', 'WA_BUSINESS', 'WA_GROUP', 'WA_BUSINESS_GROUP', 'WA_BROADCAST', 'WA_STATUS') " +
+                    "AND (normalized_number IS NULL OR LENGTH(TRIM(normalized_number)) < 7) " +
+                    "AND (phone IS NULL OR LENGTH(TRIM(phone)) < 7)"
+            )
+        }
+
+        runCatching {
+            db.execSQL(
+                """
+                DELETE FROM $TABLE_DYNAMIC_POOL
+                WHERE normalized_number LIKE 'group:%'
+                  AND TRIM(name) IN (
+                      SELECT TRIM(name) FROM $TABLE_DYNAMIC_POOL
+                      WHERE normalized_number NOT LIKE 'group:%'
+                        AND normalized_number NOT LIKE 'broadcast:%'
+                        AND normalized_number NOT LIKE 'chat:%'
+                        AND LENGTH(phone) >= 7
+                  )
+                """.trimIndent()
+            )
+        }
+    }
+
+    /**
+     * What it is:
+     * Inspects PRAGMA table_info to safely append a column to a table if it does not yet exist.
+     *
+     * What it does:
+     * Executes [addColumnIfNotExists] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [addColumnIfNotExists]
+     * @param db Target SQLiteDatabase instance.
+     * @param table Name of the table to inspect.
+     * @param column Name of the column to append if absent.
+     * @param typeDef SQLite type and optional default value declaration (e.g. "TEXT DEFAULT ''").
+     */
+    private fun addColumnIfNotExists(db: SQLiteDatabase, table: String, column: String, typeDef: String) {
+        try {
+            var exists = false
+            db.rawQuery("PRAGMA table_info($table)", null).use { cursor ->
+                val nameIndex = cursor.getColumnIndex("name")
+                if (nameIndex != -1) {
+                    while (cursor.moveToNext()) {
+                        if (cursor.getString(nameIndex).equals(column, ignoreCase = true)) {
+                            exists = true
+                            break
+                        }
+                    }
+                }
+            }
+            if (!exists) {
+                db.execSQL("ALTER TABLE $table ADD COLUMN $column $typeDef")
+            }
+        } catch (e: Exception) {
+            Log.w("DatabaseHelper", "Failed to add column $column to $table: ${e.message}")
+        }
+    }
+
+    /**
+     * What it is:
+     * Initializes and verifies all secondary persistence tables, supplemental feature columns, seed campaigns, and performance indices across dynamic contact pools and delivery ledgers.
+     *
+     * What it does:
+     * Executes [ensureDynamicPoolTables] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [ensureDynamicPoolTables]
+     * @param db Target SQLiteDatabase instance.
+     */
+    private fun ensureDynamicPoolTables(db: SQLiteDatabase) {
+        addColumnIfNotExists(db, TABLE_TASKS, "media_uri", "TEXT DEFAULT ''")
+        addColumnIfNotExists(db, TABLE_TASKS, "custom_interval_minutes", "INTEGER DEFAULT 60")
+        addColumnIfNotExists(db, TABLE_TASKS, "sound_mode", "TEXT DEFAULT 'NORMAL'")
+        addColumnIfNotExists(db, TABLE_TASKS, "simulated_caller_name", "TEXT DEFAULT ''")
+        addColumnIfNotExists(db, TABLE_TASKS, "simulated_caller_number", "TEXT DEFAULT ''")
+        addColumnIfNotExists(db, TABLE_TASKS, "simulated_call_style", "TEXT DEFAULT 'PIXEL'")
+        addColumnIfNotExists(db, TABLE_TASKS, "call_duration_seconds", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_TASKS, "include_dial_time", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_TASKS, "call_sequence_mode", "TEXT DEFAULT 'GIVEN'")
+        addColumnIfNotExists(db, TABLE_TASKS, "delay_between_calls_seconds", "INTEGER DEFAULT 5")
+        addColumnIfNotExists(db, TABLE_TASKS, "call_failure_policy", "TEXT DEFAULT 'CONTINUE'")
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_DYNAMIC_POOL (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL DEFAULT '',
+                phone TEXT NOT NULL,
+                normalized_number TEXT NOT NULL UNIQUE,
+                source TEXT NOT NULL,
+                enabled INTEGER NOT NULL DEFAULT 1,
+                last_sent_at INTEGER DEFAULT 0,
+                send_count INTEGER DEFAULT 0,
+                created_at INTEGER NOT NULL
+            )
+        """.trimIndent())
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_normalized ON $TABLE_DYNAMIC_POOL(normalized_number)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_last_sent ON $TABLE_DYNAMIC_POOL(last_sent_at)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "wa_last_sent_at", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "wa_send_count", "INTEGER DEFAULT 0")
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_wa_last_sent ON $TABLE_DYNAMIC_POOL(wa_last_sent_at)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "last_sms_sent", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "sms_sent_count", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "last_wa_sent", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "wa_sent_count", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "sms_status", "TEXT DEFAULT 'PENDING'")
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "wa_status", "TEXT DEFAULT 'PENDING'")
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "sms_retry_priority", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "wa_retry_priority", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_DYNAMIC_POOL, "photo_uri", "TEXT DEFAULT ''")
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_sms_priority ON $TABLE_DYNAMIC_POOL(sms_retry_priority)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_wa_priority ON $TABLE_DYNAMIC_POOL(wa_retry_priority)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_enabled_name ON $TABLE_DYNAMIC_POOL(enabled, name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_wa_status ON $TABLE_DYNAMIC_POOL(enabled, wa_send_count, wa_status)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_pool_sms_status ON $TABLE_DYNAMIC_POOL(enabled, send_count, sms_status)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_DAILY_CAMPAIGN_SENT (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                campaign_id INTEGER NOT NULL,
+                contact_id INTEGER NOT NULL,
+                phone TEXT NOT NULL,
+                normalized_number TEXT NOT NULL,
+                channel TEXT NOT NULL,
+                sent_at INTEGER NOT NULL,
+                status TEXT NOT NULL DEFAULT 'SUCCESS',
+                segments INTEGER DEFAULT 1,
+                UNIQUE(campaign_id, normalized_number)
+            )
+        """.trimIndent())
+        addColumnIfNotExists(db, TABLE_DAILY_CAMPAIGN_SENT, "segments", "INTEGER DEFAULT 1")
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_dc_sent_camp ON $TABLE_DAILY_CAMPAIGN_SENT(campaign_id)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_dc_sent_camp_contact ON $TABLE_DAILY_CAMPAIGN_SENT(campaign_id, contact_id)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_dc_sent_camp_norm ON $TABLE_DAILY_CAMPAIGN_SENT(campaign_id, normalized_number)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_DAILY_CAMPAIGN (
+                id INTEGER PRIMARY KEY,
+                channel TEXT DEFAULT 'SMS',
+                title TEXT,
+                message_template TEXT,
+                daily_limit INTEGER DEFAULT 30,
+                interval_seconds INTEGER DEFAULT 8,
+                scheduled_hour INTEGER DEFAULT 9,
+                scheduled_minute INTEGER DEFAULT 0,
+                sim_slot INTEGER DEFAULT 0,
+                auto_scan_enabled INTEGER DEFAULT 1,
+                is_active INTEGER DEFAULT 0,
+                last_run_date TEXT DEFAULT ''
+            )
+        """.trimIndent())
+
+        addColumnIfNotExists(db, TABLE_DAILY_CAMPAIGN, "channel", "TEXT DEFAULT 'SMS'")
+
+        val defaultCampaign = ContentValues().apply {
+            put("id", 1)
+            put("channel", "SMS")
+            put("title", "Daily Unique Contacts SMS")
+            put("message_template", "")
+            put("daily_limit", 30)
+            put("interval_seconds", 8)
+            put("scheduled_hour", 9)
+            put("scheduled_minute", 0)
+            put("sim_slot", 0)
+            put("auto_scan_enabled", 1)
+            put("is_active", 0)
+            put("last_run_date", "")
+        }
+        db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultCampaign, SQLiteDatabase.CONFLICT_IGNORE)
+
+        val defaultWhatsAppCampaign = ContentValues().apply {
+            put("id", 2)
+            put("channel", "WHATSAPP")
+            put("title", "Daily Unique Contacts WhatsApp")
+            put("message_template", "")
+            put("daily_limit", 20)
+            put("interval_seconds", 12)
+            put("scheduled_hour", 10)
+            put("scheduled_minute", 0)
+            put("sim_slot", 0)
+            put("auto_scan_enabled", 1)
+            put("is_active", 0)
+            put("last_run_date", "")
+        }
+        db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultWhatsAppCampaign, SQLiteDatabase.CONFLICT_IGNORE)
+
+        val defaultWhatsAppBusinessCampaign = ContentValues().apply {
+            put("id", 3)
+            put("channel", "WHATSAPP_BUSINESS")
+            put("title", "Daily WhatsApp Business Task Batch")
+            put("message_template", "")
+            put("daily_limit", 20)
+            put("interval_seconds", 12)
+            put("scheduled_hour", 10)
+            put("scheduled_minute", 30)
+            put("sim_slot", 0)
+            put("auto_scan_enabled", 1)
+            put("is_active", 0)
+            put("last_run_date", "")
+        }
+        db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultWhatsAppBusinessCampaign, SQLiteDatabase.CONFLICT_IGNORE)
+
+        addColumnIfNotExists(db, TABLE_AUTO_REPLY, "start_hour", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_AUTO_REPLY, "start_minute", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_AUTO_REPLY, "end_hour", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_AUTO_REPLY, "end_minute", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_AUTO_REPLY, "start_time_hour", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_AUTO_REPLY, "start_time_minute", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_AUTO_REPLY, "end_time_hour", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_AUTO_REPLY, "end_time_minute", "INTEGER DEFAULT 0")
+        addColumnIfNotExists(db, TABLE_AUTO_REPLY, "call_event_type", "TEXT DEFAULT 'BOTH'")
+        addColumnIfNotExists(db, TABLE_AUTO_REPLY, "max_daily_replies", "INTEGER DEFAULT 1")
+
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_AUTO_REPLY_HISTORY (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                rule_id INTEGER,
+                phone_number TEXT,
+                date_str TEXT,
+                reply_count INTEGER DEFAULT 1,
+                last_replied_at INTEGER,
+                UNIQUE(rule_id, phone_number, date_str)
+            )
+        """.trimIndent())
+        try {
+            db.execSQL("CREATE INDEX IF NOT EXISTS idx_reply_history_lookup ON $TABLE_AUTO_REPLY_HISTORY(rule_id, phone_number, date_str)")
+        } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+
+        // Task sequences & canned templates decommissioned in favor of direct standalone tasks and dynamic variables.
+        try { db.execSQL("DROP TABLE IF EXISTS $TABLE_CONTACT_SEQUENCES") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("DROP TABLE IF EXISTS $TABLE_SEQUENCE_STEPS") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("DROP TABLE IF EXISTS $TABLE_TEMPLATES") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+
+        // WhatsApp and WhatsApp Business Groups Cache
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_WHATSAPP_GROUPS (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                normalized_name TEXT NOT NULL UNIQUE,
+                package_name TEXT NOT NULL DEFAULT 'com.whatsapp',
+                participant_count TEXT DEFAULT '',
+                photo_uri TEXT DEFAULT '',
+                description TEXT DEFAULT '',
+                last_discovered_at INTEGER NOT NULL
+            )
+        """.trimIndent())
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_wagroups_pkg ON $TABLE_WHATSAPP_GROUPS(package_name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_TASK_DELIVERIES (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task_id INTEGER NOT NULL,
+                occurrence_id TEXT NOT NULL DEFAULT '',
+                recipient TEXT NOT NULL,
+                normalized_number TEXT NOT NULL,
+                channel TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'SUCCESS',
+                dispatched_at INTEGER NOT NULL,
+                UNIQUE(task_id, occurrence_id, normalized_number)
+            )
+        """.trimIndent())
+        addColumnIfNotExists(db, TABLE_TASK_DELIVERIES, "occurrence_id", "TEXT NOT NULL DEFAULT ''")
+        addColumnIfNotExists(db, TABLE_LOGS, "segments", "INTEGER DEFAULT 1")
+
+        // Backfill legacy logs where segments column defaulted to 1 but details recorded multiple segments/parts
+        try {
+            db.rawQuery("SELECT id, details, message_snippet FROM $TABLE_LOGS WHERE segments <= 1 AND (details LIKE '%parts:%' OR details LIKE '%segments:%')", null).use { cursor ->
+                val idIdx = cursor.getColumnIndex("id")
+                val detIdx = cursor.getColumnIndex("details")
+                while (cursor.moveToNext()) {
+                    val rowId = cursor.getLong(idIdx)
+                    val details = cursor.getString(detIdx) ?: ""
+                    val partsMatch = Regex("(?:parts|segments):\\s*(\\d+)").find(details)
+                    val realSegments = partsMatch?.groupValues?.get(1)?.toIntOrNull()
+                    if ((realSegments != null) && (realSegments > 1)) {
+                        db.execSQL("UPDATE $TABLE_LOGS SET segments = ? WHERE id = ?", arrayOf<Any>(realSegments, rowId))
+                    }
+                }
+            }
+        } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_task_deliv_lookup ON $TABLE_TASK_DELIVERIES(task_id, occurrence_id, normalized_number)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_tasks_status_trigger ON $TABLE_TASKS(status, trigger_time)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS $TABLE_APP_PRIVACY_CONFIGS (
+                package_name TEXT PRIMARY KEY,
+                app_name TEXT NOT NULL DEFAULT '',
+                is_excluded INTEGER NOT NULL DEFAULT 0,
+                disable_task_action INTEGER NOT NULL DEFAULT 0,
+                block_overlays INTEGER NOT NULL DEFAULT 0,
+                suppress_notifications INTEGER NOT NULL DEFAULT 0,
+                disable_clipboard INTEGER NOT NULL DEFAULT 0,
+                mask_sensitive_content INTEGER NOT NULL DEFAULT 0,
+                disable_rules INTEGER NOT NULL DEFAULT 0,
+                custom_notes TEXT NOT NULL DEFAULT '',
+                updated_at INTEGER NOT NULL DEFAULT 0
+            )
+        """.trimIndent())
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_pkg ON $TABLE_APP_PRIVACY_CONFIGS(package_name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_privacy_excluded ON $TABLE_APP_PRIVACY_CONFIGS(is_excluded)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_logs_task_id ON $TABLE_LOGS(task_id)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_logs_timestamp ON $TABLE_LOGS(timestamp DESC)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_autoreply_enabled_channel ON $TABLE_AUTO_REPLY(is_enabled, channel)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+    }
+
+    // 1-word / 2-word aliases
+
+
+}
+

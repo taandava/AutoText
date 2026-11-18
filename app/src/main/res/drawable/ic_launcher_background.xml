@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Solid Opaque Gradient Background Layer (Brand Orange Canvas) -->
+    <path
+        android:fillColor="#E65100"
+        android:pathData="M0,0h108v108h-108z" />
+
+    <!-- Top-Down Ambient Warm Gradient Layer -->
+    <path
+        android:fillColor="#FF7A00"
+        android:pathData="M0,0h108v68c-20,18 -68,26 -108,12z" />
+
+    <!-- Top-Left Subtle Ambient Glow -->
+    <path
+        android:fillColor="#1AFFFFFF"
+        android:pathData="M24,16 C46,16 64,34 64,56 C64,78 46,96 24,96 C2,96 -16,78 -16,56 C-16,34 2,16 24,16 Z" />
+
+</vector>
+

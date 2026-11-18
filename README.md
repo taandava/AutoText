@@ -1,81 +1,52 @@
-# AutoText — Enterprise Android Automation Platform
+# Super
 
-> **Modern, offline-first Android automation platform for unattended multi-channel message dispatch and voice call execution.**  
-> *Targeting Android 8.0 (API 26) through Android 16+ (API 36/37) • Zero-Warning Standard • 100% On-Device Sovereignty*
+Super is a personal, fully on-device scheduler for Android. It queues one-off or recurring actions — SMS, WhatsApp messages, WhatsApp status posts, phone and WhatsApp calls, reminders, call simulations — and runs them at the time you set. Everything stays on the device: the app declares no `android.permission.INTERNET`.
 
----
+- **Package:** `com.jmd.superapp` (debug builds install as `com.jmd.superapp.debug`)
+- **Min SDK:** 27 (Android 8.1) · **Target/compile SDK:** 37
+- **UI:** Jetpack Compose + Material 3
 
-## 🚀 Key Highlights & Capabilities
+## Features
 
-- **Multi-Channel Automation**:
-  - Direct SMS (Single & Dual-SIM multi-subscription support with PDU calculation)
-  - Consumer WhatsApp (Direct message, chat navigation, and contact dispatch)
-  - WhatsApp Business (Direct customer messaging and catalog dispatch)
-  - WhatsApp Status Stories (Media and text publishing for personal & business)
-  - Cellular Telephony Calls (Configurable call duration, dial timing & auto-hangup)
-  - WhatsApp VoIP Voice Calls (Automated call placement & active duration hangup)
-  - Simulated Fake Incoming Calls (Realistic OEM themes with multi-tier ringtone & haptic pulse)
-  - Scheduled Audio Alarms & Reminders (Android Alarm Clock sync & voice alerts)
-- **Dynamic Zero-Detection Stealth Mode (Banking App Shield)**:
-  - Keeps accessibility completely detached (`ENABLED_ACCESSIBILITY_SERVICES` omitted and `ACCESSIBILITY_ENABLED = "0"`) during idle periods.
-  - Automatically activates for 2–3s only when a scheduled WhatsApp task triggers, then immediately detaches.
-  - Third-party banking and UPI apps (Saraswat Bank GOMONxT, SBI YONO, HDFC, PhonePe, Paytm, etc.) detect **zero** accessibility presence.
-  - Instant retraction if an excluded application is detected in the foreground.
-- **Strict Display Orientation Invariant**:
-  - Hard-locked to portrait orientation across all screens.
-  - Actively audits and disables system auto-rotation (`accelerometer_rotation == 0`).
-- **Cooperative Cancellation & Emergency Kill Switch**:
-  - Immediate task abortion within <=250ms via sliced polling loops.
-  - High-priority ADB broadcast triggers (`ACTION_EMERGENCY_STOP` & `ACTION_RESET_EMERGENCY_STOP`).
-- **Unattended Execution & Auto-Unlock**:
-  - Wakes screen, dismisses keyguard, inputs security PIN via touch simulation, executes task, and locks hardware screen via Device Admin.
-- **100% Offline Sovereignty**:
-  - Zero external tracking, zero cloud dependencies, zero analytics. All data resides in local encrypted storage and SQLite (`autotext.db`).
+- **Tasks:** SMS, WhatsApp, WhatsApp Business, WhatsApp groups, WhatsApp status, calls, WhatsApp calls, call simulation and local reminders, each with one-off or repeating schedules.
+- **Daily campaigns:** paced batch sending with a per-day quota and interval, plus per-recipient tracking.
+- **Auto-reply:** keyword rules for incoming SMS and chat notifications.
+- **Contact pools:** contacts harvested from the address book, SMS and calls, plus manually added recipients and WhatsApp groups.
+- **History:** execution log of every dispatch with status and details, plus carrier delivery reports for SMS (`SMS Delivery` entries) so "sent" and "delivered" are not conflated.
+- **Permissions on demand:** first launch asks only for notifications; SMS, call, contact and media access are requested from the Permissions centre when a feature needs them.
+- **Reply safety:** automatic replies skip the device's own number and suppress identical repeats inside a cooldown, which prevents bot-to-bot reply loops.
+- **Banking app protection:** banking/UPI packages are excluded from the task service by package scoping, so opening one never lets the service inspect it. The service is not torn down when a banking app opens; there is an optional *strict detach* switch in Preferences if you prefer it to step aside completely.
+- **Screen assist:** optional PIN-based unlock for unattended runs, with the PIN stored in hardware-backed Keystore.
+- **Backup/restore** of the local database to a JSON file you choose.
 
----
+## Build and test
 
-## 🛡️ Top Header Real-Time Status Indicators
+Requirements: JDK 21, Android SDK with platform 37 and build-tools 36.
 
-The header bar provides 7 live status indicator icons:
-- **Active / Healthy**: Vivid Emerald Green (`#00E676`)
-- **Inactive / Attention Needed**: Vivid Carmine Red (`#FF5252`)
-
-1. **Stealth Guard (Banking Shield)**: Dynamic isolation from banking and UPI apps.
-2. **Screen Orientation Guard**: Ensures system auto-rotate remains strictly disabled (`0`).
-3. **Accessibility Service Engine**: Live accessibility binder connection and touch simulation.
-4. **Notification Quick-Reply Listener**: Notification listener for instant auto-replies.
-5. **Device Admin & Screen Auto-Lock**: Device Admin privilege for hardware screen re-locking.
-6. **Unrestricted Battery & Power**: Battery saver exemption (`REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`).
-7. **Task Scheduler Master Engine**: Master scheduler status; turns Red if paused or Emergency Stop active.
-
----
-
-## 🛠️ Build & Installation
-
-### Requirements
-- **JDK**: Java 17
-- **Android SDK**: Compile SDK 36, Min SDK 27, Target SDK 37
-- **Build System**: Gradle 9.8.2 with Android Gradle Plugin 8.7.2
-
-### Build Commands
 ```bash
-# Compile and run all 68 unit tests
-.\gradlew.bat testDebugUnitTest
-
-# Run Android Lint static analysis (0 errors, 0 warnings required)
-.\gradlew.bat lintDebug
-
-# Assemble signed production release APK and copy to root
-.\gradlew.bat bundleProjectSource assembleRelease copyReleaseApkToRoot
-
-# Install on connected Android device via ADB
-adb -s <DEVICE_ID> install -r app-release.apk
+./gradlew :app:testDebugUnitTest   # JVM unit tests
+./gradlew :app:assembleDebug       # debug APK
+./gradlew :app:assembleRelease     # signed release (super-release.jks via keystore.properties)
 ```
 
----
+Install and grant the write-secure-settings permission used for optional service auto-repair:
 
-## 📋 Documentation & Specifications
+```bash
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb shell pm grant com.jmd.superapp.debug android.permission.WRITE_SECURE_SETTINGS
+```
 
-- [`app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md`](file:///d:/New%20folder/apps/Automation/app/src/main/assets/AUTOTEXT_FEATURES_AND_LOGIC.md): Master Technical Blueprint & Architecture Specification *(also rendered offline inside the app under **Settings -> Technical Manual & Logic Guide**)*.
-- [`design.md`](file:///d:/New%20folder/apps/Automation/design.md): Material 3 Expressive Design System, UI Specifications & Component Inventory.
-- [`agent.md`](file:///d:/New%20folder/apps/Automation/agent.md): Master Engineering Directive, Defect Remediation Log, Hardware Verification Matrix & Operational Runbook.
+## Signing
+
+`keystore.properties` and `super-release.jks` are local files used to sign release builds. Keep them out of any repository you publish.
+
+## Notes
+
+- The task service only operates on WhatsApp, WhatsApp Business, dialer and system UI packages. Banking, wallet and UPI packages are never included in its scope.
+- Permissions are requested at runtime from the Permissions center; nothing is granted silently.
+
+## Documentation
+
+- [`CHAT_MEMORY.md`](CHAT_MEMORY.md) — project memory: decisions, every fix, device verification, open items.
+- [`docs/FILE_REFERENCE.md`](docs/FILE_REFERENCE.md) — per-file and per-declaration reference for all Kotlin sources.
+- [`docs/README.md`](docs/README.md) — documentation index and subsystem map.
