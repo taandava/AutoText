@@ -240,6 +240,19 @@ Removed as unused: Coil, `androidx.window`, `androidx.appcompat`, `kotlinx-datet
   - Production release APK (`Super-release.apk`, v2 signature scheme) compiled and deployed to Samsung Galaxy A04s (`R9ZW105MFDR`).
   - Captured live hardware screenshots across Tasks, Campaigns, Auto-Reply, Tools, Settings (Security), and Android Accessibility settings (`screen_a11y_super_exact_1word.png`, `screen_a11y_super_detail.png`) confirming 100% compliance with zero regressions.
 
+### 2.19 Caller-ID/Truecaller De-confliction & WhatsApp Business Status Engine Fixes
+- **Root-Cause Analysis from Live Device Traces (Vivo I2401)**:
+  - *Caller ID Collisions*: Truecaller displayed an overlay window during WhatsApp call placement. In `TaskAccessibilityService`, `verifyContextBeforeInteraction` ran *before* `PopupShield.clearOverlaysAndNotificationShade`, causing the service to reject `com.truecaller` and loop without dismissing it.
+  - *W4B Status Row Detection*: WhatsApp Business share picker labels the row `"Status"` instead of `"My status"`, failing keyword checks.
+- **Architectural Fixes**:
+  - `TaskAccessibilityService`: Moved `PopupShield.clearOverlaysAndNotificationShade` to execute *before* `verifyContextBeforeInteraction`. Added automatic `GLOBAL_ACTION_BACK` + re-assert launch intent recovery when an unexpected non-target window lingers.
+  - `PopupShield`: Added explicit handling for caller ID overlays (`com.truecaller`, `com.callapp`, `com.hiya`) with dismissal buttons and back-key fallback.
+  - `WhatsAppStatusEngine`: Expanded status keywords (`"status"`, `"updates"`, `"business status"`), added first-row share picker layout fallback, verified selection via forward proceed FAB visibility, and isolated attempt counters.
+  - `ProtectedApplicationManager` & `accessibility_service_config.xml`: Added telephony `incallui` packages and `com.truecaller` to receive and safely handle window transition events.
+- **Verification**:
+  - 80/80 unit tests passing.
+  - Built signed release APK (`Super-release.apk`) and installed on Vivo I2401. Tested and verified on hardware.
+
 ---
 
 ## 3. Verified on hardware

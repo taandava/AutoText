@@ -43,6 +43,7 @@ class WhatsAppStatusEngine(
     private var hasTappedUpdatesTab = false
     private var hasTappedTextStatusFab = false
     private var statusComposerWaitCount = 0
+    private var sharePickerAttempts = 0
 
     /**
      * What it is:
@@ -61,6 +62,7 @@ class WhatsAppStatusEngine(
         hasTappedUpdatesTab = false
         hasTappedTextStatusFab = false
         statusComposerWaitCount = 0
+        sharePickerAttempts = 0
     }
 
     /**
@@ -134,8 +136,9 @@ class WhatsAppStatusEngine(
             val isSharePicker = isSharePickerScreen(root, targetPkg, windows)
             if (isSharePicker) {
                 AppFileLogger.action(service, loggerTag, "WhatsApp Share Picker detected")
+                sharePickerAttempts++
                 if (hasClickedShareProceedButton) {
-                    if (sendAttemptCount > 22) {
+                    if (sharePickerAttempts > 25) {
                         Log.w(loggerTag, "Share picker did not advance after tapping proceed")
                         onTimeout()
                     } else onRetry(600L)
@@ -149,13 +152,13 @@ class WhatsAppStatusEngine(
                         val clicked = AccessibilityNodeUtils.clickElement(myStatusRow, service)
                         Log.d(loggerTag, "Clicked 'My status' row result: $clicked (node: ${myStatusRow.className}, checkable=${myStatusRow.isCheckable})")
                         if (clicked) hasClickedMyStatusRow = true
-                        if (!clicked && sendAttemptCount > 22) onTimeout() else onRetry(600L)
+                        if (!clicked && sharePickerAttempts > 25) onTimeout() else onRetry(600L)
                         return
                     }
                     val scrollable = AccessibilityNodeUtils.findFirstScrollableNode(root)
                     if (scrollable != null && scrollable.performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)) {
                         onRetry(500L)
-                    } else if (sendAttemptCount > 22) {
+                    } else if (sharePickerAttempts > 25) {
                         Log.w(loggerTag, "My status row not found in share picker")
                         onTimeout()
                     } else onRetry(350L)
@@ -171,7 +174,7 @@ class WhatsAppStatusEngine(
                         hasClickedShareProceedButton = true
                         onRetry(700L)
                     } else onRetry(400L)
-                } else if (sendAttemptCount > 22) {
+                } else if (sharePickerAttempts > 25) {
                     Log.w(loggerTag, "My status selected but proceed button unavailable")
                     onTimeout()
                 } else onRetry(350L)
@@ -414,6 +417,14 @@ class WhatsAppStatusEngine(
             }
         }
 
+        // 3. High-confidence heuristic: if we clicked the status row and the green forward proceed FAB is visible, status is selected
+        if (hasClickedMyStatusRow) {
+            val proceedBtn = findWhatsAppStatusProceedButton(root, targetPkg, windows)
+            if (proceedBtn != null && proceedBtn.isVisibleToUser) {
+                return true
+            }
+        }
+
         return false
     }
     /**
@@ -433,7 +444,8 @@ class WhatsAppStatusEngine(
         windows: List<AccessibilityWindowInfo>?
     ): AccessibilityNodeInfo? {
         val keywords = listOf(
-            "my status", "mi estado", "mon statut", "mein status",
+            "my status", "status", "updates", "business status", "add to status", "send to status", "share to status",
+            "mi estado", "mon statut", "mein status",
             "mio stato", "meu status", "मेरा स्टेटस", "माझा स्टेटस", "నా స్టేటస్",
             "আমার স্ট্যাটাস", "எனது நிலை", "என் நிலை", "నా స్థితి", "મારું સ્ટેટસ",
             "ನನ್ನ ಸ್ಥಿತಿ", "എന്റെ സ്റ്റാറ്റസ്", "ਮੇਰਾ ਸਟੇਟਸ", "ମୋର ସ୍ଥିତି"
@@ -492,6 +504,26 @@ class WhatsAppStatusEngine(
                     }
                     return nameNode
                 }
+            }
+        }
+
+        // Pass 3: Top row in contact picker layout fallback (first entry in WhatsApp/W4B share picker is always Status)
+        val allPickerRows = AccessibilityNodeUtils.findNodesByViewId(root, targetPkg, "contactpicker_row_name", windows)
+        val firstRow = allPickerRows.firstOrNull { it.isVisibleToUser }
+        if (firstRow != null) {
+            val text = firstRow.text?.toString()?.lowercase()?.trim().orEmpty()
+            val desc = firstRow.contentDescription?.toString()?.lowercase()?.trim().orEmpty()
+            if (text.contains("status") || desc.contains("status") || keywords.any { text.contains(it) || desc.contains(it) }) {
+                var parent = firstRow
+                var depth = 0
+                while (parent != null && depth < 5) {
+                    if (parent.isCheckable || parent.isClickable) {
+                        return parent
+                    }
+                    parent = parent.parent ?: break
+                    depth++
+                }
+                return firstRow
             }
         }
 

@@ -41,7 +41,7 @@ object PopupShield {
     private val dismissKeywords = listOf(
         "allow", "continue", "accept", "ok", "got it", "never", "remind later",
         "skip", "close", "deny", "not now", "maybe later", "dismiss", "i agree",
-        "agree", "confirm", "yes", "no thanks", "no, thanks"
+        "agree", "confirm", "yes", "no thanks", "no, thanks", "cancel", "later"
     )
 
     /**
@@ -227,6 +227,17 @@ object PopupShield {
                     service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                 }
                 clearedSomething = true
+            }
+
+            // 1b. Check for intrusive caller ID overlays (Truecaller, CallApp, Hiya)
+            if (curPkg.contains("truecaller") || curPkg.contains("callapp") || curPkg.contains("hiya")) {
+                Log.i(TAG, "Caller ID overlay/dialog detected in foreground ($curPkg). Attempting to dismiss...")
+                if (root != null && clickDismissButton(root, service)) {
+                    clearedSomething = true
+                } else {
+                    service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+                    clearedSomething = true
+                }
             }
 
             // 2. Check for floating overlay windows (Truecaller, Messenger, Call overlays)

@@ -1909,16 +1909,6 @@ class TaskAccessibilityService : AccessibilityService() {
                     return
                 }
 
-                if (!com.jmd.superapp.core.ProtectedApplicationManager.verifyContextBeforeInteraction(curPkg, targetPkg)) {
-                    Log.w(TAG, "sendRunnable: Context verification failed before interaction (curPkg=$curPkg, targetPkg=$targetPkg)")
-                    if (sendAttemptCount < 45) {
-                        handler.postDelayed(this, 500L)
-                    } else {
-                        handleSendTimeout(targetPkg)
-                    }
-                    return
-                }
-
                 // --- Pop-up & Overlay Shield: dismiss notification shade, Truecaller,
                 // floating overlays, and system dialogs before evaluating task actions
                 if (PopupShield.clearOverlaysAndNotificationShade(this@TaskAccessibilityService, targetPkg)) {
@@ -1934,8 +1924,32 @@ class TaskAccessibilityService : AccessibilityService() {
                     curPkg.contains("packageinstaller", ignoreCase = true)
 
                 if (!isTargetOrAllowedDialog) {
+                    if (sendAttemptCount in 4..15 && sendAttemptCount % 3 == 0) {
+                        Log.i(TAG, "Unexpected foreground package ($curPkg) during task dispatch; pressing Back and re-asserting $targetPkg")
+                        performGlobalAction(GLOBAL_ACTION_BACK)
+                        try {
+                            val launchIntent = packageManager.getLaunchIntentForPackage(targetPkg)
+                            if (launchIntent != null) {
+                                launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                startActivity(launchIntent)
+                            }
+                        } catch (e: Exception) {
+                            Log.w(TAG, "Failed re-asserting $targetPkg: ${e.message}")
+                        }
+                    }
+
                     if (sendAttemptCount < 45) {
                         handler.postDelayed(this, 300L)
+                    } else {
+                        handleSendTimeout(targetPkg)
+                    }
+                    return
+                }
+
+                if (!com.jmd.superapp.core.ProtectedApplicationManager.verifyContextBeforeInteraction(curPkg, targetPkg)) {
+                    Log.w(TAG, "sendRunnable: Context verification failed before interaction (curPkg=$curPkg, targetPkg=$targetPkg)")
+                    if (sendAttemptCount < 45) {
+                        handler.postDelayed(this, 500L)
                     } else {
                         handleSendTimeout(targetPkg)
                     }
