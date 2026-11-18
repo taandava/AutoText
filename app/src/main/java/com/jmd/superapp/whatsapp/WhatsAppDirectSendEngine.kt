@@ -73,16 +73,18 @@ class WhatsAppDirectSendEngine(
         onAttemptClicked: () -> Unit
     ) {
         try {
-            val curPkg = root.packageName?.toString() ?: ""
-            if (!curPkg.contains(pkg, ignoreCase = true) && !pkg.contains(curPkg, ignoreCase = true)) {
-                Log.d(loggerTag, "Active window package '$curPkg' is not target '$pkg', skipping send check")
+            // 1. Proactively clear any blocking overlay, Heads-Up Notification (HUN), or Truecaller popup
+            if (PopupShield.hasActiveBlockingOverlay(service, pkg) ||
+                root.packageName?.toString()?.lowercase()?.let { it.contains("truecaller") || it.contains("callapp") || it.contains("hiya") } == true) {
+                Log.i(loggerTag, "Blocking overlay/notification detected during direct send; clearing...")
+                PopupShield.clearOverlaysAndNotificationShade(service, pkg)
+                onRetry(350L)
                 return
             }
 
-            if (sendAttemptCount < 2 && PopupShield.hasActiveBlockingOverlay(service, pkg)) {
-                Log.d(loggerTag, "Blocking overlay detected during direct send; clearing...")
-                PopupShield.clearOverlaysAndNotificationShade(service, pkg)
-                onRetry(300L)
+            val curPkg = root.packageName?.toString() ?: ""
+            if (!curPkg.contains(pkg, ignoreCase = true) && !pkg.contains(curPkg, ignoreCase = true)) {
+                Log.d(loggerTag, "Active window package '$curPkg' is not target '$pkg', skipping send check")
                 return
             }
 

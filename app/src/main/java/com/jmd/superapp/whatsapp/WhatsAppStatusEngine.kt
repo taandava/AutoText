@@ -102,16 +102,18 @@ class WhatsAppStatusEngine(
                 return
             }
 
-            val curPkg = root.packageName?.toString() ?: ""
-            if (!curPkg.contains(targetPkg, ignoreCase = true) && !targetPkg.contains(curPkg, ignoreCase = true)) {
-                Log.d(loggerTag, "Not in target package $targetPkg yet for status ($curPkg)")
-                onRetry(300L)
+            // 1. Proactively clear any blocking overlay, Heads-Up Notification (HUN), or Truecaller popup
+            if (PopupShield.hasActiveBlockingOverlay(service, targetPkg) ||
+                root.packageName?.toString()?.lowercase()?.let { it.contains("truecaller") || it.contains("callapp") || it.contains("hiya") } == true) {
+                Log.i(loggerTag, "Blocking overlay/notification detected during status post; clearing...")
+                PopupShield.clearOverlaysAndNotificationShade(service, targetPkg)
+                onRetry(350L)
                 return
             }
 
-            if (sendAttemptCount < 2 && PopupShield.hasActiveBlockingOverlay(service, targetPkg)) {
-                Log.d(loggerTag, "Blocking overlay detected during status post; clearing...")
-                PopupShield.clearOverlaysAndNotificationShade(service, targetPkg)
+            val curPkg = root.packageName?.toString() ?: ""
+            if (!curPkg.contains(targetPkg, ignoreCase = true) && !targetPkg.contains(curPkg, ignoreCase = true)) {
+                Log.d(loggerTag, "Not in target package $targetPkg yet for status ($curPkg)")
                 onRetry(300L)
                 return
             }

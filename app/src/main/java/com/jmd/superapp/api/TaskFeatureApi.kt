@@ -32,6 +32,7 @@ import android.telephony.SubscriptionManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.jmd.superapp.R
 import com.jmd.superapp.SuperApplication
 import com.jmd.superapp.core.AppFileLogger
 import com.jmd.superapp.core.PhoneNumberNormalizer
@@ -512,7 +513,8 @@ object TaskFeatureApi {
                 )
                 val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                 val notif = NotificationCompat.Builder(context, SuperApplication.CHANNEL_REMINDERS)
-                    .setSmallIcon(android.R.drawable.ic_popup_reminder)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(0xFFFFD600.toInt())
                     .setContentTitle(request.title.ifBlank { "Reminder" })
                     .setContentText(request.message)
                     .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -577,7 +579,8 @@ object TaskFeatureApi {
                 )
                 val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                 val callNotif = NotificationCompat.Builder(context, SuperApplication.CHANNEL_REMINDERS)
-                    .setSmallIcon(android.R.drawable.ic_menu_call)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(0xFFFFD600.toInt())
                     .setContentTitle(request.callerName.ifBlank { "Incoming Call" })
                     .setContentText("Incoming call from ${request.callerNumber.ifBlank { "Unknown Caller" }}")
                     .setPriority(NotificationCompat.PRIORITY_MAX)

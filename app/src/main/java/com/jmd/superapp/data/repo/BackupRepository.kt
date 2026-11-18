@@ -22,6 +22,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.core.database.sqlite.transaction
+import com.jmd.superapp.core.AppDataEvents
 import com.jmd.superapp.core.AppFileLogger
 import com.jmd.superapp.core.BackupCipher
 import com.jmd.superapp.data.db.DatabaseHelper
@@ -459,6 +460,10 @@ class BackupRepository(context: Context) {
                         }
                     }
                 }
+                AppDataEvents.notifyTasksChanged()
+                AppDataEvents.notifyCampaignsChanged()
+                AppDataEvents.notifyAutoReplyChanged()
+                AppDataEvents.notifyLogsChanged()
                 Result.success("Restored $count records from backup successfully")
             }
         } catch (e: Exception) {

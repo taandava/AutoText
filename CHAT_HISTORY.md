@@ -602,7 +602,38 @@ Every single channel, feature, and task type was executed on the live hardware a
    - Verified all 80 unit tests passing cleanly.
    - Assembled release APK (`Super-release.apk`) and streamed installation onto connected Vivo I2401.
 
+---
 
+## 18. Universal Popup & Heads-Up Notification (HUN) Dismissal, Dedicated Monochrome Notification Icon & Backup Synchronization
 
+### 18.1 Diagnostic & Root-Cause Discovery
+- **Truecaller & Heads-Up Notification (HUN) Top Collisions**:
+  - When posting a WhatsApp Status story or navigating WhatsApp, Heads-Up Notifications (HUNs) from messaging or caller-ID apps (Truecaller, CallApp, SMS, etc.) drop down across the top 200–450px of the screen.
+  - In `WhatsappPopupShield.kt`, `hasActiveBlockingOverlay` was only evaluating system overlays if `rect.height() > screenHeight * 0.35f`, completely ignoring Heads-Up Notification drop-downs (~10–18% screen height).
+  - Furthermore, `WhatsAppStatusEngine.kt`, `WhatsAppDirectSendEngine.kt`, `WhatsAppGroupEngine.kt`, and `WhatsAppCallEngine.kt` evaluated `if (!curPkg.contains(targetPkg)) return` *before* checking or clearing overlays, so if Truecaller held focus or hovered over the screen, the engines failed to clear it.
+- **Obsolete System Icons in Notification Panel**:
+  - The notification manager was displaying ancient Android Gingerbread telephone receivers (`android.R.drawable.ic_menu_call`) and reminder clocks (`android.R.drawable.ic_popup_reminder`) because notification builders in `SequentialTaskEngine.kt`, `TaskAccessibilityService.kt`, and `TaskFeatureApi.kt` lacked a dedicated monochrome vector resource and referenced deprecated framework drawables.
+- **Cross-Screen Backup Synchronization**:
+  - While individual task, campaign, and auto-reply CRUD operations properly emitted `AppDataEvents`, `BackupRepository.importDatabaseFromJson` did not notify the reactive event bus, leaving screens stale when importing data.
+
+### 18.2 Architectural Remediation
+1. **Dedicated Monochrome Notification Icon (`ic_notification.xml`)**:
+   - Authored `app/src/main/res/drawable/ic_notification.xml` adhering strictly to Android Notification design guidelines (monochrome white vector on transparent background, 24x24dp viewport).
+   - Migrated all 7 notification builders across `SequentialTaskEngine.kt`, `TaskAccessibilityService.kt`, and `TaskFeatureApi.kt` to reference `R.drawable.ic_notification` with brand gold accent tinting (`.setColor(0xFFFFD600.toInt())`).
+2. **Universal Popup & Heads-Up Notification (HUN) Shielding**:
+   - Enhanced `PopupShield.hasActiveBlockingOverlay` and `PopupShield.clearOverlaysAndNotificationShade`:
+     - Added specialized detection for top Heads-Up Notification (HUN) drop-down banners (`wRect.top <= 0.05h && wRect.bottom in 0.06h..0.38h && wRect.width() >= 0.5w`).
+     - Automated upward swipe gesture dismissal (`AccessibilityNodeUtils.performVerticalSwipe`) from 12% down to 1% over 100ms to immediately flick intrusive heads-up notifications back into the status bar.
+     - Automatically dismisses pulled-down shades (`GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE`) and broadcasts `ACTION_CLOSE_SYSTEM_DIALOGS`.
+     - Added universal caller ID overlay detection (`com.truecaller`, `com.callapp`, `com.hiya`, `callerid`) in `service.windows`, scanning and clicking dismiss/close/cancel/X buttons or dispatching `GLOBAL_ACTION_BACK`.
+   - Wired proactive popup clearing into `SequentialTaskEngine.executeTaskSafely` the instant ANY task activates.
+   - Refactored `WhatsAppStatusEngine`, `WhatsAppDirectSendEngine`, `WhatsAppGroupEngine`, and `WhatsAppCallEngine` to clear blocking overlays and caller ID popups unconditionally at the start of each pass before evaluating package focus.
+3. **Reactive Backup Restore Synchronization**:
+   - Added `AppDataEvents.notifyTasksChanged()`, `notifyCampaignsChanged()`, `notifyAutoReplyChanged()`, and `notifyLogsChanged()` immediately upon successful completion of `BackupRepository.importDatabaseFromJson`.
+4. **Verification & Live Hardware Deployment**:
+   - Full test suite verified (80/80 unit tests pass via `./gradlew :app:testDebugUnitTest`).
+   - Re-compiled signed production APK (`Super-release.apk`) via `./gradlew :app:assembleRelease`.
+   - Installed onto connected Vivo I2401 (`adb -s 10BF1G0HCD0024R install -r Super-release.apk`).
+   - Verified live WhatsApp Business status story publication and screen assist execution on hardware.
 
 

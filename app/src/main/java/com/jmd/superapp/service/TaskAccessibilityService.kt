@@ -36,6 +36,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.jmd.superapp.R
 import com.jmd.superapp.SuperApplication
 import com.jmd.superapp.core.*
 import com.jmd.superapp.data.model.*
@@ -926,6 +927,11 @@ class TaskAccessibilityService : AccessibilityService() {
             AppFileLogger.action(SuperApplication.instance, TAG, "Prepared WhatsApp send ($currentMode) to $recipient for task #$taskId")
 
             instance?.let { s ->
+                try {
+                    PopupShield.clearOverlaysAndNotificationShade(s, packageName)
+                } catch (t: Throwable) {
+                    Log.d(TAG, "prepareForSend popup shield error: ${t.message}")
+                }
                 s.handler.removeCallbacks(s.sendRunnable)
                 s.handler.postDelayed(s.sendRunnable, 550L)
             }
@@ -1370,7 +1376,8 @@ class TaskAccessibilityService : AccessibilityService() {
 
                     val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                     val fullScreenNotification = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
-                        .setSmallIcon(android.R.drawable.ic_lock_idle_lock)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setColor(0xFFFFD600.toInt())
                         .setContentTitle("Unlock Assist")
                         .setContentText("Waking screen and assisting lockscreen...")
                         .setPriority(NotificationCompat.PRIORITY_MAX)

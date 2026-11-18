@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Super Dedicated Monochrome Notification Icon (Material Alpha Mask) -->
+    <group>
+        <!-- Center Hub Circle -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M54,54 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0" />
+
+        <!-- Blade 1 (Top Sector) -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M59.5,44.5 L70,26.3 A32,32 0 0,0 38,26.3 L48.5,44.5 A11,11 0 0,1 59.5,44.5 Z" />
+
+        <!-- Blade 2 (Bottom Right Sector) -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M65,54 L86,54 A32,32 0 0,1 70,81.7 L59.5,63.5 A11,11 0 0,0 65,54 Z" />
+
+        <!-- Blade 3 (Bottom Left Sector) -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M48.5,63.5 L38,81.7 A32,32 0 0,1 22,54 L43,54 A11,11 0 0,0 48.5,63.5 Z" />
+    </group>
+</vector>

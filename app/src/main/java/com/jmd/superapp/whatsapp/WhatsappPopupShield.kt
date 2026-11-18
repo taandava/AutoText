@@ -41,7 +41,8 @@ object PopupShield {
     private val dismissKeywords = listOf(
         "allow", "continue", "accept", "ok", "got it", "never", "remind later",
         "skip", "close", "deny", "not now", "maybe later", "dismiss", "i agree",
-        "agree", "confirm", "yes", "no thanks", "no, thanks", "cancel", "later"
+        "agree", "confirm", "yes", "no thanks", "no, thanks", "cancel", "later",
+        "decline", "clear", "x", "reject", "block", "hide", "close ad", "done"
     )
 
     /**
@@ -137,6 +138,12 @@ object PopupShield {
      */
     fun hasActiveBlockingOverlay(service: AccessibilityService, targetPkg: String = "com.whatsapp"): Boolean {
         try {
+            val root = service.rootInActiveWindow
+            val curPkg = root?.packageName?.toString().orEmpty().lowercase()
+            if (curPkg.contains("truecaller") || curPkg.contains("callapp") || curPkg.contains("hiya") || curPkg.contains("callerid")) {
+                return true
+            }
+
             val windows = service.windows.orEmpty()
             val metrics = service.resources.displayMetrics
             val screenWidth = metrics.widthPixels
@@ -150,11 +157,25 @@ object PopupShield {
 
                 val rect = android.graphics.Rect()
                 window.getBoundsInScreen(rect)
-                val isSystemBar = (rect.top == 0 && rect.height() < screenHeight * 0.15f) ||
-                    (rect.bottom >= screenHeight && rect.height() < screenHeight * 0.15f)
+
+                // 1. Caller ID overlays (Truecaller etc.) are always blocking regardless of height
+                if (windowPkg.contains("truecaller") || windowPkg.contains("callapp") ||
+                    windowPkg.contains("hiya") || windowPkg.contains("callerid")) {
+                    return true
+                }
+
+                // 2. Heads-Up Notification (HUN) drop-down banner at top of display
+                val isTopWindow = rect.top <= screenHeight * 0.05f && rect.bottom in (screenHeight * 0.06f).toInt()..(screenHeight * 0.38f).toInt()
+                val isSystemUiOrNotification = windowPkg.contains("systemui") || windowPkg.contains("notification") || windowPkg.contains("upslide")
+                if (isTopWindow && isSystemUiOrNotification && rect.width() >= screenWidth * 0.5f) {
+                    return true
+                }
+
+                val isSystemBar = (rect.top == 0 && rect.height() < screenHeight * 0.06f) ||
+                    (rect.bottom >= screenHeight && rect.height() < screenHeight * 0.06f)
 
                 if (windowPkg.contains("systemui") || com.jmd.superapp.core.OemBrandHelper.isSafeSystemOverlay(windowPkg)) {
-                    if (rect.height() > screenHeight * 0.35f && !isSystemBar) {
+                    if (rect.height() > screenHeight * 0.30f && !isSystemBar) {
                         return true
                     }
                     continue
@@ -167,8 +188,8 @@ object PopupShield {
                 val isOverlayType = windowType == AccessibilityWindowInfo.TYPE_SYSTEM ||
                     windowType == AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY
 
-                val isLargeOverlay = rect.width() > screenWidth * 0.45f && rect.height() > screenHeight * 0.20f
-                val coversInteractionArea = rect.bottom > screenHeight * 0.40f
+                val isLargeOverlay = rect.width() > screenWidth * 0.40f && rect.height() > screenHeight * 0.15f
+                val coversInteractionArea = rect.bottom > screenHeight * 0.25f
 
                 if (isOverlayType && !isSystemBar && isLargeOverlay && coversInteractionArea &&
                     !com.jmd.superapp.core.OemBrandHelper.isSafeSystemOverlay(windowPkg) &&
@@ -216,7 +237,7 @@ object PopupShield {
 
             val isNotificationShade = !isKeyguardLocked && (
                 curPkg.contains("notification") ||
-                (curPkg.contains("systemui") && rect.height() > screenHeight * 0.35f)
+                (curPkg.contains("systemui") && rect.height() > screenHeight * 0.30f)
             )
 
             if (isNotificationShade) {
@@ -229,8 +250,15 @@ object PopupShield {
                 clearedSomething = true
             }
 
+            // Always dismiss any open system dialogs safely
+            try {
+                @Suppress("DEPRECATION")
+                val closeIntent = android.content.Intent(android.content.Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
+                service.sendBroadcast(closeIntent)
+            } catch (_: Throwable) {}
+
             // 1b. Check for intrusive caller ID overlays (Truecaller, CallApp, Hiya)
-            if (curPkg.contains("truecaller") || curPkg.contains("callapp") || curPkg.contains("hiya")) {
+            if (curPkg.contains("truecaller") || curPkg.contains("callapp") || curPkg.contains("hiya") || curPkg.contains("callerid")) {
                 Log.i(TAG, "Caller ID overlay/dialog detected in foreground ($curPkg). Attempting to dismiss...")
                 if (root != null && clickDismissButton(root, service)) {
                     clearedSomething = true
@@ -240,13 +268,50 @@ object PopupShield {
                 }
             }
 
-            // 2. Check for floating overlay windows (Truecaller, Messenger, Call overlays)
+            // 2. Check for floating overlay windows & Heads-Up Notifications (HUN) in service.windows
             val windows = service.windows.orEmpty()
             for (window in windows) {
                 val windowType = window.type
                 val windowRoot = window.root
                 val windowPkg = windowRoot?.packageName?.toString()?.lowercase().orEmpty()
 
+                val wRect = android.graphics.Rect()
+                window.getBoundsInScreen(wRect)
+
+                // 2a. Heads-Up Notification (HUN) drop-down covering the top of the display
+                val isTopWindow = wRect.top <= screenHeight * 0.05f && wRect.bottom in (screenHeight * 0.06f).toInt()..(screenHeight * 0.38f).toInt()
+                val isSystemUiOrNotif = windowPkg.contains("systemui") || windowPkg.contains("notification") || windowPkg.contains("upslide")
+
+                if (isTopWindow && isSystemUiOrNotif && wRect.width() >= screenWidth * 0.5f) {
+                    Log.i(TAG, "Heads-Up Notification (HUN) banner detected at top ($windowPkg, bounds=$wRect). Dismissing...")
+                    if (windowRoot != null && clickDismissButton(windowRoot, service)) {
+                        clearedSomething = true
+                    } else {
+                        // Fling HUN away using an upward swipe gesture
+                        AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.12f, endYRatio = 0.01f, durationMs = 100L)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE)
+                        }
+                        clearedSomething = true
+                    }
+                    continue
+                }
+
+                // 2b. Caller ID overlays (Truecaller etc.) in window list
+                val isCallerId = windowPkg.contains("truecaller") || windowPkg.contains("callapp") ||
+                    windowPkg.contains("hiya") || windowPkg.contains("callerid")
+                if (isCallerId) {
+                    Log.i(TAG, "Caller ID overlay window detected: $windowPkg (bounds=$wRect)")
+                    if (windowRoot != null && clickDismissButton(windowRoot, service)) {
+                        clearedSomething = true
+                    } else {
+                        service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+                        clearedSomething = true
+                    }
+                    continue
+                }
+
+                // 2c. Generic large floating overlays
                 val isOverlayType = windowType == AccessibilityWindowInfo.TYPE_SYSTEM ||
                     windowType == AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY
 
@@ -256,10 +321,8 @@ object PopupShield {
                     windowPkg.contains("permission") || windowPkg.contains("installer") ||
                     windowPkg == "android" || com.jmd.superapp.core.OemBrandHelper.isSafeSystemOverlay(windowPkg)
 
-                val wRect = android.graphics.Rect()
-                window.getBoundsInScreen(wRect)
-                val isLargeOverlay = wRect.width() > screenWidth * 0.45f && wRect.height() > screenHeight * 0.20f
-                val coversInteractionArea = wRect.bottom > screenHeight * 0.40f
+                val isLargeOverlay = wRect.width() > screenWidth * 0.40f && wRect.height() > screenHeight * 0.15f
+                val coversInteractionArea = wRect.bottom > screenHeight * 0.25f
 
                 if (isOverlayType && isLargeOverlay && coversInteractionArea && windowRoot != null &&
                     windowPkg.isNotBlank() &&
@@ -269,7 +332,6 @@ object PopupShield {
                     windowPkg != service.packageName.lowercase()
                 ) {
                     Log.i(TAG, "Large floating overlay detected from package: $windowPkg (type=$windowType, bounds=$wRect)")
-
                     if (clickDismissButton(windowRoot, service)) {
                         Log.i(TAG, "Dismissed overlay button in $windowPkg")
                         clearedSomething = true
@@ -337,7 +399,9 @@ object PopupShield {
                 (dismissKeywords.any { txt == it || desc == it } ||
                     id.endsWith(":id/btn_close") || id.endsWith(":id/close_btn") ||
                     id.endsWith(":id/close") || id.endsWith(":id/iv_close") ||
-                    id.endsWith(":id/button_close") || id.endsWith(":id/dialog_close"))
+                    id.endsWith(":id/button_close") || id.endsWith(":id/dialog_close") ||
+                    id.endsWith(":id/dismiss") || id.endsWith(":id/btn_dismiss") ||
+                    id.endsWith(":id/caller_id_close") || id.endsWith(":id/floating_close"))
             if (isDialogButton && AccessibilityNodeUtils.clickElement(curr, service)) {
                 Log.d(TAG, "PopupShield dismissed button: $txt / $desc")
                 return true

@@ -110,17 +110,19 @@ class WhatsAppCallEngine(
             p.contains("packageinstaller", ignoreCase = true)
         }
 
+        // 0. Proactively clear any blocking overlay, Heads-Up Notification (HUN), or Truecaller popup
+        if (PopupShield.hasActiveBlockingOverlay(service, pkg) ||
+            root.packageName?.toString()?.lowercase()?.let { it.contains("truecaller") || it.contains("callapp") || it.contains("hiya") } == true) {
+            Log.i(loggerTag, "Blocking overlay/notification detected during call placement; clearing...")
+            PopupShield.clearOverlaysAndNotificationShade(service, pkg)
+            onRetry(350L)
+            return
+        }
+
         if (!hasTargetOrAllowedWindow) {
             val rootPkg = root.packageName?.toString().orEmpty()
             Log.d(loggerTag, "Active window package '$rootPkg' does not include target '$pkg' or system dialog, waiting...")
             if (sendAttemptCount <= 30) onRetry(300L) else onTimeout()
-            return
-        }
-
-        if (sendAttemptCount < 2 && PopupShield.hasActiveBlockingOverlay(service, pkg)) {
-            Log.d(loggerTag, "Blocking overlay detected during call placement; clearing...")
-            PopupShield.clearOverlaysAndNotificationShade(service, pkg)
-            onRetry(300L)
             return
         }
 

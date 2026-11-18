@@ -35,6 +35,7 @@ import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.jmd.superapp.R
 import com.jmd.superapp.SuperApplication
 import com.jmd.superapp.core.*
 import com.jmd.superapp.data.model.*
@@ -466,6 +467,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         AppFileLogger.action(appContext, TAG, "Starting execution for Task #${task.id} (${task.title}) on [${task.channel.displayName}]")
+
+        // Universal Popup & Notification Dismissal: Whenever ANY task activates, immediately clear
+        // all on-screen popups, floating heads-up notifications (HUNs), caller ID overlays (Truecaller etc.), and dialogs
+        TaskAccessibilityService.getInstance()?.let { service ->
+            try {
+                com.jmd.superapp.whatsapp.PopupShield.clearOverlaysAndNotificationShade(service)
+            } catch (t: Throwable) {
+                Log.w(TAG, "Task activation popup shield error: ${t.message}")
+            }
+        }
 
         if (!TaskSafetyManager.canExecute(task.channel)) {
             AppFileLogger.w(appContext, TAG, "TaskSafetyManager refused execution for ${task.channel.displayName} (circuit breaker tripped).")
@@ -1443,7 +1454,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         try {
                             val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                             val endNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
-                                .setSmallIcon(android.R.drawable.ic_menu_call)
+                                .setSmallIcon(R.drawable.ic_notification)
+                                .setColor(0xFFFFD600.toInt())
                                 .setContentTitle("Call Ended")
                                 .setContentText("Scheduled call with $cleanPhone concluded (${durationSec}s).")
                                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -1751,7 +1763,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             try {
                                 val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                                 val endNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
-                                    .setSmallIcon(android.R.drawable.ic_menu_call)
+                                    .setSmallIcon(R.drawable.ic_notification)
+                                    .setColor(0xFFFFD600.toInt())
                                     .setContentTitle("Call Ended")
                                     .setContentText("Scheduled WhatsApp call with $cleanPhone concluded (${durationSec}s).")
                                     .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -1877,7 +1890,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 )
                 val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                 val reminderNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_REMINDERS)
-                    .setSmallIcon(android.R.drawable.ic_popup_reminder)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(0xFFFFD600.toInt())
                     .setContentTitle(task.title.ifBlank { "Reminder" })
                     .setContentText(task.messageText.ifBlank { task.title.ifBlank { "Reminder Alert" } })
                     .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -1953,7 +1967,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 )
                 val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
                 val callNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_REMINDERS)
-                    .setSmallIcon(android.R.drawable.ic_menu_call)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(0xFFFFD600.toInt())
                     .setContentTitle(task.simulatedCallerName.ifBlank { "Incoming Call" })
                     .setContentText("Incoming call from ${task.simulatedCallerNumber.ifBlank { "Unknown Caller" }}")
                     .setPriority(NotificationCompat.PRIORITY_MAX)

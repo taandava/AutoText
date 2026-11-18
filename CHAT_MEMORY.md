@@ -400,5 +400,16 @@ real messages.
 - **Ingestion Scope Resilience:** Switched contact ingestion to `SuperApplication.instance.applicationScope` to avoid `rememberCoroutineScope` cancellation when bottom sheets dismiss.
 - **Verification:** 80/80 unit tests passing, release build signed and verified on live device Vivo I2401.
 
+---
+
+## 11. Dedicated Notification Icon & Universal Popup / HUN Shielding
+
+- **Dedicated Monochrome Notification Icon:** Authored `app/src/main/res/drawable/ic_notification.xml` (monochrome white vector on transparent background) and bound all 7 notification builders (`SequentialTaskEngine`, `TaskAccessibilityService`, `TaskFeatureApi`) to `R.drawable.ic_notification` with gold accent `.setColor(0xFFFFD600.toInt())`. Eradicated old Gingerbread system drawables (`ic_menu_call`, `ic_popup_reminder`, `ic_lock_idle_lock`) from the notification panel.
+- **Universal Heads-Up Notification (HUN) Shielding:** Added top-banner HUN detection (`0.06h..0.38h`) and upward gesture swipe dismissal (`AccessibilityNodeUtils.performVerticalSwipe`) in `WhatsappPopupShield.kt`, instantly flinging heads-up notification banners away from the top interaction area.
+- **Universal Caller ID Dismissal:** Added detection for `com.truecaller`, `com.callapp`, `com.hiya`, and other caller ID overlays in `service.windows`, automatically clicking dismiss/close/cancel buttons or dispatching `GLOBAL_ACTION_BACK`.
+- **Proactive Task Shielding:** Wired `PopupShield.clearOverlaysAndNotificationShade` to execute immediately when ANY task activates in `SequentialTaskEngine.executeTaskSafely` and at the start of each pass in `WhatsAppStatusEngine`, `WhatsAppDirectSendEngine`, `WhatsAppGroupEngine`, and `WhatsAppCallEngine`.
+- **Database Restore Synchronization:** `BackupRepository.importDatabaseFromJson` now emits `AppDataEvents` signals (`notifyTasksChanged`, `notifyCampaignsChanged`, `notifyAutoReplyChanged`, `notifyLogsChanged`), ensuring all tabs immediately sync upon database restore.
+- **Live Device Verification:** Rebuilt signed `Super-release.apk` (3.76 MB), passed 80/80 unit tests, installed on Vivo I2401, verified live WhatsApp Business status publishing and UI interaction.
+
 See `docs/FILE_REFERENCE.md` for a per-file map of the codebase and
 `README.md` / `HOW_TO_RUN_OR_UPDATE_PROJECT.md` for setup.
