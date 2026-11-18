@@ -343,5 +343,18 @@ real messages.
 | **Accessibility Label** | Settings Surface | **100% 1-WORD COMPLIANT** | Listed under Downloaded Services as `"Super"` (1 word). Detail view displays `"Super"` (1 word) and `"Super shortcut"` (2 words). |
 | **Settings Screen** | Navigation Bar | **100% FIT WITHOUT SLIDING** | Responsive 5-card bar (`Templates`, `Channels`, `Security`, `Theme`, `System`) spans from x=95 to x=1324 without horizontal scroll. |
 
+---
+
+## 7. GitHub Repository Synchronization & Purge
+
+- **Remote URL:** `https://github.com/taandava/AutoText.git`
+- **Active Branch:** `main` (tracked to `origin/main`, commit `c8d3776`)
+- **Old Codebase Eradication:**
+  - Tracked file tree verified: 100% of source files reside under `com.jmd.superapp`.
+  - All remnants of legacy `AutoText` (`app-release.apk`, `agent.md`, `design.md`, `AUTOTEXT_FEATURES_AND_LOGIC.md`) and legacy `Helper` code completely deleted.
+  - Release artifact `Super-release.apk` (v2 signed, 3.94 MB) tracked and stored at repository root.
+  - Remote branches `master` (legacy Helper code) and `feature/minimalist-engine-refactor` purged from GitHub remote via `git push origin --delete master feature/minimalist-engine-refactor`.
+  - Repository `HEAD` points exclusively to `main`. Zero obsolete branches exist on GitHub.
+
 See `docs/FILE_REFERENCE.md` for a per-file map of the codebase and
 `README.md` / `HOW_TO_RUN_OR_UPDATE_PROJECT.md` for setup.
