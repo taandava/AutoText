@@ -1,4 +1,4 @@
-# Proguard and R8 optimization rules for helper / O-O (Production Ready)
+# Proguard and R8 optimization rules for Super (Production Ready)
 
 # Preserve annotations and line numbers for stack traces
 -keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
@@ -69,7 +69,7 @@
 
 # AndroidX Startup
 -keep class androidx.startup.** { *; }
--keep class com.jmd.superapp.core.HelperAppInitializer { *; }
+-keep class com.jmd.superapp.core.SuperAppInitializer { *; }
 
 # Kotlin Coroutines
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
