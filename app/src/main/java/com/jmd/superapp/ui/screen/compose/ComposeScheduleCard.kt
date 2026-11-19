@@ -347,14 +347,15 @@ fun ComposeScheduleOptionsCard(
             }
         }
 
-        // 3. SIM Card Selection for SMS
-        if (selectedChannel == ChannelType.SMS) {
+        // 3. SIM selection for SMS and phone calls
+        val usesCarrierSim = selectedChannel == ChannelType.SMS || selectedChannel == ChannelType.CALL
+        if (usesCarrierSim) {
             AppCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = AppDesignTokens.ShapeLarge
             ) {
                 Text(
-                    "SIM Slot",
+                    if (selectedChannel == ChannelType.CALL) "Calling SIM" else "SIM Slot",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 12.5.sp,
                     color = MaterialTheme.colorScheme.onSurface

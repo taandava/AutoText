@@ -379,6 +379,12 @@ fun ComposeTaskScreen(
     }
 
     val saveTaskAction: () -> Unit = saveTaskAction@ {
+        // A one-off task scheduled in the past could never fire, so report it instead of failing silently.
+        if (selectedRecurrence == RecurrenceType.ONCE && triggerTimeMillis <= System.currentTimeMillis()) {
+            context.showAppToast("Selected time has already passed. Choose a future time.", isLong = true)
+            return@saveTaskAction
+        }
+
         /**
          * What it is:
          * Operational routine [validateContentOrShowToast].

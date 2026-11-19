@@ -69,7 +69,7 @@ fun CreateDailyCampaignSheet(
     val context = LocalContext.current
     var title by remember { mutableStateOf("") }
     var selectedChannel by remember(initialChannel) { mutableStateOf(initialChannel) }
-    var messageTemplate by remember { mutableStateOf("") }
+    var messageBody by remember { mutableStateOf("") }
     var dailyLimitText by remember { mutableStateOf("30") }
     var intervalSecondsText by remember { mutableStateOf("10") }
     var scheduledHour by remember { mutableIntStateOf(9) }
@@ -238,12 +238,12 @@ fun CreateDailyCampaignSheet(
                 )
             }
 
-            // Message Template
+            // Message body
             AppInputField(
-                value = messageTemplate,
-                onValueChange = { messageTemplate = it },
-                label = "Message Template",
-                placeholder = "Enter message with {name}, {first_name}, {date}...",
+                value = messageBody,
+                onValueChange = { messageBody = it },
+                label = "Message",
+                placeholder = "Enter the message to send...",
                 leadingIcon = Icons.Default.EditNote,
                 singleLine = false,
                 minLines = 3,
@@ -253,10 +253,7 @@ fun CreateDailyCampaignSheet(
 
             // Variable helper chips
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                listOf(
-                    listOf("{name}", "{first_name}", "{phone}", "{date}"),
-                    listOf("{short_date}", "{time}", "{greeting}", "{rupee}")
-                ).forEach { rowTags ->
+                MessageVariables.MESSAGE.chunked(4).forEach { rowTags ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -268,7 +265,7 @@ fun CreateDailyCampaignSheet(
                                     .clip(AppDesignTokens.ShapePill)
                                     .background(accentColor.copy(alpha = 0.12f))
                                     .border(1.dp, accentColor.copy(alpha = 0.35f), AppDesignTokens.ShapePill)
-                                    .clickable { messageTemplate += " $tag" }
+                                    .clickable { messageBody += " $tag" }
                                     .padding(vertical = 5.dp),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -297,7 +294,7 @@ fun CreateDailyCampaignSheet(
                     val newCfg = DailyCampaignConfig(
                         channel = selectedChannel,
                         title = finalTitle,
-                        messageTemplate = messageTemplate.trim(),
+                        message = messageBody.trim(),
                         dailyLimit = limit,
                         intervalSeconds = interval,
                         scheduledHour = scheduledHour,

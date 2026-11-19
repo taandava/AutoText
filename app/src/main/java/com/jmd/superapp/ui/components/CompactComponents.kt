@@ -99,11 +99,11 @@ fun AppButton(
     isLoading: Boolean = false,
     shape: RoundedCornerShape = AppDesignTokens.ShapeSmall,
     elevation: Dp = 0.dp,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
+    contentPadding: PaddingValues = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
     emoji: String? = null,
     fontSize: TextUnit = 13.sp,
-    maxLines: Int = 3,
-    overflow: TextOverflow = TextOverflow.Clip,
+    maxLines: Int = 1,
+    overflow: TextOverflow = TextOverflow.Ellipsis,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -182,11 +182,12 @@ fun AppButton(
                     }
                     Text(
                         text = text,
+                        modifier = Modifier.weight(1f, fill = false),
                         fontSize = fontSize,
                         fontWeight = FontWeight.Bold,
                         color = contentColor,
                         maxLines = maxLines,
-                        softWrap = true,
+                        softWrap = false,
                         overflow = overflow,
                         textAlign = TextAlign.Center
                     )

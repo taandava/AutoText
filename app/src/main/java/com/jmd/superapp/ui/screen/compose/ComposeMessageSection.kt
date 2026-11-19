@@ -59,7 +59,6 @@ import com.jmd.superapp.ui.theme.*
  * - Architecture: [ComposeMessageSection], [ComposeRecipientsAndMessageCard]
  * @param messageText Text draft content.
  * @param onMessageTextChange Callback when text is edited.
- * @param onOpenTemplates Callback to open template picker drawer.
  * @param smsPartCount Segment count calculated for SMS text length.
  * @param isUnicode True if message contains multi-byte or unicode characters.
  * @param mediaUri File URI of attached photo, video, or audio media.
@@ -83,7 +82,6 @@ fun ComposeRecipientsAndMessageCard(
     onOpenContactsPicker: () -> Unit,
     messageText: String,
     onMessageTextChange: (String) -> Unit,
-    onOpenTemplates: (() -> Unit)? = null,
     smsPartCount: Int,
     isUnicode: Boolean,
     mediaUri: String = "",
@@ -129,11 +127,17 @@ fun ComposeRecipientsAndMessageCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            val isGroupChannel = selectedChannel == ChannelType.WHATSAPP_GROUP || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
             if (isWa) {
                 val localCtx = LocalContext.current
                 val targetPkg = if (isBusiness) WhatsAppPackageHelper.PACKAGE_WHATSAPP_BUSINESS else WhatsAppPackageHelper.PACKAGE_WHATSAPP
-                val labelPick = if (isBusiness) "Pick in W4B" else "Pick in WA"
-                val labelContacts = if (isBusiness) "W4B Contacts" else "WA Contacts"
+                val labelPick = if (isBusiness) "Pick W4B" else "Pick WA"
+                val labelContacts = when {
+                    isBusiness && isGroupChannel -> "W4B Groups"
+                    isGroupChannel -> "WA Groups"
+                    isBusiness -> "W4B Contacts"
+                    else -> "WA Contacts"
+                }
                 AppButton(
                     text = labelPick,
                     onClick = {
@@ -176,27 +180,30 @@ fun ComposeRecipientsAndMessageCard(
                     text = labelContacts,
                     onClick = onOpenWhatsAppContacts,
                     variant = AppButtonVariant.SECONDARY,
-                    icon = Icons.AutoMirrored.Filled.Send,
+                    icon = if (isGroupChannel) Icons.Default.Group else Icons.AutoMirrored.Filled.Send,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    shape = AppDesignTokens.ShapePill
+                )
+            } else {
+                AppButton(
+                    text = "From Pool",
+                    onClick = onOpenPoolPicker,
+                    variant = AppButtonVariant.SECONDARY,
+                    icon = Icons.Default.Group,
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                     shape = AppDesignTokens.ShapePill
                 )
             }
-            AppButton(
-                text = "From Pool",
-                onClick = onOpenPoolPicker,
-                variant = AppButtonVariant.SECONDARY,
-                icon = Icons.Default.Group,
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                shape = AppDesignTokens.ShapePill
-            )
-            AppButton(
-                text = "Device Contacts",
-                onClick = onOpenContactsPicker,
-                variant = AppButtonVariant.SECONDARY,
-                icon = Icons.Default.Contacts,
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                shape = AppDesignTokens.ShapePill
-            )
+            if (!isGroupChannel) {
+                AppButton(
+                    text = "Device Contacts",
+                    onClick = onOpenContactsPicker,
+                    variant = AppButtonVariant.SECONDARY,
+                    icon = Icons.Default.Contacts,
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                    shape = AppDesignTokens.ShapePill
+                )
+            }
         }
 
         // Duplicate Warning Banner
@@ -504,14 +511,7 @@ fun ComposeRecipientsAndMessageCard(
         Spacer(modifier = Modifier.height(10.dp))
         Text("Dynamic Variables:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(4.dp))
-        val variables = listOf(
-            "{name}", "{first_name}", "{phone}",
-            "{date}", "{short_date}", "{time}",
-            "{date_dd_mm_yyyy}", "{date_dd_mm_yy}", "{date_words}",
-            "{time_24h}", "{today}", "{ist_time}",
-            "{day}", "{greeting}", "{namaste}",
-            "{rupee}", "{month_name}", "{year}"
-        )
+        val variables = MessageVariables.MESSAGE
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             variables.chunked(3).forEach { rowVars ->
                 Row(

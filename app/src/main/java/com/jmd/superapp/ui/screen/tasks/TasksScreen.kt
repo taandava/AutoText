@@ -78,6 +78,7 @@ fun TasksListScreen(
     var selectedTab by remember { mutableIntStateOf(0) } // 0=All, 1=Active, 2=Sent, 3=Failed
     var searchQuery by remember { mutableStateOf("") }
     var showTaskTypeDialog by remember { mutableStateOf(false) }
+    var taskPendingDeletion by remember { mutableStateOf<ScheduledTask?>(null) }
     val coroutineScope = rememberCoroutineScope()
 
     fun refreshTasks() {
@@ -216,11 +217,8 @@ fun TasksListScreen(
                                 onEditTask(task)
                             },
                             onDelete = {
-                                coroutineScope.launch(Dispatchers.IO) {
-                                    com.jmd.superapp.api.TaskFeatureApi.deleteTask(context, repository, task.id)
-                                    val t = repository.getAllTasks()
-                                    withContext(Dispatchers.Main) { tasks = t }
-                                }
+                                // Ask first: deletion also cancels the schedule and cannot be undone.
+                                taskPendingDeletion = task
                             }
                         )
                     }
@@ -257,6 +255,38 @@ fun TasksListScreen(
                 onSelectDailyCampaign = {
                     showTaskTypeDialog = false
                     onNavigateToDailyCampaign()
+                }
+            )
+        }
+
+        taskPendingDeletion?.let { pending ->
+            AlertDialog(
+                onDismissRequest = { taskPendingDeletion = null },
+                title = { Text("Delete task?") },
+                text = {
+                    Text("\"${pending.title}\" will be removed and its schedule cancelled. This cannot be undone.")
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            taskPendingDeletion = null
+                            coroutineScope.launch(Dispatchers.IO) {
+                                com.jmd.superapp.api.TaskFeatureApi.deleteTask(context, repository, pending.id)
+                                val remaining = repository.getAllTasks()
+                                withContext(Dispatchers.Main) {
+                                    tasks = remaining
+                                    context.showAppToast("Task deleted")
+                                }
+                            }
+                        }
+                    ) {
+                        Text("Delete", color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { taskPendingDeletion = null }) {
+                        Text("Cancel")
+                    }
                 }
             )
         }

@@ -262,7 +262,7 @@ fun LogDetailView(
                     }
 
                     AppButton(
-                        text = if (isRetrying) "Dispatching..." else "Retry Dispatch Now",
+                        text = if (isRetrying) "Dispatching..." else "Retry Dispatch",
                         onClick = {
                             isRetrying = true
                             retryResult = null

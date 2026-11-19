@@ -434,7 +434,8 @@ class WhatsAppRepository(private val context: Context) {
                 isBusiness -> """
                     SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
                     FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
-                    WHERE enabled = 1
+                    WHERE enabled = 1 AND phone NOT LIKE 'group:%' AND normalized_number NOT LIKE 'group:%'
+                        AND source NOT IN ('WA_GROUP', 'WA_BUSINESS_GROUP')
                     ORDER BY CASE
                         WHEN source = 'WA_BUSINESS' THEN 0
                         WHEN source = 'WA_BUSINESS_GROUP' THEN 1
@@ -446,7 +447,8 @@ class WhatsAppRepository(private val context: Context) {
                 else -> """
                     SELECT name, phone, normalized_number, IFNULL(photo_uri, ''), IFNULL(source, '')
                     FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}
-                    WHERE enabled = 1
+                    WHERE enabled = 1 AND phone NOT LIKE 'group:%' AND normalized_number NOT LIKE 'group:%'
+                        AND source NOT IN ('WA_GROUP', 'WA_BUSINESS_GROUP')
                     ORDER BY CASE
                         WHEN source = 'WA_CHAT' THEN 0
                         WHEN source = 'WA_GROUP' THEN 1
@@ -503,7 +505,10 @@ class WhatsAppRepository(private val context: Context) {
                         ContactsContract.Data.CONTACT_ID,
                         ContactsContract.Data.MIMETYPE
                     ),
-                    "${ContactsContract.Data.MIMETYPE} = '$profileMime' OR ${ContactsContract.Data.DATA3} LIKE 'Message +%'",
+                    "${ContactsContract.Data.MIMETYPE} LIKE '%whatsapp%' OR " +
+                    "${ContactsContract.Data.MIMETYPE} LIKE '%w4b%' OR " +
+                    "${ContactsContract.Data.DATA1} LIKE '%@s.whatsapp.net%' OR " +
+                    "${ContactsContract.Data.DATA3} LIKE '%+%'",
                     null,
                     "${ContactsContract.Data.DISPLAY_NAME} ASC"
                 )
@@ -513,7 +518,7 @@ class WhatsAppRepository(private val context: Context) {
                     val data1Idx = c.getColumnIndex(ContactsContract.Data.DATA1)
                     val cidIdx = c.getColumnIndex(ContactsContract.Data.CONTACT_ID)
                     val mimeIdx = c.getColumnIndex(ContactsContract.Data.MIMETYPE)
-                    val phoneRegex = Regex("""\+?[0-9]{10,13}""")
+                    val phoneRegex = Regex("""\+?[0-9]{7,15}""")
 
                     while (c.moveToNext() && map.size < limit) {
                         val name = if (nameIdx >= 0) c.getString(nameIdx).orEmpty().trim() else ""
@@ -639,7 +644,29 @@ class WhatsAppRepository(private val context: Context) {
             }
         }
 
-        return map.values.toList()
+        // Final guard: one row per real phone number regardless of how each source normalized it.
+        // Pool rows carry their stored normalized_number, address-book rows carry a freshly computed
+        // one, so the same person could otherwise appear twice in the picker.
+        val deduped = LinkedHashMap<String, WhatsAppContactItem>()
+        for (item in map.values) {
+            val isGroupItem = item.phone.startsWith("group:", ignoreCase = true) ||
+                item.normalizedPhone.startsWith("group:", ignoreCase = true)
+            val digits = item.phone.filter { it.isDigit() }
+            val key = when {
+                isGroupItem -> "group:" + item.name.lowercase().trim()
+                digits.length >= 10 -> digits.takeLast(10)
+                else -> item.normalizedPhone.ifBlank { item.phone }
+            }
+            val existing = deduped[key]
+            if (existing == null) {
+                deduped[key] = item
+            } else {
+                val betterName = if (existing.name == existing.phone && item.name != item.phone) item.name else existing.name
+                val betterPhoto = existing.photoUri.ifBlank { item.photoUri }
+                deduped[key] = existing.copy(name = betterName, photoUri = betterPhoto)
+            }
+        }
+        return deduped.values.toList()
     }
 
     /**
@@ -699,7 +726,7 @@ class WhatsAppRepository(private val context: Context) {
     fun purgeCorruptedGroupsFromPool(): Int {
         return try {
             val db = dbHelper.writableDatabase
-            val count = db.delete(
+            var count = db.delete(
                 DatabaseHelper.TABLE_DYNAMIC_POOL,
                 "(source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%') AND (" +
                     "LOWER(name) IN ('hidden updates', 'find channels to follow', 'explore more', 'create channel', 'inbox filters', 'radio group', 'add status', 'recent updates', 'recent searches', 'clear all', 'ask meta ai or search', 'search group chats', 'search chats', 'manage groups', 'manage group', 'new group', 'new community', 'archived', 'starred messages', 'disappearing messages', 'chats', 'updates', 'communities', 'calls', 'tools', 'all filter', 'groups filter', 'unread filter', 'favorites filter') " +
@@ -708,7 +735,38 @@ class WhatsAppRepository(private val context: Context) {
                 ")",
                 null
             )
-            Log.i("WhatsAppRepo", "Purged $count corrupted group entries from dynamic pool")
+            // Repair direct phone numbers and address-book contacts that were erroneously stored as groups
+            val candidates = mutableListOf<Triple<Long, String, String>>()
+            db.rawQuery(
+                "SELECT id, name FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE phone LIKE 'group:%' OR normalized_number LIKE 'group:%'",
+                null
+            ).use { c ->
+                while (c.moveToNext()) {
+                    val id = c.getLong(0)
+                    val name = c.getString(1).orEmpty().trim()
+                    val digits = name.filter { it.isDigit() }
+                    val letters = name.filter { it.isLetter() }
+                    if (digits.length >= 7 && letters.isEmpty()) {
+                        candidates.add(Triple(id, name, name))
+                    } else if (name.isNotBlank()) {
+                        val phoneFromBook = findPhoneForContactName(name)
+                        if (!phoneFromBook.isNullOrBlank()) {
+                            candidates.add(Triple(id, name, phoneFromBook))
+                        }
+                    }
+                }
+            }
+            for ((id, name, resolvedPhone) in candidates) {
+                val norm = PhoneNumberNormalizer.normalize(resolvedPhone)
+                val cv = android.content.ContentValues().apply {
+                    put("phone", resolvedPhone)
+                    put("normalized_number", norm.ifBlank { resolvedPhone })
+                    put("source", "WA_CHAT")
+                }
+                val updated = db.update(DatabaseHelper.TABLE_DYNAMIC_POOL, cv, "id = ?", arrayOf(id.toString()))
+                if (updated > 0) count++
+            }
+            Log.i("WhatsAppRepo", "Purged/repaired $count corrupted group entries from dynamic pool")
             count
         } catch (e: Exception) {
             Log.w("WhatsAppRepo", "purgeCorruptedGroupsFromPool failed: ${e.message}")

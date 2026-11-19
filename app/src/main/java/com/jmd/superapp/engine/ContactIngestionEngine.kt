@@ -72,35 +72,16 @@ class ContactIngestionEngine(
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             try {
                 val resolver = context.contentResolver
-                val fullProjection = arrayOf(
+                // Streamlined projection avoids large CursorWindow allocation limits when reading thousands of contacts
+                val projection = arrayOf(
                     ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                     ContactsContract.CommonDataKinds.Phone.NUMBER,
-                    ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,
-                    ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
                     ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                 )
-                val basicProjection = arrayOf(
-                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                    ContactsContract.CommonDataKinds.Phone.NUMBER,
-                )
 
-                val phoneCursor = try {
-                    resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, fullProjection, null, null, null)
-                } catch (e: Exception) {
-                    Log.w("ContactIngestion", "Full projection query failed, falling back to basic projection: ${e.message}")
-                    try {
-                        resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, basicProjection, null, null, null)
-                    } catch (e2: Exception) {
-                        Log.w("ContactIngestion", "Basic projection query failed: ${e2.message}")
-                        null
-                    }
-                }
-
-                phoneCursor?.use { cursor ->
+                resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, null, null, null)?.use { cursor ->
                     val nameIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
                     val numberIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
-                    val photoThumbIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI)
-                    val photoUriIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI)
                     val contactIdIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
 
                     while (cursor.moveToNext()) {
@@ -109,14 +90,8 @@ class ContactIngestionEngine(
                         val phone = if (numberIdx >= 0) cursor.getString(numberIdx).orEmpty().trim() else ""
                         if (phone.isBlank()) continue
 
-                        var photo = if (photoThumbIdx >= 0) cursor.getString(photoThumbIdx).orEmpty().trim() else ""
-                        if (photo.isBlank() && (photoUriIdx >= 0)) {
-                            photo = cursor.getString(photoUriIdx).orEmpty().trim()
-                        }
-                        if (photo.isBlank() && (contactIdIdx >= 0)) {
-                            val cid = cursor.getLong(contactIdIdx)
-                            if (cid > 0) photo = "content://com.android.contacts/contacts/$cid/photo"
-                        }
+                        val cid = if (contactIdIdx >= 0) cursor.getLong(contactIdIdx) else 0L
+                        val photo = if (cid > 0) "content://com.android.contacts/contacts/$cid/photo" else ""
 
                         if (PhoneNumberNormalizer.isMobileNumber(phone)) {
                             val normalized = PhoneNumberNormalizer.normalize(phone)
@@ -127,66 +102,6 @@ class ContactIngestionEngine(
                                 source = "CONTACT",
                                 photoUri = photo,
                             )
-                        }
-                    }
-                }
-
-                val phoneRegex = Regex("""\+?[0-9]{10,13}""")
-                resolver.query(
-                    ContactsContract.Data.CONTENT_URI,
-                    arrayOf(
-                        ContactsContract.Data.DISPLAY_NAME,
-                        ContactsContract.Data.DATA1,
-                        ContactsContract.Data.DATA3,
-                        ContactsContract.Data.CONTACT_ID,
-                        ContactsContract.Data.MIMETYPE,
-                    ),
-                    "${ContactsContract.Data.MIMETYPE} = 'vnd.android.cursor.item/vnd.com.whatsapp.profile' OR " +
-                    "${ContactsContract.Data.MIMETYPE} = 'vnd.android.cursor.item/vnd.com.whatsapp.w4b.profile' OR " +
-                    "${ContactsContract.Data.DATA3} LIKE 'Message +%'",
-                    null,
-                    null,
-                )?.use { cursor ->
-                    val nameIdx = cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)
-                    val data3Idx = cursor.getColumnIndex(ContactsContract.Data.DATA3)
-                    val data1Idx = cursor.getColumnIndex(ContactsContract.Data.DATA1)
-                    val cidIdx = cursor.getColumnIndex(ContactsContract.Data.CONTACT_ID)
-                    val mimeIdx = cursor.getColumnIndex(ContactsContract.Data.MIMETYPE)
-
-                    while (cursor.moveToNext()) {
-                        contactsScanned++
-                        val name = if (nameIdx >= 0) cursor.getString(nameIdx).orEmpty().trim() else ""
-                        val data3 = if (data3Idx >= 0) cursor.getString(data3Idx).orEmpty().trim() else ""
-                        val data1 = if (data1Idx >= 0) cursor.getString(data1Idx).orEmpty().trim() else ""
-                        val mime = if (mimeIdx >= 0) cursor.getString(mimeIdx).orEmpty().trim() else ""
-                        val phoneMatch = phoneRegex.find(data3)?.value
-                        val candidatePhone = when {
-                            phoneMatch != null -> phoneMatch
-                            data1.contains("@") -> "+" + data1.substringBefore("@").filter { it.isDigit() }
-                            else -> phoneRegex.find(data1)?.value.orEmpty()
-                        }
-
-                        if (candidatePhone.isNotBlank() && PhoneNumberNormalizer.isMobileNumber(candidatePhone)) {
-                            val normalized = PhoneNumberNormalizer.normalize(candidatePhone)
-                            val contactId = if (cidIdx >= 0) cursor.getLong(cidIdx) else 0L
-                            val photo = if (contactId > 0) "content://com.android.contacts/contacts/$contactId/photo" else ""
-                            val isW4b = mime.contains("w4b", ignoreCase = true)
-                            val src = if (isW4b) "WA_BUSINESS" else "WA_CHAT"
-
-                            val existing = candidates[normalized]
-                            if (existing == null) {
-                                candidates[normalized] = DynamicContactItem(
-                                    name = name.ifBlank { candidatePhone },
-                                    phone = candidatePhone,
-                                    normalizedNumber = normalized,
-                                    source = src,
-                                    photoUri = photo,
-                                )
-                            } else {
-                                val updatedName = if ((existing.name == existing.phone) && name.isNotBlank() && (name != candidatePhone)) name else existing.name
-                                val updatedPhoto = if (existing.photoUri.isBlank() && photo.isNotBlank()) photo else existing.photoUri
-                                candidates[normalized] = existing.copy(name = updatedName, photoUri = updatedPhoto, source = src)
-                            }
                         }
                     }
                 }
@@ -292,11 +207,13 @@ class ContactIngestionEngine(
                         ContactsContract.Data.DISPLAY_NAME,
                         ContactsContract.Data.DATA1,
                         ContactsContract.Data.DATA3,
+                        ContactsContract.Data.CONTACT_ID,
                         ContactsContract.Data.MIMETYPE,
                     ),
-                    "${ContactsContract.Data.MIMETYPE} = 'vnd.android.cursor.item/vnd.com.whatsapp.profile' OR " +
-                    "${ContactsContract.Data.MIMETYPE} = 'vnd.android.cursor.item/vnd.com.whatsapp.w4b.profile' OR " +
-                    "${ContactsContract.Data.DATA3} LIKE 'Message +%'",
+                    "${ContactsContract.Data.MIMETYPE} LIKE '%whatsapp%' OR " +
+                    "${ContactsContract.Data.MIMETYPE} LIKE '%w4b%' OR " +
+                    "${ContactsContract.Data.DATA1} LIKE '%@s.whatsapp.net%' OR " +
+                    "${ContactsContract.Data.DATA3} LIKE '%+%'",
                     null,
                     null,
                 )
@@ -304,8 +221,9 @@ class ContactIngestionEngine(
                     val nameIdx = c.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)
                     val d1Idx = c.getColumnIndex(ContactsContract.Data.DATA1)
                     val d3Idx = c.getColumnIndex(ContactsContract.Data.DATA3)
+                    val cidIdx = c.getColumnIndex(ContactsContract.Data.CONTACT_ID)
                     val mimeIdx = c.getColumnIndex(ContactsContract.Data.MIMETYPE)
-                    val phoneRegex = Regex("""\+?[0-9]{10,13}""")
+                    val phoneRegex = Regex("""\+?[0-9]{7,15}""")
 
                     while (c.moveToNext()) {
                         val name = if (nameIdx >= 0) c.getString(nameIdx).orEmpty().trim() else ""
@@ -324,6 +242,8 @@ class ContactIngestionEngine(
 
                         if (candidatePhone.isNotBlank() && PhoneNumberNormalizer.isMobileNumber(candidatePhone)) {
                             val normalized = PhoneNumberNormalizer.normalize(candidatePhone)
+                            val contactId = if (cidIdx >= 0) c.getLong(cidIdx) else 0L
+                            val photo = if (contactId > 0) "content://com.android.contacts/contacts/$contactId/photo" else ""
                             val src = if (isW4b) "WA_BUSINESS" else "WA_CHAT"
                             val existing = candidates[normalized]
                             if (existing == null) {
@@ -332,10 +252,12 @@ class ContactIngestionEngine(
                                     phone = candidatePhone,
                                     normalizedNumber = normalized,
                                     source = src,
+                                    photoUri = photo,
                                 )
                             } else {
                                 val updatedName = if ((existing.name == existing.phone) && name.isNotBlank() && (name != candidatePhone)) name else existing.name
-                                candidates[normalized] = existing.copy(name = updatedName, source = src)
+                                val updatedPhoto = if (existing.photoUri.isBlank() && photo.isNotBlank()) photo else existing.photoUri
+                                candidates[normalized] = existing.copy(name = updatedName, photoUri = updatedPhoto, source = src)
                             }
                         }
                     }
@@ -373,8 +295,10 @@ class ContactIngestionEngine(
             Log.w("ContactIngestion", "WhatsApp chat/group ingestion scan failed: ${e.message}")
         }
 
+        repo.purgeCorruptedGroupsFromPool()
         val addedCount = repo.upsertDynamicPoolBatch(candidates.values.toList())
         val (totalCount, _, _) = repo.getDynamicPoolStats()
+        com.jmd.superapp.service.TaskAccessibilityService.notifyScanCompleted()
 
         IngestionSummary(
             contactsScanned = contactsScanned,

@@ -17,15 +17,15 @@ Super is a personal, fully on-device scheduler for Android. It queues one-off or
 - **Reply safety:** automatic replies skip the device's own number and suppress identical repeats inside a cooldown, which prevents bot-to-bot reply loops.
 - **Banking app protection:** banking/UPI packages are excluded from the task service by package scoping, so opening one never lets the service inspect it. The service is not torn down when a banking app opens; there is an optional *strict detach* switch in Preferences if you prefer it to step aside completely.
 - **Screen assist:** optional PIN-based unlock for unattended runs, with the PIN stored in hardware-backed Keystore.
-- **Backup/restore** of the local database to a JSON file you choose.
+- **Backup/restore** of the local database to a file you choose, encrypted with an AES-256-GCM key held in the Android Keystore (import still accepts older plaintext backups).
+- **Crash-safe dispatch journal:** every scheduled occurrence is claimed in SQLite, so a duplicate alarm or a restart cannot send the same message twice.
 
-## Build and test
+## Build
 
 Requirements: JDK 21, Android SDK with platform 37 and build-tools 36.
 
 ```bash
-./gradlew :app:testDebugUnitTest   # JVM unit tests
-./gradlew :app:assembleDebug       # debug APK
+./gradlew :app:assembleDebug       # debug APK (applicationIdSuffix .debug)
 ./gradlew :app:assembleRelease     # signed release (super-release.jks via keystore.properties)
 ```
 
@@ -48,5 +48,6 @@ adb shell pm grant com.jmd.superapp.debug android.permission.WRITE_SECURE_SETTIN
 ## Documentation
 
 - [`CHAT_MEMORY.md`](CHAT_MEMORY.md) — project memory: decisions, every fix, device verification, open items.
+- [`CHAT_HISTORY.md`](CHAT_HISTORY.md) — full turn-by-turn execution history.
 - [`docs/FILE_REFERENCE.md`](docs/FILE_REFERENCE.md) — per-file and per-declaration reference for all Kotlin sources.
 - [`docs/README.md`](docs/README.md) — documentation index and subsystem map.

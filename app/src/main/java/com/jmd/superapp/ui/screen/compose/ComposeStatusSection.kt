@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.jmd.superapp.core.MessageVariables
 import com.jmd.superapp.ui.components.*
 import com.jmd.superapp.ui.theme.*
 
@@ -50,7 +51,6 @@ import com.jmd.superapp.ui.theme.*
  * @param messageText Text caption or body of text status.
  * @param onMessageTextChange Callback when caption is edited.
  * @param onLaunchMediaPicker Callback to launch system photo picker.
- * @param onOpenTemplates Callback to open template message drawer.
  */
 @Composable
 fun WhatsAppStatusComposerCard(
@@ -59,7 +59,6 @@ fun WhatsAppStatusComposerCard(
     messageText: String,
     onMessageTextChange: (String) -> Unit,
     onLaunchMediaPicker: () -> Unit,
-    onOpenTemplates: (() -> Unit)? = null
 ) {
     val accentColor = MaterialTheme.colorScheme.tertiary
 
@@ -243,7 +242,7 @@ fun WhatsAppStatusComposerCard(
             Spacer(modifier = Modifier.height(10.dp))
         }
 
-        // Message Header & Templates Trigger
+        // Message header and insertable variable chips
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -321,11 +320,7 @@ fun WhatsAppStatusComposerCard(
         Spacer(modifier = Modifier.height(10.dp))
         Text("Dynamic Variables:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(4.dp))
-        val statusVariables = listOf(
-            "{date}", "{short_date}", "{time}",
-            "{date_dd_mm_yyyy}", "{date_words}", "{time_24h}",
-            "{day}", "{short_day}", "{today}", "{ist_time}"
-        )
+        val statusVariables = MessageVariables.STATUS
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             statusVariables.chunked(3).forEach { rowVars ->
                 Row(
@@ -368,7 +363,6 @@ fun WhatsAppStatusComposerCard(
  * @param messageText Text caption or body of text status.
  * @param onMessageTextChange Callback when caption is edited.
  * @param onLaunchMediaPicker Callback to launch system photo picker.
- * @param onOpenTemplates Callback to open template message drawer.
  */
 @Composable
 fun WhatsAppBusinessStatusComposerCard(
@@ -377,7 +371,6 @@ fun WhatsAppBusinessStatusComposerCard(
     messageText: String,
     onMessageTextChange: (String) -> Unit,
     onLaunchMediaPicker: () -> Unit,
-    onOpenTemplates: (() -> Unit)? = null
 ) {
     val accentColor = MaterialTheme.colorScheme.primary
 
@@ -561,7 +554,7 @@ fun WhatsAppBusinessStatusComposerCard(
             Spacer(modifier = Modifier.height(10.dp))
         }
 
-        // Message Header & Templates Trigger
+        // Message header and insertable variable chips
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -639,11 +632,7 @@ fun WhatsAppBusinessStatusComposerCard(
         Spacer(modifier = Modifier.height(10.dp))
         Text("Dynamic Variables:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(4.dp))
-        val statusVariables = listOf(
-            "{date}", "{short_date}", "{time}",
-            "{date_dd_mm_yyyy}", "{date_words}", "{time_24h}",
-            "{day}", "{short_day}", "{today}", "{ist_time}"
-        )
+        val statusVariables = MessageVariables.STATUS
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             statusVariables.chunked(3).forEach { rowVars ->
                 Row(

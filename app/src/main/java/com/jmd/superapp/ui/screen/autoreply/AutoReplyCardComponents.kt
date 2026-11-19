@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.jmd.superapp.core.MessageVariables
 import com.jmd.superapp.data.model.AutoReplyRule
 import com.jmd.superapp.data.model.ChannelType
 import com.jmd.superapp.ui.components.AppBadge
@@ -436,13 +437,13 @@ fun AutoReplyLimitsCard(
 
 /**
  * What it is:
- * Template message editor card for crafting response texts with dynamic placeholder chips (e.g.
+ * Reply message editor card for crafting response texts with dynamic placeholder chips (e.g. {time}, {greeting}).
  *
  * What it does:
- * {name}, {time}).
+ * Renders the editable reply body, its character counter and the insertable token chips.
  *
  * Linked with:
- * - Architecture: [AutoReplyCardComponents], [AutoReplyTemplateCard]
+ * - Architecture: [AutoReplyCardComponents], [AutoReplyMessageCard]
  * @param channel Target channel type (Calls, SMS, WhatsApp).
  * @param callEventType Associated trigger event type.
  * @param replyText Current draft message body.
@@ -450,7 +451,7 @@ fun AutoReplyLimitsCard(
  * @param modifier Optional layout modifier.
  */
 @Composable
-fun AutoReplyTemplateCard(
+fun AutoReplyMessageCard(
     channel: ChannelType,
     callEventType: String,
     replyText: String,
@@ -476,12 +477,7 @@ fun AutoReplyTemplateCard(
         Spacer(modifier = Modifier.height(10.dp))
         Text("Dynamic Variables:", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(4.dp))
-        val tagList = listOf(
-            "{name}", "{first_name}", "{phone}",
-            "{time}", "{date}", "{day}",
-            "{greeting}", "{namaste}", "{rupee}",
-            "{short_date}", "{day_num}", "{event}"
-        )
+        val tagList = MessageVariables.MESSAGE
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             tagList.chunked(3).forEach { rowVars ->
                 Row(

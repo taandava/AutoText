@@ -56,6 +56,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 /** Upper bound for waiting on a WhatsApp send to complete before the task is retried. */
 private const val WHATSAPP_SEND_TIMEOUT_MS = 35000L
+private const val PROTECTED_WINDOW_MAX_WAIT_MS = 10 * 60_000L
 
 /**
  * What it is:
@@ -467,6 +468,10 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         AppFileLogger.action(appContext, TAG, "Starting execution for Task #${task.id} (${task.title}) on [${task.channel.displayName}]")
+
+        // Bank-safe window: a protected/banking app in the foreground suppresses this dispatch.
+        // The task waits (state and journal untouched) and runs once that app is closed.
+        awaitProtectedWindowClearance(task)
 
         // Universal Popup & Notification Dismissal: Whenever ANY task activates, immediately clear
         // all on-screen popups, floating heads-up notifications (HUNs), caller ID overlays (Truecaller etc.), and dialogs
@@ -883,8 +888,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             val phone = task.recipients[i]
                             if (phone in successfulRecipients) continue
 
-                            val name = if (i in task.recipientNames.indices) task.recipientNames[i] else "Friend"
-                            val personalizedMsg = personalize(task.messageText, name, phone)
+                            val personalizedMsg = personalize(task.messageText, phone)
                             val isLast = (i + 1) == totalRecipients
 
                             // Accessibility pre-flight per recipient: verify service alive before launching intent
@@ -1037,8 +1041,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 continue
             }
 
-            val name = if (i in task.recipientNames.indices) task.recipientNames[i] else "Friend"
-            val personalizedMsg = personalize(task.messageText, name, phone)
+            val personalizedMsg = personalize(task.messageText, phone)
 
             val shouldEnforceQuota = PreferenceManager(appContext).isSmsQuotaLimitEnabled
             if (shouldEnforceQuota) {
@@ -2024,12 +2027,55 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
      * - Component: [SequentialTaskEngine]
      */
 
-    private fun personalize(template: String, name: String, phone: String): String {
+    private fun personalize(template: String, phone: String): String {
         return MessageTemplateResolver.resolve(
             template = template,
-            name = name,
             phone = phone,
             targetTimestamp = System.currentTimeMillis(),
+        )
+    }
+
+    /**
+     * What it is:
+     * Bank-window deferral gate for every scheduled dispatch.
+     *
+     * What it does:
+     * While a package on the owner's protected list is in the foreground, logs the deferral and
+     * waits (bounded) for it to close, then lets the normal dispatch pipeline continue. The task is
+     * never marked failed or dropped by this gate.
+     */
+    private suspend fun awaitProtectedWindowClearance(task: ScheduledTask) {
+        val manager = com.jmd.superapp.core.ProtectedApplicationManager
+
+        fun blockingPackage(): String? {
+            val fg = com.jmd.superapp.service.TaskAccessibilityService.currentForegroundPackage
+            return if (!fg.isNullOrBlank() && manager.isProtectedPackage(fg)) fg else null
+        }
+
+        val first = blockingPackage() ?: return
+        AppFileLogger.i(
+            appContext,
+            TAG,
+            "Task #${task.id} (${task.title}) DEFERRED: protected app $first is foreground"
+        )
+        val deadline = System.currentTimeMillis() + PROTECTED_WINDOW_MAX_WAIT_MS
+        var previous = first
+        while (System.currentTimeMillis() < deadline) {
+            kotlinx.coroutines.delay(1000L)
+            val current = blockingPackage()
+            if (current == null) {
+                AppFileLogger.i(appContext, TAG, "Task #${task.id} protected window closed; resuming dispatch")
+                return
+            }
+            if (current != previous) {
+                previous = current
+                AppFileLogger.i(appContext, TAG, "Task #${task.id} still deferred by protected app $current")
+            }
+        }
+        AppFileLogger.w(
+            appContext,
+            TAG,
+            "Task #${task.id} protected-window wait expired after ${PROTECTED_WINDOW_MAX_WAIT_MS / 1000}s; proceeding"
         )
     }
 }

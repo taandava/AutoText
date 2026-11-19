@@ -312,8 +312,7 @@ fun DailyAutoSenderScreen(
                                 if (!isScanning) {
                                     isScanning = true
                                     scope.launch {
-                                        val scanner = ContactIngestionEngine(context, repository)
-                                        val summary = scanner.scanAndIngestAll()
+                                        val summary = repository.syncWhatsAppPool()
                                         lastScanSummary = summary
                                         refreshData()
                                         loadAllCampaigns()
@@ -496,8 +495,8 @@ fun DailyAutoSenderScreen(
                             if (!isScanning) {
                                 isScanning = true
                                 scope.launch {
-                                    val scanner = ContactIngestionEngine(context, repository)
-                                    val summary = scanner.scanAndIngestAll()
+                                    // One sync path for every screen in the app.
+                                    val summary = repository.syncWhatsAppPool()
                                     lastScanSummary = summary
                                     refreshData()
                                     loadAllCampaigns()
@@ -654,20 +653,6 @@ fun DailyAutoSenderScreen(
                             }
                             isA11yActive = alive
                             context.showAppToast(if (alive) "Service rebound & active" else "Heal triggered. Awaiting binder...")
-                        }
-                    },
-                    onScan = {
-                        if (!isScanning) {
-                            isScanning = true
-                            scope.launch {
-                                val scanner = ContactIngestionEngine(context, repository)
-                                val summary = scanner.scanAndIngestAll()
-                                lastScanSummary = summary
-                                refreshData()
-                                loadAllCampaigns()
-                                isScanning = false
-                                context.showAppToast("Ingested ${summary.newAdded} contacts", isLong = true)
-                            }
                         }
                     },
                     onSendBatch = {

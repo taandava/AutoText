@@ -219,11 +219,20 @@ class SuperApplication : Application(), Configuration.Provider {
             try {
                 val prefs = PreferenceManager(this@SuperApplication)
                 val repo = AppRepository(this@SuperApplication)
+                com.jmd.superapp.core.ProtectedApplicationManager.setUserProtectedPackages(prefs.protectedPackages)
                 // Reconcile and recover any tasks left stranded in RUNNING status from a previous process termination
                 repo.recoverInterruptedRunningTasks()
                 // Turn dispatch claims abandoned by a process kill into retryable failures
                 DispatchJournal.reconcileStale(this@SuperApplication)
-                repo.purgeAllGroupsFromPool()
+                // Only drop malformed group rows. A blanket purge here erased every harvested group on each launch.
+                // One-time reset: group rows written by the old preview/author heuristics were unreliable.
+        // Clearing them lets the next harvest classify groups from saved-sender previews.
+        if (!prefs.groupsResetV2) {
+            val removed = repo.purgeAllGroupEntries()
+            prefs.groupsResetV2 = true
+            android.util.Log.i("SuperApplication", "Group reset: removed $removed legacy group rows")
+        }
+        repo.purgeCorruptedGroupsFromPool()
 
                 // Purge any stale/completed/inactive alarms and re-arm pending tasks across channels
                 AlarmScheduler.cleanOrphanedAndCompletedAlarms(this@SuperApplication)

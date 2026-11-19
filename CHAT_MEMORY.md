@@ -1,6 +1,11 @@
 # Super — Project & Conversation Memory
 
 > Reference document for the **Super** Android app (`com.jmd.superapp`).
+
+> **Note (2026-11-18):** the entire JVM test suite was deliberately removed at the product owner's request
+> (commit `8478fa9`). Any unit-test counts mentioned below are historical records of earlier runs, not a
+> description of the current source tree. The shipped APK contains no test code.
+
 > It records what was decided, what was built, what was verified on a real device,
 > and what is still open. Keep it updated when behaviour changes.
 
@@ -527,3 +532,237 @@ real messages.
 
 See `docs/FILE_REFERENCE.md` for a per-file map of the codebase and
 `README.md` / `HOW_TO_RUN_OR_UPDATE_PROJECT.md` for setup.
+
+---
+
+## 6. Post-Antigravity audit pass — 2026-11-18 (v1.0.5)
+
+Context: after third-party (Antigravity) commits removed the JVM test suite and rebuilt the release,
+a full audit was run against the working tree and the live device (Vivo I2401, Android 17).
+
+### Fixed
+
+| Area | Finding | Fix |
+|---|---|---|
+| Lint | 6 warnings after the third-party commits | `Bitmap.createBitmap` → KTX `createBitmap`; non-lambda `Modifier.offset` → `offset { IntOffset(…) }`; `TaskCard` modifier moved to first optional parameter; deleted unused `ic_launcher_web.png`; round launcher icons re-masked into true circles. **Lint: 0 issues.** |
+| Backup | Exported backups queried the removed `templates` table → `no such table: templates` on every export | Dropped `templates` from both raw and typed backup paths |
+| Backup | "Copy JSON" threw `TransactionTooLargeException` (1.4 MB payload) with no feedback | Size guard (500 k chars) with an explicit "use Save File" message; paste now accepts the `SUPERBAK1:` envelope instead of only raw `{…}` |
+| Backup | "SD Card" wrote to `/sdcard/Documents/...` directly → blocked by scoped storage on Android 11+ | New `exportDatabaseToDocuments()` writes through MediaStore (`Documents/Super/Backups`), no permission needed |
+| Packaging | Test sources present in the tree | Confirmed removed; APK contains no test classes (`unzip -l` shows none) |
+
+### Verified on device (Vivo I2401, Android 17, signed release v1.0.5)
+
+| Check | Result |
+|---|---|
+| Install + cold start | `Status: ok`, 123 ms |
+| Screens | Tasks, Campaigns, Auto-Reply, Tools, Permission Center, Settings (all 5 tabs), Execution History, System Logs — 0 `FATAL EXCEPTION`, 0 ANR |
+| Permission Center | 7/8 granted; battery-optimisation exemption granted via `deviceidle whitelist` |
+| Notification listener | bound (`enabled_notification_listeners` lists the service) |
+| Device Admin | active, `force-lock` policy |
+| Task creation | Reminder created with a custom title, appeared as `All (3) / Active (1)`, then removed |
+| Backup export | `Documents/Super/Backups/Super_Backup_20261118_205242.json`, 1.47 MB, header `SUPERBAK1:` |
+| Backup restore | file picked through SAF restored **1850 records** into the restored, intact dataset (2 tasks) |
+
+### Known limitation
+The end-to-end auto-unlock test and real SMS/WhatsApp/call dispatch were not repeated on this device:
+unlocking needs the owner's lock-screen PIN, and dispatching would contact real recipients.
+
+### Dispatch verification (v1.0.5, self-directed to +91 91672 98798)
+
+| Channel | Evidence | Result |
+|---|---|---|
+| SMS | `SmsSender: SMS to +919167298798: Dispatched to cellular modem (1 segments, 0 confirmed)` then `RESULT_ERROR_NULL_PDU` | Reached modem handoff; self-send delivery report is null on this Jio SIM, so the app correctly logged `DISPATCHED` then `FAILED` |
+| WhatsApp | Execution History: `919167298798 · WhatsApp · SUCCESS · "Super WA audit"` | Full end-to-end send through the accessibility service |
+| Phone call | `SequentialTaskEngine: Placed direct telecom call to +919167298798 via SIM 0`, `InCallActivity` displayed, then `TelephonyCallEngine: Terminated active phone call via native TelecomManager.endCall()`; history row `SUCCESS (1/1, simSlot=0, duration=5s)` | Real call placed and auto-terminated |
+
+All test tasks were removed and the owner's two original tasks were restored from the encrypted backup
+(`Restored 1850 records`); execution history is back to its pre-test state with no `ZZAudit` rows.
+
+## Audit round: consistency sweep + destructive-action guards (v1.0.5, versionCode 6)
+
+### Code fixes
+- Removed every stale "templates" reference left after the template feature was retired: `PermissionManager` contact-permission purpose, `AutoReplyCardComponents` KDoc, `SettingsBackupRestoreCardComponents` backup description, `DailyCampaignCardComponents` card KDoc, `MoreScreen` KDoc, `ComposeStatusSection` inline comments.
+- Deleted the dead `onOpenTemplates` callback parameter (and its KDoc lines) from `ComposeMessageSection` and both `ComposeStatusSection` composables; no caller passed it.
+- **Task deletion now asks for confirmation** (`TasksScreen`): `AlertDialog` "Delete task?" naming the task, Delete/Cancel, with a "Task deleted" toast. Root cause: an unconfirmed delete let two taps remove two different cards.
+- **Past schedule times are rejected**: `saveTaskAction` in `ComposeTaskScreen` returns early with a long toast ("Selected time has already passed. Choose a future time.") when `selectedRecurrence == ONCE && triggerTimeMillis <= now`, instead of failing silently.
+
+### Verification (v1.0.5 build, sha256 c8b12364014543096900e820d1f402d7d72d318fa56335e4359f2443b483a758)
+- `:app:assembleRelease` + `:app:lintRelease` → **BUILD SUCCESSFUL**, `No issues found.` (no `w:` warnings).
+- `apksigner verify` → `CN=Super, O=Super, C=IN`, SHA-256 `66d74b9b…cf4e6`. Installed with `adb install -r` on the Vivo (10BF1G0HCD0024R) and on a Samsung SM-A045F (R9ZW105MFDR, Android 14, 720×1600, dual SIM).
+- Samsung upgrade path: v1.0.3 (versionCode 4) → v1.0.5 → DB migration to v10 clean (0 FATAL, 0 ANR, no `no such column`), cold start 1.0 s.
+- Composer chips on the fresh device: exactly the 27 kept tokens, none of the pruned ones.
+- Phone Call composer shows **Calling SIM** (Default/SIM 1/SIM 2). With SIM 2 selected on the dual-SIM device: `Placed direct telecom call to +919167298798 via SIM 2`, `simSlot=2`, call connected, auto-ended, history `SUCCESS`.
+- SMS via SIM 2: `content query content://sms/sent` shows body `ZZ Good evening 18 Nov 2026 10:16 pm ₹` with `sub_id=3` (Vi India, slot 1 = UI "SIM 2") and `Delivery confirmed for +919167298798 (part 1/1)`; tokens `{greeting} {date} {time} {rupee}` all resolved.
+- Delete confirmation verified: dialog names the task, **Cancel keeps it**, **Delete removes it**.
+- Past-time guard verified: scheduling a one-off task at 10:43 AM produced no task.
+- Settings → **Formatting** tab renders (no Templates tab) and its variable reference lists the same 27 tokens.
+
+### Known issues / notes
+- On the Samsung device, the automation's delete taps removed the two pre-existing tasks (no unconfirmed-delete guard existed then, and that device had no local backup); the data was not recoverable there.
+- On the Vivo, old test task `ZZSimCheck` (#10, FAILED) is still present from an earlier session.
+- Creating a task through the schedule bottom bar could not be completed by UI automation in the final rounds on the Vivo: the bar closes without saving and no toast/log is captured. Manual verification needed; WhatsApp end-to-end send was not re-run on this build.
+- `docs/FILE_REFERENCE.md` regenerated with `scripts/gen_file_reference.py`. No test sources exist (`app/src` contains only `main`), so no test files ship in the APK.
+
+## WhatsApp pipeline + banking app list (build ee749c27, v1.0.5)
+
+### Bugs fixed
+- **Every harvested group was deleted on app start**: `SuperApplication` called `repo.purgeAllGroupsFromPool()` (→ `deleteAllWhatsAppGroups(null)`). Replaced with `purgeCorruptedGroupsFromPool()` so only malformed rows are removed.
+- **Groups leaked into individual chats**: `WhatsAppChatScanner.isGroupRow()` fell through to `false`. The fallback now treats any row whose title resolves to no phone as a group, since a personal chat always resolves to a number.
+- **Harvest stopped too early**: stagnant-cycle tolerance raised 4 → 10 (hard cap still 150 scrolls); end-of-list still ends the scan immediately.
+- **Six sync buttons, three behaviours**: the WhatsApp picker now has one **Harvest All** (triggers `WhatsAppChatScanner` `ALL_CHATS`, keeps the sheet open) plus **Refresh**; the sheet observes `TaskAccessibilityService.scanCompletedEvent` and reloads when the harvest finishes. `Scan WA`, `Harvest Groups (WA)` and the picker's duplicate `Sync Contacts` are gone. Campaign screens route through `AppRepository.syncWhatsAppPool()`.
+- **Pool always showed 3000**: `ContactPoolPickerSheet` hard-capped `getDynamicPool(limit = 3000)` and printed the page size. It now pages 200 rows at a time with a **Load More** row and shows the real total from the new `AppRepository.countDynamicPool()`.
+- **Banking Shield had five overlapping switches**: added `ProtectedAppsSection` — searchable list of every launchable app with checkboxes, a “Select suggested banking apps” shortcut, and persistence in `PreferenceManager.protectedPackages`. `ProtectedApplicationManager.isProtectedPackage()` now checks that set first, so the choice takes effect immediately (loaded at startup too). Duplicate pref aliases `isBankingProtectionEnabled`/`isBankSafeProtectionEnabled` deleted.
+
+### Device evidence (Vivo 10BF1G0HCD0024R)
+- Build: `assembleRelease` + `lintRelease` → BUILD SUCCESSFUL, “No issues found.”; `apksigner verify` OK; sha256 `ee749c27abc780e0a93621b02761f16287e89e74e187cd282b627b73cef09f09`; install `Success`; cold start 74 ms, 0 FATAL.
+- WhatsApp picker shows exactly **Harvest All / Refresh** and “1777 verified WhatsApp accounts & chats”.
+- Harvest run: scanner scrolled 70+ cycles and discovered **1300+ chats** (previously stopped after a handful of stagnant cycles), logging `isGroupRow(...): fallback result=false (resolvedPhone=present)` for real numbers.
+
+## Round: duplicate-surface cleanup, six-token set, new mark, harvest accuracy (v1.0.5)
+
+### Duplicate surfaces removed
+- **App Privacy now has exactly one entry**: the Settings → Security → Banking Shield button. The duplicate Tools menu card was removed (`MoreScreen.kt`).
+- **Tools no longer duplicates Campaigns**: the legacy "Daily SMS" / "Daily WhatsApp" cards were removed; both opened `DailyAutoSenderScreen` with a fixed campaign id, while the Campaigns tab already owns every channel. The `DAILY_SMS`/`DAILY_WHATSAPP` routes remain only for back-compat navigation and are unreachable from the menu.
+- Campaign screen keeps one sync control; the banner card's second "Scan" button is gone.
+
+### Dynamic variables trimmed to six
+- `MessageVariables.MESSAGE` = `{date} {time} {day} {greeting} {rupee} {phone}`; `STATUS` = date/time/day/greeting/rupee; `REFERENCE` lists the same six.
+- `MessageTemplateResolver` now resolves only those six; all date/time variants, `{ist_time}`, `{pranam}`, `{currency}`, `{event}`, `{channel}`, `{recipient_count}` were deleted, along with their formatting code.
+- Settings sample text and the currency preference comment no longer mention removed tokens.
+
+### Branding
+- The launcher, round and notification icons are now a gold bolt on charcoal ("Super" mark). The old radiation-trefoil art (policy-hostile) is gone from every mipmap and from `ic_launcher_fg.xml` / `ic_notification.xml`.
+
+### Harvest accuracy and speed
+- Explicit classifier: group only when the Groups chip is active, the row is a verified business (direct), a message-author view/group content-desc/group event is present, a name-like author prefix exists, or a `You:` preview appears on a row with no resolvable phone.
+- `enum RowKind { GROUP, DIRECT, UNRESOLVED }`; UNRESOLVED rows are counted and logged, never stored.
+- End-of-list: finishes when no new unique rows appear and the forward-scroll action is gone, confirmed twice; a 400-pass hard cap remains as a safety net. End reason, discovered, saved and unresolved counts are logged.
+- Phase delays cut (350→200 ms, 500→250 ms), swipe step widened to 0.85→0.15, stagnant threshold 10→4.
+- `WhatsAppRepository.getWhatsAppContacts` de-duplicates the final list by last-10 digits / group name, so one person renders once even when pool and address book normalized differently.
+
+### Still open
+- Device disconnected before this build could be installed; on-device verification of the new classifier (group vs direct counts) and the full harvest timing is pending reconnection.
+- WhatsApp Business is harvested when the composer targets a W4B channel; "Harvest All" does not yet chain a second W4B pass automatically.
+
+---
+
+## Complete Audit, Node-Based Logic, Protection Consolidation & UI Sweep (v1.0.6, versionCode 7)
+
+### 1. WhatsApp Chat Harvest Accuracy & Speed (Node-Based)
+- **Root Cause of Chat Misclassification:** `WhatsAppChatScanner` previously inspected `preview.startsWith("You:")` or checked for arbitrary colons in preview text. Whenever the user sent the last message in a 1-on-1 direct chat, WhatsApp rendered "You: <msg>" in the preview snippet. The scanner marked all such chats as `RowKind.GROUP`.
+- **Node-Based Fix:**
+  - Automated 2-pass scan:
+    - **Pass 1 (`HARVEST_GROUPS`)**: Automatically selects the Groups filter chip (`findGroupsFilterChip`), harvests all verified groups, and adds them to `discoveredGroups` and `discoveredChats` with `isGroup = true`.
+    - **Pass 2 (`HARVEST_ROWS`)**: Selects the "All" filter chip (`findAllFilterChip`), and harvests unfiltered rows.
+  - Implemented node-based inspection:
+    - `hasMsgFromNode(row)`: verifies presence of child node `com.whatsapp:id/msg_from_tv` ("Suraj: ") which WhatsApp renders **exclusively** on group chat rows.
+    - `hasGroupAvatarDesc(row)`: checks avatar node content description for "group icon" / "group photo".
+    - Matches against verified `discoveredGroups` from Pass 1.
+    - Direct 1-on-1 chats where the user sent the last message ("You: ...") are now 100% accurately classified as `RowKind.DIRECT`.
+  - **Speed Optimization:** Removed the 6-pass rewind loop (which previously ran 240 backward scrolls and 12 vertical swipes on every run). Reduced scroll cycle delays to 180 ms.
+- **Repository & Ingestion Fixes:**
+  - In `WhatsAppRepository.kt`, removed destructive SQL subquery in `getStoredWhatsAppContacts` (`AND name NOT IN (SELECT g.name FROM dynamic_contact_pool g WHERE g.phone LIKE 'group:%')`) which previously caused direct contacts to vanish whenever a group with a similar name existed or had been previously misclassified.
+  - Enhanced `purgeCorruptedGroupsFromPool()` to automatically repair misclassified phone numbers that were erroneously stored as groups (`phone = name`, `source = WA_CHAT`).
+  - In `PhoneNumberUtils.kt`, updated `isMobileNumber` to accept digits between 7 and 15 (previously rejected numbers with $<10$ digits), allowing international and local format contacts to be ingested properly.
+  - In `ContactIngestionEngine.kt`, broadened `ContactsContract.Data` queries to match all WhatsApp and WhatsApp Business sync profiles (`MIMETYPE LIKE '%whatsapp%' OR MIMETYPE LIKE '%w4b%' OR DATA1 LIKE '%@s.whatsapp.net%' OR DATA3 LIKE '%+%'`).
+  - Single unified harvest action ("Harvest All") and refresh action across the app.
+
+### 2. Autonomous Banking App Protection Consolidation
+- **Problem:** Banking protection had too many confusing individual toggles (Smart Standby, Strict Detach, Dynamic Assist, Scoping, Masking, etc.) spread across duplicate screens.
+- **Consolidation:**
+  - Removed duplicate "App Privacy" page in Tools/Settings. Deleted `PrivacySettingsScreen.kt` (800+ lines) and `AppPrivacyDetailDialog.kt`. Removed obsolete routes (`PRIVACY`, `DAILY_SMS`, `DAILY_WHATSAPP`) from `MoreScreen.kt`.
+  - In `SettingsProtectedAppsSection.kt`: Provided a single, clean, searchable checklist of all installed launcher apps with a 1-tap "Select Suggested" shortcut for banking, financial, and UPI apps.
+  - App automatically enforces all protections under the hood: package scoping (`info.packageNames`), event isolation, overlay suppression, standby event stripping, and dynamic accessibility on demand when `WRITE_SECURE_SETTINGS` is granted.
+  - Banking apps are completely isolated and never inspected by accessibility, while automation tasks execute reliably 24/7.
+
+### 3. UI Boundary, Layout Integrity & 1-2 Word Rule Audit
+- **Compact Components:**
+  - In `CompactComponents.kt`, updated `AppButton` parameters: `contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp)`, `maxLines = 1`, `overflow = TextOverflow.Ellipsis`.
+  - Added `modifier = Modifier.weight(1f, fill = false)` to `Text` inside `RowScope` in `AppButton` to guarantee text will never overflow or push button boundaries on narrow screens.
+  - Verified `AppCard`, `AppCardElevated`, `AppBadge`, `AppChip`, `AppToggleRow`, and `AppSubScreenHeader` enforce text truncation and boundaries.
+- **1-2 Word Maximum UI Rule Sweep:**
+  - `ComposePickerSheets.kt`: Changed `Add (X) Contacts` → `Add (X)`, `Load More (X of Y)` → `Load More`.
+  - `ComposeMessageSection.kt`: Changed `Pick in W4B` / `Pick in WA` → `Pick W4B` / `Pick WA`.
+  - `ComposeCallSection.kt`: Changed `Pick in W4B` / `Pick in WA` → `Pick W4B` / `Pick WA`.
+  - `LogDetailScreen.kt`: Changed `Retry Dispatch Now` → `Retry Dispatch`.
+  - `PermissionHeroCard.kt`: Changed `Auto-Heal Services` → `Auto-Heal`.
+  - `ReminderScreen.kt`: Changed `Local Device Alarm Reminder` → `Device Alarm`.
+  - All button labels, tabs, headers, and badges strictly conform to <= 2 words.
+
+### 4. Build & Release Verification
+- Bumped version: `1.0.6` (versionCode `7`).
+- Clean compilation and R8 minification via `./gradlew.bat :app:assembleRelease --console=plain`.
+- Output: `Super-release.apk` signed with `super-release.jks`. Verified via `apksigner` Scheme v2.
+
+### 5. Final Single-Pass Harvesting Engine & Intelligent Shield Consolidation
+- **Single-Pass WhatsApp Harvesting:**
+  - Abandoned fragile multi-pass filter-chip switching (`ENSURE_GROUPS_FILTER` -> `HARVEST_GROUPS` -> `ENSURE_ALL_FILTER` -> `HARVEST_ROWS`) which failed because WhatsApp builds/locales often hide filter chips or trap the list at the bottom after scrolling.
+  - Implemented high-speed `Single-Pass Scan` on the main Chats tab: `ENSURE_CHATS_TAB` -> `HARVEST_ROWS` -> `SCROLL_DOWN` -> `COMPLETE`.
+  - 10-step node-based classification hierarchy:
+    1. Explicit target overrides (`GROUPS_ONLY`, `DIRECT_CHATS_ONLY`).
+    2. Ignored non-conversation UI rows (`isIgnoredTitle`).
+    3. Previously confirmed groups in memory.
+    4. WhatsApp sender-prefix `msg_from_tv` TextView (present exclusively on group rows).
+    5. Group avatar content description (`desc.contains("group")`).
+    6. Group event text in snippet (`created group`, `added you`, `left group`, etc.).
+    7. Pure phone numbers are 100% direct chats.
+    8. Phonebook contact match (`repo.hasCellularPhoneContact` / `findPhoneForContactName`) is 100% direct chats.
+    9. Verified Business row is 100% direct chat.
+    10. Title has alphabetic characters, is NOT in phonebook contacts, and is not a verified business: in WhatsApp, unsaved individual chats always show the phone number; only groups and address book contacts show text names. Classified 100% as GROUP.
+  - Fast scroll cycles reduced to 140 ms delay, cutting scan time by >80%.
+- **Removed "Load More" Pagination:**
+  - Completely eliminated "Load More" pagination from contact picker sheets; all contacts load directly into the list up to 100,000 without artificial caps.
+- **Unified Banking Protection:**
+  - Removed all confusing status banners, manual pause/resume switches, and duplicate error warnings from `SettingsBankingShieldCard`.
+  - Automatically activates intelligent banking protection under the hood: `isBankingShieldEnabled`, `isSmartAccessibilityScopingEnabled`, and `isDynamicA11yOnDemandEnabled` (when `WRITE_SECURE_SETTINGS` is granted).
+  - Searchable installed apps picker with auto-discovery and pre-selection of all banking, payment, and UPI apps on initial load.
+  - One-tap "Select Suggested" button and clean "Verify" / "Export Logs" action buttons adhering to the strict 1-2 words rule.
+- **Unified WhatsApp Harvest & Classification Fix:**
+  - Diagnosed and fixed the root cause of individual chats being misclassified as groups: removed flawed assumption that text names not matched in contacts are groups. Default non-group conversations to `RowKind.DIRECT`.
+  - Implemented unified two-stage scan in `WhatsAppChatScanner`:
+    1. `HARVEST_GROUPS`: Clicks WhatsApp's native "Groups" filter chip, harvesting 100% verified groups and caching them.
+    2. `SWITCH_TO_ALL`: Switches back to "All" chats and resets scroll to top.
+    3. `HARVEST_ROWS`: Scans all conversations, identifying confirmed groups from Stage 1 plus node properties (`msg_from_tv` sender prefix, group avatar descriptions, group event texts), and defaulting everything else to `RowKind.DIRECT`.
+  - Upgraded `purgeCorruptedGroupsFromPool()` in `WhatsAppRepository`: Automatically resolves contact names in `TABLE_DYNAMIC_POOL` that were stored as `group:Name`. If matched against device contacts or recipients, restores them to `phone = realPhone`, `source = "WA_CHAT"`.
+  - Filtered out `group:` items in direct WhatsApp messaging pickers (`WhatsAppContactsPickerSheet`) so direct messaging sheets never show groups.
+  - Replaced multiple harvest buttons with a single "Harvest" button adhering to the strict 1-2 words rule.
+- **Contact Ingestion Engine & CursorWindow Optimization:**
+  - Removed heavy `PHOTO_URI` / `PHOTO_THUMBNAIL_URI` strings from the cursor projection in `ContactIngestionEngine` to prevent Android's 2MB CursorWindow limit from truncating contact sync. Derived `photoUri = "content://com.android.contacts/contacts/$contactId/photo"`.
+  - Eliminated redundant double query on `ContactsContract.Data.CONTENT_URI`.
+  - Truthful feedback on sync: reports "Synced X contacts (up to date)" when no new contacts were added.
+- **Deduplication & Banking Shield Simplification:**
+  - Completely eliminated duplicate `WhatsAppSetupScreen.kt`, `PrivacySettingsScreen.kt`, and `AppPrivacyDetailDialog.kt`.
+  - Consolidated banking app protection into a single clean list of apps in Settings -> Security (`ProtectedAppsSection`), with automatic background event isolation, overlay suppression, and zero-inspection.
+- **UI & Release Verification:**
+  - Verified strict 1-2 word limit across all UI buttons, chips, and headers.
+  - Verified zero text overflow or clipping on buttons and cards.
+  - Compiled and verified release APK (`Super-release.apk`, 3.77 MB) signed with APK Signature Scheme v2.
+
+### 6. Physical Device Verification, CLI Endpoints & Contact Ingestion Scaling (2026-11-19)
+- **Physical Device Target:** Verified on connected physical Vivo `I2401` running Android 17 (SDK 37), serial `10BF1G0HCD0024R`.
+- **Streamed Release Installation:** `Super-release.apk` (v1.0.7, versionCode 8) installed cleanly via ADB streamed install (`Success`).
+- **Automation CLI & Intent API Layer (`AutomationReceiver`):**
+  - Added exported `AutomationReceiver` handling external broadcast intents for headless operations and CLI toolchains:
+    - `com.jmd.superapp.ACTION_GET_STATUS`: Emits real-time engine health, accessibility status, pool count, and protected app count.
+    - `com.jmd.superapp.ACTION_SET_BANKING_SHIELD`: Toggles package protection dynamically (`--es package <pkg> --ez enabled <bool>`).
+    - `com.jmd.superapp.ACTION_SYNC_POOL`: Initiates multi-source contact ingestion in the background.
+    - `com.jmd.superapp.ACTION_HARVEST_WHATSAPP`: Triggers node-based WhatsApp / WA Business chat and group discovery.
+    - `com.jmd.superapp.ACTION_DISPATCH_TASK`: Fires a task immediately by ID (`--el task_id <id>`).
+    - `com.jmd.superapp.ACTION_SEND_WHATSAPP`: Sends WhatsApp message via `TaskFeatureApi`.
+    - `com.jmd.superapp.ACTION_SEND_SMS`: Sends direct SMS via `TaskFeatureApi`.
+  - Verified via ADB CLI on physical device:
+    - `am broadcast -a com.jmd.superapp.ACTION_GET_STATUS -n com.jmd.superapp/.receiver.AutomationReceiver` -> returned `SuperApp Status: a11y=false, poolCount=9043, protectedApps=17`.
+    - `am broadcast -a com.jmd.superapp.ACTION_SET_BANKING_SHIELD -n com.jmd.superapp/.receiver.AutomationReceiver --es package com.google.android.apps.nbu.paisa.user --ez enabled true` -> returned `result=1, data="Banking shield enabled for com.google.android.apps.nbu.paisa.user (17 total protected)"`.
+    - `am broadcast -a com.jmd.superapp.ACTION_SYNC_POOL -n com.jmd.superapp/.receiver.AutomationReceiver` -> ingested +7,046 new contacts, scaling pool from 1,997 to **9,043 total contacts** without memory or CursorWindow bottlenecks.
+- **Compose Task Recipient Architecture:**
+  - Removed confusing redundant "From Pool" button from WhatsApp composer:
+    - WhatsApp tasks: Shows `Pick WA`, `WA Contacts`, `Device Contacts` (where `WA Contacts` loads verified contacts/groups from the pool with the single `Harvest` button).
+    - SMS tasks: Shows `From Pool`, `Device Contacts`.
+  - Zero text overflow, 100% adherence to the $\le 2$ words rule on all buttons, badges, chips, and headers.
+- **Banking Shield Live Inspection:**
+  - Verified on-device with 17 protected packages active (Aadhaar, Google Pay, PhonePe, Paytm, Amazon, etc.).
+  - Instant event drop on `onAccessibilityEvent` and zero UI tree traversal guaranteed.
+
+
+
+

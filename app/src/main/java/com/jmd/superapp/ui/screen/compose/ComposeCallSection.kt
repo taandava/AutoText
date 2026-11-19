@@ -322,7 +322,7 @@ fun ComposePhoneCallCard(
         ) {
             if (isWaCalling && onOpenWhatsAppPicker != null) {
                 AppButton(
-                    text = if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) "Pick in W4B" else "Pick in WA",
+                    text = if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) "Pick W4B" else "Pick WA",
                     onClick = onOpenWhatsAppPicker,
                     variant = AppButtonVariant.PRIMARY,
                     icon = Icons.Default.Add,

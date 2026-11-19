@@ -19,6 +19,10 @@ package com.jmd.superapp.data.repo
 
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.core.database.sqlite.transaction
@@ -31,7 +35,6 @@ import com.jmd.superapp.data.model.BackupDataDto
 import com.jmd.superapp.data.model.CampaignBackupDto
 import com.jmd.superapp.data.model.ContactBackupDto
 import com.jmd.superapp.data.model.TaskBackupDto
-import com.jmd.superapp.data.model.TemplateBackupDto
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -115,30 +118,6 @@ class BackupRepository(context: Context) {
             AppFileLogger.w("BackupRepository", "Failed to serialize tasks for typed backup: ${e.message}")
         }
 
-        val templates = mutableListOf<TemplateBackupDto>()
-        try {
-            db.query(DatabaseHelper.TABLE_TEMPLATES, null, null, null, null, null, null).use { c ->
-                val idIdx = c.getColumnIndex("id")
-                val titleIdx = c.getColumnIndex("title")
-                val catIdx = c.getColumnIndex("category")
-                val contentIdx = c.getColumnIndex("content")
-
-                while (c.moveToNext()) {
-                    templates.add(
-                        TemplateBackupDto(
-                            id = if (idIdx >= 0) c.getLong(idIdx) else 0L,
-                            title = if (titleIdx >= 0) c.getString(titleIdx).orEmpty() else "",
-                            category = if (catIdx >= 0) c.getString(catIdx).orEmpty() else "",
-                            content = if (contentIdx >= 0) c.getString(contentIdx).orEmpty() else "",
-                            createdAt = System.currentTimeMillis()
-                        )
-                    )
-                }
-            }
-        } catch (e: Exception) {
-            AppFileLogger.w("BackupRepository", "Failed to serialize templates for typed backup: ${e.message}")
-        }
-
         val rules = mutableListOf<AutoReplyBackupDto>()
         try {
             db.query(DatabaseHelper.TABLE_AUTO_REPLY, null, null, null, null, null, null).use { c ->
@@ -175,7 +154,7 @@ class BackupRepository(context: Context) {
                 val idIdx = c.getColumnIndex("id")
                 val titleIdx = c.getColumnIndex("title")
                 val chanIdx = c.getColumnIndex("channel")
-                val tmplIdx = c.getColumnIndex("message_template")
+                val tmplIdx = c.getColumnIndex("message")
                 val limIdx = c.getColumnIndex("daily_limit")
                 val simIdx = c.getColumnIndex("sim_slot")
                 val actIdx = c.getColumnIndex("is_active")
@@ -185,7 +164,7 @@ class BackupRepository(context: Context) {
                             id = if (idIdx >= 0) c.getLong(idIdx) else 0L,
                             title = if (titleIdx >= 0) c.getString(titleIdx).orEmpty() else "",
                             channel = if (chanIdx >= 0) c.getString(chanIdx).orEmpty() else "SMS",
-                            messageTemplate = if (tmplIdx >= 0) c.getString(tmplIdx).orEmpty() else "",
+                            message = if (tmplIdx >= 0) c.getString(tmplIdx).orEmpty() else "",
                             dailyLimit = if (limIdx >= 0) c.getInt(limIdx) else 50,
                             simSlot = if (simIdx >= 0) c.getInt(simIdx) else 0,
                             isActive = actIdx >= 0 && c.getInt(actIdx) == 1
@@ -230,7 +209,6 @@ class BackupRepository(context: Context) {
             app = "Super",
             exportedAt = System.currentTimeMillis(),
             tasks = tasks,
-            templates = templates,
             autoReplyRules = rules,
             dailyCampaigns = campaigns,
             contacts = contacts
@@ -276,15 +254,6 @@ class BackupRepository(context: Context) {
                     count++
                 }
 
-                for ((_, title, category, content) in backupData.templates) {
-                    val cv = ContentValues().apply {
-                        put("title", title)
-                        put("category", category)
-                        put("content", content)
-                    }
-                    db.insertWithOnConflict(DatabaseHelper.TABLE_TEMPLATES, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
-                    count++
-                }
 
                 for ((_, title, channel, eventType, keywordTrigger, replyMessage, isEnabled) in backupData.autoReplyRules) {
                     val cv = ContentValues().apply {
@@ -299,12 +268,12 @@ class BackupRepository(context: Context) {
                     count++
                 }
 
-                for ((id, title, channel, messageTemplate, dailyLimit, simSlot, isActive) in backupData.dailyCampaigns) {
+                for ((id, title, channel, message, dailyLimit, simSlot, isActive) in backupData.dailyCampaigns) {
                     val cv = ContentValues().apply {
                         put("id", id)
                         put("title", title)
                         put("channel", channel)
-                        put("message_template", messageTemplate)
+                        put("message", message)
                         put("daily_limit", dailyLimit)
                         put("sim_slot", simSlot)
                         put("is_active", if (isActive) 1 else 0)
@@ -358,7 +327,6 @@ class BackupRepository(context: Context) {
 
         val tables = listOf(
             DatabaseHelper.TABLE_TASKS,
-            DatabaseHelper.TABLE_TEMPLATES,
             DatabaseHelper.TABLE_AUTO_REPLY,
             DatabaseHelper.TABLE_DAILY_CAMPAIGN,
             DatabaseHelper.TABLE_DYNAMIC_POOL,
@@ -419,8 +387,7 @@ class BackupRepository(context: Context) {
             db.transaction {
                 val tables = listOf(
                     DatabaseHelper.TABLE_TASKS,
-                    DatabaseHelper.TABLE_TEMPLATES,
-                    DatabaseHelper.TABLE_AUTO_REPLY,
+                            DatabaseHelper.TABLE_AUTO_REPLY,
                     DatabaseHelper.TABLE_DAILY_CAMPAIGN,
                     DatabaseHelper.TABLE_DYNAMIC_POOL,
                     DatabaseHelper.TABLE_DAILY_CAMPAIGN_SENT,
@@ -501,6 +468,62 @@ class BackupRepository(context: Context) {
         } catch (e: Exception) {
             Log.e("BackupRepository", "Failed to export backup to local directory ${directory.absolutePath}: ${e.message}", e)
             Result.failure(e)
+        }
+    }
+
+
+    /**
+     * What it is:
+     * Exports an encrypted backup into the public Documents collection.
+     *
+     * What it does:
+     * On Android 10+ it inserts through MediaStore (no storage permission, survives reinstall);
+     * on older releases it falls back to a direct Documents file. Returns the user-visible path.
+     *
+     * Linked with:
+     * - Architecture: [BackupRepository], [exportDatabaseToDocuments]
+     * @param context Active Android [Context].
+     * @return [Result] with the display path of the written backup.
+     */
+    fun exportDatabaseToDocuments(context: Context): Result<String> {
+        val json = exportDatabaseToJson()
+        val timeStamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.US).format(java.util.Date())
+        val fileName = "Super_Backup_$timeStamp.json"
+        val relativeDir = "${Environment.DIRECTORY_DOCUMENTS}/Super/Backups"
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val resolver = context.contentResolver
+                val values = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "application/json")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, relativeDir)
+                    put(MediaStore.MediaColumns.IS_PENDING, 1)
+                }
+                val collection = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                val uri: Uri = resolver.insert(collection, values)
+                    ?: return Result.failure(java.io.IOException("MediaStore refused to create the backup entry"))
+                try {
+                    resolver.openOutputStream(uri)?.use { stream ->
+                        stream.write(json.toByteArray(Charsets.UTF_8))
+                    } ?: return Result.failure(java.io.IOException("Unable to open the backup file for writing"))
+                    values.clear()
+                    values.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                    resolver.update(uri, values, null, null)
+                    Result.success("$relativeDir/$fileName")
+                } catch (t: Throwable) {
+                    runCatching { resolver.delete(uri, null, null) }
+                    Result.failure(t)
+                }
+            } else {
+                val directory = java.io.File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "Super/Backups")
+                if (!directory.exists()) directory.mkdirs()
+                val target = java.io.File(directory, fileName)
+                target.writeText(json)
+                Result.success("$relativeDir/$fileName")
+            }
+        } catch (t: Throwable) {
+            Log.e("BackupRepository", "Documents export failed: ${t.message}", t)
+            Result.failure(t)
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import com.jmd.superapp.R
 
 /**
@@ -33,7 +34,7 @@ object NotificationIconHelper {
                 if (drawable != null) {
                     val density = context.resources.displayMetrics.density
                     val size = (64 * density).toInt().coerceAtLeast(128)
-                    val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+                    val bitmap = createBitmap(size, size)
                     val canvas = Canvas(bitmap)
                     drawable.setBounds(0, 0, size, size)
                     drawable.draw(canvas)

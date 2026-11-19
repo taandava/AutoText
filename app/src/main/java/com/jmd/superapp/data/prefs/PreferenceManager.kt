@@ -141,6 +141,7 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_STRICT_BANKING_DETACH = "strict_banking_detach_enabled"
         private const val KEY_PRIVACY_MODE_ENABLED = "privacy_mode_enabled"
         private const val KEY_AUTO_EXCLUDE_BANKING = "privacy_auto_exclude_banking"
+        private const val KEY_PROTECTED_PACKAGES = "protected_app_packages"
         private const val KEY_MASK_NOTIFICATIONS_LOCKSCREEN = "privacy_mask_notifications_lockscreen"
         private const val KEY_MASK_EXECUTION_LOGS = "privacy_mask_execution_logs"
         private const val KEY_AUTO_CLEAR_CLIPBOARD_SECONDS = "privacy_auto_clear_clipboard_seconds"
@@ -152,11 +153,10 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_SMS_QUOTA_LIMIT_ENABLED = "sms_quota_limit_enabled"
         private const val KEY_PREVENT_SYSTEM_AUTO_ROTATE = "prevent_system_auto_rotate"
 
-        // Template & Token Customization Keys
+        // Variable Formatting Keys
         private const val KEY_CUSTOM_DATE_FORMAT = "custom_date_format"
         private const val KEY_CUSTOM_DATE_PATTERN = "custom_date_pattern"
         private const val KEY_CUSTOM_DATE_SEPARATOR = "custom_date_separator"
-        private const val KEY_CUSTOM_SHORT_DATE_FORMAT = "custom_short_date_format"
         private const val KEY_CUSTOM_TIME_FORMAT = "custom_time_format"
         private const val KEY_CUSTOM_GREETING_STYLE = "custom_greeting_style"
         private const val KEY_CUSTOM_GREETING_TEXT = "custom_greeting_text"
@@ -698,16 +698,22 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getBoolean(KEY_BLOCK_OVERLAYS_OVER_EXCLUDED, true)
         set(value) = prefs.edit { putBoolean(KEY_BLOCK_OVERLAYS_OVER_EXCLUDED, value) }
 
-    var isBankingProtectionEnabled: Boolean
-        get() = isBankingShieldEnabled
-        set(value) { isBankingShieldEnabled = value }
+    /**
+     * User-curated list of banking, payment and UPI packages that must never be inspected.
+     * The Settings app picker writes this set; [com.jmd.superapp.core.ProtectedApplicationManager]
+     * merges it with the built-in catalog so automation avoids these apps entirely.
+     */
+    /** One-time guard: legacy heuristic group rows were cleared on the first launch of this build. */
+    var groupsResetV2: Boolean
+        get() = prefs.getBoolean("groups_reset_v2", false)
+        set(value) = prefs.edit().putBoolean("groups_reset_v2", value).apply()
 
-    var isBankSafeProtectionEnabled: Boolean
-        get() = isBankingProtectionEnabled
-        set(value) { isBankingProtectionEnabled = value }
+    var protectedPackages: Set<String>
+        get() = prefs.getStringSet(KEY_PROTECTED_PACKAGES, emptySet()) ?: emptySet()
+        set(value) = prefs.edit { putStringSet(KEY_PROTECTED_PACKAGES, value) }
 
     // ═══════════════════════════════════════════════════════════════════════════════════
-    // TEMPLATE & TOKEN CUSTOMIZATIONS
+    // VARIABLE FORMATTING
     // ═══════════════════════════════════════════════════════════════════════════════════
 
     /** Date format style for {date} token. Default "dd MMM yyyy". */
@@ -725,11 +731,6 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getString(KEY_CUSTOM_DATE_SEPARATOR, "auto") ?: "auto"
         set(value) = prefs.edit { putString(KEY_CUSTOM_DATE_SEPARATOR, value) }
 
-    /** Format style for {short_date} token. Default "dd/MM/yyyy". */
-    var customShortDateFormat: String
-        get() = prefs.getString(KEY_CUSTOM_SHORT_DATE_FORMAT, "dd/MM/yyyy") ?: "dd/MM/yyyy"
-        set(value) = prefs.edit { putString(KEY_CUSTOM_SHORT_DATE_FORMAT, value) }
-
     /** Time format style for {time} token. Default "hh:mm a". */
     var customTimeFormat: String
         get() = prefs.getString(KEY_CUSTOM_TIME_FORMAT, "hh:mm a") ?: "hh:mm a"
@@ -745,12 +746,12 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getString(KEY_CUSTOM_GREETING_TEXT, "Hello") ?: "Hello"
         set(value) = prefs.edit { putString(KEY_CUSTOM_GREETING_TEXT, value) }
 
-    /** Localized text for {namaste} token. Default "Namaste". */
+    /** Wording used by the NAMASTE greeting style. Default "Namaste". */
     var customNamasteText: String
         get() = prefs.getString(KEY_CUSTOM_NAMASTE_TEXT, "Namaste") ?: "Namaste"
         set(value) = prefs.edit { putString(KEY_CUSTOM_NAMASTE_TEXT, value) }
 
-    /** Currency symbol for {rupee} and {currency} tokens. Default "₹". */
+    /** Currency symbol for the {rupee} token. Default "₹". */
     var customCurrencySymbol: String
         get() = prefs.getString(KEY_CUSTOM_CURRENCY_SYMBOL, "₹") ?: "₹"
         set(value) = prefs.edit { putString(KEY_CUSTOM_CURRENCY_SYMBOL, value) }

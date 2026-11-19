@@ -221,6 +221,19 @@
             </intent-filter>
         </receiver>
 
+        <!-- Automation & CLI Receiver (ADB endpoints for harvest, sync, task dispatch, banking shield) -->
+        <receiver android:name=".receiver.AutomationReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.jmd.superapp.ACTION_HARVEST_WHATSAPP" />
+                <action android:name="com.jmd.superapp.ACTION_SYNC_POOL" />
+                <action android:name="com.jmd.superapp.ACTION_DISPATCH_TASK" />
+                <action android:name="com.jmd.superapp.ACTION_SEND_WHATSAPP" />
+                <action android:name="com.jmd.superapp.ACTION_SEND_SMS" />
+                <action android:name="com.jmd.superapp.ACTION_SET_BANKING_SHIELD" />
+                <action android:name="com.jmd.superapp.ACTION_GET_STATUS" />
+            </intent-filter>
+        </receiver>
+
         <!-- File Provider -->
         <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />

@@ -167,7 +167,7 @@ object PhoneNumberNormalizer {
         if (trimmed.any { it in 'a'..'z' || it in 'A'..'Z' }) return false
         val digits = trimmed.filter(Char::isDigit)
 
-        if (digits.length !in 10..15) return false
+        if (digits.length !in 7..15) return false
 
         if (digits.startsWith("1800") || digits.startsWith("1860") ||
             (digits.length == 10 && (digits.startsWith("800") || digits.startsWith("888") || digits.startsWith("877") || digits.startsWith("866") || digits.startsWith("855")))) {
@@ -191,6 +191,7 @@ object PhoneNumberNormalizer {
             return areaCode !in tollFree
         }
 
+        val isExplicitIndia = (digits.startsWith("91") && digits.length == 12) || (digits.startsWith("0") && digits.length == 11)
         var nationalNumber = digits
         if (nationalNumber.startsWith("91") && nationalNumber.length == 12) {
             nationalNumber = nationalNumber.substring(2)
@@ -198,9 +199,14 @@ object PhoneNumberNormalizer {
             nationalNumber = nationalNumber.substring(1)
         }
 
-        if (nationalNumber.length == 10) {
+        if (isExplicitIndia && nationalNumber.length == 10) {
             val firstDigit = nationalNumber[0]
             return firstDigit in listOf('6', '7', '8', '9')
+        }
+
+        if (nationalNumber.length == 10) {
+            val firstDigit = nationalNumber[0]
+            return firstDigit in '2'..'9'
         }
 
         return true

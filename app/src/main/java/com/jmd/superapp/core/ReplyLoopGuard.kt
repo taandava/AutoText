@@ -21,8 +21,8 @@ package com.jmd.superapp.core
 import android.content.Context
 import androidx.core.content.edit
 import android.telephony.SubscriptionManager
-import android.telephony.TelephonyManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 
 /**
  * What it is:
@@ -89,60 +89,42 @@ class ReplySafetyGuard(context: Context) {
      * True when the given address is one of the device's own numbers.
      * Falls back to false when the carrier does not expose the number (common on modern SIMs).
      */
-    @android.annotation.SuppressLint("HardwareIds") // Own-number detection is the intended telephony use case.
     fun isSelfNumber(rawNumber: String?): Boolean {
         val candidate = normalizeDigits(rawNumber)
         if (candidate.length < 7) return false
 
-        val ownNumbers = mutableListOf<String>()
-        val canReadPhoneState = androidx.core.content.ContextCompat.checkSelfPermission(
-            appContext, android.Manifest.permission.READ_PHONE_STATE
-        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        val canReadNumbers = androidx.core.content.ContextCompat.checkSelfPermission(
-            appContext, android.Manifest.permission.READ_PHONE_NUMBERS
-        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-
-        if (canReadNumbers || canReadPhoneState) {
-            try {
-                val telephony = appContext.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
-                @Suppress("DEPRECATION")
-                telephony?.line1Number?.let { ownNumbers.add(it) }
-            } catch (e: SecurityException) {
-                Log.d("ReplySafetyGuard", "line1Number unavailable: ${e.message}")
-            }
-        }
-
-        if (canReadPhoneState) {
-            try {
-                val subManager = appContext.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as? SubscriptionManager
-                val subs = subManager?.activeSubscriptionInfoList ?: emptyList()
-                for (sub in subs) {
-                    val number = try {
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                            try {
-                                subManager?.getPhoneNumber(sub.subscriptionId)
-                            } catch (_: Throwable) {
-                                @Suppress("DEPRECATION")
-                                sub.number
-                            }
-                        } else {
-                            @Suppress("DEPRECATION")
-                            sub.number
-                        }
-                    } catch (e: SecurityException) { null }
-                    if (!number.isNullOrBlank()) ownNumbers.add(number)
-                }
-            } catch (e: Exception) {
-                Log.d("ReplySafetyGuard", "Subscription number lookup unavailable: ${e.message}")
-            }
-        }
-
+        val ownNumbers = readOwnSubscriberNumbers()
         return ownNumbers.any { own ->
             val normalizedOwn = normalizeDigits(own)
             normalizedOwn.isNotEmpty() &&
                 (candidate == normalizedOwn ||
                     (candidate.length >= 10 && normalizedOwn.endsWith(candidate.takeLast(10))) ||
                     (normalizedOwn.length >= 10 && candidate.endsWith(normalizedOwn.takeLast(10))))
+        }
+    }
+
+    /**
+     * Reads the SIM numbers the platform exposes.
+     *
+     * The legacy SubscriptionInfo.number and TelephonyManager.line1Number fields are deprecated and
+     * return placeholders on most modern carriers, so only the API 33+ SubscriptionManager lookup is used.
+     */
+    private fun readOwnSubscriberNumbers(): List<String> {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) return emptyList()
+        val granted = ContextCompat.checkSelfPermission(
+            appContext, android.Manifest.permission.READ_PHONE_NUMBERS
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        if (!granted) return emptyList()
+
+        val subManager = appContext.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as? SubscriptionManager
+            ?: return emptyList()
+        return try {
+            subManager.activeSubscriptionInfoList.orEmpty().mapNotNull { sub ->
+                runCatching { subManager.getPhoneNumber(sub.subscriptionId) }.getOrNull()?.takeIf { it.isNotBlank() }
+            }
+        } catch (e: Exception) {
+            Log.d("ReplySafetyGuard", "Subscription number lookup unavailable: ${e.message}")
+            emptyList()
         }
     }
 

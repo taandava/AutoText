@@ -167,7 +167,7 @@ object PermissionManager {
         PermissionFeatureInfo(
             permissionId = ID_READ_CONTACTS,
             featureName = "Contact Picker & Name Resolution",
-            purpose = "Provides contact search, phone number suggestions, and personalized name token ({name}) resolution.",
+            purpose = "Provides contact search and phone number suggestions when adding recipients.",
             canWorkWithout = true,
             isRuntimeApproval = true,
             requiresSpecialUserAction = false,

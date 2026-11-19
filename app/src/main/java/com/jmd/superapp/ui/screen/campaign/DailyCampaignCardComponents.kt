@@ -695,7 +695,6 @@ fun WhatsAppBusinessReadinessCard(
  * @param lastScanSummary Metrics from the most recent contact scan.
  * @param onToggleActive Callback triggered when campaign master switch is toggled.
  * @param onAutoHeal Callback triggered to recover inactive accessibility binders.
- * @param onScan Callback to initiate contact discovery scan.
  * @param onSendBatch Callback to dispatch today's batch immediately.
  * @param modifier Optional layout modifier.
  */
@@ -710,7 +709,6 @@ fun DailyCampaignBannerCard(
     lastScanSummary: IngestionSummary?,
     onToggleActive: (Boolean) -> Unit,
     onAutoHeal: () -> Unit,
-    onScan: () -> Unit,
     onSendBatch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -809,20 +807,11 @@ fun DailyCampaignBannerCard(
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             AppButton(
-                text = if (isScanning) "Scanning..." else "Scan",
-                onClick = onScan,
-                variant = AppButtonVariant.SECONDARY,
-                icon = Icons.Default.Sync,
-                isLoading = isScanning,
-                modifier = Modifier.weight(1f)
-            )
-
-            AppButton(
                 text = "Send Batch",
                 onClick = onSendBatch,
                 variant = AppButtonVariant.PRIMARY,
                 icon = Icons.AutoMirrored.Filled.Send,
-                modifier = Modifier.weight(1.3f)
+                modifier = Modifier.weight(1f)
             )
         }
 
@@ -842,7 +831,7 @@ fun DailyCampaignBannerCard(
 
 /**
  * What it is:
- * Configuration card managing message templates, dispatch schedule timing, daily send caps, and SIM routing.
+ * Configuration card managing message content, dispatch schedule timing, daily send caps, and SIM routing.
  *
  * What it does:
  * Renders interactive Material 3 UI for [DailyCampaignConfigCard] adhering to application design invariants.
@@ -1203,11 +1192,11 @@ fun DailyCampaignConfigCard(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        // Unified Compact Input Field for Message Template
+        // Unified Compact Input Field for Message
         AppInputField(
-            value = config.messageTemplate,
-            onValueChange = { onConfigChange(config.copy(messageTemplate = it)) },
-            label = "Message Template",
+            value = config.message,
+            onValueChange = { onConfigChange(config.copy(message = it)) },
+                            label = "Message",
             placeholder = "Type your personalized batch message...",
             leadingIcon = Icons.Default.EditNote,
             singleLine = false,
@@ -1221,12 +1210,7 @@ fun DailyCampaignConfigCard(
         // Dynamic Tag Chips
         Text("Dynamic Variables:", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(4.dp))
-        val campaignVariables = listOf(
-            "{name}", "{first_name}", "{phone}",
-            "{date}", "{short_date}", "{time}",
-            "{date_dd_mm_yyyy}", "{date_words}", "{greeting}",
-            "{namaste}", "{rupee}", "{today}"
-        )
+        val campaignVariables = MessageVariables.MESSAGE
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             campaignVariables.chunked(3).forEach { rowVars ->
                 Row(
@@ -1241,9 +1225,9 @@ fun DailyCampaignConfigCard(
                                 .background(campaignThemeColor.copy(alpha = 0.12f))
                                 .border(1.dp, campaignThemeColor.copy(alpha = 0.35f), AppDesignTokens.ShapePill)
                                 .clickable {
-                                    val current = config.messageTemplate
+                                    val current = config.message
                                     val updated = current + (if (current.isNotEmpty() && !current.endsWith(" ")) " " else "") + tag
-                                    onConfigChange(config.copy(messageTemplate = updated))
+                                    onConfigChange(config.copy(message = updated))
                                 }
                                 .padding(vertical = 5.dp),
                             contentAlignment = Alignment.Center

@@ -37,6 +37,18 @@ object ProtectedApplicationManager {
 
     private const val TAG = "ProtectedAppMgr"
 
+    /** Packages the owner explicitly ticked in Settings → Banking Shield. */
+    @Volatile
+    private var userProtectedPackages: Set<String> = emptySet()
+
+    /** Loads the owner-curated list so every isolation check honours it immediately. */
+    fun setUserProtectedPackages(packages: Set<String>) {
+        userProtectedPackages = packages.map { it.trim() }.filter { it.isNotEmpty() }.toSet()
+        Log.i(TAG, "User protected app list loaded: ${userProtectedPackages.size} packages")
+    }
+
+    fun getUserProtectedPackages(): Set<String> = userProtectedPackages
+
     /**
      * Comprehensive catalog of known Indian and international banking, payment, UPI,
      * wallet, investment, and financial authentication package identifiers.
@@ -298,6 +310,9 @@ object ProtectedApplicationManager {
         if (packageName.isNullOrBlank()) return false
         val trimmed = packageName.trim()
         val lower = trimmed.lowercase()
+
+        // 0. Owner-selected apps always win, even if the catalog heuristics would miss them
+        if (userProtectedPackages.contains(trimmed)) return true
 
         // 1. Direct exact catalog match
         if (KNOWN_PROTECTED_PACKAGES.contains(trimmed)) return true

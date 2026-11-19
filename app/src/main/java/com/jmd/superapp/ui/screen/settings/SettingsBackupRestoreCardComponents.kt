@@ -51,6 +51,10 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
+/** Clipboard/Intent text payloads above this size exceed the binder transaction limit. */
+private const val MAX_CLIPBOARD_CHARS = 500_000
+
+
 /**
  * What it is:
  * Data persistence and migration card providing JSON export and import capabilities.
@@ -92,7 +96,7 @@ fun SettingsBackupRestoreCard(
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                "Back up all your scheduled tasks, SMS & WhatsApp daily campaigns, auto-reply rules, templates, and contact pool to an offline JSON file. Restore everything seamlessly after reinstalling the APK.",
+                "Back up all your scheduled tasks, SMS & WhatsApp daily campaigns, auto-reply rules, and contact pool to an offline JSON file. Restore everything seamlessly after reinstalling the APK.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 11.5.sp,
                 lineHeight = 15.5.sp
@@ -127,12 +131,11 @@ fun SettingsBackupRestoreCard(
                         variant = AppButtonVariant.SECONDARY,
                         modifier = Modifier.weight(1f),
                         onClick = {
-                            val backupDir = File(android.os.Environment.getExternalStorageDirectory(), "Documents/Super/backups")
-                            val result = repository.exportDatabaseToLocalDirectory(backupDir)
-                            result.onSuccess { file ->
-                                context.showAppToast("Saved to ${file.name}")
+                            val result = repository.exportDatabaseToDocuments(context)
+                            result.onSuccess { path ->
+                                context.showAppToast("Saved to $path", isLong = true)
                             }.onFailure { err ->
-                                context.showAppToast("Direct export failed: ${err.message}")
+                                context.showAppToast("Export failed: ${err.message} — use Save File", isLong = true)
                             }
                         }
                     )
@@ -173,11 +176,16 @@ fun SettingsBackupRestoreCard(
                             } catch (e: Exception) {
                                 com.jmd.superapp.core.AppFileLogger.w("SettingsBackupRestoreCard", "File share fallback to plain text: ${e.message}")
                                 val json = repository.exportDatabaseToJson()
-                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_TEXT, json)
+                                if (json.length > MAX_CLIPBOARD_CHARS) {
+                                    // Binder transactions cap out around 1 MB; share large vaults as a file.
+                                    context.showAppToast("Backup is too large to share as text — use Save File", isLong = true)
+                                } else {
+                                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                        type = "text/plain"
+                                        putExtra(Intent.EXTRA_TEXT, json)
+                                    }
+                                    context.startActivity(Intent.createChooser(shareIntent, "Share Backup"))
                                 }
-                                context.startActivity(Intent.createChooser(shareIntent, "Share Backup"))
                             }
                         }
                     )
@@ -189,10 +197,14 @@ fun SettingsBackupRestoreCard(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             val json = repository.exportDatabaseToJson()
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText("Backup JSON", json)
-                            com.jmd.superapp.compat.ClipboardCompat.setPrimaryClip(clipboard, clip)
-                            context.showAppToast("Backup JSON copied")
+                            if (json.length > MAX_CLIPBOARD_CHARS) {
+                                context.showAppToast("Backup is too large to copy — use Save File or SD Card", isLong = true)
+                            } else {
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("Backup JSON", json)
+                                com.jmd.superapp.compat.ClipboardCompat.setPrimaryClip(clipboard, clip)
+                                context.showAppToast("Backup JSON copied (encrypted)")
+                            }
                         }
                     )
                 }
@@ -224,8 +236,12 @@ fun SettingsBackupRestoreCard(
                     onClick = {
                         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         val text = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
-                        if (text.startsWith("{") && text.contains("tasks")) pasteJsonText = text
-                        showRestoreDialog = !showRestoreDialog
+                        if (text.startsWith("{") || text.startsWith(com.jmd.superapp.core.BackupCipher.MAGIC)) {
+                            pasteJsonText = text
+                            showRestoreDialog = true
+                        } else {
+                            context.showAppToast("Clipboard does not contain a Super backup", isLong = true)
+                        }
                     }
                 )
             }

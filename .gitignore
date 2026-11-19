@@ -6,6 +6,7 @@ app/build/
 *.iml
 .kotlin/
 .codebase-memory/
+.serena/
 local.properties
 *.jks
 *.keystore

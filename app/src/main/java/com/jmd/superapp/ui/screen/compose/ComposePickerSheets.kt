@@ -72,6 +72,7 @@ import com.jmd.superapp.whatsapp.*
  */
 
 fun isSamePhoneNumber(p1: String, p2: String): Boolean = PhoneNumberNormalizer.isSamePhoneNumber(p1, p2)
+
 /**
  * What it is:
  * Contact pool picker bottom sheet modal.
@@ -98,8 +99,11 @@ fun ContactPoolPickerSheet(
     var isSyncing by remember { mutableStateOf(false) }
     var refreshTrigger by remember { mutableIntStateOf(0) }
     var poolSearch by remember { mutableStateOf("") }
+    val poolTotal = remember(poolSearch, refreshTrigger) {
+        repository.countDynamicPool(searchQuery = poolSearch)
+    }
     val poolContacts = remember(poolSearch, refreshTrigger) {
-        repository.getDynamicPool(limit = 3000, searchQuery = poolSearch)
+        repository.getDynamicPool(limit = 100000, searchQuery = poolSearch)
     }
     val selectedRecipientsMap = remember {
         mutableStateMapOf<String, SelectedRecipient>().apply {
@@ -194,7 +198,7 @@ fun ContactPoolPickerSheet(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                "${poolContacts.size} available leads & contacts",
+                                "$poolTotal contacts",
                                 fontSize = 11.5.sp,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -205,13 +209,17 @@ fun ContactPoolPickerSheet(
                         onClick = {
                             if (!isSyncing) {
                                 isSyncing = true
-                                scope.launch(Dispatchers.IO) {
-                                    val scanner = ContactIngestionEngine(context, repository)
-                                    val summary = scanner.scanAndIngestAll()
+                                scope.launch {
+                                    val summary = repository.syncWhatsAppPool()
                                     withContext(Dispatchers.Main) {
                                         refreshTrigger++
                                         isSyncing = false
-                                        context.showAppToast("Synced ${summary.newAdded} contacts to pool")
+                                        val toastMsg = if (summary.newAdded > 0) {
+                                            "Added ${summary.newAdded} new contacts (${summary.totalPoolCount} total)"
+                                        } else {
+                                            "Synced ${summary.totalPoolCount} contacts (up to date)"
+                                        }
+                                        context.showAppToast(toastMsg)
                                     }
                                 }
                             }
@@ -245,7 +253,7 @@ fun ContactPoolPickerSheet(
                         modifier = Modifier.weight(1f)
                     )
                     AppButton(
-                        text = if (selectedRecipientsMap.isNotEmpty()) "Add (${selectedRecipientsMap.size}) Contacts" else "Done",
+                        text = if (selectedRecipientsMap.isNotEmpty()) "Add (${selectedRecipientsMap.size})" else "Done",
                         onClick = commitAction,
                         variant = AppButtonVariant.PRIMARY,
                         icon = Icons.Default.Check,
@@ -266,7 +274,7 @@ fun ContactPoolPickerSheet(
             AppSearchField(
                 value = poolSearch,
                 onValueChange = { poolSearch = it },
-                placeholder = "Search ${repository.getDynamicPoolStats().totalCount} pool contacts...",
+                placeholder = "Search $poolTotal pool contacts...",
                 leadingIcon = Icons.Default.Search,
                 onClear = { poolSearch = "" }
             )
@@ -355,13 +363,17 @@ fun ContactPoolPickerSheet(
                             onClick = {
                                 if (!isSyncing) {
                                     isSyncing = true
-                                    scope.launch(Dispatchers.IO) {
-                                        val scanner = ContactIngestionEngine(context, repository)
-                                        val summary = scanner.scanAndIngestAll()
+                                    scope.launch {
+                                        val summary = repository.syncWhatsAppPool()
                                         withContext(Dispatchers.Main) {
                                             refreshTrigger++
                                             isSyncing = false
-                                            context.showAppToast("Populated pool with ${summary.newAdded} contacts!")
+                                            val toastMsg = if (summary.newAdded > 0) {
+                                                "Added ${summary.newAdded} contacts (${summary.totalPoolCount} total)"
+                                            } else {
+                                                "Synced ${summary.totalPoolCount} contacts (up to date)"
+                                            }
+                                            context.showAppToast(toastMsg)
                                         }
                                     }
                                 }
@@ -482,8 +494,6 @@ fun WhatsAppContactsPickerSheet(
         isBusiness -> "Select WA Business Contacts"
         else -> "Select WhatsApp Contacts"
     }
-    val scanLabel = if (isBusiness) "Scan W4B" else "Scan WA"
-    val harvestLabel = if (isBusiness) "Harvest W4B" else "Harvest WA"
     val appLabel = if (isBusiness) "Business" else "WhatsApp"
 
     var isScanning by remember { mutableStateOf(false) }
@@ -500,6 +510,21 @@ fun WhatsAppContactsPickerSheet(
     }
 
     val isGroupChannel = selectedChannel == ChannelType.WHATSAPP_GROUP || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
+    val scanTick by TaskAccessibilityService.scanCompletedEvent.collectAsState()
+
+    // The accessibility harvest runs in the background; refresh this sheet when it reports completion
+    // instead of dismissing the sheet and leaving the user with a stale list.
+    LaunchedEffect(scanTick) {
+        if (scanTick > 0L) {
+            withContext(Dispatchers.IO) {
+                val refreshed = repository.getWhatsAppContacts(query = waSearch, channel = selectedChannel, limit = 10000)
+                withContext(Dispatchers.Main) {
+                    waContacts = refreshed
+                    isScanning = false
+                }
+            }
+        }
+    }
 
     LaunchedEffect(waSearch, refreshTrigger) {
         withContext(Dispatchers.IO) {
@@ -507,7 +532,7 @@ fun WhatsAppContactsPickerSheet(
             val filteredContacts = when {
                 isCalling -> allContacts.filter { !it.phone.startsWith("group:") && !it.normalizedPhone.startsWith("group:") }
                 isGroupChannel -> allContacts.filter { it.phone.startsWith("group:") || it.normalizedPhone.startsWith("group:") || it.accountType.contains("group", ignoreCase = true) }
-                else -> allContacts
+                else -> allContacts.filter { !it.phone.startsWith("group:") && !it.normalizedPhone.startsWith("group:") && !it.accountType.contains("group", ignoreCase = true) }
             }
             withContext(Dispatchers.Main) {
                 waContacts = filteredContacts
@@ -655,7 +680,7 @@ fun WhatsAppContactsPickerSheet(
                         modifier = Modifier.weight(1f)
                     )
                     AppButton(
-                        text = if (selectedRecipientsMap.isNotEmpty()) "Add (${selectedRecipientsMap.size}) Contacts" else "Done",
+                        text = if (selectedRecipientsMap.isNotEmpty()) "Add (${selectedRecipientsMap.size})" else "Done",
                         onClick = commitAction,
                         variant = AppButtonVariant.PRIMARY,
                         icon = Icons.Default.Check,
@@ -672,87 +697,40 @@ fun WhatsAppContactsPickerSheet(
                 .padding(padding)
                 .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
-            // Action buttons row for Sync Contacts, Harvest Chats, and Harvest Groups
+            // One harvest action: chats, groups and saved contacts in a single pass.
+            // A coarse refresh re-reads SQLite without touching WhatsApp.
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 AppButton(
-                    text = if (isScanning) "Syncing..." else scanLabel,
+                    text = if (isScanning) "Harvesting..." else "Harvest",
                     onClick = {
-                        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                            try {
-                                permissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
-                            } catch (e: Exception) {
-                                Log.w("ComposeTaskScreen", "Permission launch failed: ${e.message}")
-                            }
-                        }
                         if (!isScanning) {
                             isScanning = true
-                            SuperApplication.instance.applicationScope.launch(Dispatchers.IO) {
-                                try {
-                                    val scanner = ContactIngestionEngine(context, repository)
-                                    val summary = scanner.scanAndIngestAll()
-                                    val refreshed = repository.getWhatsAppContacts(query = waSearch, channel = selectedChannel, limit = 10000)
-                                    withContext(Dispatchers.Main) {
-                                        if (scope.isActive) {
-                                            waContacts = refreshed
-                                            isScanning = false
-                                        }
-                                        context.showAppToast("Synced ${summary.newAdded} $appLabel contacts & chats", isLong = true)
-                                    }
-                                } catch (t: Throwable) {
-                                    if (t is CancellationException) return@launch
-                                    Log.e("WhatsAppContacts", "Error during contacts scan: ${t.message}")
-                                    withContext(Dispatchers.Main) {
-                                        if (scope.isActive) {
-                                            isScanning = false
-                                        }
-                                        context.showAppToast("Scan error: ${t.localizedMessage ?: "Unknown"}")
-                                    }
-                                }
-                            }
+                            TaskAccessibilityService.startWhatsAppChatScan(
+                                context,
+                                targetPackage = targetPkg,
+                                channel = selectedChannel,
+                                scanTarget = WhatsAppChatScanner.ScanTarget.ALL_CHATS
+                            )
                         }
                     },
+                    variant = AppButtonVariant.PRIMARY,
+                    icon = Icons.AutoMirrored.Filled.Send,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                    shape = AppDesignTokens.ShapePill
+                )
+                AppButton(
+                    text = "Refresh",
+                    onClick = { refreshTrigger++ },
                     variant = AppButtonVariant.SECONDARY,
                     icon = Icons.Default.Sync,
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                     shape = AppDesignTokens.ShapePill
                 )
-                AppButton(
-                    text = harvestLabel,
-                    onClick = {
-                        TaskAccessibilityService.startWhatsAppChatScan(
-                            context,
-                            targetPackage = targetPkg,
-                            channel = selectedChannel,
-                            scanTarget = WhatsAppChatScanner.ScanTarget.ALL_CHATS
-                        )
-                        onDismiss()
-                    },
-                    variant = AppButtonVariant.SECONDARY,
-                    icon = Icons.AutoMirrored.Filled.Send,
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                    shape = AppDesignTokens.ShapePill
-                )
-                AppButton(
-                    text = if (isBusiness) "Harvest Groups (W4B)" else "Harvest Groups (WA)",
-                    onClick = {
-                        TaskAccessibilityService.startWhatsAppGroupScan(
-                            context,
-                            targetPackage = targetPkg,
-                            channel = selectedChannel
-                        )
-                        onDismiss()
-                    },
-                    variant = AppButtonVariant.PRIMARY,
-                    icon = Icons.Default.Groups,
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                    shape = AppDesignTokens.ShapePill
-                )
             }
-
             Spacer(modifier = Modifier.height(10.dp))
 
             AppInputField(
@@ -823,7 +801,7 @@ fun WhatsAppContactsPickerSheet(
                         AppEmptyState(
                             icon = if (isGroupChannel) Icons.Default.Groups else Icons.AutoMirrored.Filled.Send,
                             title = if (isGroupChannel) "No $appLabel Groups Found" else "No $appLabel Contacts Found",
-                            description = if (waSearch.isNotBlank()) "No results matching '$waSearch'" else if (isGroupChannel) "No WhatsApp groups harvested yet. Tap '$harvestLabel' above to scan and harvest your groups directly from WhatsApp." else "No contacts with $appLabel account detected on device. Tap '$scanLabel' to scan contacts or '$harvestLabel' to scan open chats."
+                            description = if (waSearch.isNotBlank()) "No results matching '$waSearch'" else if (isGroupChannel) "No WhatsApp groups harvested yet. Tap 'Harvest' to read chats and groups directly from WhatsApp." else "No $appLabel chats stored yet. Tap 'Harvest' to read chats and groups from WhatsApp in one pass."
                         )
                     }
                 } else {

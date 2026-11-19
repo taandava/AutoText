@@ -56,7 +56,7 @@ enum class SettingsSubdivision(
     val icon: ImageVector,
     val description: String
 ) {
-    TEMPLATES("Templates", Icons.Filled.TextFields, "Tokens"),
+    FORMATTING("Formatting", Icons.Filled.TextFields, "Variables"),
     AUTOMATION("Channels", Icons.Filled.Bolt, "Channels"),
     SECURITY("Security", Icons.Filled.Shield, "Security"),
     THEME_UI("Theme", Icons.Filled.Palette, "Theme"),
@@ -65,7 +65,7 @@ enum class SettingsSubdivision(
 
 /**
  * What it is:
- * Application settings and operational configuration screen providing controls for dynamic message templates, automation channels, lockscreen PIN unlock, accessibility banking guard, theme styling, system diagnostics, and database backup/restore.
+ * Application settings and operational configuration screen providing controls for variable formatting, automation channels, accessibility banking guard, theme styling, system diagnostics, and database backup/restore.
  *
  * What it does:
  * Renders interactive Material 3 UI for [SettingsView] adhering to application design invariants.
@@ -84,10 +84,9 @@ fun SettingsView(
     repository: AppRepository,
     prefs: PreferenceManager,
     onThemeChanged: (String) -> Unit = {},
-    onOpenPrivacySettings: () -> Unit = {},
     onBack: () -> Unit
 ) {
-    var selectedSubdivision by remember { mutableStateOf(SettingsSubdivision.TEMPLATES) }
+    var selectedSubdivision by remember { mutableStateOf(SettingsSubdivision.FORMATTING) }
     var restoreSummaryMsg by remember { mutableStateOf<String?>(null) }
 
     val exportFileLauncher = rememberLauncherForActivityResult(
@@ -222,9 +221,9 @@ fun SettingsView(
                 )
             ) {
                 when (selectedSubdivision) {
-                    SettingsSubdivision.TEMPLATES -> {
+                    SettingsSubdivision.FORMATTING -> {
                         item {
-                            SettingsTemplateTokensCard(
+                            SettingsFormattingCard(
                                 prefs = prefs
                             )
                         }
@@ -241,8 +240,7 @@ fun SettingsView(
                         item {
                             SettingsBankingShieldCard(
                                 context = context,
-                                prefs = prefs,
-                                onOpenPrivacySettings = onOpenPrivacySettings
+                                prefs = prefs
                             )
                         }
                         item {

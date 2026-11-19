@@ -84,7 +84,7 @@ private fun ComfortableSwitch(
     ) {
         Box(
             modifier = Modifier
-                .offset(x = thumbOffset)
+                .offset { androidx.compose.ui.unit.IntOffset(thumbOffset.roundToPx(), 0) }
                 .size(17.dp)
                 .clip(CircleShape)
                 .background(Color.White)
@@ -179,10 +179,10 @@ private fun ComfortableActionButton(
 fun TaskCard(
     task: ScheduledTask,
     onRunNow: () -> Unit,
-    onToggle: (Boolean) -> Unit = {},
-    onEdit: () -> Unit = {},
     onDelete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onToggle: (Boolean) -> Unit = {},
+    onEdit: () -> Unit = {}
 ) {
     val currentLocale = LocalConfiguration.current.locales[0]
     val channelColor = MaterialIconMapper.channelColor(task.channel)

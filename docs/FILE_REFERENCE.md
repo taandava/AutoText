@@ -3,21 +3,23 @@
 Auto-generated map of every Kotlin source file: what it is, what it does, and the main
 declarations it contributes.
 
-- Kotlin files: **134**
-- Kotlin lines: **59,196**
+- Kotlin files: **136**
+- Kotlin lines: **57,207**
 
-## `com.jmd.superapp`  —  1 file(s)
+> No `src/test` or `src/androidTest` tree: the project ships without test code by request.
+
+## `com.jmd.superapp` — 1 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/SuperApplication.kt`
-*232 lines*
+*273 lines*
 **What it is:** Central Android Application entry point and process lifecycle orchestrator for Super.
 **Key blocks:**
 - `class SuperApplication` — Coordinates system-wide services, registers user-facing notification categories,
 
-## `com.jmd.superapp.api`  —  1 file(s)
+## `com.jmd.superapp.api` — 1 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/api/TaskFeatureApi.kt`
-*762 lines*
+*789 lines*
 **What it is:** Architecture definition and implementation for [TaskFeatureApi].
 **What it does:** Exposes standardized, callable endpoints for all core task features: Each endpoint enforces pre-condition validation, semantic designated element actions, accurate result verification, and execution logging with verified real-device execution outcome.
 **Key blocks:**
@@ -31,7 +33,7 @@ declarations it contributes.
 - `class CallSimulationRequest` — Encapsulates state, business contracts, and operations for [CallSimulationRequest]
 - `object TaskFeatureApi` — Encapsulates state, business contracts, and operations for [TaskFeatureApi]
 
-## `com.jmd.superapp.compat`  —  5 file(s)
+## `com.jmd.superapp.compat` — 5 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/compat/AccessibilityCompat.kt`
 *58 lines*
@@ -68,14 +70,33 @@ declarations it contributes.
 **Key blocks:**
 - `object TelephonyManagerCompat` — Handles SDK branching between legacy [TelephonyManager.getCallState] (< API 31) and [TelephonyManager.getCallStateForSubscription] (>= AP…
 
-## `com.jmd.superapp.core`  —  18 file(s)
+## `com.jmd.superapp.core` — 24 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/core/AccessibilityHealthManager.kt`
-*690 lines*
+*692 lines*
 **What it is:** Architecture definition and implementation for [AccessibilityHealthManager].
 **What it does:** Provides watchdog monitoring, connection heartbeat tracking, privileged service healing, and manufacturer-specific battery optimization management.
 **Key blocks:**
 - `object AccessibilityHealthManager` — Enforces critical system invariant: **NEVER alters device display auto-rotate settings or unrelated OS configurations.**
+
+### `app/src/main/java/com/jmd/superapp/core/AppDataEvents.kt`
+*39 lines*
+**Key blocks:**
+- `object AppDataEvents`
+
+### `app/src/main/java/com/jmd/superapp/core/AutoReplyMatcher.kt`
+*96 lines*
+**What it is:** Pure deterministic rule matching engine for automated replies.
+**What it does:** Evaluates whether an incoming message or call event qualifies for automated reply based on.
+**Key blocks:**
+- `object AutoReplyMatcher` — Evaluates whether an incoming message or call event qualifies for automated reply based on
+
+### `app/src/main/java/com/jmd/superapp/core/BackupCipher.kt`
+*238 lines*
+**What it is:** Cryptographic backup vault providing cross-device portable encryption (AES-256-GCM + PBKDF2).
+**Key blocks:**
+- `class InvalidPassphraseException`
+- `object BackupCipher`
 
 ### `app/src/main/java/com/jmd/superapp/core/ContentValidator.kt`
 *313 lines*
@@ -94,8 +115,15 @@ declarations it contributes.
 - `fun Context` — Thread-safe: can be called from any background or worker thread
 - `fun showAppTimePicker` — Executes [showAppTimePicker] logic in accordance with system and security invariants
 
+### `app/src/main/java/com/jmd/superapp/core/DispatchJournal.kt`
+*278 lines*
+**What it is:** Durable exactly-once dispatch journal for scheduled task occurrences.
+**What it does:** Records every task occurrence (`task_id` + scheduled trigger time) in SQLite before dispatch and.
+**Key blocks:**
+- `object DispatchJournal` — Uses one row per `(task_id, occurrence_key)` inside transactions, with an in-flight timeout so a
+
 ### `app/src/main/java/com/jmd/superapp/core/FileLogger.kt`
-*526 lines*
+*562 lines*
 **What it is:** Architecture definition and implementation for [FileLogger].
 **What it does:** Provides persistent on-device diagnostic logging, campaign dispatch CSV ledgers, error tracking, scheduled file rotation (3 MB threshold), and log export.
 **Key blocks:**
@@ -107,6 +135,19 @@ declarations it contributes.
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for LifecycleObserver.
 **Key blocks:**
 - `object AppLifecycleObserver` — Allows background dispatch engines and accessibility services to observe app presence without manual activity counting
+
+### `app/src/main/java/com/jmd/superapp/core/MessageVariables.kt`
+*56 lines*
+**What it is:** Canonical catalog of the dynamic variables a message may contain.
+**What it does:** Defines the exact token set understood by [MessageTemplateResolver] so that every.
+**Key blocks:**
+- `class MessageVariable` — Defines the exact token set understood by [MessageTemplateResolver] so that every
+- `object MessageVariables` — Serves composer chips ([MESSAGE], [STATUS]) and the settings reference ([REFERENCE])
+
+### `app/src/main/java/com/jmd/superapp/core/NotificationIconHelper.kt`
+*49 lines*
+**Key blocks:**
+- `object NotificationIconHelper`
 
 ### `app/src/main/java/com/jmd/superapp/core/OemBrandHelper.kt`
 *712 lines*
@@ -134,28 +175,28 @@ declarations it contributes.
 - `object PermissionManager` — Encapsulates state, business contracts, and operations for [PermissionManager]
 
 ### `app/src/main/java/com/jmd/superapp/core/PhoneNumberUtils.kt`
-*402 lines*
+*408 lines*
 **What it is:** Architecture definition and implementation for [PhoneNumberUtils].
 **What it does:** Provides international and national phone number standardization, emergency service rejection, contact verification, duplicate detection, and multi-delimiter input ingestion.
 **Key blocks:**
 - `object PhoneNumberNormalizer` — Encapsulates state, business contracts, and operations for [PhoneNumberNormalizer]
 
 ### `app/src/main/java/com/jmd/superapp/core/PrivacyManager.kt`
-*647 lines*
+*665 lines*
 **What it is:** Architecture definition and implementation for [PrivacyManager].
 **What it does:** Centralized, thread-safe privacy engine governing application exclusions, accessibility target scoping, sensitive content masking, overlay suppression, and clipboard protection.
 **Key blocks:**
 - `class PrivacyManager` — Encapsulates state, business contracts, and operations for [PrivacyManager]
 
 ### `app/src/main/java/com/jmd/superapp/core/ProtectedApplicationManager.kt`
-*466 lines*
+*488 lines*
 **What it is:** Architecture definition and implementation for [ProtectedApplicationManager].
 **What it does:** Dedicated Protected Application Manager enforcing strict isolation between Super and banking, UPI, payment, financial authentication, and designated sensitive applications. Enforces Part 8 Invariants: 1. Default-deny policy for all external UI interactions. 2. Only explicitly authorized target applications (WhatsApp, WhatsApp Business, Phone/Dialer, Keyguard) may receive UI actions. 3. Immediate pre-action context verification before every physical tap, click, or text entry. 4. Zero inspection or traversal of protected applications' UI trees or window nodes. 5. Instant cancellation of pending task callbacks when a protected or non-authorized application is encountered. 6. Zero collection of credentials, PINs, OTPs, card details, or screen contents. 7. Zero overlay displays or notification heads-up over protected applications.
 **Key blocks:**
 - `object ProtectedApplicationManager` — Encapsulates state, business contracts, and operations for [ProtectedApplicationManager]
 
 ### `app/src/main/java/com/jmd/superapp/core/ReplyLoopGuard.kt`
-*172 lines*
+*167 lines*
 **What it is:** Loop protection for automatic replies, split into a pure decision core ([ReplyLoopGuard]) and a.
 **Key blocks:**
 - `object ReplyLoopGuard` — Normalizes reply content into a fingerprint and decides whether a repeated reply inside the
@@ -170,25 +211,25 @@ declarations it contributes.
 - `object TaskSafetyManager` — Provides domain logic and lifecycle management for TaskSafetyManager
 
 ### `app/src/main/java/com/jmd/superapp/core/SmsQuotaManager.kt`
-*490 lines*
+*612 lines*
 **What it is:** Architecture definition and implementation for [SmsQuotaManager].
 **What it does:** Provides cellular SMS quota tracking, TRAI/carrier daily limit enforcement (100 SMS/day safeguard), multi-part PDU segment calculation, provider reconciliation, and in-flight reservation management.
 **Key blocks:**
 - `object SmsQuotaManager` — Integrates internal execution logs with device-wide `content://sms/sent` records to track both scheduled and user-sent SMS segments again…
 
 ### `app/src/main/java/com/jmd/superapp/core/SuperAppInitializer.kt`
-*75 lines*
+*67 lines*
 **What it is:** Architecture definition and implementation for [SuperAppInitializer].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for SuperAppInitializer.
 **Key blocks:**
 - `class SuperAppInitializer` — Flattens application initialization into a unified startup sequence, optimizing cold-start latency
 
 ### `app/src/main/java/com/jmd/superapp/core/TemplateResolver.kt`
-*230 lines*
+*157 lines*
 **What it is:** Architecture definition and implementation for [TemplateResolver].
-**What it does:** Provides dynamic placeholder substitution for scheduled message drafting and templating.
+**What it does:** Provides dynamic placeholder substitution for scheduled messages, auto-replies and campaigns.
 **Key blocks:**
-- `object MessageTemplateResolver` — Supports contextual tokens:
+- `object MessageTemplateResolver` — Replaces every placeholder listed in [MessageVariables] with live date, time,
 
 ### `app/src/main/java/com/jmd/superapp/core/TraceUtils.kt`
 *36 lines*
@@ -204,37 +245,24 @@ declarations it contributes.
 **Key blocks:**
 - `object WhatsAppPackageHelper` — Encapsulates state, business contracts, and operations for [WhatsAppPackageHelper]
 
-## `com.jmd.superapp.core.diagnostic`  —  1 file(s)
-
-### `app/src/main/java/com/jmd/superapp/core/diagnostic/SystemSelfTestManager.kt`
-*1080 lines*
-**What it is:** Architecture definition and implementation for [SystemSelfTestManager].
-**What it does:** Provides a comprehensive, automated self-verification suite that verifies all application subsystems, database tables, reactive DAOs, schedulers, notification channels, background workers, system services, and navigation routes with 1-tap automated repair.
-**Key blocks:**
-- `class DiagnosticLevel` — Encapsulates state, business contracts, and operations for [DiagnosticLevel]
-- `class DiagnosticResultItem` — Encapsulates state, business contracts, and operations for [DiagnosticResultItem]
-- `class DiagnosticReport` — Encapsulates state, business contracts, and operations for [DiagnosticReport]
-- `object SystemSelfTestManager` — Encapsulates state, business contracts, and operations for [SystemSelfTestManager]
-
-## `com.jmd.superapp.data.db`  —  1 file(s)
+## `com.jmd.superapp.data.db` — 1 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/data/db/DatabaseHelper.kt`
-*629 lines*
+*667 lines*
 **What it is:** Architecture definition and implementation for [DatabaseHelper].
 **What it does:** Provides thread-safe SQLite database initialization, schema versioning, transaction isolation, and scheduled schema migrations across database versions 1 through 6. [com.jmd.superapp.data.repo.DailyCampaignRepository], [com.jmd.superapp.data.repo.LogRepository], [com.jmd.superapp.data.repo.AutoReplyRepository], [com.jmd.superapp.data.repo.WhatsAppRepository].
 **Key blocks:**
 - `class DatabaseHelper` — Manages 15 relational tables:
 
-## `com.jmd.superapp.data.model`  —  3 file(s)
+## `com.jmd.superapp.data.model` — 3 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/data/model/BackupDataDto.kt`
-*150 lines*
+*131 lines*
 **What it is:** Architecture definition and implementation for [BackupDataDto].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for BackupDataDto.
 **Key blocks:**
 - `class BackupDataDto` — Encapsulates state, business contracts, and operations for [BackupDataDto]
 - `class TaskBackupDto` — Provides domain logic and lifecycle management for TaskBackupDto
-- `class TemplateBackupDto` — Provides domain logic and lifecycle management for TemplateBackupDto
 - `class AutoReplyBackupDto` — Provides domain logic and lifecycle management for AutoReplyBackupDto
 - `class CampaignBackupDto` — Provides domain logic and lifecycle management for CampaignBackupDto
 - `class ContactBackupDto` — Provides domain logic and lifecycle management for ContactBackupDto
@@ -267,7 +295,7 @@ declarations it contributes.
 - `class AppInfoItem` — Encapsulates state, business contracts, and operations for [AppInfoItem]
 - `class GlobalPrivacySettings` — Encapsulates state, business contracts, and operations for [GlobalPrivacySettings]
 
-## `com.jmd.superapp.data.prefs`  —  3 file(s)
+## `com.jmd.superapp.data.prefs` — 2 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/data/prefs/AppDataStore.kt`
 *255 lines*
@@ -278,44 +306,44 @@ declarations it contributes.
 - `class AppDataStore` — Asynchronous, fully transactional, and coroutine-native key-value persistence. Prevents main thread disk I/O and ANRs during high-frequen…
 
 ### `app/src/main/java/com/jmd/superapp/data/prefs/PreferenceManager.kt`
-*774 lines*
+*821 lines*
 **What it is:** Architecture definition and implementation for [PreferenceManager].
 **What it does:** Provides typed configuration storage for app preferences, default SIM bindings, security PIN settings, keyguard unlock options, UI branding, and Direct Boot (FBE) device-protected storage.
 **Key blocks:**
 - `class PreferenceManager` — Encapsulates state, business contracts, and operations for [PreferenceManager]
 
-## `com.jmd.superapp.data.repo`  —  9 file(s)
+## `com.jmd.superapp.data.repo` — 9 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/data/repo/AppRepository.kt`
-*1161 lines*
+*1224 lines*
 **What it is:** Architecture definition and implementation for [AppRepository].
-**What it does:** Exposes a unified, transaction-safe facade aggregating access across all domain repositories: tasks, templates, dynamic contact pool, daily campaigns, execution logs, auto-reply rules, and WhatsApp contacts. [com.jmd.superapp.data.repo.LogRepository], [com.jmd.superapp.data.repo.RecipientRepository], [com.jmd.superapp.data.repo.AutoReplyRepository], [com.jmd.superapp.data.repo.WhatsAppRepository] `ComposeTaskScreen`, `DailyCampaignScreen`.
+**What it does:** Exposes a unified, transaction-safe facade aggregating access across all domain repositories: tasks, dynamic contact pool, daily campaigns, execution logs, auto-reply rules, and WhatsApp contacts. [com.jmd.superapp.data.repo.LogRepository], [com.jmd.superapp.data.repo.RecipientRepository], [com.jmd.superapp.data.repo.AutoReplyRepository], [com.jmd.superapp.data.repo.WhatsAppRepository] `ComposeTaskScreen`, `DailyCampaignScreen`.
 **Key blocks:**
 - `class AppRepository` — Encapsulates state, business contracts, and operations for [AppRepository]
 
 ### `app/src/main/java/com/jmd/superapp/data/repo/AutoReplyRepository.kt`
-*311 lines*
+*320 lines*
 **What it is:** Architecture definition and implementation for [AutoReplyRepository].
 **What it does:** Governs auto-reply rule configurations, time-window evaluation, keyword pattern matching, per-sender cooldown intervals, and daily reply rate limiting.
 **Key blocks:**
 - `class AutoReplyRepository` — Encapsulates state, business contracts, and operations for [AutoReplyRepository]
 
 ### `app/src/main/java/com/jmd/superapp/data/repo/BackupRepository.kt`
-*543 lines*
+*579 lines*
 **What it is:** Architecture definition and implementation for [BackupRepository].
 **What it does:** Provides transactional backup export and restore mechanisms to convert all application SQLite tables to and from structured JSON format for user export/import.
 **Key blocks:**
 - `class BackupRepository` — Supports both high-speed Kotlinx Serialization typed payloads and schema-agnostic raw table dumps
 
 ### `app/src/main/java/com/jmd/superapp/data/repo/DailyCampaignRepository.kt`
-*536 lines*
+*541 lines*
 **What it is:** Architecture definition and implementation for [DailyCampaignRepository].
 **What it does:** Governs dynamic contact pool filtering, daily quota pacing, campaign ledger recording, and unique cycle deduplication for high-volume scheduled outreach.
 **Key blocks:**
 - `class DailyCampaignRepository` — Encapsulates state, business contracts, and operations for [DailyCampaignRepository]
 
 ### `app/src/main/java/com/jmd/superapp/data/repo/LogRepository.kt`
-*268 lines*
+*273 lines*
 **What it is:** Architecture definition and implementation for [LogRepository].
 **What it does:** Persists and queries task execution logs for SMS, WhatsApp, and call actions. Maintains execution history with timestamps, delivery status, and failure diagnostics.
 **Key blocks:**
@@ -336,30 +364,30 @@ declarations it contributes.
 - `class RecipientRepository` — Encapsulates state, business contracts, and operations for [RecipientRepository]
 
 ### `app/src/main/java/com/jmd/superapp/data/repo/TaskRepository.kt`
-*531 lines*
+*567 lines*
 **What it is:** Architecture definition and implementation for [TaskRepository].
 **What it does:** Provides thread-safe CRUD operations, JSON array serialization of multi-recipient contacts, execution status transitions, and delivery deduplication for scheduled tasks.
 **Key blocks:**
 - `class TaskRepository` — Encapsulates state, business contracts, and operations for [TaskRepository]
 
 ### `app/src/main/java/com/jmd/superapp/data/repo/WhatsAppRepository.kt`
-*719 lines*
+*777 lines*
 **What it is:** Architecture definition and implementation for [WhatsAppRepository].
 **What it does:** Manages harvested WhatsApp contacts, group items, chat title validation heuristics, contact book cross-referencing, and profile photo resolution.
 **Key blocks:**
 - `class WhatsAppRepository` — Encapsulates state, business contracts, and operations for [WhatsAppRepository]
 
-## `com.jmd.superapp.engine`  —  4 file(s)
+## `com.jmd.superapp.engine` — 4 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/engine/ContactIngestionEngine.kt`
-*389 lines*
+*313 lines*
 **What it is:** Architecture definition and implementation for [ContactIngestionEngine].
 **What it does:** Coordinates contact and recipient ingestion across device ContactsContract, CallLog, cellular SMS inbox/outbox history, and WhatsApp chat history scans.
 **Key blocks:**
 - `class ContactIngestionEngine` — Encapsulates state, business contracts, and operations for [ContactIngestionEngine]
 
 ### `app/src/main/java/com/jmd/superapp/engine/SequentialTaskEngine.kt`
-*1990 lines*
+*2082 lines*
 **What it is:** Architecture definition and implementation for [SequentialTaskEngine].
 **What it does:** Centralized sequential execution orchestrator for scheduled tasks across SMS, WhatsApp chats, WhatsApp Status stories, Phone Calls, Reminders, and Sound Mode events.
 **Key blocks:**
@@ -379,7 +407,7 @@ declarations it contributes.
 **Key blocks:**
 - `class WhatsAppSender` — Interfaces with [TaskAccessibilityService] to execute scheduled taps, node inputs, and send button clicks across consumer WhatsApp and Wh…
 
-## `com.jmd.superapp.receiver`  —  8 file(s)
+## `com.jmd.superapp.receiver` — 9 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/receiver/AccessibilityWatchdogReceiver.kt`
 *118 lines*
@@ -388,15 +416,22 @@ declarations it contributes.
 **Key blocks:**
 - `class AccessibilityWatchdogReceiver` — Encapsulates state, business contracts, and operations for [AccessibilityWatchdogReceiver]
 
+### `app/src/main/java/com/jmd/superapp/receiver/AutomationReceiver.kt`
+*221 lines*
+**What it is:** Architecture definition and implementation for [AutomationReceiver].
+**What it does:** Exposes system-level automation endpoints callable via ADB CLI, automation scripts, and intent broadcasts:.
+**Key blocks:**
+- `class AutomationReceiver`
+
 ### `app/src/main/java/com/jmd/superapp/receiver/BootReceiver.kt`
-*147 lines*
+*148 lines*
 **What it is:** Architecture definition and implementation for [BootReceiver].
 **What it does:** Catches [Intent.ACTION_BOOT_COMPLETED], [Intent.ACTION_LOCKED_BOOT_COMPLETED], and [Intent.ACTION_MY_PACKAGE_REPLACED] events to reschedule pending alarms, reinitialize accessibility watchdogs, and resume daily campaign cadences. [com.jmd.superapp.scheduler.DailyCampaignScheduler].
 **Key blocks:**
 - `class BootReceiver` — Encapsulates state, business contracts, and operations for [BootReceiver]
 
 ### `app/src/main/java/com/jmd/superapp/receiver/PhoneCallReceiver.kt`
-*525 lines*
+*523 lines*
 **What it is:** Architecture definition and implementation for [PhoneCallReceiver].
 **What it does:** Monitors telephony call state transitions (RINGING, OFFHOOK, IDLE) to trigger scheduled SMS replies for missed calls, answered and ended incoming calls, or connected and ended outgoing calls. Accurately distinguishes between: 1. Missed Incoming Calls (rings but not answered) -> Triggers MISSED_CALL auto-reply. 2. Answered & Disconnected Incoming Calls (conversation occurred) -> Triggers CALL_ENDED auto-reply. 3. Answered & Disconnected Outgoing Calls (conversation occurred, duration > 0) -> Triggers CALL_ENDED auto-reply. 4. Unconnected Outgoing Calls (dialed by user but not answered, rejected, or cancelled, duration == 0) -> Strictly IGNORED (no auto-reply).
 **Key blocks:**
@@ -410,7 +445,7 @@ declarations it contributes.
 - `class SmsDeliveryReceiver` — [com.jmd.superapp.engine.SmsSender] attaches one delivered PendingIntent per PDU part. When the
 
 ### `app/src/main/java/com/jmd/superapp/receiver/SmsReceiver.kt`
-*249 lines*
+*228 lines*
 **What it is:** Architecture definition and implementation for [SmsReceiver].
 **What it does:** Catches incoming cellular SMS messages via [Telephony.Sms.Intents.SMS_RECEIVED_ACTION], inspects message body patterns against configured AutoReply rules, and dispatches responses.
 **Key blocks:**
@@ -424,7 +459,7 @@ declarations it contributes.
 - `class SuperDeviceAdminReceiver` — Encapsulates state, business contracts, and operations for [SuperDeviceAdminReceiver]
 
 ### `app/src/main/java/com/jmd/superapp/receiver/TaskAlarmReceiver.kt`
-*571 lines*
+*266 lines*
 **What it is:** Architecture definition and implementation for [TaskAlarmReceiver].
 **What it does:** Listens for exact RTC_WAKEUP alarms triggered by Android AlarmManager for scheduled task tasks. Wakes the device, logs alarm activation, updates task execution state, and enqueues the task ID into [com.jmd.superapp.engine.SequentialTaskEngine].
 **Key blocks:**
@@ -437,7 +472,7 @@ declarations it contributes.
 **Key blocks:**
 - `class TimeChangeReceiver` — Encapsulates state, business contracts, and operations for [TimeChangeReceiver]
 
-## `com.jmd.superapp.scheduler`  —  8 file(s)
+## `com.jmd.superapp.scheduler` — 8 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/scheduler/AccessibilityWatchdogScheduler.kt`
 *120 lines*
@@ -454,7 +489,7 @@ declarations it contributes.
 - `class AccessibilityWatchdogWorker` — Encapsulates state, business contracts, and operations for [AccessibilityWatchdogWorker]
 
 ### `app/src/main/java/com/jmd/superapp/scheduler/AlarmScheduler.kt`
-*600 lines*
+*720 lines*
 **What it is:** Architecture definition and implementation for [AlarmScheduler].
 **What it does:** Configures exact RTC_WAKEUP alarms with Android AlarmManager across API versions (API 26 through API 36+), strictly verifying [AlarmManager.canScheduleExactAlarms] on Android 12+ (API 31+) and falling back to inexact windowed alarms when exact alarm privileges are restricted.
 **Key blocks:**
@@ -468,7 +503,7 @@ declarations it contributes.
 - `object DailyCampaignScheduler` — Encapsulates state, business contracts, and operations for [DailyCampaignScheduler]
 
 ### `app/src/main/java/com/jmd/superapp/scheduler/DailyCampaignWorker.kt`
-*649 lines*
+*648 lines*
 **What it is:** Architecture definition and implementation for [DailyCampaignWorker].
 **What it does:** Background WorkManager [CoroutineWorker] executing scheduled daily outreach batch campaigns. Coordinates dynamic contact ingestion, per-contact cooldowns, gap delays (pacing), SMS quota tracking, and dispatching via [SmsSender] or [WhatsAppSender].
 **Key blocks:**
@@ -495,10 +530,10 @@ declarations it contributes.
 **Key blocks:**
 - `object WorkManagerScheduler` — Encapsulates state, business contracts, and operations for [WorkManagerScheduler]
 
-## `com.jmd.superapp.service`  —  4 file(s)
+## `com.jmd.superapp.service` — 4 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/service/TaskAccessibilityService.kt`
-*3213 lines*
+*3262 lines*
 **What it is:** Architecture definition and implementation for [TaskAccessibilityService].
 **What it does:** Background accessibility service delivering physical UI interaction, window inspection, dynamic popup dismissal, text population, and send button clicks across WhatsApp Messenger and WhatsApp Business. [com.jmd.superapp.whatsapp.WhatsAppGroupEngine], [com.jmd.superapp.whatsapp.PopupShield], [com.jmd.superapp.whatsapp.VoiceNoteProtectionGuard], [com.jmd.superapp.whatsapp.KeyguardUnlockEngine].
 **Key blocks:**
@@ -512,7 +547,7 @@ declarations it contributes.
 - `class TaskForegroundService` — Encapsulates state, business contracts, and operations for [TaskForegroundService]
 
 ### `app/src/main/java/com/jmd/superapp/service/TaskNotificationListenerService.kt`
-*327 lines*
+*303 lines*
 **What it is:** Architecture definition and implementation for [TaskNotificationListenerService].
 **What it does:** Processes incoming notifications across messaging apps (WhatsApp, WhatsApp Business, SMS, Telegram, Messenger) and dispatches scheduled replies via inline [RemoteInput] actions without launching UI on screen.
 **Key blocks:**
@@ -525,15 +560,15 @@ declarations it contributes.
 **Key blocks:**
 - `class TaskTileService` — Allows users to 1-tap pause Accessibility (via disableSelf) before opening banking or payment apps, and 1-tap resume or open Accessibilit…
 
-## `com.jmd.superapp.telephony`  —  1 file(s)
+## `com.jmd.superapp.telephony` — 1 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/telephony/TelephonyCallEngine.kt`
-*334 lines*
+*335 lines*
 **What it is:** Autonomous Telephony Orchestration Engine providing native call dispatch, automated call tracking,.
 **Key blocks:**
 - `object TelephonyCallEngine` — Manages cellular call dispatch, tracking, termination, and state verification
 
-## `com.jmd.superapp.ui.activity`  —  5 file(s)
+## `com.jmd.superapp.ui.activity` — 5 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/activity/CallSimulationActivity.kt`
 *279 lines*
@@ -558,7 +593,7 @@ declarations it contributes.
 - `class MainActivity` — Encapsulates state, business contracts, and operations for [MainActivity]
 
 ### `app/src/main/java/com/jmd/superapp/ui/activity/ReminderAlarmActivity.kt`
-*181 lines*
+*201 lines*
 **What it is:** Architecture definition and implementation for [ReminderAlarmActivity].
 **What it does:** Fullscreen alarm activity displaying reminder title, notes, and speaking reminder message aloud using Android [TextToSpeech] with snooze and dismiss actions.
 **Key blocks:**
@@ -571,7 +606,7 @@ declarations it contributes.
 **Key blocks:**
 - `class TaskLauncherActivity` — Encapsulates state, business contracts, and operations for [TaskLauncherActivity]
 
-## `com.jmd.superapp.ui.components`  —  4 file(s)
+## `com.jmd.superapp.ui.components` — 4 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/components/AppStatusIndicators.kt`
 *359 lines*
@@ -594,7 +629,7 @@ declarations it contributes.
 - `fun ContactAvatar` — Renders interactive Material 3 UI for [ContactAvatar] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/components/CompactComponents.kt`
-*1135 lines*
+*1137 lines*
 **What it is:** Architecture definition and implementation for [CompactComponents].
 **What it does:** Core reusable UI design building blocks adhering to Material 3 Expressive Orange specifications:.
 **Key blocks:**
@@ -621,7 +656,7 @@ declarations it contributes.
 - `fun AppInputField` — Renders interactive Material 3 Compact UI for [AppInputField] adhering to application design invariants
 - `fun AppSearchField` — Renders interactive Material 3 UI for [AppSearchField] adhering to application design invariants
 
-## `com.jmd.superapp.ui.model`  —  1 file(s)
+## `com.jmd.superapp.ui.model` — 1 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/model/UiModels.kt`
 *99 lines*
@@ -632,7 +667,7 @@ declarations it contributes.
 - `class SelectedRecipient` — Encapsulates state, business contracts, and operations for [SelectedRecipient]
 - `class TaskTypeItem` — Maps user selection to specific channel dispatch configurations and specialized task modes
 
-## `com.jmd.superapp.ui.screen`  —  7 file(s)
+## `com.jmd.superapp.ui.screen` — 6 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/CallSimulationScreen.kt`
 *292 lines*
@@ -643,16 +678,16 @@ declarations it contributes.
 - `fun SimulatedCallScreen` — Renders interactive Material 3 UI for [SimulatedCallScreen] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/MainAppHost.kt`
-*391 lines*
+*386 lines*
 **What it is:** Architecture definition and implementation for [MainAppHost].
 **What it does:** Primary UI application host managing bottom navigation tabs, deep-link text ingestion, full-screen composer sheets, sequence studios, and task type selection dialogs.
 **Key blocks:**
 - `fun MainAppHost` — Renders interactive Material 3 UI for [MainAppHost] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/MoreScreen.kt`
-*359 lines*
+*291 lines*
 **What it is:** Architecture definition and implementation for [MoreScreen].
-**What it does:** Hub screen navigating to secondary features: Settings, Documentation, Call Simulation, Templates, Auto-Reply, and System Diagnostics.
+**What it does:** Hub screen navigating to secondary features: Settings, Documentation, Call Simulation, Auto-Reply, and System Diagnostics.
 **Key blocks:**
 - `fun MoreScreenView` — Renders interactive Material 3 UI for [MoreScreenView] adhering to application design invariants
 - `fun MenuItemCard` — Renders Material 3 interface elements and handles user interaction for MenuItemCard
@@ -665,7 +700,7 @@ declarations it contributes.
 - `fun PermissionCenterView` — Renders interactive Material 3 UI for [PermissionCenterView] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/ReminderScreen.kt`
-*256 lines*
+*261 lines*
 **What it is:** Architecture definition and implementation for [ReminderScreen].
 **What it does:** Fullscreen alarm and reminder interaction screen showing note content with snooze and dismiss actions.
 **Key blocks:**
@@ -680,27 +715,16 @@ declarations it contributes.
 - `fun TaskTypeSelectionDialog` — Supported Dispatch Pathways:
 - `fun DialogOptionTile` — Renders Material 3 interface elements and handles user interaction for DialogOptionTile
 
-### `app/src/main/java/com/jmd/superapp/ui/screen/WhatsAppSetupScreen.kt`
-*744 lines*
-**What it is:** Architecture definition and implementation for [WhatsAppSetupScreen].
-**What it does:** Guided setup wizard for WhatsApp and WhatsApp Business dispatch. Steps through Accessibility service enablement, battery optimization disablement, test ping message verification, lockscreen PIN setup, and permission status checks.
-**Key blocks:**
-- `fun WhatsAppSetupAndScreenAssistView` — Configures accessibility services, device lockscreen screen assistance PINs, post-dispatch auto-relock policies, battery optimization all…
-- `fun WhatsAppA11yStatusCard` — Renders interactive Material 3 UI for [WhatsAppA11yStatusCard] adhering to application design invariants
-- `fun WhatsAppRestrictedSettingsCard` — Directs users on how to allow restricted settings in App Info before enabling Accessibility
-- `fun WhatsAppBatteryOptimizationCard` — Renders interactive Material 3 UI for [WhatsAppBatteryOptimizationCard] adhering to application design invariants
-- `fun WhatsAppLiveTestCard` — Renders interactive Material 3 UI for [WhatsAppLiveTestCard] adhering to application design invariants
-
-## `com.jmd.superapp.ui.screen.autoreply`  —  3 file(s)
+## `com.jmd.superapp.ui.screen.autoreply` — 3 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/autoreply/AutoReplyCardComponents.kt`
-*517 lines*
+*513 lines*
 **What it is:** Architecture definition and implementation for [AutoReplyCardComponents].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for AutoReplyCardComponents.
 **Key blocks:**
 - `fun AutoReplyRuleCard` — Renders interactive Material 3 UI for [AutoReplyRuleCard] adhering to application design invariants
 - `fun AutoReplyLimitsCard` — Renders interactive Material 3 UI for [AutoReplyLimitsCard] adhering to application design invariants
-- `fun AutoReplyTemplateCard` — {name}, {time})
+- `fun AutoReplyMessageCard` — Renders the editable reply body, its character counter and the insertable token chips
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/autoreply/AutoReplyDialogs.kt`
 *858 lines*
@@ -711,16 +735,16 @@ declarations it contributes.
 - `fun AutoReplyRuleDialog` — Renders interactive Material 3 UI for [AutoReplyRuleDialog] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/autoreply/AutoReplyScreen.kt`
-*266 lines*
+*303 lines*
 **What it is:** Architecture definition and implementation for [AutoReplyScreen].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for AutoReplyScreen.
 **Key blocks:**
 - `fun AutoReplyScreen` — Renders interactive Material 3 UI for [AutoReplyScreen] adhering to application design invariants
 
-## `com.jmd.superapp.ui.screen.campaign`  —  4 file(s)
+## `com.jmd.superapp.ui.screen.campaign` — 4 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/campaign/DailyCampaignCardComponents.kt`
-*1404 lines*
+*1388 lines*
 **What it is:** Architecture definition and implementation for [DailyCampaignCardComponents].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for DailyCampaignCardComponents.
 **Key blocks:**
@@ -735,7 +759,7 @@ declarations it contributes.
 - `fun WhatsAppA11yHealthBar` — Renders interactive Material 3 UI for [WhatsAppA11yHealthBar] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/campaign/DailyCampaignDialogComponents.kt`
-*509 lines*
+*506 lines*
 **What it is:** Architecture definition and implementation for [DailyCampaignDialogComponents].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for DailyCampaignDialogComponents.
 **Key blocks:**
@@ -754,13 +778,13 @@ declarations it contributes.
 - `fun LedgerItemCard` — Renders interactive Material 3 UI for [LedgerItemCard] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/campaign/DailyCampaignScreen.kt`
-*804 lines*
+*811 lines*
 **What it is:** Architecture definition and implementation for [DailyCampaignScreen].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for DailyCampaignScreen.
 **Key blocks:**
 - `fun DailyAutoSenderScreen` — Renders interactive Material 3 UI for [DailyAutoSenderScreen] adhering to application design invariants
 
-## `com.jmd.superapp.ui.screen.compose`  —  7 file(s)
+## `com.jmd.superapp.ui.screen.compose` — 7 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/compose/ComposeCallSection.kt`
 *657 lines*
@@ -780,14 +804,14 @@ declarations it contributes.
 - `fun ComposeBottomBar` — Renders interactive Material 3 UI for [ComposeBottomBar] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/compose/ComposeMessageSection.kt`
-*544 lines*
+*536 lines*
 **What it is:** Architecture definition and implementation for [ComposeMessageSection].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for ComposeMessageSection.
 **Key blocks:**
 - `fun ComposeRecipientsAndMessageCard` — Renders interactive Material 3 UI for [ComposeRecipientsAndMessageCard] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/compose/ComposePickerSheets.kt`
-*907 lines*
+*891 lines*
 **What it is:** Architecture definition and implementation for [ComposePickerSheets].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for ComposePickerSheets.
 **Key blocks:**
@@ -796,14 +820,14 @@ declarations it contributes.
 - `fun WhatsAppContactsPickerSheet` — Renders interactive Material 3 UI for [WhatsAppContactsPickerSheet] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/compose/ComposeScheduleCard.kt`
-*386 lines*
+*387 lines*
 **What it is:** Architecture definition and implementation for [ComposeScheduleCard].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for ComposeScheduleCard.
 **Key blocks:**
 - `fun ComposeScheduleOptionsCard` — Renders interactive Material 3 UI for [ComposeScheduleOptionsCard] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/compose/ComposeStatusSection.kt`
-*673 lines*
+*662 lines*
 **What it is:** Architecture definition and implementation for [ComposeStatusSection].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for ComposeStatusSection.
 **Key blocks:**
@@ -811,13 +835,13 @@ declarations it contributes.
 - `fun WhatsAppBusinessStatusComposerCard` — Renders interactive Material 3 UI for [WhatsAppBusinessStatusComposerCard] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/compose/ComposeTaskScreen.kt`
-*788 lines*
+*798 lines*
 **What it is:** Architecture definition and implementation for [ComposeTaskScreen].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for ComposeTaskScreen.
 **Key blocks:**
 - `fun ComposeTaskScreen` — Renders interactive Material 3 UI for [ComposeTaskScreen] adhering to application design invariants
 
-## `com.jmd.superapp.ui.screen.logs`  —  2 file(s)
+## `com.jmd.superapp.ui.screen.logs` — 2 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/logs/LogDetailScreen.kt`
 *334 lines*
@@ -827,13 +851,13 @@ declarations it contributes.
 - `fun LogDetailView` — Renders interactive Material 3 UI for [LogDetailView] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/logs/LogsScreen.kt`
-*376 lines*
+*409 lines*
 **What it is:** Architecture definition and implementation for [LogsScreen].
 **What it does:** Primary coordinator screen managing:.
 **Key blocks:**
 - `fun LogsView` — Renders interactive Material 3 UI for [LogsView] adhering to application design invariants
 
-## `com.jmd.superapp.ui.screen.permission`  —  5 file(s)
+## `com.jmd.superapp.ui.screen.permission` — 5 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/permission/AppPrivilegeScreen.kt`
 *260 lines*
@@ -877,48 +901,35 @@ declarations it contributes.
 - `fun PermissionStatusActiveChip` — Renders interactive Material 3 UI for [PermissionStatusActiveChip] adhering to application design invariants
 - `fun PermissionGrantActionButton` — Strictly adheres to 48dp minimum accessible touch target
 
-## `com.jmd.superapp.ui.screen.privacy`  —  2 file(s)
-
-### `app/src/main/java/com/jmd/superapp/ui/screen/privacy/AppPrivacyDetailDialog.kt`
-*295 lines*
-**What it is:** Architecture definition and implementation for [AppPrivacyDetailDialog].
-**What it does:** Provides a dialog sheet to inspect and customize granular privacy controls for an individual application.
-**Key blocks:**
-- `fun AppPrivacyDetailDialog` — Renders Material 3 interface elements and handles user interaction for AppPrivacyDetailDialog
-- `fun PrivacyControlToggle` — Renders Material 3 interface elements and handles user interaction for PrivacyControlToggle
-
-### `app/src/main/java/com/jmd/superapp/ui/screen/privacy/PrivacySettingsScreen.kt`
-*780 lines*
-**What it is:** Architecture definition and implementation for [PrivacySettingsScreen].
-**What it does:** Full-screen interface providing comprehensive privacy preferences, application-specific exclusions, accessibility target scoping, content masking, and installed application selector.
-**Key blocks:**
-- `class AppListFilter` — Provides domain logic and lifecycle management for AppListFilter
-- `fun PrivacySettingsScreen` — Renders Material 3 interface elements and handles user interaction for PrivacySettingsScreen
-- `fun AppRowItem` — Renders Material 3 interface elements and handles user interaction for AppRowItem
-- `fun drawableToBitmap` — Coordinates drawableToBitmap operations conforming to application constraints
-
-## `com.jmd.superapp.ui.screen.settings`  —  10 file(s)
+## `com.jmd.superapp.ui.screen.settings` — 10 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/settings/SettingsAutomationChannelsCardComponents.kt`
-*443 lines*
+*497 lines*
 **What it is:** Architecture definition and implementation for [SettingsAutomationChannelsCardComponents].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for SettingsAutomationChannelsCardComponents.
 **Key blocks:**
 - `fun SettingsAutomationChannelsCard` — Renders interactive Material 3 UI for [SettingsAutomationChannelsCard] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/settings/SettingsBackupRestoreCardComponents.kt`
-*367 lines*
+*383 lines*
 **What it is:** Architecture definition and implementation for [SettingsBackupRestoreCardComponents].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for SettingsBackupRestoreCardComponents.
 **Key blocks:**
 - `fun SettingsBackupRestoreCard` — Renders interactive Material 3 UI for [SettingsBackupRestoreCard] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/settings/SettingsBankingShieldCardComponents.kt`
-*637 lines*
+*270 lines*
 **What it is:** Architecture definition and implementation for [SettingsBankingShieldCardComponents].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for SettingsBankingShieldCardComponents.
 **Key blocks:**
 - `fun SettingsBankingShieldCard` — Ensures all tasks (Calls, SMS, WhatsApp, Alarms) run uninterrupted 24/7 while strictly isolating from and never inspecting banking, payme…
+
+### `app/src/main/java/com/jmd/superapp/ui/screen/settings/SettingsFormattingCardComponents.kt`
+*461 lines*
+**What it is:** Settings card for dynamic variable formats.
+**What it does:** Exposes date, time, salutation and currency formatting for the tokens listed in [MessageVariables].
+**Key blocks:**
+- `fun SettingsFormattingCard` — Renders interactive Material 3 UI for [SettingsFormattingCard] adhering to application design invariants
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/settings/SettingsPreferencesSection.kt`
 *468 lines*
@@ -927,8 +938,17 @@ declarations it contributes.
 **Key blocks:**
 - `fun SettingsPreferencesCards` — Renders interactive Material 3 UI for [SettingsPreferencesCards] adhering to application design invariants
 
+### `app/src/main/java/com/jmd/superapp/ui/screen/settings/SettingsProtectedAppsSection.kt`
+*261 lines*
+**What it is:** Searchable picker of every launchable app, persisted as the protected banking list.
+**What it does:** Loads installed launcher apps, lets the owner tick/untick them (with a one-tap suggested.
+**Key blocks:**
+- `class InstalledApp`
+- `val BANKING_HINTS`
+- `fun ProtectedAppsSection` — Loads installed launcher apps, lets the owner tick/untick them (with a one-tap suggested
+
 ### `app/src/main/java/com/jmd/superapp/ui/screen/settings/SettingsScreen.kt`
-*245 lines*
+*284 lines*
 **What it is:** Architecture definition and implementation for [SettingsScreen].
 **What it does:** Provides core logic, component interfaces, and subsystem bindings for SettingsScreen.
 **Key blocks:**
@@ -949,22 +969,6 @@ declarations it contributes.
 **Key blocks:**
 - `fun SettingsStatusIndicatorsGuideCard` — Renders interactive Material 3 UI for [SettingsStatusIndicatorsGuideCard] adhering to application design invariants
 
-### `app/src/main/java/com/jmd/superapp/ui/screen/settings/SettingsSystemSelfTestCardComponents.kt`
-*589 lines*
-**What it is:** Architecture definition and implementation for [SettingsSystemSelfTestCardComponents].
-**What it does:** Provides an interactive Material 3 diagnostic test suite embedded directly inside the Settings screen. Allows users to verify all 14 core application subsystems, database tables, schedulers, and services, and execute 1-tap automated repairs.
-**Key blocks:**
-- `fun SettingsSystemSelfTestCard` — Renders interactive Material 3 UI for [SettingsSystemSelfTestCard] adhering to application design invariants
-- `fun DiagnosticItemRow` — Renders interactive Material 3 UI for [DiagnosticItemRow] adhering to application design invariants
-- `fun handleIndividualFix` — Executes [handleIndividualFix] logic in accordance with system and security invariants
-
-### `app/src/main/java/com/jmd/superapp/ui/screen/settings/SettingsTemplateTokensCardComponents.kt`
-*511 lines*
-**What it is:** Architecture definition and implementation for [SettingsTemplateTokensCardComponents].
-**What it does:** Provides core logic, component interfaces, and subsystem bindings for SettingsTemplateTokensCardComponents.
-**Key blocks:**
-- `fun SettingsTemplateTokensCard` — Renders interactive Material 3 UI for [SettingsTemplateTokensCard] adhering to application design invariants
-
 ### `app/src/main/java/com/jmd/superapp/ui/screen/settings/SystemLogViewerScreen.kt`
 *1111 lines*
 **What it is:** Architecture definition and implementation for [SystemLogViewerScreen].
@@ -978,23 +982,26 @@ declarations it contributes.
 - `fun RawLogCard` — Renders interactive Material 3 UI for [RawLogCard] adhering to application design invariants
 - `fun parseCsvLine` — Executes [parseCsvLine] logic in accordance with system and security invariants
 
-## `com.jmd.superapp.ui.screen.tasks`  —  2 file(s)
+## `com.jmd.superapp.ui.screen.tasks` — 2 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/tasks/TaskCardComponents.kt`
-*321 lines*
+*441 lines*
 **What it is:** Architecture definition and implementation for [TaskCardComponents].
-**What it does:** Interactive presentation card displaying an individual scheduled task with channel badge, schedule timestamp, recipient summary, recurrence pill, and action buttons (Run Now, Pause/Resume, Delete).
+**What it does:** Interactive presentation card displaying an individual scheduled task with channel badge, schedule timestamp,.
 **Key blocks:**
-- `fun TaskCard` — Renders interactive Material 3 UI for [TaskCard] adhering to application design invariants
+- `fun ComfortableSwitch`
+- `fun ComfortableIconButton`
+- `fun ComfortableActionButton`
+- `fun TaskCard` — Renders a comfortable, highly readable, structured card layout with optimal typography and touch targets
 
 ### `app/src/main/java/com/jmd/superapp/ui/screen/tasks/TasksScreen.kt`
-*220 lines*
+*294 lines*
 **What it is:** Architecture definition and implementation for [TasksScreen].
-**What it does:** Primary coordinator screen managing:.
+**What it does:** Primary coordinator screen managing scheduled task viewing, searching, filtering, and creation.
 **Key blocks:**
-- `fun TasksListScreen` — Renders interactive Material 3 UI for [TasksListScreen] adhering to application design invariants
+- `fun TasksListScreen` — Renders interactive Material 3 UI for [TasksListScreen] with single-column layout of compact grid cards
 
-## `com.jmd.superapp.ui.theme`  —  2 file(s)
+## `com.jmd.superapp.ui.theme` — 2 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/theme/MaterialIconMapper.kt`
 *183 lines*
@@ -1020,7 +1027,7 @@ declarations it contributes.
 - `object AppSemanticColors` — Encapsulates state, business contracts, and operations for [AppSemanticColors]
 - `object AppLayoutGrid` — Formulates standard responsive spacing, corner radii, elevation, touch targets, and adaptive layout boundaries across the entire application
 
-## `com.jmd.superapp.ui.widget`  —  1 file(s)
+## `com.jmd.superapp.ui.widget` — 1 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/ui/widget/SuperAppWidget.kt`
 *150 lines*
@@ -1030,21 +1037,22 @@ declarations it contributes.
 - `class SuperAppWidget` — Renders on-device automation status and provides 1-tap fast access to scheduled tasks
 - `class SuperAppWidgetReceiver` — Encapsulates state, business contracts, and operations for [SuperAppWidgetReceiver]
 
-## `com.jmd.superapp.whatsapp`  —  12 file(s)
+## `com.jmd.superapp.whatsapp` — 12 file(s)
 
 ### `app/src/main/java/com/jmd/superapp/whatsapp/WhatsAppCallEngine.kt`
-*909 lines*
+*911 lines*
 **What it is:** Architecture definition and implementation for [WhatsAppCallEngine].
 **What it does:** WhatsApp Voice Call engine inspecting the accessibility hierarchy to locate and click the voice call action in personal and business WhatsApp conversations, confirm calling dialogs, and verify VoIP call screen transitions.
 **Key blocks:**
 - `class WhatsAppCallEngine` — Provides domain logic and lifecycle management for WhatsAppCallEngine
 
 ### `app/src/main/java/com/jmd/superapp/whatsapp/WhatsAppChatScanner.kt`
-*1108 lines*
+*1237 lines*
 **What it is:** Architecture definition and implementation for [WhatsAppChatScanner].
 **What it does:** Discovery engine for harvesting WhatsApp direct chats and groups via accessibility node traversal, scrolling, and pool enrichment.
 **Key blocks:**
 - `class ScanTarget` — Provides domain logic and lifecycle management for ScanTarget
+- `class RowKind` — Provides domain logic and lifecycle management for ScanTarget
 - `class WhatsAppChatScanner` — Encapsulates state, business contracts, and operations for [WhatsAppChatScanner]
 
 ### `app/src/main/java/com/jmd/superapp/whatsapp/WhatsAppDialogHandler.kt`
@@ -1055,7 +1063,7 @@ declarations it contributes.
 - `object WhatsAppDialogHandler` — Encapsulates state, business contracts, and operations for [WhatsAppDialogHandler]
 
 ### `app/src/main/java/com/jmd/superapp/whatsapp/WhatsAppDirectSendEngine.kt`
-*579 lines*
+*583 lines*
 **What it is:** Architecture definition and implementation for [WhatsAppDirectSendEngine].
 **What it does:** Direct message dispatcher executing accessibility tree inspection, input field text population, clipboard synchronization, and send button clicks across WhatsApp and WhatsApp Business conversations.
 **Key blocks:**
@@ -1069,7 +1077,7 @@ declarations it contributes.
 - `object WhatsAppDirectVoipDispatcher` — Encapsulates state, business contracts, and operations for [WhatsAppDirectVoipDispatcher]
 
 ### `app/src/main/java/com/jmd/superapp/whatsapp/WhatsAppGroupEngine.kt`
-*417 lines*
+*421 lines*
 **What it is:** Architecture definition and implementation for [WhatsAppGroupEngine].
 **What it does:** Scheduled group messaging dispatcher. Locates WhatsApp groups via search query, opens the group chat, verifies conversation context, and invokes text transmission.
 **Key blocks:**
@@ -1083,14 +1091,14 @@ declarations it contributes.
 - `object WhatsAppIntentDispatcher` — Encapsulates state, business contracts, and operations for [WhatsAppIntentDispatcher]
 
 ### `app/src/main/java/com/jmd/superapp/whatsapp/WhatsAppStatusEngine.kt`
-*736 lines*
+*771 lines*
 **What it is:** Architecture definition and implementation for [WhatsAppStatusEngine].
 **What it does:** Dedicated status story publishing engine dispatching text and photo/video story posting for both personal WhatsApp and WhatsApp Business. Navigates to Updates tab, clicks pencil/camera FAB, enters story caption/text, confirms My Status audience, and clicks publish.
 **Key blocks:**
 - `class WhatsAppStatusEngine` — Encapsulates state, business contracts, and operations for [WhatsAppStatusEngine]
 
 ### `app/src/main/java/com/jmd/superapp/whatsapp/WhatsappAccessibilityNodeUtils.kt`
-*611 lines*
+*655 lines*
 **What it is:** Architecture definition and implementation for [WhatsappAccessibilityNodeUtils].
 **What it does:** Provides resilient accessibility node BFS search algorithms, boundary inspection, gesture dispatch, physical coordinate tapping, and text-entry routines for UI actions.
 **Key blocks:**
@@ -1105,7 +1113,7 @@ declarations it contributes.
 - `typealias KeyguardUnlockEngine` — Handles gesture completion or cancellation dispatch for onCancelled
 
 ### `app/src/main/java/com/jmd/superapp/whatsapp/WhatsappPopupShield.kt`
-*340 lines*
+*456 lines*
 **What it is:** Architecture definition and implementation for [WhatsappPopupShield].
 **What it does:** Scans window hierarchies to detect and dismiss intrusive blocking overlays, system permission dialogs, incoming call caller ID overlays (e.g. Truecaller), and notification shades before starting UI actions.
 **Key blocks:**

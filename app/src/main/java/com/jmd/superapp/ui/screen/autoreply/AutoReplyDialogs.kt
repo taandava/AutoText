@@ -780,7 +780,7 @@ fun AutoReplyRuleDialog(
             )
 
             // 5. Custom Reply Message Enterprise Card (Tailored for active channel & event)
-            AutoReplyTemplateCard(
+            AutoReplyMessageCard(
                 channel = selectedChannel,
                 callEventType = callEventType,
                 replyText = replyText,

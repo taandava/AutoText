@@ -258,13 +258,6 @@ object PopupShield {
                 clearedSomething = true
             }
 
-            // Always dismiss any open system dialogs safely
-            try {
-                @Suppress("DEPRECATION")
-                val closeIntent = android.content.Intent(android.content.Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
-                service.sendBroadcast(closeIntent)
-            } catch (_: Throwable) {}
-
             // 1b. Check for intrusive caller ID overlays (Truecaller, CallApp, Hiya)
             if (curPkg.contains("truecaller") || curPkg.contains("callapp") || curPkg.contains("hiya") || curPkg.contains("callerid")) {
                 Log.i(TAG, "Caller ID overlay/dialog detected in foreground ($curPkg). Attempting to dismiss...")

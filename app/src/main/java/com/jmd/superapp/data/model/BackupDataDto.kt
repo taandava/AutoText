@@ -14,6 +14,7 @@
 
 package com.jmd.superapp.data.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -32,7 +33,6 @@ data class BackupDataDto(
     val app: String = "Super",
     val exportedAt: Long = System.currentTimeMillis(),
     val tasks: List<TaskBackupDto> = emptyList(),
-    val templates: List<TemplateBackupDto> = emptyList(),
     val autoReplyRules: List<AutoReplyBackupDto> = emptyList(),
     val dailyCampaigns: List<CampaignBackupDto> = emptyList(),
     val contacts: List<ContactBackupDto> = emptyList()
@@ -64,25 +64,6 @@ data class TaskBackupDto(
     val callDurationSeconds: Int = 0,
     val simSlot: Int = 0,
     val soundMode: String? = null
-)
-
-/**
- * What it is:
- * Component definition for [TemplateBackupDto].
- *
- * What it does:
- * Provides domain logic and lifecycle management for TemplateBackupDto.
- *
- * Linked with:
- * - Component: [BackupDataDto]
- */
-@Serializable
-data class TemplateBackupDto(
-    val id: Long = 0,
-    val title: String,
-    val category: String,
-    val content: String,
-    val createdAt: Long = System.currentTimeMillis()
 )
 
 /**
@@ -122,7 +103,7 @@ data class CampaignBackupDto(
     val id: Long = 0,
     val title: String,
     val channel: String,
-    val messageTemplate: String,
+    @SerialName("messageTemplate") val message: String,
     val dailyLimit: Int = 50,
     val simSlot: Int = 0,
     val isActive: Boolean = true

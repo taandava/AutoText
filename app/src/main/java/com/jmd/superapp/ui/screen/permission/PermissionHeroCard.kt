@@ -210,7 +210,7 @@ fun PermissionHeroCard(
                 horizontalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceSmall)
             ) {
                 AppButton(
-                    text = if (isHealing) "Healing..." else "Auto-Heal Services",
+                    text = if (isHealing) "Healing..." else "Auto-Heal",
                     onClick = {
                         if (isHealing) return@AppButton
                         isHealing = true

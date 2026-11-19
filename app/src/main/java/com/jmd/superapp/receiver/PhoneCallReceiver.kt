@@ -408,7 +408,6 @@ class PhoneCallReceiver : BroadcastReceiver() {
 
         val contactName = getContactName(context, callerNumber)
         val isContact = contactName != null
-        val displayName = contactName ?: "there"
 
         val currentCal = Calendar.getInstance()
         val currentMinutes = currentCal.get(Calendar.HOUR_OF_DAY) * 60 + currentCal.get(Calendar.MINUTE)
@@ -450,7 +449,6 @@ class PhoneCallReceiver : BroadcastReceiver() {
 
             val formattedMessage = MessageTemplateResolver.resolve(
                 template = rule.replyText,
-                name = displayName,
                 phone = callerNumber,
                 event = if (isMissedCall) "missed call" else "call",
                 targetTimestamp = System.currentTimeMillis()

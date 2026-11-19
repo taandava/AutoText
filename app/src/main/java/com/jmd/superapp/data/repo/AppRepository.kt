@@ -6,7 +6,7 @@
  * Architecture definition and implementation for [AppRepository].
  *
  * What it does:
- * Exposes a unified, transaction-safe facade aggregating access across all domain repositories: tasks, templates, dynamic contact pool, daily campaigns, execution logs, auto-reply rules, and WhatsApp contacts. [com.jmd.superapp.data.repo.LogRepository], [com.jmd.superapp.data.repo.RecipientRepository], [com.jmd.superapp.data.repo.AutoReplyRepository], [com.jmd.superapp.data.repo.WhatsAppRepository] `ComposeTaskScreen`, `DailyCampaignScreen`
+ * Exposes a unified, transaction-safe facade aggregating access across all domain repositories: tasks, dynamic contact pool, daily campaigns, execution logs, auto-reply rules, and WhatsApp contacts. [com.jmd.superapp.data.repo.LogRepository], [com.jmd.superapp.data.repo.RecipientRepository], [com.jmd.superapp.data.repo.AutoReplyRepository], [com.jmd.superapp.data.repo.WhatsAppRepository] `ComposeTaskScreen`, `DailyCampaignScreen`
  *
  * Linked With:
  * - Repositories: [com.jmd.superapp.data.db.DatabaseHelper]
@@ -32,6 +32,7 @@ import com.jmd.superapp.data.model.DailyCampaignConfig
 import com.jmd.superapp.data.model.DynamicContactItem
 import com.jmd.superapp.data.model.DynamicPoolStats
 import com.jmd.superapp.data.model.ExecutionLog
+import com.jmd.superapp.data.model.IngestionSummary
 import com.jmd.superapp.data.model.RecipientItem
 import com.jmd.superapp.data.model.ScheduledTask
 import com.jmd.superapp.data.model.TaskStatus
@@ -52,6 +53,7 @@ import java.util.Locale
  */
 class AppRepository(context: Context) {
 
+    private val appContext: Context = context.applicationContext
     private val dbHelper = DatabaseHelper.getInstance(context)
 
     val taskRepo = TaskRepository(context)
@@ -311,6 +313,38 @@ class AppRepository(context: Context) {
      * - Component: [AppRepository]
      */
 
+    /**
+     * Single entry point for "sync all contacts": phone book, SMS/call history, chat harvest staging.
+     * Every sync button in the app funnels here so there is one behaviour and one summary.
+     */
+    suspend fun syncWhatsAppPool(): IngestionSummary =
+        com.jmd.superapp.engine.ContactIngestionEngine(appContext, this).scanAndIngestAll()
+
+    /**
+     * Exact number of selectable pool rows, without loading them. Keeps the header truthful
+     * now that the picker pages instead of hard-capping at 3000.
+     */
+    fun countDynamicPool(searchQuery: String = "", whatsApp: Boolean = false): Int {
+        val trimmed = searchQuery.trim()
+        return try {
+            val db = dbHelper.readableDatabase
+            val where = if (trimmed.isNotBlank()) {
+                "WHERE enabled = 1 AND (name LIKE ? OR phone LIKE ? OR normalized_number LIKE ?)"
+            } else {
+                "WHERE enabled = 1"
+            }
+            val args = if (trimmed.isNotBlank()) {
+                arrayOf("%$trimmed%", "%$trimmed%", "%$trimmed%")
+            } else null
+            db.rawQuery("SELECT COUNT(*) FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} $where", args).use {
+                if (it.moveToFirst()) it.getInt(0) else 0
+            }
+        } catch (e: Exception) {
+            Log.w("AppRepository", "countDynamicPool failed: ${e.message}")
+            0
+        }
+    }
+
     fun getDynamicPoolStats(whatsApp: Boolean = false): DynamicPoolStats {
         val (contacted, total) = dailyCampaignRepo.getPoolStats(whatsApp)
         return DynamicPoolStats(
@@ -518,7 +552,7 @@ class AppRepository(context: Context) {
                             id = c.getLong(c.getColumnIndexOrThrow("id")),
                             channel = c.getString(c.getColumnIndexOrThrow("channel")) ?: "SMS",
                             title = c.getString(c.getColumnIndexOrThrow("title")) ?: "Daily Campaign",
-                            messageTemplate = c.getString(c.getColumnIndexOrThrow("message_template")) ?: "",
+                            message = c.getString(c.getColumnIndexOrThrow("message")) ?: "",
                             dailyLimit = c.getInt(c.getColumnIndexOrThrow("daily_limit")),
                             intervalSeconds = c.getInt(c.getColumnIndexOrThrow("interval_seconds")),
                             scheduledHour = c.getInt(c.getColumnIndexOrThrow("scheduled_hour")),
@@ -567,7 +601,7 @@ class AppRepository(context: Context) {
                         id = c.getLong(c.getColumnIndexOrThrow("id")),
                         channel = c.getString(c.getColumnIndexOrThrow("channel")) ?: "SMS",
                         title = c.getString(c.getColumnIndexOrThrow("title")) ?: "Daily Campaign",
-                        messageTemplate = c.getString(c.getColumnIndexOrThrow("message_template")) ?: "",
+                        message = c.getString(c.getColumnIndexOrThrow("message")) ?: "",
                         dailyLimit = c.getInt(c.getColumnIndexOrThrow("daily_limit")),
                         intervalSeconds = c.getInt(c.getColumnIndexOrThrow("interval_seconds")),
                         scheduledHour = c.getInt(c.getColumnIndexOrThrow("scheduled_hour")),
@@ -604,7 +638,7 @@ class AppRepository(context: Context) {
         val cv = ContentValues().apply {
             put("channel", config.channel)
             put("title", config.title)
-            put("message_template", config.messageTemplate)
+            put("message", config.message)
             put("daily_limit", config.dailyLimit)
             put("interval_seconds", config.intervalSeconds)
             put("scheduled_hour", config.scheduledHour)
@@ -631,7 +665,7 @@ class AppRepository(context: Context) {
         val db = dbHelper.writableDatabase
         val cv = ContentValues().apply {
             put("title", config.title)
-            put("message_template", config.messageTemplate)
+            put("message", config.message)
             put("daily_limit", config.dailyLimit)
             put("interval_seconds", config.intervalSeconds)
             put("scheduled_hour", config.scheduledHour)
@@ -1117,6 +1151,9 @@ class AppRepository(context: Context) {
      * - Component: [AppRepository]
      */
     fun purgeCorruptedGroupsFromPool(): Int = whatsAppRepo.purgeCorruptedGroupsFromPool()
+
+    /** Deletes every group row so a fresh, verified harvest can repopulate them. */
+    fun purgeAllGroupEntries(): Int = whatsAppRepo.deleteAllWhatsAppGroups()
     /**
      * What it is:
      * Execution routine for [purgeAllGroupsFromPool].
@@ -1174,4 +1211,14 @@ class AppRepository(context: Context) {
      * - Component: [AppRepository]
      */
     fun listLocalBackups(directory: java.io.File): List<java.io.File> = backupRepo.listLocalBackups(directory)
+
+    /**
+     * What it is:
+     * Exports an encrypted backup to public Documents (MediaStore on Android 10+).
+     *
+     * What it does:
+     * Delegates to [BackupRepository.exportDatabaseToDocuments] and returns the display path.
+     */
+    fun exportDatabaseToDocuments(context: android.content.Context): Result<String> =
+        backupRepo.exportDatabaseToDocuments(context)
 }

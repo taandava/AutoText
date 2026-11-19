@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import com.jmd.superapp.core.MessageVariables
 import com.jmd.superapp.ui.components.*
 import com.jmd.superapp.ui.theme.*
 
@@ -186,7 +187,7 @@ fun ReminderComposerCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Local Device Alarm Reminder",
+                        text = "Device Alarm",
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurface
@@ -224,30 +225,34 @@ fun ReminderComposerCard(
 
             // Dynamic Variable Chips for Reminder Voice Note
             Spacer(modifier = Modifier.height(2.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                listOf("{time}", "{date}", "{short_date}", "{day}", "{short_day}", "{day_num}").forEach { tag ->
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clip(AppDesignTokens.ShapePill)
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
-                            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f), AppDesignTokens.ShapePill)
-                            .clickable {
-                                onMessageTextChange(if (messageText.isBlank()) tag else "$messageText $tag")
-                            }
-                            .padding(vertical = 4.dp),
-                        contentAlignment = Alignment.Center
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                MessageVariables.STATUS.chunked(3).forEach { rowTags ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(
-                            text = tag,
-                            fontSize = 9.5.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.primary,
-                            maxLines = 1
-                        )
+                        rowTags.forEach { tag ->
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(AppDesignTokens.ShapePill)
+                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
+                                    .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f), AppDesignTokens.ShapePill)
+                                    .clickable {
+                                        onMessageTextChange(if (messageText.isBlank()) tag else "$messageText $tag")
+                                    }
+                                    .padding(vertical = 4.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = tag,
+                                    fontSize = 9.5.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    maxLines = 1
+                                )
+                            }
+                        }
                     }
                 }
             }

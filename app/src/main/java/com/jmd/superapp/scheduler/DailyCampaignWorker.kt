@@ -227,7 +227,7 @@ class DailyCampaignWorker(
                 return Result.success()
             }
 
-            val estimatedSegments = maxOf(1, SmsQuotaManager.calculateSmsSegments(config.messageTemplate))
+            val estimatedSegments = maxOf(1, SmsQuotaManager.calculateSmsSegments(config.message))
             val maxContactsForCampaign = campaignRemaining / estimatedSegments
             val maxContactsForQuota = quotaStatus.remaining / estimatedSegments
 
@@ -308,8 +308,7 @@ class DailyCampaignWorker(
 
             val displayName = item.name.ifBlank { "Friend" }
             val message = MessageTemplateResolver.resolve(
-                template = config.messageTemplate,
-                name = displayName,
+                template = config.message,
                 phone = item.phone,
                 targetTimestamp = System.currentTimeMillis()
             )

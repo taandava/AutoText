@@ -6,7 +6,7 @@
  * Architecture definition and implementation for [MoreScreen].
  *
  * What it does:
- * Hub screen navigating to secondary features: Settings, Documentation, Call Simulation, Templates, Auto-Reply, and System Diagnostics.
+ * Hub screen navigating to secondary features: Settings, Documentation, Call Simulation, Auto-Reply, and System Diagnostics.
  *
  * Linked With:
  * - Repositories: [com.jmd.superapp.data.repo.*]
@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.sp
 
 import com.jmd.superapp.data.prefs.*
 import com.jmd.superapp.data.repo.*
-import com.jmd.superapp.ui.screen.campaign.DailyAutoSenderScreen
 import com.jmd.superapp.ui.screen.logs.LogsView
 import com.jmd.superapp.ui.screen.settings.SettingsView
 import com.jmd.superapp.ui.screen.settings.SystemLogViewerView
@@ -46,7 +45,7 @@ import com.jmd.superapp.ui.theme.*
 
 /**
  * What it is:
- * Hub navigation screen providing access to tools, diagnostic ledgers, settings, message templates, in-app documentation, and secondary configuration views.
+ * Hub navigation screen providing access to tools, diagnostic ledgers, settings, in-app documentation, and secondary configuration views.
  *
  * What it does:
  * Renders interactive Material 3 UI for [MoreScreenView] adhering to application design invariants.
@@ -101,9 +100,6 @@ fun MoreScreenView(
     }
 
     when (selectedSubSection) {
-        "DAILY_SMS" -> DailyAutoSenderScreen(initialCampaignId = 1L, onBack = { navigateToSubSection("MENU") })
-        "DAILY_WHATSAPP" -> DailyAutoSenderScreen(initialCampaignId = 2L, onBack = { navigateToSubSection("MENU") })
-        "WHATSAPP_SETUP" -> WhatsAppSetupAndScreenAssistView(context, prefs) { navigateToSubSection("MENU") }
         "LOGS" -> LogsView(
             repository,
             onNavigateToSystemLogs = {
@@ -131,27 +127,11 @@ fun MoreScreenView(
                 navigateToSubSection("MENU")
             }
         }
-        "PRIVACY" -> com.jmd.superapp.ui.screen.privacy.PrivacySettingsScreen(
-            context = context,
-            prefs = prefs,
-            onBack = {
-                if (previousSubSection == "SETTINGS") {
-                    previousSubSection = "MENU"
-                    navigateToSubSection("SETTINGS")
-                } else {
-                    navigateToSubSection("MENU")
-                }
-            }
-        )
         "SETTINGS" -> SettingsView(
             context = context,
             repository = repository,
             prefs = prefs,
-            onThemeChanged = onThemeChanged,
-            onOpenPrivacySettings = {
-                previousSubSection = "SETTINGS"
-                navigateToSubSection("PRIVACY")
-            },
+            onThemeChanged = onThemeChanged
         ) { navigateToSubSection("MENU") }
         else -> {
             LazyColumn(
@@ -162,10 +142,10 @@ fun MoreScreenView(
                 contentPadding = PaddingValues(bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                // SECTION 1: Campaigns & Tasks
+                // SECTION 1: System, Security & Controls
                 item {
                     Text(
-                        text = "Campaigns",
+                        text = "System",
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
@@ -175,29 +155,34 @@ fun MoreScreenView(
                 }
                 item {
                     MenuItemCard(
-                        "Daily SMS",
-                        Icons.Filled.Sms,
-                        MaterialTheme.colorScheme.primary,
+                        "Permission Center",
+                        Icons.Filled.Security,
+                        MaterialTheme.colorScheme.primary
                     ) {
-                        navigateToSubSection("DAILY_SMS")
+                        navigateToSubSection("PERMISSIONS")
                     }
                 }
                 item {
                     MenuItemCard(
-                        "Daily WhatsApp",
-                        Icons.AutoMirrored.Filled.Chat,
-                        Color(0xFF2E7D32),
+                        "Settings",
+                        Icons.Filled.Settings,
+                        Color(0xFF64748B)
                     ) {
-                        navigateToSubSection("DAILY_WHATSAPP")
+                        navigateToSubSection("SETTINGS")
                     }
                 }
                 item {
                     MenuItemCard(
-                        "WhatsApp Setup",
-                        Icons.Filled.StayCurrentPortrait,
-                        Color(0xFF0D9488),
+                        "Call Simulation",
+                        Icons.Filled.PhoneInTalk,
+                        Color(0xFFE91E63)
                     ) {
-                        navigateToSubSection("WHATSAPP_SETUP")
+                        com.jmd.superapp.ui.activity.CallSimulationActivity.start(
+                            context = context,
+                            callerName = "Boss / Office",
+                            callerNumber = "+91 98765 43210",
+                            callerStyle = "PIXEL"
+                        )
                     }
                 }
 
@@ -228,59 +213,6 @@ fun MoreScreenView(
                         Color(0xFF6366F1)
                     ) {
                         navigateToSubSection("SYSTEM_LOGS")
-                    }
-                }
-
-                // SECTION 3: System, Security & Setup
-                item {
-                    Text(
-                        text = "System",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        modifier = Modifier.padding(start = 4.dp, top = 10.dp, bottom = 2.dp),
-                    )
-                }
-                item {
-                    MenuItemCard(
-                        "Permission Center",
-                        Icons.Filled.Security,
-                        MaterialTheme.colorScheme.primary
-                    ) {
-                        navigateToSubSection("PERMISSIONS")
-                    }
-                }
-                item {
-                    MenuItemCard(
-                        "Call Simulation",
-                        Icons.Filled.PhoneInTalk,
-                        Color(0xFFE91E63)
-                    ) {
-                        com.jmd.superapp.ui.activity.CallSimulationActivity.start(
-                            context = context,
-                            callerName = "Boss / Office",
-                            callerNumber = "+91 98765 43210",
-                            callerStyle = "PIXEL"
-                        )
-                    }
-                }
-                item {
-                    MenuItemCard(
-                        "App Privacy",
-                        Icons.Filled.Shield,
-                        Color(0xFFE65100)
-                    ) {
-                        navigateToSubSection("PRIVACY")
-                    }
-                }
-                item {
-                    MenuItemCard(
-                        "Settings",
-                        Icons.Filled.Settings,
-                        Color(0xFF64748B)
-                    ) {
-                        navigateToSubSection("SETTINGS")
                     }
                 }
             }

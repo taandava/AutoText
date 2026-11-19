@@ -63,7 +63,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
     companion object {
         private const val TAG = "DatabaseHelper"
         const val DATABASE_NAME = "super.db"
-        const val DATABASE_VERSION = 9
+        const val DATABASE_VERSION = 10
 
         @Volatile
         private var instance: DatabaseHelper? = null
@@ -89,7 +89,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         // Tables
         const val TABLE_TASKS = "tasks"
         const val TABLE_RECIPIENTS = "recipients"
-        const val TABLE_TEMPLATES = "templates"
         const val TABLE_AUTO_REPLY = "auto_reply_rules"
         const val TABLE_CAMPAIGNS = "campaigns"
         const val TABLE_DRIP_STEPS = "drip_steps"
@@ -238,12 +237,40 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
      * @param newVersion Target updated database version number.
      */
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // Column rename must happen before the shared schema/seeding pass writes to the new name.
+        if (oldVersion < 10) {
+            migrateCampaignMessageColumn(db)
+        }
         ensureDynamicPoolTables(db)
         deduplicateAllPools(db)
 
         if (oldVersion < 4) {
             pruneLegacyPoolAndGroupRows(db)
         }
+    }
+
+    /**
+     * What it is:
+     * Renames the campaign message column from the retired template naming.
+     *
+     * What it does:
+     * Renames `message_template` to `message` once, preserving every stored campaign body.
+     *
+     * Linked with:
+     * - Architecture: [DatabaseHelper], [migrateCampaignMessageColumn]
+     * @param db Target SQLiteDatabase instance.
+     */
+    private fun migrateCampaignMessageColumn(db: SQLiteDatabase) {
+        val hasLegacyColumn = runCatching {
+            db.rawQuery("SELECT message_template FROM $TABLE_DAILY_CAMPAIGN LIMIT 1", null).use { it.columnCount > 0 }
+        }.getOrDefault(false)
+        if (!hasLegacyColumn) {
+            addColumnIfNotExists(db, TABLE_DAILY_CAMPAIGN, "message", "TEXT")
+            return
+        }
+        runCatching {
+            db.execSQL("ALTER TABLE $TABLE_DAILY_CAMPAIGN RENAME COLUMN message_template TO message")
+        }.onFailure { Log.d(TAG, "Campaign message column migration note: ${it.message}") }
     }
 
     /**
@@ -469,7 +496,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
                 id INTEGER PRIMARY KEY,
                 channel TEXT DEFAULT 'SMS',
                 title TEXT,
-                message_template TEXT,
+                message TEXT,
                 daily_limit INTEGER DEFAULT 30,
                 interval_seconds INTEGER DEFAULT 8,
                 scheduled_hour INTEGER DEFAULT 9,
@@ -487,7 +514,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             put("id", 1)
             put("channel", "SMS")
             put("title", "Daily Unique Contacts SMS")
-            put("message_template", "")
+            put("message", "")
             put("daily_limit", 30)
             put("interval_seconds", 8)
             put("scheduled_hour", 9)
@@ -503,7 +530,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             put("id", 2)
             put("channel", "WHATSAPP")
             put("title", "Daily Unique Contacts WhatsApp")
-            put("message_template", "")
+            put("message", "")
             put("daily_limit", 20)
             put("interval_seconds", 12)
             put("scheduled_hour", 10)
@@ -519,7 +546,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             put("id", 3)
             put("channel", "WHATSAPP_BUSINESS")
             put("title", "Daily WhatsApp Business Task Batch")
-            put("message_template", "")
+            put("message", "")
             put("daily_limit", 20)
             put("interval_seconds", 12)
             put("scheduled_hour", 10)
@@ -560,7 +587,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         // Task sequences & canned templates decommissioned in favor of direct standalone tasks and dynamic variables.
         try { db.execSQL("DROP TABLE IF EXISTS $TABLE_CONTACT_SEQUENCES") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         try { db.execSQL("DROP TABLE IF EXISTS $TABLE_SEQUENCE_STEPS") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
-        try { db.execSQL("DROP TABLE IF EXISTS $TABLE_TEMPLATES") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("DROP TABLE IF EXISTS templates") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
         // WhatsApp and WhatsApp Business Groups Cache
         db.execSQL("""

@@ -55,7 +55,7 @@ data class DailyCampaignConfig(
     val id: Long = 1,
     val channel: String = "SMS",
     val title: String = "Daily Contact Campaign",
-    val messageTemplate: String = "",
+    val message: String = "",
     val dailyLimit: Int = 30,
     val intervalSeconds: Int = 8,
     val scheduledHour: Int = 9,

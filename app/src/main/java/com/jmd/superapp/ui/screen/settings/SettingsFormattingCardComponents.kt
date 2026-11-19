@@ -3,15 +3,13 @@
  * Module: Application Core Subsystem
  *
  * What it is:
- * Architecture definition and implementation for [SettingsTemplateTokensCardComponents].
+ * Settings card for dynamic variable formats.
  *
  * What it does:
- * Provides core logic, component interfaces, and subsystem bindings for SettingsTemplateTokensCardComponents.
+ * Exposes date, time, salutation and currency formatting for the tokens listed in [MessageVariables].
  *
  * Linked With:
- * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
- * - Core Security & Utilities: [com.jmd.superapp.core.MessageTemplateResolver], [com.jmd.superapp.data.prefs.PreferenceManager]
- * - Android Framework & Jetpack: [androidx.compose.animation.AnimatedVisibility], [androidx.compose.foundation.background], [androidx.compose.foundation.border], [androidx.compose.foundation.clickable]
+ * - Core: [MessageTemplateResolver], [MessageVariables], [PreferenceManager]
  */
 
 package com.jmd.superapp.ui.screen.settings
@@ -19,9 +17,7 @@ package com.jmd.superapp.ui.screen.settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -29,36 +25,34 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jmd.superapp.core.MessageTemplateResolver
+import com.jmd.superapp.core.MessageVariables
 import com.jmd.superapp.data.prefs.PreferenceManager
 import com.jmd.superapp.ui.components.*
 import com.jmd.superapp.ui.theme.AppDesignTokens
 
 /**
  * What it is:
- * Settings configuration card for template dynamic variables, date/time formats, contextual greetings, and currency tokens.
+ * Settings card for dynamic variable formats: dates, times, salutations and currency.
  *
  * What it does:
- * Renders interactive Material 3 UI for [SettingsTemplateTokensCard] adhering to application design invariants.
+ * Renders interactive Material 3 UI for [SettingsFormattingCard] adhering to application design invariants.
  *
  * Linked with:
- * - Architecture: [SettingsTemplateTokensCardComponents], [SettingsTemplateTokensCard]
+ * - Architecture: [SettingsFormattingCardComponents], [SettingsFormattingCard]
  */
 @Composable
-fun SettingsTemplateTokensCard(
+fun SettingsFormattingCard(
     prefs: PreferenceManager,
     modifier: Modifier = Modifier
 ) {
     var dateFormat by remember { mutableStateOf(prefs.customDateFormat) }
     var customPattern by remember { mutableStateOf(prefs.customDateCustomPattern) }
     var dateSeparator by remember { mutableStateOf(prefs.customDateSeparator) }
-    var shortDateFormat by remember { mutableStateOf(prefs.customShortDateFormat) }
     var timeFormat by remember { mutableStateOf(prefs.customTimeFormat) }
     var greetingStyle by remember { mutableStateOf(prefs.customGreetingStyle) }
     var customGreetingText by remember { mutableStateOf(prefs.customGreetingCustomText) }
@@ -67,11 +61,10 @@ fun SettingsTemplateTokensCard(
     var indianNumbering by remember { mutableStateOf(prefs.isIndianNumberFormattingEnabled) }
 
     // Live preview resolution triggering automatically on preference state changes
-    val livePreviewSample = remember(dateFormat, customPattern, dateSeparator, shortDateFormat, timeFormat, greetingStyle, customGreetingText, namasteText, currencySymbol) {
-        val sampleTemplate = "{namaste} Aarav! Your scheduled appointment is confirmed for {date} ({short_day}) at {time}. Total fee: {rupee}1,500. Have a {greeting}!"
+    val livePreviewSample = remember(dateFormat, customPattern, dateSeparator, timeFormat, greetingStyle, customGreetingText, namasteText, currencySymbol) {
+        val sampleTemplate = "{greeting}! Your appointment is confirmed for {date} ({day}) at {time}. Total fee: {rupee}1,500."
         MessageTemplateResolver.resolve(
             template = sampleTemplate,
-            name = "Aarav Sharma",
             phone = "+91 98765 43210",
             channel = "WhatsApp",
             prefs = prefs
@@ -79,7 +72,7 @@ fun SettingsTemplateTokensCard(
     }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        // 1. Live Interactive Template Preview Card
+        // 1. Live Variable Preview Card
         AppCardElevated(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -94,7 +87,7 @@ fun SettingsTemplateTokensCard(
                         modifier = Modifier.size(18.dp)
                     )
                     Text(
-                        text = "Token Preview",
+                        text = "Variable Preview",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 14.sp
@@ -143,7 +136,7 @@ fun SettingsTemplateTokensCard(
                 AppBadge(text = previewDate, color = MaterialTheme.colorScheme.tertiary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Choose how dates are dynamically injected into scheduled drafts and templates.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Choose how dates are injected into your messages.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -227,7 +220,7 @@ fun SettingsTemplateTokensCard(
             }
         }
 
-        // 3. Short Date & Time Format Customization
+        // 3. Time Format Customization
         AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -236,44 +229,15 @@ fun SettingsTemplateTokensCard(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Icon(Icons.Filled.Schedule, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                    Text("Time Formats", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    Text("Time Format", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
                 val previewTime = MessageTemplateResolver.resolve("{time}", prefs = prefs)
                 AppBadge(text = previewTime, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Configure compact date tags and 12-hour/24-hour time representation.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Configure 12-hour or 24-hour time representation.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
-            Text("{short_date} Format:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
-            Spacer(modifier = Modifier.height(6.dp))
-
-            val shortFormats = listOf(
-                "dd/MM/yyyy" to "DD/MM/YYYY",
-                "dd-MM-yy" to "DD-MM-YY",
-                "dd/MM" to "DD/MM",
-                "MM/dd" to "MM/DD",
-                "dd-MM" to "DD-MM"
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
-                shortFormats.forEach { (fmt, label) ->
-                    AppChip(
-                        selected = shortDateFormat == fmt,
-                        onClick = {
-                            shortDateFormat = fmt
-                            prefs.customShortDateFormat = fmt
-                        },
-                        label = label,
-                        activeColor = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-            Text("{time} Format:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
-            Spacer(modifier = Modifier.height(6.dp))
-
             val timeFormats = listOf(
                 "hh:mm a" to "12-Hour (AM/PM)",
                 "hh:mm:ss a" to "12-Hour + Sec",
@@ -301,7 +265,7 @@ fun SettingsTemplateTokensCard(
             }
         }
 
-        // 4. Greetings, Salutations & Namaste Customization
+        // 4. Salutations
         AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -316,7 +280,7 @@ fun SettingsTemplateTokensCard(
                 AppBadge(text = previewGreet, color = MaterialTheme.colorScheme.tertiary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Tailor contextual salutations and localized traditional greetings.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Tailor the greeting produced by the {greeting} variable.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
             Text("{greeting} Style:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
@@ -368,30 +332,33 @@ fun SettingsTemplateTokensCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-            Text("{namaste} Form:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
-            Spacer(modifier = Modifier.height(6.dp))
+            AnimatedVisibility(visible = greetingStyle == "NAMASTE") {
+                Column(modifier = Modifier.padding(top = 12.dp)) {
+                    Text("Namaste wording:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+                    Spacer(modifier = Modifier.height(6.dp))
 
-            val namasteForms = listOf(
-                "Namaste" to "Namaste",
-                "नमस्ते" to "नमस्ते",
-                "Pranam" to "Pranam",
-                "Namaskar" to "Namaskar",
-                "Hello" to "Hello",
-                "Hi" to "Hi"
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
-                namasteForms.forEach { (form, label) ->
-                    AppChip(
-                        selected = namasteText == form,
-                        onClick = {
-                            namasteText = form
-                            prefs.customNamasteText = form
-                        },
-                        label = label,
-                        activeColor = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.weight(1f)
+                    val namasteForms = listOf(
+                        "Namaste" to "Namaste",
+                        "नमस्ते" to "नमस्ते",
+                        "Pranam" to "Pranam",
+                        "Namaskar" to "Namaskar",
+                        "Hello" to "Hello",
+                        "Hi" to "Hi"
                     )
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
+                        namasteForms.forEach { (form, label) ->
+                            AppChip(
+                                selected = namasteText == form,
+                                onClick = {
+                                    namasteText = form
+                                    prefs.customNamasteText = form
+                                },
+                                label = label,
+                                activeColor = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -452,36 +419,19 @@ fun SettingsTemplateTokensCard(
             )
         }
 
-        // 6. Available Template Variables Cheat Sheet
+        // 6. Variable Reference
         AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Icon(Icons.Filled.Code, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                 Text("Variable Reference", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Insert any of these tags into task messages, reminders, or campaign templates:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Insert any of these tags into task messages, reminders, or campaign messages:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            val tokenList = listOf(
-                "{name}" to "Full contact name",
-                "{first_name}" to "First name only",
-                "{phone}" to "Normalized phone",
-                "{date}" to "Configured date",
-                "{short_date}" to "Compact date",
-                "{time}" to "Configured time",
-                "{day}" to "Full weekday (e.g. Thursday)",
-                "{short_day}" to "Short weekday (e.g. Thu)",
-                "{day_num}" to "Day number (01-31)",
-                "{today}" to "Today's date",
-                "{ist_time}" to "Indian Standard Time",
-                "{greeting}" to "Dynamic greeting",
-                "{namaste}" to "Configured namaste",
-                "{rupee}" to "Configured currency"
-            )
-
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                tokenList.forEach { (token, desc) ->
+                MessageVariables.REFERENCE.forEach { variable ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -492,14 +442,14 @@ fun SettingsTemplateTokensCard(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = token,
+                            text = variable.token,
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
                             fontSize = 12.sp
                         )
                         Text(
-                            text = desc,
+                            text = variable.description,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 11.sp
                         )
