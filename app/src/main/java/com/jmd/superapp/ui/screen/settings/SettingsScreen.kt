@@ -86,6 +86,13 @@ fun SettingsView(
     onThemeChanged: (String) -> Unit = {},
     onBack: () -> Unit
 ) {
+    val availableSubdivisions = remember {
+        if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+            SettingsSubdivision.entries
+        } else {
+            SettingsSubdivision.entries.filter { it != SettingsSubdivision.SECURITY }
+        }
+    }
     var selectedSubdivision by remember { mutableStateOf(SettingsSubdivision.FORMATTING) }
     var restoreSummaryMsg by remember { mutableStateOf<String?>(null) }
 
@@ -168,7 +175,7 @@ fun SettingsView(
                     val unselectedBorder = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)
                     val unselectedContent = MaterialTheme.colorScheme.onSurfaceVariant
 
-                    SettingsSubdivision.entries.forEach { sub ->
+                    availableSubdivisions.forEach { sub ->
                         val isSelected = selectedSubdivision == sub
                         Surface(
                             onClick = { selectedSubdivision = sub },

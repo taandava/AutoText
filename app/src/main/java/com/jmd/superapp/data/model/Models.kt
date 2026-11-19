@@ -125,8 +125,7 @@ enum class ChannelType(val displayName: String, val emoji: String = "") {
     CALL("Phone Call", "📞"),
     WHATSAPP_CALL("WhatsApp Call", "📞"),
     WHATSAPP_BUSINESS_CALL("Business Call", "📞💼"),
-    CALL_SIMULATION("Call Simulation", "🎭"),
-    REMINDER("Reminder", "⏰");
+    CALL_SIMULATION("Call Simulation", "🎭");
     /**
      * What it is:
      * Companion object constant and factory provider for [Models].

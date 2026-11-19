@@ -519,7 +519,10 @@ fun DailyCampaignEmptyStateCard(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        "Ingested from Phone Contacts, SMS, Calls, WhatsApp & WA Business",
+                        if (com.jmd.superapp.core.AppVariantHelper.isSuperSms)
+                            "Ingested from Contacts, SMS & Call Logs"
+                        else
+                            "Ingested from Contacts, WhatsApp & Business",
                         fontSize = 10.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

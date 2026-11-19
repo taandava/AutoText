@@ -77,9 +77,6 @@ class SuperApplication : Application(), Configuration.Provider {
         /** Notification channel identifier for task status updates and delivery receipts. */
         const val CHANNEL_TASKS = "channel_tasks"
 
-        /** Notification channel identifier for full-screen reminder alarms, countdowns, and sound toggles. */
-        const val CHANNEL_REMINDERS = "channel_reminders"
-
         /** Legacy persistent service notification channel identifier targeted for removal. */
         const val CHANNEL_SERVICE = "channel_service"
 
@@ -101,30 +98,20 @@ class SuperApplication : Application(), Configuration.Provider {
          *
          * Linked with:
          * - System: [NotificationManager], [NotificationChannel]
-         * - Resources: [R.string.notification_channel_tasks], [R.string.notification_channel_reminders]
+         * - Resources: [R.string.notification_channel_tasks]
          */
         fun createNotificationChannels(context: Context) {
             val notificationManager = context.getSystemService(NotificationManager::class.java) ?: return
 
-            // Retire legacy persistent service notification channel so no sticky notification remains
+            // Retire legacy persistent service and reminder notification channels
             try {
                 notificationManager.deleteNotificationChannel(CHANNEL_SERVICE)
+                notificationManager.deleteNotificationChannel("channel_reminders")
             } catch (e: Exception) {
-                Log.d(TAG, "Delete legacy service channel: ${e.message}")
+                Log.d(TAG, "Delete legacy channels: ${e.message}")
             }
 
             val expectedTasksName = context.getString(R.string.notification_channel_tasks)
-            val expectedRemindersName = context.getString(R.string.notification_channel_reminders)
-
-            // If existing channel has obsolete 3-word name from earlier builds, recreate it cleanly
-            val existingReminders = notificationManager.getNotificationChannel(CHANNEL_REMINDERS)
-            if (existingReminders != null && existingReminders.name != expectedRemindersName) {
-                try {
-                    notificationManager.deleteNotificationChannel(CHANNEL_REMINDERS)
-                } catch (e: Exception) {
-                    Log.d(TAG, "Recreate reminders channel: ${e.message}")
-                }
-            }
 
             val existingTasks = notificationManager.getNotificationChannel(CHANNEL_TASKS)
             if (existingTasks != null && existingTasks.name != expectedTasksName) {
@@ -145,17 +132,7 @@ class SuperApplication : Application(), Configuration.Provider {
                 enableVibration(true)
             }
 
-            // High-importance channel for reminder alarms and timer alerts
-            val remindersChannel = NotificationChannel(
-                CHANNEL_REMINDERS,
-                expectedRemindersName,
-                NotificationManager.IMPORTANCE_HIGH,
-            ).apply {
-                description = context.getString(R.string.notification_channel_reminders_desc)
-                enableVibration(true)
-            }
-
-            notificationManager.createNotificationChannels(listOf(tasksChannel, remindersChannel))
+            notificationManager.createNotificationChannels(listOf(tasksChannel))
         }
     }
 
@@ -221,8 +198,10 @@ class SuperApplication : Application(), Configuration.Provider {
                 val repo = AppRepository(this@SuperApplication)
                 prefs.isDynamicA11yOnDemandEnabled = false
                 prefs.isA11yUserPaused = false
-                com.jmd.superapp.core.ProtectedApplicationManager.setUserProtectedPackages(prefs.protectedPackages)
-                AccessibilityHealthManager.ensureAllServicesActive(this@SuperApplication)
+                if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+                    com.jmd.superapp.core.ProtectedApplicationManager.setUserProtectedPackages(prefs.protectedPackages)
+                    AccessibilityHealthManager.ensureAllServicesActive(this@SuperApplication)
+                }
                 // Reconcile and recover any tasks left stranded in RUNNING status from a previous process termination
                 repo.recoverInterruptedRunningTasks()
                 // Turn dispatch claims abandoned by a process kill into retryable failures
@@ -250,14 +229,16 @@ class SuperApplication : Application(), Configuration.Provider {
                 // Arm daily campaign schedulers for scheduled outreach cycles
                 DailyCampaignScheduler.scheduleAll(this@SuperApplication)
 
-                // Start silent exact AlarmManager heartbeat for accessibility watchdog monitoring
-                AccessibilityWatchdogScheduler.scheduleHeartbeat(this@SuperApplication)
+                if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+                    // Start silent exact AlarmManager heartbeat for accessibility watchdog monitoring
+                    AccessibilityWatchdogScheduler.scheduleHeartbeat(this@SuperApplication)
 
-                // Proactively verify and request binding for Accessibility and NotificationListener services
-                if (!prefs.isA11yUserPaused) {
-                    AccessibilityHealthManager.ensureAllServicesActive(this@SuperApplication)
+                    // Proactively verify and request binding for Accessibility and NotificationListener services
+                    if (!prefs.isA11yUserPaused) {
+                        AccessibilityHealthManager.ensureAllServicesActive(this@SuperApplication)
+                    }
+                    AccessibilityHealthManager.enforceAutoRotateInvariant(this@SuperApplication)
                 }
-                AccessibilityHealthManager.enforceAutoRotateInvariant(this@SuperApplication)
             } catch (e: Exception) {
                 Log.e(TAG, "Error during background initialization", e)
                 AppFileLogger.e(this@SuperApplication, TAG, "Recoverable issue during background initialization: ${e.message}", e)

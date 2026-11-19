@@ -171,10 +171,7 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_CALL_SIM_DEFAULT_NAME = "call_sim_default_name"
         private const val KEY_CALL_SIM_DEFAULT_NUMBER = "call_sim_default_number"
         private const val KEY_CALL_SIM_DEFAULT_STYLE = "call_sim_default_style"
-        private const val KEY_TTS_SPEECH_RATE = "tts_speech_rate"
-        private const val KEY_TTS_SPEECH_PITCH = "tts_speech_pitch"
         private const val KEY_AUTOREPLY_COOLDOWN_SECONDS = "autoreply_cooldown_seconds"
-        private const val KEY_SYSTEM_CLOCK_ALARM_SYNC = "system_clock_alarm_sync_enabled"
 
         private const val KEYSTORE_PROVIDER = "AndroidKeyStore"
         private const val KEYSTORE_ALIAS = "Super_Hardware_Key"
@@ -606,7 +603,7 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit { putInt(KEY_CUSTOM_CLICK_COORDINATE_OFFSET_Y, value) }
 
     var customAppName: String
-        get() = prefs.getString(KEY_CUSTOM_APP_NAME, "Super") ?: "Super"
+        get() = prefs.getString(KEY_CUSTOM_APP_NAME, "") ?: ""
         set(value) = prefs.edit { putString(KEY_CUSTOM_APP_NAME, value) }
 
     var appIconVariant: String
@@ -795,27 +792,8 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getString(KEY_CALL_SIM_DEFAULT_STYLE, "PIXEL") ?: "PIXEL"
         set(value) = prefs.edit { putString(KEY_CALL_SIM_DEFAULT_STYLE, value) }
 
-    /** Text-To-Speech speech rate multiplier (0.5f to 2.0f, default 1.0f). */
-    var ttsSpeechRate: Float
-        get() = prefs.getFloat(KEY_TTS_SPEECH_RATE, 1.0f)
-        set(value) = prefs.edit { putFloat(KEY_TTS_SPEECH_RATE, value.coerceIn(0.5f, 2.0f)) }
-
-    /** Text-To-Speech speech pitch multiplier (0.5f to 2.0f, default 1.0f). */
-    var ttsSpeechPitch: Float
-        get() = prefs.getFloat(KEY_TTS_SPEECH_PITCH, 1.0f)
-        set(value) = prefs.edit { putFloat(KEY_TTS_SPEECH_PITCH, value.coerceIn(0.5f, 2.0f)) }
-
     /** Auto-reply cooldown period in seconds per sender. Default 60s. */
     var autoReplyCooldownSeconds: Int
         get() = prefs.getInt(KEY_AUTOREPLY_COOLDOWN_SECONDS, 60)
         set(value) = prefs.edit { putInt(KEY_AUTOREPLY_COOLDOWN_SECONDS, value.coerceIn(10, 600)) }
-
-    /**
-     * Whether to also register reminder alarms in the device's default OEM Clock app (e.g. Samsung Clock).
-     * Default false: Super handles wakeful exact alarm notifications directly via AlarmManager and
-     * fullscreen ReminderAlarmActivity without cluttering the device's Clock app list.
-     */
-    var isSystemClockAlarmSyncEnabled: Boolean
-        get() = prefs.getBoolean(KEY_SYSTEM_CLOCK_ALARM_SYNC, false)
-        set(value) = prefs.edit { putBoolean(KEY_SYSTEM_CLOCK_ALARM_SYNC, value) }
 }

@@ -6,12 +6,12 @@
  * Architecture definition and implementation for [SequentialTaskEngine].
  *
  * What it does:
- * Centralized sequential execution orchestrator for scheduled tasks across SMS, WhatsApp chats, WhatsApp Status stories, Phone Calls, Reminders, and Sound Mode events.
+ * Centralized sequential execution orchestrator for scheduled tasks across SMS, WhatsApp chats, WhatsApp Status stories, Phone Calls, and Call Simulations.
  *
  * Linked With:
  * - Repositories: [com.jmd.superapp.data.repo.AppRepository]
  * - Models & Entities: [com.jmd.superapp.data.model.*]
- * - Schedulers & Receivers: [com.jmd.superapp.scheduler.AlarmScheduler], [com.jmd.superapp.ui.activity.ReminderAlarmActivity]
+ * - Schedulers & Receivers: [com.jmd.superapp.scheduler.AlarmScheduler]
  * - Services & Engines: [com.jmd.superapp.service.TaskAccessibilityService], [com.jmd.superapp.whatsapp.WhatsAppIntentDispatcher]
  * - UI Screens & Components: [com.jmd.superapp.ui.activity.CallSimulationActivity], [com.jmd.superapp.ui.activity.TaskLauncherActivity]
  * - Core Security & Utilities: [android.app.KeyguardManager], [android.app.NotificationManager], [android.content.pm.PackageManager], [android.media.AudioManager]
@@ -44,7 +44,6 @@ import com.jmd.superapp.data.repo.AppRepository
 import com.jmd.superapp.scheduler.AlarmScheduler
 import com.jmd.superapp.service.TaskAccessibilityService
 import com.jmd.superapp.ui.activity.CallSimulationActivity
-import com.jmd.superapp.ui.activity.ReminderAlarmActivity
 import com.jmd.superapp.ui.activity.TaskLauncherActivity
 import com.jmd.superapp.whatsapp.WhatsAppIntentDispatcher
 import kotlinx.coroutines.*
@@ -449,7 +448,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     /**
      * What it is:
-     * Top-level safe execution handler routing tasks to appropriate channel engines (SMS, WhatsApp, Calls, Reminders, Call Simulations, Sound Modes) with circuit-breaker protection.
+     * Top-level safe execution handler routing tasks to appropriate channel engines (SMS, WhatsApp, Calls, Call Simulations) with circuit-breaker protection.
      *
      * What it does:
      * Executes [executeTaskSafely] logic in accordance with system and security invariants.
@@ -600,9 +599,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     }
                 }
             }
-            ChannelType.REMINDER -> {
-                executeReminderTask(repository, task)
-            }
             ChannelType.CALL_SIMULATION -> {
                 executeCallSimulationTask(repository, task)
             }
@@ -623,7 +619,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> true
             else -> false
         }
-        if (!isUiTaskChannel && task.channel != ChannelType.CALL_SIMULATION && task.channel != ChannelType.REMINDER && prefs.isAutoLockAfterSendEnabled) {
+        if (!isUiTaskChannel && task.channel != ChannelType.CALL_SIMULATION && prefs.isAutoLockAfterSendEnabled) {
             executeDeviceLockPostcondition(appContext, task.title)
         }
         AccessibilityHealthManager.enforceAutoRotateInvariant(appContext)
@@ -1865,86 +1861,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
         return allCallsSuccess
     }
-    /**
-     * What it is:
-     * Execution routine for [executeReminderTask].
-     *
-     * What it does:
-     * Coordinates executeReminderTask operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [SequentialTaskEngine]
-     */
 
-    private fun executeReminderTask(repository: AppRepository, task: ScheduledTask): Boolean {
-        val success = try {
-            val label = AlarmScheduler.getSystemAlarmLabel(task)
-            val notifId = (task.id + 80000).toInt()
-
-            // 1. Prepare intent for custom fullscreen ReminderAlarmActivity with Text-To-Speech announcement and Snooze controls
-            val reminderIntent = Intent(appContext, ReminderAlarmActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                putExtra("reminder_title", task.title.ifBlank { "Reminder" })
-                putExtra("reminder_text", task.messageText.ifBlank { task.title.ifBlank { "Reminder Alert" } })
-                putExtra("task_id", task.id)
-                putExtra("notif_id", notifId)
-            }
-
-            // Post high-priority full-screen intent notification ensuring display on locked screens across Android 10-16
-            runCatching {
-                val fullScreenPendingIntent = PendingIntent.getActivity(
-                    appContext,
-                    notifId,
-                    reminderIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-                )
-                val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                val reminderNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_REMINDERS)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
-                    .setColor(0xFFFFD600.toInt())
-                    .setContentTitle(task.title.ifBlank { "Reminder" })
-                    .setContentText(task.messageText.ifBlank { task.title.ifBlank { "Reminder Alert" } })
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setCategory(NotificationCompat.CATEGORY_ALARM)
-                    .setFullScreenIntent(fullScreenPendingIntent, true)
-                    .setAutoCancel(true)
-                    .build()
-                nm?.notify(notifId, reminderNotif)
-            }
-
-            appContext.startActivity(reminderIntent)
-
-            repository.insertLog(
-                ExecutionLog(
-                    taskId = task.id,
-                    channel = "Reminder",
-                    recipient = "Local Device Alarm",
-                    messageSnippet = "Alarm: ${task.title.ifBlank { label }}",
-                    status = "SUCCESS",
-                    details = "Launched fullscreen ReminderAlarmActivity with TTS."
-                ),
-            )
-            AppFileLogger.action(appContext, TAG, "Task #${task.id}: Launched ReminderAlarmActivity ($label)")
-            true
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to trigger reminder for task #${task.id}: ${e.message}", e)
-            AppFileLogger.e(appContext, TAG, "Failed to trigger reminder: ${e.message}", e)
-            repository.insertLog(
-                ExecutionLog(
-                    taskId = task.id,
-                    channel = "Reminder",
-                    recipient = "Local Device Alarm",
-                    messageSnippet = "Reminder failed: ${e.message}",
-                    status = "FAILED",
-                ),
-            )
-            false
-        }
-
-        completeOrRescheduleTask(appContext, repository, task, success)
-        return success
-    }
     /**
      * What it is:
      * Execution routine for [executeCallSimulationTask].
@@ -1977,7 +1894,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                 )
                 val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                val callNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_REMINDERS)
+                val callNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
                     .setSmallIcon(R.drawable.ic_notification)
                     .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
                     .setColor(0xFFFFD600.toInt())

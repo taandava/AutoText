@@ -426,7 +426,7 @@ fun SettingsFormattingCard(
                 Text("Variable Reference", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Insert any of these tags into task messages, reminders, or campaign messages:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Insert any of these tags into task messages or campaign messages:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
 

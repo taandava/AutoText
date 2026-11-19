@@ -110,189 +110,193 @@ class ContactIngestionEngine(
             }
         }
 
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
-            try {
-                val resolver = context.contentResolver
-                resolver.query(
-                    CallLog.Calls.CONTENT_URI,
-                    arrayOf(
-                        CallLog.Calls.NUMBER,
-                        CallLog.Calls.CACHED_NAME,
-                    ),
-                    null,
-                    null,
-                    "${CallLog.Calls.DATE} DESC",
-                )?.use { cursor ->
-                    val numberIdx = cursor.getColumnIndex(CallLog.Calls.NUMBER)
-                    val nameIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME)
-                    while (cursor.moveToNext()) {
-                        callLogsScanned++
-                        val rawNumber = if (numberIdx >= 0) cursor.getString(numberIdx).orEmpty().trim() else ""
-                        val cachedName = if (nameIdx >= 0) cursor.getString(nameIdx).orEmpty().trim() else ""
-                        if (rawNumber.isBlank()) continue
-
-                        if (!PhoneNumberNormalizer.isMobileNumber(rawNumber)) continue
-
-                        val normalized = PhoneNumberNormalizer.normalize(rawNumber)
-                        val resolvedName = cachedName.ifBlank {
-                            PhoneNumberNormalizer.getContactName(context, rawNumber).orEmpty()
-                        }
-                        val existing = candidates[normalized]
-                        if (existing == null) {
-                            candidates[normalized] = DynamicContactItem(
-                                name = resolvedName.ifBlank { rawNumber },
-                                phone = rawNumber,
-                                normalizedNumber = normalized,
-                                source = "CALLLOG",
-                            )
-                        } else if (existing.name.isBlank() || (existing.name == existing.phone)) {
-                            if (resolvedName.isNotBlank()) {
-                                candidates[normalized] = existing.copy(name = resolvedName)
-                            }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Log.w("ContactIngestion", "Call log ingestion query failed: ${e.message}")
-            }
-        }
-
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-            try {
-                val resolver = context.contentResolver
-                resolver.query(
-                    Telephony.Sms.CONTENT_URI,
-                    arrayOf(Telephony.Sms.ADDRESS),
-                    null,
-                    null,
-                    "${Telephony.Sms.DATE} DESC",
-                )?.use { cursor ->
-                    val addressIdx = cursor.getColumnIndex(Telephony.Sms.ADDRESS)
-                    if (addressIdx >= 0) {
+        // 2. Call Logs & 3. SMS (SuperSMS only)
+        if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+                try {
+                    val resolver = context.contentResolver
+                    resolver.query(
+                        CallLog.Calls.CONTENT_URI,
+                        arrayOf(
+                            CallLog.Calls.NUMBER,
+                            CallLog.Calls.CACHED_NAME,
+                        ),
+                        null,
+                        null,
+                        "${CallLog.Calls.DATE} DESC",
+                    )?.use { cursor ->
+                        val numberIdx = cursor.getColumnIndex(CallLog.Calls.NUMBER)
+                        val nameIdx = cursor.getColumnIndex(CallLog.Calls.CACHED_NAME)
                         while (cursor.moveToNext()) {
-                            smsScanned++
-                            val rawAddress = cursor.getString(addressIdx)?.trim().orEmpty()
-                            if (rawAddress.isBlank()) continue
+                            callLogsScanned++
+                            val rawNumber = if (numberIdx >= 0) cursor.getString(numberIdx).orEmpty().trim() else ""
+                            val cachedName = if (nameIdx >= 0) cursor.getString(nameIdx).orEmpty().trim() else ""
+                            if (rawNumber.isBlank()) continue
 
-                            if (!PhoneNumberNormalizer.isMobileNumber(rawAddress)) continue
+                            if (!PhoneNumberNormalizer.isMobileNumber(rawNumber)) continue
 
-                            val normalized = PhoneNumberNormalizer.normalize(rawAddress)
-                            if (!candidates.containsKey(normalized)) {
-                                val resolvedName = PhoneNumberNormalizer.getContactName(context, rawAddress).orEmpty()
-                                candidates[normalized] = DynamicContactItem(
-                                    name = resolvedName.ifBlank { rawAddress },
-                                    phone = rawAddress,
-                                    normalizedNumber = normalized,
-                                    source = "SMS",
-                                )
+                            val normalized = PhoneNumberNormalizer.normalize(rawNumber)
+                            val resolvedName = cachedName.ifBlank {
+                                PhoneNumberNormalizer.getContactName(context, rawNumber).orEmpty()
                             }
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Log.w("ContactIngestion", "SMS ingestion query failed: ${e.message}")
-            }
-        }
-
-        // 4. Ingest from WhatsApp & WhatsApp Business Chats, Accounts & Groups
-        var waChatsScanned = 0
-        var waBusinessScanned = 0
-        try {
-            // Direct query of WhatsApp & WhatsApp Business sync accounts
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-                val resolver = context.contentResolver
-                val cursor = resolver.query(
-                    ContactsContract.Data.CONTENT_URI,
-                    arrayOf(
-                        ContactsContract.Data.DISPLAY_NAME,
-                        ContactsContract.Data.DATA1,
-                        ContactsContract.Data.DATA3,
-                        ContactsContract.Data.CONTACT_ID,
-                        ContactsContract.Data.MIMETYPE,
-                    ),
-                    "${ContactsContract.Data.MIMETYPE} LIKE '%whatsapp%' OR " +
-                    "${ContactsContract.Data.MIMETYPE} LIKE '%w4b%' OR " +
-                    "${ContactsContract.Data.DATA1} LIKE '%@s.whatsapp.net%' OR " +
-                    "${ContactsContract.Data.DATA3} LIKE '%+%'",
-                    null,
-                    null,
-                )
-                cursor?.use { c ->
-                    val nameIdx = c.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)
-                    val d1Idx = c.getColumnIndex(ContactsContract.Data.DATA1)
-                    val d3Idx = c.getColumnIndex(ContactsContract.Data.DATA3)
-                    val cidIdx = c.getColumnIndex(ContactsContract.Data.CONTACT_ID)
-                    val mimeIdx = c.getColumnIndex(ContactsContract.Data.MIMETYPE)
-                    val phoneRegex = Regex("""\+?[0-9]{7,15}""")
-
-                    while (c.moveToNext()) {
-                        val name = if (nameIdx >= 0) c.getString(nameIdx).orEmpty().trim() else ""
-                        val d1 = if (d1Idx >= 0) c.getString(d1Idx).orEmpty().trim() else ""
-                        val d3 = if (d3Idx >= 0) c.getString(d3Idx).orEmpty().trim() else ""
-                        val mime = if (mimeIdx >= 0) c.getString(mimeIdx).orEmpty().trim() else ""
-
-                        val isW4b = mime.contains("w4b", ignoreCase = true)
-                        if (isW4b) waBusinessScanned++ else waChatsScanned++
-
-                        val candidatePhone = when {
-                            d3.isNotBlank() && (phoneRegex.find(d3) != null) -> phoneRegex.find(d3)?.value.orEmpty()
-                            d1.contains("@") -> "+" + d1.substringBefore("@").filter { it.isDigit() }
-                            else -> phoneRegex.find(d1)?.value.orEmpty()
-                        }
-
-                        if (candidatePhone.isNotBlank() && PhoneNumberNormalizer.isMobileNumber(candidatePhone)) {
-                            val normalized = PhoneNumberNormalizer.normalize(candidatePhone)
-                            val contactId = if (cidIdx >= 0) c.getLong(cidIdx) else 0L
-                            val photo = if (contactId > 0) "content://com.android.contacts/contacts/$contactId/photo" else ""
-                            val src = if (isW4b) "WA_BUSINESS" else "WA_CHAT"
                             val existing = candidates[normalized]
                             if (existing == null) {
                                 candidates[normalized] = DynamicContactItem(
-                                    name = name.ifBlank { candidatePhone },
-                                    phone = candidatePhone,
+                                    name = resolvedName.ifBlank { rawNumber },
+                                    phone = rawNumber,
                                     normalizedNumber = normalized,
-                                    source = src,
-                                    photoUri = photo,
+                                    source = "CALLLOG",
                                 )
-                            } else {
-                                val updatedName = if ((existing.name == existing.phone) && name.isNotBlank() && (name != candidatePhone)) name else existing.name
-                                val updatedPhoto = if (existing.photoUri.isBlank() && photo.isNotBlank()) photo else existing.photoUri
-                                candidates[normalized] = existing.copy(name = updatedName, photoUri = updatedPhoto, source = src)
+                            } else if (existing.name.isBlank() || (existing.name == existing.phone)) {
+                                if (resolvedName.isNotBlank()) {
+                                    candidates[normalized] = existing.copy(name = resolvedName)
+                                }
                             }
                         }
                     }
+                } catch (e: Exception) {
+                    Log.w("ContactIngestion", "Call log ingestion query failed: ${e.message}")
                 }
             }
 
-            // Also ingest any WhatsApp/WhatsApp Business sender numbers from notification auto-reply history
-            val db = DatabaseHelper.getInstance(context).readableDatabase
-            db.query(
-                DatabaseHelper.TABLE_AUTO_REPLY_HISTORY,
-                arrayOf("phone_number"),
-                null, null, null, null,
-                "last_replied_at DESC LIMIT 500",
-            ).use { c ->
-                val phoneIdx = c.getColumnIndex("phone_number")
-                if (phoneIdx >= 0) {
-                    while (c.moveToNext()) {
-                        waChatsScanned++
-                        val phone = c.getString(phoneIdx).orEmpty().trim()
-                        if (phone.isNotBlank() && PhoneNumberNormalizer.isMobileNumber(phone)) {
-                            val normalized = PhoneNumberNormalizer.normalize(phone)
-                            if (!candidates.containsKey(normalized)) {
-                                candidates[normalized] = DynamicContactItem(
-                                    name = phone,
-                                    phone = phone,
-                                    normalizedNumber = normalized,
-                                    source = "WA_CHAT",
-                                )
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+                try {
+                    val resolver = context.contentResolver
+                    resolver.query(
+                        Telephony.Sms.CONTENT_URI,
+                        arrayOf(Telephony.Sms.ADDRESS),
+                        null,
+                        null,
+                        "${Telephony.Sms.DATE} DESC",
+                    )?.use { cursor ->
+                        val addressIdx = cursor.getColumnIndex(Telephony.Sms.ADDRESS)
+                        if (addressIdx >= 0) {
+                            while (cursor.moveToNext()) {
+                                smsScanned++
+                                val rawAddress = cursor.getString(addressIdx)?.trim().orEmpty()
+                                if (rawAddress.isBlank()) continue
+
+                                if (!PhoneNumberNormalizer.isMobileNumber(rawAddress)) continue
+
+                                val normalized = PhoneNumberNormalizer.normalize(rawAddress)
+                                if (!candidates.containsKey(normalized)) {
+                                    val resolvedName = PhoneNumberNormalizer.getContactName(context, rawAddress).orEmpty()
+                                    candidates[normalized] = DynamicContactItem(
+                                        name = resolvedName.ifBlank { rawAddress },
+                                        phone = rawAddress,
+                                        normalizedNumber = normalized,
+                                        source = "SMS",
+                                    )
+                                }
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.w("ContactIngestion", "SMS ingestion query failed: ${e.message}")
+                }
+            }
+        }
+
+        // 4. Ingest from WhatsApp & WhatsApp Business Chats, Accounts & Groups (SuperWA only)
+        var waChatsScanned = 0
+        var waBusinessScanned = 0
+        if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+            try {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                    val resolver = context.contentResolver
+                    val cursor = resolver.query(
+                        ContactsContract.Data.CONTENT_URI,
+                        arrayOf(
+                            ContactsContract.Data.DISPLAY_NAME,
+                            ContactsContract.Data.DATA1,
+                            ContactsContract.Data.DATA3,
+                            ContactsContract.Data.CONTACT_ID,
+                            ContactsContract.Data.MIMETYPE,
+                        ),
+                        "${ContactsContract.Data.MIMETYPE} LIKE '%whatsapp%' OR " +
+                        "${ContactsContract.Data.MIMETYPE} LIKE '%w4b%' OR " +
+                        "${ContactsContract.Data.DATA1} LIKE '%@s.whatsapp.net%' OR " +
+                        "${ContactsContract.Data.DATA3} LIKE '%+%'",
+                        null,
+                        null,
+                    )
+                    cursor?.use { c ->
+                        val nameIdx = c.getColumnIndex(ContactsContract.Data.DISPLAY_NAME)
+                        val d1Idx = c.getColumnIndex(ContactsContract.Data.DATA1)
+                        val d3Idx = c.getColumnIndex(ContactsContract.Data.DATA3)
+                        val cidIdx = c.getColumnIndex(ContactsContract.Data.CONTACT_ID)
+                        val mimeIdx = c.getColumnIndex(ContactsContract.Data.MIMETYPE)
+                        val phoneRegex = Regex("""\+?[0-9]{7,15}""")
+
+                        while (c.moveToNext()) {
+                            val name = if (nameIdx >= 0) c.getString(nameIdx).orEmpty().trim() else ""
+                            val d1 = if (d1Idx >= 0) c.getString(d1Idx).orEmpty().trim() else ""
+                            val d3 = if (d3Idx >= 0) c.getString(d3Idx).orEmpty().trim() else ""
+                            val mime = if (mimeIdx >= 0) c.getString(mimeIdx).orEmpty().trim() else ""
+
+                            val isW4b = mime.contains("w4b", ignoreCase = true)
+                            if (isW4b) waBusinessScanned++ else waChatsScanned++
+
+                            val candidatePhone = when {
+                                d3.isNotBlank() && (phoneRegex.find(d3) != null) -> phoneRegex.find(d3)?.value.orEmpty()
+                                d1.contains("@") -> "+" + d1.substringBefore("@").filter { it.isDigit() }
+                                else -> phoneRegex.find(d1)?.value.orEmpty()
+                            }
+
+                            if (candidatePhone.isNotBlank() && PhoneNumberNormalizer.isMobileNumber(candidatePhone)) {
+                                val normalized = PhoneNumberNormalizer.normalize(candidatePhone)
+                                val contactId = if (cidIdx >= 0) c.getLong(cidIdx) else 0L
+                                val photo = if (contactId > 0) "content://com.android.contacts/contacts/$contactId/photo" else ""
+                                val src = if (isW4b) "WA_BUSINESS" else "WA_CHAT"
+                                val existing = candidates[normalized]
+                                if (existing == null) {
+                                    candidates[normalized] = DynamicContactItem(
+                                        name = name.ifBlank { candidatePhone },
+                                        phone = candidatePhone,
+                                        normalizedNumber = normalized,
+                                        source = src,
+                                        photoUri = photo,
+                                    )
+                                } else {
+                                    val updatedName = if ((existing.name == existing.phone) && name.isNotBlank() && (name != candidatePhone)) name else existing.name
+                                    val updatedPhoto = if (existing.photoUri.isBlank() && photo.isNotBlank()) photo else existing.photoUri
+                                    candidates[normalized] = existing.copy(name = updatedName, photoUri = updatedPhoto, source = src)
+                                }
                             }
                         }
                     }
                 }
+
+                // Also ingest any WhatsApp/WhatsApp Business sender numbers from notification auto-reply history
+                val db = DatabaseHelper.getInstance(context).readableDatabase
+                db.query(
+                    DatabaseHelper.TABLE_AUTO_REPLY_HISTORY,
+                    arrayOf("phone_number"),
+                    null, null, null, null,
+                    "last_replied_at DESC LIMIT 500",
+                ).use { c ->
+                    val phoneIdx = c.getColumnIndex("phone_number")
+                    if (phoneIdx >= 0) {
+                        while (c.moveToNext()) {
+                            waChatsScanned++
+                            val phone = c.getString(phoneIdx).orEmpty().trim()
+                            if (phone.isNotBlank() && PhoneNumberNormalizer.isMobileNumber(phone)) {
+                                val normalized = PhoneNumberNormalizer.normalize(phone)
+                                if (!candidates.containsKey(normalized)) {
+                                    candidates[normalized] = DynamicContactItem(
+                                        name = phone,
+                                        phone = phone,
+                                        normalizedNumber = normalized,
+                                        source = "WA_CHAT",
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w("ContactIngestion", "WhatsApp chat/group ingestion scan failed: ${e.message}")
             }
-        } catch (e: Exception) {
-            Log.w("ContactIngestion", "WhatsApp chat/group ingestion scan failed: ${e.message}")
         }
 
         repo.purgeCorruptedGroupsFromPool()

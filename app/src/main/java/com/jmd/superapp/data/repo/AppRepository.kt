@@ -540,17 +540,22 @@ class AppRepository(context: Context) {
     fun getAllDailyCampaignConfigs(): List<DailyCampaignConfig> {
         val list = mutableListOf<DailyCampaignConfig>()
         val db = dbHelper.readableDatabase
+        val selection = if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+            "channel IN ('SMS', 'CALL')"
+        } else {
+            "channel LIKE '%WHATSAPP%'"
+        }
         try {
             db.query(
                 DatabaseHelper.TABLE_DAILY_CAMPAIGN,
-                null, null, null, null, null,
+                null, selection, null, null, null,
                 "id ASC"
             ).use { c ->
                 while (c.moveToNext()) {
                     list.add(
                         DailyCampaignConfig(
                             id = c.getLong(c.getColumnIndexOrThrow("id")),
-                            channel = c.getString(c.getColumnIndexOrThrow("channel")) ?: "SMS",
+                            channel = c.getString(c.getColumnIndexOrThrow("channel")) ?: if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) "SMS" else "WHATSAPP",
                             title = c.getString(c.getColumnIndexOrThrow("title")) ?: "Daily Campaign",
                             message = c.getString(c.getColumnIndexOrThrow("message")) ?: "",
                             dailyLimit = c.getInt(c.getColumnIndexOrThrow("daily_limit")),
@@ -569,9 +574,12 @@ class AppRepository(context: Context) {
             Log.w("AppRepository", "Error querying daily campaign configs: ${e.message}")
         }
         if (list.isEmpty()) {
-            list.add(DailyCampaignConfig(id = 1L, channel = "SMS", title = "SMS Campaign"))
-            list.add(DailyCampaignConfig(id = 2L, channel = "WHATSAPP", title = "WhatsApp Campaign"))
-            list.add(DailyCampaignConfig(id = 3L, channel = "WHATSAPP_BUSINESS", title = "Business Campaign"))
+            if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+                list.add(DailyCampaignConfig(id = 1L, channel = "SMS", title = "SMS Campaign"))
+            } else {
+                list.add(DailyCampaignConfig(id = 2L, channel = "WHATSAPP", title = "WhatsApp Campaign"))
+                list.add(DailyCampaignConfig(id = 3L, channel = "WHATSAPP_BUSINESS", title = "Business Campaign"))
+            }
         }
         return list
     }
@@ -616,10 +624,13 @@ class AppRepository(context: Context) {
         } catch (e: Exception) {
             Log.w("AppRepository", "Error querying daily campaign config #$id: ${e.message}")
         }
-        return when (id) {
-            2L -> DailyCampaignConfig(id = 2L, channel = "WHATSAPP", title = "WhatsApp Campaign")
-            3L -> DailyCampaignConfig(id = 3L, channel = "WHATSAPP_BUSINESS", title = "Business Campaign")
-            else -> DailyCampaignConfig(id = id, channel = "SMS", title = "SMS Campaign")
+        return if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+            DailyCampaignConfig(id = id, channel = "SMS", title = "SMS Campaign")
+        } else {
+            when (id) {
+                3L -> DailyCampaignConfig(id = 3L, channel = "WHATSAPP_BUSINESS", title = "Business Campaign")
+                else -> DailyCampaignConfig(id = id, channel = "WHATSAPP", title = "WhatsApp Campaign")
+            }
         }
     }
     /**

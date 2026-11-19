@@ -85,9 +85,15 @@ fun DailyAutoSenderScreen(
     var config by remember(selectedCampaignId) {
         mutableStateOf(
             if (selectedCampaignId > 0L) {
-                DailyCampaignConfig(id = selectedCampaignId)
+                DailyCampaignConfig(
+                    id = selectedCampaignId,
+                    channel = if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) "WHATSAPP" else "SMS",
+                    title = if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) "WhatsApp Campaign" else "SMS Campaign"
+                )
+            } else if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+                DailyCampaignConfig(id = 2L, channel = "WHATSAPP", title = "WhatsApp Campaign")
             } else {
-                DailyCampaignConfig()
+                DailyCampaignConfig(id = 1L, channel = "SMS", title = "SMS Campaign")
             }
         )
     }
@@ -339,7 +345,12 @@ fun DailyAutoSenderScreen(
                             icon = Icons.Filled.Add,
                             variant = AppButtonVariant.PRIMARY,
                             onClick = {
-                                showSelectChannelDialog = true
+                                if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+                                    createChannelType = "SMS"
+                                    showCreateCampaignDialog = true
+                                } else {
+                                    showSelectChannelDialog = true
+                                }
                             },
                             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                             shape = AppDesignTokens.ShapePill
@@ -380,8 +391,13 @@ fun DailyAutoSenderScreen(
                         }
                         lastScanSummary?.let { summary ->
                             Spacer(modifier = Modifier.height(6.dp))
+                            val scanText = if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+                                "Last Scan: ${summary.contactsScanned} Contacts, ${summary.smsScanned} SMS, ${summary.callLogsScanned} Calls • +${summary.newAdded} added"
+                            } else {
+                                "Last Scan: ${summary.contactsScanned} Contacts, ${summary.waChatsScanned} WhatsApp, ${summary.waBusinessScanned} Business • +${summary.newAdded} added"
+                            }
                             Text(
-                                "Last Scan: ${summary.contactsScanned} Contacts, ${summary.smsScanned} SMS, ${summary.callLogsScanned} Calls, ${summary.waChatsScanned} WhatsApp, ${summary.waBusinessScanned} WA Business • +${summary.newAdded} added",
+                                scanText,
                                 fontSize = 10.sp,
                                 color = MaterialTheme.colorScheme.primary
                             )

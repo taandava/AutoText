@@ -78,9 +78,9 @@ fun PermissionHeroCard(
     val successAccent = AppSemanticColors.success
     val primaryAccent = MaterialTheme.colorScheme.primary
 
-    val corePrivileges = remember { AppPrivilege.entries.filter { it.category == PrivilegeCategory.CORE } }
-    val systemPrivileges = remember { AppPrivilege.entries.filter { it.category == PrivilegeCategory.SYSTEM } }
-    val commPrivileges = remember { AppPrivilege.entries.filter { it.category == PrivilegeCategory.COMMUNICATION } }
+    val corePrivileges = remember { AppPrivilege.supportedEntries.filter { it.category == PrivilegeCategory.CORE } }
+    val systemPrivileges = remember { AppPrivilege.supportedEntries.filter { it.category == PrivilegeCategory.SYSTEM } }
+    val commPrivileges = remember { AppPrivilege.supportedEntries.filter { it.category == PrivilegeCategory.COMMUNICATION } }
 
     val coreCount = corePrivileges.count { privilegeStates[it] == true }
     val systemCount = systemPrivileges.count { privilegeStates[it] == true }

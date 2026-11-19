@@ -38,8 +38,7 @@ object AppVariantHelper {
             when (channel) {
                 ChannelType.SMS,
                 ChannelType.CALL,
-                ChannelType.CALL_SIMULATION,
-                ChannelType.REMINDER -> true
+                ChannelType.CALL_SIMULATION -> true
                 else -> false
             }
         } else {
@@ -51,8 +50,7 @@ object AppVariantHelper {
                 ChannelType.WHATSAPP_STATUS,
                 ChannelType.WHATSAPP_BUSINESS_STATUS,
                 ChannelType.WHATSAPP_CALL,
-                ChannelType.WHATSAPP_BUSINESS_CALL,
-                ChannelType.REMINDER -> true
+                ChannelType.WHATSAPP_BUSINESS_CALL -> true
                 else -> false
             }
         }

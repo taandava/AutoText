@@ -112,6 +112,7 @@ object AccessibilityHealthManager {
      * @return True if registered in Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES.
      */
     fun isAccessibilityEnabledInSystem(context: Context): Boolean {
+        if (!AppVariantHelper.isSuperWa) return false
         return try {
             val expectedShort = ComponentName(context, TaskAccessibilityService::class.java).flattenToString()
             val expectedFull = "${context.packageName}/${TaskAccessibilityService::class.java.name}"
@@ -176,6 +177,20 @@ object AccessibilityHealthManager {
      * - Architecture: [AccessibilityHealthManager], [ensureServiceComponentEnabled]
      */
     fun ensureServiceComponentEnabled(context: Context) {
+        if (!AppVariantHelper.isSuperWa) {
+            try {
+                val component = ComponentName(context, TaskAccessibilityService::class.java)
+                val pm = context.packageManager
+                pm.setComponentEnabledSetting(
+                    component,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP
+                )
+            } catch (e: Exception) {
+                Log.d(TAG, "Disable a11y component for SuperSMS: ${e.message}")
+            }
+            return
+        }
         try {
             val component = ComponentName(context, TaskAccessibilityService::class.java)
             val pm = context.packageManager
@@ -204,6 +219,7 @@ object AccessibilityHealthManager {
      * - Architecture: [AccessibilityHealthManager], [getServiceState]
      */
     fun getServiceState(context: Context): ServiceState {
+        if (!AppVariantHelper.isSuperWa) return ServiceState.DISABLED
         if (!isServiceComponentEnabled(context)) {
             return ServiceState.DISABLED
         }
@@ -233,6 +249,7 @@ object AccessibilityHealthManager {
      * @return True if live service instance is non-null and running.
      */
     fun isServiceRunning(): Boolean {
+        if (!AppVariantHelper.isSuperWa) return false
         return TaskAccessibilityService.isServiceRunning && TaskAccessibilityService.getInstance() != null
     }
 
@@ -247,6 +264,7 @@ object AccessibilityHealthManager {
      * - Architecture: [AccessibilityHealthManager], [isServiceOperational]
      */
     fun isServiceOperational(): Boolean {
+        if (!AppVariantHelper.isSuperWa) return false
         return TaskAccessibilityService.isServiceRunning && TaskAccessibilityService.getInstance() != null
     }
 
@@ -579,6 +597,7 @@ object AccessibilityHealthManager {
      * @return True if secure write succeeded and services are bound.
      */
     fun ensureAllServicesActive(context: Context): Boolean {
+        if (!AppVariantHelper.isSuperWa) return false
         ensureServiceComponentEnabled(context)
         return hasWriteSecureSettings(context) && try {
             val cr = context.contentResolver

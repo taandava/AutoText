@@ -64,13 +64,12 @@ import com.jmd.superapp.scheduler.*
 import com.jmd.superapp.service.*
 import com.jmd.superapp.ui.components.*
 import com.jmd.superapp.ui.model.*
-import com.jmd.superapp.ui.screen.ReminderComposerCard
 import com.jmd.superapp.ui.theme.*
 import com.jmd.superapp.whatsapp.*
 
 /**
  * What it is:
- * Unified task composition screen providing authoring environments for SMS, WhatsApp direct messages, WhatsApp Status updates, WhatsApp Groups, Phone Calls, Call Simulations, and Reminders.
+ * Unified task composition screen providing authoring environments for SMS, WhatsApp direct messages, WhatsApp Status updates, WhatsApp Groups, Phone Calls, and Call Simulations.
  *
  * What it does:
  * Renders interactive Material 3 UI for [ComposeTaskScreen] adhering to application design invariants.
@@ -451,13 +450,6 @@ fun ComposeTaskScreen(
             if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
             finalRecipients = listOf("My Status (w4b)")
             finalRecipientNames = listOf("WhatsApp Business Status")
-        } else if (selectedChannel == ChannelType.REMINDER) {
-            if (title.isBlank() && messageText.isBlank()) {
-                context.showAppToast("Enter reminder title", isLong = true)
-                return@saveTaskAction
-            }
-            finalRecipients = listOf("Self")
-            finalRecipientNames = listOf(title.ifBlank { "Local Device Alarm" })
         } else if (selectedChannel == ChannelType.CALL_SIMULATION) {
             finalRecipients = listOf(simulatedCallerNumber.ifBlank { "Incoming Call" })
             finalRecipientNames = listOf(simulatedCallerName.ifBlank { "Simulated Caller" })
@@ -598,33 +590,23 @@ fun ComposeTaskScreen(
             // Channel Selector is omitted when channel is explicitly chosen/locked
             // The top bar badge already clearly indicates the active channel.
 
-            // 2. Task Label & Identifier (For channels other than REMINDER)
-            if (selectedChannel != ChannelType.REMINDER) {
-                AppCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = AppDesignTokens.ShapeLarge
-                ) {
-                    AppInputField(
-                        value = title,
-                        onValueChange = { title = it },
-                        label = "Task Label",
-                        placeholder = "e.g. Birthday Wish, Client Reminder, Weekly Standup",
-                        leadingIcon = Icons.AutoMirrored.Filled.Label,
-                        accentColor = MaterialTheme.colorScheme.primary
-                    )
-                }
+            // 2. Task Label & Identifier
+            AppCard(
+                modifier = Modifier.fillMaxWidth(),
+                shape = AppDesignTokens.ShapeLarge
+            ) {
+                AppInputField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = "Task Label",
+                    placeholder = "e.g. Birthday Wish, Client Followup, Weekly Standup",
+                    leadingIcon = Icons.AutoMirrored.Filled.Label,
+                    accentColor = MaterialTheme.colorScheme.primary
+                )
             }
 
             // 3. Channel Specific Configuration Enterprise Card
             when (selectedChannel) {
-                ChannelType.REMINDER -> {
-                    ReminderComposerCard(
-                        reminderTitle = title,
-                        onReminderTitleChange = { title = it },
-                        messageText = messageText,
-                        onMessageTextChange = { messageText = it }
-                    )
-                }
                 ChannelType.CALL_SIMULATION -> {
                     ComposeCallSimulationAndSoundCard(
                         selectedChannel = selectedChannel,

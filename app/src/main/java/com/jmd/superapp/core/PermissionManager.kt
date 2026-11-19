@@ -177,12 +177,12 @@ object PermissionManager {
         ),
         PermissionFeatureInfo(
             permissionId = ID_POST_NOTIFICATIONS,
-            featureName = "Execution Alerts & Reminders",
-            purpose = "Displays task completion summaries, reminder heads-up alerts, and error feedback.",
+            featureName = "Execution Alerts",
+            purpose = "Displays task completion summaries, heads-up alerts, and error feedback.",
             canWorkWithout = true,
             isRuntimeApproval = true,
             requiresSpecialUserAction = false,
-            deniedImpact = "Tasks execute normally in background; completion alerts and reminders are suppressed.",
+            deniedImpact = "Tasks execute normally in background; completion alerts are suppressed.",
             revocationSafety = "Safe to revoke anytime.",
             category = PermissionCategory.SYSTEM
         ),
@@ -204,7 +204,7 @@ object PermissionManager {
             canWorkWithout = true,
             isRuntimeApproval = false,
             requiresSpecialUserAction = true,
-            deniedImpact = "Cellular SMS, calls, alarms, and call simulations work normally. WhatsApp assisted clicks are disabled.",
+            deniedImpact = "Cellular SMS, calls, and call simulations work normally. WhatsApp assisted clicks are disabled.",
             revocationSafety = "Can be safely disabled anytime; dynamic on-demand mode keeps it detached during idle.",
             category = PermissionCategory.SYSTEM
         ),

@@ -180,7 +180,7 @@ fun MainAppHost(
                             delay(6000L)
                         }
                     }
-                    val appTitle = prefs.customAppName.ifBlank { com.jmd.superapp.core.AppVariantHelper.appTitle }
+                    val appTitle = prefs.customAppName.takeIf { it.isNotBlank() && it != "Super" } ?: com.jmd.superapp.core.AppVariantHelper.appTitle
                     val iconVariant = prefs.appIconVariant
                     val appIcon = when (iconVariant) {
                         "MESSENGER" -> Icons.AutoMirrored.Filled.Chat
