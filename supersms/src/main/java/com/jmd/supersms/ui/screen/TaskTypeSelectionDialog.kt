@@ -1,0 +1,494 @@
+/**
+ * Package: com.jmd.supersms.ui.screen
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [TaskTypeSelectionDialog].
+ *
+ * What it does:
+ * Modal task picker displaying clear, categorized task types: SMS, WhatsApp, WhatsApp Business, WhatsApp Status (sub-flow for Personal vs Business W4B), Phone Calls, WhatsApp Voice Calls, Call Simulations, Contact Sequences, Daily Campaigns, Alarms, and Sound Modes. `MainAppHost`
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.supersms.data.model.*], [com.jmd.supersms.ui.model.*]
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.Color]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.shape.CircleShape], [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.automirrored.filled.ArrowBack]
+ */
+
+package com.jmd.supersms.ui.screen
+
+import androidx.compose.material.icons.automirrored.filled.*
+
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+
+import com.jmd.supersms.data.model.*
+import com.jmd.supersms.ui.model.*
+import com.jmd.supersms.ui.theme.*
+
+/**
+ * What it is:
+ * Modal selection dialog providing categorized creation options for all supported task types.
+ *
+ * What it does:
+ * Supported Dispatch Pathways:
+ *
+ * Linked with:
+ * - Architecture: [TaskTypeSelectionDialog], [TaskTypeSelectionDialog]
+ * @param onDismiss Invoked when user taps outside or cancels selection.
+ * @param onSelectChannel Callback receiving selected single-shot [ChannelType].
+ * @param onSelectSequence Callback invoked when creating a multi-step sequence for a channel.
+ * @param onSelectDailyCampaign Callback invoked when launching the daily campaign builder.
+ */
+@Composable
+fun TaskTypeSelectionDialog(
+    onDismiss: () -> Unit,
+    onSelectChannel: (ChannelType) -> Unit,
+    onSelectDailyCampaign: () -> Unit = {},
+) {
+    // Sub-flow state: null = root list, "STATUS" = choose WhatsApp vs W4B status, "WA_CALL" = choose WA vs W4B call
+    var selectedSubFlow by remember { mutableStateOf<String?>(null) }
+
+    val allTaskTypes = listOf(
+        TaskTypeItem(
+            title = "SMS Message",
+            description = "Schedule direct SMS via device SIM card",
+            icon = Icons.AutoMirrored.Filled.Message,
+            color = MaterialTheme.colorScheme.primary,
+            channel = ChannelType.SMS,
+        ),
+        TaskTypeItem(
+            title = "WhatsApp Chat",
+            description = "Send WhatsApp messages with optional media attachments",
+            icon = Icons.AutoMirrored.Filled.Chat,
+            color = Color(0xFF16A34A),
+            channel = ChannelType.WHATSAPP,
+        ),
+        TaskTypeItem(
+            title = "WA Business",
+            description = "Send WhatsApp Business direct messages with media",
+            icon = Icons.Filled.BusinessCenter,
+            color = Color(0xFF0D9488),
+            channel = ChannelType.WHATSAPP_BUSINESS,
+        ),
+        TaskTypeItem(
+            title = "WhatsApp Group",
+            description = "Send message to a WhatsApp or WhatsApp Business group chat",
+            icon = Icons.Filled.Groups,
+            color = Color(0xFF15803D),
+            channel = null,
+            isGroup = true,
+        ),
+        TaskTypeItem(
+            title = "Status Story",
+            description = "Schedule auto-posting text or photo/video stories to Status",
+            icon = Icons.Filled.PhotoCamera,
+            color = Color(0xFF7C3AED),
+            channel = null,
+            isStatus = true,
+        ),
+        TaskTypeItem(
+            title = "Phone Call",
+            description = "Schedule direct phone call via device SIM card to specified destinations",
+            icon = Icons.Filled.Phone,
+            color = Color(0xFF10B981),
+            channel = ChannelType.CALL,
+        ),
+        TaskTypeItem(
+            title = "WhatsApp Call",
+            description = "Schedule WhatsApp voice call to selected contact",
+            icon = Icons.Filled.PhoneInTalk,
+            color = Color(0xFF06B6D4),
+            channel = null,
+            isWaCall = true,
+        ),
+        TaskTypeItem(
+            title = "Call Simulation",
+            description = "Simulate incoming call alert with custom caller name and ring style",
+            icon = Icons.AutoMirrored.Filled.PhoneForwarded,
+            color = Color(0xFFD97706),
+            channel = ChannelType.CALL_SIMULATION,
+        ),
+        TaskTypeItem(
+            title = "Daily Campaign",
+            description = "High-speed paced outreach batch with 10-second intervals",
+            icon = Icons.Filled.RocketLaunch,
+            color = Color(0xFFEF4444),
+            channel = null,
+            isDailyCampaign = true,
+        ),
+    )
+
+    val taskTypes = allTaskTypes.filter { item ->
+        when {
+            item.channel != null -> com.jmd.supersms.core.AppVariantHelper.isChannelSupported(item.channel)
+            item.isGroup || item.isStatus || item.isWaCall -> com.jmd.supersms.core.AppVariantHelper.isSuperWa
+            item.isDailyCampaign -> true
+            else -> true
+        }
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false),
+    ) {
+        Surface(
+            shape = AppDesignTokens.ShapeLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant),
+            modifier = Modifier
+                .fillMaxWidth(0.92f)
+                .systemBarsPadding()
+                .padding(vertical = 16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                // Header with dynamic back button if inside a sub-flow
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        if (selectedSubFlow != null) {
+                            IconButton(
+                                onClick = { selectedSubFlow = null },
+                                modifier = Modifier.size(28.dp)
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Back",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(6.dp))
+                        }
+
+                        Column {
+                            Text(
+                                text = when (selectedSubFlow) {
+                                    "STATUS" -> "Status Platform"
+                                    "GROUP" -> "Group App"
+                                    "WA_CALL" -> "Call App"
+                                    else -> "Task Type"
+                                },
+                                fontSize = 16.5.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = when (selectedSubFlow) {
+                                    "STATUS" -> "Select App"
+                                    "GROUP" -> "Select App"
+                                    "WA_CALL" -> "Select App"
+                                    else -> "Select Action"
+                                },
+                                fontSize = 11.5.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier
+                            .size(36.dp)
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                when (selectedSubFlow) {
+                    "STATUS" -> {
+                        // Sub-selection: WhatsApp Status vs WhatsApp Business Status
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            DialogOptionTile(
+                                title = "WhatsApp Status",
+                                description = "Auto-post text or photo/video stories to personal WhatsApp",
+                                badge = "Personal",
+                                icon = Icons.Filled.PhotoCamera,
+                                color = Color(0xFF16A34A),
+                                onClick = {
+                                    onSelectChannel(ChannelType.WHATSAPP_STATUS)
+                                }
+                            )
+
+                            DialogOptionTile(
+                                title = "Business Status",
+                                description = "Auto-post text or media updates to WhatsApp Business (W4B)",
+                                badge = "Business",
+                                icon = Icons.Filled.Camera,
+                                color = Color(0xFF0D9488),
+                                onClick = {
+                                    onSelectChannel(ChannelType.WHATSAPP_BUSINESS_STATUS)
+                                }
+                            )
+                        }
+                    }
+                    "GROUP" -> {
+                        // Sub-selection: WhatsApp Group vs WhatsApp Business Group
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            DialogOptionTile(
+                                title = "WhatsApp Group",
+                                description = "Send message to a group via personal WhatsApp Messenger",
+                                badge = "Personal",
+                                icon = Icons.Filled.Groups,
+                                color = Color(0xFF16A34A),
+                                onClick = {
+                                    onSelectChannel(ChannelType.WHATSAPP_GROUP)
+                                }
+                            )
+
+                            DialogOptionTile(
+                                title = "Business Group",
+                                description = "Send message to a client/team group via WhatsApp Business (W4B)",
+                                badge = "Business",
+                                icon = Icons.Filled.Groups,
+                                color = Color(0xFF0D9488),
+                                onClick = {
+                                    onSelectChannel(ChannelType.WHATSAPP_BUSINESS_GROUP)
+                                }
+                            )
+                        }
+                    }
+                    "WA_CALL" -> {
+                        // Sub-selection: WhatsApp Call vs WhatsApp Business Call
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            DialogOptionTile(
+                                title = "WhatsApp Call",
+                                description = "Direct VoIP voice call via personal WhatsApp Messenger",
+                                badge = "Personal",
+                                icon = Icons.Filled.PhoneInTalk,
+                                color = Color(0xFF16A34A),
+                                onClick = {
+                                    onSelectChannel(ChannelType.WHATSAPP_CALL)
+                                }
+                            )
+
+                            DialogOptionTile(
+                                title = "Business Call",
+                                description = "Direct VoIP voice call via WhatsApp Business (W4B)",
+                                badge = "Business",
+                                icon = Icons.Filled.ContactPhone,
+                                color = Color(0xFF0D9488),
+                                onClick = {
+                                    onSelectChannel(ChannelType.WHATSAPP_BUSINESS_CALL)
+                                }
+                            )
+                        }
+                    }
+                    else -> {
+                        // Main Task Type List
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxHeight(0.78f)
+                        ) {
+                            items(taskTypes.size) { index ->
+                                val item = taskTypes[index]
+                                Surface(
+                                    shape = AppDesignTokens.ShapeMedium,
+                                    color = MaterialTheme.colorScheme.surface,
+                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .defaultMinSize(minHeight = 48.dp)
+                                        .clip(AppDesignTokens.ShapeMedium)
+                                        .clickable {
+                                            when {
+                                                item.isStatus -> {
+                                                    selectedSubFlow = "STATUS"
+                                                }
+                                                item.isWaCall -> {
+                                                    selectedSubFlow = "WA_CALL"
+                                                }
+                                                item.isGroup -> {
+                                                    selectedSubFlow = "GROUP"
+                                                }
+                                                item.isDailyCampaign -> {
+                                                    onSelectDailyCampaign()
+                                                }
+                                                else -> {
+                                                    item.channel?.let { onSelectChannel(it) }
+                                                }
+                                            }
+                                        }
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 10.dp, vertical = 8.dp)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                                .clip(CircleShape)
+                                                .background(item.color.copy(alpha = 0.12f)),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = item.icon ?: Icons.AutoMirrored.Filled.Send,
+                                                contentDescription = null,
+                                                tint = item.color,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
+
+                                        Spacer(modifier = Modifier.width(12.dp))
+
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = item.title,
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 13.5.sp,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                            Text(
+                                                text = item.description,
+                                                fontSize = 11.sp,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                lineHeight = 14.sp
+                                            )
+                                        }
+
+                                        Icon(
+                                            imageVector = Icons.Default.ChevronRight,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * What it is:
+ * Jetpack Compose UI component for [DialogOptionTile].
+ *
+ * What it does:
+ * Renders Material 3 interface elements and handles user interaction for DialogOptionTile.
+ *
+ * Linked with:
+ * - Component: [TaskTypeSelectionDialog]
+ */
+@Composable
+private fun DialogOptionTile(
+    title: String,
+    description: String,
+    badge: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    color: Color,
+    onClick: () -> Unit
+) {
+    Surface(
+        shape = AppDesignTokens.ShapeMedium,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(AppDesignTokens.ShapeMedium)
+            .clickable(onClick = onClick)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(color.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Surface(
+                        shape = AppDesignTokens.ShapePill,
+                        color = color.copy(alpha = 0.15f)
+                    ) {
+                        Text(
+                            text = badge,
+                            fontSize = 9.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = color,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = description,
+                    fontSize = 11.5.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 15.sp
+                )
+            }
+
+            Icon(
+                imageVector = Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp)
+            )
+        }
+    }
+}

@@ -1,0 +1,313 @@
+/**
+ * Package: com.jmd.superwa.core
+ * Module: Core Security, Invariants & Privacy
+ *
+ * What it is:
+ * Architecture definition and implementation for [ContentValidator].
+ *
+ * What it does:
+ * Provides pre-flight media URI accessibility inspection, MIME resolution, and channel-specific message content validation (SMS text-only vs WhatsApp multimedia).
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.superwa.data.model.ChannelType]
+ * - Core Security & Utilities: [androidx.core.net.toUri]
+ */
+
+package com.jmd.superwa.core
+
+import android.content.Context
+import androidx.core.net.toUri
+import com.jmd.superwa.data.model.ChannelType
+import java.io.File
+
+/**
+ * What it is:
+ * Result abstraction for attachment accessibility and format validation.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [AttachmentValidationResult].
+ *
+ * Linked with:
+ * - Architecture: [ContentValidator], [AttachmentValidationResult]
+ */
+sealed class AttachmentValidationResult {
+    /**
+     * What it is:
+     * Component definition for [Empty].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for Empty.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [Empty]
+     */
+    object Empty : AttachmentValidationResult()
+
+    /**
+     * What it is:
+     * Indicates attachment was verified as accessible and compatible.
+     *
+     * What it does:
+     * Encapsulates state, business contracts, and operations for [Valid].
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [Valid]
+     * @property mimeType Resolved MIME type string (e.g. "image/jpeg", "video/mp4").
+     * @property isVideo True if media represents a video file; false for images.
+     */
+    data class Valid(val mimeType: String, val isVideo: Boolean) : AttachmentValidationResult()
+
+    /**
+     * What it is:
+     * Indicates attachment access failed or file format is unsupported.
+     *
+     * What it does:
+     * Encapsulates state, business contracts, and operations for [Invalid].
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [Invalid]
+     * @property reason Human-readable diagnostic explanation.
+     */
+    data class Invalid(val reason: String) : AttachmentValidationResult()
+}
+
+/**
+ * What it is:
+ * Result abstraction for complete task content validation across channels.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [ContentValidationResult].
+ *
+ * Linked with:
+ * - Architecture: [ContentValidator], [ContentValidationResult]
+ */
+sealed class ContentValidationResult {
+    /**
+     * What it is:
+     * Component definition for [AcceptTextOnly].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for AcceptTextOnly.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [AcceptTextOnly]
+     */
+    object AcceptTextOnly : ContentValidationResult()
+
+    /**
+     * What it is:
+     * Component definition for [AcceptMediaOnly].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for AcceptMediaOnly.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [AcceptMediaOnly]
+     */
+    data class AcceptMediaOnly(val mimeType: String, val isVideo: Boolean) : ContentValidationResult()
+
+    /**
+     * What it is:
+     * Component definition for [AcceptMediaWithCaption].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for AcceptMediaWithCaption.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [AcceptMediaWithCaption]
+     */
+    data class AcceptMediaWithCaption(val mimeType: String, val isVideo: Boolean, val caption: String) : ContentValidationResult()
+
+    /**
+     * What it is:
+     * Component definition for [Reject].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for Reject.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [Reject]
+     */
+    data class Reject(val reason: String) : ContentValidationResult()
+}
+
+/**
+ * What it is:
+ * Centralized validator ensuring tasks have valid text, accessible media URIs, and valid channel rules.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [TaskContentValidator].
+ *
+ * Linked with:
+ * - Architecture: [ContentValidator], [TaskContentValidator]
+ */
+object TaskContentValidator {
+
+    /**
+     * What it is:
+     * Validates that an attachment URI is readable via ContentResolver or File System, resolving its MIME type and image/video classification.
+     *
+     * What it does:
+     * Executes [validateAttachmentAccess] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [validateAttachmentAccess]
+     * @param context Active Android [Context] (nullable for test environments).
+     * @param uriString URI string (content:// or file://) to inspect.
+     * @return [AttachmentValidationResult] detailing accessibility and MIME attributes.
+     */
+    fun validateAttachmentAccess(context: Context?, uriString: String?): AttachmentValidationResult {
+        val clean = uriString?.trim().orEmpty()
+        if (clean.isBlank()) return AttachmentValidationResult.Empty
+
+        val scheme = try {
+            clean.toUri().scheme?.lowercase()
+        } catch (e: Throwable) {
+            clean.substringBefore("://", "").lowercase().ifEmpty { null }
+        }
+
+        if (scheme != null && scheme != "content" && scheme != "file") {
+            return AttachmentValidationResult.Invalid("Unsupported attachment URI scheme: '$scheme'")
+        }
+        /**
+         * What it is:
+         * Operational routine [resolveFile].
+         *
+         * What it does:
+         * Executes resolveFile actions according to system invariants.
+         *
+         * Linked with:
+         * - Component: [ContentValidator]
+         */
+
+        fun resolveFile(rawUri: String): File {
+            val withoutScheme = if (rawUri.startsWith("file://", ignoreCase = true)) {
+                rawUri.substring(7)
+            } else rawUri
+            return File(withoutScheme)
+        }
+
+        var detectedMime = ""
+        var isAccessible = false
+
+        if (context != null) {
+            try {
+                val parsedUri = clean.toUri()
+                detectedMime = context.contentResolver.getType(parsedUri).orEmpty().lowercase()
+                context.contentResolver.openInputStream(parsedUri)?.use {
+                    isAccessible = true
+                }
+            } catch (e: Exception) {
+                // If content resolver fails or file scheme direct check
+                if (scheme == "file" || scheme == null) {
+                    val f = resolveFile(clean)
+                    if (f.exists() && f.canRead()) {
+                        isAccessible = true
+                    }
+                }
+            }
+        } else {
+            // Context-free fallback (e.g. unit tests): check file system or assume valid if content URI
+            if (scheme == "content") {
+                isAccessible = true
+            } else {
+                val f = resolveFile(clean)
+                isAccessible = f.exists() && f.canRead()
+            }
+        }
+
+        if (!isAccessible) {
+            return AttachmentValidationResult.Invalid("Attachment is inaccessible or file no longer exists at: $clean")
+        }
+
+        // Determine if image or video
+        val uriPathLower = clean.substringBefore('?').lowercase()
+        val isVideo = detectedMime.startsWith("video/") ||
+                uriPathLower.endsWith(".mp4") ||
+                uriPathLower.endsWith(".3gp") ||
+                uriPathLower.endsWith(".mkv") ||
+                uriPathLower.endsWith(".webm")
+
+        val isImage = detectedMime.startsWith("image/") ||
+                uriPathLower.endsWith(".jpg") ||
+                uriPathLower.endsWith(".jpeg") ||
+                uriPathLower.endsWith(".png") ||
+                uriPathLower.endsWith(".webp") ||
+                uriPathLower.endsWith(".gif") ||
+                uriPathLower.endsWith(".bmp")
+
+        if (!isVideo && !isImage && detectedMime.isNotBlank()) {
+            return AttachmentValidationResult.Invalid("Unsupported attachment type ($detectedMime). Only images and videos are supported.")
+        }
+
+        val effectiveMime = when {
+            detectedMime.isNotBlank() -> detectedMime
+            isVideo -> "video/*"
+            else -> "image/*"
+        }
+
+        return AttachmentValidationResult.Valid(effectiveMime, isVideo)
+    }
+
+    /**
+     * What it is:
+     * Validates combined message text and attachment URI according to channel constraints.
+     *
+     * What it does:
+     * Executes [validateContent] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [ContentValidator], [validateContent]
+     * @param context Active Android [Context].
+     * @param channel Target communication [ChannelType].
+     * @param messageText Draft message text.
+     * @param mediaUri Media attachment URI string.
+     * @return [ContentValidationResult] accepting or rejecting message content.
+     */
+    fun validateContent(
+        context: Context?,
+        channel: ChannelType,
+        messageText: String,
+        mediaUri: String?
+    ): ContentValidationResult {
+        val trimmedText = messageText.trim()
+        val hasText = trimmedText.isNotEmpty()
+        return when (val attachmentResult = validateAttachmentAccess(context, mediaUri)) {
+            is AttachmentValidationResult.Invalid -> {
+                ContentValidationResult.Reject(attachmentResult.reason)
+            }
+            is AttachmentValidationResult.Empty -> {
+                if (hasText) {
+                    ContentValidationResult.AcceptTextOnly
+                } else {
+                    if (channel in listOf(ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_GROUP, ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_BUSINESS_STATUS)) {
+                        ContentValidationResult.Reject("Enter message text or attach an image/video")
+                    } else {
+                        ContentValidationResult.Reject("Enter message text")
+                    }
+                }
+            }
+            is AttachmentValidationResult.Valid -> {
+                if (channel == ChannelType.SMS) {
+                    if (!hasText) {
+                        ContentValidationResult.Reject("SMS requires message text (MMS is not supported)")
+                    } else {
+                        ContentValidationResult.AcceptTextOnly
+                    }
+                } else if (hasText) {
+                    ContentValidationResult.AcceptMediaWithCaption(
+                        mimeType = attachmentResult.mimeType,
+                        isVideo = attachmentResult.isVideo,
+                        caption = trimmedText
+                    )
+                } else {
+                    ContentValidationResult.AcceptMediaOnly(
+                        mimeType = attachmentResult.mimeType,
+                        isVideo = attachmentResult.isVideo,
+                    )
+                }
+            }
+        }
+    }
+}
+

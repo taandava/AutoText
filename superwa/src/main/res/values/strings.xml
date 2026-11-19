@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SuperWA</string>
+    <string name="accessibility_service_label">SuperWA Service</string>
+    <string name="accessibility_service_description">SuperWA uses accessibility only to dispatch your scheduled messages in WhatsApp and WhatsApp Business. SuperWA never transmits data and strictly isolates financial and banking apps.</string>
+    <string name="notification_channel_tasks">Scheduled Dispatches</string>
+    <string name="notification_channel_tasks_desc">Notifications for scheduled WhatsApp dispatches</string>
+    <string name="device_admin_description">Screen lock</string>
+    <string name="tile_a11y_label">SuperWA</string>
+</resources>

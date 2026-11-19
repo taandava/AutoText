@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- SuperSMS: Standalone Cellular Messaging & Phone Call Automation -->
+    <!-- 100% On-Device Sovereignty: Zero Accessibility Service Needed -->
+
+    <!-- SMS Permissions -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+    <!-- Phone Call & Contacts Permissions -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <!-- Scheduling & Execution Permissions -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" tools:ignore="ProtectedPermissions" />
+
+    <!-- System Overlay (Display Over Other Apps / Call Simulator) -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- External Storage & Media Permissions -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+    <!-- Hardware Features Declaration -->
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+
+    <!-- Queries for Supported Apps -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+        <intent>
+            <action android:name="android.app.action.ADD_DEVICE_ADMIN" />
+        </intent>
+        <intent>
+            <action android:name="android.settings.SECURITY_SETTINGS" />
+        </intent>
+        <!-- OEM Battery Optimizer & Autostart packages -->
+        <package android:name="com.vivo.permissionmanager" />
+        <package android:name="com.vivo.abe" />
+        <package android:name="com.iqoo.secure" />
+        <package android:name="com.miui.securitycenter" />
+        <package android:name="com.miui.powerkeeper" />
+        <package android:name="com.coloros.safecenter" />
+        <package android:name="com.oplus.safecenter" />
+        <package android:name="com.oppo.safe" />
+        <package android:name="com.oneplus.security" />
+        <package android:name="com.huawei.systemmanager" />
+        <package android:name="com.hihonor.systemmanager" />
+        <package android:name="com.samsung.android.lool" />
+        <package android:name="com.samsung.android.sm" />
+        <package android:name="com.samsung.android.sm_cn" />
+        <package android:name="com.motorola.ccc.notification" />
+        <package android:name="com.motorola.powersave" />
+        <package android:name="com.motorola.bodyguard" />
+        <package android:name="com.evenwell.powersaving.g3" />
+        <package android:name="com.evenwell.emm" />
+        <package android:name="com.transsion.phonemanager" />
+        <package android:name="com.asus.mobilemanager" />
+        <package android:name="com.sonymobile.cta" />
+        <!-- OEM Telephony & Dialer Packages -->
+        <package android:name="com.samsung.android.incallui" />
+        <package android:name="com.samsung.android.app.contacts" />
+        <package android:name="com.samsung.android.dialer" />
+        <package android:name="com.google.android.dialer" />
+        <package android:name="com.android.contacts" />
+        <package android:name="com.android.incallui" />
+        <package android:name="com.oplus.dialer" />
+        <package android:name="com.vivo.phone" />
+    </queries>
+
+    <application
+        android:name=".SuperApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false"
+        android:enableOnBackInvokedCallback="true"
+        tools:targetApi="33"
+        android:theme="@style/Theme.Super">
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:launchMode="singleTask"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.Super">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <!-- Simulated Incoming Call Activity -->
+        <activity
+            android:name=".ui.activity.CallSimulationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Super.FullScreen" />
+
+        <!-- Screen-On / Keyguard Dismiss Dispatch Activity -->
+        <activity
+            android:name=".ui.activity.TaskLauncherActivity"
+            android:exported="false"
+            android:directBootAware="true"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Super.Transparent" />
+
+        <!-- Device Administration Receiver -->
+        <receiver
+            android:name=".receiver.SuperDeviceAdminReceiver"
+            android:label="@string/app_name"
+            android:description="@string/device_admin_description"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Device Admin prompt trampoline -->
+        <activity
+            android:name=".ui.activity.DeviceAdminPromptActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@style/Theme.Super.Transparent" />
+
+        <!-- Notification Listener Service (Smart Auto-Reply for SMS) -->
+        <service
+            android:name=".service.TaskNotificationListenerService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:stopWithTask="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- Task Foreground Service -->
+        <service
+            android:name=".service.TaskForegroundService"
+            android:exported="false"
+            android:stopWithTask="false" />
+
+        <!-- Alarm Receiver for Exact Scheduling & Task Dispatch -->
+        <receiver
+            android:name=".receiver.TaskAlarmReceiver"
+            android:directBootAware="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.jmd.supersms.ACTION_FIRE_TASK" />
+                <action android:name="com.jmd.supersms.ACTION_COUNTDOWN_TIMEOUT" />
+                <action android:name="com.jmd.supersms.ACTION_FIRE_CAMPAIGN" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Boot & Upgrade Receiver -->
+        <receiver
+            android:name=".receiver.BootReceiver"
+            android:directBootAware="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Time & Timezone Change Receiver -->
+        <receiver
+            android:name=".receiver.TimeChangeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Incoming SMS Receiver (Auto-Reply & Auto-Forward) -->
+        <receiver
+            android:name=".receiver.SmsReceiver"
+            android:permission="android.permission.BROADCAST_SMS"
+            android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Carrier Delivery Report Receiver -->
+        <receiver
+            android:name=".receiver.SmsDeliveryReceiver"
+            android:exported="false" />
+
+        <!-- Incoming / Missed Call Receiver -->
+        <receiver
+            android:name=".receiver.PhoneCallReceiver"
+            android:permission="android.permission.READ_PHONE_STATE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Task Dispatch & CLI Receiver -->
+        <receiver
+            android:name=".receiver.TaskDispatchReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.jmd.supersms.ACTION_SYNC_POOL" />
+                <action android:name="com.jmd.supersms.ACTION_DISPATCH_TASK" />
+                <action android:name="com.jmd.supersms.ACTION_SEND_SMS" />
+                <action android:name="com.jmd.supersms.ACTION_MAKE_CALL" />
+                <action android:name="com.jmd.supersms.ACTION_GET_STATUS" />
+            </intent-filter>
+        </receiver>
+
+        <!-- File Provider -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Jetpack Glance App Widget Receiver -->
+        <receiver
+            android:name=".ui.widget.SuperAppWidgetReceiver"
+            android:label="@string/app_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/super_appwidget_info" />
+        </receiver>
+
+        <!-- AndroidX Startup Initializer -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.jmd.supersms.core.SuperAppInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+    </application>
+
+</manifest>
