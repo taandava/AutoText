@@ -84,9 +84,7 @@ fun ProtectedAppsSection(
         ProtectedApplicationManager.setUserProtectedPackages(updated)
         prefs.isBankingShieldEnabled = true
         prefs.isSmartAccessibilityScopingEnabled = true
-        if (AccessibilityHealthManager.hasWriteSecureSettings(context)) {
-            prefs.isDynamicA11yOnDemandEnabled = true
-        }
+        prefs.isDynamicA11yOnDemandEnabled = false
     }
 
     LaunchedEffect(Unit) {
@@ -150,7 +148,7 @@ fun ProtectedAppsSection(
                     fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = "Select banking, UPI, and financial apps. Super automatically isolates them completely.",
+                    text = "Select banking, UPI, and financial apps. Super safely isolates them completely.",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 11.sp
                 )

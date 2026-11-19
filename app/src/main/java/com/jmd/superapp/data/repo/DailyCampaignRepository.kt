@@ -373,7 +373,7 @@ class DailyCampaignRepository(appContext: Context) {
      * - Component: [DailyCampaignRepository]
      */
 
-    fun getPendingPoolContactsBatch(whatsApp: Boolean = false, limit: Int = 100): List<DynamicContactItem> {
+    fun getPendingPoolContactsBatch(whatsApp: Boolean = false, limit: Int = 50000): List<DynamicContactItem> {
         val list = mutableListOf<DynamicContactItem>()
         try {
             val db = dbHelper.readableDatabase

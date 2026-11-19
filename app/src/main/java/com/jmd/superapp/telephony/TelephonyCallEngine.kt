@@ -286,11 +286,13 @@ object TelephonyCallEngine {
             }
         }
 
-        // 2. Secondary fallback: TaskAccessibilityService in-call UI click
-        val a11yEnded = TaskAccessibilityService.endPhoneCall(context)
-        if (a11yEnded) {
-            AppFileLogger.action(context, TAG, "Terminated active phone call via TaskAccessibilityService fallback")
-            return true
+        // 2. Secondary fallback: TaskAccessibilityService in-call UI click (SuperWA only)
+        if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+            val a11yEnded = TaskAccessibilityService.endPhoneCall(context)
+            if (a11yEnded) {
+                AppFileLogger.action(context, TAG, "Terminated active phone call via TaskAccessibilityService fallback")
+                return true
+            }
         }
 
         return false

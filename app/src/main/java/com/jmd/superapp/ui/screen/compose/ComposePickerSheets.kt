@@ -512,14 +512,33 @@ fun WhatsAppContactsPickerSheet(
     val isGroupChannel = selectedChannel == ChannelType.WHATSAPP_GROUP || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
     val scanTick by TaskAccessibilityService.scanCompletedEvent.collectAsState()
 
-    // The accessibility harvest runs in the background; refresh this sheet when it reports completion
+    // Automatically purge any legacy corrupted group rows on sheet opening
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            repository.purgeCorruptedGroupsFromPool()
+        }
+        refreshTrigger++
+    }
+
+    // The accessibility sync runs in the background; refresh this sheet when it reports completion
     // instead of dismissing the sheet and leaving the user with a stale list.
     LaunchedEffect(scanTick) {
         if (scanTick > 0L) {
             withContext(Dispatchers.IO) {
                 val refreshed = repository.getWhatsAppContacts(query = waSearch, channel = selectedChannel, limit = 10000)
+                val filtered = when {
+                    isCalling -> refreshed.filter { !it.phone.startsWith("group:") && !it.normalizedPhone.startsWith("group:") }
+                    isGroupChannel -> refreshed.filter { item ->
+                        val rawPhone = item.phone.removePrefix("group:").trim()
+                        val digits = rawPhone.filter { ch -> ch.isDigit() }
+                        val letters = rawPhone.filter { ch -> ch.isLetter() }
+                        val isNumber = digits.length >= 7 && letters.isEmpty()
+                        !isNumber && (item.phone.startsWith("group:") || item.normalizedPhone.startsWith("group:") || item.accountType.contains("group", ignoreCase = true))
+                    }
+                    else -> refreshed.filter { !it.phone.startsWith("group:") && !it.normalizedPhone.startsWith("group:") && !it.accountType.contains("group", ignoreCase = true) }
+                }
                 withContext(Dispatchers.Main) {
-                    waContacts = refreshed
+                    waContacts = filtered
                     isScanning = false
                 }
             }
@@ -531,7 +550,13 @@ fun WhatsAppContactsPickerSheet(
             val allContacts = repository.getWhatsAppContacts(query = waSearch, channel = selectedChannel, limit = 10000)
             val filteredContacts = when {
                 isCalling -> allContacts.filter { !it.phone.startsWith("group:") && !it.normalizedPhone.startsWith("group:") }
-                isGroupChannel -> allContacts.filter { it.phone.startsWith("group:") || it.normalizedPhone.startsWith("group:") || it.accountType.contains("group", ignoreCase = true) }
+                isGroupChannel -> allContacts.filter { item ->
+                    val rawPhone = item.phone.removePrefix("group:").trim()
+                    val digits = rawPhone.filter { ch -> ch.isDigit() }
+                    val letters = rawPhone.filter { ch -> ch.isLetter() }
+                    val isNumber = digits.length >= 7 && letters.isEmpty()
+                    !isNumber && (item.phone.startsWith("group:") || item.normalizedPhone.startsWith("group:") || item.accountType.contains("group", ignoreCase = true))
+                }
                 else -> allContacts.filter { !it.phone.startsWith("group:") && !it.normalizedPhone.startsWith("group:") && !it.accountType.contains("group", ignoreCase = true) }
             }
             withContext(Dispatchers.Main) {
@@ -697,7 +722,7 @@ fun WhatsAppContactsPickerSheet(
                 .padding(padding)
                 .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
-            // One harvest action: chats, groups and saved contacts in a single pass.
+            // One sync action: chats, groups and saved contacts in a single pass.
             // A coarse refresh re-reads SQLite without touching WhatsApp.
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
@@ -705,7 +730,7 @@ fun WhatsAppContactsPickerSheet(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 AppButton(
-                    text = if (isScanning) "Harvesting..." else "Harvest",
+                    text = if (isScanning) "Syncing..." else "Sync Chats",
                     onClick = {
                         if (!isScanning) {
                             isScanning = true
@@ -718,13 +743,20 @@ fun WhatsAppContactsPickerSheet(
                         }
                     },
                     variant = AppButtonVariant.PRIMARY,
-                    icon = Icons.AutoMirrored.Filled.Send,
+                    icon = Icons.Default.Sync,
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                     shape = AppDesignTokens.ShapePill
                 )
                 AppButton(
                     text = "Refresh",
-                    onClick = { refreshTrigger++ },
+                    onClick = {
+                        scope.launch(Dispatchers.IO) {
+                            repository.purgeCorruptedGroupsFromPool()
+                            withContext(Dispatchers.Main) {
+                                refreshTrigger++
+                            }
+                        }
+                    },
                     variant = AppButtonVariant.SECONDARY,
                     icon = Icons.Default.Sync,
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
@@ -801,7 +833,7 @@ fun WhatsAppContactsPickerSheet(
                         AppEmptyState(
                             icon = if (isGroupChannel) Icons.Default.Groups else Icons.AutoMirrored.Filled.Send,
                             title = if (isGroupChannel) "No $appLabel Groups Found" else "No $appLabel Contacts Found",
-                            description = if (waSearch.isNotBlank()) "No results matching '$waSearch'" else if (isGroupChannel) "No WhatsApp groups harvested yet. Tap 'Harvest' to read chats and groups directly from WhatsApp." else "No $appLabel chats stored yet. Tap 'Harvest' to read chats and groups from WhatsApp in one pass."
+                            description = if (waSearch.isNotBlank()) "No results matching '$waSearch'" else if (isGroupChannel) "No WhatsApp groups synced yet. Tap 'Sync Chats' to import chats and groups." else "No $appLabel chats stored yet. Tap 'Sync Chats' to import in one pass."
                         )
                     }
                 } else {

@@ -221,16 +221,31 @@
             </intent-filter>
         </receiver>
 
-        <!-- Automation & CLI Receiver (ADB endpoints for harvest, sync, task dispatch, banking shield) -->
-        <receiver android:name=".receiver.AutomationReceiver" android:exported="true">
+        <!-- Task Dispatch & CLI Receiver (ADB endpoints for sync, tasks, banking shield) -->
+        <receiver android:name=".receiver.TaskDispatchReceiver" android:exported="true">
             <intent-filter>
+                <action android:name="${applicationId}.ACTION_HARVEST_WHATSAPP" />
+                <action android:name="${applicationId}.ACTION_SYNC_CHATS" />
+                <action android:name="${applicationId}.ACTION_SYNC_POOL" />
+                <action android:name="${applicationId}.ACTION_DISPATCH_TASK" />
+                <action android:name="${applicationId}.ACTION_SEND_WHATSAPP" />
+                <action android:name="${applicationId}.ACTION_SEND_SMS" />
+                <action android:name="${applicationId}.ACTION_MAKE_CALL" />
+                <action android:name="${applicationId}.ACTION_SET_BANKING_SHIELD" />
+                <action android:name="${applicationId}.ACTION_GET_STATUS" />
+                <action android:name="${applicationId}.ACTION_DUMP_GROUPS" />
+                <action android:name="${applicationId}.ACTION_PURGE_CORRUPTED_GROUPS" />
                 <action android:name="com.jmd.superapp.ACTION_HARVEST_WHATSAPP" />
+                <action android:name="com.jmd.superapp.ACTION_SYNC_CHATS" />
                 <action android:name="com.jmd.superapp.ACTION_SYNC_POOL" />
                 <action android:name="com.jmd.superapp.ACTION_DISPATCH_TASK" />
                 <action android:name="com.jmd.superapp.ACTION_SEND_WHATSAPP" />
                 <action android:name="com.jmd.superapp.ACTION_SEND_SMS" />
+                <action android:name="com.jmd.superapp.ACTION_MAKE_CALL" />
                 <action android:name="com.jmd.superapp.ACTION_SET_BANKING_SHIELD" />
                 <action android:name="com.jmd.superapp.ACTION_GET_STATUS" />
+                <action android:name="com.jmd.superapp.ACTION_DUMP_GROUPS" />
+                <action android:name="com.jmd.superapp.ACTION_PURGE_CORRUPTED_GROUPS" />
             </intent-filter>
         </receiver>
 

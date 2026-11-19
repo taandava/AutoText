@@ -57,7 +57,7 @@ enum class SettingsSubdivision(
     val description: String
 ) {
     FORMATTING("Formatting", Icons.Filled.TextFields, "Variables"),
-    AUTOMATION("Channels", Icons.Filled.Bolt, "Channels"),
+    CHANNELS("Channels", Icons.Filled.Bolt, "Channels"),
     SECURITY("Security", Icons.Filled.Shield, "Security"),
     THEME_UI("Theme", Icons.Filled.Palette, "Theme"),
     SYSTEM("System", Icons.Filled.Build, "System")
@@ -228,7 +228,7 @@ fun SettingsView(
                             )
                         }
                     }
-                    SettingsSubdivision.AUTOMATION -> {
+                    SettingsSubdivision.CHANNELS -> {
                         item {
                             SettingsAutomationChannelsCard(
                                 context = context,
@@ -237,11 +237,13 @@ fun SettingsView(
                         }
                     }
                     SettingsSubdivision.SECURITY -> {
-                        item {
-                            SettingsBankingShieldCard(
-                                context = context,
-                                prefs = prefs
-                            )
+                        if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+                            item {
+                                SettingsBankingShieldCard(
+                                    context = context,
+                                    prefs = prefs
+                                )
+                            }
                         }
                         item {
                             SettingsScreenAssistCard(

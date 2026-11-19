@@ -218,8 +218,12 @@ fun AutoReplyScreen(
                 )
             }
 
+            val visibleRules = remember(rules) {
+                rules.filter { com.jmd.superapp.core.AppVariantHelper.isChannelSupported(it.channel) }
+            }
+
             // Rules List
-            if (rules.isEmpty()) {
+            if (visibleRules.isEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -229,7 +233,11 @@ fun AutoReplyScreen(
                     AppEmptyState(
                         icon = Icons.Filled.Quickreply,
                         title = "No Rules",
-                        description = "Create quick reply rules for missed phone calls, incoming SMS or WhatsApp chats.",
+                        description = if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+                            "Create quick reply rules for missed phone calls or incoming SMS."
+                        } else {
+                            "Create quick reply rules for WhatsApp and WhatsApp Business chats."
+                        },
                         actionText = "New Rule",
                         onActionClick = {
                             editingRule = null
@@ -243,7 +251,7 @@ fun AutoReplyScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(bottom = 60.dp)
                 ) {
-                    items(rules, key = { it.id }) { rule ->
+                    items(visibleRules, key = { it.id }) { rule ->
                         AutoReplyRuleCard(
                             rule = rule,
                             onToggle = { enable: Boolean ->

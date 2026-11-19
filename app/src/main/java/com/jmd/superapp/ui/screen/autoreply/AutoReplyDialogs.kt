@@ -90,6 +90,48 @@ fun AutoReplyTypeSelectionSheet(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+        val primaryColor = MaterialTheme.colorScheme.primary
+        val responderTypes = remember(primaryColor) {
+            listOf(
+                AutoReplyTypeItem(
+                    channel = ChannelType.CALL,
+                    title = "Call Responder",
+                    eventDescription = "2 Triggers: Missed Call or Call Ended",
+                    replyMethodDescription = "Replies strictly via SMS through device SIM",
+                    icon = Icons.Filled.Phone,
+                    color = primaryColor,
+                    defaultEvent = "MISSED_CALL"
+                ),
+                    AutoReplyTypeItem(
+                        channel = ChannelType.SMS,
+                        title = "SMS Responder",
+                        eventDescription = "Trigger: Incoming SMS Keyword Match (* for all)",
+                        replyMethodDescription = "Replies strictly via SMS through device SIM",
+                        icon = Icons.AutoMirrored.Filled.Message,
+                        color = Color(0xFF2563EB),
+                        defaultEvent = "MESSAGE"
+                    ),
+                    AutoReplyTypeItem(
+                        channel = ChannelType.WHATSAPP,
+                        title = "WhatsApp Responder",
+                        eventDescription = "3 Triggers: Message, Missed Call, or Call Ended",
+                        replyMethodDescription = "Replies strictly in WhatsApp chat via quick-reply",
+                        icon = Icons.AutoMirrored.Filled.Chat,
+                        color = Color(0xFF16A34A),
+                        defaultEvent = "MESSAGE"
+                    ),
+                    AutoReplyTypeItem(
+                        channel = ChannelType.WHATSAPP_BUSINESS,
+                        title = "WA Responder",
+                        eventDescription = "3 Triggers: Message, Missed Call, or Call Ended",
+                        replyMethodDescription = "Replies strictly in WhatsApp Business chat via quick-reply",
+                        icon = Icons.Filled.BusinessCenter,
+                        color = Color(0xFF0D9488),
+                        defaultEvent = "MESSAGE"
+                    )
+                ).filter { com.jmd.superapp.core.AppVariantHelper.isChannelSupported(it.channel) }
+            }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -101,51 +143,12 @@ fun AutoReplyTypeSelectionSheet(
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                AppBadge(text = "4 TYPES", color = MaterialTheme.colorScheme.primary, showDot = false)
+                AppBadge(text = "${responderTypes.size} TYPES", color = MaterialTheme.colorScheme.primary, showDot = false)
             }
             Text(
                 "Choose the communication channel to schedule. Each option opens its dedicated, tailored configuration form:",
                 fontSize = 11.5.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            val responderTypes = listOf(
-                AutoReplyTypeItem(
-                    channel = ChannelType.CALL,
-                    title = "Call Responder",
-                    eventDescription = "2 Triggers: Missed Call or Call Ended",
-                    replyMethodDescription = "Replies strictly via SMS through device SIM",
-                    icon = Icons.Filled.Phone,
-                    color = MaterialTheme.colorScheme.primary,
-                    defaultEvent = "MISSED_CALL"
-                ),
-                AutoReplyTypeItem(
-                    channel = ChannelType.SMS,
-                    title = "SMS Responder",
-                    eventDescription = "Trigger: Incoming SMS Keyword Match (* for all)",
-                    replyMethodDescription = "Replies strictly via SMS through device SIM",
-                    icon = Icons.AutoMirrored.Filled.Message,
-                    color = Color(0xFF2563EB),
-                    defaultEvent = "MESSAGE"
-                ),
-                AutoReplyTypeItem(
-                    channel = ChannelType.WHATSAPP,
-                    title = "WhatsApp Responder",
-                    eventDescription = "3 Triggers: Message, Missed Call, or Call Ended",
-                    replyMethodDescription = "Replies strictly in WhatsApp chat via quick-reply",
-                    icon = Icons.AutoMirrored.Filled.Chat,
-                    color = Color(0xFF16A34A),
-                    defaultEvent = "MESSAGE"
-                ),
-                AutoReplyTypeItem(
-                    channel = ChannelType.WHATSAPP_BUSINESS,
-                    title = "WA Responder",
-                    eventDescription = "3 Triggers: Message, Missed Call, or Call Ended",
-                    replyMethodDescription = "Replies strictly in WhatsApp Business chat via quick-reply",
-                    icon = Icons.Filled.BusinessCenter,
-                    color = Color(0xFF0D9488),
-                    defaultEvent = "MESSAGE"
-                )
             )
 
             responderTypes.forEach { item ->
@@ -209,7 +212,11 @@ fun AutoReplyRuleDialog(
     onSave: (AutoReplyRule) -> Unit
 ) {
     var ruleName by remember { mutableStateOf(initialRule?.name ?: "") }
-    var selectedChannel by remember { mutableStateOf(initialRule?.channel ?: ChannelType.CALL) }
+    var selectedChannel by remember {
+        mutableStateOf(
+            initialRule?.channel ?: if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) ChannelType.CALL else ChannelType.WHATSAPP
+        )
+    }
     var callEventType by remember {
         mutableStateOf(
             initialRule?.callEventType ?: if (initialRule?.channel == ChannelType.CALL) "MISSED_CALL" else "MESSAGE"
@@ -307,7 +314,7 @@ fun AutoReplyRuleDialog(
                     ChannelType.SMS to ("SMS" to Icons.AutoMirrored.Filled.Message),
                     ChannelType.WHATSAPP to ("WhatsApp" to Icons.AutoMirrored.Filled.Chat),
                     ChannelType.WHATSAPP_BUSINESS to ("WA Business" to Icons.Filled.BusinessCenter)
-                )
+                ).filter { com.jmd.superapp.core.AppVariantHelper.isChannelSupported(it.first) }
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     targetPlatforms.chunked(2).forEach { rowChannels ->

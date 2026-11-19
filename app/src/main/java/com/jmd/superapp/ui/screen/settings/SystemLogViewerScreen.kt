@@ -399,9 +399,9 @@ fun SystemLogViewerView(
                  */
                 data class LogTabItem(val index: Int, val title: String, val icon: androidx.compose.ui.graphics.vector.ImageVector, val accent: Color)
                 val tabs = listOf(
-                    LogTabItem(1, "Actions & Exec", Icons.Filled.Bolt, MaterialTheme.colorScheme.primary),
+                    LogTabItem(1, "Actions Log", Icons.Filled.Bolt, MaterialTheme.colorScheme.primary),
                     LogTabItem(0, "Batch Ledger", Icons.AutoMirrored.Filled.ListAlt, MaterialTheme.colorScheme.tertiary),
-                    LogTabItem(2, "Errors & Traces", Icons.Filled.ErrorOutline, MaterialTheme.colorScheme.error)
+                    LogTabItem(2, "Error Log", Icons.Filled.ErrorOutline, MaterialTheme.colorScheme.error)
                 )
                 tabs.forEach { tab ->
                     val isSelected = selectedTab == tab.index
@@ -1006,13 +1006,13 @@ private fun ErrorLogCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (expanded) "▼ Collapse stack trace" else "▶ Expand stack trace",
+                    text = if (expanded) "▼ Collapse Trace" else "▶ Expand Trace",
                     fontSize = 10.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Tap to toggle",
+                    text = "Toggle Trace",
                     fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -219,7 +219,10 @@ class SuperApplication : Application(), Configuration.Provider {
             try {
                 val prefs = PreferenceManager(this@SuperApplication)
                 val repo = AppRepository(this@SuperApplication)
+                prefs.isDynamicA11yOnDemandEnabled = false
+                prefs.isA11yUserPaused = false
                 com.jmd.superapp.core.ProtectedApplicationManager.setUserProtectedPackages(prefs.protectedPackages)
+                AccessibilityHealthManager.ensureAllServicesActive(this@SuperApplication)
                 // Reconcile and recover any tasks left stranded in RUNNING status from a previous process termination
                 repo.recoverInterruptedRunningTasks()
                 // Turn dispatch claims abandoned by a process kill into retryable failures

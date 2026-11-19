@@ -80,9 +80,11 @@ class WhatsAppChatScanner(
 
     private enum class DeepScanPhase {
         ENSURE_CHATS_TAB,
+        FILTER_GROUPS,
         HARVEST_GROUPS,
-        SWITCH_TO_ALL,
-        HARVEST_ROWS,
+        SCROLL_GROUPS,
+        FILTER_ALL,
+        HARVEST_ALL,
         SCROLL_DOWN,
         COMPLETE
     }
@@ -95,13 +97,13 @@ class WhatsAppChatScanner(
     private var bottomTabCheckAttempts = 0
     private var stepAttempts = 0
     private var scrollCycles = 0
-    // Hard safety cap; the scan normally ends on the verified end-of-list condition.
-    private val maxScrollCycles = 250
+    private val maxScrollCycles = 60
     private var lastDiscoveredCount = 0
     private var consecutiveStagnantCycles = 0
-    private val maxStagnantCycles = 3
+    private val maxStagnantCycles = 2
     private var reachedListEnd = false
     private var endConfirmations = 0
+    private var previousVisibleTitles = setOf<String>()
     private var initialLoadRetries = 0
     private var unresolvedRowCount = 0
     private var finishReason = ""
@@ -128,10 +130,11 @@ class WhatsAppChatScanner(
         consecutiveStagnantCycles = 0
         reachedListEnd = false
         endConfirmations = 0
+        previousVisibleTitles = emptySet()
         initialLoadRetries = 0
         unresolvedRowCount = 0
         finishReason = ""
-        Log.d(loggerTag, "Reset WhatsAppChatScanner state for single-pass scan (target=$scanTarget, maxCycles=$maxScrollCycles)")
+        Log.d(loggerTag, "Reset WhatsAppChatScanner state for unified single-pass scan (target=$scanTarget, maxCycles=$maxScrollCycles)")
     }
 
     /**
@@ -171,54 +174,85 @@ class WhatsAppChatScanner(
             }
 
             val repo = AppRepository(service)
+            val isBiz = pkg.contains("w4b", ignoreCase = true)
+            val baseChatSrc = if (isBiz) "WA_BUSINESS" else "WA_CHAT"
+            val baseGroupSrc = if (isBiz) "WA_BUSINESS_GROUP" else "WA_GROUP"
 
             when (currentPhase) {
                 DeepScanPhase.ENSURE_CHATS_TAB -> {
                     bottomTabCheckAttempts++
+
+                    val backBtn = findNavigateUpOrBackButton(root)
+                    if (backBtn != null) {
+                        Log.i(loggerTag, "ENSURE_CHATS_TAB: Currently in sub-activity/details, pressing back to return to chats list")
+                        AccessibilityNodeUtils.clickElement(backBtn, service)
+                        onRetry(350L)
+                        return
+                    }
 
                     val chatsTab = findChatsBottomTab(root)
                     if (chatsTab != null && !isChipSelected(chatsTab)) {
                         val clicked = AccessibilityNodeUtils.clickElement(chatsTab, service)
                         Log.i(loggerTag, "Clicked Chats bottom tab: result=$clicked")
                         if (clicked) {
-                            onRetry(200L)
+                            onRetry(250L)
                             return
                         }
                     }
 
-                    // Check if Groups filter chip exists and scanTarget is not DIRECT_CHATS_ONLY
-                    val groupsChip = findGroupsFilterChip(root)
-                    if (groupsChip != null && scanTarget != ScanTarget.DIRECT_CHATS_ONLY) {
-                        Log.i(loggerTag, "ENSURE_CHATS_TAB: Found Groups filter chip. Initiating Stage 1: HARVEST_GROUPS")
-                        val clicked = AccessibilityNodeUtils.clickElement(groupsChip, service)
-                        Log.i(loggerTag, "Clicked Groups filter chip: result=$clicked")
-                        currentPhase = DeepScanPhase.HARVEST_GROUPS
-                        stepAttempts = 0
-                        consecutiveStagnantCycles = 0
-                        onRetry(200L)
-                        return
+                    // Route to Groups first if scanning ALL or GROUPS_ONLY, so all groups are cataloged
+                    currentPhase = if (scanTarget == ScanTarget.DIRECT_CHATS_ONLY) {
+                        DeepScanPhase.FILTER_ALL
+                    } else {
+                        DeepScanPhase.FILTER_GROUPS
                     }
-
-                    // Otherwise ensure All filter chip or proceed to HARVEST_ROWS
-                    val allChip = findAllFilterChip(root)
-                    if (allChip != null && !isChipSelected(allChip)) {
-                        AccessibilityNodeUtils.clickElement(allChip, service)
-                    }
-                    currentPhase = DeepScanPhase.HARVEST_ROWS
                     stepAttempts = 0
                     consecutiveStagnantCycles = 0
-                    onRetry(140L)
+                    onRetry(150L)
+                }
+
+                DeepScanPhase.FILTER_GROUPS -> {
+                    stepAttempts++
+                    val groupsChip = findGroupsFilterChip(root)
+                    if (groupsChip != null) {
+                        if (!isChipSelected(groupsChip)) {
+                            val clicked = AccessibilityNodeUtils.clickElement(groupsChip, service)
+                            Log.i(loggerTag, "FILTER_GROUPS: Clicked Groups filter chip: result=$clicked")
+                            onRetry(350L)
+                            return
+                        } else {
+                            // Groups chip is selected, proceed to harvest groups
+                            Log.i(loggerTag, "FILTER_GROUPS: Groups chip selected, proceeding to HARVEST_GROUPS")
+                            currentPhase = DeepScanPhase.HARVEST_GROUPS
+                            stepAttempts = 0
+                            onRetry(250L)
+                            return
+                        }
+                    } else if (stepAttempts < 5) {
+                        Log.i(loggerTag, "FILTER_GROUPS: waiting for groups chip ($stepAttempts/5)")
+                        onRetry(250L)
+                        return
+                    } else {
+                        // No groups filter chip available after 5 attempts (older WhatsApp version), proceed directly to ALL
+                        Log.i(loggerTag, "FILTER_GROUPS: No groups chip found after 5 attempts, falling back to FILTER_ALL")
+                        currentPhase = DeepScanPhase.FILTER_ALL
+                        stepAttempts = 0
+                        onRetry(150L)
+                        return
+                    }
                 }
 
                 DeepScanPhase.HARVEST_GROUPS -> {
                     val rowContainers = findAllRowContainers(root)
-                    val isBiz = pkg.contains("w4b", ignoreCase = true)
-                    val baseGroupSrc = if (isBiz) "WA_BUSINESS_GROUP" else "WA_GROUP"
-
                     for (row in rowContainers) {
                         val title = extractTitleFromRow(row) ?: continue
                         val cleanTitle = title.trim().removePrefix("~").trim()
                         if (cleanTitle.isBlank() || !repo.isValidPickedChatName(cleanTitle) || isIgnoredTitle(cleanTitle)) continue
+
+                        val digits = cleanTitle.filter { it.isDigit() }
+                        val letters = cleanTitle.filter { it.isLetter() }
+                        if (digits.length >= 7 && letters.isEmpty()) continue
+                        if (hasIndividualAvatarDesc(row)) continue
 
                         val norm = "group:${cleanTitle.lowercase().trim()}"
                         val phone = "group:$cleanTitle"
@@ -231,11 +265,27 @@ class WhatsAppChatScanner(
                                 source = baseGroupSrc,
                                 photoUri = "",
                             )
-                            Log.i(loggerTag, "Harvested verified group: '$cleanTitle' -> $phone")
+                            Log.i(loggerTag, "Harvested verified group from Groups tab: '$cleanTitle' -> $phone")
                         }
                     }
 
-                    val totalDiscovered = discoveredChats.size
+                    val currentVisibleTitles = rowContainers.mapNotNull { extractTitleFromRow(it)?.trim() }
+                        .filter { it.isNotBlank() && !isIgnoredTitle(it) }
+                        .toSet()
+
+                    if (currentVisibleTitles.isNotEmpty() && previousVisibleTitles.isNotEmpty() && currentVisibleTitles == previousVisibleTitles) {
+                        endConfirmations++
+                        if (endConfirmations >= 2) {
+                            reachedListEnd = true
+                        }
+                    } else {
+                        endConfirmations = 0
+                    }
+                    if (currentVisibleTitles.isNotEmpty()) {
+                        previousVisibleTitles = currentVisibleTitles
+                    }
+
+                    val totalDiscovered = discoveredGroups.size
                     val discoveredNew = totalDiscovered > lastDiscoveredCount
                     if (discoveredNew) {
                         consecutiveStagnantCycles = 0
@@ -244,69 +294,102 @@ class WhatsAppChatScanner(
                         consecutiveStagnantCycles++
                     }
 
+                    val groupsFinished = reachedListEnd || consecutiveStagnantCycles >= 2 || scrollCycles >= 25
+                    if (groupsFinished) {
+                        Log.i(loggerTag, "HARVEST_GROUPS complete: ${discoveredGroups.size} verified groups cataloged")
+                        if (scanTarget == ScanTarget.GROUPS_ONLY) {
+                            finishReason = "GROUPS_ONLY_COMPLETE"
+                            finishAndSave(onFinish)
+                            return
+                        }
+                        // Switch to ALL tab for direct chats and unified completion
+                        currentPhase = DeepScanPhase.FILTER_ALL
+                        stepAttempts = 0
+                        scrollCycles = 0
+                        consecutiveStagnantCycles = 0
+                        reachedListEnd = false
+                        endConfirmations = 0
+                        previousVisibleTitles = emptySet()
+                        onRetry(250L)
+                        return
+                    } else {
+                        currentPhase = DeepScanPhase.SCROLL_GROUPS
+                        stepAttempts = 0
+                        onRetry(100L)
+                        return
+                    }
+                }
+
+                DeepScanPhase.SCROLL_GROUPS -> {
+                    scrollCycles++
                     val scrollableNode = findScrollableList(root)
                     var scrolled = false
                     if (scrollableNode != null) {
                         scrolled = scrollableNode.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     }
+
                     if (!scrolled) {
-                        scrolled = AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.82f, endYRatio = 0.20f)
+                        scrolled = AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.80f, endYRatio = 0.22f)
                     }
 
-                    val canScrollFurther = scrollableNode?.actionList?.any {
-                        it.id == AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
-                    } ?: scrolled
+                    currentPhase = DeepScanPhase.HARVEST_GROUPS
+                    stepAttempts = 0
+                    onRetry(250L)
+                    return
+                }
 
-                    val endOfGroups = (!canScrollFurther && !discoveredNew) || consecutiveStagnantCycles >= 2 || scrollCycles >= 30
-
-                    if (!endOfGroups && scrolled) {
-                        scrollCycles++
-                        onRetry(120L)
-                    } else {
-                        Log.i(loggerTag, "Groups stage finished: discovered ${discoveredGroups.size} verified groups")
-                        if (scanTarget == ScanTarget.GROUPS_ONLY) {
-                            finishAndSave(onFinish)
+                DeepScanPhase.FILTER_ALL -> {
+                    stepAttempts++
+                    val allChip = findAllFilterChip(root)
+                    if (allChip != null) {
+                        if (!isChipSelected(allChip)) {
+                            val clicked = AccessibilityNodeUtils.clickElement(allChip, service)
+                            Log.i(loggerTag, "FILTER_ALL: Clicked All filter chip: result=$clicked")
+                            onRetry(300L)
+                            return
                         } else {
-                            currentPhase = DeepScanPhase.SWITCH_TO_ALL
+                            // Reset counters for the All-Chats pass
+                            Log.i(loggerTag, "FILTER_ALL: All filter is active, starting HARVEST_ALL")
+                            scrollCycles = 0
+                            consecutiveStagnantCycles = 0
+                            lastDiscoveredCount = discoveredChats.size
+                            reachedListEnd = false
+                            endConfirmations = 0
+                            previousVisibleTitles = emptySet()
+                            currentPhase = DeepScanPhase.HARVEST_ALL
+                            stepAttempts = 0
+                            onRetry(200L)
+                            return
+                        }
+                    } else {
+                        if (stepAttempts < 4) {
+                            Log.i(loggerTag, "FILTER_ALL: waiting for All filter chip ($stepAttempts/4), attempting to scroll up")
+                            val chatsTab = findChatsBottomTab(root)
+                            if (chatsTab != null) {
+                                AccessibilityNodeUtils.clickElement(chatsTab, service)
+                            } else {
+                                AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.22f, endYRatio = 0.80f)
+                            }
+                            onRetry(250L)
+                            return
+                        } else {
+                            // If All chip not found, proceed directly to HARVEST_ALL
+                            Log.i(loggerTag, "FILTER_ALL: All chip not found after 4 attempts, proceeding to HARVEST_ALL directly")
+                            currentPhase = DeepScanPhase.HARVEST_ALL
+                            stepAttempts = 0
                             scrollCycles = 0
                             consecutiveStagnantCycles = 0
                             reachedListEnd = false
                             endConfirmations = 0
-                            onRetry(150L)
+                            previousVisibleTitles = emptySet()
+                            onRetry(200L)
+                            return
                         }
                     }
                 }
 
-                DeepScanPhase.SWITCH_TO_ALL -> {
-                    val allChip = findAllFilterChip(root)
-                    var switched = false
-                    if (allChip != null) {
-                        switched = AccessibilityNodeUtils.clickElement(allChip, service)
-                        Log.i(loggerTag, "SWITCH_TO_ALL: Clicked All filter chip: result=$switched")
-                    }
-                    if (!switched) {
-                        val chatsTab = findChatsBottomTab(root)
-                        if (chatsTab != null) {
-                            switched = AccessibilityNodeUtils.clickElement(chatsTab, service)
-                            Log.i(loggerTag, "SWITCH_TO_ALL: Clicked Chats bottom tab to reset scroll: result=$switched")
-                        }
-                    }
-
-                    currentPhase = DeepScanPhase.HARVEST_ROWS
-                    scrollCycles = 0
-                    consecutiveStagnantCycles = 0
-                    lastDiscoveredCount = discoveredChats.size
-                    reachedListEnd = false
-                    endConfirmations = 0
-                    onRetry(200L)
-                }
-
-                DeepScanPhase.HARVEST_ROWS -> {
+                DeepScanPhase.HARVEST_ALL -> {
                     val rowContainers = findAllRowContainers(root)
-                    val isBiz = pkg.contains("w4b", ignoreCase = true)
-                    val baseChatSrc = if (isBiz) "WA_BUSINESS" else "WA_CHAT"
-                    val baseGroupSrc = if (isBiz) "WA_BUSINESS_GROUP" else "WA_GROUP"
-
                     for (row in rowContainers) {
                         val title = extractTitleFromRow(row) ?: continue
                         val cleanTitle = title.trim().removePrefix("~").trim()
@@ -337,8 +420,6 @@ class WhatsAppChatScanner(
                                 )
                                 Log.i(loggerTag, "Harvested group: '$cleanTitle' -> $phone")
                             }
-                        } else if (scanTarget == ScanTarget.GROUPS_ONLY) {
-                            continue
                         } else if (isPurePhone) {
                             val norm = PhoneNumberNormalizer.normalize(cleanTitle)
                             if (norm.isNotBlank()) {
@@ -382,6 +463,22 @@ class WhatsAppChatScanner(
                         }
                     }
 
+                    val currentVisibleTitles = rowContainers.mapNotNull { extractTitleFromRow(it)?.trim() }
+                        .filter { it.isNotBlank() && !isIgnoredTitle(it) }
+                        .toSet()
+
+                    if (currentVisibleTitles.isNotEmpty() && previousVisibleTitles.isNotEmpty() && currentVisibleTitles == previousVisibleTitles) {
+                        endConfirmations++
+                        if (endConfirmations >= 2) {
+                            reachedListEnd = true
+                        }
+                    } else {
+                        endConfirmations = 0
+                    }
+                    if (currentVisibleTitles.isNotEmpty()) {
+                        previousVisibleTitles = currentVisibleTitles
+                    }
+
                     val totalDiscovered = discoveredChats.size
                     val discoveredNew = totalDiscovered > lastDiscoveredCount
                     if (discoveredNew) {
@@ -392,17 +489,17 @@ class WhatsAppChatScanner(
                     }
 
                     finishReason = when {
-                        reachedListEnd && !discoveredNew -> "END_OF_LIST: no new unique rows and last row visible"
-                        scrollCycles >= maxScrollCycles -> "HARD_CAP: reached $maxScrollCycles scroll passes"
-                        consecutiveStagnantCycles >= maxStagnantCycles -> "STAGNANT: $maxStagnantCycles passes without new rows"
+                        reachedListEnd && !discoveredNew -> "END_OF_LIST"
+                        scrollCycles >= maxScrollCycles -> "HARD_CAP"
+                        consecutiveStagnantCycles >= maxStagnantCycles -> "STAGNANT"
                         else -> ""
                     }
                     if (finishReason.isEmpty()) {
                         currentPhase = DeepScanPhase.SCROLL_DOWN
                         stepAttempts = 0
-                        onRetry(140L)
+                        onRetry(100L)
                     } else {
-                        Log.i(loggerTag, "Harvest complete ($finishReason): items=${discoveredChats.size}, unresolved=$unresolvedRowCount, cycles=$scrollCycles")
+                        Log.i(loggerTag, "Unified scan complete ($finishReason): items=${discoveredChats.size}, unresolved=$unresolvedRowCount, cycles=$scrollCycles")
                         finishAndSave(onFinish)
                     }
                 }
@@ -416,41 +513,12 @@ class WhatsAppChatScanner(
                     }
 
                     if (!scrolled) {
-                        scrolled = AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.82f, endYRatio = 0.20f)
+                        scrolled = AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.80f, endYRatio = 0.22f)
                     }
 
-                    val canScrollFurther = scrollableNode?.actionList?.any {
-                        it.id == AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
-                    } ?: scrolled
-                    val atEnd = !canScrollFurther
-                    if (atEnd) {
-                        endConfirmations++
-                        if (discoveredChats.size < 5 && initialLoadRetries < 3) {
-                            initialLoadRetries++
-                            currentPhase = DeepScanPhase.HARVEST_ROWS
-                            stepAttempts = 0
-                            onRetry(350L)
-                            return
-                        }
-                        if (endConfirmations >= 2) {
-                            reachedListEnd = true
-                        }
-                    } else {
-                        endConfirmations = 0
-                    }
-
-                    if (!reachedListEnd && scrollCycles < maxScrollCycles && consecutiveStagnantCycles < maxStagnantCycles) {
-                        currentPhase = DeepScanPhase.HARVEST_ROWS
-                        stepAttempts = 0
-                        onRetry(140L)
-                    } else {
-                        if (finishReason.isEmpty()) {
-                            finishReason = if (reachedListEnd) "END_OF_LIST: no new unique rows and last row visible"
-                            else "HARD_CAP: reached $maxScrollCycles scroll passes"
-                        }
-                        Log.i(loggerTag, "Finishing scan ($finishReason). Discovered: ${discoveredChats.size}")
-                        finishAndSave(onFinish)
-                    }
+                    currentPhase = DeepScanPhase.HARVEST_ALL
+                    stepAttempts = 0
+                    onRetry(250L)
                 }
 
                 DeepScanPhase.COMPLETE -> {
@@ -525,7 +593,43 @@ class WhatsAppChatScanner(
         val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
         if (desc.contains("unselected")) return false
         if (desc.contains("selected")) return true
+        for (i in 0 until node.childCount) {
+            val child = node.getChild(i) ?: continue
+            if (child.isSelected || AccessibilityCompat.isNodeChecked(child)) return true
+            val cd = child.contentDescription?.toString()?.lowercase().orEmpty()
+            if (cd.contains("unselected")) return false
+            if (cd.contains("selected")) return true
+        }
         return false
+    }
+
+    private fun findNavigateUpOrBackButton(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        val q = ArrayDeque<AccessibilityNodeInfo>()
+        q.add(root)
+        val bounds = Rect()
+        while (q.isNotEmpty()) {
+            val node = q.removeFirst()
+            val id = node.viewIdResourceName?.lowercase().orEmpty()
+            val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
+            node.getBoundsInScreen(bounds)
+            val isTopLeft = bounds.top <= 250 && bounds.left <= 200
+            val isBack = desc == "navigate up" || desc == "back" || desc.contains("navigate up") ||
+                desc == "पीछे जाएं" || id.endsWith("back") || id.endsWith("action_bar_back")
+            if (isTopLeft && isBack) {
+                var target: AccessibilityNodeInfo? = node
+                var depth = 0
+                while (target != null && depth < 3) {
+                    if (target.isClickable) return target
+                    target = target.parent
+                    depth++
+                }
+                return node
+            }
+            for (i in 0 until node.childCount) {
+                node.getChild(i)?.let { q.add(it) }
+            }
+        }
+        return null
     }
 
     /**
@@ -614,7 +718,9 @@ class WhatsAppChatScanner(
     private fun findScrollableList(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val q = ArrayDeque<AccessibilityNodeInfo>()
         q.add(root)
-        var fallbackScrollable: AccessibilityNodeInfo? = null
+        var bestScrollable: AccessibilityNodeInfo? = null
+        var maxArea = 0
+        val bounds = Rect()
 
         while (q.isNotEmpty()) {
             val node = q.removeFirst()
@@ -623,18 +729,25 @@ class WhatsAppChatScanner(
 
             val isNonChatList = id.contains("updates") || id.contains("status") ||
                 id.contains("call") || id.contains("channel") || id.contains("newsletter") ||
-                id.contains("community")
+                id.contains("community") || id.contains("filter") || id.contains("tab")
 
             val isHorizontalPager = id.contains("pager") || cls.contains("ViewPager")
 
             if (!isHorizontalPager && !isNonChatList) {
+                node.getBoundsInScreen(bounds)
                 val isListClass = cls.contains("RecyclerView") || cls.contains("ListView") || node.isScrollable
-                if ((id == "android:id/list" || id.endsWith("/list")) && isListClass) {
-                    Log.i(loggerTag, "findScrollableList: matched exact conversation list '$id' ($cls)")
+                val isLargeList = bounds.height() >= 450 // Conversation list takes majority of screen height
+
+                if ((id == "android:id/list" || id.endsWith(":id/list") || id.endsWith("/list")) && isListClass && isLargeList) {
+                    Log.i(loggerTag, "findScrollableList: matched exact conversation list '$id' ($cls, height=${bounds.height()})")
                     return node
                 }
-                if (isListClass && !id.contains("host") && !id.contains("parent") && fallbackScrollable == null) {
-                    fallbackScrollable = node
+                if (isListClass && isLargeList && !id.contains("host") && !id.contains("parent")) {
+                    val area = bounds.width() * bounds.height()
+                    if (area > maxArea) {
+                        maxArea = area
+                        bestScrollable = node
+                    }
                 }
             }
 
@@ -642,8 +755,8 @@ class WhatsAppChatScanner(
                 node.getChild(i)?.let { q.add(it) }
             }
         }
-        Log.i(loggerTag, "findScrollableList: fallback to '${fallbackScrollable?.viewIdResourceName}' (${fallbackScrollable?.className})")
-        return fallbackScrollable
+        Log.i(loggerTag, "findScrollableList: fallback to '${bestScrollable?.viewIdResourceName}' (${bestScrollable?.className})")
+        return bestScrollable
     }
     /**
      * What it is:
@@ -713,6 +826,10 @@ class WhatsAppChatScanner(
             val title = extractTitleFromRow(node)
             if (title == null) {
                 Log.i(loggerTag, "isValidRow: rejected because extractTitleFromRow was null for id=${node.viewIdResourceName}")
+                return false
+            }
+            if (isIgnoredTitle(title)) {
+                Log.i(loggerTag, "isValidRow: rejected by isIgnoredTitle: '$title'")
                 return false
             }
             return true
@@ -941,6 +1058,16 @@ class WhatsAppChatScanner(
 
     private fun isIgnoredTitle(title: String): Boolean {
         val lower = title.trim().lowercase()
+        if (lower.length < 2) return true
+        if (lower.contains("automatically update") || lower.contains("all group chats") ||
+            lower.contains("this list") || lower.contains("group chats") ||
+            lower.contains("manage group") || lower.contains("manage list") ||
+            lower.contains("no chats") || lower.contains("chats will appear") ||
+            lower.contains("start a chat") || lower.contains("tap and hold") ||
+            lower.contains("swipe down") || lower.contains("add new list")
+        ) {
+            return true
+        }
         val blocked = listOf(
             "photo", "video", "audio", "document", "sticker", "gif", "contact", "contacts", "location",
             "voice call", "video call", "missed call", "no answer",
@@ -951,7 +1078,7 @@ class WhatsAppChatScanner(
             "ask meta ai or search", "search group chats", "search chats", "search…", "search",
             "manage groups", "manage group", "recent searches", "clear all", "new group",
             "new community", "archived", "starred messages", "disappearing messages",
-            "chats", "updates", "communities", "calls", "tools", "filter"
+            "chats", "updates", "communities", "calls", "tools", "filter", "group chats"
         )
         return blocked.any { lower == it || lower.startsWith("$it ") || lower.startsWith("$it…") || lower.startsWith("$it...") }
     }
@@ -978,27 +1105,29 @@ class WhatsAppChatScanner(
             val id = node.viewIdResourceName?.lowercase().orEmpty()
             val cls = node.className?.toString().orEmpty()
 
+            // Strictly reject footer/manage buttons
+            if (id.contains("footer") || id.contains("manage") ||
+                desc.contains("manage", ignoreCase = true) || text.contains("manage", ignoreCase = true)
+            ) {
+                continue
+            }
+
             node.getBoundsInScreen(bounds)
+            // Top area filter chips reside strictly in the horizontal filter bar below search bar (height 40..150)
+            val isFilterBarArea = bounds.top in 150..450 && bounds.height() in 40..150
 
-            // Top area filter chips reside in the upper section of the conversation screen (bounds.top in 100..950)
-            val isTopArea = bounds.top in 100..950 && bounds.bottom in 200..1200
-
-            // Strictly exclude conversation rows, contact photos, and message bubbles
             val isChatOrAvatar = id.contains("contact_photo") || id.contains("avatar") ||
                 id.contains("contact_row") || id.contains("conversations_row") ||
                 desc.contains("picture", ignoreCase = true) || desc.contains("photo", ignoreCase = true) ||
                 desc.contains("status", ignoreCase = true)
 
-            if (isTopArea && !isChatOrAvatar) {
+            if (isFilterBarArea && !isChatOrAvatar) {
                 val isGroupChip = id.contains("conversations_filter_debug_view_id_groups") ||
-                    id.contains("id_groups") ||
-                    id.contains("filter_groups") ||
-                    id.contains("groups_filter") ||
-                    id.contains("groups_chip") ||
+                    id.endsWith("_id_groups") ||
                     desc.startsWith("Groups filter", ignoreCase = true) ||
                     desc.contains("Groups filter", ignoreCase = true) ||
-                    ((text.equals("Groups", ignoreCase = true) || text.equals("ग्रुप", ignoreCase = true) ||
-                      desc.equals("Groups", ignoreCase = true) || desc.equals("ग्रुप", ignoreCase = true)) &&
+                    ((text.startsWith("Groups", ignoreCase = true) || text.startsWith("ग्रुप", ignoreCase = true) ||
+                      desc.startsWith("Groups", ignoreCase = true) || desc.startsWith("ग्रुप", ignoreCase = true)) &&
                      (node.isClickable || node.isCheckable || cls.contains("RadioButton") || cls.contains("Button") || id.contains("filter")))
 
                 if (isGroupChip) {
@@ -1019,17 +1148,17 @@ class WhatsAppChatScanner(
         }
         return null
     }
+
     /**
      * What it is:
-     * Execution routine for [isGroupRow].
+     * Execution routine for [findAllFilterChip].
      *
      * What it does:
-     * Coordinates isGroupRow operations conforming to application constraints.
+     * Coordinates findAllFilterChip operations conforming to application constraints.
      *
      * Linked with:
      * - Component: [WhatsAppChatScanner]
      */
-
     private fun findAllFilterChip(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
         val q = ArrayDeque<AccessibilityNodeInfo>()
         q.add(root)
@@ -1042,17 +1171,19 @@ class WhatsAppChatScanner(
             val id = node.viewIdResourceName?.lowercase().orEmpty()
             val cls = node.className?.toString().orEmpty()
 
+            if (id.contains("footer") || id.contains("manage")) {
+                continue
+            }
+
             node.getBoundsInScreen(bounds)
-            val isTopArea = bounds.top in 100..950 && bounds.bottom in 200..1200
+            val isFilterBarArea = bounds.top in 150..450 && bounds.height() in 40..150
             val isChatOrAvatar = id.contains("contact_photo") || id.contains("avatar") ||
                 id.contains("contact_row") || id.contains("conversations_row") ||
                 desc.contains("picture", ignoreCase = true) || desc.contains("photo", ignoreCase = true)
 
-            if (isTopArea && !isChatOrAvatar) {
+            if (isFilterBarArea && !isChatOrAvatar) {
                 val isAllChip = id.contains("conversations_filter_debug_view_id_all") ||
-                    id.contains("id_all") ||
-                    id.contains("filter_all") ||
-                    id.contains("all_filter") ||
+                    id.endsWith("_id_all") ||
                     desc.startsWith("All filter", ignoreCase = true) ||
                     desc.contains("All filter", ignoreCase = true) ||
                     ((text.equals("All", ignoreCase = true) || text.equals("सभी", ignoreCase = true) ||
@@ -1095,19 +1226,43 @@ class WhatsAppChatScanner(
         return false
     }
 
+    private fun hasIndividualAvatarDesc(row: AccessibilityNodeInfo): Boolean {
+        val q = ArrayDeque<AccessibilityNodeInfo>()
+        q.add(row)
+        while (q.isNotEmpty()) {
+            val node = q.removeFirst()
+            val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
+            if (desc.startsWith("profile photo of") ||
+                desc.startsWith("profile picture of") ||
+                desc.startsWith("profile photo,") ||
+                desc.startsWith("double tap to view profile photo") ||
+                desc.startsWith("double tap to view photo") ||
+                desc.contains("'s status")
+            ) {
+                return true
+            }
+            for (i in 0 until node.childCount) {
+                node.getChild(i)?.let { q.add(it) }
+            }
+        }
+        return false
+    }
+
     private fun hasGroupAvatarDesc(row: AccessibilityNodeInfo): Boolean {
         val q = ArrayDeque<AccessibilityNodeInfo>()
         q.add(row)
         while (q.isNotEmpty()) {
             val node = q.removeFirst()
-            val id = node.viewIdResourceName?.lowercase().orEmpty()
             val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
-            if (desc.contains("group icon") || desc.contains("group photo") || desc.contains("group picture") ||
-                desc.startsWith("group ") || desc.contains(" group") || desc.contains("ग्रुप")
+            if (desc.startsWith("group icon of") ||
+                desc.startsWith("group photo of") ||
+                desc.startsWith("group picture of") ||
+                desc.startsWith("double tap to view group icon") ||
+                desc.startsWith("double tap to view group photo") ||
+                desc.startsWith("double tap to view group picture") ||
+                desc == "group icon" || desc == "group photo" || desc == "group picture" ||
+                desc.contains("ग्रुप आइकॉन") || desc.contains("ग्रुप फ़ोटो")
             ) {
-                return true
-            }
-            if ((id.contains("photo") || id.contains("avatar") || id.contains("icon")) && desc.contains("group")) {
                 return true
             }
             for (i in 0 until node.childCount) {
@@ -1121,9 +1276,9 @@ class WhatsAppChatScanner(
         val q = ArrayDeque<AccessibilityNodeInfo>()
         q.add(row)
         val groupEvents = listOf(
-            "created group", "created the group", "added you", "you were added",
-            "joined using", "group call", "left group", "left the group",
-            "changed the group", "changed the subject", "security code changed"
+            "created group", "created the group", "you were added to the group",
+            "added you to the group", "joined using this group", "left the group",
+            "changed the group subject", "changed the group icon"
         )
         while (q.isNotEmpty()) {
             val node = q.removeFirst()
@@ -1163,73 +1318,77 @@ class WhatsAppChatScanner(
         target: ScanTarget,
         repo: AppRepository
     ): RowKind {
-        // 1. Target overrides
-        if (target == ScanTarget.GROUPS_ONLY) {
-            Log.i(loggerTag, "classifyRow('$cleanTitle'): GROUP (GROUPS_ONLY target)")
-            return RowKind.GROUP
-        }
-        if (target == ScanTarget.DIRECT_CHATS_ONLY) {
-            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (DIRECT_CHATS_ONLY target)")
-            return RowKind.DIRECT
-        }
-        // 2. Ignore non-conversation header/status rows
+        // 1. Ignore non-conversation header/status rows
         if (isIgnoredTitle(cleanTitle) || !repo.isValidPickedChatName(cleanTitle)) {
             Log.i(loggerTag, "classifyRow('$cleanTitle'): UNRESOLVED (invalid or ignored title)")
             return RowKind.UNRESOLVED
         }
 
-        // 3. Known / previously confirmed group
+        // 2. Known / confirmed group cataloged from Groups filter tab
         if (discoveredGroups.contains(cleanTitle.lowercase().trim())) {
             Log.i(loggerTag, "classifyRow('$cleanTitle'): GROUP (matches confirmed group)")
             return RowKind.GROUP
         }
 
-        // 4. WhatsApp's dedicated sender-prefix TextView: msg_from_tv
-        // In group rows, msg_from_tv displays the sender name (e.g. "Suraj: ").
-        // In 1-on-1 direct chats, msg_from_tv NEVER exists.
+        // 3. Pure phone number is ALWAYS a direct chat (WhatsApp groups never have pure phone numbers as title)
+        val digits = cleanTitle.filter { it.isDigit() }
+        val letters = cleanTitle.filter { it.isLetter() }
+        if (digits.length >= 7 && letters.isEmpty()) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (pure phone number)")
+            return if (target == ScanTarget.GROUPS_ONLY) RowKind.UNRESOLVED else RowKind.DIRECT
+        }
+
+        // 4. Contact in device address book is ALWAYS a direct chat
+        if (repo.hasCellularPhoneContact(cleanTitle) || repo.findPhoneForContactName(cleanTitle) != null) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (phonebook contact match)")
+            return if (target == ScanTarget.GROUPS_ONLY) RowKind.UNRESOLVED else RowKind.DIRECT
+        }
+
+        // 5. Verified Business row is always a direct chat
+        if (isBusinessRow(row)) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (verified business row)")
+            return if (target == ScanTarget.GROUPS_ONLY) RowKind.UNRESOLVED else RowKind.DIRECT
+        }
+
+        // 6. Explicit individual profile avatar description ("Profile photo of ...") is ALWAYS a direct chat
+        if (hasIndividualAvatarDesc(row)) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (individual avatar description)")
+            return if (target == ScanTarget.GROUPS_ONLY) RowKind.UNRESOLVED else RowKind.DIRECT
+        }
+
+        if (target == ScanTarget.DIRECT_CHATS_ONLY) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (DIRECT_CHATS_ONLY target)")
+            return RowKind.DIRECT
+        }
+
+        // 7. WhatsApp's dedicated sender-prefix TextView: msg_from_tv
         if (hasMsgFromNode(row)) {
             Log.i(loggerTag, "classifyRow('$cleanTitle'): GROUP (has msg_from_tv node)")
             discoveredGroups.add(cleanTitle.lowercase().trim())
             return RowKind.GROUP
         }
 
-        // 5. Group avatar content description ("Group icon of ...")
+        // 8. Group avatar content description ("Group icon of ...")
         if (hasGroupAvatarDesc(row)) {
             Log.i(loggerTag, "classifyRow('$cleanTitle'): GROUP (group avatar description)")
             discoveredGroups.add(cleanTitle.lowercase().trim())
             return RowKind.GROUP
         }
 
-        // 6. Subtitle snippet contains group event notifications
+        // 9. Subtitle snippet contains group event notifications
         if (hasGroupEventText(row)) {
             Log.i(loggerTag, "classifyRow('$cleanTitle'): GROUP (group event text in snippet)")
             discoveredGroups.add(cleanTitle.lowercase().trim())
             return RowKind.GROUP
         }
 
-        // 7. Pure phone number is ALWAYS a direct chat (WhatsApp groups never have pure phone numbers as title)
-        val digits = cleanTitle.filter { it.isDigit() }
-        val letters = cleanTitle.filter { it.isLetter() }
-        if (digits.length >= 7 && letters.isEmpty()) {
-            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (pure phone number)")
-            return RowKind.DIRECT
+        // 10. If targeting GROUPS_ONLY and not matched any group indicator, it is NOT a group
+        if (target == ScanTarget.GROUPS_ONLY) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): UNRESOLVED (not a verified group in GROUPS_ONLY)")
+            return RowKind.UNRESOLVED
         }
 
-        // 8. Contact in device address book is ALWAYS a direct chat
-        if (repo.hasCellularPhoneContact(cleanTitle) || repo.findPhoneForContactName(cleanTitle) != null) {
-            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (phonebook contact match)")
-            return RowKind.DIRECT
-        }
-
-        // 9. Verified Business row is always a direct chat
-        if (isBusinessRow(row)) {
-            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (verified business row)")
-            return RowKind.DIRECT
-        }
-
-        // 10. Default Direct: When scanning the conversation list in Stage 2 (or unified scan),
-        // any row that was not confirmed as a group in Stage 1 and has no group markers (no msg_from_tv,
-        // no group avatar description, no group event text) is a DIRECT 1-on-1 chat.
+        // 11. Default Direct:
         Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (default direct chat)")
         return RowKind.DIRECT
     }

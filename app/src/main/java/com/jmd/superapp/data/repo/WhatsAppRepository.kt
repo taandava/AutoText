@@ -64,6 +64,15 @@ class WhatsAppRepository(private val context: Context) {
         if (trimmed.contains("\n") || trimmed.contains("\r")) return false
 
         val lower = trimmed.lowercase()
+        if (lower.contains("automatically update") || lower.contains("all group chats") ||
+            lower.contains("this list") || lower.contains("group chats") ||
+            lower.contains("manage group") || lower.contains("manage list") ||
+            lower.contains("no chats") || lower.contains("chats will appear") ||
+            lower.contains("start a chat") || lower.contains("tap and hold") ||
+            lower.contains("swipe down") || lower.contains("add new list")
+        ) {
+            return false
+        }
         val blockedExactOrPrefix = listOf(
             "whatsapp", "whatsapp business", "wa business", "w4b",
             "search", "chats", "updates", "calls", "tools", "camera", "settings",
@@ -133,11 +142,11 @@ class WhatsAppRepository(private val context: Context) {
                 }
             }
 
-            // 3. Prefix match in dynamic contact pool
+            // 3. Prefix match in dynamic contact pool (e.g., "John" matches "John Doe")
             if (alphaName.length >= 3) {
                 db.rawQuery(
-                    "SELECT phone FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE (LOWER(name) LIKE ? OR LOWER(?) LIKE '%' || LOWER(name) || '%') AND phone != '' AND enabled = 1 LIMIT 1",
-                    arrayOf("%${alphaName.lowercase()}%", alphaName.lowercase())
+                    "SELECT phone FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE LOWER(name) LIKE ? AND phone != '' AND enabled = 1 LIMIT 1",
+                    arrayOf("${alphaName.lowercase()}%")
                 ).use { c ->
                     if (c.moveToNext()) {
                         val p = c.getString(0)
@@ -468,6 +477,19 @@ class WhatsAppRepository(private val context: Context) {
                     val isGroup = phone.startsWith("group:", ignoreCase = true) || norm.startsWith("group:", ignoreCase = true) || source.contains("group", ignoreCase = true)
                     val isW4bEntry = source.contains("w4b", ignoreCase = true) || source.contains("business", ignoreCase = true)
 
+                    // Strict validation for group channel: phonebook contacts and cellular numbers are never groups
+                    if (isGroupChannel) {
+                        val digitsName = name.filter { it.isDigit() }
+                        val lettersName = name.filter { it.isLetter() }
+                        if (digitsName.length >= 7 && lettersName.isEmpty()) continue
+                        val rawPhone = phone.removePrefix("group:").trim()
+                        val digitsPhone = rawPhone.filter { it.isDigit() }
+                        val lettersPhone = rawPhone.filter { it.isLetter() }
+                        if (digitsPhone.length >= 7 && lettersPhone.isEmpty()) continue
+                        if (hasCellularPhoneContact(name) || findPhoneForContactName(name) != null) continue
+                        if (name.isBlank() || name.trim().length < 2) continue
+                    }
+
                     val dedupeKey = if (isGroup) "group:${name.lowercase()}" else norm.ifBlank { phone }
                     if (phone.isNotBlank() && !map.containsKey(dedupeKey)) {
                         if (matchesQuery(name, phone, norm)) {
@@ -691,7 +713,7 @@ class WhatsAppRepository(private val context: Context) {
             } else {
                 db.delete(
                     DatabaseHelper.TABLE_DYNAMIC_POOL,
-                    "source = ? OR (source = ? AND phone LIKE 'group:%')",
+                    "source = ? OR (source = ? AND (phone LIKE 'group:%' OR normalized_number LIKE 'group:%'))",
                     arrayOf(source, source)
                 )
             }
@@ -716,9 +738,10 @@ class WhatsAppRepository(private val context: Context) {
     /**
      * What it is:
      * Purges corrupted or misclassified groups from the dynamic pool (e.g.
+     * system footers or contacts mislabeled as groups).
      *
      * What it does:
-     * system footers or contacts mislabeled as groups).
+     * Executes [purgeCorruptedGroupsFromPool] logic in accordance with system and security invariants.
      *
      * Linked with:
      * - Architecture: [WhatsAppRepository], [purgeCorruptedGroupsFromPool]
@@ -726,45 +749,72 @@ class WhatsAppRepository(private val context: Context) {
     fun purgeCorruptedGroupsFromPool(): Int {
         return try {
             val db = dbHelper.writableDatabase
-            var count = db.delete(
+            var count = 0
+
+            // 1. Delete UI system strings and empty names
+            count += db.delete(
                 DatabaseHelper.TABLE_DYNAMIC_POOL,
-                "(source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%') AND (" +
-                    "LOWER(name) IN ('hidden updates', 'find channels to follow', 'explore more', 'create channel', 'inbox filters', 'radio group', 'add status', 'recent updates', 'recent searches', 'clear all', 'ask meta ai or search', 'search group chats', 'search chats', 'manage groups', 'manage group', 'new group', 'new community', 'archived', 'starred messages', 'disappearing messages', 'chats', 'updates', 'communities', 'calls', 'tools', 'all filter', 'groups filter', 'unread filter', 'favorites filter') " +
-                    "OR phone IN ('group:Hidden updates', 'group:Find channels to follow', 'group:Explore more', 'group:Create channel', 'group:Inbox filters', 'group:Recent updates', 'group:Add status', 'group:Manage Groups', 'group:Manage groups', 'group:New group', 'group:Archived') " +
-                    "OR normalized_number IN ('group:hidden updates', 'group:find channels to follow', 'group:explore more', 'group:create channel', 'group:inbox filters', 'group:recent updates', 'group:add status', 'group:manage groups', 'group:new group', 'group:archived')" +
-                ")",
+                "LOWER(TRIM(name)) LIKE '%automatically update%' OR " +
+                "LOWER(TRIM(name)) LIKE '%all group chats%' OR " +
+                "LOWER(TRIM(name)) LIKE '%this list%' OR " +
+                "LOWER(TRIM(name)) LIKE '%manage group%' OR " +
+                "LOWER(TRIM(name)) IN ('group chats', 'all filter', 'groups filter', 'unread filter') OR " +
+                "((source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%') AND (" +
+                    "LENGTH(TRIM(name)) < 2 OR " +
+                    "LOWER(TRIM(name)) IN ('archived', 'chats', 'updates', 'calls', 'tools', 'communities', 'status', 'meta ai', 'ask meta ai', 'broadcast', 'new group', 'new broadcast', 'linked devices', 'starred', 'starred messages', 'disappearing messages', 'settings', 'help', 'search', 'search…', 'search chats', 'search group chats', 'inbox filters', 'radio group', 'filter', 'all filter', 'groups filter', 'unread filter', 'favorites filter', 'explore more', 'find channels', 'find channels to follow', 'hidden updates', 'recent updates', 'add status', 'recent searches', 'clear all', 'manage groups', 'manage group', 'you', 'group chats') OR " +
+                    "phone IN ('group:Hidden updates', 'group:Find channels to follow', 'group:Explore more', 'group:Create channel', 'group:Inbox filters', 'group:Recent updates', 'group:Add status', 'group:Manage Groups', 'group:Manage groups', 'group:New group', 'group:Archived', 'group:Chats', 'group:Updates', 'group:Calls', 'group:Tools', 'group:Communities') OR " +
+                    "normalized_number IN ('group:hidden updates', 'group:find channels to follow', 'group:explore more', 'group:create channel', 'group:inbox filters', 'group:recent updates', 'group:add status', 'group:manage groups', 'group:new group', 'group:archived', 'group:chats', 'group:updates', 'group:calls', 'group:tools', 'group:communities')" +
+                "))",
                 null
             )
-            // Repair direct phone numbers and address-book contacts that were erroneously stored as groups
-            val candidates = mutableListOf<Triple<Long, String, String>>()
+
+            // 2. Any row with source NOT IN ('WA_GROUP', 'WA_BUSINESS_GROUP') should NEVER have phone starting with 'group:'
+            val nonGroupWithGroupPrefix = mutableListOf<Long>()
             db.rawQuery(
-                "SELECT id, name FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE phone LIKE 'group:%' OR normalized_number LIKE 'group:%'",
+                "SELECT id FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE source NOT IN ('WA_GROUP', 'WA_BUSINESS_GROUP') AND (phone LIKE 'group:%' OR normalized_number LIKE 'group:%')",
+                null
+            ).use { c ->
+                while (c.moveToNext()) {
+                    nonGroupWithGroupPrefix.add(c.getLong(0))
+                }
+            }
+            for (id in nonGroupWithGroupPrefix) {
+                val deleted = db.delete(DatabaseHelper.TABLE_DYNAMIC_POOL, "id = ?", arrayOf(id.toString()))
+                if (deleted > 0) count++
+            }
+
+            // 3. For rows that are groups: find all phone numbers, phonebook matches, or direct contacts and DELETE THEM from groups!
+            val groupsToDelete = mutableListOf<Long>()
+            db.rawQuery(
+                "SELECT id, name, phone, normalized_number FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%'",
                 null
             ).use { c ->
                 while (c.moveToNext()) {
                     val id = c.getLong(0)
                     val name = c.getString(1).orEmpty().trim()
-                    val digits = name.filter { it.isDigit() }
-                    val letters = name.filter { it.isLetter() }
-                    if (digits.length >= 7 && letters.isEmpty()) {
-                        candidates.add(Triple(id, name, name))
-                    } else if (name.isNotBlank()) {
-                        val phoneFromBook = findPhoneForContactName(name)
-                        if (!phoneFromBook.isNullOrBlank()) {
-                            candidates.add(Triple(id, name, phoneFromBook))
-                        }
+                    val phone = c.getString(2).orEmpty().trim()
+                    val rawPhone = phone.removePrefix("group:").trim()
+
+                    val digitsName = name.filter { it.isDigit() }
+                    val lettersName = name.filter { it.isLetter() }
+                    val digitsPhone = rawPhone.filter { it.isDigit() }
+                    val lettersPhone = rawPhone.filter { it.isLetter() }
+
+                    val isNamePureNumber = digitsName.length >= 7 && lettersName.isEmpty()
+                    val isPhonePureNumber = digitsPhone.length >= 7 && lettersPhone.isEmpty()
+                    val phoneFromBook = if (name.isNotBlank()) findPhoneForContactName(name) else null
+                    val hasCellular = hasCellularPhoneContact(name)
+
+                    // If it is a phone number or in the phonebook, it is an individual contact, NOT a group!
+                    if (isNamePureNumber || isPhonePureNumber || !phoneFromBook.isNullOrBlank() || hasCellular) {
+                        groupsToDelete.add(id)
                     }
                 }
             }
-            for ((id, name, resolvedPhone) in candidates) {
-                val norm = PhoneNumberNormalizer.normalize(resolvedPhone)
-                val cv = android.content.ContentValues().apply {
-                    put("phone", resolvedPhone)
-                    put("normalized_number", norm.ifBlank { resolvedPhone })
-                    put("source", "WA_CHAT")
-                }
-                val updated = db.update(DatabaseHelper.TABLE_DYNAMIC_POOL, cv, "id = ?", arrayOf(id.toString()))
-                if (updated > 0) count++
+
+            for (id in groupsToDelete) {
+                val deleted = db.delete(DatabaseHelper.TABLE_DYNAMIC_POOL, "id = ?", arrayOf(id.toString()))
+                if (deleted > 0) count++
             }
             Log.i("WhatsAppRepo", "Purged/repaired $count corrupted group entries from dynamic pool")
             count

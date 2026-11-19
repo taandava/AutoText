@@ -81,9 +81,7 @@ fun SettingsBankingShieldCard(
         // Enforce intelligent banking protection under the hood
         prefs.isBankingShieldEnabled = true
         prefs.isSmartAccessibilityScopingEnabled = true
-        if (hasWriteSecure) {
-            prefs.isDynamicA11yOnDemandEnabled = true
-        }
+        prefs.isDynamicA11yOnDemandEnabled = false
     }
 
     AppCard(
@@ -169,7 +167,7 @@ fun SettingsBankingShieldCard(
                         lineHeight = 14.sp
                     )
                     Spacer(modifier = Modifier.height(6.dp))
-                    val adbCmd = "adb shell pm grant com.jmd.superapp android.permission.WRITE_SECURE_SETTINGS"
+                    val adbCmd = "adb shell pm grant ${context.packageName} android.permission.WRITE_SECURE_SETTINGS"
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()

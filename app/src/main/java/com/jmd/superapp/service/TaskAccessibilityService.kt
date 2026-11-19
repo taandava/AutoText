@@ -1603,14 +1603,14 @@ class TaskAccessibilityService : AccessibilityService() {
         }
     }
 
-        private val idleDetachRunnable = Runnable {
+    private val idleDetachRunnable = Runnable {
         try {
             val appContext = applicationContext ?: this
-            val prefs = PreferenceManager(appContext)
-            // Only detach dynamically if WRITE_SECURE_SETTINGS is held so the service can auto-reconnect on demand
+            val fg = currentForegroundPackage
+            val isBanking = fg != null && (isFinancialOrBankingPackage(fg) || ProtectedApplicationManager.isProtectedPackage(fg))
             val isBusy = isDispatching || isAssistPending || isAssistVerificationMode || isVoipCallActive || com.jmd.superapp.engine.SequentialTaskEngine.isEngineActive()
-            if (prefs.isDynamicA11yOnDemandEnabled && AccessibilityHealthManager.hasWriteSecureSettings(appContext) && !isBusy) {
-                Log.i(TAG, "Idle detach: No active task, safely detaching accessibility for banking app isolation")
+            if (isBanking && AccessibilityHealthManager.hasWriteSecureSettings(appContext) && !isBusy) {
+                Log.i(TAG, "Banking Shield: Detaching accessibility while protected banking app ($fg) is foreground")
                 AccessibilityHealthManager.disableAccessibilityService(appContext)
             }
         } catch (e: Exception) {
@@ -2111,11 +2111,6 @@ class TaskAccessibilityService : AccessibilityService() {
             startProactiveUnlockLoop()
             handler.removeCallbacks(masterDisarmRunnable)
             handler.postDelayed(masterDisarmRunnable, 15000L)
-        } else {
-            val prefs = PreferenceManager(applicationContext ?: this)
-            if (prefs.isDynamicA11yOnDemandEnabled && !isAssistPending && !isAssistVerificationMode) {
-                scheduleIdleDetach(5000L)
-            }
         }
     }
     /**

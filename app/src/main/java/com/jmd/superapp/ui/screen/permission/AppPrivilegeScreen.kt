@@ -46,7 +46,7 @@ import com.jmd.superapp.receiver.SuperDeviceAdminReceiver
  */
 enum class PrivilegeCategory(val title: String, val subtitle: String) {
     CORE(
-        title = "Core Automation",
+        title = "Core Tasks",
         subtitle = "Core Services"
     ),
     SYSTEM(
@@ -95,7 +95,7 @@ enum class AppPrivilege(
     ),
     NOTIFICATION_LISTENER(
         title = "Notification Access",
-        subtitle = "Detects incoming chats for automated rules and quick responses.",
+        subtitle = "Detects incoming chats for reply rules and quick responses.",
         detailedPurpose = "Enables Super to read notification actions in messaging apps to process auto-replies directly in the background without needing to illuminate the display.",
         icon = Icons.Default.NotificationsActive,
         category = PrivilegeCategory.CORE,
@@ -112,7 +112,7 @@ enum class AppPrivilege(
     OVERLAY(
         title = "Display Overlays",
         subtitle = "Renders privacy shields, countdown overlays, and incoming alerts.",
-        detailedPurpose = "Required to render transient privacy overlays during automated screen actions and display simulated call interfaces.",
+        detailedPurpose = "Required to render transient privacy overlays during scheduled screen tasks and display simulated call interfaces.",
         icon = Icons.Default.Layers,
         category = PrivilegeCategory.SYSTEM,
         buttonLabel = "Grant"
@@ -128,7 +128,7 @@ enum class AppPrivilege(
     COMMUNICATIONS(
         title = "Device Communications",
         subtitle = "Auto-discovers contacts and permits direct cellular messaging and calling.",
-        detailedPurpose = "Required to populate recipient contact names, dispatch carrier SMS tasks, and handle incoming call automation.",
+        detailedPurpose = "Required to populate recipient contact names, dispatch carrier SMS tasks, and handle incoming call dispatch.",
         icon = Icons.Default.Contacts,
         category = PrivilegeCategory.COMMUNICATION,
         buttonLabel = "Grant All"
@@ -256,5 +256,14 @@ enum class AppPrivilege(
                 }
             }
         }
+    }
+
+    companion object {
+        val supportedEntries: List<AppPrivilege>
+            get() = if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+                entries.filter { it != ACCESSIBILITY }
+            } else {
+                entries
+            }
     }
 }

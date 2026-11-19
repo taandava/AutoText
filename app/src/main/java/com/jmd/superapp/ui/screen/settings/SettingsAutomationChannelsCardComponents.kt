@@ -82,82 +82,85 @@ fun SettingsAutomationChannelsCard(
     }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        // 1. WhatsApp Automation & Pacing
-        AppCard(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Icon(Icons.AutoMirrored.Filled.Chat, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                    Text("WhatsApp Dispatch", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+        // 1. WhatsApp Dispatch & Pacing (SuperWA only)
+        if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+            AppCard(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Icon(Icons.AutoMirrored.Filled.Chat, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                        Text("WhatsApp Dispatch", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    }
+                    AppBadge(text = "${waDelay}s Pace", color = MaterialTheme.colorScheme.primary)
                 }
-                AppBadge(text = "${waDelay}s Pace", color = MaterialTheme.colorScheme.primary)
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text("Adjust organic delay between dispatches and realistic typing simulation.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text("Adjust organic delay between dispatches and realistic typing simulation.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
-            Spacer(modifier = Modifier.height(10.dp))
-            Text("Dispatch Delay:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
-            Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+                Text("Dispatch Delay:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+                Spacer(modifier = Modifier.height(6.dp))
 
-            val delays = listOf(1, 2, 3, 5, 8, 10)
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
-                delays.forEach { s ->
-                    AppChip(
-                        selected = waDelay == s,
-                        onClick = {
-                            waDelay = s
-                            prefs.whatsappDispatchDelaySeconds = s
-                        },
-                        label = "${s}s",
-                        activeColor = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.weight(1f)
-                    )
+                val delays = listOf(1, 2, 3, 5, 8, 10)
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
+                    delays.forEach { s ->
+                        AppChip(
+                            selected = waDelay == s,
+                            onClick = {
+                                waDelay = s
+                                prefs.whatsappDispatchDelaySeconds = s
+                            },
+                            label = "${s}s",
+                            activeColor = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(12.dp))
-            Text("Typing Delay:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
-            Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+                Text("Typing Delay:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+                Spacer(modifier = Modifier.height(6.dp))
 
-            val typingDelays = listOf(
-                0 to "Instant (0ms)",
-                400 to "Natural (400ms)",
-                800 to "Human (800ms)",
-                1500 to "Deliberate (1.5s)"
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
-                typingDelays.forEach { (ms, label) ->
-                    AppChip(
-                        selected = waTypingDelay == ms,
-                        onClick = {
-                            waTypingDelay = ms
-                            prefs.whatsappTypingDelayMs = ms
-                        },
-                        label = label,
-                        activeColor = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.weight(1f)
-                    )
+                val typingDelays = listOf(
+                    0 to "Instant (0ms)",
+                    400 to "Natural (400ms)",
+                    800 to "Human (800ms)",
+                    1500 to "Deliberate (1.5s)"
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
+                    typingDelays.forEach { (ms, label) ->
+                        AppChip(
+                            selected = waTypingDelay == ms,
+                            onClick = {
+                                waTypingDelay = ms
+                                prefs.whatsappTypingDelayMs = ms
+                            },
+                            label = label,
+                            activeColor = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(12.dp))
-            AppToggleRow(
-                title = "SMS Fallback",
-                subtitle = "Attempt carrier SMS delivery if WhatsApp contact is unregistered or unavailable",
-                checked = autoSmsFallback,
-                onCheckedChange = { checked ->
-                    autoSmsFallback = checked
-                    prefs.isAutoSmsFallbackEnabled = checked
-                },
-                icon = Icons.Filled.SmsFailed
-            )
+                Spacer(modifier = Modifier.height(12.dp))
+                AppToggleRow(
+                    title = "SMS Fallback",
+                    subtitle = "Attempt carrier SMS delivery if WhatsApp contact is unregistered or unavailable",
+                    checked = autoSmsFallback,
+                    onCheckedChange = { checked ->
+                        autoSmsFallback = checked
+                        prefs.isAutoSmsFallbackEnabled = checked
+                    },
+                    icon = Icons.Filled.SmsFailed
+                )
+            }
         }
 
-        // 2. Carrier SMS & Multi-SIM Routing
-        AppCard(modifier = Modifier.fillMaxWidth()) {
+        // 2. Carrier SMS & Multi-SIM Routing (SuperSMS only)
+        if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+            AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -229,6 +232,7 @@ fun SettingsAutomationChannelsCard(
                     }
                 }
             }
+        }
         }
 
         // 3. Simulated Incoming Call Settings
@@ -384,7 +388,7 @@ fun SettingsAutomationChannelsCard(
             )
         }
 
-        // 5. Auto-Reply & Contact Harvester
+        // 5. Auto-Reply & Contact Sync
         AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -398,7 +402,7 @@ fun SettingsAutomationChannelsCard(
                 AppBadge(text = "${autoReplyCooldown}s Throttle", color = MaterialTheme.colorScheme.tertiary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Prevent auto-reply message flooding and set periodic address book harvest frequency.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Prevent auto-reply message flooding and set periodic address book sync frequency.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
             Text("Reply Throttle:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
@@ -421,7 +425,7 @@ fun SettingsAutomationChannelsCard(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-            Text("Harvest Interval:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+            Text("Sync Interval:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
             Spacer(modifier = Modifier.height(6.dp))
 
             val syncIntervals = listOf(2, 6, 12, 24)
@@ -452,7 +456,7 @@ fun SettingsAutomationChannelsCard(
                     Icon(Icons.Filled.Alarm, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                     Text("Clock Sync", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
-                AppBadge(text = if (systemClockAlarmSync) "OEM Synced" else "Clean AlarmManager", color = MaterialTheme.colorScheme.primary)
+                AppBadge(text = if (systemClockAlarmSync) "OEM Synced" else "Internal Alarm", color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text("Controls whether Reminder tasks are mirrored into the phone's built-in Clock app.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -466,7 +470,7 @@ fun SettingsAutomationChannelsCard(
             ) {
                 Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                     Text(
-                        text = "Sync to External Clock App",
+                        text = "External Clock",
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold

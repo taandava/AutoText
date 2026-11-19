@@ -171,18 +171,20 @@ fun MoreScreenView(
                         navigateToSubSection("SETTINGS")
                     }
                 }
-                item {
-                    MenuItemCard(
-                        "Call Simulation",
-                        Icons.Filled.PhoneInTalk,
-                        Color(0xFFE91E63)
-                    ) {
-                        com.jmd.superapp.ui.activity.CallSimulationActivity.start(
-                            context = context,
-                            callerName = "Boss / Office",
-                            callerNumber = "+91 98765 43210",
-                            callerStyle = "PIXEL"
-                        )
+                if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+                    item {
+                        MenuItemCard(
+                            "Call Simulation",
+                            Icons.Filled.PhoneInTalk,
+                            Color(0xFFE91E63)
+                        ) {
+                            com.jmd.superapp.ui.activity.CallSimulationActivity.start(
+                                context = context,
+                                callerName = "Boss / Office",
+                                callerNumber = "+91 98765 43210",
+                                callerStyle = "PIXEL"
+                            )
+                        }
                     }
                 }
 

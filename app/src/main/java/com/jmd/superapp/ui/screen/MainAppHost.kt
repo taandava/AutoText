@@ -82,7 +82,8 @@ fun MainAppHost(
     var isComposing by remember { mutableStateOf(value = false) }
     var initialComposeMessage by remember { mutableStateOf("") }
     var editingTask by remember { mutableStateOf<ScheduledTask?>(null) }
-    var composeChannel by remember { mutableStateOf(ChannelType.SMS) }
+    val defaultChannel = if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) com.jmd.superapp.data.model.ChannelType.SMS else com.jmd.superapp.data.model.ChannelType.WHATSAPP
+    var composeChannel by remember { mutableStateOf(defaultChannel) }
     var selectedDailyCampaignId by remember { mutableLongStateOf(0L) }
     var isToolsSubSectionOpen by remember { mutableStateOf(value = false) }
     var toolsInitialSubSection by remember { mutableStateOf("MENU") }
@@ -93,7 +94,7 @@ fun MainAppHost(
         if (!sharedText.isNullOrBlank()) {
             editingTask = null
             initialComposeMessage = sharedText
-            composeChannel = ChannelType.SMS
+            composeChannel = defaultChannel
             isComposing = true
             onSharedTextConsumed()
         }
@@ -179,7 +180,7 @@ fun MainAppHost(
                             delay(6000L)
                         }
                     }
-                    val appTitle = prefs.customAppName.ifBlank { "Super" }
+                    val appTitle = prefs.customAppName.ifBlank { com.jmd.superapp.core.AppVariantHelper.appTitle }
                     val iconVariant = prefs.appIconVariant
                     val appIcon = when (iconVariant) {
                         "MESSENGER" -> Icons.AutoMirrored.Filled.Chat
@@ -187,7 +188,7 @@ fun MainAppHost(
                         "ROCKET" -> Icons.Filled.RocketLaunch
                         "FIRE" -> Icons.Filled.LocalFireDepartment
                         "DIAMOND" -> Icons.Filled.Diamond
-                        "ASSISTANT", "COMPANION", "AUTOMATION", "AGENT" -> Icons.Filled.SmartToy
+                        "ASSISTANT", "COMPANION", "DISPATCH", "AGENT" -> Icons.Filled.SmartToy
                         else -> Icons.Filled.Bolt
                     }
                     val iconColor = when (iconVariant) {
@@ -196,7 +197,7 @@ fun MainAppHost(
                         "ROCKET" -> Color(0xFFEF4444)
                         "FIRE" -> Color(0xFFF97316)
                         "DIAMOND" -> Color(0xFF06B6D4)
-                        "ASSISTANT", "COMPANION", "AUTOMATION", "AGENT" -> Color(0xFF8B5CF6)
+                        "ASSISTANT", "COMPANION", "DISPATCH", "AGENT" -> Color(0xFF8B5CF6)
                         else -> MaterialTheme.colorScheme.primary
                     }
 

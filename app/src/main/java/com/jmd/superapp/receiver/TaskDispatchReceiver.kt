@@ -1,25 +1,16 @@
 /**
  * Package: com.jmd.superapp.receiver
- * Module: Automation & CLI Subsystem
+ * Module: Task Dispatch & Headless CLI Subsystem
  *
  * What it is:
- * Architecture definition and implementation for [AutomationReceiver].
+ * Architecture definition and implementation for [TaskDispatchReceiver].
  *
  * What it does:
- * Exposes system-level automation endpoints callable via ADB CLI, automation scripts, and intent broadcasts:
- * - ACTION_HARVEST_WHATSAPP: Triggers node-based WhatsApp / WA Business chat and group discovery.
- * - ACTION_SYNC_POOL: Triggers multi-source contact pool synchronization (Contacts, SMS, Calls).
- * - ACTION_DISPATCH_TASK: Executes a scheduled task immediately by ID.
- * - ACTION_SEND_WHATSAPP: Dispatches a WhatsApp direct message via TaskFeatureApi.
- * - ACTION_SEND_SMS: Dispatches a direct SMS via SmsSender.
- * - ACTION_SET_BANKING_SHIELD: Dynamically toggles protection for sensitive applications.
- * - ACTION_GET_STATUS: Returns and logs real-time service and engine health metrics.
- *
- * Linked With:
- * - Repositories: [com.jmd.superapp.data.repo.AppRepository]
- * - Services: [com.jmd.superapp.service.TaskAccessibilityService]
- * - API: [com.jmd.superapp.api.TaskFeatureApi]
- * - Core Security & Utilities: [com.jmd.superapp.core.ProtectedApplicationManager], [com.jmd.superapp.core.AppFileLogger]
+ * Exposes system-level endpoints callable via ADB CLI, scripts, and intent broadcasts:
+ * - SMS & Call dispatch for SuperSMS
+ * - WhatsApp chat & group sync for SuperWA
+ * - Banking shield toggles
+ * - Status diagnostics & pool inspection
  */
 
 package com.jmd.superapp.receiver
@@ -33,30 +24,25 @@ import com.jmd.superapp.api.TaskFeatureApi
 import com.jmd.superapp.api.WhatsAppMessageRequest
 import com.jmd.superapp.core.AccessibilityHealthManager
 import com.jmd.superapp.core.AppFileLogger
+import com.jmd.superapp.core.AppVariantHelper
 import com.jmd.superapp.core.ProtectedApplicationManager
 import com.jmd.superapp.core.WhatsAppPackageHelper
 import com.jmd.superapp.data.model.ChannelType
 import com.jmd.superapp.data.prefs.PreferenceManager
 import com.jmd.superapp.data.repo.AppRepository
 import com.jmd.superapp.service.TaskAccessibilityService
+import com.jmd.superapp.telephony.TelephonyCallEngine
 import com.jmd.superapp.whatsapp.WhatsAppChatScanner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AutomationReceiver : BroadcastReceiver() {
+class TaskDispatchReceiver : BroadcastReceiver() {
 
     companion object {
-        private const val TAG = "AutomationReceiver"
-
-        const val ACTION_HARVEST_WHATSAPP = "com.jmd.superapp.ACTION_HARVEST_WHATSAPP"
-        const val ACTION_SYNC_POOL = "com.jmd.superapp.ACTION_SYNC_POOL"
-        const val ACTION_DISPATCH_TASK = "com.jmd.superapp.ACTION_DISPATCH_TASK"
-        const val ACTION_SEND_WHATSAPP = "com.jmd.superapp.ACTION_SEND_WHATSAPP"
-        const val ACTION_SEND_SMS = "com.jmd.superapp.ACTION_SEND_SMS"
-        const val ACTION_SET_BANKING_SHIELD = "com.jmd.superapp.ACTION_SET_BANKING_SHIELD"
-        const val ACTION_GET_STATUS = "com.jmd.superapp.ACTION_GET_STATUS"
+        private const val TAG = "TaskDispatchReceiver"
 
         // Extra keys
         const val EXTRA_PACKAGE = "package"
@@ -66,6 +52,7 @@ class AutomationReceiver : BroadcastReceiver() {
         const val EXTRA_PHONE = "phone"
         const val EXTRA_MESSAGE = "message"
         const val EXTRA_SIM_SLOT = "sim_slot"
+        const val EXTRA_DURATION = "duration"
         const val EXTRA_IS_BUSINESS = "is_business"
         const val EXTRA_ENABLED = "enabled"
     }
@@ -74,14 +61,19 @@ class AutomationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action ?: return
-        Log.i(TAG, "Automation intent received: $action")
-        AppFileLogger.action(context, TAG, "Automation intent received: $action")
+        Log.i(TAG, "Task intent received: $action")
+        AppFileLogger.action(context, TAG, "Task intent received: $action")
 
         val repository = AppRepository(context.applicationContext)
         val prefs = PreferenceManager(context.applicationContext)
 
-        when (action) {
-            ACTION_HARVEST_WHATSAPP -> {
+        when {
+            // SYNC CHATS / HARVEST (SuperWA)
+            action.endsWith("ACTION_SYNC_CHATS") || action.endsWith("ACTION_HARVEST_WHATSAPP") -> {
+                if (AppVariantHelper.isSuperSms) {
+                    setResult(0, "Not supported in SuperSMS variant", null)
+                    return
+                }
                 val targetPkg = intent.getStringExtra(EXTRA_PACKAGE)
                     ?: WhatsAppPackageHelper.PACKAGE_WHATSAPP
                 val channelStr = intent.getStringExtra(EXTRA_CHANNEL) ?: "WHATSAPP"
@@ -103,23 +95,25 @@ class AutomationReceiver : BroadcastReceiver() {
                     channel = channel,
                     scanTarget = scanTarget
                 )
-                setResult(1, "WhatsApp harvest initiated ($scanTarget)", null)
+                setResult(1, "WhatsApp sync initiated ($scanTarget)", null)
             }
 
-            ACTION_SYNC_POOL -> {
+            // SYNC POOL
+            action.endsWith("ACTION_SYNC_POOL") -> {
                 receiverScope.launch {
                     val summary = repository.syncWhatsAppPool()
-                    val msg = "Pool synced: +${summary.newAdded} new contacts (${summary.totalPoolCount} total)"
+                    val msg = "Pool synced: +${summary.newAdded} new entries (${summary.totalPoolCount} total)"
                     Log.i(TAG, msg)
                     AppFileLogger.i(context, TAG, msg)
                     setResult(1, msg, null)
                 }
             }
 
-            ACTION_DISPATCH_TASK -> {
+            // DISPATCH TASK
+            action.endsWith("ACTION_DISPATCH_TASK") -> {
                 val taskId = intent.getLongExtra(EXTRA_TASK_ID, -1L)
                 if (taskId <= 0L) {
-                    Log.w(TAG, "Invalid task ID provided: $taskId")
+                    Log.w(TAG, "Invalid task ID: $taskId")
                     setResult(0, "Invalid task ID: $taskId", null)
                     return
                 }
@@ -136,13 +130,17 @@ class AutomationReceiver : BroadcastReceiver() {
                 }
             }
 
-            ACTION_SEND_WHATSAPP -> {
+            // SEND WHATSAPP (SuperWA)
+            action.endsWith("ACTION_SEND_WHATSAPP") -> {
+                if (AppVariantHelper.isSuperSms) {
+                    setResult(0, "Not supported in SuperSMS variant", null)
+                    return
+                }
                 val phone = intent.getStringExtra(EXTRA_PHONE).orEmpty().trim()
                 val message = intent.getStringExtra(EXTRA_MESSAGE).orEmpty()
                 val isBusiness = intent.getBooleanExtra(EXTRA_IS_BUSINESS, false)
 
                 if (phone.isBlank()) {
-                    Log.w(TAG, "Missing phone recipient for WhatsApp message")
                     setResult(0, "Missing recipient phone", null)
                     return
                 }
@@ -160,13 +158,13 @@ class AutomationReceiver : BroadcastReceiver() {
                 }
             }
 
-            ACTION_SEND_SMS -> {
+            // SEND SMS (SuperSMS)
+            action.endsWith("ACTION_SEND_SMS") -> {
                 val phone = intent.getStringExtra(EXTRA_PHONE).orEmpty().trim()
                 val message = intent.getStringExtra(EXTRA_MESSAGE).orEmpty()
                 val simSlot = intent.getIntExtra(EXTRA_SIM_SLOT, 0)
 
                 if (phone.isBlank() || message.isBlank()) {
-                    Log.w(TAG, "Missing phone or message text for SMS")
                     setResult(0, "Missing phone or message text", null)
                     return
                 }
@@ -181,12 +179,33 @@ class AutomationReceiver : BroadcastReceiver() {
                 setResult(if (result.success) 1 else 0, result.messageSnippet, null)
             }
 
-            ACTION_SET_BANKING_SHIELD -> {
+            // MAKE CALL (SuperSMS)
+            action.endsWith("ACTION_MAKE_CALL") -> {
+                val phone = intent.getStringExtra(EXTRA_PHONE).orEmpty().trim()
+                val duration = intent.getIntExtra(EXTRA_DURATION, 10)
+                val simSlot = intent.getIntExtra(EXTRA_SIM_SLOT, 0)
+
+                if (phone.isBlank()) {
+                    setResult(0, "Missing phone number for call", null)
+                    return
+                }
+
+                receiverScope.launch {
+                    val placed = TelephonyCallEngine.placeCall(context, phone, simSlot)
+                    setResult(if (placed) 1 else 0, "Call placed to $phone (duration=${duration}s, sim=$simSlot)", null)
+                    if (placed && duration > 0) {
+                        delay(duration * 1000L)
+                        TelephonyCallEngine.endCall(context)
+                    }
+                }
+            }
+
+            // SET BANKING SHIELD (SuperWA)
+            action.endsWith("ACTION_SET_BANKING_SHIELD") -> {
                 val pkg = intent.getStringExtra(EXTRA_PACKAGE).orEmpty().trim()
                 val enable = intent.getBooleanExtra(EXTRA_ENABLED, true)
 
                 if (pkg.isBlank()) {
-                    Log.w(TAG, "Missing package parameter for banking shield toggle")
                     setResult(0, "Missing package parameter", null)
                     return
                 }
@@ -206,14 +225,71 @@ class AutomationReceiver : BroadcastReceiver() {
                 setResult(1, msg, null)
             }
 
-            ACTION_GET_STATUS -> {
+            // GET STATUS
+            action.endsWith("ACTION_GET_STATUS") -> {
                 receiverScope.launch {
-                    val isA11y = AccessibilityHealthManager.isAccessibilityEnabledInSystem(context)
+                    val variant = AppVariantHelper.currentVariant
                     val poolCount = repository.countDynamicPool()
                     val protectedCount = ProtectedApplicationManager.getUserProtectedPackages().size
-                    val statusMsg = "SuperApp Status: a11y=$isA11y, poolCount=$poolCount, protectedApps=$protectedCount"
+                    val isA11y = if (AppVariantHelper.isSuperSms) {
+                        "N/A (SuperSMS - Zero Accessibility Required)"
+                    } else {
+                        AccessibilityHealthManager.isAccessibilityEnabledInSystem(context).toString()
+                    }
+                    val statusMsg = "App: $variant | a11y=$isA11y | poolCount=$poolCount | protectedApps=$protectedCount"
                     Log.i(TAG, statusMsg)
                     setResult(1, statusMsg, null)
+                }
+            }
+
+            // DUMP GROUPS (SuperWA)
+            action.endsWith("ACTION_DUMP_GROUPS") -> {
+                receiverScope.launch {
+                    val db = com.jmd.superapp.data.db.DatabaseHelper.getInstance(context).readableDatabase
+                    val dumpLines = mutableListOf<String>()
+                    val count = try {
+                        db.rawQuery(
+                            "SELECT id, name, phone, normalized_number, source FROM ${com.jmd.superapp.data.db.DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE enabled = 1 AND (source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%') ORDER BY name ASC",
+                            null
+                        ).use { c ->
+                            var cIdx = 0
+                            while (c.moveToNext()) {
+                                cIdx++
+                                val id = c.getLong(0)
+                                val name = c.getString(1).orEmpty()
+                                val phone = c.getString(2).orEmpty()
+                                val norm = c.getString(3).orEmpty()
+                                val src = c.getString(4).orEmpty()
+                                val line = "[$id] name='$name' | phone='$phone' | norm='$norm' | src='$src'"
+                                dumpLines.add(line)
+                                Log.w(TAG, "DUMP_GROUP: $line")
+                            }
+                            cIdx
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "DUMP_GROUPS error: ${e.message}")
+                        0
+                    }
+                    try {
+                        val dumpFile = java.io.File("/sdcard/Download/groups_dump.txt")
+                        dumpFile.writeText(dumpLines.joinToString("\n"))
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Could not write /sdcard/Download/groups_dump.txt: ${e.message}")
+                    }
+                    val msg = "Dumped $count group entries"
+                    Log.i(TAG, msg)
+                    setResult(1, msg, null)
+                }
+            }
+
+            // PURGE CORRUPTED GROUPS (SuperWA)
+            action.endsWith("ACTION_PURGE_CORRUPTED_GROUPS") -> {
+                receiverScope.launch {
+                    val purged = repository.purgeCorruptedGroupsFromPool()
+                    val msg = "Purged and repaired $purged corrupted group entries"
+                    Log.i(TAG, msg)
+                    AppFileLogger.i(context, TAG, msg)
+                    setResult(1, msg, null)
                 }
             }
         }

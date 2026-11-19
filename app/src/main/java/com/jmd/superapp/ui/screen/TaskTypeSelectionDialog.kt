@@ -63,7 +63,7 @@ fun TaskTypeSelectionDialog(
     // Sub-flow state: null = root list, "STATUS" = choose WhatsApp vs W4B status, "WA_CALL" = choose WA vs W4B call
     var selectedSubFlow by remember { mutableStateOf<String?>(null) }
 
-    val taskTypes = listOf(
+    val allTaskTypes = listOf(
         TaskTypeItem(
             title = "SMS Message",
             description = "Schedule direct SMS via device SIM card",
@@ -79,7 +79,7 @@ fun TaskTypeSelectionDialog(
             channel = ChannelType.WHATSAPP,
         ),
         TaskTypeItem(
-            title = "WhatsApp Business",
+            title = "WA Business",
             description = "Send WhatsApp Business direct messages with media",
             icon = Icons.Filled.BusinessCenter,
             color = Color(0xFF0D9488),
@@ -140,6 +140,15 @@ fun TaskTypeSelectionDialog(
         ),
     )
 
+    val taskTypes = allTaskTypes.filter { item ->
+        when {
+            item.channel != null -> com.jmd.superapp.core.AppVariantHelper.isChannelSupported(item.channel)
+            item.isGroup || item.isStatus || item.isWaCall -> com.jmd.superapp.core.AppVariantHelper.isSuperWa
+            item.isDailyCampaign -> true
+            else -> true
+        }
+    }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false),
@@ -185,10 +194,10 @@ fun TaskTypeSelectionDialog(
                         Column {
                             Text(
                                 text = when (selectedSubFlow) {
-                                    "STATUS" -> "Choose Status Platform"
-                                    "GROUP" -> "Choose WhatsApp Group App"
-                                    "WA_CALL" -> "Choose WhatsApp Calling App"
-                                    else -> "Choose Task Type"
+                                    "STATUS" -> "Status Platform"
+                                    "GROUP" -> "Group App"
+                                    "WA_CALL" -> "Call App"
+                                    else -> "Task Type"
                                 },
                                 fontSize = 16.5.sp,
                                 fontWeight = FontWeight.Bold,
@@ -196,10 +205,10 @@ fun TaskTypeSelectionDialog(
                             )
                             Text(
                                 text = when (selectedSubFlow) {
-                                    "STATUS" -> "Select which app to post your Status story to"
-                                    "GROUP" -> "Select WhatsApp or WhatsApp Business for this group message"
-                                    "WA_CALL" -> "Select WhatsApp or WhatsApp Business for this voice call"
-                                    else -> "Select what action you want to schedule"
+                                    "STATUS" -> "Select App"
+                                    "GROUP" -> "Select App"
+                                    "WA_CALL" -> "Select App"
+                                    else -> "Select Action"
                                 },
                                 fontSize = 11.5.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant

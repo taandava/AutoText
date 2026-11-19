@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- SuperSMS: ZERO ACCESSIBILITY SERVICE DECLARATION FOR 100% BANKING SAFETY -->
+
+    <queries>
+        <package android:name="com.whatsapp" tools:node="remove" />
+        <package android:name="com.whatsapp.w4b" tools:node="remove" />
+    </queries>
+
+    <application>
+        <!-- Remove Accessibility Service entirely from SuperSMS -->
+        <service
+            android:name="com.jmd.superapp.service.TaskAccessibilityService"
+            tools:node="remove" />
+
+        <!-- Remove Quick Settings Tile for Accessibility -->
+        <service
+            android:name="com.jmd.superapp.service.TaskTileService"
+            tools:node="remove" />
+
+        <!-- Headless CLI / Broadcast Endpoints for SuperSMS -->
+        <receiver
+            android:name="com.jmd.superapp.receiver.TaskDispatchReceiver"
+            android:exported="true"
+            tools:node="merge">
+            <intent-filter>
+                <action android:name="com.jmd.supersms.ACTION_SEND_SMS" />
+                <action android:name="com.jmd.supersms.ACTION_MAKE_CALL" />
+                <action android:name="com.jmd.supersms.ACTION_DISPATCH_TASK" />
+                <action android:name="com.jmd.supersms.ACTION_GET_STATUS" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

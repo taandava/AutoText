@@ -319,7 +319,7 @@ fun SettingsScreenAssistCard(
             )
 
             Text(
-                text = "Locks phone now, wakes display in 4 seconds, and executes automated keyguard unlock.",
+                text = "Locks phone now, wakes display in 4 seconds, and executes screen unlock assist.",
                 fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)

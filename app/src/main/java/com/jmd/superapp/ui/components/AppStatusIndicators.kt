@@ -150,161 +150,182 @@ object SystemIndicatorResolver {
         }
         val isRotationGuardActive = prefs.isPreventSystemAutoRotateEnabled && isAutoRotateOff
 
-        return listOf(
-            SystemIndicator(
-                id = "banking_shield_guard",
-                name = "Payment Compatibility Guard",
-                description = "Protects banking and payment applications (UPI, wallets, net banking) from accessibility alerts by keeping Super isolated or detached when idle.",
-                icon = Icons.Default.Security,
-                isActive = isBankingShieldActive,
-                actionLabel = if (!isBankingShieldActive) "Enable Guard" else null,
-                onAction = { _ ->
-                    prefs.isBankingShieldEnabled = true
-                }
-            ),
-            SystemIndicator(
-                id = "rotation_guard",
-                name = "Screen Orientation Guard",
-                description = "Strictly protects system display settings: ensures auto-rotate remains disabled and keeps screen orientation locked to portrait.",
-                icon = Icons.Default.ScreenLockRotation,
-                isActive = isRotationGuardActive,
-                actionLabel = if (!isRotationGuardActive) "Lock Portrait" else null,
-                onAction = { ctx ->
-                    AccessibilityHealthManager.enforceAutoRotateInvariant(ctx)
-                }
-            ),
-            SystemIndicator(
-                id = "accessibility",
-                name = a11yName,
-                description = a11yDesc,
-                icon = Icons.Default.AccessibilityNew,
-                isActive = isA11yHealthy,
-                actionLabel = when {
-                    prefs.isA11yUserPaused && hasWriteSecure -> "Resume Assistant"
-                    prefs.isA11yUserPaused -> "Enable in Settings"
-                    isA11yRunning -> "Pause Service"
-                    hasWriteSecure -> "Enable Assistant"
-                    else -> "Enable in Settings"
-                },
-                onAction = { ctx ->
-                    if (isA11yRunning) {
-                        prefs.isA11yUserPaused = true
-                        TaskAccessibilityService.disableServiceIfActive()
-                        if (hasWriteSecure) {
-                            AccessibilityHealthManager.disableAccessibilityService(ctx)
+        return buildList {
+            if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+                add(
+                    SystemIndicator(
+                        id = "banking_shield_guard",
+                        name = "Payment Compatibility Guard",
+                        description = "Protects banking and payment applications (UPI, wallets, net banking) from accessibility alerts by keeping Super isolated or detached when idle.",
+                        icon = Icons.Default.Security,
+                        isActive = isBankingShieldActive,
+                        actionLabel = if (!isBankingShieldActive) "Enable Guard" else null,
+                        onAction = { _ ->
+                            prefs.isBankingShieldEnabled = true
                         }
-                        ctx.showAppToast("Assistant paused. Banking and payment apps isolated.")
-                    } else if (hasWriteSecure) {
-                        prefs.isA11yUserPaused = false
-                        AccessibilityHealthManager.enableAccessibilityService(ctx)
-                        ctx.showAppToast("Super Scheduled Assistant Enabled!")
-                    } else {
-                        prefs.isA11yUserPaused = false
-                        AccessibilityHealthManager.ensureServiceComponentEnabled(ctx)
+                    )
+                )
+                add(
+                    SystemIndicator(
+                        id = "rotation_guard",
+                        name = "Screen Orientation Guard",
+                        description = "Strictly protects system display settings: ensures auto-rotate remains disabled and keeps screen orientation locked to portrait.",
+                        icon = Icons.Default.ScreenLockRotation,
+                        isActive = isRotationGuardActive,
+                        actionLabel = if (!isRotationGuardActive) "Lock Portrait" else null,
+                        onAction = { ctx ->
+                            AccessibilityHealthManager.enforceAutoRotateInvariant(ctx)
+                        }
+                    )
+                )
+                add(
+                    SystemIndicator(
+                        id = "accessibility",
+                        name = a11yName,
+                        description = a11yDesc,
+                        icon = Icons.Default.AccessibilityNew,
+                        isActive = isA11yHealthy,
+                        actionLabel = when {
+                            prefs.isA11yUserPaused && hasWriteSecure -> "Resume Assistant"
+                            prefs.isA11yUserPaused -> "Open Settings"
+                            isA11yRunning -> "Pause Service"
+                            hasWriteSecure -> "Enable Assistant"
+                            else -> "Open Settings"
+                        },
+                        onAction = { ctx ->
+                            if (isA11yRunning) {
+                                prefs.isA11yUserPaused = true
+                                TaskAccessibilityService.disableServiceIfActive()
+                                if (hasWriteSecure) {
+                                    AccessibilityHealthManager.disableAccessibilityService(ctx)
+                                }
+                                ctx.showAppToast("Assistant paused. Banking and payment apps isolated.")
+                            } else if (hasWriteSecure) {
+                                prefs.isA11yUserPaused = false
+                                AccessibilityHealthManager.enableAccessibilityService(ctx)
+                                ctx.showAppToast("Super Scheduled Assistant Enabled!")
+                            } else {
+                                prefs.isA11yUserPaused = false
+                                AccessibilityHealthManager.ensureServiceComponentEnabled(ctx)
+                                runCatching {
+                                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    }
+                                    ctx.startActivity(intent)
+                                }
+                            }
+                        }
+                    )
+                )
+            }
+
+            add(
+                SystemIndicator(
+                    id = "notification_listener",
+                    name = "Notification Quick-Reply Listener",
+                    description = "Monitors incoming messages and calls to trigger instant auto-replies directly via notification action buttons without opening foreground apps.",
+                    icon = Icons.Default.NotificationsActive,
+                    isActive = isNotificationListenerActive,
+                    actionLabel = if (!isNotificationListenerActive) "Grant Access" else null,
+                    onAction = { ctx ->
                         runCatching {
-                            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                            val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             }
                             ctx.startActivity(intent)
                         }
                     }
-                }
-            ),
-            SystemIndicator(
-                id = "notification_listener",
-                name = "Notification Quick-Reply Listener",
-                description = "Monitors incoming messages and calls to trigger instant auto-replies directly via notification action buttons without opening foreground apps.",
-                icon = Icons.Default.NotificationsActive,
-                isActive = isNotificationListenerActive,
-                actionLabel = if (!isNotificationListenerActive) "Grant Access" else null,
-                onAction = { ctx ->
-                    runCatching {
-                        val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                        ctx.startActivity(intent)
-                    }
-                }
-            ),
-            SystemIndicator(
-                id = "device_admin",
-                name = "Device Admin & Screen Auto-Lock",
-                description = "Allows Super to immediately re-lock the phone screen after completing unattended background tasks, securing your device against unauthorized access.",
-                icon = Icons.Default.Lock,
-                isActive = isDeviceAdminActive,
-                actionLabel = if (!isDeviceAdminActive) "Device Admin" else null,
-                onAction = { ctx ->
-                    SuperDeviceAdminReceiver.requestActivation(ctx)
-                }
-            ),
-            SystemIndicator(
-                id = "battery_opt",
-                name = "Unrestricted Battery & Power",
-                description = "Ensures the Android operating system does not suspend background tasks, drip campaigns, or scheduled alarms due to battery saver restrictions.",
-                icon = Icons.Default.Bolt,
-                isActive = isBatteryUnrestricted,
-                actionLabel = if (!isBatteryUnrestricted) "Battery Access" else null,
-                onAction = { ctx ->
-                    runCatching {
-                        val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                        ctx.startActivity(intent)
-                    }
-                }
-            ),
-            SystemIndicator(
-                id = "task_scheduler",
-                name = "Scheduled Dispatcher",
-                description = "The background service coordinating scheduled messages, repeating sequences, and daily campaigns.",
-                icon = Icons.Default.Schedule,
-                isActive = isExactAlarmActive,
-                actionLabel = if (!isExactAlarmActive) "Enable Alarms" else null,
-                onAction = { ctx ->
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        try {
-                            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                                data = "package:${ctx.packageName}".toUri()
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
-                            ctx.startActivity(intent)
-                        } catch (e: Exception) {
-                            android.util.Log.e("AppStatusIndicators", "Failed opening exact alarm settings", e)
-                        }
-                    }
-                }
-            ),
-            SystemIndicator(
-                id = "display_overlay",
-                name = "Display Over Other Apps (Overlay)",
-                description = "Allows Super to display privacy shields, countdown overlays, and incoming call simulation alerts over other applications.",
-                icon = Icons.Default.Layers,
-                isActive = isOverlayActive,
-                actionLabel = if (!isOverlayActive) "Grant Overlay" else null,
-                onAction = { ctx ->
-                    OverlayPermissionHelper.launchOverlaySettings(ctx)
-                }
-            ),
-            SystemIndicator(
-                id = "exact_alarms",
-                name = "Exact Precision Alarms",
-                description = "Guarantees tasks execute at the exact requested second without Doze-mode drift or power jitter.",
-                icon = Icons.Default.Alarm,
-                isActive = isExactAlarmActive,
-                actionLabel = if (!isExactAlarmActive) "Grant Alarm" else null,
-                onAction = { ctx ->
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        runCatching {
-                            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                                data = "package:${ctx.packageName}".toUri()
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            ctx.startActivity(intent)
-                        }
-                    }
-                }
+                )
             )
-        )
+            add(
+                SystemIndicator(
+                    id = "device_admin",
+                    name = "Device Admin & Screen Auto-Lock",
+                    description = "Allows Super to immediately re-lock the phone screen after completing unattended background tasks, securing your device against unauthorized access.",
+                    icon = Icons.Default.Lock,
+                    isActive = isDeviceAdminActive,
+                    actionLabel = if (!isDeviceAdminActive) "Device Admin" else null,
+                    onAction = { ctx ->
+                        SuperDeviceAdminReceiver.requestActivation(ctx)
+                    }
+                )
+            )
+            add(
+                SystemIndicator(
+                    id = "battery_opt",
+                    name = "Unrestricted Battery & Power",
+                    description = "Ensures the Android operating system does not suspend background tasks, drip campaigns, or scheduled alarms due to battery saver restrictions.",
+                    icon = Icons.Default.Bolt,
+                    isActive = isBatteryUnrestricted,
+                    actionLabel = if (!isBatteryUnrestricted) "Battery Access" else null,
+                    onAction = { ctx ->
+                        runCatching {
+                            val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            ctx.startActivity(intent)
+                        }
+                    }
+                )
+            )
+            add(
+                SystemIndicator(
+                    id = "task_scheduler",
+                    name = "Scheduled Dispatcher",
+                    description = "The background service coordinating scheduled messages, repeating sequences, and daily campaigns.",
+                    icon = Icons.Default.Schedule,
+                    isActive = isExactAlarmActive,
+                    actionLabel = if (!isExactAlarmActive) "Enable Alarms" else null,
+                    onAction = { ctx ->
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            try {
+                                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                    data = "package:${ctx.packageName}".toUri()
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                ctx.startActivity(intent)
+                            } catch (e: Exception) {
+                                android.util.Log.e("AppStatusIndicators", "Failed opening exact alarm settings", e)
+                            }
+                        }
+                    }
+                )
+            )
+            add(
+                SystemIndicator(
+                    id = "display_overlay",
+                    name = "Display Over Other Apps (Overlay)",
+                    description = "Allows Super to display privacy shields, countdown overlays, and incoming call simulation alerts over other applications.",
+                    icon = Icons.Default.Layers,
+                    isActive = isOverlayActive,
+                    actionLabel = if (!isOverlayActive) "Grant Overlay" else null,
+                    onAction = { ctx ->
+                        OverlayPermissionHelper.launchOverlaySettings(ctx)
+                    }
+                )
+            )
+            add(
+                SystemIndicator(
+                    id = "exact_alarms",
+                    name = "Exact Precision Alarms",
+                    description = "Guarantees tasks execute at the exact requested second without Doze-mode drift or power jitter.",
+                    icon = Icons.Default.Alarm,
+                    isActive = isExactAlarmActive,
+                    actionLabel = if (!isExactAlarmActive) "Grant Alarm" else null,
+                    onAction = { ctx ->
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            runCatching {
+                                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                                    data = "package:${ctx.packageName}".toUri()
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                }
+                                ctx.startActivity(intent)
+                            }
+                        }
+                    }
+                )
+            )
+        }
     }
 }
 

@@ -106,7 +106,7 @@ fun DailyAutoSenderScreen(
 
     var showSelectChannelDialog by remember { mutableStateOf(false) }
     var showCreateCampaignDialog by remember { mutableStateOf(false) }
-    var createChannelType by remember { mutableStateOf("SMS") }
+    var createChannelType by remember { mutableStateOf(if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) "SMS" else "WHATSAPP") }
     /**
      * What it is:
      * Execution routine for [loadAllCampaigns].
@@ -120,7 +120,14 @@ fun DailyAutoSenderScreen(
 
     fun loadAllCampaigns() {
         scope.launch(Dispatchers.IO) {
-            val list = repository.getAllDailyCampaignConfigs()
+            val rawList = repository.getAllDailyCampaignConfigs()
+            val list = rawList.filter { item ->
+                if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+                    item.channel.equals("SMS", ignoreCase = true) || item.channel.equals("CALL", ignoreCase = true)
+                } else {
+                    item.channel.contains("WHATSAPP", ignoreCase = true)
+                }
+            }
             val pStats = repository.getDynamicPoolStats()
             withContext(Dispatchers.Main) {
                 allCampaigns = list

@@ -91,15 +91,15 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
 
     // Live permission states mapped by privilege
     val privilegeStates = remember(permissionsRefreshKey) {
-        AppPrivilege.entries.associateWith { it.isGranted(context) }
+        AppPrivilege.supportedEntries.associateWith { it.isGranted(context) }
     }
 
     val grantedCount = privilegeStates.values.count { it }
-    val totalPermissions = AppPrivilege.entries.size
+    val totalPermissions = AppPrivilege.supportedEntries.size
 
-    val corePrivileges = remember { AppPrivilege.entries.filter { it.category == PrivilegeCategory.CORE } }
-    val systemPrivileges = remember { AppPrivilege.entries.filter { it.category == PrivilegeCategory.SYSTEM } }
-    val commPrivileges = remember { AppPrivilege.entries.filter { it.category == PrivilegeCategory.COMMUNICATION } }
+    val corePrivileges = remember { AppPrivilege.supportedEntries.filter { it.category == PrivilegeCategory.CORE } }
+    val systemPrivileges = remember { AppPrivilege.supportedEntries.filter { it.category == PrivilegeCategory.SYSTEM } }
+    val commPrivileges = remember { AppPrivilege.supportedEntries.filter { it.category == PrivilegeCategory.COMMUNICATION } }
 
     val coreCount = corePrivileges.count { privilegeStates[it] == true }
     val systemCount = systemPrivileges.count { privilegeStates[it] == true }
@@ -154,7 +154,7 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
                 )
             }
 
-            // 2. Group 1: Core Automation Privileges
+            // 2. Group 1: Core Privileges
             item {
                 PermissionSectionHeader(
                     title = PrivilegeCategory.CORE.title,

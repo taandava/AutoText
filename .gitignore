@@ -13,6 +13,9 @@ local.properties
 keystore.properties
 *.apk
 !Super-release.apk
+!SuperSMS-release.apk
+!SuperWA-release.apk
+.vscode/
 app/src/main/assets/project_source.zip
 
 # IntelliJ "Inspect Code" report exports (generated artefacts in root or audit - never commit these)

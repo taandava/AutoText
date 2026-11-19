@@ -138,6 +138,15 @@ class DailyCampaignWorker(
         val isWhatsApp = config.channel.equals("WHATSAPP", ignoreCase = true) ||
                 config.channel.equals("WHATSAPP_BUSINESS", ignoreCase = true)
 
+        if (com.jmd.superapp.core.AppVariantHelper.isSuperSms && isWhatsApp) {
+            AppFileLogger.w(applicationContext, TAG, "Skipping WhatsApp campaign in SuperSMS variant")
+            return Result.success()
+        }
+        if (com.jmd.superapp.core.AppVariantHelper.isSuperWa && !isWhatsApp) {
+            AppFileLogger.w(applicationContext, TAG, "Skipping SMS campaign in SuperWA variant")
+            return Result.success()
+        }
+
         val channelDisplayName = when {
             config.channel.contains("BUSINESS", ignoreCase = true) -> "Business Campaign"
             isWhatsApp -> "WhatsApp Campaign"

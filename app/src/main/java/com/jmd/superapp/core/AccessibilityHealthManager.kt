@@ -484,10 +484,6 @@ object AccessibilityHealthManager {
             Log.i(TAG, "autoHealAccessibility: Skipped because banking app is foreground or user paused is active (fg=$fg)")
             return false
         }
-        if (prefs.isDynamicA11yOnDemandEnabled && !TaskAccessibilityService.isDispatchingActive()) {
-            Log.i(TAG, "autoHealAccessibility: Skipped because dynamic on-demand is active and idle")
-            return false
-        }
         return try {
             val cr = context.contentResolver
             val expectedShort = ComponentName(context, TaskAccessibilityService::class.java).flattenToString()
@@ -604,25 +600,16 @@ object AccessibilityHealthManager {
                 // flicker on/off in system settings while a banking app was open.
                 Log.i(TAG, "Banking app ($fg) active: isolation guard holds, service stays bound")
             } else if (!prefs.isA11yUserPaused) {
-                if (prefs.isDynamicA11yOnDemandEnabled && !TaskAccessibilityService.isDispatchingActive()) {
-                    // Dynamic On-Demand Mode: In idle state with no active tasks running,
-                    // keep accessibility service detached so Google Pay and banking apps operate without payment blocks.
-                    if (isAccessibilityEnabledInSystem(context)) {
-                        disableAccessibilityService(context)
-                        Log.i(TAG, "On-Demand Standby: Safely detached idle accessibility service for banking/UPI compatibility")
-                    }
-                } else {
-                    val expectedShort = ComponentName(context, TaskAccessibilityService::class.java).flattenToString()
-                    val hasMe = a11yCurrent.contains(expectedShort) || a11yCurrent.contains(a11yExpected) ||
-                        (a11yCurrent.contains(context.packageName) && a11yCurrent.contains("TaskAccessibilityService"))
-                    if (!hasMe) {
-                        val a11yUpdated = if (a11yCurrent.isBlank()) expectedShort else "$a11yCurrent:$expectedShort"
-                        Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, a11yUpdated)
-                        Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "1")
-                        Log.i(TAG, "Directly enabled Accessibility Service in settings via WRITE_SECURE_SETTINGS")
-                    } else if (!isServiceRunning()) {
-                        autoHealAccessibility(context)
-                    }
+                val expectedShort = ComponentName(context, TaskAccessibilityService::class.java).flattenToString()
+                val hasMe = a11yCurrent.contains(expectedShort) || a11yCurrent.contains(a11yExpected) ||
+                    (a11yCurrent.contains(context.packageName) && a11yCurrent.contains("TaskAccessibilityService"))
+                if (!hasMe) {
+                    val a11yUpdated = if (a11yCurrent.isBlank()) expectedShort else "$a11yCurrent:$expectedShort"
+                    Settings.Secure.putString(cr, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, a11yUpdated)
+                    Settings.Secure.putString(cr, Settings.Secure.ACCESSIBILITY_ENABLED, "1")
+                    Log.i(TAG, "Directly enabled Accessibility Service in settings via WRITE_SECURE_SETTINGS")
+                } else if (!isServiceRunning()) {
+                    autoHealAccessibility(context)
                 }
             } else {
                 Log.d(TAG, "Accessibility Service is explicitly paused by user: respecting paused state")

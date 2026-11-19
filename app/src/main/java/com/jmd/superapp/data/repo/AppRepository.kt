@@ -365,7 +365,7 @@ class AppRepository(context: Context) {
      */
 
     fun getDynamicPool(
-        limit: Int = 1000,
+        limit: Int = 50000,
         searchQuery: String = "",
         filterUnsentOnly: Boolean = false,
         whatsApp: Boolean = false,

@@ -464,38 +464,42 @@ fun DailyCampaignEmptyStateCard(
             letterSpacing = 0.5.sp
         )
 
-        // 1. SMS Channel Card
-        ChannelSelectionCard(
-            title = "SMS Campaign",
-            badge = "Carrier Direct",
-            description = "Direct cellular SMS outreach. Dual SIM selection (SIM 1/2) with India carrier daily quota safety safeguard.",
-            icon = Icons.Default.Sms,
-            accentColor = MaterialTheme.colorScheme.primary,
-            buttonText = "Setup SMS",
-            onClick = { onSelectChannel("SMS") }
-        )
+        // 1. SMS Channel Card (SuperSMS only)
+        if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) {
+            ChannelSelectionCard(
+                title = "SMS Campaign",
+                badge = "Carrier Direct",
+                description = "Direct cellular SMS outreach. Dual SIM selection (SIM 1/2) with India carrier daily quota safety safeguard.",
+                icon = Icons.Default.Sms,
+                accentColor = MaterialTheme.colorScheme.primary,
+                buttonText = "Setup SMS",
+                onClick = { onSelectChannel("SMS") }
+            )
+        }
 
-        // 2. WhatsApp Channel Card
-        ChannelSelectionCard(
-            title = "WhatsApp Campaign",
-            badge = "Personal 1-on-1",
-            description = "Personal WhatsApp messages via accessibility service with smart recovery and customizable delay.",
-            icon = Icons.AutoMirrored.Filled.Chat,
-            accentColor = MaterialTheme.colorScheme.tertiary,
-            buttonText = "Setup WhatsApp",
-            onClick = { onSelectChannel("WHATSAPP") }
-        )
+        // 2. WhatsApp Channel Card (SuperWA only)
+        if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+            ChannelSelectionCard(
+                title = "WhatsApp Campaign",
+                badge = "Personal 1-on-1",
+                description = "Personal WhatsApp messages via accessibility service with smart recovery and customizable delay.",
+                icon = Icons.AutoMirrored.Filled.Chat,
+                accentColor = MaterialTheme.colorScheme.tertiary,
+                buttonText = "Setup WhatsApp",
+                onClick = { onSelectChannel("WHATSAPP") }
+            )
 
-        // 3. WhatsApp Business Channel Card
-        ChannelSelectionCard(
-            title = "Business Campaign",
-            badge = "Client Outreach",
-            description = "Schedule client follow-ups via WhatsApp Business app with paced delivery to protect business account standing.",
-            icon = Icons.Default.Business,
-            accentColor = MaterialTheme.colorScheme.primary,
-            buttonText = "Setup Business",
-            onClick = { onSelectChannel("WHATSAPP_BUSINESS") }
-        )
+            // 3. WhatsApp Business Channel Card
+            ChannelSelectionCard(
+                title = "Business Campaign",
+                badge = "Client Outreach",
+                description = "Schedule client follow-ups via WhatsApp Business app with paced delivery to protect business account standing.",
+                icon = Icons.Default.Business,
+                accentColor = MaterialTheme.colorScheme.primary,
+                buttonText = "Setup Business",
+                onClick = { onSelectChannel("WHATSAPP_BUSINESS") }
+            )
+        }
 
         // Ingestion Pool Action Card
         AppCard(

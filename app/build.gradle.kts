@@ -19,13 +19,32 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.jmd.superapp"
         minSdk = 27
         targetSdk = 37
-        versionCode = 9
-        versionName = "1.0.8"
+        versionCode = 11
+        versionName = "1.0.9"
 
         resourceConfigurations += listOf("en")
+    }
+
+    flavorDimensions += "variant"
+    productFlavors {
+        create("supersms") {
+            dimension = "variant"
+            applicationId = "com.jmd.supersms"
+            versionCode = 11
+            versionName = "1.0.9"
+            manifestPlaceholders["appName"] = "SuperSMS"
+            buildConfigField("String", "APP_VARIANT", "\"SUPERSMS\"")
+        }
+        create("superwa") {
+            dimension = "variant"
+            applicationId = "com.jmd.superwa"
+            versionCode = 11
+            versionName = "1.0.9"
+            manifestPlaceholders["appName"] = "SuperWA"
+            buildConfigField("String", "APP_VARIANT", "\"SUPERWA\"")
+        }
     }
 
     signingConfigs {

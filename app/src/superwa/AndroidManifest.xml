@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- SuperWA: Dedicated WhatsApp, WA Business & Call Automation with Intelligent Shield -->
+    <uses-permission android:name="android.permission.SEND_SMS" tools:node="remove" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_SMS" tools:node="remove" />
+
+    <application>
+        <!-- Remove SMS Receivers from SuperWA -->
+        <receiver
+            android:name="com.jmd.superapp.receiver.SmsReceiver"
+            tools:node="remove" />
+        <receiver
+            android:name="com.jmd.superapp.receiver.SmsDeliveryReceiver"
+            tools:node="remove" />
+
+        <!-- Headless CLI / Broadcast Endpoints for SuperWA -->
+        <receiver
+            android:name="com.jmd.superapp.receiver.TaskDispatchReceiver"
+            android:exported="true"
+            tools:node="merge">
+            <intent-filter>
+                <action android:name="com.jmd.superwa.ACTION_SYNC_CHATS" />
+                <action android:name="com.jmd.superwa.ACTION_SEND_WHATSAPP" />
+                <action android:name="com.jmd.superwa.ACTION_SET_BANKING_SHIELD" />
+                <action android:name="com.jmd.superwa.ACTION_GET_STATUS" />
+                <action android:name="com.jmd.superwa.ACTION_DUMP_GROUPS" />
+                <action android:name="com.jmd.superwa.ACTION_PURGE_CORRUPTED_GROUPS" />
+                <action android:name="com.jmd.superwa.ACTION_DISPATCH_TASK" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

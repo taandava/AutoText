@@ -1365,7 +1365,9 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     // Super to check if cellular call is still active on the device
                     val isCellularCallOngoing: () -> Boolean = {
                         val stateActive = com.jmd.superapp.compat.TelephonyManagerCompat.isCallActiveOrRinging(appContext, telephonyManager)
-                        val uiActive = TaskAccessibilityService.isPhoneCallUiActive()
+                        val uiActive = if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+                            TaskAccessibilityService.isPhoneCallUiActive()
+                        } else false
                         stateActive || uiActive
                     }
 
@@ -1420,13 +1422,16 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                                 break
                             }
 
-                            val a11yTimerActive = TaskAccessibilityService.isCallTimerVisible()
+                            val a11yTimerActive = if (com.jmd.superapp.core.AppVariantHelper.isSuperWa) {
+                                TaskAccessibilityService.isCallTimerVisible()
+                            } else false
                             val isOffhook = com.jmd.superapp.compat.TelephonyManagerCompat.isCallConnected(appContext, telephonyManager)
 
                             // Detect connection:
                             // 1. Accessibility call timer is actively running (00:01, etc.)
-                            // 2. Or offhook state sustained past typical dialing phase (> 12s)
-                            if (a11yTimerActive || (isOffhook && dialElapsedMs >= 12000L)) {
+                            // 2. Or offhook state sustained past initial dialing grace (>= 3s in SuperSMS, >= 10s general)
+                            val offhookThreshold = if (com.jmd.superapp.core.AppVariantHelper.isSuperSms) 3000L else 10000L
+                            if (a11yTimerActive || (isOffhook && dialElapsedMs >= offhookThreshold)) {
                                 connected = true
                                 AppFileLogger.action(appContext, TAG, "Call to $cleanPhone connected (timerActive=$a11yTimerActive, elapsed=${dialElapsedMs}ms)! Starting configured ${durationSec}s call duration timer...")
                                 break

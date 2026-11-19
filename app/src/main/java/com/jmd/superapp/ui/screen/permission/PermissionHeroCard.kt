@@ -183,7 +183,7 @@ fun PermissionHeroCard(
                 horizontalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceSmall)
             ) {
                 SubsystemStatusChip(
-                    title = "Automation",
+                    title = "Tasks",
                     count = coreCount,
                     total = corePrivileges.size,
                     modifier = Modifier.weight(1f)
