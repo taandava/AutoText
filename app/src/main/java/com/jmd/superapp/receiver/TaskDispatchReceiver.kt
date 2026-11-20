@@ -58,6 +58,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.json.JSONArray
 import org.json.JSONObject
 
 class TaskDispatchReceiver : BroadcastReceiver() {
@@ -78,6 +79,9 @@ class TaskDispatchReceiver : BroadcastReceiver() {
         const val ACTION_SET_BANKING_SHIELD = "com.jmd.superapp.ACTION_SET_BANKING_SHIELD"
         const val ACTION_GET_STATUS = "com.jmd.superapp.ACTION_GET_STATUS"
         const val ACTION_DEVICE_DIAGNOSTICS = "com.jmd.superapp.ACTION_DEVICE_DIAGNOSTICS"
+        const val ACTION_QUERY_POOL = "com.jmd.superapp.ACTION_QUERY_POOL"
+        const val ACTION_DUMP_GROUPS = "com.jmd.superapp.ACTION_DUMP_GROUPS"
+        const val ACTION_PURGE_CORRUPTED_GROUPS = "com.jmd.superapp.ACTION_PURGE_CORRUPTED_GROUPS"
 
         // Extra keys
         const val EXTRA_PACKAGE = "package"
@@ -437,6 +441,108 @@ class TaskDispatchReceiver : BroadcastReceiver() {
                     setResult(1, json.toString(), null)
                 } catch (e: Exception) {
                     setResult(0, e.message ?: "Failed", null)
+                }
+            }
+
+            action.endsWith("ACTION_QUERY_POOL") -> {
+                val pendingResult = goAsync()
+                receiverScope.launch {
+                    try {
+                        val query = intent.getStringExtra("query").orEmpty()
+                        val limit = intent.getIntExtra("limit", 50)
+                        val appFilter = intent.getStringExtra("app") ?: intent.getStringExtra("channel")
+                        val contacts = repository.getDynamicPool(
+                            limit = limit,
+                            searchQuery = query,
+                            channelFilter = appFilter
+                        )
+                        val arr = JSONArray()
+                        for (c in contacts) {
+                            arr.put(JSONObject().apply {
+                                put("id", c.id)
+                                put("name", c.name)
+                                put("phone", c.phone)
+                                put("normalized", c.normalizedNumber)
+                                put("source", c.source)
+                                put("photo", c.photoUri)
+                            })
+                        }
+                        val json = JSONObject().apply {
+                            put("success", true)
+                            put("count", contacts.size)
+                            put("contacts", arr)
+                        }
+                        pendingResult.setResult(1, json.toString(), null)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "ACTION_QUERY_POOL error: ${e.message}")
+                        pendingResult.setResult(0, e.message ?: "Failed", null)
+                    } finally {
+                        pendingResult.finish()
+                    }
+                }
+            }
+
+            action.endsWith("ACTION_DUMP_GROUPS") -> {
+                val pendingResult = goAsync()
+                receiverScope.launch {
+                    try {
+                        val appFilter = (intent.getStringExtra("app") ?: intent.getStringExtra("channel")).orEmpty().lowercase()
+                        val list = mutableListOf<com.jmd.superapp.data.model.WhatsAppContactItem>()
+                        if (appFilter == "w4b" || appFilter.contains("business")) {
+                            list.addAll(repository.getWhatsAppContacts(channel = ChannelType.WHATSAPP_BUSINESS_GROUP))
+                        } else if (appFilter == "wa" || appFilter == "whatsapp") {
+                            list.addAll(repository.getWhatsAppContacts(channel = ChannelType.WHATSAPP_GROUP))
+                        } else {
+                            list.addAll(repository.getWhatsAppContacts(channel = ChannelType.WHATSAPP_GROUP))
+                            list.addAll(repository.getWhatsAppContacts(channel = ChannelType.WHATSAPP_BUSINESS_GROUP))
+                        }
+                        val arr = JSONArray()
+                        for (g in list) {
+                            arr.put(JSONObject().apply {
+                                put("name", g.name)
+                                put("phone", g.phone)
+                                put("normalized", g.normalizedPhone)
+                                put("account_type", g.accountType)
+                                put("is_group", g.isGroup)
+                                put("source", if (g.accountType.contains("w4b")) "WA_BUSINESS_GROUP" else "WA_GROUP")
+                            })
+                        }
+                        val json = JSONObject().apply {
+                            put("success", true)
+                            put("count", list.size)
+                            put("groups", arr)
+                        }
+                        pendingResult.setResult(1, json.toString(), null)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "ACTION_DUMP_GROUPS error: ${e.message}")
+                        pendingResult.setResult(0, e.message ?: "Failed", null)
+                    } finally {
+                        pendingResult.finish()
+                    }
+                }
+            }
+
+            action.endsWith("ACTION_PURGE_CORRUPTED_GROUPS") -> {
+                val pendingResult = goAsync()
+                receiverScope.launch {
+                    try {
+                        val purgeAll = intent.getBooleanExtra("all", false)
+                        val purgedCount = if (purgeAll) {
+                            repository.deleteAllWhatsAppGroups()
+                        } else {
+                            repository.purgeCorruptedGroupsFromPool()
+                        }
+                        val json = JSONObject().apply {
+                            put("success", true)
+                            put("purged", purgedCount)
+                        }
+                        pendingResult.setResult(1, json.toString(), null)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "ACTION_PURGE_CORRUPTED_GROUPS error: ${e.message}")
+                        pendingResult.setResult(0, e.message ?: "Failed", null)
+                    } finally {
+                        pendingResult.finish()
+                    }
                 }
             }
         }

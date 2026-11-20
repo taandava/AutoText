@@ -983,8 +983,12 @@ class WhatsAppChatScanner(
             "ask meta ai or search", "search group chats", "search chats", "search…", "search",
             "manage groups", "manage group", "recent searches", "clear all", "new group",
             "new community", "archived", "starred messages", "disappearing messages",
-            "chats", "updates", "communities", "calls", "tools", "filter"
+            "chats", "updates", "communities", "calls", "tools", "filter",
+            "group chats", "group chat", "this list automatically updates",
+            "this list dynamically updates"
         )
+        if (lower.contains("this list") && (lower.contains("group chats") || lower.contains("updates"))) return true
+        if (lower.contains("automatically updates") || lower.contains("dynamically updates")) return true
         return blocked.any { lower == it || lower.startsWith("$it ") || lower.startsWith("$it…") || lower.startsWith("$it...") }
     }
     /**

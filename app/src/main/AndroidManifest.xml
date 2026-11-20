@@ -237,6 +237,9 @@
                 <action android:name="com.jmd.superapp.ACTION_SET_BANKING_SHIELD" />
                 <action android:name="com.jmd.superapp.ACTION_GET_STATUS" />
                 <action android:name="com.jmd.superapp.ACTION_DEVICE_DIAGNOSTICS" />
+                <action android:name="com.jmd.superapp.ACTION_QUERY_POOL" />
+                <action android:name="com.jmd.superapp.ACTION_DUMP_GROUPS" />
+                <action android:name="com.jmd.superapp.ACTION_PURGE_CORRUPTED_GROUPS" />
             </intent-filter>
         </receiver>
 

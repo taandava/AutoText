@@ -83,7 +83,7 @@ function runAdb(args, device) {
 }
 
 function getPackageForApp(app) {
-    return (app === 'sms' || app === 'supersms') ? 'com.jmd.supersms' : 'com.jmd.superwa';
+    return 'com.jmd.superapp';
 }
 
 function broadcastCommand(device, pkg, action, extras = []) {
@@ -169,7 +169,7 @@ function queryPool(device, app, query = '', limit = 50) {
 }
 
 function sendWaMessage(device, recipient, message, isBusiness = false, isGroup = false) {
-    const pkg = 'com.jmd.superwa';
+    const pkg = 'com.jmd.superapp';
     const extras = [
         '--es', 'message', message,
         '--ez', 'is_business', String(!!isBusiness)
@@ -184,7 +184,7 @@ function sendWaMessage(device, recipient, message, isBusiness = false, isGroup =
 }
 
 function callWa(device, phone, duration = 15, isBusiness = false) {
-    const pkg = 'com.jmd.superwa';
+    const pkg = 'com.jmd.superapp';
     const extras = [
         '--es', 'phone', phone,
         '--ez', 'is_business', String(!!isBusiness),
@@ -195,7 +195,7 @@ function callWa(device, phone, duration = 15, isBusiness = false) {
 }
 
 function postWaStatus(device, message = '', mediaUri = '', app = 'wa') {
-    const pkg = 'com.jmd.superwa';
+    const pkg = 'com.jmd.superapp';
     const waPkg = (app === 'w4b' || app === 'business') ? 'com.whatsapp.w4b' : 'com.whatsapp';
     const extras = ['--es', 'message', message, '--es', 'package', waPkg];
     if (mediaUri) {
@@ -205,7 +205,7 @@ function postWaStatus(device, message = '', mediaUri = '', app = 'wa') {
 }
 
 function harvestWaGroups(device, isBusiness = false, target = 'GROUPS_ONLY') {
-    const pkg = 'com.jmd.superwa';
+    const pkg = 'com.jmd.superapp';
     const waPkg = isBusiness ? 'com.whatsapp.w4b' : 'com.whatsapp';
     const extras = [
         '--es', 'package', waPkg,
@@ -215,13 +215,13 @@ function harvestWaGroups(device, isBusiness = false, target = 'GROUPS_ONLY') {
 }
 
 function dumpWaGroups(device, app = '') {
-    const pkg = 'com.jmd.superwa';
+    const pkg = 'com.jmd.superapp';
     const extras = app ? ['--es', 'app', app] : [];
     return broadcastCommand(device, pkg, 'ACTION_DUMP_GROUPS', extras);
 }
 
 function purgeWaGroups(device, all = false) {
-    const pkg = 'com.jmd.superwa';
+    const pkg = 'com.jmd.superapp';
     const extras = all ? ['--ez', 'all', 'true'] : [];
     return broadcastCommand(device, pkg, 'ACTION_PURGE_CORRUPTED_GROUPS', extras);
 }
@@ -261,7 +261,7 @@ function listWaGroups(device, app = '') {
 }
 
 function sendSms(device, phone, message, simSlot = 0) {
-    const pkg = 'com.jmd.supersms';
+    const pkg = 'com.jmd.superapp';
     const extras = [
         '--es', 'phone', phone,
         '--es', 'message', message,
@@ -271,7 +271,7 @@ function sendSms(device, phone, message, simSlot = 0) {
 }
 
 function callSms(device, phone, duration = 15, simSlot = 0) {
-    const pkg = 'com.jmd.supersms';
+    const pkg = 'com.jmd.superapp';
     const extras = [
         '--es', 'phone', phone,
         '--ei', 'duration', String(duration),
@@ -282,7 +282,7 @@ function callSms(device, phone, duration = 15, simSlot = 0) {
 }
 
 function simulateCall(device, name, phone, skin = 'PIXEL', timeout = 30) {
-    const pkg = 'com.jmd.supersms';
+    const pkg = 'com.jmd.superapp';
     const extras = [
         '--es', 'caller_name', name || 'Office / Boss',
         '--es', 'caller_number', phone || '+91 98765 43210',
@@ -293,7 +293,7 @@ function simulateCall(device, name, phone, skin = 'PIXEL', timeout = 30) {
 }
 
 function setBankingShield(device, targetPackage, enabled = true) {
-    const pkg = 'com.jmd.superwa';
+    const pkg = 'com.jmd.superapp';
     const extras = [
         '--es', 'package', targetPackage,
         '--ez', 'enabled', String(enabled)
