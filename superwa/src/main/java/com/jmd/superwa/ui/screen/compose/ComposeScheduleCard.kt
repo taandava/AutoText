@@ -53,7 +53,6 @@ import com.jmd.superwa.ui.theme.AppDesignTokens
  *
  * Linked with:
  * - Architecture: [ComposeScheduleCard], [ComposeScheduleOptionsCard]
- * @param onSimSlotChanged Callback when selected SIM slot is updated.
  * @param selectedDaysOfWeek Days of week selected for weekly repetition schedule.
  * @param onSelectedDaysOfWeekChanged Callback when selected days of week are toggled.
  */

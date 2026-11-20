@@ -339,7 +339,7 @@ fun ComposeRecipientsAndMessageCard(
                     fontWeight = FontWeight.Medium
                 )
                 AppBadge(
-                    text = "App cap: 100/day",
+                    text = "Daily Cap",
                     color = MaterialTheme.colorScheme.primary,
                     showDot = false
                 )

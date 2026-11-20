@@ -6,7 +6,7 @@
  * Architecture definition and implementation for [PrivacyModels].
  *
  * What it does:
- * Defines data models and immutable configuration contracts for per-application privacy, system visibility controls, content masking, and accessibility scoping.
+ * Defines data models and immutable configuration contracts for per-application privacy, system visibility controls, and content masking.
  *
  * Linked With:
  * - Architecture: Standard application component linkages
@@ -88,8 +88,6 @@ data class AppInfoItem(
  * @property maskNotificationsOnLockScreen Replaces sensitive message text on lockscreen notifications with generic status text.
  * @property maskExecutionLogs Masks message snippets in execution logs (e.g., replacement with asterisks).
  * @property autoClearClipboardSeconds Timeout in seconds to directly wipe system clipboard after task (0 = disabled).
- * @property smartAccessibilityScoping Restricts AccessibilityServiceInfo.packageNames to only authorized target apps.
- * @property dynamicA11yOnDemand Dynamically enables accessibility service only during active dispatches if WRITE_SECURE_SETTINGS is granted.
  * @property suppressNotifsOverExcluded Suppresses heads-up notifications when any excluded application is active in the foreground.
  * @property blockOverlaysOverExcluded Prevents floating windows or simulated call overlays while an excluded app is foregrounded.
  */
@@ -99,8 +97,6 @@ data class GlobalPrivacySettings(
     val maskNotificationsOnLockScreen: Boolean = true,
     val maskExecutionLogs: Boolean = false,
     val autoClearClipboardSeconds: Int = 15,
-    val smartAccessibilityScoping: Boolean = true,
-    val dynamicA11yOnDemand: Boolean = true,
     val suppressNotifsOverExcluded: Boolean = true,
     val blockOverlaysOverExcluded: Boolean = true
 )

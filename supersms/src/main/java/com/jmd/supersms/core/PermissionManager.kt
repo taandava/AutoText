@@ -10,7 +10,6 @@
  *
  * Linked With:
  * - Schedulers & Receivers: [android.app.AlarmManager]
- * - Services & Engines: [com.jmd.supersms.service.TaskAccessibilityService], [com.jmd.supersms.service.TaskNotificationListenerService]
  * - Core Security & Utilities: [android.app.NotificationManager], [android.content.pm.PackageManager], [android.os.PowerManager], [androidx.core.content.ContextCompat]
  * - Android Framework & Jetpack: [android.Manifest], [android.content.ComponentName], [android.os.Build], [android.provider.Settings]
  */
@@ -444,30 +443,15 @@ object PermissionManager {
 
     /**
      * What it is:
-     * Checks if Super Accessibility Service is active and bound.
+     * Checks if Notification Policy Access (DND) is granted.
      *
      * What it does:
-     * Executes [isAccessibilityOperational] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [PermissionManager], [isAccessibilityOperational]
+     * Queries NotificationManager to check policy access for sound profiles.
      */
     fun hasNotificationPolicyAccess(context: Context): Boolean {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         return notificationManager?.isNotificationPolicyAccessGranted ?: false
     }
-
-    /**
-     * What it is:
-     * Checks if Notification Listener Service is enabled in system settings.
-     *
-     * What it does:
-     * Executes [isNotificationListenerActive] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [PermissionManager], [isNotificationListenerActive]
-     */
-    fun isNotificationListenerActive(context: Context): Boolean = false
 
     /**
      * What it is:
@@ -523,12 +507,6 @@ object PermissionManager {
                 } else {
                     createAppDetailsIntent(context)
                 }
-            }
-            "android.permission.BIND_ACCESSIBILITY_SERVICE" -> {
-                Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-            }
-            "android.service.notification.NotificationListenerService" -> {
-                Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
             }
             Manifest.permission.ACCESS_NOTIFICATION_POLICY -> {
                 Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)

@@ -57,13 +57,9 @@ fun PermissionCenterView(context: Context, onBack: () -> Unit) {
     val coreRuntimePermissions = remember {
         buildList {
             add(Manifest.permission.READ_CONTACTS)
-            add(Manifest.permission.SEND_SMS)
-            add(Manifest.permission.RECEIVE_SMS)
-            add(Manifest.permission.CALL_PHONE)
             add(Manifest.permission.READ_PHONE_STATE)
             add(Manifest.permission.READ_CALL_LOG)
             addAll(PermissionManager.getRequiredMediaPermissions())
-            add(Manifest.permission.ANSWER_PHONE_CALLS)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 add(Manifest.permission.POST_NOTIFICATIONS)
             }

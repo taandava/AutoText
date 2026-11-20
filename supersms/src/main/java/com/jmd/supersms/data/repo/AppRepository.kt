@@ -1114,7 +1114,6 @@ class AppRepository(context: Context) {
     }
 
     fun isValidPickedChatName(name: String): Boolean = name.isNotBlank()
-    fun deleteAllWhatsAppGroups(source: String? = null): Int = 0
     fun purgeCorruptedGroupsFromPool(): Int = 0
     fun purgeAllGroupEntries(): Int = 0
     fun purgeAllGroupsFromPool(): Int = 0

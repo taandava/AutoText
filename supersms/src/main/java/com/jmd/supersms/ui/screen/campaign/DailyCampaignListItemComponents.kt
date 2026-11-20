@@ -176,7 +176,6 @@ fun DailyContactPoolHeaderCard(
  *
  * Linked with:
  * - Architecture: [DailyCampaignListItemComponents], [DailySentLedgerHeaderCard]
- * @param isWhatsApp Flag for channel handling.
  * @param sentCount Number of contacts dispatched so far in the active cycle.
  * @param searchQuery Current search string filter.
  * @param onSearchQueryChange Callback when search filter text changes.
@@ -186,7 +185,6 @@ fun DailyContactPoolHeaderCard(
  */
 @Composable
 fun DailySentLedgerHeaderCard(
-    isWhatsApp: Boolean,
     sentCount: Int,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
@@ -300,14 +298,12 @@ fun DailySentLedgerHeaderCard(
  * Linked with:
  * - Architecture: [DailyCampaignListItemComponents], [ContactItemCard]
  * @param contact Data model representing the discovered phone number and metadata.
- * @param isWhatsApp Flag for channel handling.
  * @param onToggle Callback triggered when active inclusion switch is toggled.
  * @param onDelete Callback triggered when item is deleted from dynamic pool.
  */
 @Composable
 fun ContactItemCard(
     contact: DynamicContactItem,
-    isWhatsApp: Boolean = false,
     onToggle: (Boolean) -> Unit,
     onDelete: () -> Unit
 ) {
@@ -321,9 +317,6 @@ fun ContactItemCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             val sourceIcon = when (contact.source) {
-                "WA_BUSINESS" -> Icons.Default.Business
-                "WA_CHAT" -> Icons.AutoMirrored.Filled.Chat
-                "WA_GROUP" -> Icons.Default.Groups
                 "CONTACT" -> Icons.Default.Person
                 "SMS" -> Icons.Default.ChatBubble
                 else -> Icons.Default.Call
@@ -376,7 +369,7 @@ fun ContactItemCard(
                     fontSize = 11.5.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
-                val isSent = if (isWhatsApp) contact.waLastSentAt > 0 else contact.lastSentAt > 0
+                val isSent = contact.lastSentAt > 0
                 if (isSent) {
                     Text(
                         text = "Already contacted in cycle",
@@ -424,18 +417,16 @@ fun ContactItemCard(
  * Linked with:
  * - Architecture: [DailyCampaignListItemComponents], [LedgerItemCard]
  * @param contact Data model representing dispatched contact item.
- * @param isWhatsApp Flag for channel handling.
  * @param onRequeue Callback triggered to return this contact back to the pending queue.
  */
 @Composable
 fun LedgerItemCard(
     contact: DynamicContactItem,
-    isWhatsApp: Boolean,
     onRequeue: () -> Unit
 ) {
-    val sentAt = if (isWhatsApp) contact.waLastSentAt else contact.lastSentAt
-    val sendCount = if (isWhatsApp) contact.waSendCount else contact.sendCount
-    val status = if (isWhatsApp) contact.waStatus else contact.smsStatus
+    val sentAt = contact.lastSentAt
+    val sendCount = contact.sendCount
+    val status = contact.smsStatus
     val currentLocale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val dateStr = if (sentAt > 0) {
         SimpleDateFormat("dd MMM yyyy, hh:mm a", currentLocale).format(Date(sentAt))
@@ -460,8 +451,8 @@ fun LedgerItemCard(
                 name = contact.name.ifBlank { contact.phone },
                 photoUri = contact.photoUri,
                 size = 36.dp,
-                badgeIcon = if (isWhatsApp) Icons.Default.PhoneAndroid else Icons.Default.Sms,
-                badgeColor = if (isWhatsApp) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary
+                badgeIcon = Icons.Default.Sms,
+                badgeColor = MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.width(10.dp))

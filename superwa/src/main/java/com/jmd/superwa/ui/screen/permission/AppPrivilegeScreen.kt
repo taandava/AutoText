@@ -127,8 +127,8 @@ enum class AppPrivilege(
     ),
     COMMUNICATIONS(
         title = "Device Communications",
-        subtitle = "Auto-discovers contacts and permits direct cellular messaging and calling.",
-        detailedPurpose = "Required to populate recipient contact names, dispatch carrier SMS tasks, and handle incoming call dispatch.",
+        subtitle = "Auto-discovers contacts and permits media attachments and status updates.",
+        detailedPurpose = "Required to populate recipient contact names, attach media photos/videos, and detect active phone calls.",
         icon = Icons.Default.Contacts,
         category = PrivilegeCategory.COMMUNICATION,
         buttonLabel = "Grant All"
@@ -174,8 +174,6 @@ enum class AppPrivilege(
         DEVICE_ADMIN -> SuperDeviceAdminReceiver.isAdminActive(context)
         COMMUNICATIONS -> {
             PermissionManager.hasContactsPermission(context) &&
-                    PermissionManager.hasSmsSendPermission(context) &&
-                    PermissionManager.hasCallPhonePermission(context) &&
                     PermissionManager.hasPhoneStatePermission(context) &&
                     PermissionManager.hasCallLogPermission(context) &&
                     PermissionManager.hasMediaPermission(context) &&

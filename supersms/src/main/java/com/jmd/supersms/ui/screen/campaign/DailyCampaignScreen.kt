@@ -519,7 +519,6 @@ fun DailyAutoSenderScreen(
         // ==========================================
         // TYPE-SPECIFIC CAMPAIGN FORM & LEDGER MODE
         // ==========================================
-        val isWhatsApp = false
         val campaignThemeColor = MaterialTheme.colorScheme.primary
 
         Column(
@@ -582,10 +581,8 @@ fun DailyAutoSenderScreen(
             // Top Status Enterprise Banner for this campaign
             item {
                 DailyCampaignBannerCard(
-                    isWhatsApp = false,
                     config = config,
                     stats = stats,
-                    isA11yActive = true,
                     isScanning = isScanning,
                     campaignThemeColor = campaignThemeColor,
                     lastScanSummary = lastScanSummary,
@@ -601,9 +598,8 @@ fun DailyAutoSenderScreen(
                         loadAllCampaigns()
                         context.showAppToast(if (active) "Campaign Activated" else "Campaign Paused: Execution stopped")
                     },
-                    onAutoHeal = {},
                     onSendBatch = {
-                        if (!isWhatsApp && smsQuota.isLimitReached) {
+                        if (smsQuota.isLimitReached) {
                             context.showAppToast("Daily SMS limit reached", isLong = true)
                             return@DailyCampaignBannerCard
                         }
@@ -622,7 +618,6 @@ fun DailyAutoSenderScreen(
             item {
                 DailyCampaignConfigCard(
                     config = config,
-                    isWhatsApp = isWhatsApp,
                     campaignThemeColor = campaignThemeColor,
                     onConfigChange = { config = it },
                     onSave = { updated ->
@@ -672,7 +667,6 @@ fun DailyAutoSenderScreen(
                     items(contactsList, key = { it.id }) { contact ->
                         ContactItemCard(
                             contact = contact,
-                            isWhatsApp = isWhatsApp,
                             onToggle = { enabled ->
                                 repository.toggleDynamicContact(contact.id, enabled)
                                 refreshData()
@@ -687,7 +681,6 @@ fun DailyAutoSenderScreen(
             } else {
                 item {
                     DailySentLedgerHeaderCard(
-                        isWhatsApp = isWhatsApp,
                         sentCount = sentLedgerList.size,
                         searchQuery = searchQuery,
                         onSearchQueryChange = { searchQuery = it },
@@ -712,7 +705,6 @@ fun DailyAutoSenderScreen(
                     items(sentLedgerList, key = { "ledger_${it.id}" }) { contact ->
                         LedgerItemCard(
                             contact = contact,
-                            isWhatsApp = isWhatsApp,
                             onRequeue = {
                                 repository.requeueContactForCampaign(selectedCampaignId, contact.id)
                                 refreshData()

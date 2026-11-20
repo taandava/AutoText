@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.asStateFlow
  * Monitors application-wide foreground/background visibility states using AndroidX ProcessLifecycleOwner.
  *
  * What it does:
- * Allows background dispatch engines and accessibility services to observe app presence without manual activity counting.
+ * Allows background dispatch engines and system services to observe app presence without manual activity counting.
  *
  * Linked with:
  * - Architecture: [LifecycleObserver], [AppLifecycleObserver]

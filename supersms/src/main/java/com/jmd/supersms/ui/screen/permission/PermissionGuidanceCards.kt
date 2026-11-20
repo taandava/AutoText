@@ -221,7 +221,7 @@ fun SideloadedAppHelpCard(
                     }
                 )
             },
-            detailedPurpose = "On Android 13+, sideloaded APKs have accessibility and notification permissions restricted by default. Tapping the three dots in App Info unlocks full access.",
+            detailedPurpose = "On Android 13+, sideloaded APKs have advanced system permissions restricted by default. Tapping the three dots in App Info unlocks full access.",
             onSettingsClick = {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = "package:${context.packageName}".toUri()

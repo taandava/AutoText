@@ -65,7 +65,7 @@ enum class SettingsSubdivision(
 
 /**
  * What it is:
- * Application settings and operational configuration screen providing controls for variable formatting, dispatch channels, accessibility banking guard, theme styling, system diagnostics, and database backup/restore.
+ * Application settings and operational configuration screen providing controls for variable formatting, dispatch channels, banking guard, theme styling, system diagnostics, and database backup/restore.
  *
  * What it does:
  * Renders interactive Material 3 UI for [SettingsView] adhering to application design invariants.

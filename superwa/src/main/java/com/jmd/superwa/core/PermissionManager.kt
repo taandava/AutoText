@@ -89,9 +89,6 @@ enum class PermissionCategory(val displayName: String) {
  */
 object PermissionManager {
 
-    const val ID_SMS = Manifest.permission.SEND_SMS
-    const val ID_RECEIVE_SMS = Manifest.permission.RECEIVE_SMS
-    const val ID_CALL_PHONE = Manifest.permission.CALL_PHONE
     const val ID_READ_PHONE_STATE = Manifest.permission.READ_PHONE_STATE
     const val ID_READ_CALL_LOG = Manifest.permission.READ_CALL_LOG
     const val ID_READ_CONTACTS = Manifest.permission.READ_CONTACTS
@@ -109,39 +106,6 @@ object PermissionManager {
     val CRITICAL_PERMISSIONS: Set<String> = setOf(ID_ACCESSIBILITY, ID_EXACT_ALARMS)
 
     val ALL_SPECIFICATIONS: List<PermissionFeatureInfo> = listOf(
-        PermissionFeatureInfo(
-            permissionId = ID_SMS,
-            featureName = "Cellular SMS Sending",
-            purpose = "Allows the background executor to dispatch cellular SMS messages via carrier modem.",
-            canWorkWithout = false,
-            isRuntimeApproval = true,
-            requiresSpecialUserAction = false,
-            deniedImpact = "Direct cellular SMS tasks fail with ACTION_REQUIRED or open system messaging app.",
-            revocationSafety = "Can be safely revoked anytime; WhatsApp and call tasks remain 100% operational.",
-            category = PermissionCategory.MESSAGING
-        ),
-        PermissionFeatureInfo(
-            permissionId = ID_RECEIVE_SMS,
-            featureName = "Incoming SMS Auto-Reply & Forwarding",
-            purpose = "Allows the SMS receiver to detect incoming messages and trigger quick reply rules.",
-            canWorkWithout = true,
-            isRuntimeApproval = true,
-            requiresSpecialUserAction = false,
-            deniedImpact = "Auto-reply rules for incoming SMS will not trigger.",
-            revocationSafety = "Can be safely revoked anytime without affecting scheduled outbound tasks.",
-            category = PermissionCategory.MESSAGING
-        ),
-        PermissionFeatureInfo(
-            permissionId = ID_CALL_PHONE,
-            featureName = "Direct Phone Call Placement",
-            purpose = "Allows Super to dial scheduled phone calls directly without requiring manual user tap in dialer.",
-            canWorkWithout = true,
-            isRuntimeApproval = true,
-            requiresSpecialUserAction = false,
-            deniedImpact = "Super opens system dialer (ACTION_DIAL) with number pre-filled; user must tap call.",
-            revocationSafety = "Can be revoked safely; fallback to ACTION_DIAL is direct.",
-            category = PermissionCategory.TELEPHONY
-        ),
         PermissionFeatureInfo(
             permissionId = ID_READ_PHONE_STATE,
             featureName = "Call State & Connected Timing",
@@ -303,46 +267,6 @@ object PermissionManager {
     fun isPermissionGranted(context: Context, permission: String): Boolean {
         return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
     }
-
-    /**
-     * What it is:
-     * Checks if the app can dispatch cellular SMS messages directly.
-     *
-     * What it does:
-     * Executes [hasSmsSendPermission] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [PermissionManager], [hasSmsSendPermission]
-     */
-    fun hasSmsSendPermission(context: Context): Boolean =
-        isPermissionGranted(context, Manifest.permission.SEND_SMS)
-
-    /**
-     * What it is:
-     * Checks if the app can read incoming SMS messages for auto-reply rules.
-     *
-     * What it does:
-     * Executes [hasSmsReadPermission] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [PermissionManager], [hasSmsReadPermission]
-     */
-    fun hasSmsReadPermission(context: Context): Boolean =
-        isPermissionGranted(context, Manifest.permission.READ_SMS) &&
-        isPermissionGranted(context, Manifest.permission.RECEIVE_SMS)
-
-    /**
-     * What it is:
-     * Checks if the app can place direct cellular phone calls.
-     *
-     * What it does:
-     * Executes [hasCallPhonePermission] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [PermissionManager], [hasCallPhonePermission]
-     */
-    fun hasCallPhonePermission(context: Context): Boolean =
-        isPermissionGranted(context, Manifest.permission.CALL_PHONE)
 
     /**
      * What it is:
@@ -542,9 +466,6 @@ object PermissionManager {
     fun getPermissionFeatureCatalog(context: Context): List<PermissionFeatureInfo> {
         return ALL_SPECIFICATIONS.map { spec ->
             val granted = when (spec.permissionId) {
-                ID_SMS -> hasSmsSendPermission(context)
-                ID_RECEIVE_SMS -> isPermissionGranted(context, Manifest.permission.RECEIVE_SMS)
-                ID_CALL_PHONE -> hasCallPhonePermission(context)
                 ID_READ_PHONE_STATE -> hasPhoneStatePermission(context)
                 ID_READ_CALL_LOG -> hasCallLogPermission(context)
                 ID_READ_CONTACTS -> hasContactsPermission(context)

@@ -568,36 +568,30 @@ fun ChannelSelectionCard(
 
 /**
  * What it is:
- * Campaign hero banner card presenting live execution status, contact pool counters, accessibility health, and batch trigger.
+ * Campaign hero banner card presenting live execution status, contact pool counters, and batch trigger.
  *
  * What it does:
  * Renders interactive Material 3 UI for [DailyCampaignBannerCard] adhering to application design invariants.
  *
  * Linked with:
  * - Architecture: [DailyCampaignCardComponents], [DailyCampaignBannerCard]
- * @param isWhatsApp Flag for channel handling.
  * @param config Target campaign configuration data class.
  * @param stats Real-time contact pool counts.
- * @param isA11yActive True if accessibility task engine is running.
  * @param isScanning True if phonebook contact scan is underway.
  * @param campaignThemeColor Color accent tailored to current campaign medium.
  * @param lastScanSummary Metrics from the most recent contact scan.
  * @param onToggleActive Callback triggered when campaign master switch is toggled.
- * @param onAutoHeal Callback triggered to recover inactive accessibility binders.
  * @param onSendBatch Callback to dispatch today's batch immediately.
  * @param modifier Optional layout modifier.
  */
 @Composable
 fun DailyCampaignBannerCard(
-    isWhatsApp: Boolean,
     config: DailyCampaignConfig,
     stats: DynamicPoolStats,
-    isA11yActive: Boolean,
     isScanning: Boolean,
     campaignThemeColor: Color,
     lastScanSummary: IngestionSummary?,
     onToggleActive: (Boolean) -> Unit,
-    onAutoHeal: () -> Unit,
     onSendBatch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -719,7 +713,6 @@ fun DailyCampaignBannerCard(
  * Linked with:
  * - Architecture: [DailyCampaignCardComponents], [DailyCampaignConfigCard]
  * @param config Target campaign configuration data class.
- * @param isWhatsApp Flag for channel handling.
  * @param campaignThemeColor Color accent tailored to current campaign medium.
  * @param onConfigChange Callback invoked as fields are modified in real-time.
  * @param onSave Callback triggered when configuration updates are persisted.
@@ -728,7 +721,6 @@ fun DailyCampaignBannerCard(
 @Composable
 fun DailyCampaignConfigCard(
     config: DailyCampaignConfig,
-    isWhatsApp: Boolean,
     campaignThemeColor: Color,
     onConfigChange: (DailyCampaignConfig) -> Unit,
     onSave: (DailyCampaignConfig) -> Unit,
@@ -957,7 +949,7 @@ fun DailyCampaignConfigCard(
         Spacer(modifier = Modifier.height(14.dp))
 
         // Send Delay Interval (PROPER ENTRY FIELD + STEPPERS + CHIPS)
-        val minSec = if (isWhatsApp) 5 else 2
+        val minSec = 2
         val maxSec = 120
 
         Row(

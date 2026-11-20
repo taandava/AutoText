@@ -27,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.jmd.supersms.core.OverlayPermissionHelper
 import com.jmd.supersms.core.PermissionManager
@@ -75,14 +74,6 @@ enum class AppPrivilege(
     val category: PrivilegeCategory,
     val buttonLabel: String
 ) {
-    ACCESSIBILITY(
-        title = "Accessibility Service",
-        subtitle = "Powers scheduled messaging dispatch and hands-free assistance.",
-        detailedPurpose = "Allows Super to interact with approved messaging applications at user-scheduled times to populate and dispatch tasks. Never reads personal data or interacts with banking apps.",
-        icon = Icons.Default.VerifiedUser,
-        category = PrivilegeCategory.CORE,
-        buttonLabel = "Enable"
-    ),
     EXACT_ALARM(
         title = "Exact Alarms",
         subtitle = "Fires scheduled tasks at the exact specified second without battery jitter.",
@@ -90,14 +81,6 @@ enum class AppPrivilege(
         icon = Icons.Default.Alarm,
         category = PrivilegeCategory.CORE,
         buttonLabel = "Grant"
-    ),
-    NOTIFICATION_LISTENER(
-        title = "Notification Access",
-        subtitle = "Detects incoming chats for reply rules and quick responses.",
-        detailedPurpose = "Enables Super to read notification actions in messaging apps to process auto-replies directly in the background without needing to illuminate the display.",
-        icon = Icons.Default.NotificationsActive,
-        category = PrivilegeCategory.CORE,
-        buttonLabel = "Enable"
     ),
     BATTERY_SAVER(
         title = "Battery Saver",
@@ -143,14 +126,10 @@ enum class AppPrivilege(
      */
 
     fun isGranted(context: Context): Boolean = when (this) {
-        ACCESSIBILITY -> false
         EXACT_ALARM -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 (context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager)?.canScheduleExactAlarms() == true
             } else true
-        }
-        NOTIFICATION_LISTENER -> {
-            NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.packageName)
         }
         BATTERY_SAVER -> {
             (context.getSystemService(Context.POWER_SERVICE) as? PowerManager)
@@ -181,11 +160,6 @@ enum class AppPrivilege(
 
     fun openSettings(context: Context) {
         when (this) {
-            ACCESSIBILITY -> {
-                context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                })
-            }
             EXACT_ALARM -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
@@ -193,11 +167,6 @@ enum class AppPrivilege(
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     })
                 }
-            }
-            NOTIFICATION_LISTENER -> {
-                context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                })
             }
             BATTERY_SAVER -> {
                 try {
@@ -242,10 +211,6 @@ enum class AppPrivilege(
 
     companion object {
         val supportedEntries: List<AppPrivilege>
-            get() = if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-                entries.filter { it != ACCESSIBILITY }
-            } else {
-                entries
-            }
+            get() = entries.toList()
     }
 }

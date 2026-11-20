@@ -6,7 +6,7 @@
  * Architecture definition and implementation for [ContentValidator].
  *
  * What it does:
- * Provides pre-flight media URI accessibility inspection, MIME resolution, and channel-specific message content validation (SMS text-only validation).
+ * Provides pre-flight media URI readability inspection, MIME resolution, and channel-specific message content validation (SMS text-only validation).
  *
  * Linked With:
  * - Models & Entities: [com.jmd.supersms.data.model.ChannelType]
@@ -22,7 +22,7 @@ import java.io.File
 
 /**
  * What it is:
- * Result abstraction for attachment accessibility and format validation.
+ * Result abstraction for attachment readability and format validation.
  *
  * What it does:
  * Encapsulates state, business contracts, and operations for [AttachmentValidationResult].
@@ -154,7 +154,7 @@ object TaskContentValidator {
      * - Architecture: [ContentValidator], [validateAttachmentAccess]
      * @param context Active Android [Context] (nullable for test environments).
      * @param uriString URI string (content:// or file://) to inspect.
-     * @return [AttachmentValidationResult] detailing accessibility and MIME attributes.
+     * @return [AttachmentValidationResult] detailing readability and MIME attributes.
      */
     fun validateAttachmentAccess(context: Context?, uriString: String?): AttachmentValidationResult {
         val clean = uriString?.trim().orEmpty()

@@ -115,7 +115,6 @@ class PreferenceManager(private val context: Context) {
 
     companion object {
         private const val TAG = "PreferenceManager"
-        private const val KEY_DEFAULT_SIM = "default_sim_slot"
 
         private const val KEY_SCREEN_ASSIST_ENABLED = "screen_assist_enabled"
         private const val KEY_SCREEN_ASSIST_TYPE = "screen_assist_type"
@@ -455,10 +454,6 @@ class PreferenceManager(private val context: Context) {
         val md = java.security.MessageDigest.getInstance("SHA-256")
         return md.digest(seed.toByteArray(Charsets.UTF_8))
     }
-
-    var defaultSimSlot: Int
-        get() = prefs.getInt(KEY_DEFAULT_SIM, 0)
-        set(value) = prefs.edit { putInt(KEY_DEFAULT_SIM, value) }
 
     var isScreenAssistEnabled: Boolean
         get() {

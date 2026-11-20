@@ -61,9 +61,6 @@ class AppDataStore(context: Context) {
     object PreferencesKeys {
         val MASTER_SCHEDULER_ENABLED = booleanPreferencesKey("master_scheduler_enabled")
         val DARK_THEME_ENABLED = booleanPreferencesKey("dark_theme_enabled")
-        val SMS_SIM_SLOT = intPreferencesKey("sms_sim_slot")
-        val CALL_SIM_SLOT = intPreferencesKey("call_sim_slot")
-        val SMS_DAILY_LIMIT = intPreferencesKey("sms_daily_limit")
         val DYNAMIC_REACH_DAILY_LIMIT = intPreferencesKey("dynamic_reach_daily_limit")
         val LAST_MAINTENANCE_TIMESTAMP = longPreferencesKey("last_maintenance_timestamp")
         val DEFAULT_COUNTRY_CODE = stringPreferencesKey("default_country_code")
@@ -84,18 +81,6 @@ class AppDataStore(context: Context) {
 
     val isDarkThemeEnabled: Flow<Boolean> = safePreferences.map { preferences ->
         preferences[PreferencesKeys.DARK_THEME_ENABLED] ?: true
-    }
-
-    val smsSimSlot: Flow<Int> = safePreferences.map { preferences ->
-        preferences[PreferencesKeys.SMS_SIM_SLOT] ?: 0
-    }
-
-    val callSimSlot: Flow<Int> = safePreferences.map { preferences ->
-        preferences[PreferencesKeys.CALL_SIM_SLOT] ?: 0
-    }
-
-    val smsDailyLimit: Flow<Int> = safePreferences.map { preferences ->
-        preferences[PreferencesKeys.SMS_DAILY_LIMIT] ?: 100
     }
 
     val dynamicReachDailyLimit: Flow<Int> = safePreferences.map { preferences ->
@@ -134,53 +119,6 @@ class AppDataStore(context: Context) {
     suspend fun setDarkThemeEnabled(enabled: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.DARK_THEME_ENABLED] = enabled
-        }
-    }    /**
-     * What it is:
-     * Execution routine for [setSmsSimSlot].
-     *
-     * What it does:
-     * Coordinates setSmsSimSlot operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [AppDataStore]
-     */
-
-    suspend fun setSmsSimSlot(slot: Int) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SMS_SIM_SLOT] = slot
-        }
-    }
-    /**
-     * What it is:
-     * Execution routine for [setCallSimSlot].
-     *
-     * What it does:
-     * Coordinates setCallSimSlot operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [AppDataStore]
-     */
-
-    suspend fun setCallSimSlot(slot: Int) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.CALL_SIM_SLOT] = slot
-        }
-    }
-    /**
-     * What it is:
-     * Execution routine for [setSmsDailyLimit].
-     *
-     * What it does:
-     * Coordinates setSmsDailyLimit operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [AppDataStore]
-     */
-
-    suspend fun setSmsDailyLimit(limit: Int) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SMS_DAILY_LIMIT] = limit
         }
     }
     /**

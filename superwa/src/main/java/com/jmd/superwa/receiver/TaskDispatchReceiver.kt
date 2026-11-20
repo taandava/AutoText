@@ -49,7 +49,6 @@ class TaskDispatchReceiver : BroadcastReceiver() {
         const val EXTRA_TASK_ID = "task_id"
         const val EXTRA_PHONE = "phone"
         const val EXTRA_MESSAGE = "message"
-        const val EXTRA_SIM_SLOT = "sim_slot"
         const val EXTRA_DURATION = "duration"
         const val EXTRA_IS_BUSINESS = "is_business"
         const val EXTRA_ENABLED = "enabled"

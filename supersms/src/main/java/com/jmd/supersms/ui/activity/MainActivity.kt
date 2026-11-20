@@ -147,7 +147,7 @@ class MainActivity : ComponentActivity() {
 
     /**
      * What it is:
-     * Re-verifies accessibility and notification listener service health upon returning to foreground.
+     * Re-verifies system permissions and dispatch health upon returning to foreground.
      *
      * What it does:
      * Executes [onResume] logic in accordance with system and security invariants.

@@ -8,12 +8,12 @@
  *
  * What it does:
  * - Coordinates autonomous phone dialing via TelecomManager and Intent fallbacks.
- * - Terminates calls natively on Android 9+ (API 28+) using ANSWER_PHONE_CALLS without requiring AccessibilityService.
+ * - Terminates calls natively on Android 9+ (API 28+) using ANSWER_PHONE_CALLS.
  * - Tracks scheduled scheduled calls to prevent unintended auto-reply triggers in [PhoneCallReceiver].
  * - Provides non-blocking call status inspection to prevent background campaigns from conflicting with active calls.
  *
  * Linked With:
- * - Architecture: [com.jmd.supersms.compat.TelephonyManagerCompat], [com.jmd.supersms.service.TaskAccessibilityService]
+ * - Architecture: [com.jmd.supersms.compat.TelephonyManagerCompat]
  * - Logging & Utilities: [com.jmd.supersms.core.FileLogger], [com.jmd.supersms.util.PhoneNumberNormalizer]
  * - Permissions & System: [android.telecom.TelecomManager], [android.telephony.TelephonyManager]
  */
@@ -251,8 +251,7 @@ object TelephonyCallEngine {
      * Programmatically terminates an active cellular phone call.
      *
      * What it does:
-     * First attempts native [TelecomManager.endCall] on API 28+ using ANSWER_PHONE_CALLS permission (without accessibility).
-     * If native termination is unsupported or fails, falls back to [TaskAccessibilityService.endPhoneCall].
+     * Attempts native [TelecomManager.endCall] on API 28+ using ANSWER_PHONE_CALLS permission.
      *
      * Linked with:
      * - Architecture: [TelephonyCallEngine], [endCall]
@@ -260,7 +259,7 @@ object TelephonyCallEngine {
      * @return True if the call termination command was successfully dispatched.
      */
     fun endCall(context: Context): Boolean {
-        // 1. Primary: Native TelecomManager.endCall() on API 28+ (No accessibility required)
+        // Native TelecomManager.endCall() on API 28+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val hasAnswerPerm = ContextCompat.checkSelfPermission(
                 context,

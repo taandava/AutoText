@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- SuperSMS: Standalone Cellular Messaging & Phone Call Dispatch -->
-    <!-- 100% On-Device Sovereignty: Zero Accessibility Service Needed -->
+    <!-- 100% On-Device Sovereignty: Native Telephony & System APIs -->
 
     <!-- SMS Permissions -->
     <uses-permission android:name="android.permission.SEND_SMS" />

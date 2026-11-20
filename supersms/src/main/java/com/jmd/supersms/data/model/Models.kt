@@ -177,16 +177,6 @@ data class RecipientItem(
     val groupName: String = "General",
     val photoUri: String = ""
 )
-/**
- * What it is:
- * Component definition for [WhatsAppContactItem].
- *
- * What it does:
- * Provides domain logic and lifecycle management for WhatsAppContactItem.
- *
- * Linked with:
- * - Component: [Models]
- */
 
 // ==================== QUICK REPLY RULE DATA MODELS ====================
 /**

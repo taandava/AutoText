@@ -145,9 +145,6 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_MASK_NOTIFICATIONS_LOCKSCREEN = "privacy_mask_notifications_lockscreen"
         private const val KEY_MASK_EXECUTION_LOGS = "privacy_mask_execution_logs"
         private const val KEY_AUTO_CLEAR_CLIPBOARD_SECONDS = "privacy_auto_clear_clipboard_seconds"
-        private const val KEY_SMART_A11Y_SCOPING = "privacy_smart_a11y_scoping"
-        private const val KEY_DYNAMIC_A11Y_ON_DEMAND = "privacy_dynamic_a11y_on_demand"
-        private const val KEY_A11Y_USER_PAUSED = "a11y_user_paused"
         private const val KEY_SUPPRESS_NOTIFS_OVER_EXCLUDED = "privacy_suppress_notifs_over_excluded"
         private const val KEY_BLOCK_OVERLAYS_OVER_EXCLUDED = "privacy_block_overlays_over_excluded"
         private const val KEY_SMS_QUOTA_LIMIT_ENABLED = "sms_quota_limit_enabled"
@@ -165,7 +162,6 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_CUSTOM_INDIAN_NUMBERING = "custom_indian_numbering"
 
         // Channel & Dispatch Customization Keys
-        private const val KEY_WHATSAPP_TYPING_DELAY_MS = "whatsapp_typing_delay_ms"
         private const val KEY_AUTO_SMS_FALLBACK_ENABLED = "auto_sms_fallback_enabled"
         private const val KEY_CALL_SIM_DURATION_SECONDS = "call_sim_duration_seconds"
         private const val KEY_CALL_SIM_DEFAULT_NAME = "call_sim_default_name"
@@ -610,10 +606,6 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getString(KEY_APP_ICON_VARIANT, "DEFAULT") ?: "DEFAULT"
         set(value) = prefs.edit { putString(KEY_APP_ICON_VARIANT, value) }
 
-    var whatsappDispatchDelaySeconds: Int
-        get() = prefs.getInt("wa_dispatch_delay_seconds", 8)
-        set(value) = prefs.edit { putInt("wa_dispatch_delay_seconds", value.coerceIn(3, 30)) }
-
     var contactSyncIntervalHours: Int
         get() = prefs.getInt("contact_sync_interval_hours", 12)
         set(value) = prefs.edit { putInt("contact_sync_interval_hours", value) }
@@ -638,7 +630,7 @@ class PreferenceManager(private val context: Context) {
     /**
      * Bank-Safe Standby & Uninterrupted Mode: Active by default.
      * Ensures all scheduled tasks (Calls, SMS, Alarms) run uninterrupted while
-     * strictly isolating from banking, payment, and UPI applications so they never detect or flag accessibility.
+     * strictly isolating from banking, payment, and UPI applications so they never conflict with active operations.
      */
     var isBankingShieldEnabled: Boolean
         get() = prefs.getBoolean(KEY_BANKING_SHIELD_ENABLED, true)
@@ -674,18 +666,6 @@ class PreferenceManager(private val context: Context) {
     var autoClearClipboardSeconds: Int
         get() = prefs.getInt(KEY_AUTO_CLEAR_CLIPBOARD_SECONDS, 15)
         set(value) = prefs.edit { putInt(KEY_AUTO_CLEAR_CLIPBOARD_SECONDS, value.coerceIn(0, 300)) }
-
-    var isSmartAccessibilityScopingEnabled: Boolean
-        get() = prefs.getBoolean(KEY_SMART_A11Y_SCOPING, true)
-        set(value) = prefs.edit { putBoolean(KEY_SMART_A11Y_SCOPING, value) }
-
-    var isDynamicA11yOnDemandEnabled: Boolean
-        get() = prefs.getBoolean(KEY_DYNAMIC_A11Y_ON_DEMAND, false)
-        set(value) = prefs.edit { putBoolean(KEY_DYNAMIC_A11Y_ON_DEMAND, value) }
-
-    var isA11yUserPaused: Boolean
-        get() = prefs.getBoolean(KEY_A11Y_USER_PAUSED, false)
-        set(value) = prefs.edit { putBoolean(KEY_A11Y_USER_PAUSED, value) }
 
     var isSuppressNotifsOverExcludedEnabled: Boolean
         get() = prefs.getBoolean(KEY_SUPPRESS_NOTIFS_OVER_EXCLUDED, true)

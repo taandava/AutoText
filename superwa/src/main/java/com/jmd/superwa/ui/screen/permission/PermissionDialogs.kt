@@ -45,13 +45,9 @@ import com.jmd.superwa.ui.theme.AppLayoutGrid
 const val UNIVERSAL_ADB_COMMAND =
     "adb shell \"pm grant com.jmd.superwa android.permission.WRITE_SECURE_SETTINGS; " +
     "pm grant com.jmd.superwa android.permission.READ_PHONE_STATE; " +
-    "pm grant com.jmd.superwa android.permission.CALL_PHONE; " +
-    "pm grant com.jmd.superwa android.permission.ANSWER_PHONE_CALLS; " +
     "pm grant com.jmd.superwa android.permission.READ_CALL_LOG; " +
     "pm grant com.jmd.superwa android.permission.READ_CONTACTS; " +
     "pm grant com.jmd.superwa android.permission.POST_NOTIFICATIONS; " +
-    "pm grant com.jmd.superwa android.permission.READ_SMS; " +
-    "pm grant com.jmd.superwa android.permission.SEND_SMS; " +
     "pm grant com.jmd.superwa android.permission.READ_MEDIA_IMAGES; " +
     "pm grant com.jmd.superwa android.permission.READ_MEDIA_VIDEO; " +
     "appops set com.jmd.superwa SYSTEM_ALERT_WINDOW allow; " +

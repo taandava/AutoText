@@ -592,12 +592,12 @@ object AppLayoutGrid {
     val ChipCornerRadius     = 6.dp   // Inner chips & status badges
     val PillCornerRadius     = 999.dp // Action buttons, interactive pills
 
-    // Responsive Layout & Accessibility Boundaries
+    // Responsive Layout & Touch Boundaries
     val ScreenGutterCompact  = 12.dp  // Compact portrait phones
     val ScreenGutterStandard = 16.dp  // Standard display margins
     val ScreenGutterExpanded = 24.dp  // Large screen & foldable margins
     val MaxContentWidth      = 640.dp // Maximum readable content width for tablets
-    val MinTouchTarget       = 48.dp  // Strict WCAG / Material accessibility target
+    val MinTouchTarget       = 48.dp  // Strict WCAG / Material touch target
 
     // Border Width Scale
     val BorderWidthHairline = 0.5.dp
