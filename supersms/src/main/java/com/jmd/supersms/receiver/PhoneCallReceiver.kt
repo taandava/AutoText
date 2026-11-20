@@ -447,8 +447,10 @@ class PhoneCallReceiver : BroadcastReceiver() {
                 continue
             }
 
+            val callerName = PhoneNumberNormalizer.getContactName(context, callerNumber) ?: "there"
             val formattedMessage = MessageTemplateResolver.resolve(
                 template = rule.replyText,
+                name = callerName,
                 phone = callerNumber,
                 event = if (isMissedCall) "missed call" else "call",
                 targetTimestamp = System.currentTimeMillis()

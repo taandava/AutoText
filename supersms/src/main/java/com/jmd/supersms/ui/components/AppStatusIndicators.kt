@@ -24,9 +24,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -135,7 +137,7 @@ object SystemIndicatorResolver {
                     id = "battery_opt",
                     name = "Battery Care",
                     description = "Ensures background tasks execute reliably without OS suspension.",
-                    icon = Icons.Default.Bolt,
+                    icon = Icons.Default.BatteryChargingFull,
                     isActive = isBatteryUnrestricted,
                     actionLabel = if (!isBatteryUnrestricted) "Battery Care" else null,
                     onAction = { ctx ->
@@ -226,4 +228,149 @@ fun AppHeaderStatusIndicators(
             }
         }
     }
+}
+
+@Composable
+fun StatusIndicatorsDialog(
+    indicators: List<SystemIndicator>,
+    onDismiss: () -> Unit
+) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val allActive = indicators.all { it.isActive }
+    val activeCount = indicators.count { it.isActive }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "System Health",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (allActive) IndicatorActiveGreen.copy(alpha = 0.15f) else IndicatorInactiveRed.copy(alpha = 0.15f),
+                        border = BorderStroke(0.75.dp, if (allActive) IndicatorActiveGreen.copy(alpha = 0.5f) else IndicatorInactiveRed.copy(alpha = 0.5f))
+                    ) {
+                        Text(
+                            text = "$activeCount/${indicators.size} Active",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (allActive) IndicatorActiveGreen else IndicatorInactiveRed,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Pure Native Cellular Telephony • Zero Special Services Needed",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        },
+        text = {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(indicators.size) { index ->
+                    val indicator = indicators[index]
+                    val tintColor = if (indicator.isActive) IndicatorActiveGreen else IndicatorInactiveRed
+
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+                        border = BorderStroke(0.5.dp, tintColor.copy(alpha = 0.35f)),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .clip(CircleShape)
+                                        .background(tintColor.copy(alpha = 0.16f)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = indicator.icon,
+                                        contentDescription = indicator.name,
+                                        tint = tintColor,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = indicator.name,
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Text(
+                                        text = indicator.description,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+
+                            if (!indicator.isActive && indicator.actionLabel != null && indicator.onAction != null) {
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Button(
+                                    onClick = { indicator.onAction.invoke(context) },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = tintColor.copy(alpha = 0.18f),
+                                        contentColor = tintColor
+                                    ),
+                                    border = BorderStroke(1.dp, tintColor.copy(alpha = 0.6f)),
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+                                    modifier = Modifier.height(28.dp),
+                                    shape = RoundedCornerShape(6.dp)
+                                ) {
+                                    Text(
+                                        text = indicator.actionLabel,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            } else {
+                                Text(
+                                    text = if (indicator.isActive) "ACTIVE" else "OFF",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = tintColor,
+                                    modifier = Modifier.padding(start = 6.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Dismiss", fontWeight = FontWeight.Bold)
+            }
+        }
+    )
 }

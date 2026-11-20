@@ -11,7 +11,7 @@
  * Linked With:
  * - Repositories: [com.jmd.supersms.data.repo.AppRepository]
  * - Models & Entities: [com.jmd.supersms.data.model.ChannelType], [com.jmd.supersms.data.model.ExecutionLog]
- * - Services & Engines: [com.jmd.supersms.engine.SequentialTaskEngine], [com.jmd.supersms.engine.SmsSender], [com.jmd.supersms.engine.WhatsAppSender], [com.jmd.supersms.service.TaskAccessibilityService]
+ * - Services & Engines: [com.jmd.supersms.engine.SequentialTaskEngine], [com.jmd.supersms.engine.SmsSender]
  * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.platform.LocalContext], [androidx.compose.ui.platform.LocalLocale]
  * - Core Security & Utilities: [android.content.ClipboardManager], [java.util.Date], [com.jmd.supersms.core.AppFileLogger], [com.jmd.supersms.core.PhoneNumberNormalizer]
  * - Android Framework & Jetpack: [android.content.ClipData], [androidx.compose.foundation.background], [androidx.compose.foundation.border], [androidx.compose.foundation.rememberScrollState]

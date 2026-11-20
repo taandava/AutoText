@@ -11,7 +11,7 @@
  * Linked With:
  * - Schedulers & Receivers: [android.app.AlarmManager]
  * - UI Screens & Components: [androidx.compose.ui.graphics.vector.ImageVector]
- * - Core Security & Utilities: [android.os.PowerManager], [androidx.core.app.NotificationManagerCompat], [androidx.core.net.toUri], [com.jmd.supersms.core.AccessibilityHealthManager]
+ * - Core Security & Utilities: [android.os.PowerManager], [androidx.core.app.NotificationManagerCompat], [androidx.core.net.toUri]
  * - Android Framework & Jetpack: [android.os.Build], [android.provider.Settings], [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.automirrored.filled.VolumeUp]
  */
 

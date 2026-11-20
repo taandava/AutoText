@@ -101,7 +101,6 @@ fun DailyAutoSenderScreen(
     var sentLedgerList by remember { mutableStateOf<List<DynamicContactItem>>(emptyList()) }
     var poolTab by remember { mutableIntStateOf(0) } // 0 = Pending Pool, 1 = Sent Ledger
 
-    var isA11yActive by remember { mutableStateOf(false) }
     var isScanning by remember { mutableStateOf(false) }
     var lastScanSummary by remember { mutableStateOf<IngestionSummary?>(null) }
     var filterUnsentOnly by remember { mutableStateOf(false) }
@@ -179,7 +178,6 @@ fun DailyAutoSenderScreen(
         val currentTab = poolTab
         val query = searchQuery.trim()
         val campId = selectedCampaignId
-        isA11yActive = true
         scope.launch(Dispatchers.IO) {
             val quota = SmsQuotaManager.getQuotaStatus(context)
             val pStats = repository.getDynamicPoolStats()

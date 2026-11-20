@@ -862,7 +862,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             val phone = task.recipients[i]
                             if (phone in successfulRecipients) continue
 
-                            val personalizedMsg = personalize(task.messageText, phone)
+                            val contactName = com.jmd.superwa.core.PhoneNumberNormalizer.getContactName(appContext, phone) ?: ""
+                            val personalizedMsg = personalize(task.messageText, phone, contactName)
                             val isLast = (i + 1) == totalRecipients
 
                             // Accessibility pre-flight per recipient: verify service alive before launching intent
@@ -1386,9 +1387,10 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
      * - Component: [SequentialTaskEngine]
      */
 
-    private fun personalize(template: String, phone: String): String {
+    private fun personalize(template: String, phone: String, name: String = ""): String {
         return MessageTemplateResolver.resolve(
             template = template,
+            name = name,
             phone = phone,
             targetTimestamp = System.currentTimeMillis(),
         )

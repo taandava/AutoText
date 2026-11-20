@@ -156,6 +156,7 @@ fun MainAppHost(
                     var systemIndicators by remember {
                         mutableStateOf(emptyList<SystemIndicator>())
                     }
+                    var showStatusIndicatorsDialog by remember { mutableStateOf(false) }
                     var resumeCounter by remember { mutableLongStateOf(0L) }
                     val lifecycleOwner = LocalLifecycleOwner.current
                     DisposableEffect(lifecycleOwner) {
@@ -268,12 +269,17 @@ fun MainAppHost(
                                 AppHeaderStatusIndicators(
                                     indicators = systemIndicators,
                                     onClick = {
-                                        toolsInitialSubSection = "PERMISSIONS"
-                                        currentTab = 3
+                                        showStatusIndicatorsDialog = true
                                     }
                                 )
                             }
                         }
+                    }
+                    if (showStatusIndicatorsDialog) {
+                        com.jmd.superwa.ui.components.StatusIndicatorsDialog(
+                            indicators = systemIndicators,
+                            onDismiss = { showStatusIndicatorsDialog = false }
+                        )
                     }
                 }
             },

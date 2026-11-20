@@ -11,7 +11,7 @@
  * Linked With:
  * - Repositories: [com.jmd.supersms.data.repo.AppRepository]
  * - Models & Entities: [com.jmd.supersms.data.model.*], [com.jmd.supersms.ui.model.*]
- * - Services & Engines: [com.jmd.supersms.service.TaskAccessibilityService]
+ * - Services & Engines: [com.jmd.supersms.engine.SequentialTaskEngine]
  * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.text.style.TextOverflow]
  * - Core Security & Utilities: [com.jmd.supersms.core.*]
  * - Android Framework & Jetpack: [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape], [androidx.compose.foundation.text.KeyboardOptions], [androidx.compose.material.icons.Icons]

@@ -10,7 +10,7 @@
  *
  * Linked With:
  * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.scale], [androidx.compose.ui.platform.LocalContext]
- * - Core Security & Utilities: [androidx.core.net.toUri], [com.jmd.supersms.core.AccessibilityHealthManager], [com.jmd.supersms.core.OemBrandHelper], [com.jmd.supersms.core.OverlayPermissionHelper]
+ * - Core Security & Utilities: [androidx.core.net.toUri], [com.jmd.supersms.core.OemBrandHelper], [com.jmd.supersms.core.OverlayPermissionHelper]
  * - Android Framework & Jetpack: [android.provider.Settings], [androidx.compose.animation.AnimatedVisibility], [androidx.compose.animation.expandVertically], [androidx.compose.animation.fadeIn]
  */
 

@@ -12,7 +12,7 @@
  * - Repositories: [com.jmd.supersms.data.repo.AppRepository]
  * - Services & Engines: [com.jmd.supersms.engine.ContactIngestionEngine]
  * - UI Screens & Components: [androidx.activity.ComponentActivity], [androidx.activity.compose.setContent], [androidx.activity.enableEdgeToEdge], [androidx.activity.result.contract.ActivityResultContracts]
- * - Core Security & Utilities: [android.content.pm.PackageManager], [android.util.Log], [androidx.core.content.ContextCompat], [com.jmd.supersms.core.AccessibilityHealthManager]
+ * - Core Security & Utilities: [android.content.pm.PackageManager], [android.util.Log], [androidx.core.content.ContextCompat]
  * - Android Framework & Jetpack: [android.Manifest], [android.os.Build], [android.os.Bundle], [androidx.lifecycle.lifecycleScope]
  */
 

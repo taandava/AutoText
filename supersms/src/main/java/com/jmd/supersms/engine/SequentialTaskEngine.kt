@@ -541,7 +541,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 continue
             }
 
-            val personalizedMsg = personalize(task.messageText, phone)
+            val contactName = com.jmd.supersms.core.PhoneNumberNormalizer.getContactName(appContext, phone) ?: ""
+            val personalizedMsg = personalize(task.messageText, phone, contactName)
 
             val shouldEnforceQuota = PreferenceManager(appContext).isSmsQuotaLimitEnabled
             if (shouldEnforceQuota) {
@@ -1041,9 +1042,10 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
      * - Component: [SequentialTaskEngine]
      */
 
-    private fun personalize(template: String, phone: String): String {
+    private fun personalize(template: String, phone: String, name: String = ""): String {
         return MessageTemplateResolver.resolve(
             template = template,
+            name = name,
             phone = phone,
             targetTimestamp = System.currentTimeMillis(),
         )

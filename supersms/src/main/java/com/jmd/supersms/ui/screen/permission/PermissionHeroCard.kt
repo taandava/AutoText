@@ -10,7 +10,7 @@
  *
  * Linked With:
  * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.text.font.FontWeight]
- * - Core Security & Utilities: [androidx.compose.animation.core.animateFloatAsState], [androidx.compose.material.icons.filled.SecurityUpdateWarning], [com.jmd.supersms.core.AccessibilityHealthManager], [com.jmd.supersms.core.showAppToast]
+ * - Core Security & Utilities: [androidx.compose.animation.core.animateFloatAsState], [androidx.compose.material.icons.filled.SecurityUpdateWarning], [com.jmd.supersms.core.showAppToast]
  * - Android Framework & Jetpack: [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.background], [androidx.compose.foundation.shape.CircleShape], [androidx.compose.foundation.shape.RoundedCornerShape]
  */
 
@@ -62,7 +62,7 @@ import kotlinx.coroutines.withContext
 fun PermissionHeroCard(
     context: Context,
     grantedCount: Int,
-    totalCount: Int = 8,
+    totalCount: Int = AppPrivilege.supportedEntries.size,
     privilegeStates: Map<AppPrivilege, Boolean>,
     onOpenAdbDialog: () -> Unit,
     onHealDone: () -> Unit

@@ -38,7 +38,7 @@ object MessageVariables {
 
     /** The only placeholders the product supports. */
     val MESSAGE: List<String> = listOf(
-        "{date}", "{time}", "{day}", "{greeting}", "{rupee}", "{phone}"
+        "{name}", "{date}", "{time}", "{day}", "{greeting}", "{rupee}", "{phone}"
     )
 
     /** Status captions use the shared scheduling tokens only. */
@@ -46,6 +46,7 @@ object MessageVariables {
 
     /** Reference rows rendered under Settings. */
     val REFERENCE: List<MessageVariable> = listOf(
+        MessageVariable("{name}", "Recipient contact name"),
         MessageVariable("{date}", "Date using your chosen format"),
         MessageVariable("{time}", "Time using your chosen format"),
         MessageVariable("{day}", "Weekday name"),

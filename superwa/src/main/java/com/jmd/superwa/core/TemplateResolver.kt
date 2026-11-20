@@ -53,6 +53,7 @@ object MessageTemplateResolver {
      */
     fun resolve(
         template: String,
+        name: String = "",
         phone: String = "",
         event: String = "",
         targetTimestamp: Long = System.currentTimeMillis(),
@@ -110,8 +111,12 @@ object MessageTemplateResolver {
             "\u20B9"
         }
         val cleanPhone = PhoneNumberNormalizer.extractRawPhoneNumber(phone)
+        val resolvedName = name.trim().ifBlank { "there" }
+        val resolvedContact = name.trim().ifBlank { cleanPhone.ifBlank { "there" } }
 
         return template
+            .replace("{name}", resolvedName, ignoreCase = true)
+            .replace("{contact}", resolvedContact, ignoreCase = true)
             .replace("{greeting}", resolvedGreeting, ignoreCase = true)
             .replace("{salutation}", resolvedGreeting, ignoreCase = true)
             .replace("{rupee}", resolvedCurrency, ignoreCase = true)

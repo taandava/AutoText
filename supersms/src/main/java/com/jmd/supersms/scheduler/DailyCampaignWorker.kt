@@ -214,6 +214,7 @@ class DailyCampaignWorker(
             val displayName = item.name.ifBlank { "Friend" }
             val message = MessageTemplateResolver.resolve(
                 template = config.message,
+                name = item.name,
                 phone = item.phone,
                 targetTimestamp = System.currentTimeMillis()
             )

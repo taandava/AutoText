@@ -146,6 +146,7 @@ class SmsReceiver : BroadcastReceiver() {
                     if (repository.canReplyToNumber(rule, senderPhone)) {
                         val formattedReply = MessageTemplateResolver.resolve(
                             template = rule.replyText,
+                            name = contactName,
                             phone = senderPhone,
                             targetTimestamp = System.currentTimeMillis()
                         )
