@@ -103,10 +103,10 @@ class SuperApplication : Application(), Configuration.Provider {
         fun createNotificationChannels(context: Context) {
             val notificationManager = context.getSystemService(NotificationManager::class.java) ?: return
 
-            // Retire legacy persistent service and reminder notification channels
+            // Retire legacy persistent service and obsolete notification channels
             try {
                 notificationManager.deleteNotificationChannel(CHANNEL_SERVICE)
-                notificationManager.deleteNotificationChannel("channel_reminders")
+                notificationManager.deleteNotificationChannel("channel_alerts_legacy")
             } catch (e: Exception) {
                 Log.d(TAG, "Delete legacy channels: ${e.message}")
             }

@@ -76,11 +76,7 @@ fun CreateDailyCampaignSheet(
     var scheduledMinute by remember { mutableIntStateOf(0) }
     var simSlot by remember { mutableIntStateOf(0) }
 
-    val accentColor = when (selectedChannel) {
-        "WHATSAPP_BUSINESS" -> MaterialTheme.colorScheme.primary
-        "WHATSAPP" -> MaterialTheme.colorScheme.tertiary
-        else -> MaterialTheme.colorScheme.primary
-    }
+    val accentColor = MaterialTheme.colorScheme.primary
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -113,11 +109,7 @@ fun CreateDailyCampaignSheet(
                     Icon(Icons.Default.AddCircleOutline, contentDescription = null, tint = accentColor, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = when (selectedChannel) {
-                            "WHATSAPP_BUSINESS" -> "Create WhatsApp Business Campaign"
-                            "WHATSAPP" -> "Create WhatsApp Daily Campaign"
-                            else -> "Create SMS Daily Campaign"
-                        },
+                        text = if (selectedChannel.equals("CALL", ignoreCase = true)) "Create Call Campaign" else "Create SMS Campaign",
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp,
                         color = MaterialTheme.colorScheme.onSurface
@@ -137,37 +129,21 @@ fun CreateDailyCampaignSheet(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = when (selectedChannel) {
-                            "WHATSAPP_BUSINESS" -> Icons.Filled.BusinessCenter
-                            "WHATSAPP" -> Icons.AutoMirrored.Filled.Chat
-                            else -> Icons.AutoMirrored.Filled.Message
-                        },
+                        imageVector = if (selectedChannel.equals("CALL", ignoreCase = true)) Icons.Filled.Phone else Icons.AutoMirrored.Filled.Message,
                         contentDescription = null,
-                        tint = when (selectedChannel) {
-                            "WHATSAPP_BUSINESS" -> Color(0xFF0D9488)
-                            "WHATSAPP" -> Color(0xFF16A34A)
-                            else -> Color(0xFF2563EB)
-                        },
+                        tint = Color(0xFF2563EB),
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
                         Text(
-                            text = when (selectedChannel) {
-                                "WHATSAPP_BUSINESS" -> "Channel: WhatsApp Business (W4B)"
-                                "WHATSAPP" -> "Channel: WhatsApp (Personal)"
-                                else -> "Channel: SMS (Carrier Direct)"
-                            },
+                            text = if (selectedChannel.equals("CALL", ignoreCase = true)) "Channel: Phone Calls" else "Channel: SMS (Carrier Direct)",
                             fontSize = 12.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = when (selectedChannel) {
-                                "WHATSAPP_BUSINESS" -> "Outreach via WhatsApp Business app with paced delivery"
-                                "WHATSAPP" -> "1-on-1 personal outreach with anti-ban delay pacing"
-                                else -> "Direct cellular SMS outreach via device SIM card"
-                            },
+                            text = if (selectedChannel.equals("CALL", ignoreCase = true)) "Direct voice calls via device SIM card" else "Direct cellular SMS outreach via device SIM card",
                             fontSize = 10.5.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -283,11 +259,7 @@ fun CreateDailyCampaignSheet(
                 text = "Activate Campaign",
                 onClick = {
                     val finalTitle = title.trim().ifBlank {
-                        when (selectedChannel) {
-                            "WHATSAPP_BUSINESS" -> "Daily WhatsApp Business Campaign"
-                            "WHATSAPP" -> "Daily WhatsApp Campaign"
-                            else -> "Daily SMS Campaign"
-                        }
+                        if (selectedChannel.equals("CALL", ignoreCase = true)) "Daily Call Campaign" else "Daily SMS Campaign"
                     }
                     val limit = dailyLimitText.toIntOrNull()?.coerceIn(1, 1000) ?: 30
                     val interval = intervalSecondsText.toIntOrNull()?.coerceIn(2, 120) ?: 10
@@ -316,7 +288,7 @@ fun CreateDailyCampaignSheet(
 
 /**
  * What it is:
- * Dialog enabling user to pick between SMS, WhatsApp, and WhatsApp Business channels for a new campaign.
+ * Dialog enabling user to pick between SMS and Call channels for a new campaign.
  *
  * What it does:
  * Renders interactive Material 3 UI for [DailyCampaignChannelSelectionDialog] adhering to application design invariants.
@@ -324,7 +296,7 @@ fun CreateDailyCampaignSheet(
  * Linked with:
  * - Architecture: [DailyCampaignDialogComponents], [DailyCampaignChannelSelectionDialog]
  * @param onDismiss Callback to dismiss channel selection dialog.
- * @param onSelectChannel Callback receiving channel key identifier (SMS, WHATSAPP, WHATSAPP_BUSINESS).
+ * @param onSelectChannel Callback receiving channel key identifier (SMS, CALL).
  */
 @Composable
 fun DailyCampaignChannelSelectionDialog(
@@ -375,39 +347,15 @@ fun DailyCampaignChannelSelectionDialog(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // 1. SMS (SuperSMS only)
-                if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-                    DailyChannelOptionCard(
-                        title = "SMS Campaign",
-                        badge = "Carrier Direct",
-                        description = "Cellular SMS outreach via SIM card with dual SIM and India daily quota protection (100 SMS/day)",
-                        icon = Icons.AutoMirrored.Filled.Message,
-                        accentColor = MaterialTheme.colorScheme.primary,
-                        onClick = { onSelectChannel("SMS") }
-                    )
-                }
-
-                // 2. WhatsApp (SuperWA only)
-                if (com.jmd.supersms.core.AppVariantHelper.isSuperWa) {
-                    DailyChannelOptionCard(
-                        title = "WhatsApp Campaign",
-                        badge = "Personal 1-on-1",
-                        description = "Send 1-on-1 personal messages to unique contacts with safe delay pacing",
-                        icon = Icons.AutoMirrored.Filled.Chat,
-                        accentColor = Color(0xFF16A34A),
-                        onClick = { onSelectChannel("WHATSAPP") }
-                    )
-
-                    // 3. WhatsApp Business
-                    DailyChannelOptionCard(
-                        title = "Business Campaign",
-                        badge = "Client Outreach",
-                        description = "Client follow-ups via WhatsApp Business app (com.whatsapp.w4b) with paced delivery safeguards",
-                        icon = Icons.Filled.BusinessCenter,
-                        accentColor = Color(0xFF0D9488),
-                        onClick = { onSelectChannel("WHATSAPP_BUSINESS") }
-                    )
-                }
+                // SMS Campaign Option
+                DailyChannelOptionCard(
+                    title = "SMS Campaign",
+                    badge = "Carrier Direct",
+                    description = "Cellular SMS outreach via SIM card with dual SIM and India daily quota protection (100 SMS/day)",
+                    icon = Icons.AutoMirrored.Filled.Message,
+                    accentColor = MaterialTheme.colorScheme.primary,
+                    onClick = { onSelectChannel("SMS") }
+                )
             }
         }
     }

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- SuperWA: Standalone WhatsApp, WA Business & Voice Automation with Banking Shield -->
+    <!-- SuperWA: Standalone WhatsApp, WA Business & Voice Dispatch with Banking Shield -->
     <!-- 100% On-Device Sovereignty: Zero Cellular SMS or Phone Dialer Permissions -->
 
     <!-- Contacts Permission -->
@@ -256,6 +256,8 @@
                 <action android:name="com.jmd.superwa.ACTION_SYNC_POOL" />
                 <action android:name="com.jmd.superwa.ACTION_DISPATCH_TASK" />
                 <action android:name="com.jmd.superwa.ACTION_SEND_WHATSAPP" />
+                <action android:name="com.jmd.superwa.ACTION_WHATSAPP_CALL" />
+                <action android:name="com.jmd.superwa.ACTION_POST_STATUS" />
                 <action android:name="com.jmd.superwa.ACTION_SET_BANKING_SHIELD" />
                 <action android:name="com.jmd.superwa.ACTION_GET_STATUS" />
                 <action android:name="com.jmd.superwa.ACTION_DUMP_GROUPS" />

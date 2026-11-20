@@ -50,7 +50,7 @@ import com.jmd.supersms.ui.activity.MainActivity
  * Modern Jetpack Glance Home Screen Widget for Super.
  *
  * What it does:
- * Renders on-device automation status and provides 1-tap fast access to scheduled tasks.
+ * Renders on-device dispatch status and provides 1-tap fast access to scheduled tasks.
  *
  * Linked with:
  * - Architecture: [SuperAppWidget], [SuperAppWidget]

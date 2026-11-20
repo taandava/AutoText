@@ -665,48 +665,4 @@ object OemBrandHelper {
             )
         }
     }
-
-    /**
-     * What it is:
-     * Populates brand-specific and standard telephony extras into [bundle] for multi-SIM calling.
-     *
-     * What it does:
-     * Executes [populateTelecomSimExtras] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [OemBrandHelper], [populateTelecomSimExtras]
-     * @param bundle Target Intent or Telecom extras bundle.
-     * @param targetPhysicalSlot Physical SIM slot index (0 for SIM 1, 1 for SIM 2).
-     * @param subId Cellular subscription identifier (if available from SubscriptionManager).
-     */
-    fun populateTelecomSimExtras(bundle: android.os.Bundle, targetPhysicalSlot: Int, subId: Int? = null) {
-        // Standard Android Telecom / Telephony extras
-        bundle.putInt("android.telecom.extra.PHONE_ACCOUNT_HANDLE_INDEX", targetPhysicalSlot)
-        bundle.putInt("com.android.phone.extra.slot", targetPhysicalSlot)
-        bundle.putInt("simSlot", targetPhysicalSlot)
-        bundle.putInt("sim_slot", targetPhysicalSlot)
-        bundle.putInt("slot", targetPhysicalSlot)
-
-        // Samsung One UI
-        bundle.putInt("phone_id", targetPhysicalSlot)
-
-        // Xiaomi / Redmi / POCO (MIUI / HyperOS)
-        bundle.putInt("simId", targetPhysicalSlot)
-        bundle.putInt("slotId", targetPhysicalSlot)
-        bundle.putInt("slot_id", targetPhysicalSlot)
-
-        // Vivo / iQOO (Funtouch OS / OriginOS)
-        bundle.putInt("simnum", targetPhysicalSlot)
-        bundle.putInt("sim_index", targetPhysicalSlot)
-
-        // Transsion / Motorola / Asus
-        bundle.putInt("slot_idx", targetPhysicalSlot)
-
-        // Cellular Subscription ID (Huawei, Honor, Android AOSP)
-        if (subId != null && subId >= 0) {
-            bundle.putInt("android.telephony.extra.SUBSCRIPTION_INDEX", subId)
-            bundle.putInt("subscription", subId)
-            bundle.putInt("sub_id", subId)
-        }
-    }
 }

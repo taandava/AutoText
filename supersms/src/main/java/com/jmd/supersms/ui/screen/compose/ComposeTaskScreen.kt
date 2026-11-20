@@ -12,7 +12,7 @@
  * - Repositories: [com.jmd.supersms.data.repo.*]
  * - Models & Entities: [com.jmd.supersms.data.model.*], [com.jmd.supersms.ui.model.*]
  * - Schedulers & Receivers: [com.jmd.supersms.scheduler.*]
- * - Services & Engines: [com.jmd.supersms.engine.*], [com.jmd.supersms.service.*], [com.jmd.supersms.whatsapp.*]
+ * - Services & Engines: [com.jmd.supersms.engine.*], [com.jmd.supersms.service.*]
  * - UI Screens & Components: [androidx.activity.compose.BackHandler], [androidx.activity.compose.rememberLauncherForActivityResult], [androidx.activity.result.contract.ActivityResultContracts], [androidx.compose.ui.Alignment]
  * - Core Security & Utilities: [android.content.pm.PackageManager], [android.util.Log], [androidx.core.content.ContextCompat], [java.util.*]
  * - Android Framework & Jetpack: [android.net.Uri], [android.provider.ContactsContract], [androidx.compose.foundation.lazy.LazyColumn], [androidx.compose.foundation.shape.CircleShape]
@@ -68,7 +68,7 @@ import com.jmd.supersms.ui.theme.*
 
 /**
  * What it is:
- * Unified task composition screen providing authoring environments for SMS, WhatsApp direct messages, WhatsApp Status updates, WhatsApp Groups, Phone Calls, and Call Simulations.
+ * Unified task composition screen providing authoring environments for SMS, Phone Calls, and Call Simulations.
  *
  * What it does:
  * Renders interactive Material 3 UI for [ComposeTaskScreen] adhering to application design invariants.
@@ -338,7 +338,7 @@ fun ComposeTaskScreen(
     var simulatedCallerNumber by remember { mutableStateOf(taskToEdit?.simulatedCallerNumber ?: "") }
     var simulatedCallStyle by remember { mutableStateOf(taskToEdit?.simulatedCallStyle ?: "PIXEL") }
 
-    // Phone / WhatsApp call specific
+    // Phone call specific
     var callDurationSeconds by remember { mutableIntStateOf(taskToEdit?.callDurationSeconds ?: 0) }
     var includeDialTimeInCallDuration by remember { mutableStateOf(taskToEdit?.includeDialTimeInCallDuration ?: false) }
     var callSequenceMode by remember { mutableStateOf(taskToEdit?.callSequenceMode ?: "GIVEN") }
@@ -415,19 +415,17 @@ fun ComposeTaskScreen(
             }
         }
 
-        // Ingest any text remaining in manual input if not status
-        if (selectedChannel != ChannelType.WHATSAPP_STATUS && selectedChannel != ChannelType.WHATSAPP_BUSINESS_STATUS) {
-            if (recipientsInput.isNotBlank()) {
-                val parsed = PhoneNumberNormalizer.parseMultiInput(recipientsInput)
-                if (parsed.isNotEmpty()) {
-                    parsed.forEach { (raw, norm) -> tryAddRecipient("", norm ?: raw) }
-                } else {
-                    recipientsInput.split(",", "\n", ";").map { it.trim() }.filter { it.isNotEmpty() }.forEach {
-                        tryAddRecipient("", it)
-                    }
+        // Ingest any text remaining in manual input
+        if (recipientsInput.isNotBlank()) {
+            val parsed = PhoneNumberNormalizer.parseMultiInput(recipientsInput)
+            if (parsed.isNotEmpty()) {
+                parsed.forEach { (raw, norm) -> tryAddRecipient("", norm ?: raw) }
+            } else {
+                recipientsInput.split(",", "\n", ";").map { it.trim() }.filter { it.isNotEmpty() }.forEach {
+                    tryAddRecipient("", it)
                 }
-                recipientsInput = ""
             }
+            recipientsInput = ""
         }
 
         val finalPhoneList = selectedRecipients.map { it.phone }
@@ -436,29 +434,14 @@ fun ComposeTaskScreen(
         val finalRecipients: List<String>
         val finalRecipientNames: List<String>
 
-        if (selectedChannel == ChannelType.WHATSAPP_STATUS) {
-            if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
-            finalRecipients = listOf("My Status")
-            finalRecipientNames = listOf("WhatsApp Status")
-        } else if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_STATUS) {
-            if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
-            finalRecipients = listOf("My Status (w4b)")
-            finalRecipientNames = listOf("WhatsApp Business Status")
-        } else if (selectedChannel == ChannelType.CALL_SIMULATION) {
+        if (selectedChannel == ChannelType.CALL_SIMULATION) {
             finalRecipients = listOf(simulatedCallerNumber.ifBlank { "Incoming Call" })
             finalRecipientNames = listOf(simulatedCallerName.ifBlank { "Simulated Caller" })
         } else if (finalPhoneList.isEmpty()) {
             context.showAppToast("Select a recipient", isLong = true)
             return@saveTaskAction
         } else {
-            // Centralized content validation (text or media) for messaging channels
-            if (selectedChannel in listOf(
-                    ChannelType.SMS,
-                    ChannelType.WHATSAPP,
-                    ChannelType.WHATSAPP_BUSINESS,
-                    ChannelType.WHATSAPP_GROUP,
-                    ChannelType.WHATSAPP_BUSINESS_GROUP
-                )) {
+            if (selectedChannel == ChannelType.SMS) {
                 if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
             }
             finalRecipients = finalPhoneList
@@ -614,7 +597,7 @@ fun ComposeTaskScreen(
                         onSoundModeSettingChange = { soundModeSetting = it }
                     )
                 }
-                ChannelType.CALL, ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> {
+                ChannelType.CALL -> {
                     ComposePhoneCallCard(
                         selectedChannel = selectedChannel,
                         onSelectChannel = { selectedChannel = it },
@@ -644,8 +627,6 @@ fun ComposeTaskScreen(
                         },
                         onOpenPoolPicker = { showPoolPickerDialog = true },
                         onOpenContactsPicker = { contactPickerLauncher.launch(null) },
-                        onOpenWhatsAppContacts = {},
-                        onOpenWhatsAppPicker = {},
                         callDurationSeconds = callDurationSeconds,
                         onCallDurationChange = { callDurationSeconds = it },
                         includeDialTime = includeDialTimeInCallDuration,
@@ -656,24 +637,6 @@ fun ComposeTaskScreen(
                         onDelayBetweenCallsChange = { delayBetweenCallsSeconds = it },
                         callFailurePolicy = callFailurePolicy,
                         onCallFailurePolicyChange = { callFailurePolicy = it }
-                    )
-                }
-                ChannelType.WHATSAPP_STATUS -> {
-                    WhatsAppStatusComposerCard(
-                        mediaUri = mediaUri,
-                        onMediaUriChange = { mediaUri = it },
-                        messageText = messageText,
-                        onMessageTextChange = { messageText = it },
-                        onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") }
-                    )
-                }
-                ChannelType.WHATSAPP_BUSINESS_STATUS -> {
-                    WhatsAppBusinessStatusComposerCard(
-                        mediaUri = mediaUri,
-                        onMediaUriChange = { mediaUri = it },
-                        messageText = messageText,
-                        onMessageTextChange = { messageText = it },
-                        onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") }
                     )
                 }
                 else -> {
@@ -703,17 +666,13 @@ fun ComposeTaskScreen(
                                 recipientsInput = ""
                             }
                         },
-                        onOpenWhatsAppContacts = {},
                         onAddDirectRecipient = { name, phone -> tryAddRecipient(name, phone) },
                         onOpenPoolPicker = { showPoolPickerDialog = true },
                         onOpenContactsPicker = { contactPickerLauncher.launch(null) },
                         messageText = messageText,
                         onMessageTextChange = { messageText = it },
                         smsPartCount = smsPartCount,
-                        isUnicode = isUnicode,
-                        mediaUri = mediaUri,
-                        onMediaUriChange = { mediaUri = it },
-                        onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") }
+                        isUnicode = isUnicode
                     )
                 }
             }

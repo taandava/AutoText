@@ -19,7 +19,6 @@ object AppVariantHelper {
             ChannelType.SMS,
             ChannelType.CALL,
             ChannelType.CALL_SIMULATION -> true
-            else -> false
         }
     }
 }

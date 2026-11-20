@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- SuperSMS: Standalone Cellular Messaging & Phone Call Automation -->
+    <!-- SuperSMS: Standalone Cellular Messaging & Phone Call Dispatch -->
     <!-- 100% On-Device Sovereignty: Zero Accessibility Service Needed -->
 
     <!-- SMS Permissions -->
@@ -156,17 +156,6 @@
             android:launchMode="singleInstance"
             android:theme="@style/Theme.Super.Transparent" />
 
-        <!-- Notification Listener Service (Smart Auto-Reply for SMS) -->
-        <service
-            android:name=".service.TaskNotificationListenerService"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:stopWithTask="false"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
-
         <!-- Task Foreground Service -->
         <service
             android:name=".service.TaskForegroundService"
@@ -242,6 +231,7 @@
                 <action android:name="com.jmd.supersms.ACTION_DISPATCH_TASK" />
                 <action android:name="com.jmd.supersms.ACTION_SEND_SMS" />
                 <action android:name="com.jmd.supersms.ACTION_MAKE_CALL" />
+                <action android:name="com.jmd.supersms.ACTION_SIMULATE_CALL" />
                 <action android:name="com.jmd.supersms.ACTION_GET_STATUS" />
             </intent-filter>
         </receiver>

@@ -73,18 +73,8 @@ fun ActiveCampaignOverviewCard(
     onViewContacts: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isWa = campaign.channel.contains("WHATSAPP", ignoreCase = true)
-    val isBiz = campaign.channel.contains("BUSINESS", ignoreCase = true)
-    val themeColor = when {
-        isBiz -> MaterialTheme.colorScheme.primary
-        isWa -> MaterialTheme.colorScheme.tertiary
-        else -> MaterialTheme.colorScheme.primary
-    }
-    val channelIcon = when {
-        isBiz -> Icons.Filled.BusinessCenter
-        isWa -> Icons.AutoMirrored.Filled.Chat
-        else -> Icons.AutoMirrored.Filled.Message
-    }
+    val themeColor = MaterialTheme.colorScheme.primary
+    val channelIcon = Icons.AutoMirrored.Filled.Message
 
     AppCardElevated(
         modifier = modifier.fillMaxWidth(),
@@ -129,28 +119,22 @@ fun ActiveCampaignOverviewCard(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         AppBadge(
-                            text = when {
-                                isBiz -> "WA Business"
-                                isWa -> "WhatsApp"
-                                else -> "SMS"
-                            },
+                            text = "SMS",
                             icon = channelIcon,
                             color = themeColor,
                             showDot = false
                         )
-                        if (!isWa) {
-                            Spacer(modifier = Modifier.width(4.dp))
-                            val simLabel = if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"
-                            AppBadge(
-                                text = simLabel,
-                                icon = Icons.Filled.Smartphone,
-                                color = MaterialTheme.colorScheme.primary,
-                                showDot = false
-                            )
-                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        val simLabel = if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"
+                        AppBadge(
+                            text = simLabel,
+                            icon = Icons.Filled.Smartphone,
+                            color = MaterialTheme.colorScheme.primary,
+                            showDot = false
+                        )
                     }
                     Spacer(modifier = Modifier.height(2.dp))
-                    val simSuffix = if (!isWa) " • ${if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"}" else ""
+                    val simSuffix = " • ${if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"}"
                     Text(
                         "Daily at %02d:%02d • %ds interval %s".format(
                             campaign.scheduledHour,
@@ -265,13 +249,7 @@ fun PausedCampaignOverviewCard(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isWa = campaign.channel.contains("WHATSAPP", ignoreCase = true)
-    val isBiz = campaign.channel.contains("BUSINESS", ignoreCase = true)
-    val icon = when {
-        isBiz -> Icons.Default.Business
-        isWa -> Icons.AutoMirrored.Filled.Chat
-        else -> Icons.Default.Sms
-    }
+    val icon = Icons.AutoMirrored.Filled.Message
 
     AppCard(
         modifier = modifier.fillMaxWidth(),
@@ -312,14 +290,12 @@ fun PausedCampaignOverviewCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    if (!isWa) {
-                        val pausedSimLabel = if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"
-                        AppBadge(
-                            text = pausedSimLabel,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            showDot = false
-                        )
-                    }
+                    val pausedSimLabel = if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"
+                    AppBadge(
+                        text = pausedSimLabel,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        showDot = false
+                    )
                     AppBadge(
                         text = "PAUSED",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -329,7 +305,7 @@ fun PausedCampaignOverviewCard(
             }
 
             // Info row: Limits & Schedule
-            val pausedSimSuffix = if (!isWa) " • ${if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"}" else ""
+            val pausedSimSuffix = " • ${if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"}"
             Text(
                 "Limit: ${campaign.dailyLimit}/day • %02d:%02d%s".format(
                     campaign.scheduledHour,
@@ -464,42 +440,16 @@ fun DailyCampaignEmptyStateCard(
             letterSpacing = 0.5.sp
         )
 
-        // 1. SMS Channel Card (SuperSMS only)
-        if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-            ChannelSelectionCard(
-                title = "SMS Campaign",
-                badge = "Carrier Direct",
-                description = "Direct cellular SMS outreach. Dual SIM selection (SIM 1/2) with India carrier daily quota safety safeguard.",
-                icon = Icons.Default.Sms,
-                accentColor = MaterialTheme.colorScheme.primary,
-                buttonText = "Setup SMS",
-                onClick = { onSelectChannel("SMS") }
-            )
-        }
-
-        // 2. WhatsApp Channel Card (SuperWA only)
-        if (com.jmd.supersms.core.AppVariantHelper.isSuperWa) {
-            ChannelSelectionCard(
-                title = "WhatsApp Campaign",
-                badge = "Personal 1-on-1",
-                description = "Personal WhatsApp messages via accessibility service with smart recovery and customizable delay.",
-                icon = Icons.AutoMirrored.Filled.Chat,
-                accentColor = MaterialTheme.colorScheme.tertiary,
-                buttonText = "Setup WhatsApp",
-                onClick = { onSelectChannel("WHATSAPP") }
-            )
-
-            // 3. WhatsApp Business Channel Card
-            ChannelSelectionCard(
-                title = "Business Campaign",
-                badge = "Client Outreach",
-                description = "Schedule client follow-ups via WhatsApp Business app with paced delivery to protect business account standing.",
-                icon = Icons.Default.Business,
-                accentColor = MaterialTheme.colorScheme.primary,
-                buttonText = "Setup Business",
-                onClick = { onSelectChannel("WHATSAPP_BUSINESS") }
-            )
-        }
+        // SMS Channel Card
+        ChannelSelectionCard(
+            title = "SMS Campaign",
+            badge = "Carrier Direct",
+            description = "Direct cellular SMS outreach. Dual SIM selection (SIM 1/2) with India carrier daily quota safety safeguard.",
+            icon = Icons.Default.Sms,
+            accentColor = MaterialTheme.colorScheme.primary,
+            buttonText = "Setup SMS",
+            onClick = { onSelectChannel("SMS") }
+        )
 
         // Ingestion Pool Action Card
         AppCard(
@@ -519,10 +469,7 @@ fun DailyCampaignEmptyStateCard(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        if (com.jmd.supersms.core.AppVariantHelper.isSuperSms)
-                            "Ingested from Contacts, SMS & Call Logs"
-                        else
-                            "Ingested from Contacts, WhatsApp & Business",
+                        "Ingested from Contacts, SMS & Call Logs",
                         fontSize = 10.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -551,7 +498,7 @@ fun DailyCampaignEmptyStateCard(
  *
  * Linked with:
  * - Architecture: [DailyCampaignCardComponents], [ChannelSelectionCard]
- * @param title Name of the channel (e.g. SMS, WhatsApp, WhatsApp Business).
+ * @param title Name of the channel (e.g. SMS, Cellular Call).
  * @param badge Status or capability tag displayed on top right.
  * @param description Detailed text explaining channel constraints and behavior.
  * @param icon Vector icon representing the medium.
@@ -614,71 +561,6 @@ fun ChannelSelectionCard(
     }
 }
 
-/**
- * What it is:
- * Diagnostic card showing WhatsApp Business package installation and accessibility engine readiness.
- *
- * What it does:
- * Renders interactive Material 3 UI for [WhatsAppBusinessReadinessCard] adhering to application design invariants.
- *
- * Linked with:
- * - Architecture: [DailyCampaignCardComponents], [WhatsAppBusinessReadinessCard]
- * @param isInstalled True if com.whatsapp.w4b package is discovered on the device.
- * @param isA11yActive True if accessibility task binder is responsive.
- * @param onAutoHeal Callback to trigger accessibility reactivation.
- * @param modifier Optional layout modifier.
- */
-@Composable
-fun WhatsAppBusinessReadinessCard(
-    isInstalled: Boolean,
-    isA11yActive: Boolean,
-    onAutoHeal: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    AppCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = AppDesignTokens.ShapeMedium
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Business,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    "Business Readiness",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            AppBadge(
-                text = if (isInstalled) "INSTALLED" else "NOT INSTALLED",
-                color = if (isInstalled) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
-                showDot = true
-            )
-        }
-        if (!isInstalled) {
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                "WhatsApp Business app (com.whatsapp.w4b) is not detected on this device. Install from Google Play Store so messages can be dispatched through your business account.",
-                fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.error,
-                lineHeight = 15.sp
-            )
-        }
-        Spacer(modifier = Modifier.height(6.dp))
-        WhatsAppA11yHealthBar(isA11yActive = isA11yActive, onAutoHeal = onAutoHeal)
-    }
-}
-
 // =========================================================================================
 // --- DAILY CAMPAIGN COMPONENTS ---
 // =========================================================================================
@@ -693,7 +575,7 @@ fun WhatsAppBusinessReadinessCard(
  *
  * Linked with:
  * - Architecture: [DailyCampaignCardComponents], [DailyCampaignBannerCard]
- * @param isWhatsApp True if this campaign dispatches via WhatsApp or WA Business.
+ * @param isWhatsApp Flag for channel handling.
  * @param config Target campaign configuration data class.
  * @param stats Real-time contact pool counts.
  * @param isA11yActive True if accessibility task engine is running.
@@ -731,7 +613,7 @@ fun DailyCampaignBannerCard(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = if (isWhatsApp) Icons.Default.PhoneAndroid else Icons.AutoMirrored.Filled.ScheduleSend,
+                    imageVector = Icons.AutoMirrored.Filled.ScheduleSend,
                     contentDescription = null,
                     tint = campaignThemeColor,
                     modifier = Modifier.size(22.dp)
@@ -739,14 +621,14 @@ fun DailyCampaignBannerCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
-                        if (isWhatsApp) "Daily WhatsApp Campaign" else "Daily Contact SMS",
+                        "SMS Campaign",
                         fontSize = 15.5.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         if (config.isActive) "Active • Sends ${config.dailyLimit}/day at %02d:%02d".format(config.scheduledHour, config.scheduledMinute)
-                        else "${if (isWhatsApp) "WhatsApp" else "SMS"} Dispatch Paused",
+                        else "Dispatch Paused",
                         fontSize = 12.sp,
                         color = if (config.isActive) campaignThemeColor else MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -797,15 +679,6 @@ fun DailyCampaignBannerCard(
             )
         }
 
-        // WhatsApp Accessibility Health & Readiness
-        if (isWhatsApp) {
-            Spacer(modifier = Modifier.height(6.dp))
-            WhatsAppA11yHealthBar(
-                isA11yActive = isA11yActive,
-                onAutoHeal = onAutoHeal
-            )
-        }
-
         Spacer(modifier = Modifier.height(8.dp))
 
         // Action Buttons: Scan Contacts, Edit Campaign & Send Now
@@ -846,7 +719,7 @@ fun DailyCampaignBannerCard(
  * Linked with:
  * - Architecture: [DailyCampaignCardComponents], [DailyCampaignConfigCard]
  * @param config Target campaign configuration data class.
- * @param isWhatsApp True if campaign is routed via WhatsApp.
+ * @param isWhatsApp Flag for channel handling.
  * @param campaignThemeColor Color accent tailored to current campaign medium.
  * @param onConfigChange Callback invoked as fields are modified in real-time.
  * @param onSave Callback triggered when configuration updates are persisted.
@@ -884,7 +757,7 @@ fun DailyCampaignConfigCard(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    "${if (isWhatsApp) "WhatsApp" else "SMS"} Campaign Settings",
+                    "Campaign Settings",
                     fontSize = 14.5.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -966,7 +839,6 @@ fun DailyCampaignConfigCard(
 
         // Scheduled Time & Channel Specific Information
         val isSms = config.channel.equals("SMS", ignoreCase = true)
-        val isWaBiz = config.channel.contains("BUSINESS", ignoreCase = true)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -979,35 +851,6 @@ fun DailyCampaignConfigCard(
                 icon = Icons.Default.AccessTime,
                 modifier = Modifier.weight(1f)
             )
-
-            if (!isSms) {
-                Surface(
-                    shape = AppDesignTokens.ShapePill,
-                    color = campaignThemeColor.copy(alpha = 0.16f),
-                    border = BorderStroke(1.dp, campaignThemeColor.copy(alpha = 0.4f)),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            if (isWaBiz) Icons.Default.Business else Icons.AutoMirrored.Filled.Chat,
-                            contentDescription = null,
-                            tint = campaignThemeColor,
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            if (isWaBiz) "WA Business Channel" else "WhatsApp Channel",
-                            fontSize = 11.5.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = campaignThemeColor
-                        )
-                    }
-                }
-            }
         }
 
         if (isSms) {
@@ -1329,67 +1172,6 @@ fun DailySmsQuotaCard(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 13.5.sp
         )
-    }
-}
-
-/**
- * What it is:
- * Compact horizontal banner displaying accessibility task readiness and one-click heal button.
- *
- * What it does:
- * Renders interactive Material 3 UI for [WhatsAppA11yHealthBar] adhering to application design invariants.
- *
- * Linked with:
- * - Architecture: [DailyCampaignCardComponents], [WhatsAppA11yHealthBar]
- * @param isA11yActive True if accessibility task engine is active.
- * @param onAutoHeal Callback triggered when user taps to restart accessibility service.
- * @param modifier Optional layout modifier.
- */
-@Composable
-fun WhatsAppA11yHealthBar(
-    isA11yActive: Boolean,
-    onAutoHeal: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        shape = AppDesignTokens.ShapeSmall,
-        color = if (isA11yActive) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-        border = BorderStroke(
-            1.dp,
-            if (isA11yActive) MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
-        ),
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                Icon(
-                    imageVector = if (isA11yActive) Icons.Default.CheckCircle else Icons.Default.Warning,
-                    contentDescription = null,
-                    tint = if (isA11yActive) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(14.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    if (isA11yActive) "Task Ready" else "Task Inactive",
-                    fontSize = 10.5.sp,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-            if (!isA11yActive) {
-                AppButton(
-                    text = "Auto-Heal",
-                    onClick = onAutoHeal,
-                    variant = AppButtonVariant.SECONDARY,
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-                    shape = AppDesignTokens.ShapePill
-                )
-            }
-        }
     }
 }
 

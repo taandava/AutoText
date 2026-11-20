@@ -6,7 +6,7 @@
  * Architecture definition and implementation for [AppRepository].
  *
  * What it does:
- * Exposes a unified, transaction-safe facade aggregating access across all domain repositories: tasks, dynamic contact pool, daily campaigns, execution logs, auto-reply rules, and WhatsApp contacts. [com.jmd.supersms.data.repo.LogRepository], [com.jmd.supersms.data.repo.RecipientRepository], [com.jmd.supersms.data.repo.AutoReplyRepository], [com.jmd.supersms.data.repo.WhatsAppRepository] `ComposeTaskScreen`, `DailyCampaignScreen`
+ * Exposes a unified, transaction-safe facade aggregating access across all domain repositories: tasks, dynamic contact pool, daily campaigns, execution logs, and auto-reply rules. [com.jmd.supersms.data.repo.LogRepository], [com.jmd.supersms.data.repo.RecipientRepository], [com.jmd.supersms.data.repo.AutoReplyRepository] `ComposeTaskScreen`, `DailyCampaignScreen`
  *
  * Linked With:
  * - Repositories: [com.jmd.supersms.data.db.DatabaseHelper]
@@ -36,7 +36,6 @@ import com.jmd.supersms.data.model.IngestionSummary
 import com.jmd.supersms.data.model.RecipientItem
 import com.jmd.supersms.data.model.ScheduledTask
 import com.jmd.supersms.data.model.TaskStatus
-import com.jmd.supersms.data.model.WhatsAppContactItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -187,8 +186,8 @@ class AppRepository(context: Context) {
      * Linked with:
      * - Component: [AppRepository]
      */
-    fun getPendingPoolContactsForCampaign(campaignId: Long, isWhatsApp: Boolean = false, limit: Int = 100): List<DynamicContactItem> =
-        dailyCampaignRepo.getPendingPoolContactsForCampaign(campaignId, isWhatsApp, limit)
+    fun getPendingPoolContactsForCampaign(campaignId: Long, limit: Int = 100): List<DynamicContactItem> =
+        dailyCampaignRepo.getPendingPoolContactsForCampaign(campaignId, limit)
     /**
      * What it is:
      * Execution routine for [markCampaignContactSuccess].
@@ -278,29 +277,9 @@ class AppRepository(context: Context) {
      * - Component: [AppRepository]
      */
 
-    fun markContactSent(id: Long, whatsApp: Boolean = false) = dailyCampaignRepo.markContactSuccess(id, whatsApp)
-    /**
-     * What it is:
-     * Execution routine for [markContactPendingRetry].
-     *
-     * What it does:
-     * Coordinates markContactPendingRetry operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [AppRepository]
-     */
-    fun markContactPendingRetry(id: Long, whatsApp: Boolean = false, status: String = "QUEUED") = dailyCampaignRepo.markContactPendingRetry(id, whatsApp, status)
-    /**
-     * What it is:
-     * Execution routine for [markContactInvalid].
-     *
-     * What it does:
-     * Coordinates markContactInvalid operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [AppRepository]
-     */
-    fun markContactInvalid(id: Long, whatsApp: Boolean = false) = dailyCampaignRepo.markContactInvalid(id, whatsApp)
+    fun markContactSent(id: Long) = dailyCampaignRepo.markContactSuccess(id)
+    fun markContactPendingRetry(id: Long, status: String = "QUEUED") = dailyCampaignRepo.markContactPendingRetry(id, status)
+    fun markContactInvalid(id: Long) = dailyCampaignRepo.markContactInvalid(id)
     /**
      * What it is:
      * Execution routine for [getDynamicPoolStats].
@@ -316,14 +295,14 @@ class AppRepository(context: Context) {
      * Single entry point for "sync all contacts": phone book, SMS/call history, chat harvest staging.
      * Every sync button in the app funnels here so there is one behaviour and one summary.
      */
-    suspend fun syncWhatsAppPool(): IngestionSummary =
+    suspend fun syncContactPool(): IngestionSummary =
         com.jmd.supersms.engine.ContactIngestionEngine(appContext, this).scanAndIngestAll()
 
     /**
      * Exact number of selectable pool rows, without loading them. Keeps the header truthful
      * now that the picker pages instead of hard-capping at 3000.
      */
-    fun countDynamicPool(searchQuery: String = "", whatsApp: Boolean = false): Int {
+    fun countDynamicPool(searchQuery: String = ""): Int {
         val trimmed = searchQuery.trim()
         return try {
             val db = dbHelper.readableDatabase
@@ -344,8 +323,8 @@ class AppRepository(context: Context) {
         }
     }
 
-    fun getDynamicPoolStats(whatsApp: Boolean = false): DynamicPoolStats {
-        val (contacted, total) = dailyCampaignRepo.getPoolStats(whatsApp)
+    fun getDynamicPoolStats(): DynamicPoolStats {
+        val (contacted, total) = dailyCampaignRepo.getPoolStats()
         return DynamicPoolStats(
             totalCount = total,
             unsentCount = total - contacted,
@@ -367,10 +346,9 @@ class AppRepository(context: Context) {
         limit: Int = 50000,
         searchQuery: String = "",
         filterUnsentOnly: Boolean = false,
-        whatsApp: Boolean = false,
     ): List<DynamicContactItem> {
         if (filterUnsentOnly) {
-            val list = dailyCampaignRepo.getPendingPoolContactsBatch(whatsApp, limit)
+            val list = dailyCampaignRepo.getPendingPoolContactsBatch(limit)
             if (searchQuery.isBlank()) return list
             return list.filter { (_, name, phone) ->
                 name.contains(searchQuery, ignoreCase = true) || phone.contains(searchQuery)
@@ -539,11 +517,7 @@ class AppRepository(context: Context) {
     fun getAllDailyCampaignConfigs(): List<DailyCampaignConfig> {
         val list = mutableListOf<DailyCampaignConfig>()
         val db = dbHelper.readableDatabase
-        val selection = if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-            "channel IN ('SMS', 'CALL')"
-        } else {
-            "channel LIKE '%WHATSAPP%'"
-        }
+        val selection = "channel = 'SMS'"
         try {
             db.query(
                 DatabaseHelper.TABLE_DAILY_CAMPAIGN,
@@ -554,7 +528,7 @@ class AppRepository(context: Context) {
                     list.add(
                         DailyCampaignConfig(
                             id = c.getLong(c.getColumnIndexOrThrow("id")),
-                            channel = c.getString(c.getColumnIndexOrThrow("channel")) ?: if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) "SMS" else "WHATSAPP",
+                            channel = c.getString(c.getColumnIndexOrThrow("channel")) ?: "SMS",
                             title = c.getString(c.getColumnIndexOrThrow("title")) ?: "Daily Campaign",
                             message = c.getString(c.getColumnIndexOrThrow("message")) ?: "",
                             dailyLimit = c.getInt(c.getColumnIndexOrThrow("daily_limit")),
@@ -573,12 +547,7 @@ class AppRepository(context: Context) {
             Log.w("AppRepository", "Error querying daily campaign configs: ${e.message}")
         }
         if (list.isEmpty()) {
-            if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-                list.add(DailyCampaignConfig(id = 1L, channel = "SMS", title = "SMS Campaign"))
-            } else {
-                list.add(DailyCampaignConfig(id = 2L, channel = "WHATSAPP", title = "WhatsApp Campaign"))
-                list.add(DailyCampaignConfig(id = 3L, channel = "WHATSAPP_BUSINESS", title = "Business Campaign"))
-            }
+            list.add(DailyCampaignConfig(id = 1L, channel = "SMS", title = "SMS Campaign"))
         }
         return list
     }
@@ -623,14 +592,7 @@ class AppRepository(context: Context) {
         } catch (e: Exception) {
             Log.w("AppRepository", "Error querying daily campaign config #$id: ${e.message}")
         }
-        return if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-            DailyCampaignConfig(id = id, channel = "SMS", title = "SMS Campaign")
-        } else {
-            when (id) {
-                3L -> DailyCampaignConfig(id = 3L, channel = "WHATSAPP_BUSINESS", title = "Business Campaign")
-                else -> DailyCampaignConfig(id = id, channel = "WHATSAPP", title = "WhatsApp Campaign")
-            }
-        }
+        return DailyCampaignConfig(id = id, channel = "SMS", title = "SMS Campaign")
     }
     /**
      * What it is:
@@ -1069,7 +1031,7 @@ class AppRepository(context: Context) {
      */
     fun exportContactsToCsv(): String = recipientRepo.exportContactsToCsv()
 
-    // ==================== WHATSAPP CONTACTS ====================
+    // ==================== CONTACT LOOKUP ====================
     /**
      * What it is:
      * Execution routine for [isValidPickedChatName].
@@ -1152,7 +1114,6 @@ class AppRepository(context: Context) {
     }
 
     fun isValidPickedChatName(name: String): Boolean = name.isNotBlank()
-    fun getWhatsAppContacts(query: String = "", channel: ChannelType = ChannelType.SMS, limit: Int = 10000): List<WhatsAppContactItem> = emptyList()
     fun deleteAllWhatsAppGroups(source: String? = null): Int = 0
     fun purgeCorruptedGroupsFromPool(): Int = 0
     fun purgeAllGroupEntries(): Int = 0

@@ -21,7 +21,7 @@ import androidx.tracing.trace
  * Enterprise performance tracing utility integrating AndroidX Tracing and Perfetto.
  *
  * What it does:
- * Enables zero-overhead section profiling for critical automation paths: keyguard dismissal, accessibility traversal, database maintenance, and dispatch loops.
+ * Enables zero-overhead section profiling for critical dispatch paths: keyguard dismissal, accessibility traversal, database maintenance, and dispatch loops.
  *
  * Linked with:
  * - Architecture: [TraceUtils], [AppTrace]

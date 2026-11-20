@@ -96,7 +96,7 @@ fun SettingsBackupRestoreCard(
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                "Back up all your scheduled tasks, SMS & WhatsApp daily campaigns, auto-reply rules, and contact pool to an offline JSON file. Restore everything seamlessly after reinstalling the APK.",
+                "Back up all your scheduled tasks, SMS daily campaigns, auto-reply rules, and contact pool to an offline JSON file. Restore everything seamlessly after reinstalling the APK.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 11.5.sp,
                 lineHeight = 15.5.sp

@@ -233,11 +233,7 @@ fun AutoReplyScreen(
                     AppEmptyState(
                         icon = Icons.Filled.Quickreply,
                         title = "No Rules",
-                        description = if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-                            "Create quick reply rules for missed phone calls or incoming SMS."
-                        } else {
-                            "Create quick reply rules for WhatsApp and WhatsApp Business chats."
-                        },
+                        description = "Create quick reply rules for missed phone calls or incoming SMS.",
                         actionText = "New Rule",
                         onActionClick = {
                             editingRule = null

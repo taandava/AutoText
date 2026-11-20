@@ -29,7 +29,7 @@ import java.util.*
 
 /**
  * What it is:
- * Repository managing [DynamicContactItem] pools and daily campaign dispatches across SMS and WhatsApp channels.
+ * Repository managing [DynamicContactItem] pools and daily campaign dispatches across SMS channels.
  *
  * What it does:
  * Encapsulates state, business contracts, and operations for [DailyCampaignRepository].
@@ -44,7 +44,7 @@ class DailyCampaignRepository(appContext: Context) {
 
     /**
      * What it is:
-     * Retrieves eligible pending contacts from dynamic pool for campaign execution, excluding contacts previously dispatched in this campaign and filtering by channel type.
+     * Retrieves eligible pending contacts from dynamic pool for campaign execution, excluding contacts previously dispatched in this campaign.
      *
      * What it does:
      * Executes [getPendingPoolContactsForCampaign] logic in accordance with system and security invariants.
@@ -52,29 +52,16 @@ class DailyCampaignRepository(appContext: Context) {
      * Linked with:
      * - Architecture: [DailyCampaignRepository], [getPendingPoolContactsForCampaign]
      * @param campaignId Identifier of the active daily campaign.
-     * @param isWhatsApp True if querying for WhatsApp/W4B delivery, false for SMS.
      * @param limit Maximum contacts to fetch for this batch.
      * @return List of candidate [DynamicContactItem] recipients.
      */
-    fun getPendingPoolContactsForCampaign(campaignId: Long, isWhatsApp: Boolean = false, limit: Int = 100): List<DynamicContactItem> {
+    fun getPendingPoolContactsForCampaign(campaignId: Long, limit: Int = 100): List<DynamicContactItem> {
         val list = mutableListOf<DynamicContactItem>()
         try {
             val db = dbHelper.readableDatabase
-            val statusCol = if (isWhatsApp) "wa_status" else "sms_status"
-            val priorityCol = if (isWhatsApp) "wa_retry_priority" else "sms_retry_priority"
-
-            // Look up campaign config to check exact channel
-            var channel = if (isWhatsApp) "WHATSAPP" else "SMS"
-            db.rawQuery("SELECT channel FROM ${DatabaseHelper.TABLE_DAILY_CAMPAIGN} WHERE id = ? LIMIT 1", arrayOf(campaignId.toString())).use {
-                if (it.moveToFirst()) channel = it.getString(0) ?: channel
-            }
-            val isBusiness = channel.contains("BUSINESS", ignoreCase = true)
-
-            val channelFilter = when {
-                !isWhatsApp -> "AND normalized_number NOT LIKE 'group:%' AND normalized_number NOT LIKE 'broadcast:%' AND normalized_number NOT LIKE 'chat:%'"
-                isBusiness -> "AND (source = 'WA_BUSINESS' OR normalized_number LIKE 'group:%' OR source IN ('WA_CHAT', 'CONTACT'))"
-                else -> "AND (source IN ('WA_CHAT', 'WA_GROUP', 'CONTACT') OR normalized_number LIKE 'group:%')"
-            }
+            val statusCol = "sms_status"
+            val priorityCol = "sms_retry_priority"
+            val channelFilter = "AND normalized_number NOT LIKE 'group:%' AND normalized_number NOT LIKE 'broadcast:%' AND normalized_number NOT LIKE 'chat:%'"
 
             val query = """
                 SELECT id, name, phone, normalized_number, source, enabled, last_sent_at, send_count, created_at, wa_last_sent_at, wa_send_count, IFNULL(sms_status, 'PENDING'), IFNULL(wa_status, 'PENDING'), IFNULL(photo_uri, '')
@@ -87,10 +74,6 @@ class DailyCampaignRepository(appContext: Context) {
                   )
                   AND IFNULL($statusCol, '') != 'INVALID'
                 ORDER BY IFNULL($priorityCol, 0) DESC,
-                         CASE WHEN source = 'WA_BUSINESS' AND $isBusiness THEN 0
-                              WHEN source = 'WA_CHAT' THEN 1
-                              WHEN source = 'WA_GROUP' THEN 2
-                              ELSE 3 END,
                          id ASC
                 LIMIT ?
             """.trimIndent()
@@ -136,8 +119,7 @@ class DailyCampaignRepository(appContext: Context) {
             }
             db.insertWithOnConflict(DatabaseHelper.TABLE_DAILY_CAMPAIGN_SENT, null, cv, SQLiteDatabase.CONFLICT_REPLACE)
 
-            val isWa = channel.contains("WHATSAPP", ignoreCase = true)
-            markContactSuccess(contact.id, isWa)
+            markContactSuccess(contact.id)
             AppDataEvents.notifyCampaignsChanged()
         } catch (e: Exception) {
             Log.e(tag, "Error marking campaign contact success", e)
@@ -274,14 +256,7 @@ class DailyCampaignRepository(appContext: Context) {
         var sent = 0
         try {
             val db = dbHelper.readableDatabase
-            var channel = "SMS"
-            db.rawQuery("SELECT channel FROM ${DatabaseHelper.TABLE_DAILY_CAMPAIGN} WHERE id = ? LIMIT 1", arrayOf(campaignId.toString())).use {
-                if (it.moveToFirst()) channel = it.getString(0) ?: channel
-            }
-            val isWa = channel.contains("WHATSAPP", ignoreCase = true)
-            val channelFilter = if (!isWa) {
-                "AND normalized_number NOT LIKE 'group:%' AND normalized_number NOT LIKE 'broadcast:%' AND normalized_number NOT LIKE 'chat:%'"
-            } else ""
+            val channelFilter = "AND normalized_number NOT LIKE 'group:%' AND normalized_number NOT LIKE 'broadcast:%' AND normalized_number NOT LIKE 'chat:%'"
 
             db.rawQuery("SELECT COUNT(*) FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE enabled = 1 $channelFilter", null).use {
                 if (it.moveToFirst()) total = it.getInt(0)
@@ -373,13 +348,13 @@ class DailyCampaignRepository(appContext: Context) {
      * - Component: [DailyCampaignRepository]
      */
 
-    fun getPendingPoolContactsBatch(whatsApp: Boolean = false, limit: Int = 50000): List<DynamicContactItem> {
+    fun getPendingPoolContactsBatch(limit: Int = 50000): List<DynamicContactItem> {
         val list = mutableListOf<DynamicContactItem>()
         try {
             val db = dbHelper.readableDatabase
-            val statusCol = if (whatsApp) "wa_status" else "sms_status"
-            val countCol = if (whatsApp) "wa_send_count" else "send_count"
-            val priorityCol = if (whatsApp) "wa_retry_priority" else "sms_retry_priority"
+            val statusCol = "sms_status"
+            val countCol = "send_count"
+            val priorityCol = "sms_retry_priority"
 
             val query = """
                 SELECT id, name, phone, normalized_number, source, enabled, last_sent_at, send_count, created_at, wa_last_sent_at, wa_send_count, IFNULL(sms_status, 'PENDING'), IFNULL(wa_status, 'PENDING'), IFNULL(photo_uri, '')
@@ -401,102 +376,46 @@ class DailyCampaignRepository(appContext: Context) {
         }
         return list
     }
-    /**
-     * What it is:
-     * Execution routine for [markContactSuccess].
-     *
-     * What it does:
-     * Coordinates markContactSuccess operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [DailyCampaignRepository]
-     */
 
-    fun markContactSuccess(id: Long, whatsApp: Boolean = false) {
+    fun markContactSuccess(id: Long) {
         try {
             val db = dbHelper.writableDatabase
-            val col = if (whatsApp) "wa_last_sent_at" else "last_sent_at"
-            val altCol = if (whatsApp) "last_wa_sent" else "last_sms_sent"
-            val cnt = if (whatsApp) "wa_send_count" else "send_count"
-            val altCnt = if (whatsApp) "wa_sent_count" else "sms_sent_count"
-            val priorityCol = if (whatsApp) "wa_retry_priority" else "sms_retry_priority"
-            val statusCol = if (whatsApp) "wa_status" else "sms_status"
-
             val now = System.currentTimeMillis()
-            val sql = "UPDATE ${DatabaseHelper.TABLE_DYNAMIC_POOL} SET $col = ?, $altCol = ?, $cnt = IFNULL($cnt, 0) + 1, $altCnt = IFNULL($altCnt, 0) + 1, $priorityCol = 0, $statusCol = 'SUCCESS' WHERE id = ?"
+            val sql = "UPDATE ${DatabaseHelper.TABLE_DYNAMIC_POOL} SET last_sent_at = ?, last_sms_sent = ?, send_count = IFNULL(send_count, 0) + 1, sms_sent_count = IFNULL(sms_sent_count, 0) + 1, sms_retry_priority = 0, sms_status = 'SUCCESS' WHERE id = ?"
             db.execSQL(sql, arrayOf<Any>(now, now, id))
         } catch (e: Exception) {
             Log.e(tag, "Error marking contact success", e)
         }
     }
-    /**
-     * What it is:
-     * Execution routine for [markContactPendingRetry].
-     *
-     * What it does:
-     * Coordinates markContactPendingRetry operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [DailyCampaignRepository]
-     */
 
-    fun markContactPendingRetry(id: Long, whatsApp: Boolean = false, status: String = "QUEUED") {
+    fun markContactPendingRetry(id: Long, status: String = "QUEUED") {
         try {
             val db = dbHelper.writableDatabase
-            val priorityCol = if (whatsApp) "wa_retry_priority" else "sms_retry_priority"
-            val statusCol = if (whatsApp) "wa_status" else "sms_status"
-
-            val sql = "UPDATE ${DatabaseHelper.TABLE_DYNAMIC_POOL} SET $priorityCol = 1, $statusCol = ? WHERE id = ?"
+            val sql = "UPDATE ${DatabaseHelper.TABLE_DYNAMIC_POOL} SET sms_retry_priority = 1, sms_status = ? WHERE id = ?"
             db.execSQL(sql, arrayOf<Any>(status, id))
         } catch (e: Exception) {
             Log.e(tag, "Error marking contact pending retry", e)
         }
     }
-    /**
-     * What it is:
-     * Execution routine for [markContactInvalid].
-     *
-     * What it does:
-     * Coordinates markContactInvalid operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [DailyCampaignRepository]
-     */
 
-    fun markContactInvalid(id: Long, whatsApp: Boolean = false) {
+    fun markContactInvalid(id: Long) {
         try {
             val db = dbHelper.writableDatabase
-            val col = if (whatsApp) "wa_last_sent_at" else "last_sent_at"
-            val altCol = if (whatsApp) "last_wa_sent" else "last_sms_sent"
-            val priorityCol = if (whatsApp) "wa_retry_priority" else "sms_retry_priority"
-            val statusCol = if (whatsApp) "wa_status" else "sms_status"
-
             val now = System.currentTimeMillis()
-            val sql = "UPDATE ${DatabaseHelper.TABLE_DYNAMIC_POOL} SET $col = ?, $altCol = ?, $priorityCol = 0, $statusCol = 'INVALID' WHERE id = ?"
+            val sql = "UPDATE ${DatabaseHelper.TABLE_DYNAMIC_POOL} SET last_sent_at = ?, last_sms_sent = ?, sms_retry_priority = 0, sms_status = 'INVALID' WHERE id = ?"
             db.execSQL(sql, arrayOf<Any>(now, now, id))
         } catch (e: Exception) {
             Log.e(tag, "Error marking contact invalid", e)
         }
     }
-    /**
-     * What it is:
-     * Execution routine for [getPoolStats].
-     *
-     * What it does:
-     * Coordinates getPoolStats operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [DailyCampaignRepository]
-     */
 
-    fun getPoolStats(whatsApp: Boolean = false): Pair<Int, Int> {
+    fun getPoolStats(): Pair<Int, Int> {
         var total = 0
         var contacted = 0
         try {
             val db = dbHelper.readableDatabase
-            val cntCol = if (whatsApp) "wa_send_count" else "send_count"
             db.rawQuery(
-                "SELECT COUNT(*), SUM(CASE WHEN IFNULL($cntCol, 0) > 0 THEN 1 ELSE 0 END) FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}",
+                "SELECT COUNT(*), SUM(CASE WHEN IFNULL(send_count, 0) > 0 THEN 1 ELSE 0 END) FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL}",
                 null
             ).use {
                 if (it.moveToFirst()) {

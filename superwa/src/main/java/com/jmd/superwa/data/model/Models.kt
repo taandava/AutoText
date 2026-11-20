@@ -53,7 +53,7 @@ data class DynamicContactItem(
 
 data class DailyCampaignConfig(
     val id: Long = 1,
-    val channel: String = "SMS",
+    val channel: String = "WHATSAPP",
     val title: String = "Daily Contact Campaign",
     val message: String = "",
     val dailyLimit: Int = 30,
@@ -115,52 +115,27 @@ data class DynamicPoolStats(
  */
 
 enum class ChannelType(val displayName: String, val emoji: String = "") {
-    SMS("SMS", "ðŸ“©"),
-    WHATSAPP("WhatsApp", "ðŸ’¬"),
-    WHATSAPP_BUSINESS("WA Business", "ðŸ’¼"),
-    WHATSAPP_GROUP("WhatsApp Group", "ðŸ‘¥"),
-    WHATSAPP_BUSINESS_GROUP("Business Group", "ðŸ‘¥ðŸ’¼"),
-    WHATSAPP_STATUS("WA Status", "ðŸ“¸"),
-    WHATSAPP_BUSINESS_STATUS("W4B Status", "ðŸ“¸ðŸ’¼"),
-    CALL("Phone Call", "ðŸ“ž"),
-    WHATSAPP_CALL("WhatsApp Call", "ðŸ“ž"),
-    WHATSAPP_BUSINESS_CALL("Business Call", "ðŸ“žðŸ’¼"),
-    CALL_SIMULATION("Call Simulation", "ðŸŽ­");
-    /**
-     * What it is:
-     * Companion object constant and factory provider for [Models].
-     *
-     * What it does:
-     * Manages static declarations, tag references, and builder utilities.
-     *
-     * Linked with:
-     * - Component: [Models]
-     */
+    WHATSAPP("WhatsApp", "💬"),
+    WHATSAPP_BUSINESS("WA Business", "💼"),
+    WHATSAPP_GROUP("WhatsApp Group", "👥"),
+    WHATSAPP_BUSINESS_GROUP("Business Group", "👥💼"),
+    WHATSAPP_STATUS("WA Status", "📸"),
+    WHATSAPP_BUSINESS_STATUS("W4B Status", "📸💼"),
+    WHATSAPP_CALL("WhatsApp Call", "📞"),
+    WHATSAPP_BUSINESS_CALL("Business Call", "📞💼");
 
     companion object {
-        /**
-         * Backward-compatible alias for [CALL_SIMULATION].
-         */
-        @JvmField
-        val SIMULATED_CALL: ChannelType = CALL_SIMULATION
-        /**
-         * What it is:
-         * Operational routine [fromString].
-         *
-         * What it does:
-         * Executes fromString actions according to system invariants.
-         *
-         * Linked with:
-         * - Component: [Models]
-         */
-
         fun fromString(value: String?): ChannelType {
-            if (value.isNullOrBlank()) return SMS
+            if (value.isNullOrBlank()) return WHATSAPP
             return when (val clean = value.trim().uppercase()) {
-                "CALL_SIMULATION", "SIMULATION", "SIMULATED_CALL" -> CALL_SIMULATION
                 "WHATSAPP_GROUP", "GROUP", "WA_GROUP" -> WHATSAPP_GROUP
                 "WHATSAPP_BUSINESS_GROUP", "W4B_GROUP", "WA_BUSINESS_GROUP" -> WHATSAPP_BUSINESS_GROUP
-                else -> entries.firstOrNull { it.name == clean } ?: SMS
+                "WHATSAPP_BUSINESS", "W4B", "BUSINESS" -> WHATSAPP_BUSINESS
+                "WHATSAPP_STATUS", "STATUS" -> WHATSAPP_STATUS
+                "WHATSAPP_BUSINESS_STATUS", "W4B_STATUS" -> WHATSAPP_BUSINESS_STATUS
+                "WHATSAPP_CALL", "WA_CALL" -> WHATSAPP_CALL
+                "WHATSAPP_BUSINESS_CALL", "W4B_CALL" -> WHATSAPP_BUSINESS_CALL
+                else -> entries.firstOrNull { it.name == clean } ?: WHATSAPP
             }
         }
     }
@@ -546,7 +521,7 @@ enum class TaskStatus(val displayName: String) {
 data class ScheduledTask(
     val id: Long = 0,
     val title: String = "",
-    val channel: ChannelType = ChannelType.SMS,
+    val channel: ChannelType = ChannelType.WHATSAPP,
     val recipients: List<String> = emptyList(),
     val recipientNames: List<String> = emptyList(),
     val messageText: String = "",

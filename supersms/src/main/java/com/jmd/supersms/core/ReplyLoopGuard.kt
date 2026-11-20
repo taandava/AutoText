@@ -64,7 +64,7 @@ object ReplyLoopGuard {
 
     /**
      * Storage key for a recipient. Uses the normalized number when possible, otherwise the raw label
-     * (WhatsApp notifications only expose a display name).
+     * (Some notifications only expose a display name).
      */
     fun storageKey(recipient: String): String =
         "reply_guard_" + PhoneNumberNormalizer.normalize(recipient).ifBlank {

@@ -14,15 +14,5 @@ object AppVariantHelper {
 
     val isAccessibilitySupported: Boolean = true
 
-    fun isChannelSupported(channel: ChannelType): Boolean {
-        return when (channel) {
-            ChannelType.WHATSAPP,
-            ChannelType.WHATSAPP_BUSINESS,
-            ChannelType.WHATSAPP_GROUP,
-            ChannelType.WHATSAPP_BUSINESS_GROUP,
-            ChannelType.WHATSAPP_STATUS,
-            ChannelType.WHATSAPP_CALL -> true
-            else -> false
-        }
-    }
+    fun isChannelSupported(channel: ChannelType): Boolean = true
 }

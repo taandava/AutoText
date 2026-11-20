@@ -65,7 +65,7 @@ private val BANKING_HINTS = listOf(
  * What it does:
  * Loads installed launcher apps, lets the owner tick/untick them (with a one-tap suggested
  * selection) and pushes the result into [PreferenceManager] and [ProtectedApplicationManager]
- * so automation and overlays skip those packages immediately.
+ * so dispatch and overlays skip those packages immediately.
  */
 @Composable
 fun ProtectedAppsSection(

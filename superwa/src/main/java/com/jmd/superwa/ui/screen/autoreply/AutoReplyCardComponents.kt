@@ -70,43 +70,25 @@ fun AutoReplyRuleCard(
     onDelete: () -> Unit
 ) {
     val themeColor = when (rule.channel) {
-        ChannelType.CALL -> MaterialTheme.colorScheme.primary
-        ChannelType.SMS -> MaterialTheme.colorScheme.primary
-        ChannelType.WHATSAPP -> MaterialTheme.colorScheme.tertiary
         ChannelType.WHATSAPP_BUSINESS -> MaterialTheme.colorScheme.primary
         else -> MaterialTheme.colorScheme.tertiary
     }
 
     val (channelIcon, channelText) = when (rule.channel) {
-        ChannelType.CALL -> Icons.Filled.Phone to "Calls (SMS)"
-        ChannelType.SMS -> Icons.AutoMirrored.Filled.Message to "SMS"
-        ChannelType.WHATSAPP -> Icons.AutoMirrored.Filled.Chat to "WhatsApp"
         ChannelType.WHATSAPP_BUSINESS -> Icons.Filled.BusinessCenter to "WA Business"
-        else -> Icons.AutoMirrored.Filled.Chat to rule.channel.displayName
+        else -> Icons.AutoMirrored.Filled.Chat to "WhatsApp"
     }
 
-    val (eventIcon, eventBadgeText) = when (rule.channel) {
-        ChannelType.CALL -> when (rule.callEventType.uppercase()) {
-            "MISSED_CALL" -> Icons.AutoMirrored.Filled.PhoneMissed to "Missed Call"
-            "CALL_ENDED" -> Icons.Filled.CallEnd to "Call Ended"
-            else -> Icons.Filled.PhoneInTalk to "Missed & Ended"
-        }
-        ChannelType.SMS -> Icons.AutoMirrored.Filled.Message to "Incoming SMS"
-        ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS -> when (rule.callEventType.uppercase()) {
-            "MISSED_CALL" -> Icons.AutoMirrored.Filled.PhoneMissed to "Missed Call"
-            "CALL_ENDED" -> Icons.Filled.CallEnd to "Call Ended"
-            "MESSAGE" -> Icons.AutoMirrored.Filled.Chat to "Message"
-            else -> Icons.Filled.Forum to "All Events"
-        }
-        else -> Icons.AutoMirrored.Filled.Chat to rule.channel.displayName
+    val (eventIcon, eventBadgeText) = when (rule.callEventType.uppercase()) {
+        "MISSED_CALL" -> Icons.AutoMirrored.Filled.PhoneMissed to "Missed Call"
+        "CALL_ENDED" -> Icons.Filled.CallEnd to "Call Ended"
+        "MESSAGE" -> Icons.AutoMirrored.Filled.Chat to "Message"
+        else -> Icons.Filled.Forum to "All Events"
     }
 
     val replyMechanismText = when (rule.channel) {
-        ChannelType.CALL -> "Auto-replies via SMS to mobile numbers"
-        ChannelType.SMS -> "Auto-replies via SMS • Trigger: ${if (rule.triggerPattern == "*") "All Incoming" else "\"${rule.triggerPattern}\""}"
-        ChannelType.WHATSAPP -> if (rule.callEventType.uppercase() in listOf("MISSED_CALL", "CALL_ENDED")) "Replies in WhatsApp chat" else "Replies in WhatsApp • Trigger: ${if (rule.triggerPattern == "*") "All Incoming" else "\"${rule.triggerPattern}\""}"
         ChannelType.WHATSAPP_BUSINESS -> if (rule.callEventType.uppercase() in listOf("MISSED_CALL", "CALL_ENDED")) "Replies in WA Business chat" else "Replies in WA Business • Trigger: ${if (rule.triggerPattern == "*") "All Incoming" else "\"${rule.triggerPattern}\""}"
-        else -> "Replies via ${rule.channel.displayName}"
+        else -> if (rule.callEventType.uppercase() in listOf("MISSED_CALL", "CALL_ENDED")) "Replies in WhatsApp chat" else "Replies in WhatsApp • Trigger: ${if (rule.triggerPattern == "*") "All Incoming" else "\"${rule.triggerPattern}\""}"
     }
 
     AppCard(
@@ -169,11 +151,7 @@ fun AutoReplyRuleCard(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (rule.channel in listOf(ChannelType.CALL, ChannelType.SMS)) {
-                    AppBadge(text = "Mobile Only", icon = Icons.Filled.Smartphone, color = MaterialTheme.colorScheme.primary, showDot = false)
-                } else {
-                    AppBadge(text = "App Chat", icon = Icons.AutoMirrored.Filled.Chat, color = themeColor, showDot = false)
-                }
+                AppBadge(text = "App Chat", icon = Icons.AutoMirrored.Filled.Chat, color = themeColor, showDot = false)
                 AppBadge(
                     text = if (rule.maxDailyReplies <= 0) "Unlimited" else "Max ${rule.maxDailyReplies}x/day",
                     icon = Icons.Filled.BarChart,
@@ -444,7 +422,7 @@ fun AutoReplyLimitsCard(
  *
  * Linked with:
  * - Architecture: [AutoReplyCardComponents], [AutoReplyMessageCard]
- * @param channel Target channel type (Calls, SMS, WhatsApp).
+ * @param channel Target channel type (WhatsApp, WA Business).
  * @param callEventType Associated trigger event type.
  * @param replyText Current draft message body.
  * @param onReplyTextChanged Callback when message body is edited.

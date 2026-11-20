@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.superwa.whatsapp
- * Module: WhatsApp Automation Subsystem
+ * Module: WhatsApp Dispatch Subsystem
  *
  * What it is:
  * Architecture definition and implementation for [WhatsAppCallEngine].

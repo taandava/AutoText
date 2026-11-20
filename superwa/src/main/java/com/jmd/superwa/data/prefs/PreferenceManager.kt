@@ -164,7 +164,7 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_CUSTOM_CURRENCY_SYMBOL = "custom_currency_symbol"
         private const val KEY_CUSTOM_INDIAN_NUMBERING = "custom_indian_numbering"
 
-        // Channel & Automation Customization Keys
+        // Channel & Dispatch Customization Keys
         private const val KEY_WHATSAPP_TYPING_DELAY_MS = "whatsapp_typing_delay_ms"
         private const val KEY_AUTO_SMS_FALLBACK_ENABLED = "auto_sms_fallback_enabled"
         private const val KEY_CALL_SIM_DURATION_SECONDS = "call_sim_duration_seconds"
@@ -698,7 +698,7 @@ class PreferenceManager(private val context: Context) {
     /**
      * User-curated list of banking, payment and UPI packages that must never be inspected.
      * The Settings app picker writes this set; [com.jmd.superwa.core.ProtectedApplicationManager]
-     * merges it with the built-in catalog so automation avoids these apps entirely.
+     * merges it with the built-in catalog so dispatch avoids these apps entirely.
      */
     /** One-time guard: legacy heuristic group rows were cleared on the first launch of this build. */
     var groupsResetV2: Boolean
@@ -797,7 +797,7 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit { putBoolean(KEY_CUSTOM_INDIAN_NUMBERING, value) }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // CHANNEL & AUTOMATION CUSTOMIZATIONS
+    // CHANNEL & DISPATCH CUSTOMIZATIONS
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
     /** WhatsApp typing simulation delay in milliseconds before dispatching. Default 400ms. */

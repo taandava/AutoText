@@ -288,13 +288,7 @@ object TaskContentValidator {
                 }
             }
             is AttachmentValidationResult.Valid -> {
-                if (channel == ChannelType.SMS) {
-                    if (!hasText) {
-                        ContentValidationResult.Reject("SMS requires message text (MMS is not supported)")
-                    } else {
-                        ContentValidationResult.AcceptTextOnly
-                    }
-                } else if (hasText) {
+                if (hasText) {
                     ContentValidationResult.AcceptMediaWithCaption(
                         mimeType = attachmentResult.mimeType,
                         isVideo = attachmentResult.isVideo,

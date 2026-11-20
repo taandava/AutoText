@@ -217,9 +217,9 @@ class PhoneCallReceiver : BroadcastReceiver() {
             return
         }
 
-        // Feature Cooperation: If this was an automated scheduled call dispatched by Super, suppress auto-reply
+        // Feature Cooperation: If this was an scheduled scheduled call dispatched by Super, suppress auto-reply
         if (com.jmd.supersms.telephony.TelephonyCallEngine.isAutomatedCall(targetNumber)) {
-            AppFileLogger.action(context, TAG, "Call with $targetNumber was dispatched as an automated scheduled task. Suppressing auto-reply.")
+            AppFileLogger.action(context, TAG, "Call with $targetNumber was dispatched as an scheduled scheduled task. Suppressing auto-reply.")
             com.jmd.supersms.telephony.TelephonyCallEngine.clearAutomatedCall(targetNumber)
             return
         }

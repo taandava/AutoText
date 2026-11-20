@@ -353,7 +353,7 @@ class TaskAccessibilityService : AccessibilityService() {
 
         /**
          * What it is:
-         * Returns true if an automated dispatch, unlock, or scan operation is actively executing.
+         * Returns true if an scheduled dispatch, unlock, or scan operation is actively executing.
          *
          * What it does:
          * Executes [isDispatchingActive] logic in accordance with system invariants.
@@ -1852,9 +1852,6 @@ class TaskAccessibilityService : AccessibilityService() {
             handler.postDelayed({
                 PopupShield.clearAllBlockingPopups(this@TaskAccessibilityService) {
                     when (ch) {
-                        ChannelType.CALL -> {
-                            launchPhoneCallFromService(rc)
-                        }
                         ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> {
                             WhatsAppIntentDispatcher.launchWhatsAppCall(
                                 context = this@TaskAccessibilityService,
@@ -3146,41 +3143,7 @@ class TaskAccessibilityService : AccessibilityService() {
         return null
     }
 
-    /**
-     * What it is:
-     * Places a direct phone call from accessibility service context following keyguard auto-unlock.
-     *
-     * What it does:
-     * Executes [launchPhoneCallFromService] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [TaskAccessibilityService], [launchPhoneCallFromService]
-     */
-    fun launchPhoneCallFromService(recipient: String) {
-        try {
-            val cleanPhone = PhoneNumberNormalizer.cleanPhoneNumber(recipient)
-            val uri = Uri.fromParts("tel", cleanPhone, null)
-            val hasCallPerm = ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.CALL_PHONE,
-            ) == PackageManager.PERMISSION_GRANTED
 
-            val callIntent = if (hasCallPerm) {
-                Intent(Intent.ACTION_CALL, uri).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                }
-            } else {
-                Intent(Intent.ACTION_DIAL, uri).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                }
-            }
-            startActivity(callIntent)
-            Log.i(TAG, "launchPhoneCallFromService: Dispatched phone call intent for $cleanPhone")
-            AppFileLogger.action(applicationContext, TAG, "Placed phone call to $cleanPhone post-unlock")
-        } catch (e: Exception) {
-            Log.e(TAG, "launchPhoneCallFromService failed: ${e.message}", e)
-        }
-    }
     /**
      * What it is:
      * Execution routine for [handleSendTimeout].

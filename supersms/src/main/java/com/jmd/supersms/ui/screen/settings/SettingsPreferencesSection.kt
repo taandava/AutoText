@@ -58,11 +58,6 @@ fun SettingsPreferencesCards(
     var countryCode by remember { mutableStateOf(prefs.defaultCountryCode) }
     var simSlot by remember { mutableIntStateOf(prefs.defaultSimSlot) }
     var appTheme by remember { mutableStateOf(prefs.appThemeMode) }
-    var fallbackStrategy by remember { mutableStateOf(prefs.fallbackClickStrategy) }
-    var gestureFallback by remember { mutableStateOf(prefs.isGestureFallbackEnabled) }
-    var maxRetries by remember { mutableIntStateOf(prefs.fallbackMaxRetries) }
-    var clickOffsetY by remember { mutableIntStateOf(prefs.customClickCoordinateOffsetY) }
-    var waDelay by remember { mutableIntStateOf(prefs.whatsappDispatchDelaySeconds) }
     var contactSyncHours by remember { mutableIntStateOf(prefs.contactSyncIntervalHours) }
     var dailySmsLimit by remember { mutableIntStateOf(prefs.dailySmsSafetyLimit) }
     var smsQuotaEnabled by remember { mutableStateOf(prefs.isSmsQuotaLimitEnabled) }
@@ -122,41 +117,7 @@ fun SettingsPreferencesCards(
             }
         }
 
-        // WhatsApp Task Speed & Timing
-        AppCard(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Dispatch Speed", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                AppBadge(text = "${waDelay}s Pace", color = MaterialTheme.colorScheme.tertiary)
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text("Delay between WhatsApp message dispatches to keep sending organic and reliable.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                listOf(
-                    4 to "Fast (4s)",
-                    8 to "Normal (8s)",
-                    15 to "Safe (15s)",
-                    25 to "Slow (25s)"
-                ).forEach { (delaySec, label) ->
-                    AppChip(
-                        selected = waDelay == delaySec,
-                        onClick = {
-                            waDelay = delaySec
-                            prefs.whatsappDispatchDelaySeconds = delaySec
-                        },
-                        label = label,
-                        activeColor = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-        }
 
 
         // Contact Auto-Sync Frequency
@@ -220,112 +181,7 @@ fun SettingsPreferencesCards(
             }
         }
 
-        // Task Fallback & Failure Recovery Customisation
-        AppCard(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Fallback Strategy", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                AppBadge(text = "Reliability", color = MaterialTheme.colorScheme.tertiary)
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text("Customize how Super recovers when WhatsApp UI buttons or views fail to click.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text("Dispatch Strategy:", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
-            Spacer(modifier = Modifier.height(4.dp))
-
-            val strategies = listOf(
-                "SMART_FALLBACK" to "Smart Auto",
-                "A11Y_FIRST" to "A11y Node",
-                "GESTURE_FORCE" to "Physical Tap"
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                strategies.forEach { (stratKey, stratLabel) ->
-                    AppChip(
-                        selected = fallbackStrategy == stratKey,
-                        onClick = {
-                            fallbackStrategy = stratKey
-                            prefs.fallbackClickStrategy = stratKey
-                        },
-                        label = stratLabel,
-                        activeColor = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("Tap Fallback", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold)
-                    Text("If accessibility node click is ignored by WhatsApp, simulate physical screen tap on button bounds", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 11.sp)
-                }
-                Switch(
-                    checked = gestureFallback,
-                    onCheckedChange = {
-                        gestureFallback = it
-                        prefs.isGestureFallbackEnabled = it
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.tertiary,
-                        checkedTrackColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f)
-                    )
-                )
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            var retriesText by remember(maxRetries) { mutableStateOf(maxRetries.toString()) }
-            AppInputField(
-                value = retriesText,
-                onValueChange = { newStr ->
-                    val digits = newStr.filter { it.isDigit() }.take(3)
-                    retriesText = digits
-                    val num = digits.toIntOrNull()
-                    if (num != null && num > 0) {
-                        maxRetries = num
-                        prefs.fallbackMaxRetries = num
-                    }
-                },
-                label = "Recovery Attempts",
-                placeholder = "35",
-                leadingIcon = Icons.Default.Replay,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                accentColor = MaterialTheme.colorScheme.tertiary
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            var offsetText by remember(clickOffsetY) { mutableStateOf(clickOffsetY.toString()) }
-            AppInputField(
-                value = offsetText,
-                onValueChange = { newStr ->
-                    val clean = if (newStr.startsWith("-")) "-" + newStr.drop(1).filter { it.isDigit() }.take(3) else newStr.filter { it.isDigit() }.take(3)
-                    offsetText = clean
-                    val num = clean.toIntOrNull()
-                    if (num != null) {
-                        clickOffsetY = num
-                        prefs.customClickCoordinateOffsetY = num
-                    }
-                },
-                label = "Click Offset",
-                placeholder = "0",
-                leadingIcon = Icons.Default.Tune,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                accentColor = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text("Adjust where fallback tap lands if button bounds differ on custom ROMs / foldables.", fontSize = 10.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
 
         // Default SIM Slot
         AppCard(modifier = Modifier.fillMaxWidth()) {

@@ -85,7 +85,7 @@ import com.jmd.superwa.whatsapp.*
  */
 @Composable
 fun ComposeTaskScreen(
-    initialChannel: ChannelType = ChannelType.SMS,
+    initialChannel: ChannelType = ChannelType.WHATSAPP,
     initialMessage: String = "",
     taskToEdit: ScheduledTask? = null,
     onTaskSaved: () -> Unit,
@@ -295,23 +295,7 @@ fun ComposeTaskScreen(
         }
     }
 
-    val callPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            context.showAppToast("Call permission granted")
-        } else {
-            context.showAppToast("Call permission needed", isLong = true)
-        }
-    }
 
-    LaunchedEffect(selectedChannel) {
-        if (selectedChannel == ChannelType.CALL) {
-            if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                callPermissionLauncher.launch(android.Manifest.permission.CALL_PHONE)
-            }
-        }
-    }
 
     // Date & Time
     val calendar = remember {
@@ -332,12 +316,6 @@ fun ComposeTaskScreen(
     var selectedDaysOfWeek by remember { mutableStateOf(taskToEdit?.selectedDaysOfWeek ?: emptyList()) }
     var customIntervalMinutes by remember { mutableIntStateOf(taskToEdit?.customIntervalMinutes ?: 60) }
     val prefs = remember { PreferenceManager(context) }
-    var simSlot by remember { mutableIntStateOf(taskToEdit?.simSlot ?: prefs.defaultSimSlot) }
-
-    // Call simulation specific
-    var simulatedCallerName by remember { mutableStateOf(taskToEdit?.simulatedCallerName ?: "") }
-    var simulatedCallerNumber by remember { mutableStateOf(taskToEdit?.simulatedCallerNumber ?: "") }
-    var simulatedCallStyle by remember { mutableStateOf(taskToEdit?.simulatedCallStyle ?: "PIXEL") }
 
     // Phone / WhatsApp call specific
     var callDurationSeconds by remember { mutableIntStateOf(taskToEdit?.callDurationSeconds ?: 0) }
@@ -362,18 +340,6 @@ fun ComposeTaskScreen(
             showWhatsAppContactsDialog = false
         } else {
             onCancel()
-        }
-    }
-
-    val isUnicode = remember(messageText) {
-        messageText.any { it.code > 127 }
-    }
-    val smsPartCount = remember(messageText, isUnicode) {
-        if (messageText.isEmpty()) 1
-        else if (isUnicode) {
-            if (messageText.length <= 70) 1 else ((messageText.length + 66) / 67)
-        } else {
-            if (messageText.length <= 160) 1 else ((messageText.length + 152) / 153)
         }
     }
 
@@ -450,16 +416,12 @@ fun ComposeTaskScreen(
             if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
             finalRecipients = listOf("My Status (w4b)")
             finalRecipientNames = listOf("WhatsApp Business Status")
-        } else if (selectedChannel == ChannelType.CALL_SIMULATION) {
-            finalRecipients = listOf(simulatedCallerNumber.ifBlank { "Incoming Call" })
-            finalRecipientNames = listOf(simulatedCallerName.ifBlank { "Simulated Caller" })
         } else if (finalPhoneList.isEmpty()) {
             context.showAppToast("Select a recipient", isLong = true)
             return@saveTaskAction
         } else {
             // Centralized content validation (text or media) for messaging channels
             if (selectedChannel in listOf(
-                    ChannelType.SMS,
                     ChannelType.WHATSAPP,
                     ChannelType.WHATSAPP_BUSINESS,
                     ChannelType.WHATSAPP_GROUP,
@@ -469,12 +431,6 @@ fun ComposeTaskScreen(
             }
             finalRecipients = finalPhoneList
             finalRecipientNames = finalNameList
-        }
-
-        if (selectedChannel == ChannelType.CALL) {
-            if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                callPermissionLauncher.launch(android.Manifest.permission.CALL_PHONE)
-            }
         }
 
         val effectiveRecurrence = selectedRecurrence
@@ -495,11 +451,10 @@ fun ComposeTaskScreen(
                 recurrence = effectiveRecurrence,
                 customIntervalMinutes = effectiveInterval,
                 selectedDaysOfWeek = selectedDaysOfWeek,
-                simSlot = simSlot,
                 askBeforeSend = false,
-                simulatedCallerName = simulatedCallerName,
-                simulatedCallerNumber = simulatedCallerNumber,
-                simulatedCallStyle = simulatedCallStyle,
+                simulatedCallerName = "",
+                simulatedCallerNumber = "",
+                simulatedCallStyle = "PIXEL",
                 soundModeSetting = soundModeSetting,
                 mediaUri = mediaUri,
                 callDurationSeconds = callDurationSeconds,
@@ -531,11 +486,10 @@ fun ComposeTaskScreen(
                 recurrence = effectiveRecurrence,
                 customIntervalMinutes = effectiveInterval,
                 selectedDaysOfWeek = selectedDaysOfWeek,
-                simSlot = simSlot,
                 askBeforeSend = false,
-                simulatedCallerName = simulatedCallerName,
-                simulatedCallerNumber = simulatedCallerNumber,
-                simulatedCallStyle = simulatedCallStyle,
+                simulatedCallerName = "",
+                simulatedCallerNumber = "",
+                simulatedCallStyle = "PIXEL",
                 soundModeSetting = soundModeSetting,
                 mediaUri = mediaUri,
                 callDurationSeconds = callDurationSeconds,
@@ -607,20 +561,7 @@ fun ComposeTaskScreen(
 
             // 3. Channel Specific Configuration Enterprise Card
             when (selectedChannel) {
-                ChannelType.CALL_SIMULATION -> {
-                    ComposeCallSimulationAndSoundCard(
-                        selectedChannel = selectedChannel,
-                        simulatedCallerName = simulatedCallerName,
-                        onSimulatedCallerNameChange = { simulatedCallerName = it },
-                        simulatedCallerNumber = simulatedCallerNumber,
-                        onSimulatedCallerNumberChange = { simulatedCallerNumber = it },
-                        simulatedCallStyle = simulatedCallStyle,
-                        onSimulatedCallStyleChange = { simulatedCallStyle = it },
-                        soundModeSetting = soundModeSetting,
-                        onSoundModeSettingChange = { soundModeSetting = it }
-                    )
-                }
-                ChannelType.CALL, ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> {
+                ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> {
                     ComposePhoneCallCard(
                         selectedChannel = selectedChannel,
                         onSelectChannel = { selectedChannel = it },
@@ -727,8 +668,6 @@ fun ComposeTaskScreen(
                         onOpenContactsPicker = { contactPickerLauncher.launch(null) },
                         messageText = messageText,
                         onMessageTextChange = { messageText = it },
-                        smsPartCount = smsPartCount,
-                        isUnicode = isUnicode,
                         mediaUri = mediaUri,
                         onMediaUriChange = { mediaUri = it },
                         onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") }
@@ -736,7 +675,7 @@ fun ComposeTaskScreen(
                 }
             }
 
-            // 4. Execution Schedule, Repetition, SIM & Safety Enterprise Cards
+            // 4. Execution Schedule, Repetition & Safety Enterprise Cards
             ComposeScheduleOptionsCard(
                 selectedChannel = selectedChannel,
                 triggerTimeMillis = triggerTimeMillis,
@@ -745,8 +684,6 @@ fun ComposeTaskScreen(
                 onRecurrenceChanged = { selectedRecurrence = it },
                 customIntervalMinutes = customIntervalMinutes,
                 onCustomIntervalMinutesChanged = { customIntervalMinutes = it },
-                simSlot = simSlot,
-                onSimSlotChanged = { simSlot = it },
                 selectedDaysOfWeek = selectedDaysOfWeek,
                 onSelectedDaysOfWeekChanged = { selectedDaysOfWeek = it }
             )

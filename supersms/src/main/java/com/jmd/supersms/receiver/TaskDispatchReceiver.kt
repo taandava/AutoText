@@ -49,7 +49,7 @@ class TaskDispatchReceiver : BroadcastReceiver() {
             // SYNC POOL
             action.endsWith("ACTION_SYNC_POOL") -> {
                 receiverScope.launch {
-                    val summary = repository.syncWhatsAppPool()
+                    val summary = repository.syncContactPool()
                     val msg = "Pool synced: +${summary.newAdded} new entries (${summary.totalPoolCount} total)"
                     Log.i(TAG, msg)
                     AppFileLogger.i(context, TAG, msg)

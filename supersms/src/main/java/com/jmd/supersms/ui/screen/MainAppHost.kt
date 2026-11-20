@@ -82,7 +82,7 @@ fun MainAppHost(
     var isComposing by remember { mutableStateOf(value = false) }
     var initialComposeMessage by remember { mutableStateOf("") }
     var editingTask by remember { mutableStateOf<ScheduledTask?>(null) }
-    val defaultChannel = if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) com.jmd.supersms.data.model.ChannelType.SMS else com.jmd.supersms.data.model.ChannelType.WHATSAPP
+    val defaultChannel = com.jmd.supersms.data.model.ChannelType.SMS
     var composeChannel by remember { mutableStateOf(defaultChannel) }
     var selectedDailyCampaignId by remember { mutableLongStateOf(0L) }
     var isToolsSubSectionOpen by remember { mutableStateOf(value = false) }

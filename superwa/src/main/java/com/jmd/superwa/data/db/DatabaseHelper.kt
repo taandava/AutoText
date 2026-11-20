@@ -222,12 +222,8 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         com.jmd.superwa.core.DispatchJournal.ensureTable(db)
         pruneLegacyPoolAndGroupRows(db)
         try {
-            if (com.jmd.superwa.core.AppVariantHelper.isSuperSms) {
-                db.delete(TABLE_DAILY_CAMPAIGN, "channel LIKE '%WHATSAPP%'", null)
-            } else {
-                db.delete(TABLE_DAILY_CAMPAIGN, "channel IN ('SMS', 'CALL')", null)
-            }
-            db.delete(TABLE_TASKS, "channel = 'REMINDER'", null)
+            db.delete(TABLE_DAILY_CAMPAIGN, "channel NOT LIKE '%WHATSAPP%'", null)
+            db.delete(TABLE_TASKS, "channel NOT LIKE '%WHATSAPP%'", null)
         } catch (e: Exception) {
             Log.w("DatabaseHelper", "Error during onOpen variant hygiene: ${e.message}")
         }
@@ -518,57 +514,39 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
             )
         """.trimIndent())
 
-        addColumnIfNotExists(db, TABLE_DAILY_CAMPAIGN, "channel", "TEXT DEFAULT 'SMS'")
+        addColumnIfNotExists(db, TABLE_DAILY_CAMPAIGN, "channel", "TEXT DEFAULT 'WHATSAPP'")
 
-        if (com.jmd.superwa.core.AppVariantHelper.isSuperSms) {
-            val defaultCampaign = ContentValues().apply {
-                put("id", 1)
-                put("channel", "SMS")
-                put("title", "Daily Unique Contacts SMS")
-                put("message", "")
-                put("daily_limit", 30)
-                put("interval_seconds", 8)
-                put("scheduled_hour", 9)
-                put("scheduled_minute", 0)
-                put("sim_slot", 0)
-                put("auto_scan_enabled", 1)
-                put("is_active", 0)
-                put("last_run_date", "")
-            }
-            db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultCampaign, SQLiteDatabase.CONFLICT_IGNORE)
-        } else {
-            val defaultWhatsAppCampaign = ContentValues().apply {
-                put("id", 2)
-                put("channel", "WHATSAPP")
-                put("title", "Daily Unique Contacts WhatsApp")
-                put("message", "")
-                put("daily_limit", 20)
-                put("interval_seconds", 12)
-                put("scheduled_hour", 10)
-                put("scheduled_minute", 0)
-                put("sim_slot", 0)
-                put("auto_scan_enabled", 1)
-                put("is_active", 0)
-                put("last_run_date", "")
-            }
-            db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultWhatsAppCampaign, SQLiteDatabase.CONFLICT_IGNORE)
-
-            val defaultWhatsAppBusinessCampaign = ContentValues().apply {
-                put("id", 3)
-                put("channel", "WHATSAPP_BUSINESS")
-                put("title", "Daily WhatsApp Business Task Batch")
-                put("message", "")
-                put("daily_limit", 20)
-                put("interval_seconds", 12)
-                put("scheduled_hour", 10)
-                put("scheduled_minute", 30)
-                put("sim_slot", 0)
-                put("auto_scan_enabled", 1)
-                put("is_active", 0)
-                put("last_run_date", "")
-            }
-            db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultWhatsAppBusinessCampaign, SQLiteDatabase.CONFLICT_IGNORE)
+        val defaultWhatsAppCampaign = ContentValues().apply {
+            put("id", 2)
+            put("channel", "WHATSAPP")
+            put("title", "Daily Unique Contacts WhatsApp")
+            put("message", "")
+            put("daily_limit", 20)
+            put("interval_seconds", 12)
+            put("scheduled_hour", 10)
+            put("scheduled_minute", 0)
+            put("sim_slot", 0)
+            put("auto_scan_enabled", 1)
+            put("is_active", 0)
+            put("last_run_date", "")
         }
+        db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultWhatsAppCampaign, SQLiteDatabase.CONFLICT_IGNORE)
+
+        val defaultWhatsAppBusinessCampaign = ContentValues().apply {
+            put("id", 3)
+            put("channel", "WHATSAPP_BUSINESS")
+            put("title", "Daily WhatsApp Business Task Batch")
+            put("message", "")
+            put("daily_limit", 20)
+            put("interval_seconds", 12)
+            put("scheduled_hour", 10)
+            put("scheduled_minute", 30)
+            put("sim_slot", 0)
+            put("auto_scan_enabled", 1)
+            put("is_active", 0)
+            put("last_run_date", "")
+        }
+        db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultWhatsAppBusinessCampaign, SQLiteDatabase.CONFLICT_IGNORE)
 
         addColumnIfNotExists(db, TABLE_AUTO_REPLY, "start_hour", "INTEGER DEFAULT 0")
         addColumnIfNotExists(db, TABLE_AUTO_REPLY, "start_minute", "INTEGER DEFAULT 0")

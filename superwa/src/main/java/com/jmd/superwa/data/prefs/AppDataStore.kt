@@ -38,7 +38,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
  * Modern Jetpack DataStore preferences implementation.
  *
  * What it does:
- * Asynchronous, fully transactional, and coroutine-native key-value persistence. Prevents main thread disk I/O and ANRs during high-frequency automation loops.
+ * Asynchronous, fully transactional, and coroutine-native key-value persistence. Prevents main thread disk I/O and ANRs during high-frequency dispatch loops.
  *
  * Linked with:
  * - Architecture: [AppDataStore], [AppDataStore]

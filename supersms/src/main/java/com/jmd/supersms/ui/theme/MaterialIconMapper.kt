@@ -64,15 +64,7 @@ object MaterialIconMapper {
 
     fun channelIcon(channel: ChannelType): ImageVector = when (channel) {
         ChannelType.SMS -> Icons.AutoMirrored.Filled.Message
-        ChannelType.WHATSAPP -> Icons.AutoMirrored.Filled.Chat
-        ChannelType.WHATSAPP_BUSINESS -> Icons.Filled.BusinessCenter
-        ChannelType.WHATSAPP_GROUP -> Icons.Filled.Groups
-        ChannelType.WHATSAPP_BUSINESS_GROUP -> Icons.Filled.Groups
-        ChannelType.WHATSAPP_STATUS -> Icons.Filled.PhotoCamera
-        ChannelType.WHATSAPP_BUSINESS_STATUS -> Icons.Filled.Camera
         ChannelType.CALL -> Icons.Filled.Phone
-        ChannelType.WHATSAPP_CALL -> Icons.Filled.PhoneInTalk
-        ChannelType.WHATSAPP_BUSINESS_CALL -> Icons.Filled.ContactPhone
         ChannelType.CALL_SIMULATION -> Icons.AutoMirrored.Filled.PhoneForwarded
     }
     /**
@@ -88,15 +80,7 @@ object MaterialIconMapper {
 
     fun channelColor(channel: ChannelType): Color = when (channel) {
         ChannelType.SMS -> Color(0xFF2563EB) // Vibrant Blue
-        ChannelType.WHATSAPP -> Color(0xFF16A34A) // WhatsApp Green
-        ChannelType.WHATSAPP_BUSINESS -> Color(0xFF0D9488) // Business Teal
-        ChannelType.WHATSAPP_GROUP -> Color(0xFF15803D) // Emerald Group
-        ChannelType.WHATSAPP_BUSINESS_GROUP -> Color(0xFF0D9488) // Business Teal Group
-        ChannelType.WHATSAPP_STATUS -> Color(0xFF7C3AED) // Vibrant Purple
-        ChannelType.WHATSAPP_BUSINESS_STATUS -> Color(0xFF4F46E5) // Indigo
         ChannelType.CALL -> Color(0xFF10B981) // Green Phone
-        ChannelType.WHATSAPP_CALL -> Color(0xFF06B6D4) // Cyan VoIP
-        ChannelType.WHATSAPP_BUSINESS_CALL -> Color(0xFF0284C7) // Sky Blue
         ChannelType.CALL_SIMULATION -> Color(0xFFD97706) // Amber Simulation
     }
     /**

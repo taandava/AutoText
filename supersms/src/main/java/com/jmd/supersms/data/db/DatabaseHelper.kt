@@ -98,7 +98,6 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         const val TABLE_AUTO_REPLY_HISTORY = "auto_reply_history"
         const val TABLE_CONTACT_SEQUENCES = "contact_sequences"
         const val TABLE_SEQUENCE_STEPS = "sequence_steps"
-        const val TABLE_WHATSAPP_GROUPS = "whatsapp_groups"
         const val TABLE_DAILY_CAMPAIGN_SENT = "daily_campaign_sent_ledger"
         const val TABLE_TASK_DELIVERIES = "task_recipient_deliveries"
         const val TABLE_APP_PRIVACY_CONFIGS = "app_privacy_configs"
@@ -222,12 +221,8 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         com.jmd.supersms.core.DispatchJournal.ensureTable(db)
         pruneLegacyPoolAndGroupRows(db)
         try {
-            if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-                db.delete(TABLE_DAILY_CAMPAIGN, "channel LIKE '%WHATSAPP%'", null)
-            } else {
-                db.delete(TABLE_DAILY_CAMPAIGN, "channel IN ('SMS', 'CALL')", null)
-            }
-            db.delete(TABLE_TASKS, "channel = 'REMINDER'", null)
+            db.delete(TABLE_DAILY_CAMPAIGN, "channel != 'SMS'", null)
+            db.delete(TABLE_TASKS, "channel NOT IN ('SMS', 'CALL', 'CALL_SIMULATION')", null)
         } catch (e: Exception) {
             Log.w("DatabaseHelper", "Error during onOpen variant hygiene: ${e.message}")
         }
@@ -353,7 +348,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
 
     /**
      * What it is:
-     * Cleanses legacy and corrupted entries from dynamic contact pools and WhatsApp group tables.
+     * Cleanses legacy and corrupted entries from dynamic contact pools.
      *
      * What it does:
      * Removes status text, ephemeral indicators, web links, and individual contacts mistakenly classified as groups.
@@ -520,55 +515,21 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
 
         addColumnIfNotExists(db, TABLE_DAILY_CAMPAIGN, "channel", "TEXT DEFAULT 'SMS'")
 
-        if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-            val defaultCampaign = ContentValues().apply {
-                put("id", 1)
-                put("channel", "SMS")
-                put("title", "Daily Unique Contacts SMS")
-                put("message", "")
-                put("daily_limit", 30)
-                put("interval_seconds", 8)
-                put("scheduled_hour", 9)
-                put("scheduled_minute", 0)
-                put("sim_slot", 0)
-                put("auto_scan_enabled", 1)
-                put("is_active", 0)
-                put("last_run_date", "")
-            }
-            db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultCampaign, SQLiteDatabase.CONFLICT_IGNORE)
-        } else {
-            val defaultWhatsAppCampaign = ContentValues().apply {
-                put("id", 2)
-                put("channel", "WHATSAPP")
-                put("title", "Daily Unique Contacts WhatsApp")
-                put("message", "")
-                put("daily_limit", 20)
-                put("interval_seconds", 12)
-                put("scheduled_hour", 10)
-                put("scheduled_minute", 0)
-                put("sim_slot", 0)
-                put("auto_scan_enabled", 1)
-                put("is_active", 0)
-                put("last_run_date", "")
-            }
-            db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultWhatsAppCampaign, SQLiteDatabase.CONFLICT_IGNORE)
-
-            val defaultWhatsAppBusinessCampaign = ContentValues().apply {
-                put("id", 3)
-                put("channel", "WHATSAPP_BUSINESS")
-                put("title", "Daily WhatsApp Business Task Batch")
-                put("message", "")
-                put("daily_limit", 20)
-                put("interval_seconds", 12)
-                put("scheduled_hour", 10)
-                put("scheduled_minute", 30)
-                put("sim_slot", 0)
-                put("auto_scan_enabled", 1)
-                put("is_active", 0)
-                put("last_run_date", "")
-            }
-            db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultWhatsAppBusinessCampaign, SQLiteDatabase.CONFLICT_IGNORE)
+        val defaultCampaign = ContentValues().apply {
+            put("id", 1)
+            put("channel", "SMS")
+            put("title", "Daily Unique Contacts SMS")
+            put("message", "")
+            put("daily_limit", 30)
+            put("interval_seconds", 8)
+            put("scheduled_hour", 9)
+            put("scheduled_minute", 0)
+            put("sim_slot", 0)
+            put("auto_scan_enabled", 1)
+            put("is_active", 0)
+            put("last_run_date", "")
         }
+        db.insertWithOnConflict(TABLE_DAILY_CAMPAIGN, null, defaultCampaign, SQLiteDatabase.CONFLICT_IGNORE)
 
         addColumnIfNotExists(db, TABLE_AUTO_REPLY, "start_hour", "INTEGER DEFAULT 0")
         addColumnIfNotExists(db, TABLE_AUTO_REPLY, "start_minute", "INTEGER DEFAULT 0")
@@ -601,20 +562,7 @@ class DatabaseHelper private constructor(context: Context) : SQLiteOpenHelper(co
         try { db.execSQL("DROP TABLE IF EXISTS $TABLE_SEQUENCE_STEPS") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
         try { db.execSQL("DROP TABLE IF EXISTS templates") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
-        // WhatsApp and WhatsApp Business Groups Cache
-        db.execSQL("""
-            CREATE TABLE IF NOT EXISTS $TABLE_WHATSAPP_GROUPS (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                normalized_name TEXT NOT NULL UNIQUE,
-                package_name TEXT NOT NULL DEFAULT 'com.whatsapp',
-                participant_count TEXT DEFAULT '',
-                photo_uri TEXT DEFAULT '',
-                description TEXT DEFAULT '',
-                last_discovered_at INTEGER NOT NULL
-            )
-        """.trimIndent())
-        try { db.execSQL("CREATE INDEX IF NOT EXISTS idx_wagroups_pkg ON $TABLE_WHATSAPP_GROUPS(package_name)") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
+        try { db.execSQL("DROP TABLE IF EXISTS whatsapp_groups") } catch (e: Exception) { Log.d(TAG, "Database schema/migration note: ${e.message}") }
 
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS $TABLE_TASK_DELIVERIES (

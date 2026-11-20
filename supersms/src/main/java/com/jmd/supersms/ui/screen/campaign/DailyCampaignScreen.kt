@@ -60,7 +60,7 @@ import com.jmd.supersms.ui.theme.*
 
 /**
  * What it is:
- * Dedicated recurrent daily campaign manager orchestrating SMS and WhatsApp multi-contact dispatches.
+ * Dedicated recurrent daily campaign manager orchestrating SMS multi-contact dispatches.
  *
  * What it does:
  * Renders interactive Material 3 UI for [DailyAutoSenderScreen] adhering to application design invariants.
@@ -87,11 +87,9 @@ fun DailyAutoSenderScreen(
             if (selectedCampaignId > 0L) {
                 DailyCampaignConfig(
                     id = selectedCampaignId,
-                    channel = if (com.jmd.supersms.core.AppVariantHelper.isSuperWa) "WHATSAPP" else "SMS",
-                    title = if (com.jmd.supersms.core.AppVariantHelper.isSuperWa) "WhatsApp Campaign" else "SMS Campaign"
+                    channel = "SMS",
+                    title = "SMS Campaign"
                 )
-            } else if (com.jmd.supersms.core.AppVariantHelper.isSuperWa) {
-                DailyCampaignConfig(id = 2L, channel = "WHATSAPP", title = "WhatsApp Campaign")
             } else {
                 DailyCampaignConfig(id = 1L, channel = "SMS", title = "SMS Campaign")
             }
@@ -112,7 +110,7 @@ fun DailyAutoSenderScreen(
 
     var showSelectChannelDialog by remember { mutableStateOf(false) }
     var showCreateCampaignDialog by remember { mutableStateOf(false) }
-    var createChannelType by remember { mutableStateOf(if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) "SMS" else "WHATSAPP") }
+    var createChannelType by remember { mutableStateOf("SMS") }
     /**
      * What it is:
      * Execution routine for [loadAllCampaigns].
@@ -128,11 +126,7 @@ fun DailyAutoSenderScreen(
         scope.launch(Dispatchers.IO) {
             val rawList = repository.getAllDailyCampaignConfigs()
             val list = rawList.filter { item ->
-                if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-                    item.channel.equals("SMS", ignoreCase = true) || item.channel.equals("CALL", ignoreCase = true)
-                } else {
-                    item.channel.contains("WHATSAPP", ignoreCase = true)
-                }
+                item.channel.equals("SMS", ignoreCase = true) || item.channel.equals("CALL", ignoreCase = true)
             }
             val pStats = repository.getDynamicPoolStats()
             withContext(Dispatchers.Main) {
@@ -191,12 +185,10 @@ fun DailyAutoSenderScreen(
             val pStats = repository.getDynamicPoolStats()
             if (campId > 0L) {
                 val cfg = repository.getDailyCampaignConfig(campId)
-                val isWa = cfg.channel.contains("WHATSAPP", ignoreCase = true)
                 val st = repository.getCampaignStats(campId)
                 val pending = if (currentTab == 0) {
                     repository.getPendingPoolContactsForCampaign(
                         campaignId = campId,
-                        isWhatsApp = isWa,
                         limit = 100
                     ).filter { item ->
                         query.isBlank() || item.name.contains(query, ignoreCase = true) || item.phone.contains(query)
@@ -325,7 +317,7 @@ fun DailyAutoSenderScreen(
                                 if (!isScanning) {
                                     isScanning = true
                                     scope.launch {
-                                        val summary = repository.syncWhatsAppPool()
+                                        val summary = repository.syncContactPool()
                                         lastScanSummary = summary
                                         refreshData()
                                         loadAllCampaigns()
@@ -345,12 +337,8 @@ fun DailyAutoSenderScreen(
                             icon = Icons.Filled.Add,
                             variant = AppButtonVariant.PRIMARY,
                             onClick = {
-                                if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-                                    createChannelType = "SMS"
-                                    showCreateCampaignDialog = true
-                                } else {
-                                    showSelectChannelDialog = true
-                                }
+                                createChannelType = "SMS"
+                                showCreateCampaignDialog = true
                             },
                             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                             shape = AppDesignTokens.ShapePill
@@ -391,11 +379,7 @@ fun DailyAutoSenderScreen(
                         }
                         lastScanSummary?.let { summary ->
                             Spacer(modifier = Modifier.height(6.dp))
-                            val scanText = if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
-                                "Last Scan: ${summary.contactsScanned} Contacts, ${summary.smsScanned} SMS, ${summary.callLogsScanned} Calls • +${summary.newAdded} added"
-                            } else {
-                                "Last Scan: ${summary.contactsScanned} Contacts, ${summary.waChatsScanned} WhatsApp, ${summary.waBusinessScanned} Business • +${summary.newAdded} added"
-                            }
+                            val scanText = "Last Scan: ${summary.contactsScanned} Contacts, ${summary.smsScanned} SMS, ${summary.callLogsScanned} Calls • +${summary.newAdded} added"
                             Text(
                                 scanText,
                                 fontSize = 10.sp,
@@ -431,8 +415,7 @@ fun DailyAutoSenderScreen(
                             context.showAppToast(if (active) "Campaign Activated" else "Campaign Paused: Execution stopped")
                         },
                         onRunNow = {
-                            val isWa = cmp.channel.contains("WHATSAPP", ignoreCase = true)
-                            if (!isWa && smsQuota.isLimitReached) {
+                            if (smsQuota.isLimitReached) {
                                 context.showAppToast("Daily SMS limit reached", isLong = true)
                                 return@ActiveCampaignOverviewCard
                             }
@@ -500,11 +483,7 @@ fun DailyAutoSenderScreen(
                         onSelectChannel = { ch ->
                             val newCfg = DailyCampaignConfig(
                                 id = (allCampaigns.maxOfOrNull { it.id } ?: 0L) + 1L,
-                                title = when (ch) {
-                                    "WHATSAPP_BUSINESS" -> "Daily WhatsApp Business Outreach"
-                                    "WHATSAPP" -> "Daily WhatsApp Outreach"
-                                    else -> "Daily SMS Outreach"
-                                },
+                                title = if (ch.equals("CALL", ignoreCase = true)) "Daily Call Outreach" else "Daily SMS Outreach",
                                 channel = ch,
                                 isActive = true
                             )
@@ -518,7 +497,7 @@ fun DailyAutoSenderScreen(
                                 isScanning = true
                                 scope.launch {
                                     // One sync path for every screen in the app.
-                                    val summary = repository.syncWhatsAppPool()
+                                    val summary = repository.syncContactPool()
                                     lastScanSummary = summary
                                     refreshData()
                                     loadAllCampaigns()
@@ -540,13 +519,8 @@ fun DailyAutoSenderScreen(
         // ==========================================
         // TYPE-SPECIFIC CAMPAIGN FORM & LEDGER MODE
         // ==========================================
-        val isWhatsApp = config.channel.contains("WHATSAPP", ignoreCase = true)
-        val isWhatsAppBusiness = config.channel.contains("BUSINESS", ignoreCase = true)
-        val campaignThemeColor = when {
-            isWhatsAppBusiness -> MaterialTheme.colorScheme.primary
-            isWhatsApp -> MaterialTheme.colorScheme.tertiary
-            else -> MaterialTheme.colorScheme.primary
-        }
+        val isWhatsApp = false
+        val campaignThemeColor = MaterialTheme.colorScheme.primary
 
         Column(
             modifier = Modifier
@@ -655,7 +629,7 @@ fun DailyAutoSenderScreen(
                         repository.saveDailyCampaignConfig(updated)
                         DailyCampaignScheduler.scheduleOrUpdate(context, updated.id)
                         loadAllCampaigns()
-                        context.showAppToast("${if (isWhatsApp) "WhatsApp" else "SMS"} campaign settings saved successfully")
+                        context.showAppToast("Campaign saved")
                     }
                 )
             }

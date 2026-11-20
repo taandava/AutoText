@@ -56,7 +56,6 @@ fun SettingsPreferencesCards(
     onThemeChanged: (String) -> Unit = {}
 ) {
     var countryCode by remember { mutableStateOf(prefs.defaultCountryCode) }
-    var simSlot by remember { mutableIntStateOf(prefs.defaultSimSlot) }
     var appTheme by remember { mutableStateOf(prefs.appThemeMode) }
     var fallbackStrategy by remember { mutableStateOf(prefs.fallbackClickStrategy) }
     var gestureFallback by remember { mutableStateOf(prefs.isGestureFallbackEnabled) }
@@ -64,8 +63,6 @@ fun SettingsPreferencesCards(
     var clickOffsetY by remember { mutableIntStateOf(prefs.customClickCoordinateOffsetY) }
     var waDelay by remember { mutableIntStateOf(prefs.whatsappDispatchDelaySeconds) }
     var contactSyncHours by remember { mutableIntStateOf(prefs.contactSyncIntervalHours) }
-    var dailySmsLimit by remember { mutableIntStateOf(prefs.dailySmsSafetyLimit) }
-    var smsQuotaEnabled by remember { mutableStateOf(prefs.isSmsQuotaLimitEnabled) }
     var dispatchSound by remember { mutableStateOf(prefs.isDispatchNotificationSoundEnabled) }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -327,39 +324,7 @@ fun SettingsPreferencesCards(
             Text("Adjust where fallback tap lands if button bounds differ on custom ROMs / foldables.", fontSize = 10.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
 
-        // Default SIM Slot
-        AppCard(modifier = Modifier.fillMaxWidth()) {
-            Text("SIM Slot", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text("Preferred carrier SIM card for outbound SMS messages.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                listOf("Default" to 0, "SIM 1" to 1, "SIM 2" to 2).forEach { (label, slot) ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable {
-                            simSlot = slot
-                            prefs.defaultSimSlot = slot
-                        }
-                    ) {
-                        RadioButton(
-                            selected = simSlot == slot,
-                            onClick = {
-                                simSlot = slot
-                                prefs.defaultSimSlot = slot
-                            },
-                            colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(label, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
-                    }
-                }
-            }
-        }
+
 
         // Default Country Dialing Code (India +91)
         AppCard(modifier = Modifier.fillMaxWidth()) {
@@ -410,59 +375,6 @@ fun SettingsPreferencesCards(
             )
         }
 
-        // Cellular SMS Quota & Safety Controls
-        AppCard(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("SMS Quota", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                    Text(
-                        if (smsQuotaEnabled) "Daily carrier safeguard ($dailySmsLimit SMS/day)" else "Unlimited personal dispatch mode (no quota throttling)",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 11.5.sp
-                    )
-                }
-                Switch(
-                    checked = smsQuotaEnabled,
-                    onCheckedChange = {
-                        smsQuotaEnabled = it
-                        prefs.isSmsQuotaLimitEnabled = it
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.tertiary,
-                        checkedTrackColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f)
-                    )
-                )
-            }
 
-            if (smsQuotaEnabled) {
-                Spacer(modifier = Modifier.height(10.dp))
-                Text("SMS Limit:", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
-                    listOf(
-                        100 to "100",
-                        500 to "500",
-                        1000 to "1,000",
-                        5000 to "5,000"
-                    ).forEach { (limitVal, label) ->
-                        AppChip(
-                            selected = dailySmsLimit == limitVal,
-                            onClick = {
-                                dailySmsLimit = limitVal
-                                prefs.dailySmsSafetyLimit = limitVal
-                            },
-                            label = label,
-                            activeColor = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
-            }
-        }
     }
 }

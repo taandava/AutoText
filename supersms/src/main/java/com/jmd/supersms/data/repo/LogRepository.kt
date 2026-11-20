@@ -6,7 +6,7 @@
  * Architecture definition and implementation for [LogRepository].
  *
  * What it does:
- * Persists and queries task execution logs for SMS, WhatsApp, and call actions. Maintains execution history with timestamps, delivery status, and failure diagnostics.
+ * Persists and queries task execution logs for SMS and phone call actions. Maintains execution history with timestamps, delivery status, and failure diagnostics.
  *
  * Linked With:
  * - Repositories: [com.jmd.supersms.data.db.DatabaseHelper]

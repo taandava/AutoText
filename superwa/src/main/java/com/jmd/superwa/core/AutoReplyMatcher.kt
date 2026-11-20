@@ -1,12 +1,12 @@
 /**
  * Package: com.jmd.superwa.core
- * Module: Core Automation Subsystem
+ * Module: Core Dispatch Subsystem
  *
  * What it is:
- * Pure deterministic rule matching engine for automated replies.
+ * Pure deterministic rule matching engine for scheduled replies.
  *
  * What it does:
- * Evaluates whether an incoming message or call event qualifies for automated reply based on
+ * Evaluates whether an incoming message or call event qualifies for scheduled reply based on
  * trigger keywords, exact match requirements, and active operating hours time-windows.
  *
  * Linked With:

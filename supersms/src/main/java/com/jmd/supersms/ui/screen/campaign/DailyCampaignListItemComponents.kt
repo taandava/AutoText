@@ -176,7 +176,7 @@ fun DailyContactPoolHeaderCard(
  *
  * Linked with:
  * - Architecture: [DailyCampaignListItemComponents], [DailySentLedgerHeaderCard]
- * @param isWhatsApp True if displaying WhatsApp dispatch records; false for SMS.
+ * @param isWhatsApp Flag for channel handling.
  * @param sentCount Number of contacts dispatched so far in the active cycle.
  * @param searchQuery Current search string filter.
  * @param onSearchQueryChange Callback when search filter text changes.
@@ -209,7 +209,7 @@ fun DailySentLedgerHeaderCard(
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "${if (isWhatsApp) "WhatsApp" else "SMS"} Sent Ledger",
+                        "SMS Sent Ledger",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -251,7 +251,7 @@ fun DailySentLedgerHeaderCard(
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
                     Text(
-                        "Reset campaign cycle for ${if (isWhatsApp) "WhatsApp" else "SMS"}? This will re-queue all $sentCount contacted numbers for new dispatches.",
+                        "Reset campaign cycle for SMS? This will re-queue all $sentCount contacted numbers for new dispatches.",
                         color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 11.5.sp
                     )
@@ -300,7 +300,7 @@ fun DailySentLedgerHeaderCard(
  * Linked with:
  * - Architecture: [DailyCampaignListItemComponents], [ContactItemCard]
  * @param contact Data model representing the discovered phone number and metadata.
- * @param isWhatsApp True if evaluating WhatsApp cycle state.
+ * @param isWhatsApp Flag for channel handling.
  * @param onToggle Callback triggered when active inclusion switch is toggled.
  * @param onDelete Callback triggered when item is deleted from dynamic pool.
  */
@@ -424,7 +424,7 @@ fun ContactItemCard(
  * Linked with:
  * - Architecture: [DailyCampaignListItemComponents], [LedgerItemCard]
  * @param contact Data model representing dispatched contact item.
- * @param isWhatsApp True if evaluating WhatsApp delivery history; false for SMS.
+ * @param isWhatsApp Flag for channel handling.
  * @param onRequeue Callback triggered to return this contact back to the pending queue.
  */
 @Composable

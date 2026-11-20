@@ -168,7 +168,7 @@ fun A11yDisclosureDialog(context: Context, onDismiss: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(AppLayoutGrid.SpaceSmall)
             ) {
                 Text(
-                    text = "Super uses Android's Accessibility Service API exclusively for user-directed automated task dispatch:",
+                    text = "Super uses Android's Accessibility Service API exclusively for user-directed scheduled task dispatch:",
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

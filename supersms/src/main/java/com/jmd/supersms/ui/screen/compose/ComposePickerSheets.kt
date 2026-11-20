@@ -149,7 +149,7 @@ fun ContactPoolPickerSheet(
                             if (!isSyncing) {
                                 isSyncing = true
                                 scope.launch {
-                                    val summary = repository.syncWhatsAppPool()
+                                    val summary = repository.syncContactPool()
                                     withContext(Dispatchers.Main) {
                                         refreshTrigger++
                                         isSyncing = false
@@ -303,7 +303,7 @@ fun ContactPoolPickerSheet(
                                 if (!isSyncing) {
                                   isSyncing = true
                                     scope.launch {
-                                        val summary = repository.syncWhatsAppPool()
+                                        val summary = repository.syncContactPool()
                                         withContext(Dispatchers.Main) {
                                             refreshTrigger++
                                             isSyncing = false

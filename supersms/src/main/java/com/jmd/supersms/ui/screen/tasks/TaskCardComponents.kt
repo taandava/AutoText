@@ -192,17 +192,9 @@ fun TaskCard(
     val successColor = if (isDark) Color(0xFF22C55E) else Color(0xFF16A34A)
 
     val channelDisplayName = when (task.channel) {
-        ChannelType.WHATSAPP_BUSINESS,
-        ChannelType.WHATSAPP_BUSINESS_GROUP,
-        ChannelType.WHATSAPP_BUSINESS_STATUS,
-        ChannelType.WHATSAPP_BUSINESS_CALL -> "WA Biz"
-        ChannelType.WHATSAPP,
-        ChannelType.WHATSAPP_GROUP,
-        ChannelType.WHATSAPP_STATUS,
-        ChannelType.WHATSAPP_CALL -> "WhatsApp"
         ChannelType.SMS -> "SMS"
-        ChannelType.CALL,
-        ChannelType.CALL_SIMULATION -> "Call"
+        ChannelType.CALL -> "Phone Call"
+        ChannelType.CALL_SIMULATION -> "Simulated Call"
     }
 
     val dateFormatted = SimpleDateFormat("dd MMM • hh:mm a", currentLocale).format(Date(task.triggerTimeMillis))

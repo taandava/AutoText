@@ -138,25 +138,13 @@ fun ActiveCampaignOverviewCard(
                             color = themeColor,
                             showDot = false
                         )
-                        if (!isWa) {
-                            Spacer(modifier = Modifier.width(4.dp))
-                            val simLabel = if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"
-                            AppBadge(
-                                text = simLabel,
-                                icon = Icons.Filled.Smartphone,
-                                color = MaterialTheme.colorScheme.primary,
-                                showDot = false
-                            )
-                        }
                     }
                     Spacer(modifier = Modifier.height(2.dp))
-                    val simSuffix = if (!isWa) " • ${if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"}" else ""
                     Text(
-                        "Daily at %02d:%02d • %ds interval %s".format(
+                        "Daily at %02d:%02d • %ds interval".format(
                             campaign.scheduledHour,
                             campaign.scheduledMinute,
-                            campaign.intervalSeconds,
-                            simSuffix
+                            campaign.intervalSeconds
                         ),
                         fontSize = 11.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -312,14 +300,6 @@ fun PausedCampaignOverviewCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    if (!isWa) {
-                        val pausedSimLabel = if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"
-                        AppBadge(
-                            text = pausedSimLabel,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            showDot = false
-                        )
-                    }
                     AppBadge(
                         text = "PAUSED",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -329,12 +309,10 @@ fun PausedCampaignOverviewCard(
             }
 
             // Info row: Limits & Schedule
-            val pausedSimSuffix = if (!isWa) " • ${if (campaign.simSlot == 0) "Default SIM" else "SIM ${campaign.simSlot}"}" else ""
             Text(
-                "Limit: ${campaign.dailyLimit}/day • %02d:%02d%s".format(
+                "Limit: ${campaign.dailyLimit}/day • %02d:%02d".format(
                     campaign.scheduledHour,
-                    campaign.scheduledMinute,
-                    pausedSimSuffix
+                    campaign.scheduledMinute
                 ),
                 fontSize = 11.5.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -965,7 +943,6 @@ fun DailyCampaignConfigCard(
         Spacer(modifier = Modifier.height(10.dp))
 
         // Scheduled Time & Channel Specific Information
-        val isSms = config.channel.equals("SMS", ignoreCase = true)
         val isWaBiz = config.channel.contains("BUSINESS", ignoreCase = true)
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -980,13 +957,12 @@ fun DailyCampaignConfigCard(
                 modifier = Modifier.weight(1f)
             )
 
-            if (!isSms) {
-                Surface(
-                    shape = AppDesignTokens.ShapePill,
-                    color = campaignThemeColor.copy(alpha = 0.16f),
-                    border = BorderStroke(1.dp, campaignThemeColor.copy(alpha = 0.4f)),
-                    modifier = Modifier.weight(1f)
-                ) {
+            Surface(
+                shape = AppDesignTokens.ShapePill,
+                color = campaignThemeColor.copy(alpha = 0.16f),
+                border = BorderStroke(1.dp, campaignThemeColor.copy(alpha = 0.4f)),
+                modifier = Modifier.weight(1f)
+            ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -1008,48 +984,8 @@ fun DailyCampaignConfigCard(
                     }
                 }
             }
-        }
 
-        if (isSms) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                listOf("Default SIM" to 0, "SIM 1" to 1, "SIM 2" to 2).forEach { (label, slot) ->
-                    val isSelected = config.simSlot == slot
-                    Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.18f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
-                        border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)),
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable { onConfigChange(config.copy(simSlot = slot)) }
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.SimCard,
-                                contentDescription = null,
-                                tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(14.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                label,
-                                fontSize = 11.5.sp,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            }
-        }
+
 
         // Native Interactive Clock Picker Frame
         if (isTimePickerExpanded) {

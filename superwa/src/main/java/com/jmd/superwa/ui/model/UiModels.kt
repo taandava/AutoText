@@ -28,9 +28,9 @@ import com.jmd.superwa.data.model.*
  *
  * Linked with:
  * - Architecture: [UiModels], [AutoReplyTypeItem]
- * @property channel Targeted communication channel ([ChannelType.SMS], [ChannelType.WHATSAPP], or [ChannelType.WHATSAPP_BUSINESS]).
- * @property title Human-readable display label (e.g., "SMS Auto Reply", "WhatsApp Auto Reply").
- * @property eventDescription Summary of triggering event condition (e.g., "Missed call or incoming SMS").
+ * @property channel Targeted communication channel ([ChannelType.WHATSAPP], or [ChannelType.WHATSAPP_BUSINESS]).
+ * @property title Human-readable display label (e.g., "WhatsApp Reply", "Business Reply").
+ * @property eventDescription Summary of triggering event condition (e.g., "Missed call or message").
  * @property replyMethodDescription Explanation of the dispatch channel mechanism.
  * @property emoji Expressive visual emoji icon for the card header.
  * @property color Primary theme accent color associated with this channel.

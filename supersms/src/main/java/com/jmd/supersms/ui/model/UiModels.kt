@@ -28,8 +28,8 @@ import com.jmd.supersms.data.model.*
  *
  * Linked with:
  * - Architecture: [UiModels], [AutoReplyTypeItem]
- * @property channel Targeted communication channel ([ChannelType.SMS], [ChannelType.WHATSAPP], or [ChannelType.WHATSAPP_BUSINESS]).
- * @property title Human-readable display label (e.g., "SMS Auto Reply", "WhatsApp Auto Reply").
+ * @property channel Targeted communication channel ([ChannelType.SMS] or [ChannelType.CALL]).
+ * @property title Human-readable display label (e.g., "SMS Auto Reply", "Call Auto Reply").
  * @property eventDescription Summary of triggering event condition (e.g., "Missed call or incoming SMS").
  * @property replyMethodDescription Explanation of the dispatch channel mechanism.
  * @property emoji Expressive visual emoji icon for the card header.
@@ -74,15 +74,12 @@ data class SelectedRecipient(
  *
  * Linked with:
  * - Architecture: [UiModels], [TaskTypeItem]
- * @property title Display name of the task option (e.g. "SMS Message", "WhatsApp Voice Call").
+ * @property title Display name of the task option (e.g. "SMS Message", "Phone Call").
  * @property description Subtitle outlining workflow capabilities.
  * @property emoji Visual iconography representing the task action.
  * @property color Dominant background and border highlight color.
- * @property channel Underlying [ChannelType] if mapped to a single-shot task, or null for multi-step sequences.
- * @property isSequence True if option launches the multi-step contact sequence composer.
- * @property isStatus True if option launches the WhatsApp status update publisher.
+ * @property channel Underlying [ChannelType] if mapped to a single-shot task.
  * @property isDailyCampaign True if option routes to the unique contact daily outreach engine.
- * @property isWaCall True if option configures a live WhatsApp VoIP call task.
  * @property icon Optional Material 3 vector icon.
  */
 data class TaskTypeItem(
@@ -91,9 +88,6 @@ data class TaskTypeItem(
     val emoji: String = "",
     val color: Color,
     val channel: ChannelType?,
-    val isStatus: Boolean = false,
     val isDailyCampaign: Boolean = false,
-    val isWaCall: Boolean = false,
-    val isGroup: Boolean = false,
     val icon: ImageVector? = null
 )

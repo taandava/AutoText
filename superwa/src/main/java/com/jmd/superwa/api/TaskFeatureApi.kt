@@ -1,6 +1,6 @@
 /**
  * Package: com.jmd.superwa.api
- * Module: Public Automation API Layer
+ * Module: Public Dispatch API Layer
  *
  * What it is:
  * Architecture definition and implementation for [TaskFeatureApi].
@@ -126,58 +126,6 @@ data class WhatsAppCallRequest(
     val callDurationSeconds: Int = 0,
     val includeDialTime: Boolean = false,
     val shouldRelock: Boolean = false
-)
-
-/**
- * What it is:
- * Request parameters and data specification for SMS dispatch.
- *
- * What it does:
- * Encapsulates state, business contracts, and operations for [SmsRequest].
- *
- * Linked with:
- * - Architecture: [TaskFeatureApi], [SmsRequest]
- */
-data class SmsRequest(
-    val taskId: Long,
-    val recipient: String,
-    val message: String,
-    val simSlot: Int = 0
-)
-
-/**
- * What it is:
- * Request parameters and data specification for Telecom Phone Calling.
- *
- * What it does:
- * Encapsulates state, business contracts, and operations for [PhoneCallRequest].
- *
- * Linked with:
- * - Architecture: [TaskFeatureApi], [PhoneCallRequest]
- */
-data class PhoneCallRequest(
-    val taskId: Long,
-    val recipient: String,
-    val simSlot: Int = 0,
-    val callDurationSeconds: Int = 0,
-    val includeDialTime: Boolean = false
-)
-
-/**
- * What it is:
- * Request parameters and data specification for Inbound Call Simulation.
- *
- * What it does:
- * Encapsulates state, business contracts, and operations for [CallSimulationRequest].
- *
- * Linked with:
- * - Architecture: [TaskFeatureApi], [CallSimulationRequest]
- */
-data class CallSimulationRequest(
-    val taskId: Long,
-    val callerName: String,
-    val callerNumber: String,
-    val style: String = "Modern"
 )
 
 /**
@@ -352,7 +300,7 @@ object TaskFeatureApi {
                 }
                 delay((durationSec * 1000L).milliseconds)
             }
-            hangupActiveCall(context, repository, request.taskId, isVoip = true, pkg = targetPkg)
+            hangupActiveCall(context, repository, request.taskId, pkg = targetPkg)
         }
         val snippet = if (success) "Initiated WhatsApp voice call to $cleanPhone" else "WhatsApp voice call failed to connect"
         val outcome = FeatureExecutionResult(
@@ -368,141 +316,23 @@ object TaskFeatureApi {
     }
 
     /**
-     * What it is:
-     * Dispatches cellular SMS with full Multi-SIM support and modem delivery verification.
-     *
-     * What it does:
-     * Executes [sendSms] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [TaskFeatureApi], [sendSms]
-     */
-    fun sendSms(
-        context: Context,
-        repository: AppRepository,
-        request: SmsRequest
-    ): FeatureExecutionResult {
-        val outcome = FeatureExecutionResult(
-            taskId = request.taskId,
-            channel = ChannelType.SMS,
-            success = false,
-            recipient = request.recipient,
-            messageSnippet = "Cellular SMS handled in SuperSMS",
-            details = "Feature delegated to SuperSMS"
-        )
-        logResult(repository, outcome)
-        return outcome
-    }
-
-    /**
-     * What it is:
-     * Places a direct Telecom phone call with Multi-SIM OEM extras and optional duration holding.
-     *
-     * What it does:
-     * Executes [placePhoneCall] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [TaskFeatureApi], [placePhoneCall]
-     */
-    suspend fun placePhoneCall(
-        context: Context,
-        repository: AppRepository,
-        request: PhoneCallRequest
-    ): FeatureExecutionResult {
-        val cleanPhone = PhoneNumberNormalizer.cleanPhoneNumber(request.recipient).filter { it.isDigit() || it == '+' }
-        val hasCallPerm = ContextCompat.checkSelfPermission(context, android.Manifest.permission.CALL_PHONE) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        val callInitiated = com.jmd.superwa.telephony.TelephonyCallEngine.placeCall(context, cleanPhone, request.simSlot)
-
-        if (callInitiated && request.callDurationSeconds > 0) {
-            val durationSec = request.callDurationSeconds
-            if (request.includeDialTime) {
-                delay((durationSec * 1000L).milliseconds)
-            } else {
-                var elapsedMs = 0L
-                while (elapsedMs < 30_000L) {
-                    if (com.jmd.superwa.telephony.TelephonyCallEngine.isCallConnected(context) ||
-                        TaskAccessibilityService.isCallTimerVisible()) {
-                        break
-                    }
-                    delay(500.milliseconds)
-                    elapsedMs += 500L
-                }
-                delay((durationSec * 1000L).milliseconds)
-            }
-            hangupActiveCall(context, repository, request.taskId, isVoip = false)
-        }
-
-        val snippet = "Placed phone call to $cleanPhone (simSlot=${request.simSlot}, duration=${request.callDurationSeconds}s)"
-        val outcome = FeatureExecutionResult(
-            taskId = request.taskId,
-            channel = ChannelType.CALL,
-            success = callInitiated,
-            recipient = cleanPhone,
-            messageSnippet = snippet,
-            details = if (hasCallPerm) "Direct call dispatched via TelephonyCallEngine" else "Dialer opened (ACTION_DIAL)"
-        )
-        logResult(repository, outcome)
-        return outcome
-    }
-
-    /**
-     * What it is:
-     * Simulates an inbound phone call with fullscreen ringing UI.
-     *
-     * What it does:
-     * Executes [simulateCall] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [TaskFeatureApi], [simulateCall]
-     */
-    fun simulateCall(
-        context: Context,
-        repository: AppRepository,
-        request: CallSimulationRequest
-    ): FeatureExecutionResult {
-        val outcome = FeatureExecutionResult(
-            taskId = request.taskId,
-            channel = ChannelType.CALL_SIMULATION,
-            success = false,
-            recipient = request.callerNumber,
-            messageSnippet = "Call simulation handled in SuperSMS",
-            details = "Feature delegated to SuperSMS"
-        )
-        logResult(repository, outcome)
-        return outcome
-    }
-
-    /**
-     * What it is:
-     * Terminates an active cellular phone call or WhatsApp VoIP call using designated system hooks.
-     *
-     * What it does:
-     * Executes [hangupActiveCall] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [TaskFeatureApi], [hangupActiveCall]
+     * Terminates an active WhatsApp VoIP call using accessibility designated end call button.
      */
     fun hangupActiveCall(
         context: Context,
         repository: AppRepository,
         taskId: Long,
-        isVoip: Boolean = false,
         pkg: String = "com.whatsapp"
     ): FeatureExecutionResult {
-        val success = if (isVoip) {
-            TaskAccessibilityService.endWhatsAppCall(pkg)
-        } else {
-            com.jmd.superwa.telephony.TelephonyCallEngine.endCall(context)
-        }
-
-        val snippet = if (isVoip) "Concluded WhatsApp VoIP call" else "Concluded cellular phone call"
+        val success = TaskAccessibilityService.endWhatsAppCall(pkg)
+        val snippet = "Concluded WhatsApp VoIP call"
         val outcome = FeatureExecutionResult(
             taskId = taskId,
-            channel = if (isVoip) ChannelType.WHATSAPP_CALL else ChannelType.CALL,
+            channel = ChannelType.WHATSAPP_CALL,
             success = success,
             recipient = "Active Call",
             messageSnippet = snippet,
-            details = if (success) "Call terminated successfully via TelecomManager/Designated End Button" else "Call termination routine unfulfilled"
+            details = if (success) "Call terminated successfully via Designated End Button" else "Call termination routine unfulfilled"
         )
         logResult(repository, outcome)
         return outcome

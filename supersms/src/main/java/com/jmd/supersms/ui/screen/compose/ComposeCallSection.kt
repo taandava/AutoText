@@ -114,7 +114,7 @@ fun ComposeCallSimulationAndSoundCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    listOf("PIXEL" to "Pixel", "SAMSUNG" to "Samsung", "WHATSAPP" to "WhatsApp").forEach { (style, label) ->
+                    listOf("PIXEL" to "Pixel", "SAMSUNG" to "Samsung", "DEFAULT" to "Default").forEach { (style, label) ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.clickable { onSimulatedCallStyleChange(style) }
@@ -175,7 +175,7 @@ fun ComposeSimulatedCallAndSoundCard(
 
 /**
  * What it is:
- * Recipient selector and calling policy card for cellular and WhatsApp outbound voice calls.
+ * Recipient selector and calling policy card for cellular outbound voice calls.
  *
  * What it does:
  * Renders interactive Material 3 UI for [ComposePhoneCallCard] adhering to application design invariants.
@@ -192,10 +192,8 @@ fun ComposeSimulatedCallAndSoundCard(
  * @param onAddManualRecipient Callback to parse and add manual number.
  * @param onOpenPoolPicker Callback to display dynamic pool selection sheet.
  * @param onOpenContactsPicker Callback to open system contact picker.
- * @param selectedChannel Channel configuration (CALL, WHATSAPP_CALL, WHATSAPP_BUSINESS_CALL).
+ * @param selectedChannel Channel configuration (CALL).
  * @param onSelectChannel Callback to change calling channel.
- * @param onOpenWhatsAppPicker Optional callback to launch WhatsApp chat scanner.
- * @param onOpenWhatsAppContacts Optional callback to launch WhatsApp contacts sheet.
  * @param callDurationSeconds Auto-hangup duration timer in seconds.
  * @param onCallDurationChange Callback to update auto-hangup timer.
  * @param includeDialTime Whether to count dialing latency into duration limit.
@@ -221,8 +219,6 @@ fun ComposePhoneCallCard(
     onOpenContactsPicker: () -> Unit,
     selectedChannel: ChannelType = ChannelType.CALL,
     onSelectChannel: ((ChannelType) -> Unit)? = null,
-    onOpenWhatsAppPicker: (() -> Unit)? = null,
-    onOpenWhatsAppContacts: (() -> Unit)? = null,
     callDurationSeconds: Int = 0,
     onCallDurationChange: (Int) -> Unit = {},
     includeDialTime: Boolean = false,
@@ -234,12 +230,7 @@ fun ComposePhoneCallCard(
     callFailurePolicy: String = "CONTINUE",
     onCallFailurePolicyChange: (String) -> Unit = {}
 ) {
-    val isWaCalling = selectedChannel == ChannelType.WHATSAPP_CALL || selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL
-    val cardColor = if (isWaCalling) {
-        if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary
-    } else {
-        MaterialTheme.colorScheme.primary
-    }
+    val cardColor = MaterialTheme.colorScheme.primary
 
     AppCard(
         modifier = Modifier.fillMaxWidth(),
@@ -261,13 +252,13 @@ fun ComposePhoneCallCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
-                        if (selectedRecipients.size > 1) "Scheduled Call Recipients (${selectedRecipients.size})" else "Scheduled Call Recipients",
+                        if (selectedRecipients.size > 1) "Call Recipients (${selectedRecipients.size})" else "Call Recipients",
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.5.sp,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        if (selectedRecipients.size > 1) "Super will place calls sequentially to each number until all are completed" else "Super will dial each scheduled number in sequence",
+                        "Super dialer executes scheduled calls in sequence",
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -280,38 +271,6 @@ fun ComposePhoneCallCard(
             }
         }
 
-        if (isWaCalling && onSelectChannel != null) {
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "App:",
-                    fontSize = 11.5.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.Medium
-                )
-                AppChip(
-                    selected = selectedChannel == ChannelType.WHATSAPP_CALL,
-                    onClick = { onSelectChannel(ChannelType.WHATSAPP_CALL) },
-                    label = "WhatsApp (Personal)",
-                    icon = Icons.AutoMirrored.Filled.Chat,
-                    activeColor = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.weight(1f)
-                )
-                AppChip(
-                    selected = selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL,
-                    onClick = { onSelectChannel(ChannelType.WHATSAPP_BUSINESS_CALL) },
-                    label = "WA Business",
-                    icon = Icons.Default.Business,
-                    activeColor = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-
         Spacer(modifier = Modifier.height(10.dp))
 
         // Quick Picker Buttons
@@ -320,26 +279,6 @@ fun ComposePhoneCallCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (isWaCalling && onOpenWhatsAppPicker != null) {
-                AppButton(
-                    text = if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) "Pick W4B" else "Pick WA",
-                    onClick = onOpenWhatsAppPicker,
-                    variant = AppButtonVariant.PRIMARY,
-                    icon = Icons.Default.Add,
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                    shape = AppDesignTokens.ShapePill
-                )
-            }
-            if (isWaCalling && onOpenWhatsAppContacts != null) {
-                AppButton(
-                    text = if (selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL) "W4B Contacts" else "WA Contacts",
-                    onClick = onOpenWhatsAppContacts,
-                    variant = AppButtonVariant.SECONDARY,
-                    icon = Icons.AutoMirrored.Filled.Chat,
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                    shape = AppDesignTokens.ShapePill
-                )
-            }
             AppButton(
                 text = "From Pool",
                 onClick = onOpenPoolPicker,

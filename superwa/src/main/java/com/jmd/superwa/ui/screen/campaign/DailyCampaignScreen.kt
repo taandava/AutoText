@@ -87,13 +87,11 @@ fun DailyAutoSenderScreen(
             if (selectedCampaignId > 0L) {
                 DailyCampaignConfig(
                     id = selectedCampaignId,
-                    channel = if (com.jmd.superwa.core.AppVariantHelper.isSuperWa) "WHATSAPP" else "SMS",
-                    title = if (com.jmd.superwa.core.AppVariantHelper.isSuperWa) "WhatsApp Campaign" else "SMS Campaign"
+                    channel = "WHATSAPP",
+                    title = "WhatsApp Campaign"
                 )
-            } else if (com.jmd.superwa.core.AppVariantHelper.isSuperWa) {
-                DailyCampaignConfig(id = 2L, channel = "WHATSAPP", title = "WhatsApp Campaign")
             } else {
-                DailyCampaignConfig(id = 1L, channel = "SMS", title = "SMS Campaign")
+                DailyCampaignConfig(id = 2L, channel = "WHATSAPP", title = "WhatsApp Campaign")
             }
         )
     }
@@ -111,7 +109,7 @@ fun DailyAutoSenderScreen(
 
     var showSelectChannelDialog by remember { mutableStateOf(false) }
     var showCreateCampaignDialog by remember { mutableStateOf(false) }
-    var createChannelType by remember { mutableStateOf(if (com.jmd.superwa.core.AppVariantHelper.isSuperSms) "SMS" else "WHATSAPP") }
+    var createChannelType by remember { mutableStateOf("WHATSAPP") }
     /**
      * What it is:
      * Execution routine for [loadAllCampaigns].
@@ -127,11 +125,7 @@ fun DailyAutoSenderScreen(
         scope.launch(Dispatchers.IO) {
             val rawList = repository.getAllDailyCampaignConfigs()
             val list = rawList.filter { item ->
-                if (com.jmd.superwa.core.AppVariantHelper.isSuperSms) {
-                    item.channel.equals("SMS", ignoreCase = true) || item.channel.equals("CALL", ignoreCase = true)
-                } else {
-                    item.channel.contains("WHATSAPP", ignoreCase = true)
-                }
+                item.channel.contains("WHATSAPP", ignoreCase = true)
             }
             val pStats = repository.getDynamicPoolStats()
             withContext(Dispatchers.Main) {
@@ -341,12 +335,7 @@ fun DailyAutoSenderScreen(
                             icon = Icons.Filled.Add,
                             variant = AppButtonVariant.PRIMARY,
                             onClick = {
-                                if (com.jmd.superwa.core.AppVariantHelper.isSuperSms) {
-                                    createChannelType = "SMS"
-                                    showCreateCampaignDialog = true
-                                } else {
-                                    showSelectChannelDialog = true
-                                }
+                                showSelectChannelDialog = true
                             },
                             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                             shape = AppDesignTokens.ShapePill
@@ -381,7 +370,7 @@ fun DailyAutoSenderScreen(
                                 modifier = Modifier.weight(1f),
                                 title = "WA Ready",
                                 value = "${poolStats.unsentCount}",
-                                icon = Icons.Default.Chat,
+                                icon = Icons.AutoMirrored.Filled.Chat,
                                 iconTint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -491,7 +480,7 @@ fun DailyAutoSenderScreen(
                                 title = when (ch) {
                                     "WHATSAPP_BUSINESS" -> "Daily WhatsApp Business Outreach"
                                     "WHATSAPP" -> "Daily WhatsApp Outreach"
-                                    else -> "Daily SMS Outreach"
+                                    else -> "Daily WhatsApp Outreach"
                                 },
                                 channel = ch,
                                 isActive = true
@@ -683,7 +672,7 @@ fun DailyAutoSenderScreen(
                         repository.saveDailyCampaignConfig(updated)
                         DailyCampaignScheduler.scheduleOrUpdate(context, updated.id)
                         loadAllCampaigns()
-                        context.showAppToast("${if (isWhatsApp) "WhatsApp" else "SMS"} campaign settings saved successfully")
+                        context.showAppToast("WhatsApp campaign settings saved successfully")
                     }
                 )
             }

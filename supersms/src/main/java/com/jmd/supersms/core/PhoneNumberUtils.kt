@@ -70,23 +70,6 @@ object PhoneNumberNormalizer {
         }
     }
 
-    /**
-     * What it is:
-     * Formats normalized phone number specifically for WhatsApp deep-links (stripping leading '+').
-     *
-     * What it does:
-     * Executes [formatForWhatsApp] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [PhoneNumberUtils], [formatForWhatsApp]
-     * @param raw Raw phone number input.
-     * @param defaultCountryCode Country code prefix.
-     * @return Pure digit string formatted for whatsapp:// and api.whatsapp.com URIs.
-     */
-    fun formatForWhatsApp(raw: String, defaultCountryCode: String = "+91"): String {
-        val norm = normalize(raw, defaultCountryCode)
-        return norm.replace("+", "").trim()
-    }
 
     /**
      * What it is:

@@ -19,7 +19,7 @@ package com.jmd.supersms.data.model
  * Model representing an ingested contact inside the dynamic outreach pool.
  *
  * What it does:
- * Tracks individual contact outreach status, last sent timestamps, and dispatch counts across both SMS and WhatsApp channels.
+ * Tracks individual contact outreach status, last sent timestamps, and dispatch counts across SMS channels.
  *
  * Linked with:
  * - Architecture: [Models], [DynamicContactItem]
@@ -115,51 +115,19 @@ data class DynamicPoolStats(
  */
 
 enum class ChannelType(val displayName: String, val emoji: String = "") {
-    SMS("SMS", "ðŸ“©"),
-    WHATSAPP("WhatsApp", "ðŸ’¬"),
-    WHATSAPP_BUSINESS("WA Business", "ðŸ’¼"),
-    WHATSAPP_GROUP("WhatsApp Group", "ðŸ‘¥"),
-    WHATSAPP_BUSINESS_GROUP("Business Group", "ðŸ‘¥ðŸ’¼"),
-    WHATSAPP_STATUS("WA Status", "ðŸ“¸"),
-    WHATSAPP_BUSINESS_STATUS("W4B Status", "ðŸ“¸ðŸ’¼"),
-    CALL("Phone Call", "ðŸ“ž"),
-    WHATSAPP_CALL("WhatsApp Call", "ðŸ“ž"),
-    WHATSAPP_BUSINESS_CALL("Business Call", "ðŸ“žðŸ’¼"),
-    CALL_SIMULATION("Call Simulation", "ðŸŽ­");
-    /**
-     * What it is:
-     * Companion object constant and factory provider for [Models].
-     *
-     * What it does:
-     * Manages static declarations, tag references, and builder utilities.
-     *
-     * Linked with:
-     * - Component: [Models]
-     */
+    SMS("SMS", "💬"),
+    CALL("Phone Call", "📞"),
+    CALL_SIMULATION("Call Simulation", "🎭");
 
     companion object {
-        /**
-         * Backward-compatible alias for [CALL_SIMULATION].
-         */
         @JvmField
         val SIMULATED_CALL: ChannelType = CALL_SIMULATION
-        /**
-         * What it is:
-         * Operational routine [fromString].
-         *
-         * What it does:
-         * Executes fromString actions according to system invariants.
-         *
-         * Linked with:
-         * - Component: [Models]
-         */
 
         fun fromString(value: String?): ChannelType {
             if (value.isNullOrBlank()) return SMS
             return when (val clean = value.trim().uppercase()) {
                 "CALL_SIMULATION", "SIMULATION", "SIMULATED_CALL" -> CALL_SIMULATION
-                "WHATSAPP_GROUP", "GROUP", "WA_GROUP" -> WHATSAPP_GROUP
-                "WHATSAPP_BUSINESS_GROUP", "W4B_GROUP", "WA_BUSINESS_GROUP" -> WHATSAPP_BUSINESS_GROUP
+                "CALL", "PHONE_CALL", "PHONE" -> CALL
                 else -> entries.firstOrNull { it.name == clean } ?: SMS
             }
         }
@@ -220,33 +188,6 @@ data class RecipientItem(
  * - Component: [Models]
  */
 
-data class WhatsAppContactItem(
-    val name: String,
-    val phone: String,
-    val normalizedPhone: String = "",
-    val accountType: String = "com.whatsapp",
-    val photoUri: String = ""
-)
-/**
- * What it is:
- * Component definition for [WhatsAppGroupItem].
- *
- * What it does:
- * Provides domain logic and lifecycle management for WhatsAppGroupItem.
- *
- * Linked with:
- * - Component: [Models]
- */
-
-data class WhatsAppGroupItem(
-    val name: String,
-    val participantCount: String = "",
-    val lastDiscoveredAt: Long = System.currentTimeMillis(),
-    val packageName: String = "com.whatsapp",
-    val photoUri: String = "",
-    val description: String = ""
-)
-
 // ==================== QUICK REPLY RULE DATA MODELS ====================
 /**
  * What it is:
@@ -262,7 +203,7 @@ data class WhatsAppGroupItem(
 data class AutoReplyRule(
     val id: Long = 0,
     val name: String,
-    val channel: ChannelType = ChannelType.WHATSAPP,
+    val channel: ChannelType = ChannelType.SMS,
     val replyText: String,
     val triggerPattern: String = "*",
     val isExactMatch: Boolean = false,

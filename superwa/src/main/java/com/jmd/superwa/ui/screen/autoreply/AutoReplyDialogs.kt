@@ -94,42 +94,24 @@ fun AutoReplyTypeSelectionSheet(
         val responderTypes = remember(primaryColor) {
             listOf(
                 AutoReplyTypeItem(
-                    channel = ChannelType.CALL,
-                    title = "Call Responder",
-                    eventDescription = "2 Triggers: Missed Call or Call Ended",
-                    replyMethodDescription = "Replies strictly via SMS through device SIM",
-                    icon = Icons.Filled.Phone,
-                    color = primaryColor,
-                    defaultEvent = "MISSED_CALL"
+                    channel = ChannelType.WHATSAPP,
+                    title = "WhatsApp Reply",
+                    eventDescription = "Message, Missed Call, or Ended Call",
+                    replyMethodDescription = "Replies in WhatsApp chat",
+                    icon = Icons.AutoMirrored.Filled.Chat,
+                    color = Color(0xFF16A34A),
+                    defaultEvent = "MESSAGE"
                 ),
-                    AutoReplyTypeItem(
-                        channel = ChannelType.SMS,
-                        title = "SMS Responder",
-                        eventDescription = "Trigger: Incoming SMS Keyword Match (* for all)",
-                        replyMethodDescription = "Replies strictly via SMS through device SIM",
-                        icon = Icons.AutoMirrored.Filled.Message,
-                        color = Color(0xFF2563EB),
-                        defaultEvent = "MESSAGE"
-                    ),
-                    AutoReplyTypeItem(
-                        channel = ChannelType.WHATSAPP,
-                        title = "WhatsApp Responder",
-                        eventDescription = "3 Triggers: Message, Missed Call, or Call Ended",
-                        replyMethodDescription = "Replies strictly in WhatsApp chat via quick-reply",
-                        icon = Icons.AutoMirrored.Filled.Chat,
-                        color = Color(0xFF16A34A),
-                        defaultEvent = "MESSAGE"
-                    ),
-                    AutoReplyTypeItem(
-                        channel = ChannelType.WHATSAPP_BUSINESS,
-                        title = "WA Responder",
-                        eventDescription = "3 Triggers: Message, Missed Call, or Call Ended",
-                        replyMethodDescription = "Replies strictly in WhatsApp Business chat via quick-reply",
-                        icon = Icons.Filled.BusinessCenter,
-                        color = Color(0xFF0D9488),
-                        defaultEvent = "MESSAGE"
-                    )
-                ).filter { com.jmd.superwa.core.AppVariantHelper.isChannelSupported(it.channel) }
+                AutoReplyTypeItem(
+                    channel = ChannelType.WHATSAPP_BUSINESS,
+                    title = "Business Reply",
+                    eventDescription = "Message, Missed Call, or Ended Call",
+                    replyMethodDescription = "Replies in WA Business chat",
+                    icon = Icons.Filled.BusinessCenter,
+                    color = Color(0xFF0D9488),
+                    defaultEvent = "MESSAGE"
+                )
+            )
             }
 
             Row(
@@ -214,12 +196,12 @@ fun AutoReplyRuleDialog(
     var ruleName by remember { mutableStateOf(initialRule?.name ?: "") }
     var selectedChannel by remember {
         mutableStateOf(
-            initialRule?.channel ?: if (com.jmd.superwa.core.AppVariantHelper.isSuperSms) ChannelType.CALL else ChannelType.WHATSAPP
+            initialRule?.channel ?: ChannelType.WHATSAPP
         )
     }
     var callEventType by remember {
         mutableStateOf(
-            initialRule?.callEventType ?: if (initialRule?.channel == ChannelType.CALL) "MISSED_CALL" else "MESSAGE"
+            initialRule?.callEventType ?: "MESSAGE"
         )
     }
     var isExactMatch by remember { mutableStateOf(initialRule?.isExactMatch ?: false) }
@@ -247,9 +229,6 @@ fun AutoReplyRuleDialog(
     var cooldownSeconds by remember { mutableIntStateOf(initialRule?.cooldownSeconds ?: 30) }
 
     val themeColor = when (selectedChannel) {
-        ChannelType.CALL -> MaterialTheme.colorScheme.primary
-        ChannelType.SMS -> MaterialTheme.colorScheme.primary
-        ChannelType.WHATSAPP -> MaterialTheme.colorScheme.tertiary
         ChannelType.WHATSAPP_BUSINESS -> MaterialTheme.colorScheme.primary
         else -> MaterialTheme.colorScheme.tertiary
     }
@@ -310,11 +289,9 @@ fun AutoReplyRuleDialog(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 val targetPlatforms = listOf(
-                    ChannelType.CALL to ("Phone Calls" to Icons.Filled.Phone),
-                    ChannelType.SMS to ("SMS" to Icons.AutoMirrored.Filled.Message),
                     ChannelType.WHATSAPP to ("WhatsApp" to Icons.AutoMirrored.Filled.Chat),
                     ChannelType.WHATSAPP_BUSINESS to ("WA Business" to Icons.Filled.BusinessCenter)
-                ).filter { com.jmd.superwa.core.AppVariantHelper.isChannelSupported(it.first) }
+                )
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     targetPlatforms.chunked(2).forEach { rowChannels ->
@@ -325,23 +302,12 @@ fun AutoReplyRuleDialog(
                             rowChannels.forEach { (ch, pair) ->
                                 val (title, iconVector) = pair
                                 val isSelected = selectedChannel == ch
-                                val chipColor = when (ch) {
-                                    ChannelType.CALL, ChannelType.SMS -> MaterialTheme.colorScheme.primary
-                                    ChannelType.WHATSAPP -> MaterialTheme.colorScheme.tertiary
-                                    ChannelType.WHATSAPP_BUSINESS -> MaterialTheme.colorScheme.primary
-                                    else -> MaterialTheme.colorScheme.tertiary
-                                }
+                                val chipColor = if (ch == ChannelType.WHATSAPP_BUSINESS) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary
                                 AppChip(
                                     selected = isSelected,
                                     onClick = {
                                         selectedChannel = ch
-                                        if (ch == ChannelType.CALL) {
-                                            if (callEventType == "MESSAGE") callEventType = "MISSED_CALL"
-                                        } else if (ch == ChannelType.SMS) {
-                                            callEventType = "MESSAGE"
-                                        } else {
-                                            if (callEventType !in listOf("MESSAGE", "MISSED_CALL", "CALL_ENDED")) callEventType = "MESSAGE"
-                                        }
+                                        if (callEventType !in listOf("MESSAGE", "MISSED_CALL", "CALL_ENDED")) callEventType = "MESSAGE"
                                     },
                                     label = title,
                                     activeColor = chipColor,
@@ -356,159 +322,6 @@ fun AutoReplyRuleDialog(
 
             // 3. Dynamic Specialized Form Based on Selected Channel
             when (selectedChannel) {
-                ChannelType.CALL -> {
-                    AppCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = AppDesignTokens.ShapeLarge
-                    ) {
-                        Text(
-                            "Call Trigger",
-                            fontSize = 14.5.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            "Select which call event triggers an quick response:",
-                            fontSize = 11.5.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            listOf(
-                                Triple("MISSED_CALL", "Missed Call", Icons.AutoMirrored.Filled.PhoneMissed),
-                                Triple("CALL_ENDED", "Call Ended", Icons.Filled.CallEnd)
-                            ).forEach { (eventKey, eventLabel, eventIcon) ->
-                                AppChip(
-                                    selected = callEventType == eventKey,
-                                    onClick = { callEventType = eventKey },
-                                    label = eventLabel,
-                                    activeColor = MaterialTheme.colorScheme.primary,
-                                    icon = eventIcon,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Surface(
-                            shape = AppDesignTokens.ShapeMedium,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Sms,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Column {
-                                    Text("Method: SMS", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.primary)
-                                    Text(
-                                        "When a phone call is missed or ended, Super immediately sends a quick SMS reply to the caller's mobile number via your device SIM. Landlines and toll-free numbers are filtered out directly.",
-                                        fontSize = 11.5.sp,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        lineHeight = 16.sp
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                ChannelType.SMS -> {
-                    AppCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = AppDesignTokens.ShapeLarge
-                    ) {
-                        Text(
-                            "SMS Trigger",
-                            fontSize = 14.5.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            "Triggers directly on incoming SMS messages received on your device:",
-                            fontSize = 11.5.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        AppInputField(
-                            value = triggerPattern,
-                            onValueChange = { triggerPattern = it },
-                            label = "Trigger Keyword",
-                            placeholder = "e.g. *, hello, price, info",
-                            leadingIcon = Icons.Default.Tag,
-                            accentColor = MaterialTheme.colorScheme.primary
-                        )
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text("Exact Match", fontSize = 13.5.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
-                                Text("Match exact word instead of containing substring", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            }
-                            Switch(
-                                checked = isExactMatch,
-                                onCheckedChange = { isExactMatch = it },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color.White,
-                                    checkedTrackColor = MaterialTheme.colorScheme.primary,
-                                    uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                                )
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Surface(
-                            shape = AppDesignTokens.ShapeMedium,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Sms,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Column {
-                                    Text("Method: SMS", fontWeight = FontWeight.Bold, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.primary)
-                                    Text(
-                                        "Quick response is sent as an SMS message via your SIM card.",
-                                        fontSize = 11.5.sp,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        lineHeight = 16.sp
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
                 ChannelType.WHATSAPP -> {
                     AppCard(
                         modifier = Modifier.fillMaxWidth(),
@@ -821,19 +634,16 @@ fun AutoReplyRuleDialog(
                         }
 
                         val defaultName = when (selectedChannel) {
-                            ChannelType.CALL -> if (callEventType == "CALL_ENDED") "Call Ended Responder" else "Missed Call Responder"
-                            ChannelType.SMS -> "SMS Auto-Reply"
-                            ChannelType.WHATSAPP -> when (callEventType) {
-                                "MISSED_CALL" -> "WhatsApp Missed Call Reply"
-                                "CALL_ENDED" -> "WhatsApp Call Ended Reply"
-                                else -> "WhatsApp Chat Reply"
-                            }
                             ChannelType.WHATSAPP_BUSINESS -> when (callEventType) {
-                                "MISSED_CALL" -> "WA Business Missed Call Reply"
-                                "CALL_ENDED" -> "WA Business Call Ended Reply"
-                                else -> "WA Business Chat Reply"
+                                "MISSED_CALL" -> "Missed Call"
+                                "CALL_ENDED" -> "Call Ended"
+                                else -> "Business Reply"
                             }
-                            else -> "Auto Reply - ${selectedChannel.displayName}"
+                            else -> when (callEventType) {
+                                "MISSED_CALL" -> "Missed Call"
+                                "CALL_ENDED" -> "Call Ended"
+                                else -> "WhatsApp Reply"
+                            }
                         }
 
                         val finalRule = AutoReplyRule(
@@ -841,7 +651,7 @@ fun AutoReplyRuleDialog(
                             name = ruleName.ifBlank { defaultName },
                             channel = selectedChannel,
                             replyText = replyText.trim(),
-                            triggerPattern = if (selectedChannel == ChannelType.CALL || callEventType in listOf("MISSED_CALL", "CALL_ENDED")) "*" else triggerPattern.ifEmpty { "*" },
+                            triggerPattern = if (callEventType in listOf("MISSED_CALL", "CALL_ENDED")) "*" else triggerPattern.ifEmpty { "*" },
                             isExactMatch = isExactMatch,
                             cooldownSeconds = cooldownSeconds,
                             callEventType = callEventType,

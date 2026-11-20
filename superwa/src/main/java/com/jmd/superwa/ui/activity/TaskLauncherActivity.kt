@@ -241,11 +241,6 @@ class TaskLauncherActivity : Activity() {
         } else {
             // Already unlocked or auto-unlock disabled
             when (channel) {
-                ChannelType.CALL -> {
-                    AppFileLogger.action(this, TAG, "Screen awake/unlocked. Dismissing trampoline for Phone Call to $recipient")
-                    keyguardManager.requestDismissKeyguard(this, dismissCallback)
-                    handler.postDelayed({ cleanFinish() }, 300L)
-                }
                 ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> {
                     AppFileLogger.action(this, TAG, "Screen awake/unlocked, launching WhatsApp call directly")
                     WhatsAppIntentDispatcher.launchWhatsAppCall(

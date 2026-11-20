@@ -200,9 +200,6 @@ fun TaskCard(
         ChannelType.WHATSAPP_GROUP,
         ChannelType.WHATSAPP_STATUS,
         ChannelType.WHATSAPP_CALL -> "WhatsApp"
-        ChannelType.SMS -> "SMS"
-        ChannelType.CALL,
-        ChannelType.CALL_SIMULATION -> "Call"
     }
 
     val dateFormatted = SimpleDateFormat("dd MMM • hh:mm a", currentLocale).format(Date(task.triggerTimeMillis))

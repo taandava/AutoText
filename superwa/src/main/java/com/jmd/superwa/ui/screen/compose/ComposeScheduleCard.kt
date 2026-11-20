@@ -66,8 +66,6 @@ fun ComposeScheduleOptionsCard(
     onRecurrenceChanged: (RecurrenceType) -> Unit,
     customIntervalMinutes: Int,
     onCustomIntervalMinutesChanged: (Int) -> Unit,
-    simSlot: Int,
-    onSimSlotChanged: (Int) -> Unit,
     selectedDaysOfWeek: List<Int> = emptyList(),
     onSelectedDaysOfWeekChanged: (List<Int>) -> Unit = {}
 ) {
@@ -346,42 +344,5 @@ fun ComposeScheduleOptionsCard(
                 }
             }
         }
-
-        // 3. SIM selection for SMS and phone calls
-        val usesCarrierSim = selectedChannel == ChannelType.SMS || selectedChannel == ChannelType.CALL
-        if (usesCarrierSim) {
-            AppCard(
-                modifier = Modifier.fillMaxWidth(),
-                shape = AppDesignTokens.ShapeLarge
-            ) {
-                Text(
-                    if (selectedChannel == ChannelType.CALL) "Calling SIM" else "SIM Slot",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.5.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    listOf("Default SIM" to 0, "SIM 1" to 1, "SIM 2" to 2).forEach { (label, slot) ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { onSimSlotChanged(slot) }
-                        ) {
-                            RadioButton(
-                                selected = simSlot == slot,
-                                onClick = { onSimSlotChanged(slot) },
-                                colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colorScheme.primary)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(label, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
-                        }
-                    }
-                }
-            }
-        }
-
     }
 }

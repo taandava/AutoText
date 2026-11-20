@@ -164,7 +164,7 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_CUSTOM_CURRENCY_SYMBOL = "custom_currency_symbol"
         private const val KEY_CUSTOM_INDIAN_NUMBERING = "custom_indian_numbering"
 
-        // Channel & Automation Customization Keys
+        // Channel & Dispatch Customization Keys
         private const val KEY_WHATSAPP_TYPING_DELAY_MS = "whatsapp_typing_delay_ms"
         private const val KEY_AUTO_SMS_FALLBACK_ENABLED = "auto_sms_fallback_enabled"
         private const val KEY_CALL_SIM_DURATION_SECONDS = "call_sim_duration_seconds"
@@ -637,7 +637,7 @@ class PreferenceManager(private val context: Context) {
 
     /**
      * Bank-Safe Standby & Uninterrupted Mode: Active by default.
-     * Ensures all scheduled tasks (Calls, SMS, WhatsApp, Alarms) run uninterrupted while
+     * Ensures all scheduled tasks (Calls, SMS, Alarms) run uninterrupted while
      * strictly isolating from banking, payment, and UPI applications so they never detect or flag accessibility.
      */
     var isBankingShieldEnabled: Boolean
@@ -698,7 +698,7 @@ class PreferenceManager(private val context: Context) {
     /**
      * User-curated list of banking, payment and UPI packages that must never be inspected.
      * The Settings app picker writes this set; [com.jmd.supersms.core.ProtectedApplicationManager]
-     * merges it with the built-in catalog so automation avoids these apps entirely.
+     * merges it with the built-in catalog so dispatch avoids these apps entirely.
      */
     /** One-time guard: legacy heuristic group rows were cleared on the first launch of this build. */
     var groupsResetV2: Boolean
@@ -797,18 +797,8 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit { putBoolean(KEY_CUSTOM_INDIAN_NUMBERING, value) }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-    // CHANNEL & AUTOMATION CUSTOMIZATIONS
+    // CHANNEL & DISPATCH CUSTOMIZATIONS
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-
-    /** WhatsApp typing simulation delay in milliseconds before dispatching. Default 400ms. */
-    var whatsappTypingDelayMs: Int
-        get() = prefs.getInt(KEY_WHATSAPP_TYPING_DELAY_MS, 400)
-        set(value) = prefs.edit { putInt(KEY_WHATSAPP_TYPING_DELAY_MS, value.coerceIn(0, 3000)) }
-
-    /** Automatic SMS fallback when WhatsApp chat cannot be resolved or is not installed. */
-    var isAutoSmsFallbackEnabled: Boolean
-        get() = prefs.getBoolean(KEY_AUTO_SMS_FALLBACK_ENABLED, false)
-        set(value) = prefs.edit { putBoolean(KEY_AUTO_SMS_FALLBACK_ENABLED, value) }
 
     /** Ring duration for simulated incoming call activity in seconds. Default 30s. */
     var callSimulationRingDurationSeconds: Int
@@ -825,7 +815,7 @@ class PreferenceManager(private val context: Context) {
         get() = prefs.getString(KEY_CALL_SIM_DEFAULT_NUMBER, "+91 98765 43210") ?: "+91 98765 43210"
         set(value) = prefs.edit { putString(KEY_CALL_SIM_DEFAULT_NUMBER, value) }
 
-    /** Default visual skin style for incoming call simulation ("PIXEL", "SAMSUNG", "WHATSAPP"). */
+    /** Default visual skin style for incoming call simulation ("PIXEL", "SAMSUNG"). */
     var callSimulationDefaultStyle: String
         get() = prefs.getString(KEY_CALL_SIM_DEFAULT_STYLE, "PIXEL") ?: "PIXEL"
         set(value) = prefs.edit { putString(KEY_CALL_SIM_DEFAULT_STYLE, value) }

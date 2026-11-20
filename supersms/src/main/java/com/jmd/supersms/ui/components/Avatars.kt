@@ -6,7 +6,7 @@
  * Architecture definition and implementation for [Avatars].
  *
  * What it does:
- * Contact avatars with initials generation, color hashing, LruCache photo caching, and badge overlays for WhatsApp, SMS, and Call channel indicators.
+ * Contact avatars with initials generation, color hashing, LruCache photo caching, and badge overlays for SMS and Call channel indicators.
  *
  * Linked With:
  * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip], [androidx.compose.ui.graphics.*]

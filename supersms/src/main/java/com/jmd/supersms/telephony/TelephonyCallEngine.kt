@@ -3,13 +3,13 @@
  * Module: Autonomous Telephony Orchestration Engine
  *
  * What it is:
- * Autonomous Telephony Orchestration Engine providing native call dispatch, automated call tracking,
+ * Autonomous Telephony Orchestration Engine providing native call dispatch, scheduled call tracking,
  * permission-guarded native call termination, call state verification, and cross-feature collision gating.
  *
  * What it does:
  * - Coordinates autonomous phone dialing via TelecomManager and Intent fallbacks.
  * - Terminates calls natively on Android 9+ (API 28+) using ANSWER_PHONE_CALLS without requiring AccessibilityService.
- * - Tracks automated scheduled calls to prevent unintended auto-reply triggers in [PhoneCallReceiver].
+ * - Tracks scheduled scheduled calls to prevent unintended auto-reply triggers in [PhoneCallReceiver].
  * - Provides non-blocking call status inspection to prevent background campaigns from conflicting with active calls.
  *
  * Linked With:
@@ -53,14 +53,14 @@ object TelephonyCallEngine {
     private const val AUTOMATED_CALL_TTL_MS = 15 * 60 * 1000L // 15 minutes TTL
 
     /**
-     * In-memory thread-safe registry of automated calls initiated by the Super application.
+     * In-memory thread-safe registry of scheduled calls initiated by the Super application.
      * Maps normalized phone number to dispatch timestamp.
      */
     private val automatedCalls = ConcurrentHashMap<String, Long>()
 
     /**
      * What it is:
-     * Registers a phone number as an active automated call dispatched by Super.
+     * Registers a phone number as an active scheduled call dispatched by Super.
      *
      * What it does:
      * Stores timestamped entry and purges expired entries to prevent memory leaks.
@@ -80,7 +80,7 @@ object TelephonyCallEngine {
 
     /**
      * What it is:
-     * Checks if a phone number was part of an automated scheduled call within the TTL window.
+     * Checks if a phone number was part of an scheduled scheduled call within the TTL window.
      *
      * What it does:
      * Verifies existence and TTL expiration.
@@ -88,7 +88,7 @@ object TelephonyCallEngine {
      * Linked with:
      * - Architecture: [TelephonyCallEngine], [isAutomatedCall]
      * @param rawPhone Phone number to query.
-     * @return True if number matches an automated call initiated within the last 15 minutes.
+     * @return True if number matches an scheduled call initiated within the last 15 minutes.
      */
     fun isAutomatedCall(rawPhone: String): Boolean {
         val normalized = normalize(rawPhone)
@@ -104,7 +104,7 @@ object TelephonyCallEngine {
 
     /**
      * What it is:
-     * Clears an automated call tracking entry after post-call handling completes.
+     * Clears an scheduled call tracking entry after post-call handling completes.
      *
      * What it does:
      * Removes the entry from the registry.
@@ -307,7 +307,7 @@ object TelephonyCallEngine {
 
     /**
      * What it is:
-     * Purges expired entries from the automated calls cache.
+     * Purges expired entries from the scheduled calls cache.
      *
      * What it does:
      * Iterates through registry and removes keys older than TTL.

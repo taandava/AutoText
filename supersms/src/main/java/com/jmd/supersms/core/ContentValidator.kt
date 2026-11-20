@@ -6,7 +6,7 @@
  * Architecture definition and implementation for [ContentValidator].
  *
  * What it does:
- * Provides pre-flight media URI accessibility inspection, MIME resolution, and channel-specific message content validation (SMS text-only vs WhatsApp multimedia).
+ * Provides pre-flight media URI accessibility inspection, MIME resolution, and channel-specific message content validation (SMS text-only validation).
  *
  * Linked With:
  * - Models & Entities: [com.jmd.supersms.data.model.ChannelType]
@@ -280,31 +280,14 @@ object TaskContentValidator {
                 if (hasText) {
                     ContentValidationResult.AcceptTextOnly
                 } else {
-                    if (channel in listOf(ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_GROUP, ChannelType.WHATSAPP_BUSINESS_GROUP, ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_BUSINESS_STATUS)) {
-                        ContentValidationResult.Reject("Enter message text or attach an image/video")
-                    } else {
-                        ContentValidationResult.Reject("Enter message text")
-                    }
+                    ContentValidationResult.Reject("Enter message text")
                 }
             }
             is AttachmentValidationResult.Valid -> {
-                if (channel == ChannelType.SMS) {
-                    if (!hasText) {
-                        ContentValidationResult.Reject("SMS requires message text (MMS is not supported)")
-                    } else {
-                        ContentValidationResult.AcceptTextOnly
-                    }
-                } else if (hasText) {
-                    ContentValidationResult.AcceptMediaWithCaption(
-                        mimeType = attachmentResult.mimeType,
-                        isVideo = attachmentResult.isVideo,
-                        caption = trimmedText
-                    )
+                if (!hasText) {
+                    ContentValidationResult.Reject("SMS requires message text (MMS is not supported)")
                 } else {
-                    ContentValidationResult.AcceptMediaOnly(
-                        mimeType = attachmentResult.mimeType,
-                        isVideo = attachmentResult.isVideo,
-                    )
+                    ContentValidationResult.AcceptTextOnly
                 }
             }
         }

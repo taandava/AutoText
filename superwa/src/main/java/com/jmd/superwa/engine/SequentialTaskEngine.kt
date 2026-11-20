@@ -531,9 +531,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             return false
         }
 
-        // 0b. Pre-flight Telephony Mutual Gate: If a cellular call is active, hold non-call UI tasks to prevent clashes
-        if (task.channel != ChannelType.CALL && task.channel != ChannelType.SMS &&
-            com.jmd.superwa.telephony.TelephonyCallEngine.isCallActive(appContext)) {
+        // 0b. Pre-flight Telephony Mutual Gate: If a cellular call is active, hold WhatsApp tasks to prevent clashes
+        if (com.jmd.superwa.telephony.TelephonyCallEngine.isCallActive(appContext)) {
             val msg = "Postponed Task #${task.id} (${task.title}) by 30s: Active cellular call in progress. Will execute once call concludes."
             AppFileLogger.action(appContext, TAG, msg)
             TaskSafetyManager.postponeTask(appContext, task.id, reason = msg)
@@ -575,14 +574,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     }
                 }
             }
-            ChannelType.SMS -> {
-                smsMutex.withLock {
-                    executeSmsTask(repository, task)
-                }
-            }
-            ChannelType.CALL -> {
-                executeCallTask(repository, task)
-            }
             ChannelType.WHATSAPP_CALL,
             ChannelType.WHATSAPP_BUSINESS_CALL,
             -> {
@@ -598,9 +589,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     }
                 }
             }
-            ChannelType.CALL_SIMULATION -> {
-                executeCallSimulationTask(repository, task)
-            }
         }
 
         val freshAfter = repository.getTaskById(task.id)
@@ -612,15 +600,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             TaskSafetyManager.recordFailure(task.channel, appContext)
         }
 
-        val isUiTaskChannel = when (task.channel) {
-            ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS, ChannelType.WHATSAPP_GROUP, ChannelType.WHATSAPP_BUSINESS_GROUP,
-            ChannelType.WHATSAPP_STATUS, ChannelType.WHATSAPP_BUSINESS_STATUS,
-            ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> true
-            else -> false
-        }
-        if (!isUiTaskChannel && task.channel != ChannelType.CALL_SIMULATION && prefs.isAutoLockAfterSendEnabled) {
-            executeDeviceLockPostcondition(appContext, task.title)
-        }
         AccessibilityHealthManager.enforceAutoRotateInvariant(appContext)
         if (success) {
             DispatchJournal.complete(appContext, task.id, dispatchOccurrence)

@@ -242,7 +242,7 @@ fun LogDetailView(
                     Text("Manual Dispatch", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        "Immediately dispatch this message directly via carrier SMS or WhatsApp accessibility.",
+                        "Immediately dispatch this message directly via carrier SMS.",
                         fontSize = 11.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 16.sp

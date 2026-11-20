@@ -423,21 +423,7 @@ object ProtectedApplicationManager {
      * Linked with:
      * - Architecture: [ProtectedApplicationManager], [isTaskTargetAuthorized]
      */
-    fun isTaskTargetAuthorized(task: ScheduledTask): Boolean {
-        return when (task.channel) {
-            ChannelType.SMS,
-            ChannelType.CALL,
-            ChannelType.CALL_SIMULATION -> true
-            ChannelType.WHATSAPP,
-            ChannelType.WHATSAPP_GROUP,
-            ChannelType.WHATSAPP_STATUS,
-            ChannelType.WHATSAPP_CALL -> true
-            ChannelType.WHATSAPP_BUSINESS,
-            ChannelType.WHATSAPP_BUSINESS_GROUP,
-            ChannelType.WHATSAPP_BUSINESS_STATUS,
-            ChannelType.WHATSAPP_BUSINESS_CALL -> true
-        }
-    }
+    fun isTaskTargetAuthorized(task: ScheduledTask): Boolean = true
 
     /**
      * What it is:

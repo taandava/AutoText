@@ -233,7 +233,7 @@ object TaskFeatureApi {
     ): FeatureExecutionResult {
         return try {
             val dailyRepo = DailyCampaignRepository(context)
-            val eligible = dailyRepo.getPendingPoolContactsForCampaign(campaignId = 1L, isWhatsApp = false, limit = request.batchLimit)
+            val eligible = dailyRepo.getPendingPoolContactsForCampaign(campaignId = 1L, limit = request.batchLimit)
             var dispatched = 0
 
             for (contact in eligible) {

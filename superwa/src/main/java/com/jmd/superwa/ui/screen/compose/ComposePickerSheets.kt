@@ -484,15 +484,15 @@ fun WhatsAppContactsPickerSheet(
         selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP ||
         selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL ||
         selectedChannel == ChannelType.WHATSAPP_BUSINESS_STATUS
-    val isCalling = selectedChannel == ChannelType.CALL || selectedChannel == ChannelType.WHATSAPP_CALL || selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL
+    val isCalling = selectedChannel == ChannelType.WHATSAPP_CALL || selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL
     val targetPkg = if (isBusiness) "com.whatsapp.w4b" else "com.whatsapp"
     val sheetTitle = when {
-        selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL -> "Select WA Business Call Contacts"
-        selectedChannel == ChannelType.WHATSAPP_CALL -> "Select WhatsApp Call Contacts"
-        selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP -> "Select WA Business Groups"
-        selectedChannel == ChannelType.WHATSAPP_GROUP -> "Select WhatsApp Groups"
-        isBusiness -> "Select WA Business Contacts"
-        else -> "Select WhatsApp Contacts"
+        selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL -> "Business Calls"
+        selectedChannel == ChannelType.WHATSAPP_CALL -> "WA Calls"
+        selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP -> "Business Groups"
+        selectedChannel == ChannelType.WHATSAPP_GROUP -> "WA Groups"
+        isBusiness -> "Business Contacts"
+        else -> "WA Contacts"
     }
     val appLabel = if (isBusiness) "Business" else "WhatsApp"
 

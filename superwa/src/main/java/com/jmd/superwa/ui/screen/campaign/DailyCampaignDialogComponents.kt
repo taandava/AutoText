@@ -74,7 +74,6 @@ fun CreateDailyCampaignSheet(
     var intervalSecondsText by remember { mutableStateOf("10") }
     var scheduledHour by remember { mutableIntStateOf(9) }
     var scheduledMinute by remember { mutableIntStateOf(0) }
-    var simSlot by remember { mutableIntStateOf(0) }
 
     val accentColor = when (selectedChannel) {
         "WHATSAPP_BUSINESS" -> MaterialTheme.colorScheme.primary
@@ -228,16 +227,6 @@ fun CreateDailyCampaignSheet(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // SIM Slot if SMS
-            if (selectedChannel == "SMS") {
-                AppSegmentedControl(
-                    items = listOf("Default SIM", "SIM 1", "SIM 2"),
-                    selectedIndex = simSlot.coerceIn(0, 2),
-                    onItemSelected = { simSlot = it },
-                    activeColor = MaterialTheme.colorScheme.primary
-                )
-            }
-
             // Message body
             AppInputField(
                 value = messageBody,
@@ -299,7 +288,6 @@ fun CreateDailyCampaignSheet(
                         intervalSeconds = interval,
                         scheduledHour = scheduledHour,
                         scheduledMinute = scheduledMinute,
-                        simSlot = simSlot,
                         autoScanEnabled = true,
                         isActive = true
                     )
@@ -375,39 +363,25 @@ fun DailyCampaignChannelSelectionDialog(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // 1. SMS (SuperSMS only)
-                if (com.jmd.superwa.core.AppVariantHelper.isSuperSms) {
-                    DailyChannelOptionCard(
-                        title = "SMS Campaign",
-                        badge = "Carrier Direct",
-                        description = "Cellular SMS outreach via SIM card with dual SIM and India daily quota protection (100 SMS/day)",
-                        icon = Icons.AutoMirrored.Filled.Message,
-                        accentColor = MaterialTheme.colorScheme.primary,
-                        onClick = { onSelectChannel("SMS") }
-                    )
-                }
+                // 1. WhatsApp
+                DailyChannelOptionCard(
+                    title = "WhatsApp Campaign",
+                    badge = "Personal 1-on-1",
+                    description = "Send 1-on-1 personal messages to unique contacts with safe delay pacing",
+                    icon = Icons.AutoMirrored.Filled.Chat,
+                    accentColor = Color(0xFF16A34A),
+                    onClick = { onSelectChannel("WHATSAPP") }
+                )
 
-                // 2. WhatsApp (SuperWA only)
-                if (com.jmd.superwa.core.AppVariantHelper.isSuperWa) {
-                    DailyChannelOptionCard(
-                        title = "WhatsApp Campaign",
-                        badge = "Personal 1-on-1",
-                        description = "Send 1-on-1 personal messages to unique contacts with safe delay pacing",
-                        icon = Icons.AutoMirrored.Filled.Chat,
-                        accentColor = Color(0xFF16A34A),
-                        onClick = { onSelectChannel("WHATSAPP") }
-                    )
-
-                    // 3. WhatsApp Business
-                    DailyChannelOptionCard(
-                        title = "Business Campaign",
-                        badge = "Client Outreach",
-                        description = "Client follow-ups via WhatsApp Business app (com.whatsapp.w4b) with paced delivery safeguards",
-                        icon = Icons.Filled.BusinessCenter,
-                        accentColor = Color(0xFF0D9488),
-                        onClick = { onSelectChannel("WHATSAPP_BUSINESS") }
-                    )
-                }
+                // 2. WhatsApp Business
+                DailyChannelOptionCard(
+                    title = "Business Campaign",
+                    badge = "Client Outreach",
+                    description = "Client follow-ups via WhatsApp Business app (com.whatsapp.w4b) with paced delivery safeguards",
+                    icon = Icons.Filled.BusinessCenter,
+                    accentColor = Color(0xFF0D9488),
+                    onClick = { onSelectChannel("WHATSAPP_BUSINESS") }
+                )
             }
         }
     }

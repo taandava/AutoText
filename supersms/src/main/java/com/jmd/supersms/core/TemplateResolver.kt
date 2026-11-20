@@ -47,7 +47,7 @@ object MessageTemplateResolver {
      * @param phone Recipient's phone number or identifier.
      * @param event Associated event trigger description (e.g. "missed call").
      * @param targetTimestamp Milliseconds timestamp used for date/time formatting.
-     * @param channel Channel display name or type (e.g. "SMS", "WhatsApp").
+     * @param channel Channel display name or type (e.g. "SMS", "Call").
      * @param recipientCount Total recipients targeted in task/dispatch batch.
      * @return Fully resolved message string.
      */

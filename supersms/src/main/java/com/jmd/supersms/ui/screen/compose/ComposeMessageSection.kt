@@ -75,25 +75,18 @@ fun ComposeRecipientsAndMessageCard(
     recipientsInput: String,
     onRecipientsInputChange: (String) -> Unit,
     onAddManualRecipient: () -> Unit,
-    onOpenWhatsAppContacts: () -> Unit,
     onAddDirectRecipient: ((name: String, phone: String) -> Unit)? = null,
     onOpenPoolPicker: () -> Unit,
     onOpenContactsPicker: () -> Unit,
     messageText: String,
     onMessageTextChange: (String) -> Unit,
     smsPartCount: Int,
-    isUnicode: Boolean,
-    mediaUri: String = "",
-    onMediaUriChange: (String) -> Unit = {},
-    onLaunchMediaPicker: () -> Unit = {}
+    isUnicode: Boolean
 ) {
     AppCard(
         modifier = Modifier.fillMaxWidth(),
         shape = AppDesignTokens.ShapeLarge
     ) {
-        val isWa = selectedChannel == ChannelType.WHATSAPP || selectedChannel == ChannelType.WHATSAPP_BUSINESS ||
-            selectedChannel == ChannelType.WHATSAPP_GROUP || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
-        val isBusiness = selectedChannel == ChannelType.WHATSAPP_BUSINESS || selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP
 
         // Recipients Header
         Row(
@@ -318,98 +311,6 @@ fun ComposeRecipientsAndMessageCard(
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-
-        // Media Attachment Selector for WhatsApp, WA Business & Groups
-        if (isWa) {
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "Media Attachment",
-                    fontSize = 11.5.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.Medium
-                )
-                if (mediaUri.isNotBlank()) {
-                    Text(
-                        "Remove",
-                        fontSize = 11.5.sp,
-                        color = MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable { onMediaUriChange("") }
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            if (mediaUri.isNotBlank()) {
-                val isVideo = mediaUri.contains("mp4", ignoreCase = true) || mediaUri.contains("video", ignoreCase = true)
-                Surface(
-                    shape = AppDesignTokens.ShapeSmall,
-                    color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.4f)),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                            Icon(
-                                imageVector = if (isVideo) Icons.Default.Videocam else Icons.Default.Image,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(
-                                    text = if (isVideo) "Video Attached" else "Image / File Attached",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = mediaUri.substringAfterLast("/").take(32),
-                                    fontSize = 10.5.sp,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    maxLines = 1
-                                )
-                            }
-                        }
-                        IconButton(onClick = { onMediaUriChange("") }, modifier = Modifier.size(20.dp)) {
-                            Icon(Icons.Default.Close, contentDescription = "Remove", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(14.dp))
-                        }
-                    }
-                }
-            } else {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    AppButton(
-                        text = "Attach Image",
-                        onClick = onLaunchMediaPicker,
-                        variant = AppButtonVariant.SECONDARY,
-                        icon = Icons.Default.AddPhotoAlternate,
-                        modifier = Modifier.weight(1f),
-                        shape = AppDesignTokens.ShapeSmall
-                    )
-                    AppButton(
-                        text = "Attach Video",
-                        onClick = onLaunchMediaPicker,
-                        variant = AppButtonVariant.SECONDARY,
-                        icon = Icons.Default.Videocam,
-                        modifier = Modifier.weight(1f),
-                        shape = AppDesignTokens.ShapeSmall
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(6.dp))
-        }
 
         AppInputField(
             value = messageText,

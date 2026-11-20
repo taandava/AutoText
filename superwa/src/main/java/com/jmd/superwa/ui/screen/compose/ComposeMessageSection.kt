@@ -82,8 +82,6 @@ fun ComposeRecipientsAndMessageCard(
     onOpenContactsPicker: () -> Unit,
     messageText: String,
     onMessageTextChange: (String) -> Unit,
-    smsPartCount: Int,
-    isUnicode: Boolean,
     mediaUri: String = "",
     onMediaUriChange: (String) -> Unit = {},
     onLaunchMediaPicker: () -> Unit = {}
@@ -484,28 +482,6 @@ fun ComposeRecipientsAndMessageCard(
             maxLines = 4,
             accentColor = MaterialTheme.colorScheme.primary
         )
-
-        // SMS Char & Counter
-        if (selectedChannel == ChannelType.SMS) {
-            Spacer(modifier = Modifier.height(6.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "${messageText.length} chars • $smsPartCount SMS part${if (smsPartCount > 1) "s" else ""} (${if (isUnicode) "UCS-2 Unicode" else "GSM-7"})",
-                    fontSize = 11.sp,
-                    color = if (smsPartCount > 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.Medium
-                )
-                AppBadge(
-                    text = "App cap: 100/day",
-                    color = MaterialTheme.colorScheme.primary,
-                    showDot = false
-                )
-            }
-        }
 
         // Variable Insertion Chips
         Spacer(modifier = Modifier.height(10.dp))

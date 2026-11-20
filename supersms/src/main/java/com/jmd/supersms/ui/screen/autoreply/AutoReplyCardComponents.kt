@@ -72,41 +72,29 @@ fun AutoReplyRuleCard(
     val themeColor = when (rule.channel) {
         ChannelType.CALL -> MaterialTheme.colorScheme.primary
         ChannelType.SMS -> MaterialTheme.colorScheme.primary
-        ChannelType.WHATSAPP -> MaterialTheme.colorScheme.tertiary
-        ChannelType.WHATSAPP_BUSINESS -> MaterialTheme.colorScheme.primary
-        else -> MaterialTheme.colorScheme.tertiary
+        else -> MaterialTheme.colorScheme.primary
     }
 
     val (channelIcon, channelText) = when (rule.channel) {
-        ChannelType.CALL -> Icons.Filled.Phone to "Calls (SMS)"
-        ChannelType.SMS -> Icons.AutoMirrored.Filled.Message to "SMS"
-        ChannelType.WHATSAPP -> Icons.AutoMirrored.Filled.Chat to "WhatsApp"
-        ChannelType.WHATSAPP_BUSINESS -> Icons.Filled.BusinessCenter to "WA Business"
-        else -> Icons.AutoMirrored.Filled.Chat to rule.channel.displayName
+        ChannelType.CALL -> Icons.Filled.Phone to "Call Reply"
+        ChannelType.SMS -> Icons.AutoMirrored.Filled.Message to "SMS Reply"
+        else -> Icons.AutoMirrored.Filled.Message to rule.channel.displayName
     }
 
     val (eventIcon, eventBadgeText) = when (rule.channel) {
         ChannelType.CALL -> when (rule.callEventType.uppercase()) {
             "MISSED_CALL" -> Icons.AutoMirrored.Filled.PhoneMissed to "Missed Call"
             "CALL_ENDED" -> Icons.Filled.CallEnd to "Call Ended"
-            else -> Icons.Filled.PhoneInTalk to "Missed & Ended"
+            else -> Icons.Filled.PhoneInTalk to "All Calls"
         }
         ChannelType.SMS -> Icons.AutoMirrored.Filled.Message to "Incoming SMS"
-        ChannelType.WHATSAPP, ChannelType.WHATSAPP_BUSINESS -> when (rule.callEventType.uppercase()) {
-            "MISSED_CALL" -> Icons.AutoMirrored.Filled.PhoneMissed to "Missed Call"
-            "CALL_ENDED" -> Icons.Filled.CallEnd to "Call Ended"
-            "MESSAGE" -> Icons.AutoMirrored.Filled.Chat to "Message"
-            else -> Icons.Filled.Forum to "All Events"
-        }
-        else -> Icons.AutoMirrored.Filled.Chat to rule.channel.displayName
+        else -> Icons.AutoMirrored.Filled.Message to "SMS Event"
     }
 
     val replyMechanismText = when (rule.channel) {
         ChannelType.CALL -> "Auto-replies via SMS to mobile numbers"
         ChannelType.SMS -> "Auto-replies via SMS • Trigger: ${if (rule.triggerPattern == "*") "All Incoming" else "\"${rule.triggerPattern}\""}"
-        ChannelType.WHATSAPP -> if (rule.callEventType.uppercase() in listOf("MISSED_CALL", "CALL_ENDED")) "Replies in WhatsApp chat" else "Replies in WhatsApp • Trigger: ${if (rule.triggerPattern == "*") "All Incoming" else "\"${rule.triggerPattern}\""}"
-        ChannelType.WHATSAPP_BUSINESS -> if (rule.callEventType.uppercase() in listOf("MISSED_CALL", "CALL_ENDED")) "Replies in WA Business chat" else "Replies in WA Business • Trigger: ${if (rule.triggerPattern == "*") "All Incoming" else "\"${rule.triggerPattern}\""}"
-        else -> "Replies via ${rule.channel.displayName}"
+        else -> "Replies via SMS"
     }
 
     AppCard(
@@ -444,7 +432,7 @@ fun AutoReplyLimitsCard(
  *
  * Linked with:
  * - Architecture: [AutoReplyCardComponents], [AutoReplyMessageCard]
- * @param channel Target channel type (Calls, SMS, WhatsApp).
+ * @param channel Target channel type (Calls, SMS).
  * @param callEventType Associated trigger event type.
  * @param replyText Current draft message body.
  * @param onReplyTextChanged Callback when message body is edited.

@@ -92,7 +92,7 @@ object DispatchJournal {
      * What it does:
      * Grants the claim for a new, failed (retryable) or abandoned occurrence; denies it when the
      * occurrence already completed, is currently in flight, or exhausted its retry budget. Returns
-     * `true` (fail-open) if the journal itself errors, so automation is never blocked by bookkeeping.
+     * `true` (fail-open) if the journal itself errors, so dispatch is never blocked by bookkeeping.
      *
      * @return true when the caller may dispatch.
      */

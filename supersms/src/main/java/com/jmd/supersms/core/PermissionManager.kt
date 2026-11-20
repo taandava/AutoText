@@ -29,7 +29,6 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import com.jmd.supersms.service.TaskNotificationListenerService
 
 /**
  * What it is:
@@ -113,7 +112,7 @@ object PermissionManager {
             isRuntimeApproval = true,
             requiresSpecialUserAction = false,
             deniedImpact = "Direct cellular SMS tasks fail with ACTION_REQUIRED or open system messaging app.",
-            revocationSafety = "Can be safely revoked anytime; WhatsApp and call tasks remain 100% operational.",
+            revocationSafety = "Can be safely revoked anytime; call tasks remain 100% operational.",
             category = PermissionCategory.MESSAGING
         ),
         PermissionFeatureInfo(
@@ -229,7 +228,7 @@ object PermissionManager {
         PermissionFeatureInfo(
             permissionId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) ID_READ_MEDIA_IMAGES else ID_READ_EXTERNAL_STORAGE,
             featureName = "Media & Attachment Access",
-            purpose = "Allows attaching photos and videos to scheduled WhatsApp and MMS tasks.",
+            purpose = "Allows reading media for audio ringtones and multimedia tasks.",
             canWorkWithout = true,
             isRuntimeApproval = true,
             requiresSpecialUserAction = false,
@@ -468,12 +467,7 @@ object PermissionManager {
      * Linked with:
      * - Architecture: [PermissionManager], [isNotificationListenerActive]
      */
-    fun isNotificationListenerActive(context: Context): Boolean {
-        val cr = context.contentResolver
-        val expected = ComponentName(context, TaskNotificationListenerService::class.java).flattenToString()
-        val current = Settings.Secure.getString(cr, "enabled_notification_listeners") ?: ""
-        return current.contains(expected)
-    }
+    fun isNotificationListenerActive(context: Context): Boolean = false
 
     /**
      * What it is:

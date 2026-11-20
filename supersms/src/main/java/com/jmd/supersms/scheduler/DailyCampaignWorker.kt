@@ -167,7 +167,7 @@ class DailyCampaignWorker(
             }
         }
 
-        val recipients = repo.getPendingPoolContactsForCampaign(campaignId = config.id, isWhatsApp = false, limit = allowedBatchSize)
+        val recipients = repo.getPendingPoolContactsForCampaign(campaignId = config.id, limit = allowedBatchSize)
         if (recipients.isEmpty()) {
             AppFileLogger.i(applicationContext, TAG, "No recipients in pool to send daily campaign to.")
             return Result.success()
@@ -242,7 +242,7 @@ class DailyCampaignWorker(
             val (canSend, quotaReason) = SmsQuotaManager.canDispatchSms(applicationContext, message)
             if (!canSend) {
                 queuedCount++
-                repo.markContactPendingRetry(item.id, whatsApp = false, status = "QUEUED")
+                repo.markContactPendingRetry(item.id, status = "QUEUED")
                 repo.insertLog(
                     ExecutionLog(
                         taskId = config.id,
@@ -261,7 +261,7 @@ class DailyCampaignWorker(
             if (sendResult.success) {
                 SmsQuotaManager.commitSmsQuotaReservation(sendResult.segments)
                 successCount++
-                repo.markContactSent(item.id, whatsApp = false)
+                repo.markContactSent(item.id)
                 repo.markCampaignContactSuccess(config.id, item, config.channel, sendResult.segments)
                 repo.insertLog(
                     ExecutionLog(
@@ -276,7 +276,7 @@ class DailyCampaignWorker(
                 )
                 AppFileLogger.i(applicationContext, TAG, "Sent SMS to ${item.phone} ($displayName) [${sendResult.segments} parts]")
             } else if (sendResult.deliveryStatus == SmsSender.DeliveryStatus.PENDING_TIMEOUT || sendResult.deliveryStatus == SmsSender.DeliveryStatus.PARTIAL_DISPATCH) {
-                repo.markContactSent(item.id, whatsApp = false)
+                repo.markContactSent(item.id)
                 repo.markCampaignContactDispatched(config.id, item, config.channel, sendResult.segments)
                 repo.insertLog(
                     ExecutionLog(
@@ -295,7 +295,7 @@ class DailyCampaignWorker(
                 val reason = sendResult.reason
                 val isQuota = reason.contains("limit", ignoreCase = true) || reason.contains("quota", ignoreCase = true)
                 val status = if (isQuota) "QUEUED" else "FAILED"
-                repo.markContactPendingRetry(item.id, whatsApp = false, status = status)
+                repo.markContactPendingRetry(item.id, status = status)
                 repo.insertLog(
                     ExecutionLog(
                         taskId = config.id,

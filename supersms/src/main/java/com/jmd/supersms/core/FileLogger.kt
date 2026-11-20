@@ -255,7 +255,7 @@ object AppFileLogger {
      * - Architecture: [FileLogger], [campaignLedger]
      * @param context Active Android [Context].
      * @param campaignId Unique daily campaign ID.
-     * @param channel Transmission channel ("SMS", "WHATSAPP", "WHATSAPP_BUSINESS").
+     * @param channel Transmission channel ("SMS", "CALL").
      * @param recipientName Resolved recipient contact name.
      * @param recipientPhone Destination phone number or JID.
      * @param status Outcome status ("SUCCESS", "DISPATCHED", "FAILED", "QUEUED").

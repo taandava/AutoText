@@ -19,7 +19,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.jmd.superwa.api.SmsRequest
 import com.jmd.superwa.api.TaskFeatureApi
 import com.jmd.superwa.api.WhatsAppMessageRequest
 import com.jmd.superwa.core.AccessibilityHealthManager
@@ -31,7 +30,6 @@ import com.jmd.superwa.data.model.ChannelType
 import com.jmd.superwa.data.prefs.PreferenceManager
 import com.jmd.superwa.data.repo.AppRepository
 import com.jmd.superwa.service.TaskAccessibilityService
-import com.jmd.superwa.telephony.TelephonyCallEngine
 import com.jmd.superwa.whatsapp.WhatsAppChatScanner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -158,45 +156,52 @@ class TaskDispatchReceiver : BroadcastReceiver() {
                 }
             }
 
-            // SEND SMS (SuperSMS)
-            action.endsWith("ACTION_SEND_SMS") -> {
+            // WHATSAPP CALL (SuperWA)
+            action.endsWith("ACTION_WHATSAPP_CALL") -> {
                 val phone = intent.getStringExtra(EXTRA_PHONE).orEmpty().trim()
-                val message = intent.getStringExtra(EXTRA_MESSAGE).orEmpty()
-                val simSlot = intent.getIntExtra(EXTRA_SIM_SLOT, 0)
+                val isBusiness = intent.getBooleanExtra(EXTRA_IS_BUSINESS, false)
+                val duration = intent.getIntExtra(EXTRA_DURATION, 0)
+                val includeDialTime = intent.getBooleanExtra("include_dial_time", true)
 
-                if (phone.isBlank() || message.isBlank()) {
-                    setResult(0, "Missing phone or message text", null)
+                if (phone.isBlank()) {
+                    setResult(0, "Missing recipient phone", null)
                     return
                 }
 
-                val request = SmsRequest(
-                    taskId = System.currentTimeMillis(),
-                    recipient = phone,
-                    message = message,
-                    simSlot = simSlot
-                )
-                val result = TaskFeatureApi.sendSms(context, repository, request)
-                setResult(if (result.success) 1 else 0, result.messageSnippet, null)
+                val ch = if (isBusiness) ChannelType.WHATSAPP_BUSINESS_CALL else ChannelType.WHATSAPP_CALL
+                receiverScope.launch {
+                    val request = com.jmd.superwa.api.WhatsAppCallRequest(
+                        taskId = System.currentTimeMillis(),
+                        channel = ch,
+                        recipient = phone,
+                        callDurationSeconds = duration,
+                        includeDialTime = includeDialTime
+                    )
+                    val result = TaskFeatureApi.startWhatsAppCall(context, repository, request)
+                    setResult(if (result.success) 1 else 0, result.messageSnippet, null)
+                }
             }
 
-            // MAKE CALL (SuperSMS)
-            action.endsWith("ACTION_MAKE_CALL") -> {
-                val phone = intent.getStringExtra(EXTRA_PHONE).orEmpty().trim()
-                val duration = intent.getIntExtra(EXTRA_DURATION, 10)
-                val simSlot = intent.getIntExtra(EXTRA_SIM_SLOT, 0)
+            // POST STATUS (SuperWA)
+            action.endsWith("ACTION_POST_STATUS") -> {
+                val message = intent.getStringExtra(EXTRA_MESSAGE).orEmpty()
+                val mediaUri = intent.getStringExtra("media_uri").orEmpty()
+                val isMedia = intent.getBooleanExtra("is_media", mediaUri.isNotBlank())
 
-                if (phone.isBlank()) {
-                    setResult(0, "Missing phone number for call", null)
+                if (message.isBlank() && mediaUri.isBlank()) {
+                    setResult(0, "Missing status text or media URI", null)
                     return
                 }
 
                 receiverScope.launch {
-                    val placed = TelephonyCallEngine.placeCall(context, phone, simSlot)
-                    setResult(if (placed) 1 else 0, "Call placed to $phone (duration=${duration}s, sim=$simSlot)", null)
-                    if (placed && duration > 0) {
-                        delay(duration * 1000L)
-                        TelephonyCallEngine.endCall(context)
-                    }
+                    val request = com.jmd.superwa.api.WhatsAppStatusRequest(
+                        taskId = System.currentTimeMillis(),
+                        message = message,
+                        mediaUri = mediaUri,
+                        isMedia = isMedia
+                    )
+                    val result = TaskFeatureApi.postWhatsAppStatus(context, repository, request)
+                    setResult(if (result.success) 1 else 0, result.messageSnippet, null)
                 }
             }
 

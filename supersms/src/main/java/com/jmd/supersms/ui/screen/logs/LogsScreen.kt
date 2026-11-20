@@ -160,7 +160,6 @@ fun LogsView(
     val filteredLogs = remember(logs, selectedFilter) {
         when (selectedFilter) {
             "SMS" -> logs.filter { it.channel.equals("SMS", ignoreCase = true) }
-            "WHATSAPP" -> logs.filter { it.channel.contains("WHATSAPP", ignoreCase = true) }
             "CALLS" -> logs.filter { it.channel.contains("CALL", ignoreCase = true) }
             "CAMPAIGNS" -> logs.filter {
                 it.details.contains("campaign", ignoreCase = true) ||
@@ -242,7 +241,6 @@ fun LogsView(
                 listOf(
                     LogFilterChip("ALL", "All (${logs.size})", Icons.Filled.BarChart),
                     LogFilterChip("SMS", "SMS (${logs.count { it.channel.equals("SMS", ignoreCase = true) }})", Icons.AutoMirrored.Filled.Message),
-                    LogFilterChip("WHATSAPP", "WhatsApp (${logs.count { it.channel.contains("WHATSAPP", ignoreCase = true) }})", Icons.AutoMirrored.Filled.Chat),
                     LogFilterChip("CALLS", "Calls (${logs.count { it.channel.contains("CALL", ignoreCase = true) }})", Icons.Filled.Phone),
                     LogFilterChip("CAMPAIGNS", "Campaigns (${logs.count { it.details.contains("campaign", ignoreCase = true) || it.details.contains("pool", ignoreCase = true) || it.messageSnippet.contains("Daily", ignoreCase = true) }})", Icons.Filled.RocketLaunch),
                     LogFilterChip("FAILED", "Failed (${logs.count { it.status.equals("FAILED", ignoreCase = true) || it.status.equals("QUEUED", ignoreCase = true) }})", Icons.Filled.Cancel)
@@ -325,18 +323,12 @@ fun LogsView(
                                         )
                                         Spacer(modifier = Modifier.width(6.dp))
                                         val (displayChannel, channelIcon, channelColor) = when {
-                                            log.channel.contains("Call", ignoreCase = true) && log.channel.contains("Phone", ignoreCase = true) ->
-                                                Triple("Phone Call", Icons.Filled.Phone, MaterialTheme.colorScheme.primary)
+                                            log.channel.contains("Simulation", ignoreCase = true) ->
+                                                Triple("Call Sim", Icons.Filled.PhoneInTalk, MaterialTheme.colorScheme.tertiary)
                                             log.channel.contains("Call", ignoreCase = true) ->
-                                                Triple("WA Call", Icons.Filled.PhoneInTalk, MaterialTheme.colorScheme.tertiary)
-                                            log.channel.contains("Status", ignoreCase = true) ->
-                                                Triple("WA Status", Icons.Filled.AutoAwesome, MaterialTheme.colorScheme.primary)
-                                            log.channel.contains("SMS", ignoreCase = true) ->
-                                                Triple("SMS", Icons.AutoMirrored.Filled.Message, MaterialTheme.colorScheme.primary)
-                                            log.channel.contains("Business", ignoreCase = true) || log.channel.contains("w4b", ignoreCase = true) ->
-                                                Triple("W4B", Icons.Filled.BusinessCenter, MaterialTheme.colorScheme.tertiary)
+                                                Triple("Phone Call", Icons.Filled.Phone, MaterialTheme.colorScheme.primary)
                                             else ->
-                                                Triple("WhatsApp", Icons.AutoMirrored.Filled.Chat, MaterialTheme.colorScheme.tertiary)
+                                                Triple("SMS", Icons.AutoMirrored.Filled.Message, MaterialTheme.colorScheme.primary)
                                         }
                                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                                             Surface(

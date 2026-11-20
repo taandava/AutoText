@@ -6,13 +6,13 @@
  * Architecture definition and implementation for [SequentialTaskEngine].
  *
  * What it does:
- * Centralized sequential execution orchestrator for scheduled tasks across SMS, WhatsApp chats, WhatsApp Status stories, Phone Calls, and Call Simulations.
+ * Centralized sequential execution orchestrator for scheduled tasks across SMS, Phone Calls, and Call Simulations.
  *
  * Linked With:
  * - Repositories: [com.jmd.supersms.data.repo.AppRepository]
  * - Models & Entities: [com.jmd.supersms.data.model.*]
  * - Schedulers & Receivers: [com.jmd.supersms.scheduler.AlarmScheduler]
- * - Services & Engines: [com.jmd.supersms.service.TaskAccessibilityService], [com.jmd.supersms.whatsapp.WhatsAppIntentDispatcher]
+ * - Services & Engines: [com.jmd.supersms.engine.SmsSender], [com.jmd.supersms.telephony.TelephonyCallEngine]
  * - UI Screens & Components: [com.jmd.supersms.ui.activity.CallSimulationActivity], [com.jmd.supersms.ui.activity.TaskLauncherActivity]
  * - Core Security & Utilities: [android.app.KeyguardManager], [android.app.NotificationManager], [android.content.pm.PackageManager], [android.media.AudioManager]
  * - Android Framework & Jetpack: [android.app.PendingIntent], [android.net.Uri], [kotlinx.coroutines.channels.Channel], [kotlinx.coroutines.sync.Mutex]
@@ -53,8 +53,6 @@ import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.milliseconds
 
-/** Upper bound for waiting on a WhatsApp send to complete before the task is retried. */
-private const val WHATSAPP_SEND_TIMEOUT_MS = 35000L
 private const val PROTECTED_WINDOW_MAX_WAIT_MS = 10 * 60_000L
 
 /**
@@ -446,7 +444,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
     /**
      * What it is:
-     * Top-level safe execution handler routing tasks to appropriate channel engines (SMS, WhatsApp, Calls, Call Simulations) with circuit-breaker protection.
+     * Top-level safe execution handler routing tasks to appropriate channel engines (SMS, Phone Calls, Call Simulations) with circuit-breaker protection.
      *
      * What it does:
      * Executes [executeTaskSafely] logic in accordance with system and security invariants.
