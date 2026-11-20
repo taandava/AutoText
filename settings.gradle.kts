@@ -19,4 +19,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Super"
-include(":supersms", ":superwa")
+include(":app")

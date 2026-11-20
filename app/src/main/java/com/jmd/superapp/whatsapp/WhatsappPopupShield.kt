@@ -1,0 +1,470 @@
+/**
+ * Package: com.jmd.superapp.whatsapp
+ * Module: WhatsApp Task Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [WhatsappPopupShield].
+ *
+ * What it does:
+ * Scans window hierarchies to detect and dismiss intrusive blocking overlays, system permission dialogs, incoming call caller ID overlays (e.g. Truecaller), and notification shades before starting UI actions.
+ *
+ * Linked With:
+ * - Services & Engines: [android.accessibilityservice.AccessibilityService]
+ * - Core Security & Utilities: [android.util.Log]
+ * - Android Framework & Jetpack: [android.os.Build], [android.os.Handler], [android.os.Looper], [android.view.accessibility.AccessibilityNodeInfo]
+ */
+
+package com.jmd.superapp.whatsapp
+
+import android.accessibilityservice.AccessibilityService
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+
+/**
+ * What it is:
+ * Resilient overlay inspector detecting and dismissing UI obstacles.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [PopupShield].
+ *
+ * Linked with:
+ * - Architecture: [WhatsappPopupShield], [PopupShield]
+ */
+object PopupShield {
+    private const val TAG = "PopupShield"
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val dismissKeywords = listOf(
+        "allow", "continue", "accept", "ok", "got it", "never", "remind later",
+        "skip", "close", "deny", "not now", "maybe later", "dismiss", "i agree",
+        "agree", "confirm", "yes", "no thanks", "no, thanks", "cancel", "later",
+        "decline", "clear", "x", "reject", "block", "hide", "close ad", "done",
+        "mark as read", "view transactions", "remind me later", "discard",
+        "✕", "✖", "×"
+    )
+
+    /**
+     * What it is:
+     * Executes an asynchronous multi-pass loop to dismiss any blocking popups, dialogs, or pulled-down notification shades before dispatch commences.
+     *
+     * What it does:
+     * Executes [clearAllBlockingPopups] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappPopupShield], [clearAllBlockingPopups]
+     * @param service The active [AccessibilityService] used to query root windows and invoke dismiss actions.
+     * @param onComplete Callback invoked on the main looper once all obstacles are cleared or max passes are exhausted.
+     */
+    fun clearAllBlockingPopups(service: AccessibilityService, onComplete: () -> Unit) {
+        clearPass(service, pass = 0, maxPasses = 8, onComplete = onComplete)
+    }
+
+    /**
+     * What it is:
+     * Executes a single pass of UI cleanup, re-scheduling subsequent passes until the window hierarchy is clear.
+     *
+     * What it does:
+     * Executes [clearPass] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappPopupShield], [clearPass]
+     * @param service The active [AccessibilityService].
+     * @param pass The current pass iteration index (0-indexed).
+     * @param maxPasses The maximum allowed retry attempts before relinquishing control to `onComplete`.
+     * @param onComplete Callback executed when the view hierarchy is clear of blocking overlays.
+     */
+    private fun clearPass(
+        service: AccessibilityService,
+        pass: Int,
+        maxPasses: Int,
+        onComplete: () -> Unit
+    ) {
+        try {
+            val root = service.rootInActiveWindow
+            if (root == null) {
+                if (pass < maxPasses) {
+                    handler.postDelayed({ clearPass(service, pass + 1, maxPasses, onComplete) }, 300L)
+                } else {
+                    onComplete()
+                }
+                return
+            }
+
+            val curPkg = root.packageName?.toString().orEmpty().lowercase()
+
+            val privacyMgr = com.jmd.superapp.core.PrivacyManager.getInstance(service)
+            if (privacyMgr.isAppExcluded(curPkg) || privacyMgr.isOverlayBlockedForActiveApp() ||
+                com.jmd.superapp.core.ProtectedApplicationManager.isProtectedPackage(curPkg)) {
+                Log.d(TAG, "PopupShield: Excluded, banking, or overlay-blocked app in foreground ($curPkg); halting popup shield")
+                onComplete()
+                return
+            }
+
+            // 1. Clear any active notification shade or floating overlays (Truecaller, Messenger, system prompts)
+            if (clearOverlaysAndNotificationShade(service)) {
+                handler.postDelayed({ clearPass(service, pass + 1, maxPasses, onComplete) }, 350L)
+                return
+            }
+
+            // 2. Click any dismiss/allow/ok style dialog button present.
+            if (clickDismissButton(root, service)) {
+                handler.postDelayed({ clearPass(service, pass + 1, maxPasses, onComplete) }, 300L)
+                return
+            }
+
+            // 3. Nothing left to clear -> done.
+            Log.i(TAG, "PopupShield: clear complete after pass $pass (pkg=$curPkg)")
+            onComplete()
+        } catch (t: Throwable) {
+            Log.e(TAG, "PopupShield error", t)
+            onComplete()
+        }
+    }
+
+    /**
+     * What it is:
+     * Inspects all visible windows on screen for floating overlays, heads-up banners, or open notification shades that are not the target application.
+     *
+     * What it does:
+     * Executes [hasActiveBlockingOverlay] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappPopupShield], [hasActiveBlockingOverlay]
+     * @param service The active [AccessibilityService] providing window introspection.
+     * @param targetPkg The target package expected to hold user focus (defaults to "com.whatsapp").
+     * @return `true` if an active blocking overlay or extended notification shade is detected; `false` otherwise.
+     */
+    fun hasActiveBlockingOverlay(service: AccessibilityService, targetPkg: String = "com.whatsapp"): Boolean {
+        try {
+            val root = service.rootInActiveWindow
+            val curPkg = root?.packageName?.toString().orEmpty().lowercase()
+            if (curPkg.contains("truecaller") || curPkg.contains("callapp") || curPkg.contains("hiya") || curPkg.contains("callerid")) {
+                return true
+            }
+
+            val windows = service.windows.orEmpty()
+            val metrics = service.resources.displayMetrics
+            val screenWidth = metrics.widthPixels
+            val screenHeight = metrics.heightPixels
+
+            for (window in windows) {
+                val windowType = window.type
+                val windowPkg = window.root?.packageName?.toString()?.lowercase().orEmpty()
+                val windowTitle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    window.title?.toString()?.lowercase().orEmpty()
+                } else ""
+
+                if (windowPkg.isBlank() && windowTitle.isBlank()) continue
+
+                val rect = android.graphics.Rect()
+                window.getBoundsInScreen(rect)
+
+                // 1. Caller ID overlays (Truecaller etc.) are always blocking regardless of height
+                if (windowPkg.contains("truecaller") || windowPkg.contains("callapp") ||
+                    windowPkg.contains("hiya") || windowPkg.contains("callerid") ||
+                    windowTitle.contains("truecaller") || windowTitle.contains("callapp") ||
+                    windowTitle.contains("hiya") || windowTitle.contains("callerid")) {
+                    return true
+                }
+
+                // 2. Safe system UI and OEM overlays (status bars, navigation/gesture bars, smart island, wallpaper)
+                val isKnownSafeOem = com.jmd.superapp.core.OemBrandHelper.isSafeSystemOverlay(windowPkg) ||
+                    windowPkg.contains("systemui") ||
+                    windowPkg.contains("upslide") ||
+                    windowTitle.contains("smartisland") ||
+                    windowTitle.contains("sideslide") ||
+                    windowTitle.contains("gesture") ||
+                    windowTitle.contains("screendecor") ||
+                    windowTitle.contains("statusbar")
+
+                val isSystemBar = (rect.top == 0 && rect.height() < screenHeight * 0.10f) ||
+                    (rect.bottom >= screenHeight && rect.height() < screenHeight * 0.10f)
+
+                if (isKnownSafeOem || isSystemBar) {
+                    // Only block if a full notification shade is expanded over the screen (>35% screen height)
+                    if (windowTitle.contains("notificationshade") || windowPkg.contains("notificationshade")) {
+                        if (rect.height() > screenHeight * 0.35f) {
+                            return true
+                        }
+                    }
+                    continue
+                }
+
+                // 3. Heads-Up Notification (HUN) drop-down banner at top of display
+                val isHunBanner = (windowTitle.contains("heads-up") || windowTitle.contains("headsup")) &&
+                    rect.top <= screenHeight * 0.08f &&
+                    rect.height() in (screenHeight * 0.08f).toInt()..(screenHeight * 0.40f).toInt() &&
+                    rect.width() >= screenWidth * 0.4f
+                if (isHunBanner) {
+                    return true
+                }
+
+                if (windowPkg.contains("keyguard")) {
+                    return true
+                }
+
+                val isOverlayType = windowType == AccessibilityWindowInfo.TYPE_SYSTEM ||
+                    windowType == AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY
+
+                val isLargeOverlay = rect.width() > screenWidth * 0.40f && rect.height() > screenHeight * 0.15f
+                val coversInteractionArea = rect.bottom > screenHeight * 0.25f
+
+                if (isOverlayType && !isSystemBar && isLargeOverlay && coversInteractionArea &&
+                    !com.jmd.superapp.core.OemBrandHelper.isSafeSystemOverlay(windowPkg) &&
+                    !windowPkg.contains(targetPkg, ignoreCase = true) &&
+                    !windowPkg.contains("w4b", ignoreCase = true) &&
+                    windowPkg != service.packageName.lowercase()
+                ) {
+                    return true
+                }
+            }
+        } catch (t: Throwable) {
+            Log.w(TAG, "Error checking active overlays: ${t.message}")
+        }
+        return false
+    }
+
+    /**
+     * What it is:
+     * Clears all open notification shades, floating overlays, Truecaller popups, and system dialogs to leave the screen clean and ready for task clicks.
+     *
+     * What it does:
+     * Executes [clearOverlaysAndNotificationShade] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappPopupShield], [clearOverlaysAndNotificationShade]
+     * @param service The active [AccessibilityService] used to perform dismiss actions and global back navigation.
+     * @param targetPkg The target application package name.
+     * @return `true` if any overlay, notification shade, or dialog button was closed; `false` otherwise.
+     */
+    fun clearOverlaysAndNotificationShade(service: AccessibilityService, targetPkg: String = "com.whatsapp"): Boolean {
+        try {
+            var clearedSomething = false
+
+            // 1. Check for open notification shade / system UI (only if not on keyguard/lockscreen)
+            val km = service.getSystemService(android.content.Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager
+            val isKeyguardLocked = km?.isKeyguardLocked == true
+
+            val root = service.rootInActiveWindow
+            val curPkg = root?.packageName?.toString().orEmpty().lowercase()
+            val metrics = service.resources.displayMetrics
+            val screenWidth = metrics.widthPixels
+            val screenHeight = metrics.heightPixels
+            val rect = android.graphics.Rect()
+            root?.getBoundsInScreen(rect)
+
+            val isNotificationShade = !isKeyguardLocked && (
+                curPkg.contains("notification") ||
+                (curPkg.contains("systemui") && rect.height() > screenHeight * 0.30f)
+            )
+
+            if (isNotificationShade) {
+                Log.i(TAG, "Dismissing pulled-down notification shade window ($curPkg)...")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE)
+                } else {
+                    service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+                }
+                clearedSomething = true
+            }
+
+            // 1b. Check for intrusive caller ID overlays (Truecaller, CallApp, Hiya)
+            if (curPkg.contains("truecaller") || curPkg.contains("callapp") || curPkg.contains("hiya") || curPkg.contains("callerid")) {
+                Log.i(TAG, "Caller ID overlay/dialog detected in foreground ($curPkg). Attempting to dismiss...")
+                if (root != null && clickDismissButton(root, service)) {
+                    clearedSomething = true
+                } else {
+                    if (!rect.isEmpty) {
+                        val closeX = rect.right - (rect.width() * 0.08f)
+                        val closeY = rect.top + (rect.height() * 0.12f)
+                        AccessibilityNodeUtils.dispatchPhysicalTap(service, closeX, closeY)
+                    }
+                    AccessibilityNodeUtils.performHorizontalSwipe(
+                        service,
+                        startXRatio = 0.25f,
+                        endXRatio = 0.95f,
+                        yRatio = (rect.centerY().toFloat() / screenHeight).coerceIn(0.05f, 0.95f)
+                    )
+                    service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+                    clearedSomething = true
+                }
+            }
+
+            // 2. Check for floating overlay windows & Heads-Up Notifications (HUN) in service.windows
+            val windows = service.windows.orEmpty()
+            for (window in windows) {
+                val windowType = window.type
+                val windowRoot = window.root
+                val windowPkg = windowRoot?.packageName?.toString()?.lowercase().orEmpty()
+                val windowTitle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    window.title?.toString()?.lowercase().orEmpty()
+                } else ""
+
+                val wRect = android.graphics.Rect()
+                window.getBoundsInScreen(wRect)
+
+                // 2a. Heads-Up Notification (HUN) drop-down covering the top of the display
+                val isTopWindow = wRect.top <= screenHeight * 0.08f && wRect.bottom in (screenHeight * 0.05f).toInt()..(screenHeight * 0.45f).toInt()
+                val isSystemUiOrNotif = windowPkg.contains("systemui") || windowPkg.contains("notification") || windowPkg.contains("upslide") ||
+                    windowTitle.contains("notification") || windowTitle.contains("heads-up")
+
+                if (isTopWindow && isSystemUiOrNotif && wRect.width() >= screenWidth * 0.4f) {
+                    Log.i(TAG, "Heads-Up Notification (HUN) banner detected at top ($windowPkg, bounds=$wRect). Dismissing...")
+                    if (windowRoot != null && clickDismissButton(windowRoot, service)) {
+                        clearedSomething = true
+                    } else {
+                        // Fling HUN away using an upward swipe gesture and horizontal swipe
+                        AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.12f, endYRatio = 0.01f, durationMs = 100L)
+                        AccessibilityNodeUtils.performHorizontalSwipe(service, startXRatio = 0.20f, endXRatio = 0.95f, yRatio = 0.08f, durationMs = 150L)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE)
+                        }
+                        clearedSomething = true
+                    }
+                    continue
+                }
+
+                // 2b. Caller ID overlays (Truecaller etc.) in window list
+                val isCallerId = windowPkg.contains("truecaller") || windowPkg.contains("callapp") ||
+                    windowPkg.contains("hiya") || windowPkg.contains("callerid") ||
+                    windowTitle.contains("truecaller") || windowTitle.contains("callapp") ||
+                    windowTitle.contains("hiya") || windowTitle.contains("callerid")
+                if (isCallerId) {
+                    Log.i(TAG, "Caller ID overlay window detected: $windowPkg / $windowTitle (bounds=$wRect)")
+                    if (windowRoot != null && clickDismissButton(windowRoot, service)) {
+                        clearedSomething = true
+                    } else {
+                        val tapX = wRect.right - (wRect.width() * 0.08f)
+                        val tapY = wRect.top + (wRect.height() * 0.12f)
+                        AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                        AccessibilityNodeUtils.performHorizontalSwipe(
+                            service,
+                            startXRatio = 0.25f,
+                            endXRatio = 0.95f,
+                            yRatio = (wRect.centerY().toFloat() / screenHeight).coerceIn(0.05f, 0.95f)
+                        )
+                        clearedSomething = true
+                    }
+                    continue
+                }
+
+                // 2c. Generic large floating overlays
+                val isOverlayType = windowType == AccessibilityWindowInfo.TYPE_SYSTEM ||
+                    windowType == AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY
+
+                val isSafeSystemPkg = windowPkg.contains("launcher") || windowPkg.contains("home") ||
+                    windowPkg.contains("systemui") || windowPkg.contains("settings") ||
+                    windowPkg.contains("inputmethod") || windowPkg.contains("gboard") ||
+                    windowPkg.contains("permission") || windowPkg.contains("installer") ||
+                    windowPkg == "android" || com.jmd.superapp.core.OemBrandHelper.isSafeSystemOverlay(windowPkg)
+
+                val isLargeOverlay = wRect.width() > screenWidth * 0.40f && wRect.height() > screenHeight * 0.15f
+                val coversInteractionArea = wRect.bottom > screenHeight * 0.25f
+
+                if (isOverlayType && isLargeOverlay && coversInteractionArea &&
+                    windowPkg.isNotBlank() &&
+                    !isSafeSystemPkg &&
+                    !windowPkg.contains(targetPkg, ignoreCase = true) &&
+                    !windowPkg.contains("w4b", ignoreCase = true) &&
+                    windowPkg != service.packageName.lowercase()
+                ) {
+                    Log.i(TAG, "Large floating overlay detected from package: $windowPkg (type=$windowType, bounds=$wRect)")
+                    if (windowRoot != null && clickDismissButton(windowRoot, service)) {
+                        Log.i(TAG, "Dismissed overlay button in $windowPkg")
+                        clearedSomething = true
+                    } else {
+                        val tapX = wRect.right - (wRect.width() * 0.08f)
+                        val tapY = wRect.top + (wRect.height() * 0.12f)
+                        AccessibilityNodeUtils.dispatchPhysicalTap(service, tapX, tapY)
+                        AccessibilityNodeUtils.performHorizontalSwipe(
+                            service,
+                            startXRatio = 0.25f,
+                            endXRatio = 0.95f,
+                            yRatio = (wRect.centerY().toFloat() / screenHeight).coerceIn(0.05f, 0.95f)
+                        )
+                        clearedSomething = true
+                    }
+                }
+            }
+
+            // 3. Clear any visible dismiss/allow dialog buttons on active root (strictly non-system and non-target)
+            val rootPkg = root?.packageName?.toString()?.lowercase().orEmpty()
+            val isRootSafeSystem = rootPkg.contains("launcher") || rootPkg.contains("home") ||
+                rootPkg.contains("systemui") || rootPkg.contains("settings") ||
+                rootPkg.contains("inputmethod") || rootPkg.contains("gboard") ||
+                rootPkg.contains("permission") || rootPkg.contains("installer") ||
+                rootPkg == "android"
+            val isTargetApp = rootPkg.contains(targetPkg, ignoreCase = true) ||
+                rootPkg.contains("whatsapp", ignoreCase = true)
+
+            if (root != null && !isRootSafeSystem && !isTargetApp && clickDismissButton(root, service)) {
+                clearedSomething = true
+            }
+
+            return clearedSomething
+        } catch (t: Throwable) {
+            Log.e(TAG, "Error during clearOverlaysAndNotificationShade", t)
+            return false
+        }
+    }
+
+    /**
+     * What it is:
+     * Executes a single synchronous pass over the view hierarchy to find and click any visible dismiss, OK, accept, close, or permission dialog buttons.
+     *
+     * What it does:
+     * Executes [clickDismissButton] logic in accordance with system and security invariants.
+     *
+     * Linked with:
+     * - Architecture: [WhatsappPopupShield], [clickDismissButton]
+     * @param root The root [AccessibilityNodeInfo] representing the active window or popup hierarchy.
+     * @param service The active [AccessibilityService] used to perform the element click action.
+     * @return `true` if a matching dismissal button was clicked; `false` otherwise.
+     */
+    fun clickDismissButton(root: AccessibilityNodeInfo, service: AccessibilityService): Boolean {
+        val queue = ArrayDeque<AccessibilityNodeInfo>()
+        queue.add(root)
+        var scanned = 0
+        while (queue.isNotEmpty() && scanned < 80) {
+            val curr = queue.removeFirst()
+            scanned++
+            val txt = curr.text?.toString()?.lowercase().orEmpty()
+            val desc = curr.contentDescription?.toString()?.lowercase().orEmpty()
+            val id = curr.viewIdResourceName?.lowercase().orEmpty()
+            val pkg = curr.packageName?.toString()?.lowercase().orEmpty()
+
+            // Strictly protect system auto-rotate, quick settings tiles, and system UI controls
+            if (pkg.contains("systemui") || pkg.contains("settings") ||
+                txt.contains("rotate") || txt.contains("rotation") ||
+                desc.contains("rotate") || desc.contains("rotation") ||
+                id.contains("rotate") || id.contains("rotation") || id.contains("tile") ||
+                id.contains("close_keyboard") || id.contains("keyboard") || id.contains("composer")
+            ) {
+                continue
+            }
+
+            val isCallerIdPkg = pkg.contains("truecaller") || pkg.contains("callapp") || pkg.contains("callerid")
+            val isDialogButton = curr.isClickable &&
+                (dismissKeywords.any { txt == it || desc == it || txt.startsWith(it) || desc.startsWith(it) } ||
+                    id.endsWith(":id/btn_close") || id.endsWith(":id/close_btn") ||
+                    id.endsWith(":id/close") || id.endsWith(":id/iv_close") ||
+                    id.endsWith(":id/button_close") || id.endsWith(":id/dialog_close") ||
+                    id.endsWith(":id/dismiss") || id.endsWith(":id/btn_dismiss") ||
+                    id.endsWith(":id/caller_id_close") || id.endsWith(":id/floating_close") ||
+                    id.contains("close") || id.contains("dismiss") || id.contains("cancel") ||
+                    (isCallerIdPkg && (curr.className?.contains("Image") == true || curr.className?.contains("Button") == true)))
+            if (isDialogButton && AccessibilityNodeUtils.clickElement(curr, service)) {
+                Log.d(TAG, "PopupShield dismissed button: $txt / $desc")
+                return true
+            }
+            for (i in 0 until curr.childCount) {
+                curr.getChild(i)?.let { queue.add(it) }
+            }
+        }
+        return false
+    }
+}

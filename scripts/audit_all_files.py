@@ -1,23 +1,19 @@
 import os
 import re
 import sys
+import xml.etree.ElementTree as ET
 
 def run_comprehensive_audit():
     print("=" * 70)
-    print("STARTING COMPREHENSIVE WHOLE-PROJECT REPOSITORY AUDIT")
+    print("STARTING COMPREHENSIVE WHOLE-PROJECT REPOSITORY AUDIT (SUPERAPP)")
     print("=" * 70)
 
     prohibited_re = re.compile(r'\b(automation|automate|automating|automated)\b', re.I)
-    reminder_re = re.compile(r'\breminder(s)?\b', re.I)
-    supersms_wa_re = re.compile(r'\b(whatsapp|w4b|whatsappbusiness)\b', re.I)
-    supersms_a11y_re = re.compile(r'\b(accessibility|device_admin|deviceadmin)\b', re.I)
-    superwa_sms_re = re.compile(r'\b(SmsManager|SEND_SMS|RECEIVE_SMS|READ_SMS|CALL_PHONE)\b')
+    direct_window_compat_re = re.compile(r'(?<!compat\.)(?<!fun )\b(setShowWhenLocked|setTurnScreenOn)\s*\(', re.I)
 
     stats = {
-        'supersms_kt': 0,
-        'supersms_xml': 0,
-        'superwa_kt': 0,
-        'superwa_xml': 0,
+        'app_kt': 0,
+        'app_xml': 0,
         'scripts': 0,
         'gradle_files': 0
     }
@@ -25,7 +21,7 @@ def run_comprehensive_audit():
     issues = []
 
     for root, dirs, files in os.walk('.'):
-        if any(skip in root for skip in ['.git', '.gradle', 'build', '.idea', 'node_modules', '.freebuff', '.kotlin', '.serena', '.vscode']):
+        if any(skip in root for skip in ['.git', '.gradle', 'build', '.idea', 'node_modules', '.freebuff', '.kotlin', '.serena', '.vscode', 'supersms', 'superwa']):
             continue
         for f in files:
             p = os.path.join(root, f)
@@ -34,60 +30,61 @@ def run_comprehensive_audit():
             is_kt = f.endswith('.kt')
             is_xml = f.endswith('.xml')
             is_py = f.endswith('.py')
+            is_js = f.endswith('.js')
             is_gradle = f.endswith(('.gradle', '.gradle.kts'))
 
-            if not (is_kt or is_xml or is_py or is_gradle):
+            if not (is_kt or is_xml or is_py or is_js or is_gradle):
                 continue
 
-            if rel.startswith('supersms'):
-                if is_kt: stats['supersms_kt'] += 1
-                elif is_xml: stats['supersms_xml'] += 1
-            elif rel.startswith('superwa'):
-                if is_kt: stats['superwa_kt'] += 1
-                elif is_xml: stats['superwa_xml'] += 1
+            if rel.startswith('app'):
+                if is_kt: stats['app_kt'] += 1
+                elif is_xml: stats['app_xml'] += 1
             elif rel.startswith('scripts'):
                 stats['scripts'] += 1
             if is_gradle:
                 stats['gradle_files'] += 1
 
-            is_sms = rel.startswith('supersms')
-            is_wa = rel.startswith('superwa')
+            is_app = rel.startswith('app')
+
+            # 1. XML Parsing Validation
+            if is_xml:
+                try:
+                    ET.parse(p)
+                except ET.ParseError as pe:
+                    issues.append((rel, 0, "XML Syntax Parse Error", str(pe)))
+
+            # 2. Kotlin Package Verification
+            if is_kt:
+                expected_pkg_suffix = os.path.dirname(rel).replace('\\', '/').split('/src/main/java/')[-1].replace('/', '.')
+                try:
+                    with open(p, 'r', encoding='utf-8') as fp:
+                        first_lines = [fp.readline() for _ in range(30)]
+                    pkg_line = next((l.strip() for l in first_lines if l.strip().startswith('package ')), None)
+                    if pkg_line:
+                        actual_pkg = pkg_line.replace('package ', '').strip()
+                        if actual_pkg != expected_pkg_suffix:
+                            issues.append((rel, 1, f"Package Mismatch", f"Declared: '{actual_pkg}', expected: '{expected_pkg_suffix}'"))
+                except Exception as e:
+                    issues.append((rel, 0, "Kotlin Read Error", str(e)))
 
             try:
                 with open(p, 'r', encoding='utf-8', errors='ignore') as fp:
                     for line_no, line in enumerate(fp, 1):
-                        # 1. Prohibited policy words (only in code modules, exclude audit scripts checking for them)
-                        if (is_sms or is_wa) and prohibited_re.search(line):
+                        # 3. Prohibited policy words in application module
+                        if is_app and prohibited_re.search(line):
                             m = prohibited_re.search(line)
                             issues.append((rel, line_no, f"Prohibited word '{m.group(0)}'", line.strip()))
 
-                        # 2. Legacy reminders
-                        if (is_sms or is_wa) and reminder_re.search(line):
-                            m = reminder_re.search(line)
-                            issues.append((rel, line_no, f"Reminder match '{m.group(0)}'", line.strip()))
-
-                        # 3. SuperSMS leaks (WhatsApp, A11y, DeviceAdmin)
-                        if is_sms:
-                            m_wa = supersms_wa_re.search(line)
-                            if m_wa:
-                                issues.append((rel, line_no, f"SuperSMS WhatsApp leak '{m_wa.group(0)}'", line.strip()))
-                            m_a11y = supersms_a11y_re.search(line)
-                            if m_a11y:
-                                issues.append((rel, line_no, f"SuperSMS A11y leak '{m_a11y.group(0)}'", line.strip()))
-
-                        # 4. SuperWA leaks (SmsManager, SMS permissions, CALL_PHONE)
-                        if is_wa:
-                            m_sms = superwa_sms_re.search(line)
-                            if m_sms:
-                                issues.append((rel, line_no, f"SuperWA Telephony/Dialer leak '{m_sms.group(0)}'", line.strip()))
+                        # 4. Direct window methods bypassing ActivityWindowCompat
+                        if is_app and is_kt and not rel.endswith('ActivityWindowCompat.kt'):
+                            if direct_window_compat_re.search(line):
+                                issues.append((rel, line_no, "Direct Window Method (Use ActivityWindowCompat)", line.strip()))
             except Exception as e:
                 issues.append((rel, 0, "Read Error", str(e)))
 
     print("\nFile Statistics Scanned:")
-    print(f"  - SuperSMS Kotlin Files: {stats['supersms_kt']}")
-    print(f"  - SuperSMS XML Files:    {stats['supersms_xml']}")
-    print(f"  - SuperWA Kotlin Files:  {stats['superwa_kt']}")
-    print(f"  - SuperWA XML Files:     {stats['superwa_xml']}")
+    print(f"  - App Kotlin Files:      {stats['app_kt']}")
+    print(f"  - App XML Files:         {stats['app_xml']}")
     print(f"  - Tooling Scripts:       {stats['scripts']}")
     print(f"  - Gradle Build Files:    {stats['gradle_files']}")
     print(f"  - TOTAL FILES SCANNED:   {sum(stats.values())}")

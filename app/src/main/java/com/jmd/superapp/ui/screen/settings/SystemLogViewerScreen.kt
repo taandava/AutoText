@@ -1,0 +1,1111 @@
+/**
+ * Package: com.jmd.superapp.ui.screen.settings
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [SystemLogViewerScreen].
+ *
+ * What it does:
+ * Provides core logic, component interfaces, and subsystem bindings for SystemLogViewerScreen.
+ *
+ * Linked With:
+ * - UI Screens & Components: [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.graphics.Color], [androidx.compose.ui.platform.LocalLocale]
+ * - Core Security & Utilities: [android.content.ClipboardManager], [com.jmd.superapp.compat.ClipboardCompat], [com.jmd.superapp.core.AppFileLogger], [com.jmd.superapp.core.showAppToast]
+ * - Android Framework & Jetpack: [android.content.ClipData], [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.horizontalScroll], [androidx.compose.foundation.lazy.LazyColumn]
+ */
+
+package com.jmd.superapp.ui.screen.settings
+
+import androidx.compose.material.icons.automirrored.filled.*
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.jmd.superapp.compat.ClipboardCompat
+import com.jmd.superapp.core.AppFileLogger
+import com.jmd.superapp.core.showAppToast
+import com.jmd.superapp.ui.components.AppCard
+import com.jmd.superapp.ui.components.AppSubScreenHeader
+import com.jmd.superapp.ui.components.AppChip
+import com.jmd.superapp.ui.theme.AppDesignTokens
+
+/**
+ * What it is:
+ * Structured log models for rich execution-history style display.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [ParsedSystemLogItem].
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [ParsedSystemLogItem]
+ */
+sealed class ParsedSystemLogItem {
+    abstract val rawText: String
+    abstract val timestamp: String
+    /**
+     * What it is:
+     * Component definition for [ActionLog].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for ActionLog.
+     *
+     * Linked with:
+     * - Component: [SystemLogViewerScreen]
+     */
+
+    data class ActionLog(
+        override val timestamp: String,
+        val level: String,
+        val tag: String,
+        val message: String,
+        val details: String = "",
+        override val rawText: String
+    ) : ParsedSystemLogItem()
+    /**
+     * What it is:
+     * Component definition for [LedgerLog].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for LedgerLog.
+     *
+     * Linked with:
+     * - Component: [SystemLogViewerScreen]
+     */
+
+    data class LedgerLog(
+        override val timestamp: String,
+        val campaignId: String,
+        val channel: String,
+        val recipientName: String,
+        val recipientPhone: String,
+        val status: String,
+        val snippet: String,
+        val attempt: String,
+        val details: String,
+        override val rawText: String
+    ) : ParsedSystemLogItem()
+    /**
+     * What it is:
+     * Component definition for [ErrorLog].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for ErrorLog.
+     *
+     * Linked with:
+     * - Component: [SystemLogViewerScreen]
+     */
+
+    data class ErrorLog(
+        override val timestamp: String,
+        val tag: String,
+        val message: String,
+        val stackTrace: String = "",
+        override val rawText: String
+    ) : ParsedSystemLogItem()
+    /**
+     * What it is:
+     * Component definition for [RawLine].
+     *
+     * What it does:
+     * Provides domain logic and lifecycle management for RawLine.
+     *
+     * Linked with:
+     * - Component: [SystemLogViewerScreen]
+     */
+
+    data class RawLine(
+        override val timestamp: String = "",
+        override val rawText: String
+    ) : ParsedSystemLogItem()
+}
+
+/**
+ * What it is:
+ * Modernized Diagnostic Log Reader rendering Actions, Task Batch Ledger, and Errors formatted cleanly with Material 3 Expressive cards, chips, and level badges like Execution History.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [SystemLogViewerView] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [SystemLogViewerView]
+ */
+@Composable
+fun SystemLogViewerView(
+    context: Context,
+    onBack: () -> Unit
+) {
+    var selectedTab by remember { mutableIntStateOf(1) } // 1: Actions & Exec, 0: Task Batch Ledger, 2: Errors & Traces
+    var searchQuery by remember { mutableStateOf("") }
+    var levelFilter by remember { mutableStateOf("ALL") }
+    var reloadTrigger by remember { mutableIntStateOf(0) }
+    val currentLocale = LocalConfiguration.current.locales[0]
+
+    val ledgerText = remember(reloadTrigger) { AppFileLogger.readLedgerFile(context, 1500) }
+    val execText = remember(reloadTrigger) { AppFileLogger.readLogFile(context, 1500) }
+    val errorText = remember(reloadTrigger) { AppFileLogger.readErrorLog(context, 500) }
+
+    val (activeTitle, activeFile, activeContent) = when (selectedTab) {
+        0 -> Triple("Task Batch Activity Ledger", AppFileLogger.getLedgerFile(context), ledgerText)
+        1 -> Triple("Device Actions & System Log", AppFileLogger.getLogFile(context), execText)
+        else -> Triple("Diagnostic Errors Log", AppFileLogger.getErrorFile(context), errorText)
+    }
+
+    val fileSizeKb = ((activeFile?.length() ?: 0L) / 1024.0)
+
+    // Parse the active log content into structured entries
+    val parsedItems = remember(activeContent, selectedTab) {
+        if (activeContent.isBlank()) return@remember emptyList()
+        val lines = activeContent.lines().filter { it.isNotBlank() }
+
+        when (selectedTab) {
+            1 -> {
+                // Actions & Exec Log: Format is "[$timestamp] [$level] [$tag] $message"
+                val execRegex = Regex("""^\[(.*?)\]\s+\[(.*?)\]\s+\[(.*?)\]\s+(.*)$""")
+                lines.map { line ->
+                    val match = execRegex.find(line.trim())
+                    if (match != null) {
+                        val (ts, lvl, tag, msg) = match.destructured
+                        ParsedSystemLogItem.ActionLog(
+                            timestamp = ts.trim(),
+                            level = lvl.trim().uppercase(),
+                            tag = tag.trim(),
+                            message = msg.trim(),
+                            rawText = line
+                        )
+                    } else {
+                        ParsedSystemLogItem.RawLine(rawText = line)
+                    }
+                }.reversed() // Show newest on top
+            }
+            0 -> {
+                // Task Batch Ledger: CSV format
+                // "Timestamp,CampaignId,Channel,RecipientName,RecipientPhone,Status,MessageSnippet,Attempt,Details"
+                lines.mapNotNull { line ->
+                    if (line.startsWith("Timestamp,", ignoreCase = true)) return@mapNotNull null
+                    try {
+                        val parts = parseCsvLine(line)
+                        if (parts.size >= 6) {
+                            ParsedSystemLogItem.LedgerLog(
+                                timestamp = parts.getOrElse(0) { "" },
+                                campaignId = parts.getOrElse(1) { "" },
+                                channel = parts.getOrElse(2) { "" },
+                                recipientName = parts.getOrElse(3) { "" },
+                                recipientPhone = parts.getOrElse(4) { "" },
+                                status = parts.getOrElse(5) { "UNKNOWN" },
+                                snippet = parts.getOrElse(6) { "" },
+                                attempt = parts.getOrElse(7) { "1" },
+                                details = parts.getOrElse(8) { "" },
+                                rawText = line
+                            )
+                        } else {
+                            ParsedSystemLogItem.RawLine(rawText = line)
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.w("SystemLogViewer", "Failed to parse CSV log line: ${e.message}")
+                        ParsedSystemLogItem.RawLine(rawText = line)
+                    }
+                }.reversed() // Show newest on top
+            }
+            else -> {
+                // Diagnostic Errors: Format is "[$timestamp] [$tag] $message" or stack traces
+                val errRegex = Regex("""^\[(.*?)\]\s+\[(.*?)\]\s+(.*)$""")
+                val result = mutableListOf<ParsedSystemLogItem>()
+                var currentError: ParsedSystemLogItem.ErrorLog? = null
+
+                lines.forEach { line ->
+                    val match = errRegex.find(line.trim())
+                    if (match != null) {
+                        currentError?.let { result.add(it) }
+                        val (ts, tag, msg) = match.destructured
+                        currentError = ParsedSystemLogItem.ErrorLog(
+                            timestamp = ts.trim(),
+                            tag = tag.trim(),
+                            message = msg.trim(),
+                            stackTrace = "",
+                            rawText = line
+                        )
+                    } else {
+                        val err = currentError
+                        if (err != null) {
+                            val st = if (err.stackTrace.isEmpty()) line else "${err.stackTrace}\n$line"
+                            currentError = err.copy(stackTrace = st)
+                        } else {
+                            result.add(ParsedSystemLogItem.RawLine(rawText = line))
+                        }
+                    }
+                }
+                currentError?.let { result.add(it) }
+                result.reversed() // Show newest on top
+            }
+        }
+    }
+
+    // Filter items based on searchQuery and levelFilter
+    val filteredItems = remember(parsedItems, searchQuery, levelFilter, selectedTab) {
+        var items = parsedItems
+        if (selectedTab == 1 && levelFilter != "ALL") {
+            items = items.filter { item ->
+                when (item) {
+                    is ParsedSystemLogItem.ActionLog -> item.level.equals(levelFilter, ignoreCase = true)
+                    else -> true
+                }
+            }
+        } else if (selectedTab == 0 && levelFilter != "ALL") {
+            items = items.filter { item ->
+                when (item) {
+                    is ParsedSystemLogItem.LedgerLog -> {
+                        when (levelFilter) {
+                            "SUCCESS" -> item.status.equals("SUCCESS", ignoreCase = true)
+                            "QUEUED" -> item.status.equals("QUEUED", ignoreCase = true)
+                            "FAILED" -> item.status.contains("FAIL", ignoreCase = true) || item.status.contains("INVALID", ignoreCase = true)
+                            else -> true
+                        }
+                    }
+                    else -> true
+                }
+            }
+        }
+
+        if (searchQuery.isNotBlank()) {
+            val q = searchQuery.trim().lowercase()
+            items = items.filter { item ->
+                when (item) {
+                    is ParsedSystemLogItem.ActionLog ->
+                        item.message.lowercase().contains(q) || item.tag.lowercase().contains(q) || item.timestamp.contains(q)
+                    is ParsedSystemLogItem.LedgerLog ->
+                        item.recipientPhone.contains(q) || item.recipientName.lowercase().contains(q) ||
+                                item.channel.lowercase().contains(q) || item.status.lowercase().contains(q) ||
+                                item.details.lowercase().contains(q) || item.snippet.lowercase().contains(q)
+                    is ParsedSystemLogItem.ErrorLog ->
+                        item.message.lowercase().contains(q) || item.tag.lowercase().contains(q) || item.stackTrace.lowercase().contains(q)
+                    is ParsedSystemLogItem.RawLine ->
+                        item.rawText.lowercase().contains(q)
+                }
+            }
+        }
+        items
+    }
+
+    Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        topBar = {
+            AppSubScreenHeader(
+                title = activeTitle,
+                subtitle = "${filteredItems.size} Records",
+                onBack = onBack,
+                actions = {
+                    IconButton(onClick = {
+                        reloadTrigger++
+                        context.showAppToast("Logs refreshed")
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Refresh,
+                            contentDescription = "Refresh",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                    IconButton(onClick = {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, "Super Diagnostic Report - $activeTitle")
+                            putExtra(Intent.EXTRA_TEXT, activeContent)
+                        }
+                        context.startActivity(Intent.createChooser(shareIntent, "Share $activeTitle"))
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Share,
+                            contentDescription = "Share",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                    IconButton(onClick = {
+                        val allIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, "Super Complete Ledger & Diagnostic Logs Bundle")
+                            putExtra(Intent.EXTRA_TEXT, AppFileLogger.exportAllLogsSummary(context))
+                        }
+                        context.startActivity(Intent.createChooser(allIntent, "Export Complete Diagnostic Bundle"))
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Archive,
+                            contentDescription = "Export All",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                    IconButton(onClick = {
+                        AppFileLogger.clearAllLogs(context)
+                        reloadTrigger++
+                        context.showAppToast("Logs cleared")
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Clear",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            )
+        },
+        containerColor = AppDesignTokens.VoidBackground
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            // Segmented Log Tabs
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                /**
+                 * What it is:
+                 * Data entity or component [LogTabItem].
+                 *
+                 * What it does:
+                 * Encapsulates state, business rules, and lifecycle for LogTabItem.
+                 *
+                 * Linked with:
+                 * - Component: [SystemLogViewerScreen]
+                 */
+                data class LogTabItem(val index: Int, val title: String, val icon: androidx.compose.ui.graphics.vector.ImageVector, val accent: Color)
+                val tabs = listOf(
+                    LogTabItem(1, "Actions & Exec", Icons.Filled.Bolt, MaterialTheme.colorScheme.primary),
+                    LogTabItem(0, "Batch Ledger", Icons.AutoMirrored.Filled.ListAlt, MaterialTheme.colorScheme.tertiary),
+                    LogTabItem(2, "Errors & Traces", Icons.Filled.ErrorOutline, MaterialTheme.colorScheme.error)
+                )
+                tabs.forEach { tab ->
+                    val isSelected = selectedTab == tab.index
+                    Surface(
+                        onClick = {
+                            selectedTab = tab.index
+                            levelFilter = "ALL"
+                        },
+                        shape = AppDesignTokens.ShapePill,
+                        color = if (isSelected) tab.accent.copy(alpha = 0.2f) else MaterialTheme.colorScheme.surfaceContainerHigh,
+                        border = BorderStroke(
+                            1.dp,
+                            if (isSelected) tab.accent else MaterialTheme.colorScheme.outlineVariant
+                        ),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(vertical = 7.dp, horizontal = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = tab.icon,
+                                contentDescription = null,
+                                tint = if (isSelected) tab.accent else MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = tab.title,
+                                fontSize = 11.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isSelected) tab.accent else MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Quick Filter Pills (for Actions or Ledger)
+            if (selectedTab == 1) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 2.dp)
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    /**
+                     * What it is:
+                     * Data entity or component [LevelFilterItem].
+                     *
+                     * What it does:
+                     * Encapsulates state, business rules, and lifecycle for LevelFilterItem.
+                     *
+                     * Linked with:
+                     * - Component: [SystemLogViewerScreen]
+                     */
+                    data class LevelFilterItem(val key: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector?)
+                    listOf(
+                        LevelFilterItem("ALL", "All", null),
+                        LevelFilterItem("ACTION", "Action", Icons.Filled.Bolt),
+                        LevelFilterItem("INFO", "Info", Icons.Filled.Info),
+                        LevelFilterItem("WARN", "Warn", Icons.Filled.Warning),
+                        LevelFilterItem("ERROR", "Error", Icons.Filled.Error)
+                    ).forEach { item ->
+                        AppChip(
+                            selected = levelFilter == item.key,
+                            onClick = { levelFilter = item.key },
+                            label = item.label,
+                            icon = item.icon
+                        )
+                    }
+                }
+            } else if (selectedTab == 0) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 2.dp)
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    /**
+                     * What it is:
+                     * Data entity or component [StatusFilterItem].
+                     *
+                     * What it does:
+                     * Encapsulates state, business rules, and lifecycle for StatusFilterItem.
+                     *
+                     * Linked with:
+                     * - Component: [SystemLogViewerScreen]
+                     */
+                    data class StatusFilterItem(val key: String, val label: String, val icon: androidx.compose.ui.graphics.vector.ImageVector?)
+                    listOf(
+                        StatusFilterItem("ALL", "All", null),
+                        StatusFilterItem("SUCCESS", "Success", Icons.Filled.CheckCircle),
+                        StatusFilterItem("QUEUED", "Queued", Icons.Filled.HourglassTop),
+                        StatusFilterItem("FAILED", "Failed", Icons.Filled.Cancel)
+                    ).forEach { item ->
+                        AppChip(
+                            selected = levelFilter == item.key,
+                            onClick = { levelFilter = item.key },
+                            label = item.label,
+                            icon = item.icon
+                        )
+                    }
+                }
+            }
+
+            // Search Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = {
+                        Text(
+                            text = if (selectedTab == 0) "Filter phone, taskBatch, status..." else "Filter tag, text, error...",
+                            fontSize = 11.5.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(start = 6.dp).size(16.dp)
+                        )
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = "Clear search",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    shape = AppDesignTokens.ShapePill,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(42.dp)
+                )
+
+                Surface(
+                    shape = AppDesignTokens.ShapePill,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    Text(
+                        text = "${filteredItems.size}",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                    )
+                }
+            }
+
+            // Main Content: LazyColumn with Card Layout
+            if (filteredItems.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = if (selectedTab == 2) Icons.Filled.Shield else Icons.AutoMirrored.Filled.Article,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = if (searchQuery.isNotBlank() || levelFilter != "ALL") {
+                                "No logs match current filter criteria"
+                            } else if (selectedTab == 2) {
+                                "No diagnostic errors logged. System is operating normally!"
+                            } else if (selectedTab == 0) {
+                                "No taskBatch ledger entries recorded yet."
+                            } else {
+                                "No execution records logged yet."
+                            },
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.5.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 12.dp),
+                    contentPadding = PaddingValues(
+                        top = 4.dp,
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 24.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    itemsIndexed(filteredItems, key = { index, item -> "$selectedTab-$index-${item.timestamp}" }) { _, item ->
+                        when (item) {
+                            is ParsedSystemLogItem.ActionLog -> ActionLogCard(
+                                log = item,
+                                onCopy = {
+                                    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                    ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("System Log", item.rawText))
+                                    context.showAppToast("Log copied to clipboard")
+                                }
+                            )
+                            is ParsedSystemLogItem.LedgerLog -> LedgerLogCard(
+                                log = item,
+                                onCopy = {
+                                    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                    ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("Ledger Log", item.rawText))
+                                    context.showAppToast("Ledger entry copied")
+                                }
+                            )
+                            is ParsedSystemLogItem.ErrorLog -> ErrorLogCard(
+                                log = item,
+                                onCopy = {
+                                    val full = "${item.rawText}\n${item.stackTrace}"
+                                    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                    ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("Error Log", full))
+                                    context.showAppToast("Error details copied")
+                                }
+                            )
+                            is ParsedSystemLogItem.RawLine -> RawLogCard(
+                                line = item.rawText,
+                                onCopy = {
+                                    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                    ClipboardCompat.setPrimaryClip(cm, ClipData.newPlainText("Log Line", item.rawText))
+                                    context.showAppToast("Line copied")
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * What it is:
+ * Card rendering an Action / System log entry with badge, tag, timestamp, and message.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [ActionLogCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [ActionLogCard]
+ */
+@Composable
+private fun ActionLogCard(
+    log: ParsedSystemLogItem.ActionLog,
+    onCopy: () -> Unit
+) {
+    val (badgeColor, badgeIcon) = when (log.level) {
+        "ACTION" -> Pair(MaterialTheme.colorScheme.primary, Icons.Filled.Bolt)
+        "INFO" -> Pair(MaterialTheme.colorScheme.secondary, Icons.Filled.Info)
+        "WARN" -> Pair(Color(0xFFEAB308), Icons.Filled.Warning)
+        "ERROR" -> Pair(MaterialTheme.colorScheme.error, Icons.Filled.Error)
+        "SUCCESS" -> Pair(MaterialTheme.colorScheme.tertiary, Icons.Filled.CheckCircle)
+        else -> Pair(MaterialTheme.colorScheme.onSurfaceVariant, Icons.Filled.Description)
+    }
+
+    AppCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onCopy
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Level badge
+            Surface(
+                shape = AppDesignTokens.ShapePill,
+                color = badgeColor.copy(alpha = 0.16f),
+                border = BorderStroke(0.75.dp, badgeColor.copy(alpha = 0.4f))
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = badgeIcon,
+                        contentDescription = null,
+                        tint = badgeColor,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(
+                        text = log.level,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = badgeColor
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(6.dp))
+
+            // Tag chip
+            Surface(
+                shape = AppDesignTokens.ShapePill,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
+            ) {
+                Text(
+                    text = log.tag,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Timestamp chip
+            Text(
+                text = log.timestamp,
+                fontSize = 10.sp,
+                fontFamily = FontFamily.Monospace,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // Message text
+        Text(
+            text = log.message,
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            lineHeight = 16.5.sp,
+            fontFamily = FontFamily.SansSerif
+        )
+    }
+}
+
+/**
+ * What it is:
+ * Card rendering a Task Batch Ledger entry with recipient, channel, status pill, and details.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [LedgerLogCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [LedgerLogCard]
+ */
+@Composable
+private fun LedgerLogCard(
+    log: ParsedSystemLogItem.LedgerLog,
+    onCopy: () -> Unit
+) {
+    val isSuccess = log.status.equals("SUCCESS", ignoreCase = true) || log.status.equals("DISPATCHED", ignoreCase = true)
+    val isQueued = log.status.equals("QUEUED", ignoreCase = true)
+    val (statusColor, statusIcon) = when {
+        isSuccess -> Pair(MaterialTheme.colorScheme.tertiary, Icons.Filled.CheckCircle)
+        isQueued -> Pair(Color(0xFFEAB308), Icons.Filled.HourglassTop)
+        else -> Pair(MaterialTheme.colorScheme.error, Icons.Filled.Cancel)
+    }
+
+    val (channelIcon, channelColor) = when {
+        log.channel.contains("SMS", ignoreCase = true) -> Pair(Icons.AutoMirrored.Filled.Message, MaterialTheme.colorScheme.secondary)
+        log.channel.contains("BUSINESS", ignoreCase = true) -> Pair(Icons.Filled.BusinessCenter, MaterialTheme.colorScheme.primary)
+        else -> Pair(Icons.AutoMirrored.Filled.Chat, MaterialTheme.colorScheme.tertiary)
+    }
+
+    AppCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onCopy
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = statusIcon,
+                contentDescription = log.status,
+                tint = statusColor,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (log.recipientName.isNotBlank() && log.recipientName != log.recipientPhone) {
+                            "${log.recipientName} (${log.recipientPhone})"
+                        } else {
+                            log.recipientPhone
+                        },
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.5.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    // Channel Pill
+                    Surface(
+                        shape = AppDesignTokens.ShapePill,
+                        color = channelColor.copy(alpha = 0.16f),
+                        border = BorderStroke(0.75.dp, channelColor.copy(alpha = 0.35f))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = channelIcon,
+                                contentDescription = null,
+                                tint = channelColor,
+                                modifier = Modifier.size(11.dp)
+                            )
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(
+                                text = log.channel,
+                                fontSize = 9.5.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = channelColor
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Status: ${log.status} • Attempt ${log.attempt}",
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = statusColor
+                    )
+
+                    Text(
+                        text = log.timestamp,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                if (log.snippet.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = "“${log.snippet}”",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                if (log.details.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = log.details,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * What it is:
+ * Card rendering an Error entry with collapsible stack trace and copy capability.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [ErrorLogCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [ErrorLogCard]
+ */
+@Composable
+private fun ErrorLogCard(
+    log: ParsedSystemLogItem.ErrorLog,
+    onCopy: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    AppCard(
+        modifier = Modifier.fillMaxWidth(),
+        borderColor = MaterialTheme.colorScheme.error.copy(alpha = 0.4f),
+        onClick = { expanded = !expanded }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                shape = AppDesignTokens.ShapePill,
+                color = MaterialTheme.colorScheme.error.copy(alpha = 0.16f),
+                border = BorderStroke(0.75.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.4f))
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Error,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(
+                        text = "ERROR",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(6.dp))
+
+            Surface(
+                shape = AppDesignTokens.ShapePill,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
+            ) {
+                Text(
+                    text = log.tag,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = log.timestamp,
+                fontSize = 10.sp,
+                fontFamily = FontFamily.Monospace,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            text = log.message,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.error,
+            lineHeight = 16.sp
+        )
+
+        if (log.stackTrace.isNotBlank()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = if (expanded) "▼ Collapse stack trace" else "▶ Expand stack trace",
+                    fontSize = 10.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "Tap to toggle",
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            AnimatedVisibility(
+                visible = expanded,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                Surface(
+                    shape = AppDesignTokens.ShapeSmall,
+                    color = Color(0xFF0F172A),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp)
+                ) {
+                    Text(
+                        text = log.stackTrace,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        color = Color(0xFFF87171),
+                        modifier = Modifier.padding(8.dp),
+                        lineHeight = 14.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * What it is:
+ * Fallback card for raw unstructured log text.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [RawLogCard] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [RawLogCard]
+ */
+@Composable
+private fun RawLogCard(
+    line: String,
+    onCopy: () -> Unit
+) {
+    AppCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onCopy
+    ) {
+        Text(
+            text = line,
+            fontSize = 11.sp,
+            fontFamily = FontFamily.Monospace,
+            color = MaterialTheme.colorScheme.onSurface,
+            lineHeight = 15.sp
+        )
+    }
+}
+
+/**
+ * What it is:
+ * Standard CSV line parser supporting double-quoted fields.
+ *
+ * What it does:
+ * Executes [parseCsvLine] logic in accordance with system and security invariants.
+ *
+ * Linked with:
+ * - Architecture: [SystemLogViewerScreen], [parseCsvLine]
+ */
+private fun parseCsvLine(line: String): List<String> {
+    val result = mutableListOf<String>()
+    var cur = StringBuilder()
+    var inQuotes = false
+    var i = 0
+    while (i < line.length) {
+        val ch = line[i]
+        if (ch == '\"') {
+            if (inQuotes && i + 1 < line.length && line[i + 1] == '\"') {
+                cur.append('\"')
+                i++
+            } else {
+                inQuotes = !inQuotes
+            }
+        } else if (ch == ',' && !inQuotes) {
+            result.add(cur.toString().trim())
+            cur = StringBuilder()
+        } else {
+            cur.append(ch)
+        }
+        i++
+    }
+    result.add(cur.toString().trim())
+    return result
+}
+

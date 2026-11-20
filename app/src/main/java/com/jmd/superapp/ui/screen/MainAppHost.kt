@@ -1,0 +1,386 @@
+/**
+ * Package: com.jmd.superapp.ui.screen
+ * Module: Application Core Subsystem
+ *
+ * What it is:
+ * Architecture definition and implementation for [MainAppHost].
+ *
+ * What it does:
+ * Primary UI application host managing bottom navigation tabs, deep-link text ingestion, full-screen composer sheets, sequence studios, and task type selection dialogs.
+ *
+ * Linked With:
+ * - Models & Entities: [com.jmd.superapp.data.model.ChannelType], [com.jmd.superapp.data.model.ScheduledTask]
+ * - UI Screens & Components: [androidx.activity.compose.BackHandler], [androidx.compose.ui.Alignment], [androidx.compose.ui.Modifier], [androidx.compose.ui.draw.clip]
+ * - Core Security & Utilities: [com.jmd.superapp.data.prefs.PreferenceManager]
+ * - Android Framework & Jetpack: [androidx.compose.foundation.BorderStroke], [androidx.compose.foundation.background], [androidx.compose.foundation.border], [androidx.compose.foundation.clickable]
+ */
+
+package com.jmd.superapp.ui.screen
+
+import androidx.compose.material.icons.automirrored.filled.*
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.jmd.superapp.data.model.ChannelType
+import com.jmd.superapp.data.model.ScheduledTask
+import com.jmd.superapp.data.prefs.PreferenceManager
+import com.jmd.superapp.ui.components.SystemIndicatorResolver
+import com.jmd.superapp.ui.components.AppHeaderStatusIndicators
+import com.jmd.superapp.ui.screen.autoreply.AutoReplyScreen
+import com.jmd.superapp.ui.screen.campaign.DailyAutoSenderScreen
+import com.jmd.superapp.ui.screen.compose.ComposeTaskScreen
+import com.jmd.superapp.ui.screen.tasks.TasksListScreen
+import kotlinx.coroutines.delay
+import com.jmd.superapp.ui.components.SystemIndicator
+import kotlin.time.Duration.Companion.milliseconds
+
+/**
+ * What it is:
+ * Root Composable host managing top-level navigation, tab selection, and global overlay dialogs.
+ *
+ * What it does:
+ * Renders interactive Material 3 UI for [MainAppHost] adhering to application design invariants.
+ *
+ * Linked with:
+ * - Architecture: [MainAppHost], [MainAppHost]
+ * @param sharedText Incoming text received from external ACTION_SEND intents.
+ * @param onSharedTextConsumed Callback to reset consumed share intent data.
+ * @param onThemeChanged Callback invoked when user modifies color theme settings.
+ */
+@Composable
+fun MainAppHost(
+    sharedText: String? = null,
+    onSharedTextConsumed: () -> Unit = {},
+    onThemeChanged: (String) -> Unit = {},
+) {
+    val context = LocalContext.current
+    val repository = remember { com.jmd.superapp.data.repo.AppRepository(context) }
+    val prefs = remember { PreferenceManager(context) }
+
+    var currentTab by remember { mutableIntStateOf(0) }
+    var isComposing by remember { mutableStateOf(value = false) }
+    var initialComposeMessage by remember { mutableStateOf("") }
+    var editingTask by remember { mutableStateOf<ScheduledTask?>(null) }
+    var composeChannel by remember { mutableStateOf(ChannelType.SMS) }
+    var selectedDailyCampaignId by remember { mutableLongStateOf(0L) }
+    var isToolsSubSectionOpen by remember { mutableStateOf(value = false) }
+    var toolsInitialSubSection by remember { mutableStateOf("MENU") }
+    var isAutoReplyEditing by remember { mutableStateOf(value = false) }
+    var showTaskTypeDialog by remember { mutableStateOf(value = false) }
+
+    LaunchedEffect(sharedText) {
+        if (!sharedText.isNullOrBlank()) {
+            editingTask = null
+            initialComposeMessage = sharedText
+            composeChannel = ChannelType.SMS
+            isComposing = true
+            onSharedTextConsumed()
+        }
+    }
+
+    if (showTaskTypeDialog) {
+        TaskTypeSelectionDialog(
+            onDismiss = { showTaskTypeDialog = false },
+            onSelectChannel = { channel ->
+                showTaskTypeDialog = false
+                editingTask = null
+                composeChannel = channel
+                isComposing = true
+            },
+            onSelectDailyCampaign = {
+                showTaskTypeDialog = false
+                selectedDailyCampaignId = 0L
+                currentTab = 1
+            }
+        )
+    }
+
+    if (isComposing) {
+        ComposeTaskScreen(
+            initialChannel = editingTask?.channel ?: composeChannel,
+            initialMessage = initialComposeMessage,
+            taskToEdit = editingTask,
+            onTaskSaved = {
+                editingTask = null
+                initialComposeMessage = ""
+                isComposing = false
+            },
+            onDeleteTask = { task ->
+                repository.deleteTask(task.id)
+                com.jmd.superapp.scheduler.AlarmScheduler(context).cancelTask(task.id)
+                editingTask = null
+                initialComposeMessage = ""
+                isComposing = false
+            },
+            onCancel = {
+                editingTask = null
+                initialComposeMessage = ""
+                isComposing = false
+            }
+        )
+    } else {
+        val isToolsSubSection = (currentTab == 3 && isToolsSubSectionOpen)
+        val isCampaignDetail = (currentTab == 1 && selectedDailyCampaignId > 0L)
+        val shouldShowBars = !isToolsSubSection && !isCampaignDetail && !isAutoReplyEditing
+
+        BackHandler(enabled = currentTab != 0 && shouldShowBars) {
+            currentTab = 0
+        }
+
+        Scaffold(
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            topBar = {
+                if (shouldShowBars) {
+                    var systemIndicators by remember {
+                        mutableStateOf(emptyList<SystemIndicator>())
+                    }
+                    var resumeCounter by remember { mutableLongStateOf(0L) }
+                    val lifecycleOwner = LocalLifecycleOwner.current
+                    DisposableEffect(lifecycleOwner) {
+                        val observer = LifecycleEventObserver { _, event ->
+                            if (event == Lifecycle.Event.ON_RESUME) {
+                                resumeCounter++
+                            }
+                        }
+                        lifecycleOwner.lifecycle.addObserver(observer)
+                        onDispose {
+                            lifecycleOwner.lifecycle.removeObserver(observer)
+                        }
+                    }
+
+                    LaunchedEffect(resumeCounter) {
+                        while (true) {
+                            // resolveAll performs multiple binder calls; never do that on the frame thread.
+                            val next = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+                                SystemIndicatorResolver.resolveAll(context, prefs)
+                            }
+                            if (next != systemIndicators) systemIndicators = next
+                            delay(6000L)
+                        }
+                    }
+                    val appTitle = prefs.customAppName.ifBlank { "Super" }
+                    val iconVariant = prefs.appIconVariant
+                    val appIcon = when (iconVariant) {
+                        "MESSENGER" -> Icons.AutoMirrored.Filled.Chat
+                        "BUSINESS" -> Icons.Filled.BusinessCenter
+                        "ROCKET" -> Icons.Filled.RocketLaunch
+                        "FIRE" -> Icons.Filled.LocalFireDepartment
+                        "DIAMOND" -> Icons.Filled.Diamond
+                        "ASSISTANT", "COMPANION", "DISPATCH", "AGENT" -> Icons.Filled.SmartToy
+                        else -> Icons.Filled.Bolt
+                    }
+                    val iconColor = when (iconVariant) {
+                        "MESSENGER" -> MaterialTheme.colorScheme.primary
+                        "BUSINESS" -> Color(0xFF2E7D32)
+                        "ROCKET" -> Color(0xFFEF4444)
+                        "FIRE" -> Color(0xFFF97316)
+                        "DIAMOND" -> Color(0xFF06B6D4)
+                        "ASSISTANT", "COMPANION", "DISPATCH", "AGENT" -> Color(0xFF8B5CF6)
+                        else -> MaterialTheme.colorScheme.primary
+                    }
+
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.surface,
+                        tonalElevation = 0.dp,
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .statusBarsPadding()
+                                .padding(horizontal = 12.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            // Left: Brand identity & current section label (flex-shrinks safely with ellipsis)
+                            Row(
+                                modifier = Modifier
+                                    .weight(1f, fill = false)
+                                    .padding(end = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(30.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(iconColor.copy(alpha = 0.15f)),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        imageVector = appIcon,
+                                        contentDescription = null,
+                                        tint = iconColor,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(7.dp))
+                                Column(modifier = Modifier.weight(1f, fill = false)) {
+                                    Text(
+                                        text = appTitle,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Text(
+                                        text = when (currentTab) {
+                                            0 -> "Tasks"
+                                            1 -> "Campaigns"
+                                            2 -> "Auto-Reply"
+                                            else -> "Tools"
+                                        },
+                                        fontSize = 10.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+
+                            // Right: Responsive Action Controls (Status Indicators)
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                AppHeaderStatusIndicators(
+                                    indicators = systemIndicators,
+                                    onClick = {
+                                        toolsInitialSubSection = "PERMISSIONS"
+                                        currentTab = 3
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            bottomBar = {
+                if (shouldShowBars) {
+                    NavigationBar(
+                        modifier = Modifier.fillMaxWidth(),
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        tonalElevation = 0.dp
+                    ) {
+                    val navItems = listOf(
+                        Triple(0, "Tasks", Icons.Filled.Schedule to Color(0xFF2563EB)),
+                        Triple(1, "Campaigns", Icons.Filled.RocketLaunch to Color(0xFFEF4444)),
+                        Triple(2, "Auto-Reply", Icons.Filled.Quickreply to Color(0xFF16A34A)),
+                        Triple(3, "Tools", Icons.Filled.Tune to Color(0xFF8B5CF6))
+                    )
+
+                    navItems.forEach { (tabIndex, title, iconPair) ->
+                        val isSelected = currentTab == tabIndex
+                        val (iconVector, activeColor) = iconPair
+                        NavigationBarItem(
+                            selected = isSelected,
+                            alwaysShowLabel = true,
+                            onClick = {
+                                if (tabIndex == 1) {
+                                    selectedDailyCampaignId = 0L
+                                }
+                                if (tabIndex == 3) {
+                                    toolsInitialSubSection = "MENU"
+                                }
+                                currentTab = tabIndex
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = iconVector,
+                                    contentDescription = title,
+                                    tint = if (isSelected) activeColor else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            },
+                            label = {
+                                Text(
+                                    text = title,
+                                    fontSize = 10.5.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                    maxLines = 1
+                                )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = activeColor,
+                                selectedTextColor = activeColor,
+                                indicatorColor = activeColor.copy(alpha = 0.15f),
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        )
+                    }
+                }
+            }
+        },
+        containerColor = MaterialTheme.colorScheme.background
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = padding.calculateTopPadding(), bottom = padding.calculateBottomPadding())
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                ) {
+                when (currentTab) {
+                    0 -> TasksListScreen(
+                        onNavigateToCompose = { channel ->
+                            editingTask = null
+                            composeChannel = channel
+                            isComposing = true
+                        },
+                        onEditTask = { task ->
+                            editingTask = task
+                            isComposing = true
+                        },
+                        onNavigateToDailyCampaign = {
+                            currentTab = 1
+                        }
+                    )
+                    1 -> DailyAutoSenderScreen(
+                        initialCampaignId = selectedDailyCampaignId,
+                        onCampaignIdChange = { selectedDailyCampaignId = it }
+                    )
+                    2 -> AutoReplyScreen(
+                        onEditingStateChanged = { isAutoReplyEditing = it }
+                    )
+                    3 -> MoreScreenView(
+                        initialSubSection = toolsInitialSubSection,
+                        onSubSectionStateChanged = { isOpen ->
+                            isToolsSubSectionOpen = isOpen
+                            if (!isOpen) {
+                                toolsInitialSubSection = "MENU"
+                            }
+                        },
+                        onThemeChanged = onThemeChanged
+                    )
+                }
+            }
+        }
+    }
+}
+}

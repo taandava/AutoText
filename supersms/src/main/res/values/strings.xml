@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">SuperSMS</string>
-    <string name="notification_channel_tasks">Scheduled SMS &amp; Calls</string>
-    <string name="notification_channel_tasks_desc">Notifications for scheduled cellular dispatches</string>
-</resources>

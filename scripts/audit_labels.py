@@ -5,9 +5,13 @@ patterns = [
     (re.compile(r'AppButton\s*\(\s*text\s*=\s*"([^"]+)"'), 'AppButton'),
     (re.compile(r'AppBadge\s*\(\s*text\s*=\s*"([^"]+)"'), 'AppBadge'),
     (re.compile(r'AppChip\s*\([^)]*label\s*=\s*"([^"]+)"'), 'AppChip'),
+    (re.compile(r'actionLabel\s*=\s*"([^"]+)"'), 'actionLabel'),
+    (re.compile(r'buttonText\s*=\s*"([^"]+)"'), 'buttonText'),
+    (re.compile(r'SystemIndicator\s*\([^)]*name\s*=\s*"([^"]+)"'), 'SystemIndicator.name'),
+    (re.compile(r'SystemIndicator\s*\([^)]*actionLabel\s*=\s*"([^"]+)"'), 'SystemIndicator.actionLabel'),
 ]
 
-for module in ['supersms', 'superwa']:
+for module in ['app']:
     print(f"=== CHECKING UI LABELS IN {module} ===")
     violations = []
     for root, _, files in os.walk(module):

@@ -1,8 +1,6 @@
 .gradle/
 build/
 app/build/
-supersms/build/
-superwa/build/
 .idea/*
 !.idea/inspectionProfiles/
 *.iml
@@ -15,8 +13,6 @@ local.properties
 keystore.properties
 *.apk
 !Super-release.apk
-!SuperSMS-release.apk
-!SuperWA-release.apk
 .vscode/
 app/src/main/assets/project_source.zip
 

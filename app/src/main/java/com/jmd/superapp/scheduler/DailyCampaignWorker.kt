@@ -1,0 +1,648 @@
+/**
+ * Package: com.jmd.superapp.scheduler
+ * Module: Schedulers & Background Workers
+ *
+ * What it is:
+ * Architecture definition and implementation for [DailyCampaignWorker].
+ *
+ * What it does:
+ * Background WorkManager [CoroutineWorker] executing scheduled daily outreach batch campaigns. Coordinates dynamic contact ingestion, per-contact cooldowns, gap delays (pacing), SMS quota tracking, and dispatching via [SmsSender] or [WhatsAppSender].
+ *
+ * Linked With:
+ * - Repositories: [com.jmd.superapp.data.repo.AppRepository]
+ * - Models & Entities: [com.jmd.superapp.data.model.ChannelType], [com.jmd.superapp.data.model.ExecutionLog]
+ * - Schedulers & Receivers: [androidx.work.CoroutineWorker], [androidx.work.WorkerParameters]
+ * - Services & Engines: [com.jmd.superapp.engine.ContactIngestionEngine], [com.jmd.superapp.engine.SequentialTaskEngine], [com.jmd.superapp.engine.SmsSender], [com.jmd.superapp.engine.WhatsAppSender]
+ * - Core Security & Utilities: [android.content.pm.PackageManager], [androidx.core.content.ContextCompat], [com.jmd.superapp.core.AccessibilityHealthManager], [com.jmd.superapp.core.AppFileLogger]
+ * - Android Framework & Jetpack: [kotlinx.coroutines.delay], [kotlinx.coroutines.sync.Mutex], [kotlinx.coroutines.sync.withLock]
+ */
+
+package com.jmd.superapp.scheduler
+
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+import androidx.work.CoroutineWorker
+import androidx.work.WorkerParameters
+import com.jmd.superapp.core.AccessibilityHealthManager
+import com.jmd.superapp.core.AppFileLogger
+import com.jmd.superapp.core.MessageTemplateResolver
+import com.jmd.superapp.core.SmsQuotaManager
+import com.jmd.superapp.data.model.ChannelType
+import com.jmd.superapp.data.model.ExecutionLog
+import com.jmd.superapp.data.prefs.PreferenceManager
+import com.jmd.superapp.data.repo.AppRepository
+import com.jmd.superapp.engine.ContactIngestionEngine
+import com.jmd.superapp.engine.SequentialTaskEngine
+import com.jmd.superapp.engine.SmsSender
+import com.jmd.superapp.engine.WhatsAppSender
+import com.jmd.superapp.service.TaskAccessibilityService
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+
+/**
+ * What it is:
+ * Background worker executing paced daily batch outreach campaigns.
+ *
+ * What it does:
+ * Encapsulates state, business contracts, and operations for [DailyCampaignWorker].
+ *
+ * Linked with:
+ * - Architecture: [DailyCampaignWorker], [DailyCampaignWorker]
+ */
+class DailyCampaignWorker(
+    appContext: Context,
+    params: WorkerParameters,
+) : CoroutineWorker(appContext, params) {
+    /**
+     * What it is:
+     * Companion object constant and factory provider for [DailyCampaignWorker].
+     *
+     * What it does:
+     * Manages static declarations, tag references, and builder utilities.
+     *
+     * Linked with:
+     * - Component: [DailyCampaignWorker]
+     */
+
+    companion object {
+        const val TAG = "DailyCampaignWorker"
+        const val KEY_MANUAL_TRIGGER = "key_manual_trigger"
+        const val KEY_CAMPAIGN_ID = "key_campaign_id"
+
+        private val workerMutex = Mutex()
+    }
+
+    /**
+     * What it is:
+     * Executes the background campaign workflow: 1.
+     *
+     * What it does:
+     * Validates campaign status, schedule date, and permission readiness (Accessibility for WhatsApp, SEND_SMS for cellular). 2. Checks India TRAI regulatory SMS quotas (100 SMS/day ceiling) and campaign daily allowance limits. 3. Triggers scheduled contact ingestion if auto-scan is enabled. 4. Queries pending recipient pool contacts and paces sequential dispatch according to configured throttle delays. 5. Logs detailed execution results and updates campaign progress ledgers.
+     *
+     * Linked with:
+     * - Architecture: [DailyCampaignWorker], [doWork]
+     * @return [Result.success] on clean completion/pause, or [Result.failure] on critical missing permissions.
+     */
+    override suspend fun doWork(): Result = workerMutex.withLock {
+        val repo = AppRepository(applicationContext)
+        val campaignId = inputData.getLong(KEY_CAMPAIGN_ID, 1L)
+        val config = repo.getDailyCampaignConfig(campaignId)
+        val isManual = inputData.getBoolean(KEY_MANUAL_TRIGGER, defaultValue = false)
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val todayStr = dateFormat.format(Date())
+
+        AppFileLogger.i(
+            applicationContext,
+            TAG,
+            "Starting DailyCampaignWorker for id=$campaignId (${config.title}), manual=$isManual, active=${config.isActive}"
+        )
+
+        val prefs = PreferenceManager(applicationContext)
+
+        if (!config.isActive) {
+            AppFileLogger.i(applicationContext, TAG, "Campaign #$campaignId is inactive. Skipping.")
+            return Result.success()
+        }
+
+        if (!isManual) {
+            val nowCal = java.util.Calendar.getInstance()
+            val targetCal = java.util.Calendar.getInstance().apply {
+                set(java.util.Calendar.HOUR_OF_DAY, config.scheduledHour)
+                set(java.util.Calendar.MINUTE, config.scheduledMinute)
+                set(java.util.Calendar.SECOND, 0)
+                set(java.util.Calendar.MILLISECOND, 0)
+            }
+            // Strict invariant: Non-manual background workers MUST NOT fire before the scheduled time window
+            if (nowCal.timeInMillis < targetCal.timeInMillis - 60_000L) {
+                AppFileLogger.w(
+                    applicationContext,
+                    TAG,
+                    "Premature trigger intercepted: Current time (${nowCal.time}) is before scheduled dispatch window (${targetCal.time}) for Campaign #${config.id}. Cancelling background dispatch."
+                )
+                return Result.success()
+            }
+
+            if (config.lastRunDate == todayStr) {
+                AppFileLogger.i(applicationContext, TAG, "Campaign already executed today ($todayStr). Skipping duplicate run.")
+                return Result.success()
+            }
+        }
+
+        val isWhatsApp = config.channel.equals("WHATSAPP", ignoreCase = true) ||
+                config.channel.equals("WHATSAPP_BUSINESS", ignoreCase = true)
+
+        val channelDisplayName = when {
+            config.channel.contains("BUSINESS", ignoreCase = true) -> "Business Campaign"
+            isWhatsApp -> "WhatsApp Campaign"
+            else -> "SMS Campaign"
+        }
+
+        val privacyMgr = com.jmd.superapp.core.PrivacyManager.getInstance(applicationContext)
+        if (isWhatsApp) {
+            privacyMgr.prepareAccessibilityForTask()
+            val isA11yActive = AccessibilityHealthManager.awaitServiceReadiness(applicationContext, 4000L)
+            if (!isA11yActive) {
+                val errorMsg = "Accessibility Service is not operational. Waiting for service reconnection before dispatching WhatsApp campaign."
+                repo.insertLog(
+                    ExecutionLog(
+                        taskId = config.id,
+                        channel = channelDisplayName,
+                        recipient = "N/A",
+                        messageSnippet = "Accessibility Service disconnected or paused",
+                        status = "RETRY",
+                        details = errorMsg
+                    )
+                )
+                AppFileLogger.w(applicationContext, TAG, errorMsg)
+                privacyMgr.releaseAccessibilityAfterTask()
+                return Result.retry()
+            }
+        } else {
+            val hasSmsPerm = ContextCompat.checkSelfPermission(
+                applicationContext,
+                android.Manifest.permission.SEND_SMS
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (!hasSmsPerm) {
+                val errorMsg = "SEND_SMS permission not granted."
+                repo.insertLog(
+                    ExecutionLog(
+                        taskId = config.id,
+                        channel = channelDisplayName,
+                        recipient = "N/A",
+                        messageSnippet = "SEND_SMS permission not granted",
+                        status = "FAILED",
+                        details = errorMsg
+                    )
+                )
+                AppFileLogger.e(applicationContext, TAG, errorMsg)
+                return Result.failure()
+            }
+        }
+
+        try {
+        val alreadySentCampaign = if (isWhatsApp) {
+            repo.getSentCountForCampaignToday(config.id)
+        } else {
+            repo.getSentSegmentsForCampaignToday(config.id)
+        }
+        val campaignRemaining = maxOf(0, config.dailyLimit - alreadySentCampaign)
+
+        if (campaignRemaining <= 0) {
+            val limitMsg = "Daily limit of ${config.dailyLimit} reached today for campaign '${config.title}' ($alreadySentCampaign already sent today). Pausing batch."
+            AppFileLogger.i(applicationContext, TAG, limitMsg)
+            return Result.success()
+        }
+
+        var allowedBatchSize = campaignRemaining
+
+        if (!isWhatsApp) {
+            val quotaStatus = SmsQuotaManager.getQuotaStatus(applicationContext)
+            AppFileLogger.i(
+                applicationContext,
+                TAG,
+                "India SMS Quota check: ${quotaStatus.totalSentToday}/${quotaStatus.limit} sent today across device. Remaining: ${quotaStatus.remaining}. Campaign remaining allowance: $campaignRemaining segments."
+            )
+
+            if (quotaStatus.isLimitReached) {
+                val limitMsg = "App daily safeguard of 100 SMS reached across device (${quotaStatus.totalSentToday} sent today). Batch queued for tomorrow to prevent carrier penalty."
+                repo.insertLog(
+                    ExecutionLog(
+                        taskId = config.id,
+                        channel = channelDisplayName,
+                        recipient = "All Queued Contacts",
+                        messageSnippet = "Daily India SMS Quota Exceeded",
+                        status = "QUEUED",
+                        details = limitMsg
+                    )
+                )
+                AppFileLogger.w(applicationContext, TAG, limitMsg)
+                return Result.success()
+            }
+
+            val estimatedSegments = maxOf(1, SmsQuotaManager.calculateSmsSegments(config.message))
+            val maxContactsForCampaign = campaignRemaining / estimatedSegments
+            val maxContactsForQuota = quotaStatus.remaining / estimatedSegments
+
+            if (maxContactsForCampaign <= 0 || maxContactsForQuota <= 0) {
+                val limitMsg = "Campaign daily limit reached or estimated segments exceed remaining capacity (campaign remaining: $campaignRemaining, quota remaining: ${quotaStatus.remaining}, required: $estimatedSegments)."
+                AppFileLogger.i(applicationContext, TAG, limitMsg)
+                return Result.success()
+            }
+
+            allowedBatchSize = minOf(maxContactsForCampaign, maxContactsForQuota)
+        }
+
+        if (config.autoScanEnabled) {
+            try {
+                val scanner = ContactIngestionEngine(applicationContext, repo)
+                val summary = scanner.scanAndIngestAll()
+                AppFileLogger.i(
+                    applicationContext,
+                    TAG,
+                    "Auto-scanned: Contacts=${summary.contactsScanned}, SMS=${summary.smsScanned}, Calls=${summary.callLogsScanned}, New=${summary.newAdded}"
+                )
+            } catch (e: Exception) {
+                if (e is kotlinx.coroutines.CancellationException) throw e
+                AppFileLogger.w(applicationContext, TAG, "Contact ingestion encountered an issue: ${e.message}", e)
+            }
+        }
+
+        val recipients = repo.getPendingPoolContactsForCampaign(campaignId = config.id, isWhatsApp = isWhatsApp, limit = allowedBatchSize)
+        if (recipients.isEmpty()) {
+            AppFileLogger.i(applicationContext, TAG, "No recipients in pool to send daily campaign to.")
+            return Result.success()
+        }
+
+        val smsSender = if (!isWhatsApp) SmsSender(applicationContext) else null
+        val waSender = if (isWhatsApp) WhatsAppSender(applicationContext) else null
+
+        var successCount = 0
+        var failCount = 0
+        var queuedCount = 0
+
+        val configuredWaDelay = prefs.whatsappDispatchDelaySeconds
+        val minInterval = if (isWhatsApp) configuredWaDelay else 4
+        val intervalMs = (config.intervalSeconds.coerceAtLeast(minInterval)) * 1000L
+        val totalCount = recipients.size
+
+        AppFileLogger.i(
+            applicationContext,
+            TAG,
+            "Commencing dispatch of $totalCount recipients for $channelDisplayName. Interval: ${intervalMs}ms"
+        )
+
+        for ((index, item) in recipients.withIndex()) {
+            val liveConfig = repo.getDailyCampaignConfig(config.id)
+            if (!liveConfig.isActive) {
+                AppFileLogger.w(applicationContext, TAG, "Daily Campaign #${config.id} was PAUSED/DEACTIVATED by user mid-batch! Halting immediately.")
+                TaskAccessibilityService.clearPending()
+                return Result.success()
+            }
+            if (isStopped) {
+                AppFileLogger.w(applicationContext, TAG, "DailyCampaignWorker was stopped by system. Halting immediately.")
+                TaskAccessibilityService.clearPending()
+                return Result.success()
+            }
+
+            // Mutual Cooperation Gate: If cellular phone call is active, wait until idle before dispatching campaign contact
+            if (com.jmd.superapp.telephony.TelephonyCallEngine.isCallActive(applicationContext)) {
+                AppFileLogger.i(applicationContext, TAG, "Daily Campaign #${config.id} paused: Active phone call in progress. Awaiting call completion...")
+                var callWaitElapsedMs = 0L
+                val maxCallWaitMs = 180_000L
+                while (com.jmd.superapp.telephony.TelephonyCallEngine.isCallActive(applicationContext) && callWaitElapsedMs < maxCallWaitMs) {
+                    if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive) {
+                        return Result.success()
+                    }
+                    delay(2000L.milliseconds)
+                    callWaitElapsedMs += 2000L
+                }
+            }
+
+            val displayName = item.name.ifBlank { "Friend" }
+            val message = MessageTemplateResolver.resolve(
+                template = config.message,
+                phone = item.phone,
+                targetTimestamp = System.currentTimeMillis()
+            )
+
+            val isLast = index == totalCount - 1
+
+            if (isWhatsApp) {
+                val waChannel = if (config.channel.contains("BUSINESS", ignoreCase = true)) {
+                    ChannelType.WHATSAPP_BUSINESS
+                } else {
+                    ChannelType.WHATSAPP
+                }
+
+                val shouldRelockThisItem = isLast && prefs.isAutoLockAfterSendEnabled
+
+                val taskDispatchMutex = SequentialTaskEngine.getUiTaskMutex(applicationContext)
+                taskDispatchMutex.withLock {
+                    var sendOutcome = TaskAccessibilityService.RESULT_NONE
+                    var attemptsMade = 0
+                    val maxImmediateAttempts = 3 // 1 initial + up to 2 immediate retries
+
+                    while (attemptsMade < maxImmediateAttempts && sendOutcome != TaskAccessibilityService.RESULT_SUCCESS && sendOutcome != TaskAccessibilityService.RESULT_INVALID) {
+                        attemptsMade++
+                        if (attemptsMade > 1) {
+                            AppFileLogger.i(applicationContext, TAG, "Retrying WhatsApp message to ${item.phone} (attempt $attemptsMade/$maxImmediateAttempts)")
+                            delay(1200.milliseconds)
+                        }
+                        TaskAccessibilityService.clearPending()
+                        TaskAccessibilityService.markDispatchPending()
+
+                        SequentialTaskEngine.getInstance(applicationContext).ensureDeviceAwakeAndUnlocked(
+                            taskId = config.id,
+                            channel = waChannel,
+                            targetRecipient = item.phone
+                        )
+
+                        val dispatched = waSender?.send(
+                            taskId = config.id,
+                            channel = waChannel,
+                            recipientPhone = item.phone,
+                            messageText = message,
+                            shouldRelock = shouldRelockThisItem,
+                            isBatchCampaign = true
+                        ) ?: false
+
+                        if (!dispatched) {
+                            sendOutcome = TaskAccessibilityService.RESULT_NONE
+                            if (attemptsMade < maxImmediateAttempts) continue
+                        } else {
+                            val maxWaitMs = 16000L
+                            var waitedMs = 0L
+                            while (TaskAccessibilityService.lastSendResult == TaskAccessibilityService.RESULT_PENDING && waitedMs < maxWaitMs) {
+                                if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive) {
+                                    TaskAccessibilityService.clearPending()
+                                    return Result.success()
+                                }
+                                delay(500.milliseconds)
+                                waitedMs += 500L
+                            }
+                            sendOutcome = TaskAccessibilityService.lastSendResult
+                        }
+
+                        if (sendOutcome != TaskAccessibilityService.RESULT_SUCCESS && !isLast) {
+                            TaskAccessibilityService.navigateBack()
+                            delay(400.milliseconds)
+                        }
+                    }
+
+                    when (sendOutcome) {
+                        TaskAccessibilityService.RESULT_SUCCESS -> {
+                            successCount++
+                            repo.markContactSent(item.id, whatsApp = true)
+                            repo.markCampaignContactSuccess(config.id, item, config.channel)
+                            AppFileLogger.i(applicationContext, TAG, "Delivered WhatsApp message to ${item.phone} ($displayName) on attempt $attemptsMade")
+                            AppFileLogger.campaignLedger(
+                                context = applicationContext,
+                                campaignId = config.id,
+                                channel = channelDisplayName,
+                                recipientName = displayName,
+                                recipientPhone = item.phone,
+                                status = "SUCCESS",
+                                messageSnippet = message.take(80),
+                                attempt = item.waSendCount + attemptsMade,
+                                details = "Batch campaign dispatch delivered via Super Service (attempt $attemptsMade)"
+                            )
+                        }
+                        TaskAccessibilityService.RESULT_INVALID -> {
+                            failCount++
+                            repo.markContactInvalid(item.id, whatsApp = true)
+                            AppFileLogger.w(applicationContext, TAG, "Recipient ${item.phone} is invalid or not registered on WhatsApp")
+                            AppFileLogger.campaignLedger(
+                                context = applicationContext,
+                                campaignId = config.id,
+                                channel = channelDisplayName,
+                                recipientName = displayName,
+                                recipientPhone = item.phone,
+                                status = "INVALID",
+                                messageSnippet = message.take(80),
+                                attempt = item.waSendCount + attemptsMade,
+                                details = "Recipient not registered on WhatsApp or invalid phone number"
+                            )
+                        }
+                        else -> {
+                            failCount++
+                            repo.markContactPendingRetry(item.id, whatsApp = true, status = "FAILED")
+                            repo.insertLog(
+                                ExecutionLog(
+                                    taskId = config.id,
+                                    channel = channelDisplayName,
+                                    recipient = "${item.phone} ($displayName)",
+                                    messageSnippet = message.take(60),
+                                    status = "FAILED",
+                                    details = "WhatsApp dispatch timed out after $attemptsMade attempts (contact kept in priority retry queue)"
+                                )
+                            )
+                            AppFileLogger.w(applicationContext, TAG, "WhatsApp dispatch failed after $attemptsMade attempts for ${item.phone}. Added to priority retry queue.")
+                            AppFileLogger.campaignLedger(
+                                context = applicationContext,
+                                campaignId = config.id,
+                                channel = channelDisplayName,
+                                recipientName = displayName,
+                                recipientPhone = item.phone,
+                                status = "TIMEOUT",
+                                messageSnippet = message.take(80),
+                                attempt = item.waSendCount + attemptsMade,
+                                details = "WhatsApp dispatch timed out after $attemptsMade attempts (kept in queue for next cycle)"
+                            )
+                        }
+                    }
+
+                    if (!isLast && sendOutcome == TaskAccessibilityService.RESULT_SUCCESS) {
+                        delay(450.milliseconds)
+                        TaskAccessibilityService.navigateBack()
+                        delay(350.milliseconds)
+                    }
+                }
+            } else {
+                val exactMessageSegments = SmsQuotaManager.calculateSmsSegments(message)
+                val sentSoFarToday = repo.getSentSegmentsForCampaignToday(config.id)
+                if (sentSoFarToday + exactMessageSegments > config.dailyLimit) {
+                    queuedCount++
+                    val stopReason = "Campaign daily limit reached ($sentSoFarToday/${config.dailyLimit} segments sent). Next contact requires $exactMessageSegments segments."
+                    AppFileLogger.i(applicationContext, TAG, stopReason)
+                    repo.insertLog(
+                        ExecutionLog(
+                            taskId = config.id,
+                            channel = channelDisplayName,
+                            recipient = "${item.phone} ($displayName)",
+                            messageSnippet = message.take(160),
+                            status = "QUEUED",
+                            details = stopReason
+                        )
+                    )
+                    break
+                }
+
+                val (canSend, quotaReason) = SmsQuotaManager.canDispatchSms(applicationContext, message)
+                if (!canSend) {
+                    queuedCount++
+                    repo.markContactPendingRetry(item.id, whatsApp = false, status = "QUEUED")
+                    repo.insertLog(
+                        ExecutionLog(
+                            taskId = config.id,
+                            channel = channelDisplayName,
+                            recipient = "${item.phone} ($displayName)",
+                            messageSnippet = message.take(160),
+                            status = "QUEUED",
+                            details = quotaReason
+                        )
+                    )
+                    AppFileLogger.w(applicationContext, TAG, "Stopping SMS batch at ${item.phone}: $quotaReason")
+                    AppFileLogger.campaignLedger(
+                        context = applicationContext,
+                        campaignId = config.id,
+                        channel = channelDisplayName,
+                        recipientName = displayName,
+                        recipientPhone = item.phone,
+                        status = "QUEUED",
+                        messageSnippet = message.take(80),
+                        attempt = item.sendCount + 1,
+                        details = quotaReason
+                    )
+                    break
+                }
+
+                val sendResult = smsSender?.sendSmsWithResult(item.phone, message, config.simSlot, enforceQuota = true)
+                if (sendResult != null && sendResult.success) {
+                    SmsQuotaManager.commitSmsQuotaReservation(sendResult.segments)
+                    successCount++
+                    repo.markContactSent(item.id, whatsApp = false)
+                    repo.markCampaignContactSuccess(config.id, item, config.channel, sendResult.segments)
+                    repo.insertLog(
+                        ExecutionLog(
+                            taskId = config.id,
+                            channel = channelDisplayName,
+                            recipient = "${item.phone} ($displayName)",
+                            messageSnippet = message.take(160),
+                            status = "SUCCESS",
+                            details = "Source: ${item.source}, SIM: ${config.simSlot}, parts: ${sendResult.segments}",
+                            segments = sendResult.segments
+                        )
+                    )
+                    AppFileLogger.i(applicationContext, TAG, "Sent SMS to ${item.phone} ($displayName) [${sendResult.segments} parts]")
+                    AppFileLogger.campaignLedger(
+                        context = applicationContext,
+                        campaignId = config.id,
+                        channel = channelDisplayName,
+                        recipientName = displayName,
+                        recipientPhone = item.phone,
+                        status = "SUCCESS",
+                        messageSnippet = message.take(80),
+                        attempt = item.sendCount + 1,
+                        details = "Source: ${item.source}, SIM: ${config.simSlot}, parts: ${sendResult.segments}"
+                    )
+                } else if (sendResult != null && (sendResult.deliveryStatus == SmsSender.DeliveryStatus.PENDING_TIMEOUT || sendResult.deliveryStatus == SmsSender.DeliveryStatus.PARTIAL_DISPATCH)) {
+                    // Cellular modem accepted dispatch (or partially dispatched) but full carrier ACK is pending.
+                    // Do NOT mark as FAILED to prevent duplicate re-sends, but accurately mark as DISPATCHED in campaign ledger.
+                    repo.markContactSent(item.id, whatsApp = false)
+                    repo.markCampaignContactDispatched(config.id, item, config.channel, sendResult.segments)
+                    repo.insertLog(
+                        ExecutionLog(
+                            taskId = config.id,
+                            channel = channelDisplayName,
+                            recipient = "${item.phone} ($displayName)",
+                            messageSnippet = message.take(160),
+                            status = "DISPATCHED",
+                            details = if (sendResult.deliveryStatus == SmsSender.DeliveryStatus.PARTIAL_DISPATCH) sendResult.reason else "Dispatched to cellular modem via SIM ${config.simSlot} (${sendResult.segments} parts); carrier acknowledgement pending",
+                            segments = sendResult.segments
+                        )
+                    )
+                    AppFileLogger.i(applicationContext, TAG, "SMS dispatched to modem for ${item.phone} ($displayName) [${sendResult.segments} parts], carrier ack pending")
+                    AppFileLogger.campaignLedger(
+                        context = applicationContext,
+                        campaignId = config.id,
+                        channel = channelDisplayName,
+                        recipientName = displayName,
+                        recipientPhone = item.phone,
+                        status = "DISPATCHED",
+                        messageSnippet = message.take(80),
+                        attempt = item.sendCount + 1,
+                        details = if (sendResult.deliveryStatus == SmsSender.DeliveryStatus.PARTIAL_DISPATCH) sendResult.reason else "Dispatched to cellular modem via SIM ${config.simSlot} (${sendResult.segments} parts); carrier acknowledgement pending"
+                    )
+                } else {
+                    failCount++
+                    val reason = sendResult?.reason ?: "Failed to transmit SMS"
+                    val isQuota = reason.contains("limit", ignoreCase = true) || reason.contains("quota", ignoreCase = true)
+                    val status = if (isQuota) "QUEUED" else "FAILED"
+                    repo.markContactPendingRetry(item.id, whatsApp = false, status = status)
+                    repo.insertLog(
+                        ExecutionLog(
+                            taskId = config.id,
+                            channel = channelDisplayName,
+                            recipient = "${item.phone} ($displayName)",
+                            messageSnippet = message.take(160),
+                            status = status,
+                            details = reason
+                        )
+                    )
+                    AppFileLogger.w(applicationContext, TAG, "SMS outcome for ${item.phone}: $status ($reason)")
+                    AppFileLogger.campaignLedger(
+                        context = applicationContext,
+                        campaignId = config.id,
+                        channel = channelDisplayName,
+                        recipientName = displayName,
+                        recipientPhone = item.phone,
+                        status = status,
+                        messageSnippet = message.take(80),
+                        attempt = item.sendCount + 1,
+                        details = reason
+                    )
+                    if (isQuota) {
+                        queuedCount++
+                        break
+                    }
+                }
+            }
+
+            if (!isLast) {
+                var elapsed = 0L
+                val step = 250L
+                while (elapsed < intervalMs) {
+                    if (isStopped || !repo.getDailyCampaignConfig(config.id).isActive) {
+                        AppFileLogger.w(applicationContext, TAG, "Daily Campaign #${config.id} interval delay cancelled: Campaign paused.")
+                        TaskAccessibilityService.clearPending()
+                        return Result.success()
+                    }
+                    val chunk = minOf(step, intervalMs - elapsed)
+                    delay(chunk.milliseconds)
+                    elapsed += chunk
+                }
+            }
+        }
+
+        if (isWhatsApp && !prefs.isAutoLockAfterSendEnabled && successCount > 0) {
+            delay(1200.milliseconds)
+            try {
+                val homeIntent = android.content.Intent(android.content.Intent.ACTION_MAIN).apply {
+                    addCategory(android.content.Intent.CATEGORY_HOME)
+                    flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                applicationContext.startActivity(homeIntent)
+            } catch (e: Exception) {
+                AppFileLogger.w(applicationContext, TAG, "Failed to navigate HOME after campaign: ${e.message}")
+            }
+        }
+
+        // If the worker was stopped or interrupted by system, do not retry! Terminate cleanly.
+        if (isStopped) {
+            AppFileLogger.w(applicationContext, TAG, "Daily campaign #${config.id} was stopped prematurely. Halting without retry.")
+            return Result.success()
+        }
+
+        val finalConfig = repo.getDailyCampaignConfig(config.id)
+        if (successCount == 0 && failCount > 0) {
+            if (!finalConfig.isActive) {
+                AppFileLogger.w(applicationContext, TAG, "Daily campaign #${config.id} had failures, but campaign is inactive or stopped. Will NOT retry.")
+                return Result.success()
+            }
+            AppFileLogger.w(applicationContext, TAG, "Daily campaign #${config.id} had 0 successes and $failCount failures. Leaving lastRunDate open for retry.")
+            return Result.retry()
+        }
+
+        repo.updateDailyCampaignLastRunDate(config.id, todayStr)
+        AppFileLogger.action(
+            applicationContext,
+            TAG,
+            "Daily campaign #${config.id} (${config.title}) finished. Sent=$successCount, Failed=$failCount, Queued=$queuedCount"
+        )
+
+        return Result.success()
+        } finally {
+            if (isWhatsApp) {
+                privacyMgr.releaseAccessibilityAfterTask()
+            }
+        }
+    }
+}

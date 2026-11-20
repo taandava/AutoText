@@ -1,0 +1,27 @@
+{
+  "name": "super-android-suite",
+  "version": "2.3.0",
+  "description": "SuperWA and SuperSMS Dynamic Live Endpoint & CLI Suite",
+  "private": true,
+  "scripts": {
+    "serve": "node scripts/super_cli.js serve --port 3000",
+    "live": "node scripts/super_cli.js live",
+    "repl": "node scripts/super_cli.js repl",
+    "devices": "node scripts/super_cli.js devices",
+    "status": "node scripts/super_cli.js status",
+    "status:sms": "node scripts/super_cli.js status --app sms",
+    "diagnostics": "node scripts/super_cli.js diagnostics",
+    "diagnostics:sms": "node scripts/super_cli.js diagnostics --app sms",
+    "groups": "node scripts/super_cli.js list-groups",
+    "dump:groups": "node scripts/super_cli.js dump-groups",
+    "purge:groups": "node scripts/super_cli.js purge-groups",
+    "sync:wa": "node scripts/super_cli.js sync-pool --app wa",
+    "sync:sms": "node scripts/super_cli.js sync-pool --app sms",
+    "pool:sms": "node scripts/super_cli.js query-pool --app sms",
+    "pool:wa": "node scripts/super_cli.js query-pool --app wa",
+    "batch:wa": "node scripts/super_cli.js batch --app wa",
+    "batch:sms": "node scripts/super_cli.js batch --app sms",
+    "logs:wa": "node scripts/super_cli.js logs --app wa",
+    "logs:sms": "node scripts/super_cli.js logs --app sms"
+  }
+}
