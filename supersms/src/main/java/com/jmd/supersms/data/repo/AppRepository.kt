@@ -317,7 +317,7 @@ class AppRepository(context: Context) {
      * Every sync button in the app funnels here so there is one behaviour and one summary.
      */
     suspend fun syncWhatsAppPool(): IngestionSummary =
-        com.jmd.supersms.engine.ContactIngestionEngine(appContext, this).runFullIngestion()
+        com.jmd.supersms.engine.ContactIngestionEngine(appContext, this).scanAndIngestAll()
 
     /**
      * Exact number of selectable pool rows, without loading them. Keeps the header truthful

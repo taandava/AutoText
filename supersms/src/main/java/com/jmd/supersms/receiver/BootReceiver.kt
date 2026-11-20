@@ -24,7 +24,6 @@ class BootReceiver : BroadcastReceiver() {
             DispatchJournal.reconcileStale(context)
             AlarmScheduler(context).rescheduleAllPending()
             DailyCampaignScheduler.scheduleAll(context)
-            SuperDeviceAdminReceiver.ensureActive(context)
         }
     }
 }

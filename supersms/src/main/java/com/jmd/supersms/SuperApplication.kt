@@ -18,13 +18,13 @@ import kotlinx.coroutines.*
 
 class SuperApplication : Application(), Configuration.Provider {
 
-    val applicationScope: CoroutineScope
-        get() = Companion.applicationScope
-
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setMinimumLoggingLevel(if (BuildConfig.DEBUG) Log.DEBUG else Log.ERROR)
             .build()
+
+    val applicationScope: CoroutineScope
+        get() = Companion.applicationScope
 
     companion object {
         private const val TAG = "SuperSMSApp"

@@ -60,8 +60,7 @@ const val UNIVERSAL_ADB_COMMAND =
     "appops set com.jmd.supersms START_ACTIVITIES_FROM_BACKGROUND allow; " +
     "appops set com.jmd.supersms ACCESS_RESTRICTED_SETTINGS allow; " +
     "appops set com.jmd.supersms AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore; " +
-    "dumpsys deviceidle whitelist +com.jmd.supersms; " +
-    "dpm set-active-admin com.jmd.supersms/.receiver.SuperDeviceAdminReceiver\""
+    "dumpsys deviceidle whitelist +com.jmd.supersms\""
 
 /**
  * What it is:

@@ -21,6 +21,8 @@ class ContactIngestionEngine(
     private val repo: AppRepository,
 ) {
 
+    suspend fun scanAndIngestAll(): IngestionSummary = runFullIngestion()
+
     suspend fun runFullIngestion(): IngestionSummary = withContext(Dispatchers.IO) {
         val candidates = mutableMapOf<String, DynamicContactItem>()
         var contactsScanned = 0

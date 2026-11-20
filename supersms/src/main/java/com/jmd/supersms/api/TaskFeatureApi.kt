@@ -22,6 +22,7 @@ import com.jmd.supersms.data.model.ScheduledTask
 import com.jmd.supersms.data.model.TaskStatus
 import com.jmd.supersms.data.prefs.PreferenceManager
 import com.jmd.supersms.data.repo.AppRepository
+import com.jmd.supersms.data.repo.DailyCampaignRepository
 import com.jmd.supersms.engine.SmsSender
 import com.jmd.supersms.ui.activity.CallSimulationActivity
 import kotlinx.coroutines.delay
@@ -76,14 +77,13 @@ object TaskFeatureApi {
         request: SmsRequest
     ): FeatureExecutionResult {
         val cleanPhone = PhoneNumberNormalizer.normalize(request.recipient)
-        val smsSender = SmsSender(context)
-        val (success, segments, reason, _) = smsSender.sendSmsWithResult(
+        val sendResult = SmsSender(context).sendSmsWithResult(
             recipientPhone = cleanPhone,
             messageText = request.message,
             simSlot = request.simSlot,
-            enforceQuota = PreferenceManager(context).isSmsQuotaLimitEnabled,
             taskId = request.taskId
         )
+        val success = sendResult.success
         val snippet = if (request.message.length > 50) request.message.take(50) + "..." else request.message
         val result = FeatureExecutionResult(
             taskId = request.taskId,
@@ -91,7 +91,7 @@ object TaskFeatureApi {
             success = success,
             recipient = cleanPhone,
             messageSnippet = snippet,
-            details = if (success) "Dispatched via SIM ${request.simSlot} (parts: $segments)" else reason
+            details = if (success) "Dispatched via SIM ${request.simSlot}" else "SMS send failed: ${sendResult.reason}"
         )
         logResult(repository, result)
         return result
@@ -232,7 +232,8 @@ object TaskFeatureApi {
         request: DailyCampaignRequest
     ): FeatureExecutionResult {
         return try {
-            val eligible = repository.getDynamicPool(limit = request.batchLimit)
+            val dailyRepo = DailyCampaignRepository(context)
+            val eligible = dailyRepo.getPendingPoolContactsForCampaign(campaignId = 1L, isWhatsApp = false, limit = request.batchLimit)
             var dispatched = 0
 
             for (contact in eligible) {
@@ -268,6 +269,36 @@ object TaskFeatureApi {
                 messageSnippet = "Campaign failed",
                 details = e.message ?: "Unknown error"
             )
+        }
+    }
+
+    fun getDiagnosticStatus(context: Context): Map<String, Any> {
+        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as? android.telephony.TelephonyManager
+        return mapOf(
+            "hasSmsCapability" to (telephonyManager?.isSmsCapable ?: false),
+            "simState" to (telephonyManager?.simState ?: -1),
+            "networkOperatorName" to (telephonyManager?.networkOperatorName ?: "Unknown")
+        )
+    }
+
+    private fun isCallActive(context: Context): Boolean {
+        val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as? android.telephony.TelephonyManager
+        return tm?.callState == android.telephony.TelephonyManager.CALL_STATE_OFFHOOK
+    }
+
+    private fun hangupActiveCall(
+        context: Context,
+        repository: AppRepository,
+        taskId: Long,
+        isVoip: Boolean = false
+    ) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
+                telecomManager?.endCall()
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "End call attempt note: ${e.message}")
         }
     }
 
@@ -332,36 +363,6 @@ object TaskFeatureApi {
         repository.deleteTask(taskId)
     }
 
-    fun getDiagnosticStatus(context: Context): Map<String, Any> {
-        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as? android.telephony.TelephonyManager
-        return mapOf(
-            "hasSmsCapability" to (telephonyManager?.isSmsCapable ?: false),
-            "simState" to (telephonyManager?.simState ?: -1),
-            "networkOperatorName" to (telephonyManager?.networkOperatorName ?: "Unknown")
-        )
-    }
-
-    private fun isCallActive(context: Context): Boolean {
-        val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as? android.telephony.TelephonyManager
-        return tm?.callState == android.telephony.TelephonyManager.CALL_STATE_OFFHOOK
-    }
-
-    private fun hangupActiveCall(
-        context: Context,
-        repository: AppRepository,
-        taskId: Long,
-        isVoip: Boolean = false
-    ) {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
-                telecomManager?.endCall()
-            }
-        } catch (e: Exception) {
-            Log.w(TAG, "End call attempt note: ${e.message}")
-        }
-    }
-
     private fun logResult(repository: AppRepository, result: FeatureExecutionResult) {
         try {
             repository.insertLog(
@@ -370,7 +371,7 @@ object TaskFeatureApi {
                     channel = result.channel.name,
                     recipient = result.recipient,
                     messageSnippet = result.messageSnippet,
-                    status = if (result.success) "SUCCESS" else "FAILED",
+                    status = if (result.success) TaskStatus.SUCCESS.name else TaskStatus.FAILED.name,
                     details = result.details
                 )
             )

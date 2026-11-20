@@ -37,11 +37,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.jmd.supersms.R
 import com.jmd.supersms.SuperApplication
+import com.jmd.supersms.compat.TelephonyManagerCompat
 import com.jmd.supersms.core.*
 import com.jmd.supersms.data.model.*
 import com.jmd.supersms.data.prefs.PreferenceManager
 import com.jmd.supersms.data.repo.AppRepository
 import com.jmd.supersms.scheduler.AlarmScheduler
+import com.jmd.supersms.telephony.TelephonyCallEngine
 import com.jmd.supersms.ui.activity.CallSimulationActivity
 import com.jmd.supersms.ui.activity.TaskLauncherActivity
 import kotlinx.coroutines.*
@@ -505,10 +507,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             TaskSafetyManager.recordFailure(task.channel, appContext)
         }
 
-        if (prefs.isAutoLockAfterSendEnabled && task.channel != ChannelType.CALL_SIMULATION) {
-            executeDeviceLockPostcondition(appContext, task.title)
-        }
-
         if (success) {
             DispatchJournal.complete(appContext, task.id, dispatchOccurrence)
         } else {
@@ -516,63 +514,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         return success
-    }
-
-    suspend fun ensureDeviceAwakeAndUnlocked(
-        task: ScheduledTask,
-        targetRecipient: String = ""
-    ): Boolean = ensureDeviceAwakeAndUnlocked(task.id, task.channel, targetRecipient)
-
-    suspend fun ensureDeviceAwakeAndUnlocked(
-        taskId: Long,
-        channel: ChannelType,
-        targetRecipient: String = ""
-    ): Boolean {
-        val km = appContext.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
-        val pm = appContext.getSystemService(Context.POWER_SERVICE) as? PowerManager
-        val isScreenOn = pm?.isInteractive == true
-        val isLocked = (km?.isKeyguardLocked == true) || (km?.isDeviceLocked == true) || (!isScreenOn)
-
-        if (!isLocked) return true
-
-        AppFileLogger.action(
-            appContext,
-            TAG,
-            "Device is locked/screen off before executing ${channel.displayName} for Task #$taskId. Initiating screen wake & keyguard unlock..."
-        )
-
-        try {
-            val wakeLock = pm?.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK,
-                "SuperSMS:ExecutionWakeLock",
-            )
-            wakeLock?.acquire(45000L)
-        } catch (e: Exception) {
-            Log.w(TAG, "ExecutionWakeLock acquire error: ${e.message}")
-        }
-
-        val launchIntent = Intent(appContext, TaskLauncherActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(TaskLauncherActivity.EXTRA_TASK_ID, taskId)
-            putExtra(TaskLauncherActivity.EXTRA_CHANNEL, channel.name)
-            putExtra(TaskLauncherActivity.EXTRA_RECIPIENT, targetRecipient)
-            putExtra(TaskLauncherActivity.EXTRA_WAKE_ONLY, true)
-        }
-
-        appContext.startActivity(launchIntent)
-        delay(1200.milliseconds)
-        return true
-    }
-
-    private suspend fun executeDeviceLockPostcondition(context: Context, taskTitle: String): Boolean {
-        val prefs = PreferenceManager(context)
-        if (!prefs.isAutoLockAfterSendEnabled) return true
-        val homeIntent = Intent(Intent.ACTION_MAIN).apply {
-            addCategory(Intent.CATEGORY_HOME)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        runCatching { context.startActivity(homeIntent) }
-        return true
     }
 
     private suspend fun executeSmsTask(repository: AppRepository, task: ScheduledTask): Boolean {
@@ -583,7 +524,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
         for (i in task.recipients.indices) {
             val currentTaskState = repository.getTaskById(task.id)
-            if ((currentTaskState == null) || (currentTaskState.status == TaskStatus.CANCELLED)) {
+            if (currentTaskState == null || currentTaskState.status == TaskStatus.CANCELLED) {
                 AppFileLogger.w(appContext, TAG, "SMS task #${task.id} cancelled during recipient loop. Aborting.")
                 return false
             }
@@ -615,9 +556,9 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             }
             val (sendSuccess, sendSegments, sendReason, sendDeliveryStatus) =
                 smsSender.sendSmsWithResult(
-                    phone,
-                    personalizedMsg,
-                    task.simSlot,
+                    recipientPhone = phone,
+                    messageText = personalizedMsg,
+                    simSlot = task.simSlot,
                     enforceQuota = shouldEnforceQuota,
                     taskId = task.id,
                     occurrenceId = occurrenceId
@@ -669,9 +610,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             success = allSuccess,
             pendingConfirmation = hasPendingConfirmation,
         )
-        if (PreferenceManager(appContext).isAutoLockAfterSendEnabled) {
-            executeDeviceLockPostcondition(appContext, task.title)
-        }
         return allSuccess
     }
 
@@ -773,7 +711,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                                         AppFileLogger.w(appContext, TAG, "Selected SIM ${task.simSlot} unavailable; falling back to default active SIM account")
                                     } else {
                                         explicitSimUnresolved = true
-                                        Log.w(TAG, "Selected SIM ${task.simSlot} (slotIndex=$targetPhysicalSlot) could not be resolved and no fallback accounts exist")
                                     }
                                 }
                             }
@@ -784,7 +721,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             Log.w(TAG, "Exception resolving call-capable account for SIM ${task.simSlot}: ${e.message}")
                             explicitSimUnresolved = true
                         }
-                        com.jmd.supersms.core.OemBrandHelper.populateTelecomSimExtras(this, targetPhysicalSlot, matchedSubId)
+                        OemBrandHelper.populateTelecomSimExtras(this, targetPhysicalSlot, matchedSubId)
                     }
                 }
 
@@ -805,7 +742,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     continue
                 }
 
-                com.jmd.supersms.telephony.TelephonyCallEngine.trackAutomatedCall(cleanPhone)
+                TelephonyCallEngine.trackAutomatedCall(cleanPhone)
                 var callInitiated = false
                 if (hasCallPerm && telecomManager != null) {
                     try {
@@ -853,7 +790,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 AppFileLogger.action(appContext, TAG, "Task #${task.id}: $logSnippet")
                 if (isDirectCall) anyDirectCall = true
 
-                // Call Duration Holding and Quick Hangup Execution
                 if (isDirectCall && task.callDurationSeconds > 0) {
                     val durationSec = task.callDurationSeconds
                     val telephonyManager = appContext.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
@@ -863,7 +799,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     ) == PackageManager.PERMISSION_GRANTED
 
                     val isCellularCallOngoing: () -> Boolean = {
-                        com.jmd.supersms.compat.TelephonyManagerCompat.isCallActiveOrRinging(appContext, telephonyManager)
+                        TelephonyManagerCompat.isCallActiveOrRinging(appContext, telephonyManager)
                     }
 
                     val waitForCallDurationWithEarlyCheck: suspend (Long, Long, Boolean) -> Boolean = { totalMs, graceMs, allowEarlyExit ->
@@ -910,10 +846,10 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                                 break
                             }
 
-                            val isOffhook = com.jmd.supersms.compat.TelephonyManagerCompat.isCallConnected(appContext, telephonyManager)
+                            val isOffhook = TelephonyManagerCompat.isCallConnected(appContext, telephonyManager)
                             if (isOffhook && dialElapsedMs >= 3000L) {
                                 connected = true
-                                AppFileLogger.action(appContext, TAG, "Call to $cleanPhone connected (elapsed=${dialElapsedMs}ms)! Starting configured ${durationSec}s call duration timer...")
+                                AppFileLogger.action(appContext, TAG, "Call to $cleanPhone connected! Starting configured ${durationSec}s call duration timer...")
                                 break
                             }
 
@@ -925,7 +861,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             waitForCallDurationWithEarlyCheck(durationSec * 1000L, 2000L, true)
                         } else {
                             AppFileLogger.action(appContext, TAG, "Call to $cleanPhone did not connect within timeout ($dialElapsedMs ms). Attempting hangup...")
-                            com.jmd.supersms.telephony.TelephonyCallEngine.endCall(appContext)
+                            TelephonyCallEngine.endCall(appContext)
                             false
                         }
                     } else {
@@ -934,7 +870,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
 
                     if (durationCriteriaSatisfied) {
                         AppFileLogger.action(appContext, TAG, "Configured call duration (${durationSec}s) elapsed for $cleanPhone. Hanging up call now...")
-                        val hungUp = com.jmd.supersms.telephony.TelephonyCallEngine.endCall(appContext)
+                        val hungUp = TelephonyCallEngine.endCall(appContext)
                         AppFileLogger.action(appContext, TAG, "Hangup request for $cleanPhone: result=$hungUp")
 
                         try {
@@ -997,11 +933,29 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         }
 
         completeOrRescheduleTask(appContext, repository, task, allCallsSuccess)
-        if (anyDirectCall && PreferenceManager(appContext).isAutoLockAfterSendEnabled) {
-            executeDeviceLockPostcondition(appContext, task.title)
-        }
         return allCallsSuccess
     }
+    /**
+     * What it is:
+     * Execution routine for [ensureDeviceAwakeAndUnlocked].
+     *
+     * What it does:
+     * Coordinates ensureDeviceAwakeAndUnlocked operations conforming to application constraints.
+     *
+     * Linked with:
+     * - Component: [SequentialTaskEngine]
+     */
+
+    suspend fun ensureDeviceAwakeAndUnlocked(
+        task: ScheduledTask,
+        targetRecipient: String = ""
+    ): Boolean = true
+
+    suspend fun ensureDeviceAwakeAndUnlocked(
+        taskId: Long,
+        channel: ChannelType,
+        targetRecipient: String = ""
+    ): Boolean = true
     /**
      * What it is:
      * Execution routine for [executeCallSimulationTask].
@@ -1097,4 +1051,5 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         )
     }
 }
+
 

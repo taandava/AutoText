@@ -9,7 +9,7 @@
  * Provides core logic, component interfaces, and subsystem bindings for AppPrivilegeScreen.
  *
  * Linked With:
- * - Schedulers & Receivers: [android.app.AlarmManager], [com.jmd.supersms.receiver.SuperDeviceAdminReceiver]
+ * - Schedulers & Receivers: [android.app.AlarmManager]
  * - UI Screens & Components: [androidx.compose.ui.graphics.vector.ImageVector]
  * - Core Security & Utilities: [android.os.PowerManager], [androidx.core.app.NotificationManagerCompat], [androidx.core.net.toUri], [com.jmd.supersms.core.AccessibilityHealthManager]
  * - Android Framework & Jetpack: [android.os.Build], [android.provider.Settings], [androidx.compose.material.icons.Icons], [androidx.compose.material.icons.automirrored.filled.VolumeUp]
@@ -31,7 +31,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.jmd.supersms.core.OverlayPermissionHelper
 import com.jmd.supersms.core.PermissionManager
-import com.jmd.supersms.receiver.SuperDeviceAdminReceiver
 
 /**
  * What it is:
@@ -116,14 +115,6 @@ enum class AppPrivilege(
         category = PrivilegeCategory.SYSTEM,
         buttonLabel = "Grant"
     ),
-    DEVICE_ADMIN(
-        title = "Device Admin",
-        subtitle = "Hardware screen lock authorization to secure phone post-task.",
-        detailedPurpose = "Grants standard device administration privileges solely used to secure the display immediately after scheduled tasks conclude.",
-        icon = Icons.Default.AdminPanelSettings,
-        category = PrivilegeCategory.COMMUNICATION,
-        buttonLabel = "Activate"
-    ),
     COMMUNICATIONS(
         title = "Device Communications",
         subtitle = "Auto-discovers contacts and permits direct cellular messaging and calling.",
@@ -166,7 +157,6 @@ enum class AppPrivilege(
                 ?.isIgnoringBatteryOptimizations(context.packageName) == true
         }
         OVERLAY -> OverlayPermissionHelper.canDrawOverlays(context)
-        DEVICE_ADMIN -> SuperDeviceAdminReceiver.isAdminActive(context)
         COMMUNICATIONS -> {
             PermissionManager.hasContactsPermission(context) &&
                     PermissionManager.hasSmsSendPermission(context) &&
@@ -228,9 +218,6 @@ enum class AppPrivilege(
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     })
                 }
-            }
-            DEVICE_ADMIN -> {
-                SuperDeviceAdminReceiver.requestActivation(context)
             }
             COMMUNICATIONS -> {
                 context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {

@@ -9,7 +9,7 @@
  * Provides comprehensive, verified permission-to-feature mapping, live runtime state verification, graceful degradation rules, and transparent user-directed settings intent routing. Adheres strictly to Part 9 Invariants: 1. Zero root 'su' commands or artificial elevation. 2. Transparent user-directed system settings navigation. 3. Never claims a permission is granted without verifying live system state via official APIs. 4. Application remains completely stable when optional permissions are unavailable.
  *
  * Linked With:
- * - Schedulers & Receivers: [android.app.AlarmManager], [com.jmd.supersms.receiver.SuperDeviceAdminReceiver]
+ * - Schedulers & Receivers: [android.app.AlarmManager]
  * - Services & Engines: [com.jmd.supersms.service.TaskAccessibilityService], [com.jmd.supersms.service.TaskNotificationListenerService]
  * - Core Security & Utilities: [android.app.NotificationManager], [android.content.pm.PackageManager], [android.os.PowerManager], [androidx.core.content.ContextCompat]
  * - Android Framework & Jetpack: [android.Manifest], [android.content.ComponentName], [android.os.Build], [android.provider.Settings]
@@ -29,7 +29,6 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import com.jmd.supersms.receiver.SuperDeviceAdminReceiver
 import com.jmd.supersms.service.TaskNotificationListenerService
 
 /**
@@ -55,7 +54,7 @@ data class PermissionFeatureInfo(
     val category: PermissionCategory = PermissionCategory.CORE
 ) {
     val isCritical: Boolean
-        get() = !canWorkWithout || permissionId == PermissionManager.ID_ACCESSIBILITY || permissionId == PermissionManager.ID_EXACT_ALARMS
+        get() = !canWorkWithout || permissionId == PermissionManager.ID_SMS || permissionId == PermissionManager.ID_EXACT_ALARMS
 }
 /**
  * What it is:
@@ -99,13 +98,11 @@ object PermissionManager {
     const val ID_READ_EXTERNAL_STORAGE = Manifest.permission.READ_EXTERNAL_STORAGE
     const val ID_POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS"
     const val ID_EXACT_ALARMS = "android.permission.SCHEDULE_EXACT_ALARM"
-    const val ID_ACCESSIBILITY = "android.permission.BIND_ACCESSIBILITY_SERVICE"
-    const val ID_DEVICE_ADMIN = "android.app.action.ADD_DEVICE_ADMIN"
     const val ID_BATTERY_OPTIMIZATION = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
     const val ID_NOTIFICATION_POLICY = Manifest.permission.ACCESS_NOTIFICATION_POLICY
     const val ID_OVERLAY = "android.permission.SYSTEM_ALERT_WINDOW"
 
-    val CRITICAL_PERMISSIONS: Set<String> = setOf(ID_ACCESSIBILITY, ID_EXACT_ALARMS)
+    val CRITICAL_PERMISSIONS: Set<String> = setOf(ID_SMS, ID_EXACT_ALARMS)
 
     val ALL_SPECIFICATIONS: List<PermissionFeatureInfo> = listOf(
         PermissionFeatureInfo(
@@ -194,28 +191,6 @@ object PermissionManager {
             requiresSpecialUserAction = true,
             deniedImpact = "Android may delay scheduled task execution by 15-60 minutes in battery saving modes.",
             revocationSafety = "Safe to revoke, but scheduling precision is compromised.",
-            category = PermissionCategory.SYSTEM
-        ),
-        PermissionFeatureInfo(
-            permissionId = ID_ACCESSIBILITY,
-            featureName = "Task",
-            purpose = "Assists in scheduled WhatsApp message sending, status publishing, and secure screen task assistance.",
-            canWorkWithout = true,
-            isRuntimeApproval = false,
-            requiresSpecialUserAction = true,
-            deniedImpact = "Cellular SMS, calls, and call simulations work normally. WhatsApp assisted clicks are disabled.",
-            revocationSafety = "Can be safely disabled anytime; dynamic on-demand mode keeps it detached during idle.",
-            category = PermissionCategory.SYSTEM
-        ),
-        PermissionFeatureInfo(
-            permissionId = ID_DEVICE_ADMIN,
-            featureName = "Hardware Screen Auto-Lock",
-            purpose = "Allows Super to immediately re-lock the phone via simulated power button lock after unattended tasks conclude.",
-            canWorkWithout = true,
-            isRuntimeApproval = false,
-            requiresSpecialUserAction = true,
-            deniedImpact = "Screen lock postcondition falls back to returning to home launcher; device may remain awake.",
-            revocationSafety = "Safe to revoke anytime in Settings > Security.",
             category = PermissionCategory.SYSTEM
         ),
         PermissionFeatureInfo(
@@ -478,37 +453,9 @@ object PermissionManager {
      * Linked with:
      * - Architecture: [PermissionManager], [isAccessibilityOperational]
      */
-    fun isAccessibilityOperational(context: Context): Boolean {
-        return false
-    }
-
-    /**
-     * What it is:
-     * Checks if notification policy access (DND control) is granted.
-     *
-     * What it does:
-     * Executes [hasNotificationPolicyAccess] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [PermissionManager], [hasNotificationPolicyAccess]
-     */
     fun hasNotificationPolicyAccess(context: Context): Boolean {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         return notificationManager?.isNotificationPolicyAccessGranted ?: false
-    }
-
-    /**
-     * What it is:
-     * Checks if Device Administration is active for instant hardware screen re-locking.
-     *
-     * What it does:
-     * Executes [isDeviceAdminActive] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [PermissionManager], [isDeviceAdminActive]
-     */
-    fun isDeviceAdminActive(context: Context): Boolean {
-        return SuperDeviceAdminReceiver.isAdminActive(context)
     }
 
     /**
@@ -549,8 +496,6 @@ object PermissionManager {
                 ID_READ_CONTACTS -> hasContactsPermission(context)
                 ID_POST_NOTIFICATIONS -> hasPostNotificationsPermission(context)
                 ID_EXACT_ALARMS -> canScheduleExactAlarms(context)
-                ID_ACCESSIBILITY -> isAccessibilityOperational(context)
-                ID_DEVICE_ADMIN -> isDeviceAdminActive(context)
                 ID_BATTERY_OPTIMIZATION -> isBatteryOptimizationIgnored(context)
                 ID_NOTIFICATION_POLICY -> hasNotificationPolicyAccess(context)
                 ID_OVERLAY -> hasOverlayPermission(context)

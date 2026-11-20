@@ -658,6 +658,24 @@ fun ComposeTaskScreen(
                         onCallFailurePolicyChange = { callFailurePolicy = it }
                     )
                 }
+                ChannelType.WHATSAPP_STATUS -> {
+                    WhatsAppStatusComposerCard(
+                        mediaUri = mediaUri,
+                        onMediaUriChange = { mediaUri = it },
+                        messageText = messageText,
+                        onMessageTextChange = { messageText = it },
+                        onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") }
+                    )
+                }
+                ChannelType.WHATSAPP_BUSINESS_STATUS -> {
+                    WhatsAppBusinessStatusComposerCard(
+                        mediaUri = mediaUri,
+                        onMediaUriChange = { mediaUri = it },
+                        messageText = messageText,
+                        onMessageTextChange = { messageText = it },
+                        onLaunchMediaPicker = { statusMediaPickerLauncher.launch("*/*") }
+                    )
+                }
                 else -> {
                     ComposeRecipientsAndMessageCard(
                         selectedChannel = selectedChannel,
@@ -728,6 +746,6 @@ fun ComposeTaskScreen(
             onDismiss = { showPoolPickerDialog = false }
         )
     }
-}
+    }
 }
 
