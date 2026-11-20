@@ -50,23 +50,35 @@ fun SettingsFormattingCard(
     prefs: PreferenceManager,
     modifier: Modifier = Modifier
 ) {
-    var dateFormat by remember { mutableStateOf(prefs.customDateFormat) }
-    var customPattern by remember { mutableStateOf(prefs.customDateCustomPattern) }
-    var dateSeparator by remember { mutableStateOf(prefs.customDateSeparator) }
-    var timeFormat by remember { mutableStateOf(prefs.customTimeFormat) }
-    var greetingStyle by remember { mutableStateOf(prefs.customGreetingStyle) }
+    var currencyOption by remember { mutableStateOf(prefs.currencyOption) }
+    var customCurrencySymbol by remember {
+        mutableStateOf(
+            if (prefs.customCurrencySymbol == "\u20B9" || prefs.customCurrencySymbol == "â‚¹") "$" else prefs.customCurrencySymbol
+        )
+    }
+    var salutationOption by remember { mutableStateOf(prefs.salutationOption) }
     var customGreetingText by remember { mutableStateOf(prefs.customGreetingCustomText) }
-    var namasteText by remember { mutableStateOf(prefs.customNamasteText) }
-    var currencySymbol by remember { mutableStateOf(prefs.customCurrencySymbol) }
-    var indianNumbering by remember { mutableStateOf(prefs.isIndianNumberFormattingEnabled) }
+    var timeFormatOption by remember { mutableStateOf(prefs.timeFormatOption) }
+    var dateMonthOption by remember { mutableStateOf(prefs.dateMonthOption) }
+    var dateYearOption by remember { mutableStateOf(prefs.dateYearOption) }
+    var dateSeparatorOption by remember { mutableStateOf(prefs.dateSeparatorOption) }
 
     // Live preview resolution triggering automatically on preference state changes
-    val livePreviewSample = remember(dateFormat, customPattern, dateSeparator, timeFormat, greetingStyle, customGreetingText, namasteText, currencySymbol) {
-        val sampleTemplate = "{greeting}! Your appointment is confirmed for {date} ({day}) at {time}. Total fee: {rupee}1,500."
+    val livePreviewSample = remember(
+        currencyOption,
+        customCurrencySymbol,
+        salutationOption,
+        customGreetingText,
+        timeFormatOption,
+        dateMonthOption,
+        dateYearOption,
+        dateSeparatorOption
+    ) {
+        val sampleTemplate = "{greeting}! Your bill is generated for {date} at {time}. Total fee: {rupee}1,500."
         MessageTemplateResolver.resolve(
             template = sampleTemplate,
             phone = "+91 98765 43210",
-            channel = "WhatsApp",
+            channel = "SMS",
             prefs = prefs
         )
     }
@@ -82,7 +94,7 @@ fun SettingsFormattingCard(
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Icon(
                         imageVector = Icons.Filled.AutoAwesome,
-                        contentDescription = "Live Preview",
+                        contentDescription = "Preview",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp)
                     )
@@ -97,7 +109,7 @@ fun SettingsFormattingCard(
             }
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "Below preview updates in real time as you adjust date, time, greeting, and currency formats.",
+                text = "Below preview updates in real time as you adjust date, time, salutation, and currency formats.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp
             )
@@ -121,7 +133,7 @@ fun SettingsFormattingCard(
             }
         }
 
-        // 2. Date Format & Separator Customization
+        // 2. Currency Format Customization (Rupee ₹ vs Custom)
         AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -129,59 +141,52 @@ fun SettingsFormattingCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Icon(Icons.Filled.CalendarMonth, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                    Text("Date Format", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    Icon(Icons.Filled.CurrencyRupee, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                    Text("Currency Format", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
-                val previewDate = MessageTemplateResolver.resolve("{date}", prefs = prefs)
-                AppBadge(text = previewDate, color = MaterialTheme.colorScheme.tertiary)
+                val curBadge = if (currencyOption == "CUSTOM") customCurrencySymbol.ifBlank { "Custom" } else "₹"
+                AppBadge(text = curBadge, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Choose how dates are injected into your messages.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Select standard Rupee sign or custom currency symbol.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
+            Text("Currency Option:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+            Spacer(modifier = Modifier.height(6.dp))
 
-            val dateFormats = listOf(
-                "dd-MM-yyyy" to "DD-MM-YYYY",
-                "dd/MM/yyyy" to "DD/MM/YYYY",
-                "dd.MM.yyyy" to "DD.MM.YYYY",
-                "ddMMyyyy" to "DDMMYYYY",
-                "dd-MM-yy" to "DD-MM-YY",
-                "yyyy-MM-dd" to "YYYY-MM-DD",
-                "dd MMM yyyy" to "12 Nov 2026",
-                "dd MMMM yyyy" to "12 November 2026",
-                "MMMM dd, yyyy" to "Nov 12, 2026",
-                "CUSTOM" to "Custom Pattern"
-            )
-
-            // Grid of Date Formats
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                dateFormats.chunked(2).forEach { rowItems ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
-                        rowItems.forEach { (fmt, label) ->
-                            AppChip(
-                                selected = dateFormat == fmt,
-                                onClick = {
-                                    dateFormat = fmt
-                                    prefs.customDateFormat = fmt
-                                },
-                                label = label,
-                                activeColor = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                }
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+                AppChip(
+                    selected = currencyOption == "RUPEE",
+                    onClick = {
+                        currencyOption = "RUPEE"
+                        prefs.currencyOption = "RUPEE"
+                    },
+                    label = "Rupee (₹)",
+                    activeColor = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f)
+                )
+                AppChip(
+                    selected = currencyOption == "CUSTOM",
+                    onClick = {
+                        currencyOption = "CUSTOM"
+                        prefs.currencyOption = "CUSTOM"
+                    },
+                    label = "Custom Symbol",
+                    activeColor = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f)
+                )
             }
 
-            AnimatedVisibility(visible = dateFormat == "CUSTOM") {
+            AnimatedVisibility(visible = currencyOption == "CUSTOM") {
                 Column(modifier = Modifier.padding(top = 8.dp)) {
                     OutlinedTextField(
-                        value = customPattern,
-                        onValueChange = { newPattern ->
-                            customPattern = newPattern
-                            prefs.customDateCustomPattern = newPattern
+                        value = customCurrencySymbol,
+                        onValueChange = { newSym ->
+                            customCurrencySymbol = newSym
+                            prefs.customCurrencySymbol = newSym
                         },
-                        label = { Text("Custom Date Pattern (e.g. EEE, d MMM yyyy)") },
+                        label = { Text("Custom Symbol") },
+                        placeholder = { Text("e.g. $, €, £, Rs.") },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -191,36 +196,74 @@ fun SettingsFormattingCard(
                     )
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.height(12.dp))
-            Text("Date Delimiter:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+        // 3. Salutation Format (Time of Day vs Custom)
+        AppCard(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Icon(Icons.Filled.WavingHand, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                    Text("Salutation Format", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                }
+                val previewGreet = MessageTemplateResolver.resolve("{greeting}", prefs = prefs)
+                AppBadge(text = previewGreet, color = MaterialTheme.colorScheme.tertiary)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text("Select time-of-day greeting or custom text for {greeting}.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Text("Salutation Option:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
             Spacer(modifier = Modifier.height(6.dp))
 
-            val separators = listOf(
-                "auto" to "Default",
-                "-" to "Hyphen (-)",
-                "/" to "Slash (/)",
-                "." to "Dot (.)",
-                " " to "Space ( )",
-                "" to "None"
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
-                separators.forEach { (sep, label) ->
-                    AppChip(
-                        selected = dateSeparator == sep,
-                        onClick = {
-                            dateSeparator = sep
-                            prefs.customDateSeparator = sep
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+                AppChip(
+                    selected = salutationOption == "TIME_OF_DAY",
+                    onClick = {
+                        salutationOption = "TIME_OF_DAY"
+                        prefs.salutationOption = "TIME_OF_DAY"
+                    },
+                    label = "Time Day",
+                    activeColor = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f)
+                )
+                AppChip(
+                    selected = salutationOption == "CUSTOM",
+                    onClick = {
+                        salutationOption = "CUSTOM"
+                        prefs.salutationOption = "CUSTOM"
+                    },
+                    label = "Custom Text",
+                    activeColor = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            AnimatedVisibility(visible = salutationOption == "CUSTOM") {
+                Column(modifier = Modifier.padding(top = 8.dp)) {
+                    OutlinedTextField(
+                        value = customGreetingText,
+                        onValueChange = { newText ->
+                            customGreetingText = newText
+                            prefs.customGreetingCustomText = newText
                         },
-                        label = label,
-                        activeColor = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.weight(1f)
+                        label = { Text("Custom Text") },
+                        placeholder = { Text("e.g. Hello, Namaste, Welcome") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                        )
                     )
                 }
             }
         }
 
-        // 3. Time Format Customization
+        // 4. Time Format (12 hr vs 24 hr)
         AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -235,37 +278,37 @@ fun SettingsFormattingCard(
                 AppBadge(text = previewTime, color = MaterialTheme.colorScheme.primary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Configure 12-hour or 24-hour time representation.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Select 12-hour or 24-hour clock format.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
-            val timeFormats = listOf(
-                "hh:mm a" to "12-Hour (AM/PM)",
-                "hh:mm:ss a" to "12-Hour + Sec",
-                "HH:mm" to "24-Hour Military",
-                "HH:mm:ss" to "24-Hour + Sec",
-                "hh:mm a 'IST'" to "With IST Zone"
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                timeFormats.chunked(2).forEach { rowItems ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
-                        rowItems.forEach { (fmt, label) ->
-                            AppChip(
-                                selected = timeFormat == fmt,
-                                onClick = {
-                                    timeFormat = fmt
-                                    prefs.customTimeFormat = fmt
-                                },
-                                label = label,
-                                activeColor = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                }
+            Text("Time Option:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+                AppChip(
+                    selected = timeFormatOption == "12HR",
+                    onClick = {
+                        timeFormatOption = "12HR"
+                        prefs.timeFormatOption = "12HR"
+                    },
+                    label = "12 Hour",
+                    activeColor = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.weight(1f)
+                )
+                AppChip(
+                    selected = timeFormatOption == "24HR",
+                    onClick = {
+                        timeFormatOption = "24HR"
+                        prefs.timeFormatOption = "24HR"
+                    },
+                    label = "24 Hour",
+                    activeColor = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
 
-        // 4. Salutations
+        // 5. Date Format (dd constant, month m/mm/mmm/mmmm, year yy/yyyy, separator)
         AppCard(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -273,150 +316,89 @@ fun SettingsFormattingCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Icon(Icons.Filled.WavingHand, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                    Text("Salutations", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    Icon(Icons.Filled.CalendarMonth, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                    Text("Date Format", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                 }
-                val previewGreet = MessageTemplateResolver.resolve("{greeting}", prefs = prefs)
-                AppBadge(text = previewGreet, color = MaterialTheme.colorScheme.tertiary)
+                val previewDate = MessageTemplateResolver.resolve("{date}", prefs = prefs)
+                AppBadge(text = previewDate, color = MaterialTheme.colorScheme.tertiary)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Tailor the greeting produced by the {greeting} variable.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Day dd is constant. Select month, year, and delimiter.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
-            Text("{greeting} Style:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+            Text("Day Code:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
             Spacer(modifier = Modifier.height(6.dp))
-
-            val greetingStyles = listOf(
-                "DYNAMIC" to "Time-of-Day (Morning/Eve)",
-                "NAMASTE" to "Namaste",
-                "PRANAM" to "Pranam",
-                "HELLO" to "Hello",
-                "HI" to "Hi",
-                "CUSTOM" to "Custom Text"
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                greetingStyles.chunked(2).forEach { rowItems ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
-                        rowItems.forEach { (style, label) ->
-                            AppChip(
-                                selected = greetingStyle == style,
-                                onClick = {
-                                    greetingStyle = style
-                                    prefs.customGreetingStyle = style
-                                },
-                                label = label,
-                                activeColor = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                }
+            Row(modifier = Modifier.fillMaxWidth()) {
+                AppChip(
+                    selected = true,
+                    onClick = {},
+                    label = "Day (dd)",
+                    activeColor = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
-
-            AnimatedVisibility(visible = greetingStyle == "CUSTOM") {
-                Column(modifier = Modifier.padding(top = 8.dp)) {
-                    OutlinedTextField(
-                        value = customGreetingText,
-                        onValueChange = { newText ->
-                            customGreetingText = newText
-                            prefs.customGreetingCustomText = newText
-                        },
-                        label = { Text("Custom Greeting (e.g. Jai Jinendra, Radhe Radhe, Sat Sri Akal)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
-                        )
-                    )
-                }
-            }
-
-            AnimatedVisibility(visible = greetingStyle == "NAMASTE") {
-                Column(modifier = Modifier.padding(top = 12.dp)) {
-                    Text("Namaste wording:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    val namasteForms = listOf(
-                        "Namaste" to "Namaste",
-                        "à¤¨à¤®à¤¸à¥à¤¤à¥‡" to "à¤¨à¤®à¤¸à¥à¤¤à¥‡",
-                        "Pranam" to "Pranam",
-                        "Namaskar" to "Namaskar",
-                        "Hello" to "Hello",
-                        "Hi" to "Hi"
-                    )
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
-                        namasteForms.forEach { (form, label) ->
-                            AppChip(
-                                selected = namasteText == form,
-                                onClick = {
-                                    namasteText = form
-                                    prefs.customNamasteText = form
-                                },
-                                label = label,
-                                activeColor = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // 5. Currency Symbol & Indian Number Grouping
-        AppCard(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Icon(Icons.Filled.CurrencyRupee, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                    Text("Currency Format", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                }
-                AppBadge(text = currencySymbol, color = MaterialTheme.colorScheme.primary)
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text("Configure currency symbol and Indian Lakhs/Crores numbering formats.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
-            Text("Currency Symbol:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+            Text("Month Format:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
             Spacer(modifier = Modifier.height(6.dp))
-
-            val currencies = listOf(
-                "â‚¹" to "â‚¹ (Rupee)",
-                "Rs." to "Rs.",
-                "INR" to "INR",
-                "$" to "$ (Dollar)",
-                "â‚¬" to "â‚¬ (Euro)",
-                "Â£" to "Â£ (Pound)"
-            )
+            val months = listOf("m", "mm", "mmm", "mmmm")
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
-                currencies.forEach { (sym, label) ->
+                months.forEach { m ->
                     AppChip(
-                        selected = currencySymbol == sym,
+                        selected = dateMonthOption.equals(m, ignoreCase = true),
                         onClick = {
-                            currencySymbol = sym
-                            prefs.customCurrencySymbol = sym
+                            dateMonthOption = m
+                            prefs.dateMonthOption = m
                         },
-                        label = label,
+                        label = m,
                         activeColor = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.weight(1f)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-            AppToggleRow(
-                title = "Indian Grouping",
-                subtitle = "Format thousands and lakhs using Indian comma conventions rather than international millions (100,000)",
-                checked = indianNumbering,
-                onCheckedChange = { checked ->
-                    indianNumbering = checked
-                    prefs.isIndianNumberFormattingEnabled = checked
-                },
-                icon = Icons.Filled.Pin
+            Spacer(modifier = Modifier.height(10.dp))
+            Text("Year Format:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+            Spacer(modifier = Modifier.height(6.dp))
+            val years = listOf("yy", "yyyy")
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.fillMaxWidth()) {
+                years.forEach { y ->
+                    AppChip(
+                        selected = dateYearOption.equals(y, ignoreCase = true),
+                        onClick = {
+                            dateYearOption = y
+                            prefs.dateYearOption = y
+                        },
+                        label = y,
+                        activeColor = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Text("Date Separator:", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp)
+            Spacer(modifier = Modifier.height(6.dp))
+            val separators = listOf(
+                "/" to "Slash (/)",
+                "-" to "Hyphen (-)",
+                "." to "Dot (.)",
+                " " to "Space ( )"
             )
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
+                separators.forEach { (sep, label) ->
+                    AppChip(
+                        selected = dateSeparatorOption == sep,
+                        onClick = {
+                            dateSeparatorOption = sep
+                            prefs.dateSeparatorOption = sep
+                        },
+                        label = label,
+                        activeColor = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
         }
 
         // 6. Variable Reference
@@ -426,7 +408,7 @@ fun SettingsFormattingCard(
                 Text("Variable Reference", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text("Insert any of these tags into task messages or campaign messages:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            Text("Available tokens for template messages:", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(10.dp))
 

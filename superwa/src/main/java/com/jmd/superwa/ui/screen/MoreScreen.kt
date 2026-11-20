@@ -160,6 +160,15 @@ fun MoreScreenView(
                         navigateToSubSection("SETTINGS")
                     }
                 }
+                item {
+                    MenuItemCard(
+                        "Dynamic Variables",
+                        Icons.Filled.TextFields,
+                        Color(0xFF0D9488)
+                    ) {
+                        navigateToSubSection("SETTINGS")
+                    }
+                }
 
                 // SECTION 2: Rules & Execution History
                 item {

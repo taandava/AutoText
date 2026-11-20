@@ -171,6 +171,15 @@ fun MoreScreenView(
                         navigateToSubSection("SETTINGS")
                     }
                 }
+                item {
+                    MenuItemCard(
+                        "Dynamic Variables",
+                        Icons.Filled.TextFields,
+                        Color(0xFF0D9488)
+                    ) {
+                        navigateToSubSection("SETTINGS")
+                    }
+                }
                 if (com.jmd.supersms.core.AppVariantHelper.isSuperSms) {
                     item {
                         MenuItemCard(

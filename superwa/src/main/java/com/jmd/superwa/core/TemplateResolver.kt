@@ -72,7 +72,7 @@ object MessageTemplateResolver {
         val dayOfWeek = SimpleDateFormat("EEEE", locale).format(cal.time)
 
         // Resolve customizable date pattern
-        val datePattern = resolveEffectiveDatePattern(
+        val datePattern = activePrefs?.buildEffectiveDateFormat() ?: resolveEffectiveDatePattern(
             baseFormat = activePrefs?.customDateFormat ?: "dd MMM yyyy",
             customPattern = activePrefs?.customDateCustomPattern ?: "dd-MM-yyyy",
             separator = activePrefs?.customDateSeparator ?: "auto"
@@ -80,11 +80,11 @@ object MessageTemplateResolver {
         val dateFormatted = try {
             SimpleDateFormat(datePattern, locale).format(cal.time)
         } catch (_: IllegalArgumentException) {
-            SimpleDateFormat("dd MMM yyyy", locale).format(cal.time)
+            SimpleDateFormat("dd-MMM-yyyy", locale).format(cal.time)
         }
 
-        // Resolve customizable time pattern
-        val timePattern = activePrefs?.customTimeFormat ?: "hh:mm a"
+        // Resolve customizable time pattern (12hr vs 24hr)
+        val timePattern = if (activePrefs?.timeFormatOption == "24HR") "HH:mm" else "hh:mm a"
         val timeFormatted = try {
             SimpleDateFormat(timePattern, locale).format(cal.time)
         } catch (_: IllegalArgumentException) {
@@ -98,21 +98,24 @@ object MessageTemplateResolver {
             else -> "Good evening"
         }
 
-        val resolvedGreeting = when (activePrefs?.customGreetingStyle?.uppercase()) {
-            "NAMASTE" -> activePrefs.customNamasteText.ifBlank { "Namaste" }
-            "PRANAM" -> "Pranam"
-            "HELLO" -> "Hello"
-            "HI" -> "Hi"
-            "CUSTOM" -> activePrefs.customGreetingCustomText.ifBlank { timeGreeting }
-            else -> timeGreeting // "DYNAMIC" or null
+        val resolvedGreeting = if (activePrefs?.salutationOption == "CUSTOM") {
+            activePrefs.customGreetingCustomText.ifBlank { timeGreeting }
+        } else {
+            timeGreeting
         }
 
-        val resolvedCurrency = activePrefs?.customCurrencySymbol?.ifBlank { "â‚¹" } ?: "â‚¹"
+        val resolvedCurrency = if (activePrefs?.currencyOption == "CUSTOM") {
+            activePrefs.customCurrencySymbol.ifBlank { "\u20B9" }
+        } else {
+            "\u20B9"
+        }
         val cleanPhone = PhoneNumberNormalizer.extractRawPhoneNumber(phone)
 
         return template
             .replace("{greeting}", resolvedGreeting, ignoreCase = true)
+            .replace("{salutation}", resolvedGreeting, ignoreCase = true)
             .replace("{rupee}", resolvedCurrency, ignoreCase = true)
+            .replace("{currency}", resolvedCurrency, ignoreCase = true)
             .replace("{day}", dayOfWeek, ignoreCase = true)
             .replace("{date}", dateFormatted, ignoreCase = true)
             .replace("{time}", timeFormatted, ignoreCase = true)

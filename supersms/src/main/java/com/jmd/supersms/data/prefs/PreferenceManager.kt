@@ -713,6 +713,44 @@ class PreferenceManager(private val context: Context) {
     // VARIABLE FORMATTING
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
+    // Dynamic Variable Preferences
+    var currencyOption: String
+        get() = prefs.getString("dynamic_currency_option", "RUPEE") ?: "RUPEE"
+        set(value) = prefs.edit { putString("dynamic_currency_option", value) }
+
+    var salutationOption: String
+        get() = prefs.getString("dynamic_salutation_option", "TIME_OF_DAY") ?: "TIME_OF_DAY"
+        set(value) = prefs.edit { putString("dynamic_salutation_option", value) }
+
+    var timeFormatOption: String
+        get() = prefs.getString("dynamic_time_option", "12HR") ?: "12HR"
+        set(value) = prefs.edit { putString("dynamic_time_option", value) }
+
+    var dateMonthOption: String
+        get() = prefs.getString("dynamic_date_month_option", "mmm") ?: "mmm"
+        set(value) = prefs.edit { putString("dynamic_date_month_option", value) }
+
+    var dateYearOption: String
+        get() = prefs.getString("dynamic_date_year_option", "yyyy") ?: "yyyy"
+        set(value) = prefs.edit { putString("dynamic_date_year_option", value) }
+
+    var dateSeparatorOption: String
+        get() = prefs.getString("dynamic_date_separator_option", "-") ?: "-"
+        set(value) = prefs.edit { putString("dynamic_date_separator_option", value) }
+
+    fun buildEffectiveDateFormat(): String {
+        val monthCode = when (dateMonthOption.lowercase()) {
+            "m" -> "M"
+            "mm" -> "MM"
+            "mmm" -> "MMM"
+            "mmmm" -> "MMMM"
+            else -> "MMM"
+        }
+        val yearCode = if (dateYearOption.equals("yy", ignoreCase = true)) "yy" else "yyyy"
+        val sep = dateSeparatorOption
+        return "dd$sep$monthCode$sep$yearCode"
+    }
+
     /** Date format style for {date} token. Default "dd MMM yyyy". */
     var customDateFormat: String
         get() = prefs.getString(KEY_CUSTOM_DATE_FORMAT, "dd MMM yyyy") ?: "dd MMM yyyy"
@@ -750,7 +788,7 @@ class PreferenceManager(private val context: Context) {
 
     /** Currency symbol for the {rupee} token. Default "â‚¹". */
     var customCurrencySymbol: String
-        get() = prefs.getString(KEY_CUSTOM_CURRENCY_SYMBOL, "â‚¹") ?: "â‚¹"
+        get() = prefs.getString(KEY_CUSTOM_CURRENCY_SYMBOL, "\u20B9")?.replace("â‚¹", "\u20B9") ?: "\u20B9"
         set(value) = prefs.edit { putString(KEY_CUSTOM_CURRENCY_SYMBOL, value) }
 
     /** Indian number grouping format (1,00,000 vs 100,000). Default true. */
