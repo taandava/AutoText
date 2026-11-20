@@ -6,13 +6,13 @@
  * Architecture definition and implementation for [ContactIngestionEngine].
  *
  * What it does:
- * Coordinates contact and recipient ingestion across device ContactsContract, CallLog, cellular SMS inbox/outbox history, and WhatsApp chat history scans.
+ * Coordinates contact and recipient ingestion across device ContactsContract, CallLog, and WhatsApp chat history scans.
  *
  * Linked With:
  * - Repositories: [com.jmd.superwa.data.db.DatabaseHelper], [com.jmd.superwa.data.repo.AppRepository], [com.jmd.superwa.data.repo.WhatsAppRepository]
  * - Models & Entities: [com.jmd.superwa.data.model.DynamicContactItem], [com.jmd.superwa.data.model.IngestionSummary]
  * - Core Security & Utilities: [android.content.pm.PackageManager], [android.util.Log], [androidx.core.content.ContextCompat], [com.jmd.superwa.core.PhoneNumberNormalizer]
- * - Android Framework & Jetpack: [android.Manifest], [android.provider.CallLog], [android.provider.ContactsContract], [android.provider.Telephony]
+ * - Android Framework & Jetpack: [android.Manifest], [android.provider.CallLog], [android.provider.ContactsContract]
  */
 
 package com.jmd.superwa.engine
@@ -22,7 +22,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.provider.CallLog
 import android.provider.ContactsContract
-import android.provider.Telephony
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.jmd.superwa.core.PhoneNumberNormalizer
@@ -156,43 +155,6 @@ class ContactIngestionEngine(
                     }
                 } catch (e: Exception) {
                     Log.w("ContactIngestion", "Call log ingestion query failed: ${e.message}")
-                }
-            }
-
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-                try {
-                    val resolver = context.contentResolver
-                    resolver.query(
-                        Telephony.Sms.CONTENT_URI,
-                        arrayOf(Telephony.Sms.ADDRESS),
-                        null,
-                        null,
-                        "${Telephony.Sms.DATE} DESC",
-                    )?.use { cursor ->
-                        val addressIdx = cursor.getColumnIndex(Telephony.Sms.ADDRESS)
-                        if (addressIdx >= 0) {
-                            while (cursor.moveToNext()) {
-                                smsScanned++
-                                val rawAddress = cursor.getString(addressIdx)?.trim().orEmpty()
-                                if (rawAddress.isBlank()) continue
-
-                                if (!PhoneNumberNormalizer.isMobileNumber(rawAddress)) continue
-
-                                val normalized = PhoneNumberNormalizer.normalize(rawAddress)
-                                if (!candidates.containsKey(normalized)) {
-                                    val resolvedName = PhoneNumberNormalizer.getContactName(context, rawAddress).orEmpty()
-                                    candidates[normalized] = DynamicContactItem(
-                                        name = resolvedName.ifBlank { rawAddress },
-                                        phone = rawAddress,
-                                        normalizedNumber = normalized,
-                                        source = "SMS",
-                                    )
-                                }
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.w("ContactIngestion", "SMS ingestion query failed: ${e.message}")
                 }
             }
         }
