@@ -59,7 +59,7 @@ def audit_module(module_name, prohibited_words, leak_words):
 print("="*60)
 print("AUDITING SUPERSMS")
 print("="*60)
-sms_issues = audit_module('supersms', ['automation', 'automate', 'automating'], ['whatsapp', 'whatsappbusiness', 'w4b'])
+sms_issues = audit_module('supersms', ['automation', 'automate', 'automating', 'automated'], ['whatsapp', 'whatsappbusiness', 'w4b'])
 print(f"Prohibited word matches: {len(sms_issues['prohibited'])}")
 for item in sms_issues['prohibited'][:10]:
     print(f"  - '{item['word']}' in {item['file']} (lines {item['lines']})")
@@ -75,7 +75,7 @@ for item in sms_issues['reminders']:
 print("\n" + "="*60)
 print("AUDITING SUPERWA")
 print("="*60)
-wa_issues = audit_module('superwa', ['automation', 'automate', 'automating'], ['callsimulation', 'call_simulation', 'simslot', 'smsquota'])
+wa_issues = audit_module('superwa', ['automation', 'automate', 'automating', 'automated'], ['callsimulation', 'call_simulation', 'simslot', 'smsquota'])
 print(f"Prohibited word matches: {len(wa_issues['prohibited'])}")
 for item in wa_issues['prohibited'][:10]:
     print(f"  - '{item['word']}' in {item['file']} (lines {item['lines']})")

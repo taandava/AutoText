@@ -50,13 +50,13 @@ import java.util.concurrent.ConcurrentHashMap
 object TelephonyCallEngine {
 
     private const val TAG = "TelephonyCallEngine"
-    private const val AUTOMATED_CALL_TTL_MS = 15 * 60 * 1000L // 15 minutes TTL
+    private const val DISPATCH_CALL_TTL_MS = 15 * 60 * 1000L // 15 minutes TTL
 
     /**
      * In-memory thread-safe registry of scheduled calls initiated by the Super application.
      * Maps normalized phone number to dispatch timestamp.
      */
-    private val automatedCalls = ConcurrentHashMap<String, Long>()
+    private val dispatchedCalls = ConcurrentHashMap<String, Long>()
 
     /**
      * What it is:
@@ -66,37 +66,37 @@ object TelephonyCallEngine {
      * Stores timestamped entry and purges expired entries to prevent memory leaks.
      *
      * Linked with:
-     * - Architecture: [TelephonyCallEngine], [trackAutomatedCall]
+     * - Architecture: [TelephonyCallEngine], [trackDispatchedCall]
      * @param rawPhone Target phone number.
      */
-    fun trackAutomatedCall(rawPhone: String) {
+    fun trackDispatchedCall(rawPhone: String) {
         val normalized = normalize(rawPhone)
         if (normalized.isNotBlank()) {
             val now = System.currentTimeMillis()
-            automatedCalls[normalized] = now
+            dispatchedCalls[normalized] = now
             purgeExpiredEntries(now)
         }
     }
 
     /**
      * What it is:
-     * Checks if a phone number was part of an scheduled scheduled call within the TTL window.
+     * Checks if a phone number was part of a scheduled call within the TTL window.
      *
      * What it does:
      * Verifies existence and TTL expiration.
      *
      * Linked with:
-     * - Architecture: [TelephonyCallEngine], [isAutomatedCall]
+     * - Architecture: [TelephonyCallEngine], [isDispatchedCall]
      * @param rawPhone Phone number to query.
-     * @return True if number matches an scheduled call initiated within the last 15 minutes.
+     * @return True if number matches a call initiated within the last 15 minutes.
      */
-    fun isAutomatedCall(rawPhone: String): Boolean {
+    fun isDispatchedCall(rawPhone: String): Boolean {
         val normalized = normalize(rawPhone)
         if (normalized.isBlank()) return false
         val now = System.currentTimeMillis()
-        val timestamp = automatedCalls[normalized] ?: return false
-        if (now - timestamp > AUTOMATED_CALL_TTL_MS) {
-            automatedCalls.remove(normalized)
+        val timestamp = dispatchedCalls[normalized] ?: return false
+        if (now - timestamp > DISPATCH_CALL_TTL_MS) {
+            dispatchedCalls.remove(normalized)
             return false
         }
         return true
@@ -104,19 +104,19 @@ object TelephonyCallEngine {
 
     /**
      * What it is:
-     * Clears an scheduled call tracking entry after post-call handling completes.
+     * Clears a scheduled call tracking entry after post-call handling completes.
      *
      * What it does:
      * Removes the entry from the registry.
      *
      * Linked with:
-     * - Architecture: [TelephonyCallEngine], [clearAutomatedCall]
+     * - Architecture: [TelephonyCallEngine], [clearDispatchedCall]
      * @param rawPhone Phone number to clear.
      */
-    fun clearAutomatedCall(rawPhone: String) {
+    fun clearDispatchedCall(rawPhone: String) {
         val normalized = normalize(rawPhone)
         if (normalized.isNotBlank()) {
-            automatedCalls.remove(normalized)
+            dispatchedCalls.remove(normalized)
         }
     }
 
@@ -178,7 +178,7 @@ object TelephonyCallEngine {
             android.Manifest.permission.CALL_PHONE
         ) == PackageManager.PERMISSION_GRANTED
 
-        trackAutomatedCall(cleanPhone)
+        trackDispatchedCall(cleanPhone)
 
         val uri = Uri.fromParts("tel", cleanPhone, null)
         val telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
@@ -316,10 +316,10 @@ object TelephonyCallEngine {
      * - Architecture: [TelephonyCallEngine], [purgeExpiredEntries]
      */
     private fun purgeExpiredEntries(now: Long) {
-        val iterator = automatedCalls.entries.iterator()
+        val iterator = dispatchedCalls.entries.iterator()
         while (iterator.hasNext()) {
             val entry = iterator.next()
-            if (now - entry.value > AUTOMATED_CALL_TTL_MS) {
+            if (now - entry.value > DISPATCH_CALL_TTL_MS) {
                 iterator.remove()
             }
         }

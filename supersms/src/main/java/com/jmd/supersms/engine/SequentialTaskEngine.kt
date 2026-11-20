@@ -740,7 +740,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     continue
                 }
 
-                TelephonyCallEngine.trackAutomatedCall(cleanPhone)
+                TelephonyCallEngine.trackDispatchedCall(cleanPhone)
                 var callInitiated = false
                 if (hasCallPerm && telecomManager != null) {
                     try {
