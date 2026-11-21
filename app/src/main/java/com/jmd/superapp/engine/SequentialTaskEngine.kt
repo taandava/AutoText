@@ -600,9 +600,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     }
                 }
             }
-            ChannelType.REMINDER -> {
-                executeReminderTask(repository, task)
-            }
             ChannelType.CALL_SIMULATION -> {
                 executeCallSimulationTask(repository, task)
             }
@@ -623,7 +620,7 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             ChannelType.WHATSAPP_CALL, ChannelType.WHATSAPP_BUSINESS_CALL -> true
             else -> false
         }
-        if (!isUiTaskChannel && task.channel != ChannelType.CALL_SIMULATION && task.channel != ChannelType.REMINDER && prefs.isAutoLockAfterSendEnabled) {
+        if (!isUiTaskChannel && task.channel != ChannelType.CALL_SIMULATION && prefs.isAutoLockAfterSendEnabled) {
             executeDeviceLockPostcondition(appContext, task.title)
         }
         if (success) {
@@ -1836,22 +1833,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
             executeDeviceLockPostcondition(appContext, task.title)
         }
         return allCallsSuccess
-    }
-    /**
-     * What it is:
-     * Execution routine for [executeReminderTask].
-     *
-     * What it does:
-     * Coordinates executeReminderTask operations conforming to application constraints.
-     *
-     * Linked with:
-     * - Component: [SequentialTaskEngine]
-     */
-
-    private fun executeReminderTask(repository: AppRepository, task: ScheduledTask): Boolean {
-        AppFileLogger.i(appContext, TAG, "Task #${task.id}: Reminder channel is no longer active.")
-        completeOrRescheduleTask(appContext, repository, task, true)
-        return true
     }
     /**
      * What it is:

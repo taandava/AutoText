@@ -427,8 +427,7 @@ object ProtectedApplicationManager {
         return when (task.channel) {
             ChannelType.SMS,
             ChannelType.CALL,
-            ChannelType.CALL_SIMULATION,
-            ChannelType.REMINDER -> true
+            ChannelType.CALL_SIMULATION -> true
             ChannelType.WHATSAPP,
             ChannelType.WHATSAPP_GROUP,
             ChannelType.WHATSAPP_STATUS,

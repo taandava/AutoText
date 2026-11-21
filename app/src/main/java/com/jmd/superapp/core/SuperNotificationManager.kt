@@ -26,12 +26,15 @@ object SuperNotificationManager {
 
     // V2 channels to ensure zero legacy OEM channel classification state
     const val CHANNEL_TASKS = "channel_tasks_v2"
-    const val CHANNEL_REMINDERS = "channel_reminders_v2"
+    const val CHANNEL_ALERTS = "channel_alerts_v2"
+    @Deprecated("Renamed to CHANNEL_ALERTS", ReplaceWith("CHANNEL_ALERTS"))
+    const val CHANNEL_REMINDERS = CHANNEL_ALERTS
 
     private val LEGACY_CHANNELS = listOf(
         "channel_service",
         "channel_tasks",
         "channel_reminders",
+        "channel_reminders_v2",
     )
 
     /**
@@ -51,7 +54,7 @@ object SuperNotificationManager {
         }
 
         val tasksName = context.getString(R.string.notification_channel_tasks)
-        val remindersName = context.getString(R.string.notification_channel_reminders)
+        val alertsName = context.getString(R.string.notification_channel_alerts)
 
         // 2. Tasks & Execution Channel
         val tasksChannel = NotificationChannel(
@@ -66,19 +69,19 @@ object SuperNotificationManager {
         }
 
         // 3. Alerts & High-Priority Channel
-        val remindersChannel = NotificationChannel(
-            CHANNEL_REMINDERS,
-            remindersName,
+        val alertsChannel = NotificationChannel(
+            CHANNEL_ALERTS,
+            alertsName,
             NotificationManager.IMPORTANCE_HIGH,
         ).apply {
-            description = context.getString(R.string.notification_channel_reminders_desc)
+            description = context.getString(R.string.notification_channel_alerts_desc)
             enableVibration(true)
             setShowBadge(true)
             disableOemClassification(this)
         }
 
         try {
-            nm.createNotificationChannels(listOf(tasksChannel, remindersChannel))
+            nm.createNotificationChannels(listOf(tasksChannel, alertsChannel))
         } catch (t: Throwable) {
             Log.e(TAG, "Failed creating notification channels: ${t.message}", t)
         }
@@ -178,7 +181,7 @@ object SuperNotificationManager {
         val content = "Incoming call from ${callerNumber.ifBlank { "Unknown Caller" }}"
         val notif = buildNotification(
             context = context,
-            channelId = CHANNEL_REMINDERS,
+            channelId = CHANNEL_ALERTS,
             title = title,
             content = content,
             priority = NotificationCompat.PRIORITY_MAX,

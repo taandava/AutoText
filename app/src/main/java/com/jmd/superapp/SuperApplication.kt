@@ -78,8 +78,9 @@ class SuperApplication : Application(), Configuration.Provider {
         /** Notification channel identifier for task status updates and delivery receipts. */
         const val CHANNEL_TASKS = com.jmd.superapp.core.SuperNotificationManager.CHANNEL_TASKS
 
-        /** Notification channel identifier for full-screen reminder alarms, countdowns, and sound toggles. */
-        const val CHANNEL_REMINDERS = com.jmd.superapp.core.SuperNotificationManager.CHANNEL_REMINDERS
+        /** Notification channel identifier for full-screen alerts and call simulation. */
+        const val CHANNEL_ALERTS = com.jmd.superapp.core.SuperNotificationManager.CHANNEL_ALERTS
+        const val CHANNEL_REMINDERS = CHANNEL_ALERTS
 
         /** Legacy persistent service notification channel identifier targeted for removal. */
         const val CHANNEL_SERVICE = "channel_service"

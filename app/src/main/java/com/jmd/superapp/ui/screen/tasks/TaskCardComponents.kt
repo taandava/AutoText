@@ -203,7 +203,6 @@ fun TaskCard(
         ChannelType.SMS -> "SMS"
         ChannelType.CALL,
         ChannelType.CALL_SIMULATION -> "Call"
-        ChannelType.REMINDER -> "Alarm"
     }
 
     val dateFormatted = SimpleDateFormat("dd MMM • hh:mm a", currentLocale).format(Date(task.triggerTimeMillis))
@@ -308,23 +307,7 @@ fun TaskCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    if (task.channel == ChannelType.REMINDER) {
-                        Icon(
-                            imageVector = Icons.Filled.Alarm,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(13.dp)
-                        )
-                        Text(
-                            text = task.messageText.ifBlank { "Reminder" },
-                            fontSize = 12.5.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.primary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false)
-                        )
-                    } else if (task.recipients.isNotEmpty()) {
+                    if (task.recipients.isNotEmpty()) {
                         Icon(
                             imageVector = Icons.Filled.Person,
                             contentDescription = null,

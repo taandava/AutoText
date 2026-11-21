@@ -55,7 +55,12 @@ def run_comprehensive_audit():
 
             # 2. Kotlin Package Verification
             if is_kt:
-                expected_pkg_suffix = os.path.dirname(rel).replace('\\', '/').split('/src/main/java/')[-1].replace('/', '.')
+                clean_rel = os.path.dirname(rel).replace('\\', '/')
+                for prefix in ['/src/main/java/', '/src/test/java/']:
+                    if prefix in clean_rel:
+                        clean_rel = clean_rel.split(prefix)[-1]
+                        break
+                expected_pkg_suffix = clean_rel.replace('/', '.')
                 try:
                     with open(p, 'r', encoding='utf-8') as fp:
                         first_lines = [fp.readline() for _ in range(30)]

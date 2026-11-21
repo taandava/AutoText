@@ -177,12 +177,12 @@ object PermissionManager {
         ),
         PermissionFeatureInfo(
             permissionId = ID_POST_NOTIFICATIONS,
-            featureName = "Execution Alerts & Reminders",
-            purpose = "Displays task completion summaries, reminder heads-up alerts, and error feedback.",
+            featureName = "Execution Alerts",
+            purpose = "Displays task completion summaries, heads-up alerts, and error feedback.",
             canWorkWithout = true,
             isRuntimeApproval = true,
             requiresSpecialUserAction = false,
-            deniedImpact = "Tasks execute normally in background; completion alerts and reminders are suppressed.",
+            deniedImpact = "Tasks execute normally in background; completion alerts are suppressed.",
             revocationSafety = "Safe to revoke anytime.",
             category = PermissionCategory.SYSTEM
         ),

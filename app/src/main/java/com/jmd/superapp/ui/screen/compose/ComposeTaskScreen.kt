@@ -612,21 +612,19 @@ fun ComposeTaskScreen(
             // Channel Selector is omitted when channel is explicitly chosen/locked
             // The top bar badge already clearly indicates the active channel.
 
-            // 2. Task Label & Identifier (For channels other than REMINDER)
-            if (selectedChannel != ChannelType.REMINDER) {
-                AppCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = AppDesignTokens.ShapeLarge
-                ) {
-                    AppInputField(
-                        value = title,
-                        onValueChange = { title = it },
-                        label = "Task Label",
-                        placeholder = "e.g. Birthday Wish, Client Reminder, Weekly Standup",
-                        leadingIcon = Icons.AutoMirrored.Filled.Label,
-                        accentColor = MaterialTheme.colorScheme.primary
-                    )
-                }
+            // 2. Task Label & Identifier
+            AppCard(
+                modifier = Modifier.fillMaxWidth(),
+                shape = AppDesignTokens.ShapeLarge
+            ) {
+                AppInputField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = "Task Label",
+                    placeholder = "e.g. Birthday Wish, Client Followup, Weekly Standup",
+                    leadingIcon = Icons.AutoMirrored.Filled.Label,
+                    accentColor = MaterialTheme.colorScheme.primary
+                )
             }
 
             // 3. Channel Specific Configuration Enterprise Card

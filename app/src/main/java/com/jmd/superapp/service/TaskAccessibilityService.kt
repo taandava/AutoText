@@ -512,7 +512,7 @@ class TaskAccessibilityService : AccessibilityService() {
                 }
 
                 if (!isServiceRunning || instance == null) {
-                    context.showAppToast("Please enable Super Assistant in Settings > Accessibility to pick chats", isLong = true)
+                    context.showAppToast("Please enable Super in Settings > Accessibility to pick chats", isLong = true)
                     runCatching {
                         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -652,7 +652,7 @@ class TaskAccessibilityService : AccessibilityService() {
                 }
 
                 if (!isServiceRunning || instance == null) {
-                    context.showAppToast("Please enable Super Assistant in Settings > Accessibility to scan chats", isLong = true)
+                    context.showAppToast("Please enable Super in Settings > Accessibility to scan chats", isLong = true)
                     runCatching {
                         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -1310,7 +1310,7 @@ class TaskAccessibilityService : AccessibilityService() {
                 }
 
                 if (!isServiceRunning) {
-                    context.showAppToast("Please enable Super Assistant in Settings > Accessibility first", isLong = true)
+                    context.showAppToast("Please enable Super in Settings > Accessibility first", isLong = true)
                     runCatching {
                         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK

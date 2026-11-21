@@ -23,7 +23,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.provider.AlarmClock
 import android.util.Log
 import com.jmd.superapp.core.AppFileLogger
 import com.jmd.superapp.core.TaskSafetyManager
@@ -160,37 +159,7 @@ class AlarmScheduler(private val context: Context) {
 
     /**
      * What it is:
-     * Integrates with Android's system clock app using [AlarmClock.ACTION_SET_ALARM] to set an audible device-level alarm for [ChannelType.REMINDER] tasks.
-     *
-     * What it does:
-     * Uses a unique, task-specific label pattern to prevent colliding with or dismissing unrelated personal alarms.
-     *
-     * Linked with:
-     * - Architecture: [AlarmScheduler], [setDeviceSystemAlarm]
-     * @param task Reminder task configuration.
-     */
-    fun setDeviceSystemAlarm(task: ScheduledTask) {
-        setDeviceSystemAlarm(context, task)
-    }
-
-    /**
-     * What it is:
-     * Dismisses the device-level system alarm from Android's system clock app using [AlarmClock.ACTION_DISMISS_ALARM].
-     *
-     * What it does:
-     * Specifically matches ONLY the exact unique label set for this task (`Super #<id>: ...`) using [AlarmClock.ALARM_SEARCH_MODE_LABEL], strictly preserving all other user-configured alarms.
-     *
-     * Linked with:
-     * - Architecture: [AlarmScheduler], [dismissDeviceSystemAlarm]
-     * @param task Target reminder task to dismiss from system clock.
-     */
-    fun dismissDeviceSystemAlarm(task: ScheduledTask) {
-        dismissDeviceSystemAlarm(context, task)
-    }
-
-    /**
-     * What it is:
-     * Cancels any pending [AlarmManager] alarms associated with the specified task ID, and if the task is a [ChannelType.REMINDER], dismisses its corresponding system clock alarm.
+     * Cancels any pending [AlarmManager] alarms associated with the specified task ID.
      *
      * What it does:
      * Executes [cancelTask] logic in accordance with system and security invariants.
@@ -317,134 +286,6 @@ class AlarmScheduler(private val context: Context) {
             }
             Log.d(TAG, "cleanOrphanedAndCompletedAlarms: Purged and cancelled alarms for $cleanedCount inactive/expired tasks")
             AppFileLogger.action(context, TAG, "Purged and cancelled alarms for $cleanedCount inactive/expired tasks from AlarmManager")
-        }
-
-        /**
-         * What it is:
-         * Generates a unique, non-colliding system alarm label identifying this exact task.
-         *
-         * What it does:
-         * Prepends `Super #<id>: ` to ensure searches specifically match only alarms scheduled by this application and never dismiss user personal alarms.
-         *
-         * Linked with:
-         * - Architecture: [AlarmScheduler], [getSystemAlarmLabel]
-         * @param task Target [ScheduledTask].
-         * @return Formatted unique alarm label.
-         */
-        @JvmStatic
-        fun getSystemAlarmLabel(task: ScheduledTask): String {
-            val cleanTitle = task.title.ifBlank { task.messageText.ifBlank { "Reminder" } }.trim()
-            return "Super #${task.id}: $cleanTitle"
-        }
-
-        /**
-         * What it is:
-         * Integrates with Android's system clock app using [AlarmClock.ACTION_SET_ALARM] to set an audible device-level alarm for [ChannelType.REMINDER] tasks.
-         *
-         * What it does:
-         * Executes [setDeviceSystemAlarm] logic in accordance with system invariants.
-         *
-         * Linked with:
-         * - Architecture: [AlarmScheduler], [setDeviceSystemAlarm]
-         * @param context Active Android [Context].
-         * @param task Reminder task configuration.
-         */
-        @JvmStatic
-        fun setDeviceSystemAlarm(context: Context, task: ScheduledTask) {
-            if (task.channel != ChannelType.REMINDER) return
-            try {
-                val now = System.currentTimeMillis()
-                val triggerTime = if (task.triggerTimeMillis <= now) {
-                    calculateNextFutureTrigger(task, now)
-                } else {
-                    task.triggerTimeMillis
-                }
-                if (triggerTime <= now) {
-                    Log.w(TAG, "Cannot register system clock alarm for task #${task.id}: trigger time is in the past ($triggerTime <= $now)")
-                    return
-                }
-                val cal = Calendar.getInstance().apply { timeInMillis = triggerTime }
-                val hour = cal[Calendar.HOUR_OF_DAY]
-                val minute = cal[Calendar.MINUTE]
-                val message = getSystemAlarmLabel(task)
-
-                val intent = Intent(AlarmClock.ACTION_SET_ALARM).apply {
-                    putExtra(AlarmClock.EXTRA_HOUR, hour)
-                    putExtra(AlarmClock.EXTRA_MINUTES, minute)
-                    putExtra(AlarmClock.EXTRA_MESSAGE, message)
-                    putExtra(AlarmClock.EXTRA_SKIP_UI, true)
-                    putExtra(AlarmClock.EXTRA_VIBRATE, true)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-                context.startActivity(intent)
-                Log.i(TAG, "Registered system clock app alarm for task #${task.id} ($message at $hour:$minute)")
-                AppFileLogger.action(context, TAG, "Registered System Clock App alarm for Task #${task.id} ($message) at $hour:$minute")
-            } catch (e: Exception) {
-                Log.w(TAG, "Could not set System Clock alarm via ACTION_SET_ALARM: ${e.message}")
-            }
-        }
-
-        /**
-         * What it is:
-         * Dismisses the device-level system alarm from Android's system clock app using [AlarmClock.ACTION_DISMISS_ALARM].
-         *
-         * What it does:
-         * Uses [AlarmClock.ALARM_SEARCH_MODE_LABEL] with [getSystemAlarmLabel] to guarantee that only alarms set by this task are dismissed, completely leaving other user alarms intact.
-         *
-         * Linked with:
-         * - Architecture: [AlarmScheduler], [dismissDeviceSystemAlarm]
-         * @param context Active Android [Context].
-         * @param task Target reminder task.
-         */
-        @JvmStatic
-        fun dismissDeviceSystemAlarm(context: Context, task: ScheduledTask) {
-            if (task.channel != ChannelType.REMINDER) return
-            try {
-                val cleanTitle = task.title.ifBlank { task.messageText.ifBlank { "Reminder" } }.trim()
-                val labels = listOf(
-                    "Super #${task.id}: $cleanTitle",
-                    "Helper #${task.id}: $cleanTitle",
-                    "AutoText #${task.id}: $cleanTitle",
-                    "Super #${task.id}",
-                    "Helper #${task.id}",
-                    "AutoText #${task.id}"
-                ).distinct()
-
-                for (label in labels) {
-                    val dismissIntent = Intent(AlarmClock.ACTION_DISMISS_ALARM).apply {
-                        putExtra(AlarmClock.EXTRA_ALARM_SEARCH_MODE, AlarmClock.ALARM_SEARCH_MODE_LABEL)
-                        putExtra(AlarmClock.EXTRA_MESSAGE, label)
-                        putExtra(AlarmClock.EXTRA_SKIP_UI, true)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                    context.startActivity(dismissIntent)
-                }
-                Log.i(TAG, "Dismissed system clock alarm for task #${task.id}")
-                AppFileLogger.action(context, TAG, "Dismissed System Clock alarm for Task #${task.id}")
-            } catch (e: Exception) {
-                Log.w(TAG, "Could not dismiss System Clock alarm via ACTION_DISMISS_ALARM: ${e.message}")
-            }
-        }
-
-        /**
-         * Dismisses system clock alarms for a given task ID even if the task record was already deleted from the database.
-         */
-        @JvmStatic
-        fun dismissDeviceSystemAlarmById(context: Context, taskId: Long) {
-            try {
-                val candidateLabels = listOf("Super #$taskId", "Helper #$taskId", "AutoText #$taskId")
-                for (lbl in candidateLabels) {
-                    val dismissIntent = Intent(AlarmClock.ACTION_DISMISS_ALARM).apply {
-                        putExtra(AlarmClock.EXTRA_ALARM_SEARCH_MODE, AlarmClock.ALARM_SEARCH_MODE_LABEL)
-                        putExtra(AlarmClock.EXTRA_MESSAGE, lbl)
-                        putExtra(AlarmClock.EXTRA_SKIP_UI, true)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                    context.startActivity(dismissIntent)
-                }
-            } catch (e: Exception) {
-                Log.w(TAG, "Could not dismiss System Clock alarm by id #$taskId: ${e.message}")
-            }
         }
 
         /**

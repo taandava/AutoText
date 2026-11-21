@@ -74,7 +74,6 @@ object MaterialIconMapper {
         ChannelType.WHATSAPP_CALL -> Icons.Filled.PhoneInTalk
         ChannelType.WHATSAPP_BUSINESS_CALL -> Icons.Filled.ContactPhone
         ChannelType.CALL_SIMULATION -> Icons.AutoMirrored.Filled.PhoneForwarded
-        ChannelType.REMINDER -> Icons.Filled.Alarm
     }
     /**
      * What it is:
@@ -99,7 +98,6 @@ object MaterialIconMapper {
         ChannelType.WHATSAPP_CALL -> Color(0xFF06B6D4) // Cyan VoIP
         ChannelType.WHATSAPP_BUSINESS_CALL -> Color(0xFF0284C7) // Sky Blue
         ChannelType.CALL_SIMULATION -> Color(0xFFD97706) // Amber Simulation
-        ChannelType.REMINDER -> Color(0xFFE11D48) // Rose Alarm
     }
     /**
      * What it is:

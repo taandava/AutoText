@@ -178,7 +178,6 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_TTS_SPEECH_RATE = "tts_speech_rate"
         private const val KEY_TTS_SPEECH_PITCH = "tts_speech_pitch"
         private const val KEY_AUTOREPLY_COOLDOWN_SECONDS = "autoreply_cooldown_seconds"
-        private const val KEY_SYSTEM_CLOCK_ALARM_SYNC = "system_clock_alarm_sync_enabled"
 
         private const val KEYSTORE_PROVIDER = "AndroidKeyStore"
         private const val KEYSTORE_ALIAS = "Super_Hardware_Key"
@@ -864,13 +863,4 @@ class PreferenceManager(private val context: Context) {
     var autoReplyCooldownSeconds: Int
         get() = prefs.getInt(KEY_AUTOREPLY_COOLDOWN_SECONDS, 60)
         set(value) = prefs.edit { putInt(KEY_AUTOREPLY_COOLDOWN_SECONDS, value.coerceIn(10, 600)) }
-
-    /**
-     * Whether to also register reminder alarms in the device's default OEM Clock app (e.g. Samsung Clock).
-     * Default false: Super handles wakeful exact alarm notifications directly via AlarmManager and
-     * fullscreen ReminderAlarmActivity without cluttering the device's Clock app list.
-     */
-    var isSystemClockAlarmSyncEnabled: Boolean
-        get() = prefs.getBoolean(KEY_SYSTEM_CLOCK_ALARM_SYNC, false)
-        set(value) = prefs.edit { putBoolean(KEY_SYSTEM_CLOCK_ALARM_SYNC, value) }
 }

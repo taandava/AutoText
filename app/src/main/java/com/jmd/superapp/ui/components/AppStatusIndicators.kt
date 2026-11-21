@@ -117,10 +117,10 @@ object SystemIndicatorResolver {
         }
 
         val a11yName = when {
-            !isComponentEnabled -> "Super Assistant (Disabled in System)"
-            prefs.isA11yUserPaused -> "Super Assistant (Paused for Payments)"
-            isA11yRunning -> "Super Scheduled Assistant (Active • Bank-Safe)"
-            else -> "Super Scheduled Assistant"
+            !isComponentEnabled -> "Super (Disabled)"
+            prefs.isA11yUserPaused -> "Super (Paused)"
+            isA11yRunning -> "Super (Active)"
+            else -> "Super"
         }
 
         val a11yDesc = when {

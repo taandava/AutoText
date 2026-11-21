@@ -139,13 +139,13 @@ class TaskTileService : TileService() {
         val isRunning = AccessibilityHealthManager.isServiceOperational()
         if (isRunning) {
             tile.state = Tile.STATE_ACTIVE
-            tile.label = "Super Assistant"
+            tile.label = "Super"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 tile.subtitle = "Active"
             }
         } else {
             tile.state = Tile.STATE_INACTIVE
-            tile.label = "Super Assistant"
+            tile.label = "Super"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 tile.subtitle = "Paused"
             }
