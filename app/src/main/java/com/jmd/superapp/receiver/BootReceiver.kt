@@ -137,7 +137,6 @@ class BootReceiver : BroadcastReceiver() {
             if (!prefs.isA11yUserPaused) {
                 AccessibilityHealthManager.ensureAllServicesActive(context)
             }
-            AccessibilityHealthManager.enforceAutoRotateInvariant(context)
             AlarmScheduler(context).rescheduleAllPending()
             DailyCampaignScheduler.scheduleAll(context)
             AccessibilityWatchdogScheduler.scheduleHeartbeat(context)

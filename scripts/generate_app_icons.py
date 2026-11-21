@@ -50,8 +50,8 @@ def render_emblem(size, is_round=False):
         (120, 180)
     ]
 
-    # 1. Outer Glow Layer (#80FF9100 - translucent amber glow)
-    glow_color = (255, 145, 0, 100)
+    # 1. Outer Glow Layer (#80FFD600 - translucent gold glow)
+    glow_color = (255, 214, 0, 90)
     glow_r_outer = r_outer + (1.5 * unit)
     glow_r_inner = r_inner - (1.0 * unit)
 

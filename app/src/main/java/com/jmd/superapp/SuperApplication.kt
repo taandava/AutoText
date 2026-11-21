@@ -9,7 +9,7 @@
  * - Bootstraps the application process and provides global singleton access.
  * - Sets up defensive global uncaught exception handler with immediate diagnostic log dumping.
  * - Creates and registers system-level notification channels for tasks and alarms.
- * - Enforces accessibility service component enablement and auto-rotation invariance.
+ * - Enforces accessibility service component enablement and state recovery.
  * - Spawns structured background coroutine to recover interrupted tasks, re-arm pending alarms,
  *   schedule daily campaigns, and launch the accessibility watchdog heartbeat.
  *
@@ -207,7 +207,6 @@ class SuperApplication : Application(), Configuration.Provider {
                 if (!prefs.isA11yUserPaused) {
                     AccessibilityHealthManager.ensureAllServicesActive(this@SuperApplication)
                 }
-                AccessibilityHealthManager.enforceAutoRotateInvariant(this@SuperApplication)
             } catch (e: Exception) {
                 Log.e(TAG, "Error during background initialization", e)
                 AppFileLogger.e(this@SuperApplication, TAG, "Recoverable issue during background initialization: ${e.message}", e)

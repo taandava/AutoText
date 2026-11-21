@@ -38,6 +38,8 @@ object NotificationIconHelper {
                 }
 
                 val drawable = ContextCompat.getDrawable(context, R.drawable.ic_launcher_large)
+                    ?: ContextCompat.getDrawable(context, R.mipmap.ic_super_emblem_round)
+                    ?: ContextCompat.getDrawable(context, R.mipmap.ic_super_emblem)
                     ?: ContextCompat.getDrawable(context, R.mipmap.ic_launcher_round)
                     ?: ContextCompat.getDrawable(context, R.mipmap.ic_launcher)
                 if (drawable != null) {

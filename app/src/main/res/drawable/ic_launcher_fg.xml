@@ -7,19 +7,19 @@
 
     <!-- Dynamic Geometric Emblem Symbol (Vibrant Gold & Charcoal Accent) -->
 
-    <!-- Outer Glow Layer -->
+    <!-- Outer Glow Layer (Gold Glow) -->
     <group>
         <path
-            android:fillColor="#80FF9100"
+            android:fillColor="#80FFD600"
             android:pathData="M54,54 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0" />
         <path
-            android:fillColor="#80FF9100"
+            android:fillColor="#80FFD600"
             android:pathData="M59.5,44.5 L70,26.3 A32,32 0 0,0 38,26.3 L48.5,44.5 A11,11 0 0,1 59.5,44.5 Z" />
         <path
-            android:fillColor="#80FF9100"
+            android:fillColor="#80FFD600"
             android:pathData="M65,54 L86,54 A32,32 0 0,1 70,81.7 L59.5,63.5 A11,11 0 0,0 65,54 Z" />
         <path
-            android:fillColor="#80FF9100"
+            android:fillColor="#80FFD600"
             android:pathData="M48.5,63.5 L38,81.7 A32,32 0 0,1 22,54 L43,54 A11,11 0 0,0 48.5,63.5 Z" />
     </group>
 

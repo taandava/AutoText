@@ -142,14 +142,6 @@ object SystemIndicatorResolver {
         val isExactAlarmActive = (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) ||
             (alarmManager?.canScheduleExactAlarms() == true)
 
-        val isAutoRotateOff = try {
-            Settings.System.getInt(context.contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0) == 0
-        } catch (e: Exception) {
-            android.util.Log.w("AppStatusIndicators", "Failed reading ACCELEROMETER_ROTATION setting: ${e.message}")
-            true
-        }
-        val isRotationGuardActive = prefs.isPreventSystemAutoRotateEnabled && isAutoRotateOff
-
         return listOf(
             SystemIndicator(
                 id = "banking_shield_guard",
@@ -160,17 +152,6 @@ object SystemIndicatorResolver {
                 actionLabel = if (!isBankingShieldActive) "Enable Guard" else null,
                 onAction = { _ ->
                     prefs.isBankingShieldEnabled = true
-                }
-            ),
-            SystemIndicator(
-                id = "rotation_guard",
-                name = "Orientation Guard",
-                description = "Strictly protects system display settings: ensures auto-rotate remains disabled and keeps screen orientation locked to portrait.",
-                icon = Icons.Default.ScreenLockRotation,
-                isActive = isRotationGuardActive,
-                actionLabel = if (!isRotationGuardActive) "Lock Portrait" else null,
-                onAction = { ctx ->
-                    AccessibilityHealthManager.enforceAutoRotateInvariant(ctx)
                 }
             ),
             SystemIndicator(

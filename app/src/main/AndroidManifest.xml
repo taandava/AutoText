@@ -106,10 +106,10 @@
         <package android:name="com.vivo.phone" />
     </queries>
 
-    <application android:name=".SuperApplication" android:allowBackup="true" android:dataExtractionRules="@xml/data_extraction_rules" android:fullBackupContent="@xml/backup_rules" android:icon="@mipmap/ic_super_emblem" android:roundIcon="@mipmap/ic_super_emblem_round" android:label="@string/app_name" android:supportsRtl="true" android:usesCleartextTraffic="false" android:enableOnBackInvokedCallback="true" tools:targetApi="33" android:theme="@style/Theme.Super">
+    <application android:name=".SuperApplication" android:allowBackup="true" android:dataExtractionRules="@xml/data_extraction_rules" android:fullBackupContent="@xml/backup_rules" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:label="@string/app_name" android:supportsRtl="true" android:usesCleartextTraffic="false" android:enableOnBackInvokedCallback="true" tools:targetApi="33" android:theme="@style/Theme.Super">
 
         <!-- Main Activity -->
-        <activity android:name=".ui.activity.MainActivity" android:icon="@mipmap/ic_super_emblem" android:roundIcon="@mipmap/ic_super_emblem_round" android:launchMode="singleTask" android:exported="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.Super">
+        <activity android:name=".ui.activity.MainActivity" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:launchMode="singleTask" android:exported="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.Super">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -121,20 +121,6 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
-        <!-- Fresh Component Launcher Alias to Evict Stale OEM Icon Caches -->
-        <activity-alias
-            android:name=".ui.activity.SuperAssistantLauncher"
-            android:targetActivity=".ui.activity.MainActivity"
-            android:icon="@mipmap/ic_super_emblem"
-            android:roundIcon="@mipmap/ic_super_emblem_round"
-            android:label="@string/app_name"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
 
 
         <!-- Simulated Incoming Call Activity (Internal simulation only) -->

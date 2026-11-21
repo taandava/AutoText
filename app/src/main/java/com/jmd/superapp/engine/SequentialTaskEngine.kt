@@ -626,7 +626,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         if (!isUiTaskChannel && task.channel != ChannelType.CALL_SIMULATION && task.channel != ChannelType.REMINDER && prefs.isAutoLockAfterSendEnabled) {
             executeDeviceLockPostcondition(appContext, task.title)
         }
-        AccessibilityHealthManager.enforceAutoRotateInvariant(appContext)
         if (success) {
             DispatchJournal.complete(appContext, task.id, dispatchOccurrence)
         } else {
@@ -1143,7 +1142,6 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
         AppFileLogger.action(context, TAG, "Executing device auto-lock postcondition for '$taskTitle' (Power button simulation, Fingerprint safe)...")
         // 1. Return to home launcher first so private conversation/dialer is cleared
         TaskAccessibilityService.minimizeToHome(context)
-        AccessibilityHealthManager.enforceAutoRotateInvariant(context)
         delay(400.milliseconds)
 
         val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager

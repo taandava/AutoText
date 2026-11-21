@@ -151,7 +151,6 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_SUPPRESS_NOTIFS_OVER_EXCLUDED = "privacy_suppress_notifs_over_excluded"
         private const val KEY_BLOCK_OVERLAYS_OVER_EXCLUDED = "privacy_block_overlays_over_excluded"
         private const val KEY_SMS_QUOTA_LIMIT_ENABLED = "sms_quota_limit_enabled"
-        private const val KEY_PREVENT_SYSTEM_AUTO_ROTATE = "prevent_system_auto_rotate"
 
         // Variable Formatting Keys
         private const val KEY_CUSTOM_DATE_FORMAT = "custom_date_format"
@@ -185,10 +184,6 @@ class PreferenceManager(private val context: Context) {
         private const val KEYSTORE_ALIAS = "Super_Hardware_Key"
         private const val LEGACY_KEYSTORE_ALIAS = "Helper_Hardware_Key"
     }
-
-    var isPreventSystemAutoRotateEnabled: Boolean
-        get() = prefs.getBoolean(KEY_PREVENT_SYSTEM_AUTO_ROTATE, true)
-        set(value) = prefs.edit { putBoolean(KEY_PREVENT_SYSTEM_AUTO_ROTATE, value) }
 
     var isTasksMasterEnabled: Boolean
         get() = true

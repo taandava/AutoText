@@ -67,7 +67,6 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestMultiplePermissions(),
     ) { _ ->
         triggerBackgroundContactIngestion()
-        AccessibilityHealthManager.enforceAutoRotateInvariant(applicationContext)
     }
 
     /**
@@ -90,10 +89,6 @@ class MainActivity : ComponentActivity() {
             handleIncomingIntent(intent)
             checkAndRequestPermissions()
             triggerBackgroundContactIngestion()
-        }
-        // Settings/PM writes are not needed before the first frame; keep them off the startup path.
-        lifecycleScope.launch(Dispatchers.IO) {
-            AccessibilityHealthManager.enforceAutoRotateInvariant(applicationContext)
         }
 
         setContent {
@@ -171,7 +166,6 @@ class MainActivity : ComponentActivity() {
             if (!prefs.isA11yUserPaused) {
                 AccessibilityHealthManager.ensureAllServicesActive(applicationContext)
             }
-            AccessibilityHealthManager.enforceAutoRotateInvariant(applicationContext)
         }
         triggerBackgroundContactIngestion()
     }

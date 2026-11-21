@@ -437,11 +437,9 @@ object PopupShield {
             val id = curr.viewIdResourceName?.lowercase().orEmpty()
             val pkg = curr.packageName?.toString()?.lowercase().orEmpty()
 
-            // Strictly protect system auto-rotate, quick settings tiles, and system UI controls
+            // Strictly protect system UI controls, quick settings tiles, and keyboard
             if (pkg.contains("systemui") || pkg.contains("settings") ||
-                txt.contains("rotate") || txt.contains("rotation") ||
-                desc.contains("rotate") || desc.contains("rotation") ||
-                id.contains("rotate") || id.contains("rotation") || id.contains("tile") ||
+                id.contains("tile") ||
                 id.contains("close_keyboard") || id.contains("keyboard") || id.contains("composer")
             ) {
                 continue

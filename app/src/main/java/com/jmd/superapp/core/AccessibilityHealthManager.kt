@@ -42,7 +42,7 @@ import com.jmd.superapp.service.TaskNotificationListenerService
  * Service lifecycle supervisor and watchdog manager for Android Accessibility and Notification listeners.
  *
  * What it does:
- * Enforces critical system invariant: **NEVER alters device display auto-rotate settings or unrelated OS configurations.**
+ * Provides continuous background verification and lifecycle maintenance for accessibility services.
  *
  * Linked with:
  * - Architecture: [AccessibilityHealthManager], [AccessibilityHealthManager]
@@ -67,36 +67,6 @@ object AccessibilityHealthManager {
      */
     fun recordHeartbeat() {
         lastHeartbeatTime = System.currentTimeMillis()
-    }
-
-    /**
-     * What it is:
-     * Enforces the system invariant that auto-rotate is never enabled by Super.
-     *
-     * What it does:
-     * When [PreferenceManager.isPreventSystemAutoRotateEnabled] is true, checks [Settings.System.ACCELEROMETER_ROTATION] and forces it to 0 (portrait locked) if enabled.
-     *
-     * Linked with:
-     * - Architecture: [AccessibilityHealthManager], [enforceAutoRotateInvariant]
-     */
-    fun enforceAutoRotateInvariant(context: Context) {
-        val prefs = PreferenceManager(context.applicationContext)
-        if (!prefs.isPreventSystemAutoRotateEnabled) return
-
-        try {
-            val cr = context.contentResolver
-            val isAutoRotateOn = Settings.System.getInt(cr, Settings.System.ACCELEROMETER_ROTATION, 0) == 1
-            if (isAutoRotateOn) {
-                if (Settings.System.canWrite(context) || hasWriteSecureSettings(context)) {
-                    Settings.System.putInt(cr, Settings.System.ACCELEROMETER_ROTATION, 0)
-                    Log.i(TAG, "enforceAutoRotateInvariant: Reset system auto-rotate to OFF (portrait locked).")
-                } else {
-                    Log.d(TAG, "enforceAutoRotateInvariant: write permission not held, skipping.")
-                }
-            }
-        } catch (e: Exception) {
-            Log.d(TAG, "enforceAutoRotateInvariant skipped: ${e.message}")
-        }
     }
 
     /**
@@ -466,7 +436,7 @@ object AccessibilityHealthManager {
      * Recycles the accessibility service registration via Secure Settings to heal dropped binders.
      *
      * What it does:
-     * Strictly avoids writing invalid dummy component names and never touches system auto-rotate settings. Skips healing if Banking Shield is enabled.
+     * Strictly avoids writing invalid dummy component names. Skips healing if Banking Shield is enabled.
      *
      * Linked with:
      * - Architecture: [AccessibilityHealthManager], [autoHealAccessibility]
