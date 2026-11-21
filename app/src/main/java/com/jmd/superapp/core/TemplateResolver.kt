@@ -54,6 +54,7 @@ object MessageTemplateResolver {
     fun resolve(
         template: String,
         phone: String = "",
+        name: String = "",
         event: String = "",
         targetTimestamp: Long = System.currentTimeMillis(),
         channel: String = "",
@@ -72,18 +73,14 @@ object MessageTemplateResolver {
         val dayOfWeek = SimpleDateFormat("EEEE", locale).format(cal.time)
 
         // Resolve customizable date pattern
-        val datePattern = resolveEffectiveDatePattern(
-            baseFormat = activePrefs?.customDateFormat ?: "dd MMM yyyy",
-            customPattern = activePrefs?.customDateCustomPattern ?: "dd-MM-yyyy",
-            separator = activePrefs?.customDateSeparator ?: "auto"
-        )
+        val datePattern = activePrefs?.customDateFormat ?: "dd/MMM/yyyy"
         val dateFormatted = try {
             SimpleDateFormat(datePattern, locale).format(cal.time)
         } catch (_: IllegalArgumentException) {
-            SimpleDateFormat("dd MMM yyyy", locale).format(cal.time)
+            SimpleDateFormat("dd/MMM/yyyy", locale).format(cal.time)
         }
 
-        // Resolve customizable time pattern
+        // Resolve customizable time pattern (12 hr vs 24 hr)
         val timePattern = activePrefs?.customTimeFormat ?: "hh:mm a"
         val timeFormatted = try {
             SimpleDateFormat(timePattern, locale).format(cal.time)
@@ -98,19 +95,24 @@ object MessageTemplateResolver {
             else -> "Good evening"
         }
 
-        val resolvedGreeting = when (activePrefs?.customGreetingStyle?.uppercase()) {
-            "NAMASTE" -> activePrefs.customNamasteText.ifBlank { "Namaste" }
-            "PRANAM" -> "Pranam"
-            "HELLO" -> "Hello"
-            "HI" -> "Hi"
-            "CUSTOM" -> activePrefs.customGreetingCustomText.ifBlank { timeGreeting }
-            else -> timeGreeting // "DYNAMIC" or null
+        // Resolve 2-option greeting: Time of Day vs Custom
+        val resolvedGreeting = if (activePrefs?.salutationOption == "CUSTOM") {
+            activePrefs.customGreetingCustomText.ifBlank { "Hello" }
+        } else {
+            timeGreeting
         }
 
-        val resolvedCurrency = activePrefs?.customCurrencySymbol?.ifBlank { "₹" } ?: "₹"
+        // Resolve 2-option currency: Standard Rupee vs Custom
+        val resolvedCurrency = if (activePrefs?.currencyOption == "CUSTOM") {
+            activePrefs.customCurrencySymbol.ifBlank { "$" }
+        } else {
+            "₹"
+        }
+
         val cleanPhone = PhoneNumberNormalizer.extractRawPhoneNumber(phone)
 
         return template
+            .replace("{name}", name, ignoreCase = true)
             .replace("{greeting}", resolvedGreeting, ignoreCase = true)
             .replace("{rupee}", resolvedCurrency, ignoreCase = true)
             .replace("{day}", dayOfWeek, ignoreCase = true)

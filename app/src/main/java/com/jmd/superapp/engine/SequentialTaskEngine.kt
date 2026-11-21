@@ -44,7 +44,6 @@ import com.jmd.superapp.data.repo.AppRepository
 import com.jmd.superapp.scheduler.AlarmScheduler
 import com.jmd.superapp.service.TaskAccessibilityService
 import com.jmd.superapp.ui.activity.CallSimulationActivity
-import com.jmd.superapp.ui.activity.ReminderAlarmActivity
 import com.jmd.superapp.ui.activity.TaskLauncherActivity
 import com.jmd.superapp.whatsapp.WhatsAppIntentDispatcher
 import kotlinx.coroutines.*
@@ -890,7 +889,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             val phone = task.recipients[i]
                             if (phone in successfulRecipients) continue
 
-                            val personalizedMsg = personalize(task.messageText, phone)
+                            val recipientName = task.recipientNames.getOrNull(i).orEmpty()
+                            val personalizedMsg = personalize(task.messageText, phone, recipientName)
                             val isLast = (i + 1) == totalRecipients
 
                             // Accessibility pre-flight per recipient: verify service alive before launching intent
@@ -1043,7 +1043,8 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                 continue
             }
 
-            val personalizedMsg = personalize(task.messageText, phone)
+            val recipientName = task.recipientNames.getOrNull(i).orEmpty()
+            val personalizedMsg = personalize(task.messageText, phone, recipientName)
 
             val shouldEnforceQuota = PreferenceManager(appContext).isSmsQuotaLimitEnabled
             if (shouldEnforceQuota) {
@@ -1860,73 +1861,9 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
      */
 
     private fun executeReminderTask(repository: AppRepository, task: ScheduledTask): Boolean {
-        val success = try {
-            val label = AlarmScheduler.getSystemAlarmLabel(task)
-            val notifId = (task.id + 80000).toInt()
-
-            // 1. Prepare intent for custom fullscreen ReminderAlarmActivity with Text-To-Speech announcement and Snooze controls
-            val reminderIntent = Intent(appContext, ReminderAlarmActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                putExtra("reminder_title", task.title.ifBlank { "Reminder" })
-                putExtra("reminder_text", task.messageText.ifBlank { task.title.ifBlank { "Reminder Alert" } })
-                putExtra("task_id", task.id)
-                putExtra("notif_id", notifId)
-            }
-
-            // Post high-priority full-screen intent notification ensuring display on locked screens across Android 10-16
-            runCatching {
-                val fullScreenPendingIntent = PendingIntent.getActivity(
-                    appContext,
-                    notifId,
-                    reminderIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-                )
-                val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                val reminderNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_REMINDERS)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
-                    .setColor(0xFFFFD600.toInt())
-                    .setContentTitle(task.title.ifBlank { "Reminder" })
-                    .setContentText(task.messageText.ifBlank { task.title.ifBlank { "Reminder Alert" } })
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setCategory(NotificationCompat.CATEGORY_ALARM)
-                    .setFullScreenIntent(fullScreenPendingIntent, true)
-                    .setAutoCancel(true)
-                    .build()
-                nm?.notify(notifId, reminderNotif)
-            }
-
-            appContext.startActivity(reminderIntent)
-
-            repository.insertLog(
-                ExecutionLog(
-                    taskId = task.id,
-                    channel = "Reminder",
-                    recipient = "Local Device Alarm",
-                    messageSnippet = "Alarm: ${task.title.ifBlank { label }}",
-                    status = "SUCCESS",
-                    details = "Launched fullscreen ReminderAlarmActivity with TTS."
-                ),
-            )
-            AppFileLogger.action(appContext, TAG, "Task #${task.id}: Launched ReminderAlarmActivity ($label)")
-            true
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to trigger reminder for task #${task.id}: ${e.message}", e)
-            AppFileLogger.e(appContext, TAG, "Failed to trigger reminder: ${e.message}", e)
-            repository.insertLog(
-                ExecutionLog(
-                    taskId = task.id,
-                    channel = "Reminder",
-                    recipient = "Local Device Alarm",
-                    messageSnippet = "Reminder failed: ${e.message}",
-                    status = "FAILED",
-                ),
-            )
-            false
-        }
-
-        completeOrRescheduleTask(appContext, repository, task, success)
-        return success
+        AppFileLogger.i(appContext, TAG, "Task #${task.id}: Reminder channel is no longer active.")
+        completeOrRescheduleTask(appContext, repository, task, true)
+        return true
     }
     /**
      * What it is:
@@ -2015,10 +1952,11 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
      * - Component: [SequentialTaskEngine]
      */
 
-    private fun personalize(template: String, phone: String): String {
+    private fun personalize(template: String, phone: String, name: String = ""): String {
         return MessageTemplateResolver.resolve(
             template = template,
             phone = phone,
+            name = name,
             targetTimestamp = System.currentTimeMillis(),
         )
     }

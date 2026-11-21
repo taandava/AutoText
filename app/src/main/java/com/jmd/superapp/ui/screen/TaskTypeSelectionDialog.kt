@@ -131,13 +131,6 @@ fun TaskTypeSelectionDialog(
             channel = null,
             isDailyCampaign = true,
         ),
-        TaskTypeItem(
-            title = "Reminder",
-            description = "Local on-device audio alarm and reminder notification",
-            icon = Icons.Filled.Alarm,
-            color = Color(0xFFE11D48),
-            channel = ChannelType.REMINDER,
-        ),
     )
 
     Dialog(

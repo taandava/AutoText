@@ -310,6 +310,7 @@ class DailyCampaignWorker(
             val message = MessageTemplateResolver.resolve(
                 template = config.message,
                 phone = item.phone,
+                name = displayName,
                 targetTimestamp = System.currentTimeMillis()
             )
 

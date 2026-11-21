@@ -208,6 +208,7 @@ class TaskNotificationListenerService : NotificationListenerService() {
                         val formattedReply = MessageTemplateResolver.resolve(
                             template = rule.replyText,
                             phone = title,
+                            name = title,
                             event = if (isMissedCall) "missed call" else if (isCallEnded) "call" else "message",
                             targetTimestamp = System.currentTimeMillis()
                         )

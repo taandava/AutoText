@@ -157,10 +157,15 @@ class PreferenceManager(private val context: Context) {
         private const val KEY_CUSTOM_DATE_FORMAT = "custom_date_format"
         private const val KEY_CUSTOM_DATE_PATTERN = "custom_date_pattern"
         private const val KEY_CUSTOM_DATE_SEPARATOR = "custom_date_separator"
+        private const val KEY_DATE_MONTH_OPTION = "custom_date_month_option"
+        private const val KEY_DATE_YEAR_OPTION = "custom_date_year_option"
+        private const val KEY_TIME_FORMAT_OPTION = "custom_time_format_option"
         private const val KEY_CUSTOM_TIME_FORMAT = "custom_time_format"
+        private const val KEY_SALUTATION_OPTION = "custom_salutation_option"
         private const val KEY_CUSTOM_GREETING_STYLE = "custom_greeting_style"
         private const val KEY_CUSTOM_GREETING_TEXT = "custom_greeting_text"
         private const val KEY_CUSTOM_NAMASTE_TEXT = "custom_namaste_text"
+        private const val KEY_CURRENCY_OPTION = "custom_currency_option"
         private const val KEY_CUSTOM_CURRENCY_SYMBOL = "custom_currency_symbol"
         private const val KEY_CUSTOM_INDIAN_NUMBERING = "custom_indian_numbering"
 
@@ -720,48 +725,96 @@ class PreferenceManager(private val context: Context) {
         set(value) = prefs.edit { putStringSet(KEY_PROTECTED_PACKAGES, value) }
 
     // ═══════════════════════════════════════════════════════════════════════════════════
-    // VARIABLE FORMATTING
+    // VARIABLE FORMATTING (STRICT 2-OPTION & 3-STEP SELECTION ARCHITECTURE)
     // ═══════════════════════════════════════════════════════════════════════════════════
 
-    /** Date format style for {date} token. Default "dd MMM yyyy". */
+    /** Date month option: "m", "mm", "mmm", "mmmm". Default "mmm". */
+    var dateMonthOption: String
+        get() = prefs.getString(KEY_DATE_MONTH_OPTION, "mmm") ?: "mmm"
+        set(value) = prefs.edit { putString(KEY_DATE_MONTH_OPTION, value) }
+
+    /** Date year option: "yy" or "yyyy". Default "yyyy". */
+    var dateYearOption: String
+        get() = prefs.getString(KEY_DATE_YEAR_OPTION, "yyyy") ?: "yyyy"
+        set(value) = prefs.edit { putString(KEY_DATE_YEAR_OPTION, value) }
+
+    /** Explicit date delimiter ("/", "-", ".", " "). Default "/". */
+    var customDateSeparator: String
+        get() = prefs.getString(KEY_CUSTOM_DATE_SEPARATOR, "/") ?: "/"
+        set(value) = prefs.edit { putString(KEY_CUSTOM_DATE_SEPARATOR, value) }
+
+    /** Date format style for {date} token, computed from 3-step structured builder. */
     var customDateFormat: String
-        get() = prefs.getString(KEY_CUSTOM_DATE_FORMAT, "dd MMM yyyy") ?: "dd MMM yyyy"
-        set(value) = prefs.edit { putString(KEY_CUSTOM_DATE_FORMAT, value) }
+        get() {
+            val sep = customDateSeparator
+            val m = when (dateMonthOption.lowercase()) {
+                "m" -> "M"
+                "mm" -> "MM"
+                "mmm" -> "MMM"
+                "mmmm" -> "MMMM"
+                else -> "MMM"
+            }
+            val y = if (dateYearOption.lowercase() == "yy") "yy" else "yyyy"
+            return "dd$sep$m$sep$y"
+        }
+        set(value) {
+            prefs.edit { putString(KEY_CUSTOM_DATE_FORMAT, value) }
+        }
 
     /** Custom user-defined SimpleDateFormat pattern when customDateFormat == "CUSTOM". */
     var customDateCustomPattern: String
         get() = prefs.getString(KEY_CUSTOM_DATE_PATTERN, "dd-MM-yyyy") ?: "dd-MM-yyyy"
         set(value) = prefs.edit { putString(KEY_CUSTOM_DATE_PATTERN, value) }
 
-    /** Explicit date separator ("auto", "-", "/", ".", " ", ""). */
-    var customDateSeparator: String
-        get() = prefs.getString(KEY_CUSTOM_DATE_SEPARATOR, "auto") ?: "auto"
-        set(value) = prefs.edit { putString(KEY_CUSTOM_DATE_SEPARATOR, value) }
+    /** Time format option: "12HR" or "24HR". Default "12HR". */
+    var timeFormatOption: String
+        get() = prefs.getString(KEY_TIME_FORMAT_OPTION, "12HR") ?: "12HR"
+        set(value) = prefs.edit { putString(KEY_TIME_FORMAT_OPTION, value) }
 
-    /** Time format style for {time} token. Default "hh:mm a". */
+    /** Time format style for {time} token: "hh:mm a" or "HH:mm". */
     var customTimeFormat: String
-        get() = prefs.getString(KEY_CUSTOM_TIME_FORMAT, "hh:mm a") ?: "hh:mm a"
-        set(value) = prefs.edit { putString(KEY_CUSTOM_TIME_FORMAT, value) }
+        get() = if (timeFormatOption == "24HR") "HH:mm" else "hh:mm a"
+        set(value) {
+            timeFormatOption = if (value.contains("HH")) "24HR" else "12HR"
+            prefs.edit { putString(KEY_CUSTOM_TIME_FORMAT, value) }
+        }
 
-    /** Greeting style for {greeting} token: "DYNAMIC", "NAMASTE", "PRANAM", "HELLO", "HI", "CUSTOM". */
+    /** Salutation mode: "TIME_OF_DAY" or "CUSTOM". Default "TIME_OF_DAY". */
+    var salutationOption: String
+        get() = prefs.getString(KEY_SALUTATION_OPTION, "TIME_OF_DAY") ?: "TIME_OF_DAY"
+        set(value) = prefs.edit { putString(KEY_SALUTATION_OPTION, value) }
+
+    /** Greeting style for {greeting} token (backward compatibility). */
     var customGreetingStyle: String
-        get() = prefs.getString(KEY_CUSTOM_GREETING_STYLE, "DYNAMIC") ?: "DYNAMIC"
-        set(value) = prefs.edit { putString(KEY_CUSTOM_GREETING_STYLE, value) }
+        get() = if (salutationOption == "CUSTOM") "CUSTOM" else "DYNAMIC"
+        set(value) {
+            salutationOption = if (value.equals("CUSTOM", ignoreCase = true)) "CUSTOM" else "TIME_OF_DAY"
+            prefs.edit { putString(KEY_CUSTOM_GREETING_STYLE, value) }
+        }
 
-    /** Custom greeting text when customGreetingStyle == "CUSTOM". */
+    /** Custom greeting text when salutationOption == "CUSTOM". Default "Hello". */
     var customGreetingCustomText: String
         get() = prefs.getString(KEY_CUSTOM_GREETING_TEXT, "Hello") ?: "Hello"
         set(value) = prefs.edit { putString(KEY_CUSTOM_GREETING_TEXT, value) }
 
-    /** Wording used by the NAMASTE greeting style. Default "Namaste". */
+    /** Legacy wording for namaste text. */
     var customNamasteText: String
         get() = prefs.getString(KEY_CUSTOM_NAMASTE_TEXT, "Namaste") ?: "Namaste"
         set(value) = prefs.edit { putString(KEY_CUSTOM_NAMASTE_TEXT, value) }
 
-    /** Currency symbol for the {rupee} token. Default "₹". */
+    /** Currency mode: "RUPEE" or "CUSTOM". Default "RUPEE". */
+    var currencyOption: String
+        get() = prefs.getString(KEY_CURRENCY_OPTION, "RUPEE") ?: "RUPEE"
+        set(value) = prefs.edit { putString(KEY_CURRENCY_OPTION, value) }
+
+    /** Currency symbol for {rupee} token when currencyOption == "CUSTOM". Default "$". */
     var customCurrencySymbol: String
-        get() = prefs.getString(KEY_CUSTOM_CURRENCY_SYMBOL, "₹") ?: "₹"
-        set(value) = prefs.edit { putString(KEY_CUSTOM_CURRENCY_SYMBOL, value) }
+        get() {
+            return if (currencyOption == "RUPEE") "₹" else prefs.getString(KEY_CUSTOM_CURRENCY_SYMBOL, "$") ?: "$"
+        }
+        set(value) {
+            prefs.edit { putString(KEY_CUSTOM_CURRENCY_SYMBOL, value) }
+        }
 
     /** Indian number grouping format (1,00,000 vs 100,000). Default true. */
     var isIndianNumberFormattingEnabled: Boolean

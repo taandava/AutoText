@@ -140,36 +140,17 @@ class AlarmScheduler(private val context: Context) {
         )
 
         try {
-            if (task.channel == ChannelType.REMINDER) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (alarmManager.canScheduleExactAlarms()) {
-                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    } else {
-                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-                } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
                     alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                }
-                Log.d(TAG, "Scheduled reminder alarm for task ${task.id} (${task.title}) at $triggerTime")
-                AppFileLogger.action(context, TAG, "Scheduled reminder alarm for Task #${task.id} (${task.title}) at $triggerTime")
-
-                val prefs = PreferenceManager(context)
-                if (prefs.isSystemClockAlarmSyncEnabled) {
-                    setDeviceSystemAlarm(task)
+                } else {
+                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
                 }
             } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    if (alarmManager.canScheduleExactAlarms()) {
-                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    } else {
-                        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                    }
-                } else {
-                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-                }
-                Log.d(TAG, "Scheduled task ${task.id} (${task.title}) for trigger at $triggerTime")
-                AppFileLogger.action(context, TAG, "Scheduled Task #${task.id} (${task.title}) for trigger at $triggerTime")
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
             }
+            Log.d(TAG, "Scheduled task ${task.id} (${task.title}) for trigger at $triggerTime")
+            AppFileLogger.action(context, TAG, "Scheduled Task #${task.id} (${task.title}) for trigger at $triggerTime")
         } catch (e: SecurityException) {
             Log.e(TAG, "Exact alarm permission missing, fallback to setAndAllowWhileIdle", e)
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
@@ -220,15 +201,6 @@ class AlarmScheduler(private val context: Context) {
      * @param task Optional pre-loaded [ScheduledTask] instance (if available).
      */
     fun cancelTask(taskId: Long, task: ScheduledTask? = null) {
-        val targetTask = task ?: runCatching { AppRepository(context).getTaskById(taskId) }.getOrNull()
-        if (targetTask != null) {
-            if (targetTask.channel == ChannelType.REMINDER) {
-                dismissDeviceSystemAlarm(targetTask)
-            }
-        } else {
-            dismissDeviceSystemAlarmById(context, taskId)
-        }
-
         val intent = Intent(context, TaskAlarmReceiver::class.java).apply {
             action = ACTION_FIRE_TASK
             putExtra(EXTRA_TASK_ID, taskId)

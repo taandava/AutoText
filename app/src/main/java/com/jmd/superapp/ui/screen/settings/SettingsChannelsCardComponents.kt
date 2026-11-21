@@ -65,7 +65,6 @@ fun SettingsChannelsCard(
     var ttsPitch by remember { mutableFloatStateOf(prefs.ttsSpeechPitch) }
     var autoReplyCooldown by remember { mutableIntStateOf(prefs.autoReplyCooldownSeconds) }
     var contactSyncHours by remember { mutableIntStateOf(prefs.contactSyncIntervalHours) }
-    var systemClockAlarmSync by remember { mutableStateOf(prefs.isSystemClockAlarmSyncEnabled) }
 
     // TTS Engine for live testing
     var isTtsReady by remember { mutableStateOf(false) }
@@ -438,59 +437,6 @@ fun SettingsChannelsCard(
                         modifier = Modifier.weight(1f)
                     )
                 }
-            }
-        }
-
-        // 6. Reminder & System Clock Sync
-        AppCard(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Icon(Icons.Filled.Alarm, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                    Text("Clock Sync", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                }
-                AppBadge(text = if (systemClockAlarmSync) "OEM Synced" else "Clean AlarmManager", color = MaterialTheme.colorScheme.primary)
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text("Controls whether Reminder tasks are mirrored into the phone's built-in Clock app.", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
-                    Text(
-                        text = "Sync to External Clock App",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = if (systemClockAlarmSync)
-                            "On: Reminders also create an alarm in your device's Clock app."
-                            else
-                            "Off (Recommended): Reminders trigger exact alarms internally with fullscreen alerts and voice, leaving your device's Clock app clean and unpolluted.",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 11.sp
-                    )
-                }
-                Switch(
-                    checked = systemClockAlarmSync,
-                    onCheckedChange = { enable ->
-                        systemClockAlarmSync = enable
-                        prefs.isSystemClockAlarmSyncEnabled = enable
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.primary,
-                        checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
-                    )
-                )
             }
         }
     }

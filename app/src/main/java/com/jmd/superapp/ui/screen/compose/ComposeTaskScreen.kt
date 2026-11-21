@@ -64,7 +64,6 @@ import com.jmd.superapp.scheduler.*
 import com.jmd.superapp.service.*
 import com.jmd.superapp.ui.components.*
 import com.jmd.superapp.ui.model.*
-import com.jmd.superapp.ui.screen.ReminderComposerCard
 import com.jmd.superapp.ui.theme.*
 import com.jmd.superapp.whatsapp.*
 
@@ -451,13 +450,6 @@ fun ComposeTaskScreen(
             if (!validateContentOrShowToast(selectedChannel, messageText, mediaUri)) return@saveTaskAction
             finalRecipients = listOf("My Status (w4b)")
             finalRecipientNames = listOf("WhatsApp Business Status")
-        } else if (selectedChannel == ChannelType.REMINDER) {
-            if (title.isBlank() && messageText.isBlank()) {
-                context.showAppToast("Enter reminder title", isLong = true)
-                return@saveTaskAction
-            }
-            finalRecipients = listOf("Self")
-            finalRecipientNames = listOf(title.ifBlank { "Local Device Alarm" })
         } else if (selectedChannel == ChannelType.CALL_SIMULATION) {
             finalRecipients = listOf(simulatedCallerNumber.ifBlank { "Incoming Call" })
             finalRecipientNames = listOf(simulatedCallerName.ifBlank { "Simulated Caller" })
@@ -617,14 +609,6 @@ fun ComposeTaskScreen(
 
             // 3. Channel Specific Configuration Enterprise Card
             when (selectedChannel) {
-                ChannelType.REMINDER -> {
-                    ReminderComposerCard(
-                        reminderTitle = title,
-                        onReminderTitleChange = { title = it },
-                        messageText = messageText,
-                        onMessageTextChange = { messageText = it }
-                    )
-                }
                 ChannelType.CALL_SIMULATION -> {
                     ComposeCallSimulationAndSoundCard(
                         selectedChannel = selectedChannel,

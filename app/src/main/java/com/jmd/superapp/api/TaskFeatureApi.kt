@@ -48,7 +48,6 @@ import com.jmd.superapp.engine.SmsSender
 import com.jmd.superapp.engine.WhatsAppSender
 import com.jmd.superapp.service.TaskAccessibilityService
 import com.jmd.superapp.ui.activity.CallSimulationActivity
-import com.jmd.superapp.ui.activity.ReminderAlarmActivity
 import com.jmd.superapp.whatsapp.WhatsAppIntentDispatcher
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
@@ -164,23 +163,6 @@ data class PhoneCallRequest(
     val simSlot: Int = 0,
     val callDurationSeconds: Int = 0,
     val includeDialTime: Boolean = false
-)
-
-/**
- * What it is:
- * Request parameters and data specification for Interactive Reminder Alarms.
- *
- * What it does:
- * Encapsulates state, business contracts, and operations for [ReminderRequest].
- *
- * Linked with:
- * - Architecture: [TaskFeatureApi], [ReminderRequest]
- */
-data class ReminderRequest(
-    val taskId: Long,
-    val title: String,
-    val message: String,
-    val ttsEnabled: Boolean = true
 )
 
 /**
@@ -506,73 +488,6 @@ object TaskFeatureApi {
             recipient = cleanPhone,
             messageSnippet = snippet,
             details = if (hasCallPerm) "Direct call dispatched via TelephonyCallEngine" else "Dialer opened (ACTION_DIAL)"
-        )
-        logResult(repository, outcome)
-        return outcome
-    }
-
-    /**
-     * What it is:
-     * Triggers high-priority full-screen interactive reminder alarm.
-     *
-     * What it does:
-     * Executes [triggerReminder] logic in accordance with system and security invariants.
-     *
-     * Linked with:
-     * - Architecture: [TaskFeatureApi], [triggerReminder]
-     */
-    fun triggerReminder(
-        context: Context,
-        repository: AppRepository,
-        request: ReminderRequest
-    ): FeatureExecutionResult {
-        val success = try {
-            val notifId = (request.taskId + 60000).toInt()
-            val reminderIntent = Intent(context, ReminderAlarmActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                putExtra("title", request.title.ifBlank { "Super Reminder" })
-                putExtra("message", request.message)
-                putExtra("task_id", request.taskId)
-                putExtra("notif_id", notifId)
-                putExtra("tts_enabled", request.ttsEnabled)
-            }
-
-            runCatching {
-                val fullScreenPendingIntent = PendingIntent.getActivity(
-                    context,
-                    notifId,
-                    reminderIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-                )
-                val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                val notif = NotificationCompat.Builder(context, SuperApplication.CHANNEL_REMINDERS)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .apply { NotificationIconHelper.getLargeIcon(context)?.let { setLargeIcon(it) } }
-                    .setColor(0xFFFFD600.toInt())
-                    .setContentTitle(request.title.ifBlank { "Reminder" })
-                    .setContentText(request.message)
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setCategory(NotificationCompat.CATEGORY_ALARM)
-                    .setFullScreenIntent(fullScreenPendingIntent, true)
-                    .setAutoCancel(true)
-                    .build()
-                nm?.notify(notifId, notif)
-            }
-
-            context.startActivity(reminderIntent)
-            true
-        } catch (e: Exception) {
-            Log.e(TAG, "triggerReminder failed: ${e.message}", e)
-            false
-        }
-
-        val snippet = if (success) "Triggered reminder: ${request.title}" else "Failed triggering reminder"
-        val outcome = FeatureExecutionResult(
-            taskId = request.taskId,
-            channel = ChannelType.REMINDER,
-            success = success,
-            recipient = "Local Device",
-            messageSnippet = snippet
         )
         logResult(repository, outcome)
         return outcome

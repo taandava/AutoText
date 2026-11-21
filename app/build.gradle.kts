@@ -73,6 +73,12 @@ android {
         checkReleaseBuilds = false
     }
 
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
     packaging {
         resources {
             excludes += setOf(
@@ -124,4 +130,5 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.13.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
+    testImplementation("junit:junit:4.13.2")
 }
