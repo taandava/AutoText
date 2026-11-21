@@ -44,13 +44,6 @@ class SuperAppInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         val appContext = context.applicationContext
         AppFileLogger.i(appContext, "SuperAppInitializer", "AndroidX Startup Initializer executing early system bootstrap")
-
-        // Enqueue periodic background maintenance worker
-        try {
-            WorkManagerScheduler.schedulePeriodicMaintenance(appContext)
-        } catch (e: Exception) {
-            AppFileLogger.w("SuperAppInitializer", "WorkManager bootstrap note: ${e.message}")
-        }
     }
     /**
      * What it is:

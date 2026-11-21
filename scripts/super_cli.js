@@ -94,7 +94,7 @@ function broadcastCommand(device, pkg, action, extras = []) {
     const formattedExtras = extras.map(arg => {
         const str = String(arg);
         if (str.includes(' ') || str.includes('\t') || str.includes('"') || str.includes("'")) {
-            return `'${str.replace(/'/g, "'\\''")}'`;
+            return `"${str.replace(/"/g, '\\"')}"`;
         }
         return str;
     });

@@ -229,6 +229,11 @@ object TaskFeatureApi {
             cleanPhone
         )
 
+        if (!com.jmd.superapp.core.AccessibilityHealthManager.isServiceOperational() || com.jmd.superapp.service.TaskAccessibilityService.getInstance() == null) {
+            com.jmd.superapp.core.AccessibilityHealthManager.ensureServiceAlive(context)
+            com.jmd.superapp.core.AccessibilityHealthManager.awaitServiceReadiness(context, 3000L)
+        }
+
         val sender = WhatsAppSender(context)
         val launched = sender.send(
             taskId = request.taskId,
@@ -288,6 +293,11 @@ object TaskFeatureApi {
             "Status"
         )
 
+        if (!com.jmd.superapp.core.AccessibilityHealthManager.isServiceOperational() || com.jmd.superapp.service.TaskAccessibilityService.getInstance() == null) {
+            com.jmd.superapp.core.AccessibilityHealthManager.ensureServiceAlive(context)
+            com.jmd.superapp.core.AccessibilityHealthManager.awaitServiceReadiness(context, 3000L)
+        }
+
         val sender = WhatsAppSender(context)
         val launched = sender.send(
             taskId = request.taskId,
@@ -346,6 +356,11 @@ object TaskFeatureApi {
             request.channel,
             cleanPhone
         )
+
+        if (!com.jmd.superapp.core.AccessibilityHealthManager.isServiceOperational() || com.jmd.superapp.service.TaskAccessibilityService.getInstance() == null) {
+            com.jmd.superapp.core.AccessibilityHealthManager.ensureServiceAlive(context)
+            com.jmd.superapp.core.AccessibilityHealthManager.awaitServiceReadiness(context, 3000L)
+        }
 
         val launched = WhatsAppIntentDispatcher.launchWhatsAppCall(
             context = context,

@@ -252,15 +252,11 @@ class WhatsAppChatScanner(
                         val cleanTitle = title.trim().removePrefix("~").trim()
                         if (cleanTitle.isBlank() || !repo.isValidPickedChatName(cleanTitle) || isIgnoredTitle(cleanTitle)) continue
 
-                        // Reject individual contacts: direct avatar photo, pure phone number, or device address book entry
-                        if (hasDirectAvatarDesc(row)) {
-                            Log.i(loggerTag, "HARVEST_GROUPS: Skipping '$cleanTitle' (direct profile photo detected)")
-                            continue
-                        }
+                        // In the WhatsApp "Groups" tab, every conversation row is an authentic group.
+                        // Skip only pure phone numbers that lack any letters/name.
                         val digits = cleanTitle.filter { it.isDigit() }
                         val letters = cleanTitle.filter { it.isLetter() }
                         if (digits.length >= 7 && letters.isEmpty()) continue
-                        if (repo.hasCellularPhoneContact(cleanTitle) || repo.findPhoneForContactName(cleanTitle) != null) continue
 
                         if (seenRowTitlesInScan.add(cleanTitle.lowercase().trim())) {
                             anyNewRowSeenThisPass = true
@@ -296,18 +292,19 @@ class WhatsAppChatScanner(
                         scrolled = scrollableNode.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
                     }
                     if (!scrolled) {
-                        scrolled = AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.82f, endYRatio = 0.20f)
+                        scrolled = AccessibilityNodeUtils.performVerticalSwipe(service, startYRatio = 0.80f, endYRatio = 0.22f)
                     }
 
                     val canScrollFurther = scrollableNode?.actionList?.any {
                         it.id == AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
                     } ?: scrolled
 
-                    val endOfGroups = (!canScrollFurther && !discoveredNew) || consecutiveStagnantCycles >= 2 || scrollCycles >= 30
+                    val endOfGroups = (!canScrollFurther && !discoveredNew && consecutiveStagnantCycles >= 4) ||
+                        consecutiveStagnantCycles >= 6 || scrollCycles >= 60
 
                     if (!endOfGroups && scrolled) {
                         scrollCycles++
-                        onRetry(120L)
+                        onRetry(180L)
                     } else {
                         Log.i(loggerTag, "Groups stage finished: discovered ${discoveredGroups.size} verified groups")
                         if (scanTarget == ScanTarget.GROUPS_ONLY) {
@@ -318,7 +315,7 @@ class WhatsAppChatScanner(
                             consecutiveStagnantCycles = 0
                             reachedListEnd = false
                             endConfirmations = 0
-                            onRetry(150L)
+                            onRetry(200L)
                         }
                     }
                 }
@@ -529,11 +526,9 @@ class WhatsAppChatScanner(
 
         // Clean up corrupted group entries before batch upsert
         repo.purgeCorruptedGroupsFromPool()
-        if (scanTarget == ScanTarget.GROUPS_ONLY) {
-            val targetGroupSource = if (activePkg.contains("w4b", ignoreCase = true)) "WA_BUSINESS_GROUP" else "WA_GROUP"
-            if (discoveredChats.isNotEmpty()) {
-                repo.deleteAllWhatsAppGroups(targetGroupSource)
-            }
+        val targetGroupSource = if (activePkg.contains("w4b", ignoreCase = true)) "WA_BUSINESS_GROUP" else "WA_GROUP"
+        if (discoveredGroups.isNotEmpty()) {
+            repo.deleteAllWhatsAppGroups(targetGroupSource)
         }
 
         val savedChats = if (discoveredChats.isNotEmpty()) {
@@ -993,11 +988,8 @@ class WhatsAppChatScanner(
     private fun isIgnoredTitle(title: String): Boolean {
         val lower = title.trim().lowercase()
         val blocked = listOf(
-            "photo", "video", "audio", "document", "sticker", "gif", "contact", "contacts", "location",
-            "voice call", "video call", "missed call", "no answer",
             "inbox filters", "radio group", "all filter", "groups filter", "unread filter",
             "favorites filter", "new customer filter", "new order filter",
-            "follow-up", "follow up", "todo", "to-do", "new customer", "new order", "pending payment", "paid", "order complete",
             "maharashtra cyber", "maharashtra cyber - home department government of maharashtra",
             "hidden updates", "find channels to follow", "explore more", "create channel",
             "recent updates", "add status", "muted updates", "view updates", "channels",
@@ -1318,7 +1310,29 @@ class WhatsAppChatScanner(
             return RowKind.UNRESOLVED
         }
 
-        // Direct profile avatar strictly identifies an individual contact
+        // 2. Concrete group indicators FIRST (Harvested from Groups tab, group avatar, msg sender label, or system event)
+        val isKnownGroup = discoveredGroups.contains(cleanTitle.lowercase().trim())
+        val hasAvatarDesc = hasGroupAvatarDesc(row)
+        val hasMsgFrom = hasMsgFromNode(row)
+        val hasEvent = hasGroupEventText(row)
+        val isConfirmedGroup = (isKnownGroup || hasAvatarDesc || hasMsgFrom || hasEvent)
+
+        if (isConfirmedGroup) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): GROUP (confirmed by known/markers)")
+            discoveredGroups.add(cleanTitle.lowercase().trim())
+            return RowKind.GROUP
+        }
+
+        if (target == ScanTarget.GROUPS_ONLY) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (rejected from GROUPS_ONLY, no group markers)")
+            return RowKind.DIRECT
+        }
+
+        if (target == ScanTarget.DIRECT_CHATS_ONLY) {
+            return RowKind.DIRECT
+        }
+
+        // 3. Direct individual chat indicators
         if (hasDirectAvatarDesc(row)) {
             Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (direct profile photo avatar)")
             return RowKind.DIRECT
@@ -1341,35 +1355,6 @@ class WhatsAppChatScanner(
         if (isBusinessRow(row)) {
             Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (verified business row)")
             return RowKind.DIRECT
-        }
-
-        // 2. Concrete group indicators ONLY
-        val isKnownGroup = discoveredGroups.contains(cleanTitle.lowercase().trim())
-        val hasAvatarDesc = hasGroupAvatarDesc(row)
-        val hasMsgFrom = hasMsgFromNode(row)
-        val hasEvent = hasGroupEventText(row)
-
-        val isConfirmedGroup = (isKnownGroup || hasAvatarDesc || hasMsgFrom || hasEvent)
-
-        if (target == ScanTarget.GROUPS_ONLY) {
-            return if (isConfirmedGroup) {
-                Log.i(loggerTag, "classifyRow('$cleanTitle'): GROUP (GROUPS_ONLY target confirmed by markers)")
-                discoveredGroups.add(cleanTitle.lowercase().trim())
-                RowKind.GROUP
-            } else {
-                Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (rejected from GROUPS_ONLY, no group markers)")
-                RowKind.DIRECT
-            }
-        }
-
-        if (target == ScanTarget.DIRECT_CHATS_ONLY) {
-            return RowKind.DIRECT
-        }
-
-        if (isConfirmedGroup) {
-            Log.i(loggerTag, "classifyRow('$cleanTitle'): GROUP (confirmed by markers)")
-            discoveredGroups.add(cleanTitle.lowercase().trim())
-            return RowKind.GROUP
         }
 
         // Default Direct

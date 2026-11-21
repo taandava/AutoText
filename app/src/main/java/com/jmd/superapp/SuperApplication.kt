@@ -38,6 +38,7 @@ import com.jmd.superapp.receiver.TaskAlarmReceiver
 import com.jmd.superapp.scheduler.AccessibilityWatchdogScheduler
 import com.jmd.superapp.scheduler.AlarmScheduler
 import com.jmd.superapp.scheduler.DailyCampaignScheduler
+import com.jmd.superapp.scheduler.WorkManagerScheduler
 import com.jmd.superapp.service.TaskForegroundService
 import kotlinx.coroutines.*
 
@@ -246,6 +247,9 @@ class SuperApplication : Application(), Configuration.Provider {
 
                 // Arm daily campaign schedulers for scheduled outreach cycles
                 DailyCampaignScheduler.scheduleAll(this@SuperApplication)
+
+                // Enqueue periodic background maintenance worker
+                WorkManagerScheduler.schedulePeriodicMaintenance(this@SuperApplication)
 
                 // Start silent exact AlarmManager heartbeat for accessibility watchdog monitoring
                 AccessibilityWatchdogScheduler.scheduleHeartbeat(this@SuperApplication)

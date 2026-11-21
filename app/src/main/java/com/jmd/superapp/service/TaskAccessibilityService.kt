@@ -1604,18 +1604,8 @@ class TaskAccessibilityService : AccessibilityService() {
     }
 
         private val idleDetachRunnable = Runnable {
-        try {
-            val appContext = applicationContext ?: this
-            val prefs = PreferenceManager(appContext)
-            // Only detach dynamically if WRITE_SECURE_SETTINGS is held so the service can auto-reconnect on demand
-            val isBusy = isDispatching || isAssistPending || isAssistVerificationMode || isVoipCallActive || com.jmd.superapp.engine.SequentialTaskEngine.isEngineActive()
-            if (prefs.isDynamicA11yOnDemandEnabled && AccessibilityHealthManager.hasWriteSecureSettings(appContext) && !isBusy) {
-                Log.i(TAG, "Idle detach: No active task, safely detaching accessibility for banking app isolation")
-                AccessibilityHealthManager.disableAccessibilityService(appContext)
-            }
-        } catch (e: Exception) {
-            Log.w(TAG, "idleDetachRunnable error: ${e.message}")
-        }
+        // Automatic background banking protection is handled via ProtectedApplicationManager
+        // without disabling the service, ensuring scheduled tasks and CLI dispatches always have a live service.
     }
     /**
      * What it is:

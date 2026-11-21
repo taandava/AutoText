@@ -731,14 +731,14 @@ class WhatsAppRepository(private val context: Context) {
             var count = db.delete(
                 DatabaseHelper.TABLE_DYNAMIC_POOL,
                 "(source IN ('WA_GROUP', 'WA_BUSINESS_GROUP') OR phone LIKE 'group:%' OR normalized_number LIKE 'group:%') AND (" +
-                    "LOWER(name) IN ('hidden updates', 'find channels to follow', 'explore more', 'create channel', 'inbox filters', 'radio group', 'add status', 'recent updates', 'recent searches', 'clear all', 'ask meta ai or search', 'search group chats', 'search chats', 'manage groups', 'manage group', 'new group', 'new community', 'archived', 'starred messages', 'disappearing messages', 'chats', 'updates', 'communities', 'calls', 'tools', 'all filter', 'groups filter', 'unread filter', 'favorites filter', 'group chats', 'group chat', 'follow-up', 'follow up', 'todo', 'to-do', 'new customer', 'new order', 'pending payment', 'paid', 'order complete') " +
+                    "LOWER(name) IN ('hidden updates', 'find channels to follow', 'explore more', 'create channel', 'inbox filters', 'radio group', 'add status', 'recent updates', 'recent searches', 'clear all', 'ask meta ai or search', 'search group chats', 'search chats', 'manage groups', 'manage group', 'new group', 'new community', 'archived', 'starred messages', 'disappearing messages', 'chats', 'updates', 'communities', 'calls', 'tools', 'all filter', 'groups filter', 'unread filter', 'favorites filter', 'group chats', 'group chat') " +
                     "OR LOWER(name) LIKE '%automatically updates%' OR LOWER(name) LIKE '%dynamically updates%' OR LOWER(name) LIKE '%all group chats%' OR LOWER(name) LIKE '%maharashtra cyber%' " +
                     "OR phone IN ('group:Hidden updates', 'group:Find channels to follow', 'group:Explore more', 'group:Create channel', 'group:Inbox filters', 'group:Recent updates', 'group:Add status', 'group:Manage Groups', 'group:Manage groups', 'group:New group', 'group:Archived', 'group:Group chats', 'group:group chats') " +
                     "OR normalized_number IN ('group:hidden updates', 'group:find channels to follow', 'group:explore more', 'group:create channel', 'group:inbox filters', 'group:recent updates', 'group:add status', 'group:manage groups', 'group:new group', 'group:archived', 'group:wa:group chats', 'group:w4b:group chats')" +
                 ")",
                 null
             )
-            // Repair direct phone numbers and address-book contacts that were erroneously stored as groups
+            // Repair pure phone numbers that were erroneously stored as groups
             val candidates = mutableListOf<Triple<Long, String, String>>()
             db.rawQuery(
                 "SELECT id, name FROM ${DatabaseHelper.TABLE_DYNAMIC_POOL} WHERE phone LIKE 'group:%' OR normalized_number LIKE 'group:%'",
@@ -751,11 +751,6 @@ class WhatsAppRepository(private val context: Context) {
                     val letters = name.filter { it.isLetter() }
                     if (digits.length >= 7 && letters.isEmpty()) {
                         candidates.add(Triple(id, name, name))
-                    } else if (name.isNotBlank()) {
-                        val phoneFromBook = findPhoneForContactName(name)
-                        if (!phoneFromBook.isNullOrBlank()) {
-                            candidates.add(Triple(id, name, phoneFromBook))
-                        }
                     }
                 }
             }

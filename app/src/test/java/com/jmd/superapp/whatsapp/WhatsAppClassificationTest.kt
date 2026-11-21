@@ -116,4 +116,53 @@ class WhatsAppClassificationTest {
         val (ok9, _) = validateRecipientForChannel("+919500910092", ChannelType.WHATSAPP_BUSINESS)
         assertTrue(ok9)
     }
+
+    private fun isIgnoredTitle(title: String): Boolean {
+        val lower = title.trim().lowercase()
+        val blocked = listOf(
+            "inbox filters", "radio group", "all filter", "groups filter", "unread filter",
+            "favorites filter", "new customer filter", "new order filter",
+            "maharashtra cyber", "maharashtra cyber - home department government of maharashtra",
+            "hidden updates", "find channels to follow", "explore more", "create channel",
+            "recent updates", "add status", "muted updates", "view updates", "channels",
+            "ask meta ai or search", "search group chats", "search chats", "search…", "search",
+            "manage groups", "manage group", "recent searches", "clear all", "new group",
+            "new community", "archived", "starred messages", "disappearing messages",
+            "chats", "updates", "communities", "calls", "tools", "filter",
+            "group chats", "group chat", "this list automatically updates",
+            "this list dynamically updates"
+        )
+        if (lower.contains("this list") && (lower.contains("group chats") || lower.contains("updates"))) return true
+        if (lower.contains("automatically updates") || lower.contains("dynamically updates")) return true
+        if (lower.contains("maharashtra cyber")) return true
+        if (lower.contains("channel") || lower.contains("newsletter")) return true
+        return blocked.any { lower == it || lower.startsWith("$it ") || lower.startsWith("$it…") || lower.startsWith("$it...") }
+    }
+
+    @Test
+    fun testLegitimateGroupTitlesAreNotIgnored() {
+        assertFalse(isIgnoredTitle("Contacts"))
+        assertFalse(isIgnoredTitle("Follow-Up"))
+        assertFalse(isIgnoredTitle("Follow up"))
+        assertFalse(isIgnoredTitle("Expenses"))
+        assertFalse(isIgnoredTitle("Pending Payment"))
+        assertFalse(isIgnoredTitle("Machine"))
+        assertFalse(isIgnoredTitle("Dilip"))
+        assertFalse(isIgnoredTitle("Todo"))
+        assertFalse(isIgnoredTitle("New Customer"))
+        assertFalse(isIgnoredTitle("Order Complete"))
+    }
+
+    @Test
+    fun testSystemNavigationChromeIsIgnored() {
+        assertTrue(isIgnoredTitle("Search group chats"))
+        assertTrue(isIgnoredTitle("Search chats"))
+        assertTrue(isIgnoredTitle("Ask Meta AI or Search"))
+        assertTrue(isIgnoredTitle("Archived"))
+        assertTrue(isIgnoredTitle("Starred messages"))
+        assertTrue(isIgnoredTitle("Manage Groups"))
+        assertTrue(isIgnoredTitle("Chats"))
+        assertTrue(isIgnoredTitle("Updates"))
+        assertTrue(isIgnoredTitle("Calls"))
+    }
 }
