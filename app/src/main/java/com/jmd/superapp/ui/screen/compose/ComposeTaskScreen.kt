@@ -132,6 +132,28 @@ fun ComposeTaskScreen(
         if (cleanPhone.isBlank()) return false
         val cleanName = name.trim()
 
+        val isBusiness = selectedChannel == ChannelType.WHATSAPP_BUSINESS ||
+            selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP ||
+            selectedChannel == ChannelType.WHATSAPP_BUSINESS_CALL ||
+            selectedChannel == ChannelType.WHATSAPP_BUSINESS_STATUS
+
+        // Strict channel-recipient boundary guards
+        if (cleanPhone.startsWith("group:", ignoreCase = true)) {
+            if (selectedChannel == ChannelType.SMS || selectedChannel == ChannelType.CALL || selectedChannel == ChannelType.CALL_SIMULATION) {
+                context.showAppToast("Groups cannot receive calls or SMS", isLong = true)
+                return false
+            }
+            val isBizGroup = cleanPhone.startsWith("group:w4b:", ignoreCase = true)
+            if (isBusiness && !isBizGroup) {
+                context.showAppToast("Cannot add WhatsApp group to Business task", isLong = true)
+                return false
+            }
+            if (!isBusiness && isBizGroup) {
+                context.showAppToast("Cannot add Business group to WhatsApp task", isLong = true)
+                return false
+            }
+        }
+
         val norm = PhoneNumberNormalizer.normalize(cleanPhone)
         val digits = cleanPhone.filter { it.isDigit() }
 

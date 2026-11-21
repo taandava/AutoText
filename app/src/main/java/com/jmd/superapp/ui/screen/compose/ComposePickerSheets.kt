@@ -105,38 +105,23 @@ fun ContactPoolPickerSheet(
     val isSmsOrCall = selectedChannel == ChannelType.SMS || selectedChannel == ChannelType.CALL || selectedChannel == ChannelType.CALL_SIMULATION
 
     var poolTab by remember { mutableIntStateOf(if (isGroupChannel) 1 else 0) }
-    var groupFilterIndex by remember {
-        mutableIntStateOf(
-            when (selectedChannel) {
-                ChannelType.WHATSAPP_BUSINESS_GROUP -> 2
-                ChannelType.WHATSAPP_GROUP -> 1
-                else -> if (isBusinessChannel) 2 else if (selectedChannel == ChannelType.WHATSAPP) 1 else 0
-            }
-        )
-    } // 0 = All, 1 = WhatsApp, 2 = Business
     var isSyncing by remember { mutableStateOf(false) }
     var refreshTrigger by remember { mutableIntStateOf(0) }
     var poolSearch by remember { mutableStateOf("") }
 
     val activeGroupFilter = if (poolTab == 1) {
-        when {
-            selectedChannel == ChannelType.WHATSAPP_GROUP -> "WA_GROUP"
-            selectedChannel == ChannelType.WHATSAPP_BUSINESS_GROUP -> "WA_BUSINESS_GROUP"
-            groupFilterIndex == 1 -> "WA_GROUP"
-            groupFilterIndex == 2 -> "WA_BUSINESS_GROUP"
-            else -> null
-        }
+        if (isBusinessChannel) "WA_BUSINESS_GROUP" else "WA_GROUP"
     } else null
 
     val activeChatFilter = if (isBusinessChannel) "w4b" else "wa"
-    val poolTotal = remember(poolSearch, refreshTrigger, poolTab, groupFilterIndex, isBusinessChannel) {
+    val poolTotal = remember(poolSearch, refreshTrigger, poolTab, isBusinessChannel) {
         if (poolTab == 1) {
             repository.countDynamicGroupPool(searchQuery = poolSearch, channelFilter = activeGroupFilter)
         } else {
             repository.countDynamicPool(searchQuery = poolSearch, channelFilter = activeChatFilter)
         }
     }
-    val poolContacts = remember(poolSearch, refreshTrigger, poolTab, groupFilterIndex, isBusinessChannel) {
+    val poolContacts = remember(poolSearch, refreshTrigger, poolTab, isBusinessChannel) {
         if (poolTab == 1) {
             repository.getDynamicGroupPool(limit = 100000, searchQuery = poolSearch, channelFilter = activeGroupFilter)
         } else {
@@ -356,13 +341,6 @@ fun ContactPoolPickerSheet(
                 )
             }
 
-            if (poolTab == 1 && !isGroupChannel) {
-                AppSegmentedControl(
-                    items = listOf("All", "WhatsApp", "Business"),
-                    selectedIndex = groupFilterIndex,
-                    onItemSelected = { groupFilterIndex = it }
-                )
-            }
 
             AppSearchField(
                 value = poolSearch,

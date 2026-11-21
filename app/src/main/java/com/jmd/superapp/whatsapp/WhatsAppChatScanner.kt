@@ -1161,13 +1161,14 @@ class WhatsAppChatScanner(
             val node = q.removeFirst()
             val id = node.viewIdResourceName?.lowercase().orEmpty()
             val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
-            if (desc.contains("group icon") || desc.contains("group photo") || desc.contains("group picture") ||
-                desc.startsWith("group ") || desc.contains(" group") || desc.contains("ग्रुप")
-            ) {
-                return true
-            }
-            if ((id.contains("photo") || id.contains("avatar") || id.contains("icon")) && desc.contains("group")) {
-                return true
+            val isAvatarNode = id.contains("photo") || id.contains("avatar") || id.contains("icon") || id.contains("picture")
+            if (isAvatarNode) {
+                if (desc == "group icon" || desc == "group photo" || desc == "group picture" ||
+                    desc == "group profile picture" || desc == "ग्रुप आइकन" || desc == "ग्रुप फ़ोटो" ||
+                    desc.startsWith("group icon") || desc.startsWith("group photo") || desc.startsWith("group picture")
+                ) {
+                    return true
+                }
             }
             for (i in 0 until node.childCount) {
                 node.getChild(i)?.let { q.add(it) }
@@ -1181,8 +1182,8 @@ class WhatsAppChatScanner(
         q.add(row)
         val groupEvents = listOf(
             "created group", "created the group", "added you", "you were added",
-            "joined using", "group call", "left group", "left the group",
-            "changed the group", "changed the subject", "security code changed"
+            "joined using", "left group", "left the group",
+            "changed the group", "changed the subject"
         )
         while (q.isNotEmpty()) {
             val node = q.removeFirst()
@@ -1287,12 +1288,16 @@ class WhatsAppChatScanner(
         q.add(row)
         while (q.isNotEmpty()) {
             val node = q.removeFirst()
+            val id = node.viewIdResourceName?.lowercase().orEmpty()
             val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
-            if (desc.contains("profile photo") || desc.contains("profile picture") ||
-                desc.contains("profile photo of") || desc.contains("profile picture of") ||
-                desc.contains("view profile photo") || desc.contains("view profile picture")
-            ) {
-                return true
+            val isAvatar = id.contains("photo") || id.contains("avatar") || id.contains("picture")
+            if (isAvatar && !desc.contains("group")) {
+                if (desc == "profile photo" || desc == "profile picture" ||
+                    desc.startsWith("profile photo of") || desc.startsWith("profile picture of") ||
+                    desc.contains("view profile photo") || desc.contains("view profile picture")
+                ) {
+                    return true
+                }
             }
             for (i in 0 until node.childCount) {
                 node.getChild(i)?.let { q.add(it) }
