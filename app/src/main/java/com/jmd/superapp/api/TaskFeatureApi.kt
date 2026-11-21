@@ -229,10 +229,17 @@ object TaskFeatureApi {
         repository: AppRepository,
         request: WhatsAppMessageRequest
     ): FeatureExecutionResult {
-        val cleanPhone = PhoneNumberNormalizer.formatForWhatsApp(
-            request.recipient,
-            PreferenceManager(context).defaultCountryCode
-        )
+        val isGroup = request.channel == ChannelType.WHATSAPP_GROUP ||
+            request.channel == ChannelType.WHATSAPP_BUSINESS_GROUP ||
+            request.recipient.startsWith("group:", ignoreCase = true)
+        val cleanPhone = if (isGroup) {
+            request.recipient
+        } else {
+            PhoneNumberNormalizer.formatForWhatsApp(
+                request.recipient,
+                PreferenceManager(context).defaultCountryCode
+            )
+        }
 
         com.jmd.superapp.engine.SequentialTaskEngine.getInstance(context).ensureDeviceAwakeAndUnlocked(
             request.taskId,

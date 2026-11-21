@@ -233,6 +233,15 @@ class WhatsAppChatScanner(
                 }
 
                 DeepScanPhase.HARVEST_GROUPS -> {
+                    // Verify that Groups filter chip is actively selected before harvesting rows
+                    val groupsChip = findGroupsFilterChip(root)
+                    if (groupsChip != null && !isChipSelected(groupsChip)) {
+                        Log.i(loggerTag, "HARVEST_GROUPS: Groups filter chip is not yet active. Clicking chip...")
+                        AccessibilityNodeUtils.clickElement(groupsChip, service)
+                        onRetry(250L)
+                        return
+                    }
+
                     val rowContainers = findAllRowContainers(root)
                     val isBiz = pkg.contains("w4b", ignoreCase = true)
                     val baseGroupSrc = if (isBiz) "WA_BUSINESS_GROUP" else "WA_GROUP"
@@ -242,6 +251,16 @@ class WhatsAppChatScanner(
                         val title = extractTitleFromRow(row) ?: continue
                         val cleanTitle = title.trim().removePrefix("~").trim()
                         if (cleanTitle.isBlank() || !repo.isValidPickedChatName(cleanTitle) || isIgnoredTitle(cleanTitle)) continue
+
+                        // Reject individual contacts: direct avatar photo, pure phone number, or device address book entry
+                        if (hasDirectAvatarDesc(row)) {
+                            Log.i(loggerTag, "HARVEST_GROUPS: Skipping '$cleanTitle' (direct profile photo detected)")
+                            continue
+                        }
+                        val digits = cleanTitle.filter { it.isDigit() }
+                        val letters = cleanTitle.filter { it.isLetter() }
+                        if (digits.length >= 7 && letters.isEmpty()) continue
+                        if (repo.hasCellularPhoneContact(cleanTitle) || repo.findPhoneForContactName(cleanTitle) != null) continue
 
                         if (seenRowTitlesInScan.add(cleanTitle.lowercase().trim())) {
                             anyNewRowSeenThisPass = true
@@ -978,6 +997,8 @@ class WhatsAppChatScanner(
             "voice call", "video call", "missed call", "no answer",
             "inbox filters", "radio group", "all filter", "groups filter", "unread filter",
             "favorites filter", "new customer filter", "new order filter",
+            "follow-up", "follow up", "todo", "to-do", "new customer", "new order", "pending payment", "paid", "order complete",
+            "maharashtra cyber", "maharashtra cyber - home department government of maharashtra",
             "hidden updates", "find channels to follow", "explore more", "create channel",
             "recent updates", "add status", "muted updates", "view updates", "channels",
             "ask meta ai or search", "search group chats", "search chats", "search…", "search",
@@ -989,6 +1010,8 @@ class WhatsAppChatScanner(
         )
         if (lower.contains("this list") && (lower.contains("group chats") || lower.contains("updates"))) return true
         if (lower.contains("automatically updates") || lower.contains("dynamically updates")) return true
+        if (lower.contains("maharashtra cyber")) return true
+        if (lower.contains("channel") || lower.contains("newsletter")) return true
         return blocked.any { lower == it || lower.startsWith("$it ") || lower.startsWith("$it…") || lower.startsWith("$it...") }
     }
     /**
@@ -1259,21 +1282,23 @@ class WhatsAppChatScanner(
         return (hasEntry || hasVoiceOrSend) && !hasBottomNav
     }
 
-    private fun isProbableGroupName(name: String): Boolean {
-        val trimmed = name.trim().lowercase()
-        val groupKeywords = listOf(
-            "group", "team", "family", "club", "committee", "synergy", "machine",
-            "project", "class", "batch", "staff", "official", "community",
-            "announcements", "society", "association", "gang", "friends",
-            "buddies", "boys", "girls", "office", "work", "dept", "department",
-            "squad", "circle", "hub", "network", "union", "league", "trust",
-            "foundation", "portal", "council", "wing", "pariwar", "parivar"
-        )
-        return groupKeywords.any { keyword ->
-            trimmed == keyword || trimmed.startsWith("$keyword ") ||
-                trimmed.endsWith(" $keyword") || trimmed.contains(" $keyword ") ||
-                trimmed.contains("-$keyword") || trimmed.contains("$keyword-")
+    private fun hasDirectAvatarDesc(row: AccessibilityNodeInfo): Boolean {
+        val q = ArrayDeque<AccessibilityNodeInfo>()
+        q.add(row)
+        while (q.isNotEmpty()) {
+            val node = q.removeFirst()
+            val desc = node.contentDescription?.toString()?.lowercase().orEmpty()
+            if (desc.contains("profile photo") || desc.contains("profile picture") ||
+                desc.contains("profile photo of") || desc.contains("profile picture of") ||
+                desc.contains("view profile photo") || desc.contains("view profile picture")
+            ) {
+                return true
+            }
+            for (i in 0 until node.childCount) {
+                node.getChild(i)?.let { q.add(it) }
+            }
         }
+        return false
     }
 
     private fun classifyRow(
@@ -1288,20 +1313,38 @@ class WhatsAppChatScanner(
             return RowKind.UNRESOLVED
         }
 
+        // Direct profile avatar strictly identifies an individual contact
+        if (hasDirectAvatarDesc(row)) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (direct profile photo avatar)")
+            return RowKind.DIRECT
+        }
+
         val digits = cleanTitle.filter { it.isDigit() }
         val letters = cleanTitle.filter { it.isLetter() }
         val isPurePhone = digits.length >= 7 && letters.isEmpty()
+        if (isPurePhone) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (pure phone number)")
+            return RowKind.DIRECT
+        }
+
         val isInPhoneBook = repo.hasCellularPhoneContact(cleanTitle) || repo.findPhoneForContactName(cleanTitle) != null
+        if (isInPhoneBook) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (phonebook contact match)")
+            return RowKind.DIRECT
+        }
 
-        // 2. Target overrides & group marker detection
+        if (isBusinessRow(row)) {
+            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (verified business row)")
+            return RowKind.DIRECT
+        }
+
+        // 2. Concrete group indicators ONLY
         val isKnownGroup = discoveredGroups.contains(cleanTitle.lowercase().trim())
-        val hasMsgFrom = hasMsgFromNode(row)
         val hasAvatarDesc = hasGroupAvatarDesc(row)
+        val hasMsgFrom = hasMsgFromNode(row)
         val hasEvent = hasGroupEventText(row)
-        val isProbable = isProbableGroupName(cleanTitle)
 
-        val isConfirmedGroup = (isKnownGroup || hasMsgFrom || hasAvatarDesc || hasEvent || isProbable) &&
-            !isPurePhone && !isInPhoneBook
+        val isConfirmedGroup = (isKnownGroup || hasAvatarDesc || hasMsgFrom || hasEvent)
 
         if (target == ScanTarget.GROUPS_ONLY) {
             return if (isConfirmedGroup) {
@@ -1315,7 +1358,6 @@ class WhatsAppChatScanner(
         }
 
         if (target == ScanTarget.DIRECT_CHATS_ONLY) {
-            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (DIRECT_CHATS_ONLY target)")
             return RowKind.DIRECT
         }
 
@@ -1325,25 +1367,7 @@ class WhatsAppChatScanner(
             return RowKind.GROUP
         }
 
-        // 3. Pure phone number is ALWAYS a direct chat
-        if (isPurePhone) {
-            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (pure phone number)")
-            return RowKind.DIRECT
-        }
-
-        // 4. Contact in device address book is ALWAYS a direct chat
-        if (isInPhoneBook) {
-            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (phonebook contact match)")
-            return RowKind.DIRECT
-        }
-
-        // 5. Verified Business row is always a direct chat
-        if (isBusinessRow(row)) {
-            Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (verified business row)")
-            return RowKind.DIRECT
-        }
-
-        // 6. Default Direct
+        // Default Direct
         Log.i(loggerTag, "classifyRow('$cleanTitle'): DIRECT (default direct chat)")
         return RowKind.DIRECT
     }
