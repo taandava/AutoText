@@ -2,6 +2,7 @@ package com.jmd.superapp.core
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
@@ -29,8 +30,16 @@ object NotificationIconHelper {
                 if (!it.isRecycled) return it
             }
             try {
-                val drawable = ContextCompat.getDrawable(context, R.mipmap.ic_launcher)
-                    ?: ContextCompat.getDrawable(context, R.drawable.ic_launcher_fg)
+                // Direct pre-rendered high-DPI circular gold emblem bitmap
+                val directBmp = BitmapFactory.decodeResource(context.resources, R.drawable.ic_launcher_large)
+                if (directBmp != null) {
+                    cachedLargeIcon = directBmp
+                    return directBmp
+                }
+
+                val drawable = ContextCompat.getDrawable(context, R.drawable.ic_launcher_large)
+                    ?: ContextCompat.getDrawable(context, R.mipmap.ic_launcher_round)
+                    ?: ContextCompat.getDrawable(context, R.mipmap.ic_launcher)
                 if (drawable != null) {
                     val density = context.resources.displayMetrics.density
                     val size = (64 * density).toInt().coerceAtLeast(128)

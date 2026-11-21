@@ -3,10 +3,10 @@
     <string name="app_name">Super</string>
     <string name="accessibility_service_label">Super</string>
     <string name="accessibility_service_description">Super uses the Android Accessibility Service API only to carry out the scheduled messages, calls and reminders you set up, inside the messaging and dialer apps you choose. Super never reads, stores or transmits your conversations, personal data or keystrokes, and it never inspects banking or payment apps.</string>
-    <string name="notification_channel_tasks">Scheduled Messages</string>
-    <string name="notification_channel_tasks_desc">Scheduled Messages</string>
-    <string name="notification_channel_reminders">Reminders</string>
-    <string name="notification_channel_reminders_desc">Reminder Alerts</string>
+    <string name="notification_channel_tasks">Super Tasks</string>
+    <string name="notification_channel_tasks_desc">Super Tasks</string>
+    <string name="notification_channel_reminders">Super Alerts</string>
+    <string name="notification_channel_reminders_desc">Super Alerts</string>
     <string name="device_admin_description">Screen lock</string>
     <string name="tile_a11y_label">Super Task</string>
 </resources>

@@ -4,8 +4,50 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Super mark: gold bolt centred inside the adaptive safe zone. -->
-    <path
-        android:fillColor="#FFC400"
-        android:pathData="M60,18 L34,60 L50,60 L44,92 L74,48 L56,48 Z" />
+
+    <!-- Dynamic Geometric Emblem Symbol (Vibrant Gold & Charcoal Accent) -->
+
+    <!-- Outer Glow Layer -->
+    <group>
+        <path
+            android:fillColor="#80FF9100"
+            android:pathData="M54,54 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0" />
+        <path
+            android:fillColor="#80FF9100"
+            android:pathData="M59.5,44.5 L70,26.3 A32,32 0 0,0 38,26.3 L48.5,44.5 A11,11 0 0,1 59.5,44.5 Z" />
+        <path
+            android:fillColor="#80FF9100"
+            android:pathData="M65,54 L86,54 A32,32 0 0,1 70,81.7 L59.5,63.5 A11,11 0 0,0 65,54 Z" />
+        <path
+            android:fillColor="#80FF9100"
+            android:pathData="M48.5,63.5 L38,81.7 A32,32 0 0,1 22,54 L43,54 A11,11 0 0,0 48.5,63.5 Z" />
+    </group>
+
+    <!-- Main Solid Geometric Emblem Symbol -->
+    <group>
+        <!-- Center Hub Circle -->
+        <path
+            android:fillColor="#FFD600"
+            android:pathData="M54,54 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0" />
+
+        <!-- Center Core Point -->
+        <path
+            android:fillColor="#212121"
+            android:pathData="M54,54 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0" />
+
+        <!-- Blade 1 (Top Sector) -->
+        <path
+            android:fillColor="#FFD600"
+            android:pathData="M59.5,44.5 L70,26.3 A32,32 0 0,0 38,26.3 L48.5,44.5 A11,11 0 0,1 59.5,44.5 Z" />
+
+        <!-- Blade 2 (Bottom Right Sector) -->
+        <path
+            android:fillColor="#FFD600"
+            android:pathData="M65,54 L86,54 A32,32 0 0,1 70,81.7 L59.5,63.5 A11,11 0 0,0 65,54 Z" />
+
+        <!-- Blade 3 (Bottom Left Sector) -->
+        <path
+            android:fillColor="#FFD600"
+            android:pathData="M48.5,63.5 L38,81.7 A32,32 0 0,1 22,54 L43,54 A11,11 0 0,0 48.5,63.5 Z" />
+    </group>
 </vector>

@@ -108,7 +108,7 @@
     <application android:name=".SuperApplication" android:allowBackup="true" android:dataExtractionRules="@xml/data_extraction_rules" android:fullBackupContent="@xml/backup_rules" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:label="@string/app_name" android:supportsRtl="true" android:usesCleartextTraffic="false" android:enableOnBackInvokedCallback="true" tools:targetApi="33" android:theme="@style/Theme.Super">
 
         <!-- Main Activity -->
-        <activity android:name=".ui.activity.MainActivity" android:launchMode="singleTask" android:exported="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.Super">
+        <activity android:name=".ui.activity.MainActivity" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:launchMode="singleTask" android:exported="true" android:screenOrientation="portrait" tools:ignore="DiscouragedApi,LockedOrientationActivity" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.Super">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -160,7 +160,7 @@
         <service android:name=".service.TaskForegroundService" android:exported="false" android:stopWithTask="false" />
 
         <!-- Quick Settings Tile: 1-Tap Pause & Resume Accessibility for Payment App Compatibility -->
-        <service android:name=".service.TaskTileService" android:icon="@mipmap/ic_launcher" android:label="@string/tile_a11y_label" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" android:exported="true">
+        <service android:name=".service.TaskTileService" android:icon="@drawable/ic_notification" android:label="@string/tile_a11y_label" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE" android:exported="true">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
@@ -246,31 +246,17 @@
         </provider>
 
         <!-- Jetpack Glance App Widget Receiver -->
-        <receiver
-            android:name=".ui.widget.SuperAppWidgetReceiver"
-            android:label="@string/app_name"
-            android:exported="true">
+        <receiver android:name=".ui.widget.SuperAppWidgetReceiver" android:label="@string/app_name" android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/super_appwidget_info" />
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/super_appwidget_info" />
         </receiver>
 
         <!-- AndroidX Startup Initializer -->
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge">
-            <meta-data
-                android:name="com.jmd.superapp.core.SuperAppInitializer"
-                android:value="androidx.startup" />
-            <meta-data
-                android:name="androidx.work.WorkManagerInitializer"
-                android:value="androidx.startup"
-                tools:node="remove" />
+        <provider android:name="androidx.startup.InitializationProvider" android:authorities="${applicationId}.androidx-startup" android:exported="false" tools:node="merge">
+            <meta-data android:name="com.jmd.superapp.core.SuperAppInitializer" android:value="androidx.startup" />
+            <meta-data android:name="androidx.work.WorkManagerInitializer" android:value="androidx.startup" tools:node="remove" />
         </provider>
 
     </application>

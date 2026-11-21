@@ -82,6 +82,7 @@ class TaskDispatchReceiver : BroadcastReceiver() {
         const val ACTION_QUERY_POOL = "com.jmd.superapp.ACTION_QUERY_POOL"
         const val ACTION_DUMP_GROUPS = "com.jmd.superapp.ACTION_DUMP_GROUPS"
         const val ACTION_PURGE_CORRUPTED_GROUPS = "com.jmd.superapp.ACTION_PURGE_CORRUPTED_GROUPS"
+        const val ACTION_POST_NOTIFICATION = "com.jmd.superapp.ACTION_POST_NOTIFICATION"
 
         // Extra keys
         const val EXTRA_PACKAGE = "package"
@@ -358,6 +359,23 @@ class TaskDispatchReceiver : BroadcastReceiver() {
                 )
                 val result = TaskFeatureApi.simulateCall(context, repository, request)
                 setResult(if (result.success) 1 else 0, result.messageSnippet, null)
+            }
+
+            action.endsWith("ACTION_POST_NOTIFICATION") -> {
+                val title = intent.getStringExtra("title") ?: "Super Task"
+                val content = intent.getStringExtra("content") ?: "Active task completed"
+                val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? android.app.NotificationManager
+                val notif = androidx.core.app.NotificationCompat.Builder(context, com.jmd.superapp.SuperApplication.CHANNEL_TASKS)
+                    .setSmallIcon(com.jmd.superapp.R.drawable.ic_notification)
+                    .apply { com.jmd.superapp.core.NotificationIconHelper.getLargeIcon(context)?.let { setLargeIcon(it) } }
+                    .setColor(0xFFFFD600.toInt())
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true)
+                    .build()
+                nm?.notify(7788, notif)
+                setResult(1, "Notification posted: $title", null)
             }
 
             action.endsWith("ACTION_SET_BANKING_SHIELD") -> {

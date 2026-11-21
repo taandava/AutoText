@@ -22,8 +22,8 @@ android {
         applicationId = "com.jmd.superapp"
         minSdk = 27
         targetSdk = 37
-        versionCode = 9
-        versionName = "1.0.8"
+        versionCode = 13
+        versionName = "1.1.3"
 
         resourceConfigurations += listOf("en")
     }

@@ -140,11 +140,15 @@ def main():
         img_round.save(os.path.join(dir_path, "ic_launcher_round.png"), "PNG")
         print(f"Generated {folder} ({size}x{size})")
 
-    # Also generate high-res 512x512 play store / web icon
+    # Also generate high-res 512x512 play store / web icon and 192x192 notification large icon
     web_dir = os.path.join(base_res, "drawable")
     img_512 = render_emblem(512, is_round=False)
     img_512.save(os.path.join(web_dir, "ic_launcher_web.png"), "PNG")
     print("Generated 512x512 web icon")
+
+    img_large = render_emblem(192, is_round=True)
+    img_large.save(os.path.join(web_dir, "ic_launcher_large.png"), "PNG")
+    print("Generated 192x192 notification large icon")
 
 if __name__ == "__main__":
     main()

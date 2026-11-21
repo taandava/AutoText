@@ -292,6 +292,15 @@ function simulateCall(device, name, phone, skin = 'PIXEL', timeout = 30) {
     return broadcastCommand(device, pkg, 'ACTION_SIMULATE_CALL', extras);
 }
 
+function postNotification(device, title = 'Super Task', content = 'Active task running') {
+    const pkg = 'com.jmd.superapp';
+    const extras = [
+        '--es', 'title', title,
+        '--es', 'content', content
+    ];
+    return broadcastCommand(device, pkg, 'ACTION_POST_NOTIFICATION', extras);
+}
+
 function setBankingShield(device, targetPackage, enabled = true) {
     const pkg = 'com.jmd.superapp';
     const extras = [
@@ -812,6 +821,7 @@ Commands:
   send-sms              Send cellular SMS (--phone, --message, [--sim 0])
   call-sms              Make cellular call (--phone, [--duration 15], [--sim 0])
   simulate-call         Simulate inbound call (--name, --phone, [--skin PIXEL])
+  notify                Post test notification (--title, --content)
   shield                Set banking shield (--package, [--disable])
   campaigns             List active campaigns (--app wa|sms)
   batch                 Trigger campaign outreach batch (--app wa|sms, --campaign-id 1)
@@ -977,6 +987,15 @@ function main() {
             const timeout = parseInt(flags.timeout || '30', 10);
             console.log(`[*] Simulating Inbound Call from ${name} (${phone}) on ${device}...`);
             const res = simulateCall(device, name, phone, skin, timeout);
+            console.log(res.data);
+            break;
+        }
+
+        case 'notify': {
+            const title = flags.title || 'Super Task';
+            const content = flags.content || 'Active task running';
+            console.log(`[*] Posting notification "${title}: ${content}" on ${device}...`);
+            const res = postNotification(device, title, content);
             console.log(res.data);
             break;
         }
