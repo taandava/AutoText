@@ -1444,17 +1444,12 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                         AppFileLogger.action(appContext, TAG, "Hangup request for $cleanPhone: result=$hungUp")
 
                         try {
-                            val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                            val endNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
-                                .setSmallIcon(R.drawable.ic_notification)
-                                .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
-                                .setColor(0xFFFFD600.toInt())
-                                .setContentTitle("Call Ended")
-                                .setContentText("Scheduled call with $cleanPhone concluded (${durationSec}s).")
-                                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                                .setAutoCancel(true)
-                                .build()
-                            nm?.notify((task.id + index + 50000).toInt(), endNotif)
+                            com.jmd.superapp.core.SuperNotificationManager.postTaskNotification(
+                                appContext,
+                                (task.id + index + 50000).toInt(),
+                                "Call Ended",
+                                "Scheduled call with $cleanPhone concluded (${durationSec}s)."
+                            )
                         } catch (e: Exception) {
                             Log.d(TAG, "Call duration notification error: ${e.message}")
                         }
@@ -1754,17 +1749,12 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                             AppFileLogger.action(appContext, TAG, "Auto-hangup WhatsApp VoIP call after ${durationSec}s: result=$hungUp")
 
                             try {
-                                val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                                val endNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
-                                    .setSmallIcon(R.drawable.ic_notification)
-                                    .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
-                                    .setColor(0xFFFFD600.toInt())
-                                    .setContentTitle("Call Ended")
-                                    .setContentText("Scheduled WhatsApp call with $cleanPhone concluded (${durationSec}s).")
-                                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                                    .setAutoCancel(true)
-                                    .build()
-                                nm?.notify((task.id + index + 60000).toInt(), endNotif)
+                                com.jmd.superapp.core.SuperNotificationManager.postTaskNotification(
+                                    appContext,
+                                    (task.id + index + 60000).toInt(),
+                                    "Call Ended",
+                                    "Scheduled WhatsApp call with $cleanPhone concluded (${durationSec}s)."
+                                )
                             } catch (e: Exception) {
                                 Log.d(TAG, "WhatsApp call duration notification error: ${e.message}")
                             }
@@ -1896,19 +1886,13 @@ class SequentialTaskEngine private constructor(private val appContext: Context) 
                     simulationIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                 )
-                val nm = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                val callNotif = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_REMINDERS)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
-                    .setColor(0xFFFFD600.toInt())
-                    .setContentTitle(task.simulatedCallerName.ifBlank { "Incoming Call" })
-                    .setContentText("Incoming call from ${task.simulatedCallerNumber.ifBlank { "Unknown Caller" }}")
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setCategory(NotificationCompat.CATEGORY_CALL)
-                    .setFullScreenIntent(fullScreenPendingIntent, true)
-                    .setAutoCancel(true)
-                    .build()
-                nm?.notify(notifId, callNotif)
+                com.jmd.superapp.core.SuperNotificationManager.postSimulatedCallNotification(
+                    appContext,
+                    notifId,
+                    task.simulatedCallerName,
+                    task.simulatedCallerNumber,
+                    fullScreenPendingIntent
+                )
             }
 
             appContext.startActivity(simulationIntent)

@@ -36,4 +36,11 @@ object AppDataEvents {
     fun notifyLogsChanged() {
         _logsChanged.tryEmit(Unit)
     }
+
+    fun notifyAllDataChanged() {
+        notifyTasksChanged()
+        notifyCampaignsChanged()
+        notifyAutoReplyChanged()
+        notifyLogsChanged()
+    }
 }

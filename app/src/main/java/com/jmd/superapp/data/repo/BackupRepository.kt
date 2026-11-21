@@ -338,6 +338,7 @@ class BackupRepository(context: Context) {
             DatabaseHelper.TABLE_AUTO_REPLY_HISTORY,
             DatabaseHelper.TABLE_TASK_DELIVERIES,
             DatabaseHelper.TABLE_APP_PRIVACY_CONFIGS,
+            DatabaseHelper.TABLE_WHATSAPP_GROUPS,
         )
 
         for (table in tables) {
@@ -387,7 +388,7 @@ class BackupRepository(context: Context) {
             db.transaction {
                 val tables = listOf(
                     DatabaseHelper.TABLE_TASKS,
-                            DatabaseHelper.TABLE_AUTO_REPLY,
+                    DatabaseHelper.TABLE_AUTO_REPLY,
                     DatabaseHelper.TABLE_DAILY_CAMPAIGN,
                     DatabaseHelper.TABLE_DYNAMIC_POOL,
                     DatabaseHelper.TABLE_DAILY_CAMPAIGN_SENT,
@@ -398,6 +399,7 @@ class BackupRepository(context: Context) {
                     DatabaseHelper.TABLE_AUTO_REPLY_HISTORY,
                     DatabaseHelper.TABLE_TASK_DELIVERIES,
                     DatabaseHelper.TABLE_APP_PRIVACY_CONFIGS,
+                    DatabaseHelper.TABLE_WHATSAPP_GROUPS,
                 )
 
                 for (table in tables) {

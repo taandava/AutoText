@@ -76,10 +76,10 @@ class SuperApplication : Application(), Configuration.Provider {
         private const val TAG = "SuperApp"
 
         /** Notification channel identifier for task status updates and delivery receipts. */
-        const val CHANNEL_TASKS = "channel_tasks"
+        const val CHANNEL_TASKS = com.jmd.superapp.core.SuperNotificationManager.CHANNEL_TASKS
 
         /** Notification channel identifier for full-screen reminder alarms, countdowns, and sound toggles. */
-        const val CHANNEL_REMINDERS = "channel_reminders"
+        const val CHANNEL_REMINDERS = com.jmd.superapp.core.SuperNotificationManager.CHANNEL_REMINDERS
 
         /** Legacy persistent service notification channel identifier targeted for removal. */
         const val CHANNEL_SERVICE = "channel_service"
@@ -105,58 +105,7 @@ class SuperApplication : Application(), Configuration.Provider {
          * - Resources: [R.string.notification_channel_tasks], [R.string.notification_channel_reminders]
          */
         fun createNotificationChannels(context: Context) {
-            val notificationManager = context.getSystemService(NotificationManager::class.java) ?: return
-
-            // Retire legacy persistent service notification channel so no sticky notification remains
-            try {
-                notificationManager.deleteNotificationChannel(CHANNEL_SERVICE)
-            } catch (e: Exception) {
-                Log.d(TAG, "Delete legacy service channel: ${e.message}")
-            }
-
-            val expectedTasksName = context.getString(R.string.notification_channel_tasks)
-            val expectedRemindersName = context.getString(R.string.notification_channel_reminders)
-
-            // If existing channel has obsolete 3-word name from earlier builds, recreate it cleanly
-            val existingReminders = notificationManager.getNotificationChannel(CHANNEL_REMINDERS)
-            if (existingReminders != null && existingReminders.name != expectedRemindersName) {
-                try {
-                    notificationManager.deleteNotificationChannel(CHANNEL_REMINDERS)
-                } catch (e: Exception) {
-                    Log.d(TAG, "Recreate reminders channel: ${e.message}")
-                }
-            }
-
-            val existingTasks = notificationManager.getNotificationChannel(CHANNEL_TASKS)
-            if (existingTasks != null && existingTasks.name != expectedTasksName) {
-                try {
-                    notificationManager.deleteNotificationChannel(CHANNEL_TASKS)
-                } catch (e: Exception) {
-                    Log.d(TAG, "Recreate tasks channel: ${e.message}")
-                }
-            }
-
-            // Channel for task completions, execution failures, and message dispatches
-            val tasksChannel = NotificationChannel(
-                CHANNEL_TASKS,
-                expectedTasksName,
-                NotificationManager.IMPORTANCE_HIGH,
-            ).apply {
-                description = context.getString(R.string.notification_channel_tasks_desc)
-                enableVibration(true)
-            }
-
-            // High-importance channel for reminder alarms and timer alerts
-            val remindersChannel = NotificationChannel(
-                CHANNEL_REMINDERS,
-                expectedRemindersName,
-                NotificationManager.IMPORTANCE_HIGH,
-            ).apply {
-                description = context.getString(R.string.notification_channel_reminders_desc)
-                enableVibration(true)
-            }
-
-            notificationManager.createNotificationChannels(listOf(tasksChannel, remindersChannel))
+            com.jmd.superapp.core.SuperNotificationManager.createNotificationChannels(context)
         }
     }
 

@@ -301,6 +301,16 @@ function postNotification(device, title = 'Super Task', content = 'Active task r
     return broadcastCommand(device, pkg, 'ACTION_POST_NOTIFICATION', extras);
 }
 
+function backupDb(device) {
+    const pkg = 'com.jmd.superapp';
+    return broadcastCommand(device, pkg, 'ACTION_BACKUP_DB');
+}
+
+function restoreDb(device) {
+    const pkg = 'com.jmd.superapp';
+    return broadcastCommand(device, pkg, 'ACTION_RESTORE_DB');
+}
+
 function setBankingShield(device, targetPackage, enabled = true) {
     const pkg = 'com.jmd.superapp';
     const extras = [
@@ -996,6 +1006,20 @@ function main() {
             const content = flags.content || 'Active task running';
             console.log(`[*] Posting notification "${title}: ${content}" on ${device}...`);
             const res = postNotification(device, title, content);
+            console.log(res.data);
+            break;
+        }
+
+        case 'backup': {
+            console.log(`[*] Backing up Super database on ${device}...`);
+            const res = backupDb(device);
+            console.log(res.data);
+            break;
+        }
+
+        case 'restore': {
+            console.log(`[*] Restoring Super database on ${device}...`);
+            const res = restoreDb(device);
             console.log(res.data);
             break;
         }

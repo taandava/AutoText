@@ -134,10 +134,12 @@ def main():
         # Standard squircle launcher icon
         img = render_emblem(size, is_round=False)
         img.save(os.path.join(dir_path, "ic_launcher.png"), "PNG")
+        img.save(os.path.join(dir_path, "ic_super_emblem.png"), "PNG")
 
         # Round launcher icon
         img_round = render_emblem(size, is_round=True)
         img_round.save(os.path.join(dir_path, "ic_launcher_round.png"), "PNG")
+        img_round.save(os.path.join(dir_path, "ic_super_emblem_round.png"), "PNG")
         print(f"Generated {folder} ({size}x{size})")
 
     # Also generate high-res 512x512 play store / web icon and 192x192 notification large icon

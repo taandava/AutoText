@@ -83,6 +83,9 @@ class TaskDispatchReceiver : BroadcastReceiver() {
         const val ACTION_DUMP_GROUPS = "com.jmd.superapp.ACTION_DUMP_GROUPS"
         const val ACTION_PURGE_CORRUPTED_GROUPS = "com.jmd.superapp.ACTION_PURGE_CORRUPTED_GROUPS"
         const val ACTION_POST_NOTIFICATION = "com.jmd.superapp.ACTION_POST_NOTIFICATION"
+        const val ACTION_BACKUP_DB = "com.jmd.superapp.ACTION_BACKUP_DB"
+        const val ACTION_RESTORE_DB = "com.jmd.superapp.ACTION_RESTORE_DB"
+        const val ACTION_REMOVE_DEVICE_ADMIN = "com.jmd.superapp.ACTION_REMOVE_DEVICE_ADMIN"
 
         // Extra keys
         const val EXTRA_PACKAGE = "package"
@@ -364,18 +367,138 @@ class TaskDispatchReceiver : BroadcastReceiver() {
             action.endsWith("ACTION_POST_NOTIFICATION") -> {
                 val title = intent.getStringExtra("title") ?: "Super Task"
                 val content = intent.getStringExtra("content") ?: "Active task completed"
-                val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? android.app.NotificationManager
-                val notif = androidx.core.app.NotificationCompat.Builder(context, com.jmd.superapp.SuperApplication.CHANNEL_TASKS)
-                    .setSmallIcon(com.jmd.superapp.R.drawable.ic_notification)
-                    .apply { com.jmd.superapp.core.NotificationIconHelper.getLargeIcon(context)?.let { setLargeIcon(it) } }
-                    .setColor(0xFFFFD600.toInt())
-                    .setContentTitle(title)
-                    .setContentText(content)
-                    .setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH)
-                    .setAutoCancel(true)
-                    .build()
-                nm?.notify(7788, notif)
+                try {
+                    val appIcon = context.packageManager.getApplicationIcon(context.packageName)
+                    val bmp = android.graphics.Bitmap.createBitmap(192, 192, android.graphics.Bitmap.Config.ARGB_8888)
+                    val canvas = android.graphics.Canvas(bmp)
+                    appIcon.setBounds(0, 0, 192, 192)
+                    appIcon.draw(canvas)
+                    java.io.FileOutputStream(java.io.File("/sdcard/pm_icon.png")).use { 
+                        bmp.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) 
+                    }
+                } catch (t: Throwable) {
+                    android.util.Log.e("TaskDispatchReceiver", "Dump PM icon: ${t.message}")
+                }
+                com.jmd.superapp.core.SuperNotificationManager.postTaskNotification(context, 7788, title, content)
                 setResult(1, "Notification posted: $title", null)
+            }
+
+            action.endsWith("ACTION_BACKUP_DB") -> {
+                val pendingResult = goAsync()
+                receiverScope.launch {
+                    try {
+                        val backupDir = java.io.File("/sdcard/Download/super_backup")
+                        if (!backupDir.exists()) backupDir.mkdirs()
+
+                        // 1. Raw SQLite database files
+                        val dbFile = context.getDatabasePath("super.db")
+                        var rawCopied = false
+                        if (dbFile.exists()) {
+                            dbFile.copyTo(java.io.File(backupDir, "super.db"), overwrite = true)
+                            val wal = java.io.File(dbFile.path + "-wal")
+                            if (wal.exists()) wal.copyTo(java.io.File(backupDir, "super.db-wal"), overwrite = true)
+                            val shm = java.io.File(dbFile.path + "-shm")
+                            if (shm.exists()) shm.copyTo(java.io.File(backupDir, "super.db-shm"), overwrite = true)
+                            rawCopied = true
+                        }
+
+                        // 2. Encrypted JSON backup in Documents/Super/Backups/
+                        val docResult = repository.exportDatabaseToDocuments(context)
+
+                        // 3. Direct JSON backup in Download/super_backup/
+                        val json = repository.exportDatabaseToJson()
+                        java.io.File(backupDir, "super_backup.json").writeText(json)
+
+                        val poolCount = repository.countDynamicPool()
+                        val groupCount = repository.countDynamicGroupPool()
+                        val msg = "BACKUP_SUCCESS: Raw=$rawCopied, Contacts=$poolCount, Groups=$groupCount, Docs=${docResult.getOrNull()}"
+                        Log.i(TAG, msg)
+                        AppFileLogger.action(context, TAG, msg)
+                        pendingResult.setResult(1, msg, null)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Backup failed: ${e.message}", e)
+                        pendingResult.setResult(0, "Backup failed: ${e.message}", null)
+                    } finally {
+                        pendingResult.finish()
+                    }
+                }
+            }
+
+            action.endsWith("ACTION_RESTORE_DB") -> {
+                val pendingResult = goAsync()
+                receiverScope.launch {
+                    try {
+                        val backupDir = java.io.File("/sdcard/Download/super_backup")
+                        val dbFile = context.getDatabasePath("super.db")
+                        val rawDb = java.io.File(backupDir, "super.db")
+                        var restored = false
+
+                        if (rawDb.exists() && rawDb.length() > 0) {
+                            com.jmd.superapp.data.db.DatabaseHelper.getInstance(context).close()
+                            rawDb.copyTo(dbFile, overwrite = true)
+                            val wal = java.io.File(backupDir, "super.db-wal")
+                            if (wal.exists()) wal.copyTo(java.io.File(dbFile.path + "-wal"), overwrite = true)
+                            val shm = java.io.File(backupDir, "super.db-shm")
+                            if (shm.exists()) shm.copyTo(java.io.File(dbFile.path + "-shm"), overwrite = true)
+                            restored = true
+                            Log.i(TAG, "Restored raw database files (${rawDb.length()} bytes)")
+                        }
+
+                        val jsonFile = java.io.File(backupDir, "super_backup.json")
+                        if (!restored && jsonFile.exists()) {
+                            val res = repository.importDatabaseFromJson(jsonFile.readText())
+                            restored = res.isSuccess
+                            Log.i(TAG, "Restored from Download JSON: ${res.getOrNull()}")
+                        }
+
+                        if (!restored) {
+                            val docsDir = java.io.File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOCUMENTS), "Super/Backups")
+                            val latest = docsDir.listFiles()?.filter { it.extension == "json" }?.maxByOrNull { it.lastModified() }
+                            if (latest != null) {
+                                val res = repository.importDatabaseFromJson(latest.readText())
+                                restored = res.isSuccess
+                                Log.i(TAG, "Restored from Documents: ${res.getOrNull()}")
+                            }
+                        }
+
+                        if (restored) {
+                            com.jmd.superapp.core.AppDataEvents.notifyAllDataChanged()
+                            val poolCount = repository.countDynamicPool()
+                            val groupCount = repository.countDynamicGroupPool()
+                            val msg = "RESTORE_SUCCESS: Contacts=$poolCount, Groups=$groupCount"
+                            Log.i(TAG, msg)
+                            AppFileLogger.action(context, TAG, msg)
+                            pendingResult.setResult(1, msg, null)
+                        } else {
+                            pendingResult.setResult(0, "No backup found to restore", null)
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Restore failed: ${e.message}", e)
+                        pendingResult.setResult(0, "Restore failed: ${e.message}", null)
+                    } finally {
+                        pendingResult.finish()
+                    }
+                }
+            }
+
+            action.endsWith("ACTION_REMOVE_DEVICE_ADMIN") -> {
+                try {
+                    val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as? android.app.admin.DevicePolicyManager
+                    val admin = android.content.ComponentName(context, com.jmd.superapp.receiver.SuperDeviceAdminReceiver::class.java)
+                    if (dpm != null && dpm.isAdminActive(admin)) {
+                        dpm.removeActiveAdmin(admin)
+                        val msg = "Device Admin removed successfully"
+                        Log.i(TAG, msg)
+                        setResult(1, msg, null)
+                    } else {
+                        val msg = "Device Admin not active"
+                        Log.i(TAG, msg)
+                        setResult(1, msg, null)
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to remove device admin: ${e.message}", e)
+                    setResult(0, e.message, null)
+                }
             }
 
             action.endsWith("ACTION_SET_BANKING_SHIELD") -> {

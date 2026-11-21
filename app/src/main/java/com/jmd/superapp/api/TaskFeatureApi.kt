@@ -541,19 +541,13 @@ object TaskFeatureApi {
                     simulationIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                 )
-                val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                val callNotif = NotificationCompat.Builder(context, SuperApplication.CHANNEL_REMINDERS)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .apply { NotificationIconHelper.getLargeIcon(context)?.let { setLargeIcon(it) } }
-                    .setColor(0xFFFFD600.toInt())
-                    .setContentTitle(request.callerName.ifBlank { "Incoming Call" })
-                    .setContentText("Incoming call from ${request.callerNumber.ifBlank { "Unknown Caller" }}")
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setCategory(NotificationCompat.CATEGORY_CALL)
-                    .setFullScreenIntent(fullScreenPendingIntent, true)
-                    .setAutoCancel(true)
-                    .build()
-                nm?.notify(notifId, callNotif)
+                com.jmd.superapp.core.SuperNotificationManager.postSimulatedCallNotification(
+                    context,
+                    notifId,
+                    request.callerName,
+                    request.callerNumber,
+                    fullScreenPendingIntent
+                )
             }
 
             context.startActivity(simulationIntent)

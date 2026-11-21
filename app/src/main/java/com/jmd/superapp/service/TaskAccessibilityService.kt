@@ -1374,19 +1374,13 @@ class TaskAccessibilityService : AccessibilityService() {
                     )
                     screenWakeLock?.acquire(15000L)
 
-                    val notificationManager = appContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-                    val fullScreenNotification = NotificationCompat.Builder(appContext, SuperApplication.CHANNEL_TASKS)
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .apply { NotificationIconHelper.getLargeIcon(appContext)?.let { setLargeIcon(it) } }
-                        .setColor(0xFFFFD600.toInt())
-                        .setContentTitle("Unlock Assist")
-                        .setContentText("Waking screen and assisting lockscreen...")
-                        .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .setCategory(NotificationCompat.CATEGORY_ALARM)
-                        .setFullScreenIntent(pendingIntent, true)
-                        .setAutoCancel(true)
-                        .build()
-                    notificationManager?.notify(9988, fullScreenNotification)
+                    com.jmd.superapp.core.SuperNotificationManager.postAlarmNotification(
+                        appContext,
+                        9988,
+                        "Unlock Assist",
+                        "Waking screen and assisting lockscreen...",
+                        pendingIntent
+                    )
 
                     val optionsBundle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
                         ActivityOptions.makeBasic().apply {
